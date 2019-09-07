@@ -1,0 +1,70 @@
+@media (min-width:768px){.calendar-container{width:680px}
+}
+@media (min-width:992px){.calendar-container{width:900px}
+}
+@media (min-width:1200px){.calendar-container{width:1100px}
+}
+
+.time-row {
+    background-color: rgb(150, 3, 32);
+    text-align: center;
+    color: white;
+    padding: 5px;
+    font-size: larger;
+    border:  #6E6E6E solid 1px;
+}
+.event-row {
+    background-color: #C4C4C4;
+    border:  #6E6E6E solid 1px;
+}
+
+.event-row > div {
+    border:  #6E6E6E solid 1px;
+    color:  #6E6E6E solid 1px;
+    background-color: #E4BDC5;
+}
+
+div.interested {
+    background-color: #f3e1e5;
+}
+
+div.teacher, div.performer, div.volunteer {
+    background-color: #f3e1e5;
+}
+
+.calendar-container {
+    border:  #6E6E6E solid 1px;
+}
+.backward {
+    text-align: left;
+    padding: 0px;
+}
+.backward > a > button {
+    background-color: #B5B5B5;
+    border:  0px;
+}
+.forward > a > button {
+    background-color: #B5B5B5;
+    border:  0px;
+}
+.forward {
+    text-align: right;
+    padding: 0px;
+}
+.header1 {
+    text-align: center;
+    font-family: "TwentiethCenturyPoster";
+    font-size: 20px;
+    border:  #6E6E6E solid 1px;
+    background-color: #D0D0D0;
+}
+.header2 {
+    text-align: center;
+    font-family: "TwentiethCenturyPoster";
+    font-size: 25px;
+    border:  #6E6E6E solid 1px;
+    background-color: #B5B5B5;
+}
+.cal-favorite {
+  float: right;
+}

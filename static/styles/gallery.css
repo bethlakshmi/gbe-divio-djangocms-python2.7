@@ -1,0 +1,54 @@
+div.imageGalleryItem.default {
+    width: 25%;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    padding: 0px 7px;
+    margin-bottom: 14px;
+    box-sizing: border-box;
+
+}
+a.imageGallery {
+    padding: 0px;
+    margin: 0px;
+    line-height: 0px;
+    font-size:0px;
+    position: relative;
+    display: block;
+}
+div.imageGalleryItem.default>a>img{
+    width: 100%;
+}
+
+@font-face {
+  font-family: 'TwentiethCenturyPoster';
+  src: url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.eot?#iefix") format("embedded-opentype"), url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.woff") format("woff"), url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.ttf") format("truetype"), url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.svg#TwentiethCentury") format("svg");
+  font-style: normal;
+  font-weight: normal; }
+  
+.imageGallery {
+    font-family: Lucida Grande,Tahoma,Verdana,sans-serif;
+    text-transform: none;
+    font-style: normal;
+    letter-spacing: normal;
+    font-weight: bold;
+    line-height:1.1;
+    font-size: 15.5px;
+    text-align: center;
+    padding: 10px;
+}
+
+h1.imageGallery {
+    margin: 5px 0px;
+    padding: 0px 0px 5px 0px;
+}
+h2.imageGallery {
+    font-size: 12px;
+    margin: 3px 0px;
+    padding: 0px 0px 3px 0px;
+}
+div.imageGallery {
+    vertical-align: top;
+    float: none;
+    display: block;
+}
