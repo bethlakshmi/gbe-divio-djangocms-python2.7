@@ -1,0 +1,18 @@
+  {% if fee_link %}
+    {% include 'payment_info.tmpl' %}
+    {% comment %} I feel dirty even doing this, but it's quick and gets the noise out of the template
+    {%endcomment %} 
+  {% endif %}
+  <p>
+    <font color=red>*</font> indicates a required field
+    {% if not nodraft and draft_fields %}
+      <br>
+      <b>bold text</b> indicates a field required for saving a draft
+    {% endif %}
+  </p>
+    {% for form in forms %}
+      {%if showheader%}
+        <h4>{{form.prefix}}</h4>
+      {%endif%}
+    {% include "form_table.tmpl" %}
+    {% endfor %}

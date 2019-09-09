@@ -1,0 +1,52 @@
+  {% load staticfiles %}
+    <div class="form-group">
+	<div class="container">
+	<div class="row">
+	<div class="col-md-2">
+	<label for="{{field.name}}" class="control-label">	      
+            {% if field.errors %}
+              <font color="red">!</font>&nbsp;&nbsp;
+	    {% elif field.css_classes == 'required' or field.name in submit_fields %}
+              <font color="red">*</font>
+            {% endif %} 
+            {% if field.errors %}
+                <font color="red">
+            {% endif %}
+            {% if field.name in draft_fields %}
+	        <b>{{ field.label_tag }}</b>
+	    {% else %}
+	        {{ field.label_tag }}
+	    {% endif %}
+
+            {% if field.errors %}
+                </font>
+            {% endif %} 
+
+            {% if field.help_text %}
+                <span class="dropt" title="Help">
+                <img src= "{% static "img/question.png" %}" alt="?"/>
+                  <span style="width:200px;float:right;text-align:left;">
+                  {{ field.help_text }}
+                  </span>
+                </span>
+            {% endif %}
+	</label>
+	</div>
+	<div class="col-md-4{% if field.field.choices|length > 7 %} long_choice{%endif%}">
+            {{ field }}
+	</div>
+	</div>
+	</div>
+
+      {% if field.errors %}
+	<div class="container">
+        <div class="row">
+	  <div class="col-md-2">&nbsp;</div>
+	  <div class="col-md-4">
+ 	    <label for="field.name">	      
+              <font color="red">{{ field.errors }}</font>
+            </label>
+	  </div>
+	</div>
+	</div>
+      {% endif %}

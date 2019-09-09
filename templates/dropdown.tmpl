@@ -1,0 +1,12 @@
+{% load i18n menu_tags cache mptt_tags %}
+{% for child in children %}
+    <li class="{% if child.children %}dropdown-submenu{% endif %}{% if child.selected %} active{% endif %}">
+        <a {% if child.children %}class="test"{% endif %} tabindex="-1" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">{{ child.get_menu_title }}</a>
+        {% if child.children %}
+            <ul class="dropdown-menu">
+                {% show_menu from_level to_level extra_inactive extra_active "dropdown.tmpl" "" "" child %}
+            </ul>
+        {% endif %}
+
+    </li>
+{% endfor %}

@@ -1,0 +1,61 @@
+{% extends 'base.tmpl' %}
+
+{% block title %}
+  Login to GBE
+{% endblock %}
+
+{% block content %}
+ 
+
+  <form action="" method=post>
+    {% csrf_token %}
+    <br><br>
+    <table>
+    <tr>
+      <td>
+	<label for="username">Login: </label>
+      </td>
+      <td>
+	<input type="text" 
+	       name="username" 
+	       value=""
+	       placeholder="Username or Email"
+	       id="username"
+	       tabindex=1/>
+      </td>
+      <td rowspan="3">
+	<div class="login_text">This is the login page.
+          You may have ended up here if you tried to do something which requires
+          a login (like submit an act or a class).
+          If you have a login, please enter it at left, or
+          <a href='{% url 'gbe:register' %}' tabindex=3>
+	    register
+	  </a> 
+	  to create a login.</br></br>
+          <a href='{% url 'gbe:password_reset' %}' tabindex=4>
+	    Help!
+	  </a> I forgot my username or password!
+	</div>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="password">Password: </label></td>
+      <td>
+	<input type="password" 
+	       name="password" 
+	       value=""
+	       placeholder="Password"
+	       id="password" 
+	       tabindex=2/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan=2 align=center><input type="submit" value="Login"/></td>
+    </tr>
+    </table>
+    <input type="hidden" name="next" value = "{{next | escape}}" />
+  </form>
+   {% if form.errors %}
+    <p class="error">This site does not recognize your username or password.</p>
+  {% endif %} 
+{% endblock %}

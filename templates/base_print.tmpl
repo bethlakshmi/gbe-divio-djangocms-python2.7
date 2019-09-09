@@ -1,0 +1,23 @@
+{% load staticfiles %}
+
+<html>
+  <head>
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="shortcut icon" href= {% static "img/favicon.ico" %} type="image/x-icon"/>
+    <link rel="stylesheet" 
+	    type="text/css" 
+	    href= {% static "styles/base.css" %} media="all"/>
+    <link rel="stylesheet" 
+	    type="text/css" 
+	    href= {% static "styles/menus.css" %} media="all"/>
+
+  </head>
+  <body> 
+ 
+      <div id="middle">
+          {% block content %}
+          {% endblock %}
+      </div>    
+      
+  </body>
+</html>

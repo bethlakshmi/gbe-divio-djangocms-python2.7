@@ -1,0 +1,45 @@
+{% load thumbnail %}
+
+    <!-- Gallery Section Start -->
+    <section id="gallery" class="section">
+      <div class="container">
+      <div class="row">
+        <div class="col-md-12 perf-div">
+          <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">{{heading}}</h2>
+        </div>
+      </div>
+        <div class="gallery-wrap wow fadeInDown">
+      {% for item in grid_items %}
+        {% cycle '<div class="row">' '' '' '' %}
+        <div class="col-sm-3 col-xs-12 gallery-pn">
+            <div class="gallery-item">
+              <div class="name">
+	        {{item.name}}
+	      </div>
+              <a href="#">{% if item.img %}
+		<img src="{% thumbnail item.img 250x250 crop upscale subject_location=item.img.subject_location %}" alt="">{% else %}
+		<img src="{{STATIC_URL}}/img/defaultperfpromo.png" alt="">{% endif %}
+              </a>
+              <div class="overlay">
+                <div class="icons">
+                  {% if item.img %}
+                  <a class="preview lightbox" href="{{item.img.url}}" data-toggle="tooltip" title="Expand Photo"><i class="icon-eye"></i></a>
+                  {% endif %}
+                  <a class="link" data-toggle="modal" data-target="#{{item.pk}}_modal" data-backdrop="true" href="#" data-toggle="tooltip" title="Biography">
+                    <i class="icon-share-alt"></i>
+                  </a>
+                  {% if request.user.is_superuser %}{% if item.img %}
+                  <a class="lightbox below" href="/admin/filer/image/{{item.img.pk}}/?_pick=file&_popup=1" target="_blank" data-toggle="tooltip" title="Edit Photo">
+                    <i class="icon-pencil"></i>
+                  </a>{% endif %}
+                  <a class="performer below" href="/admin/gbe/performer/{{item.pk}}" target="_blank" data-toggle="tooltip" title="Edit Bio">
+                    <i class="icon-note"></i>
+                  </a>{% endif %}
+                </div>
+              </div>
+        {% include "people_modal.tmpl" %}
+            </div>
+	</div>
+        {% cycle '' '' '' '</div>' %}
+      {% endfor %}
+    <!-- Gallery Section End -->

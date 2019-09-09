@@ -1,0 +1,74 @@
+{% load thumbnail %}
+    <!-- Featured Performer Section Start -->
+    <section id="team" class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 perf-div">
+            <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Special Guests</h2>
+          </div>
+{% for featured in featured_items %}
+{% cycle True True False False as img_right silent %}
+    {% cycle '<div class="row">' '' '<div class="row">' '' %}
+          <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="single-member wow fadeInRight" data-wow-delay="0.2s">
+    {% if img_right %}
+              <div class="team-desc">
+                <h5>{{featured.role}}</h5>
+                <h3>{{featured.bio.name}}</h3>
+                <p>{{featured.bio.bio | truncatechars:175 }}
+ 	        {% if featured.bio.bio|length > 175 %}
+		<a class="more-link" href="#" data-toggle="modal" data-target="#{{featured.bio.pk}}_modal" data-backdrop="true" >
+                    (more)</a>
+		{% endif %}</p>
+              </div>
+    {% endif %}
+        {% if featured.bio.img %}
+              <div class="team-img">
+                <img src="{% thumbnail featured.bio.img 250x250 crop upscale subject_location=featured.bio.img.subject_location %}" alt="">
+                <div class="social-icon">
+            {% if featured.bio.img %}
+                  <a class="social" href="{{featured.bio.img.url}}" data-toggle="tooltip" title="Expand Photo">
+                    <i class="fa fa-eye"></i>
+                  </a>
+            {% endif %}
+            {% if featured.bio.homepage %}
+                  <a class="social" href="{{featured.bio.homepage}}" target="_blank" data-toggle="tooltip" title="Performer Homepage">
+                    <i class="fa fa-link"></i>
+                  </a>
+            {% endif %}
+                  <a class="social" href="#" data-toggle="modal" data-target="#{{featured.bio.pk}}_modal" data-backdrop="true" data-toggle="tooltip" title="More...">
+                    <i class="fa fa-external-link"></i>
+                  </a>
+            {% if request.user.is_superuser %}</br></br>{% if featured.bio.img %}
+                  <a class="social" href="/admin/filer/image/{{featured.bio.img.pk}}/?_pick=file&_popup=1" target="_blank" data-toggle="tooltip" title="Edit Photo">
+                    <i class="fa fa-pencil"></i>
+                  </a>{% endif %}
+                  <a class="social" href="/admin/gbe/performer/{{featured.bio.pk}}" target="_blank" data-toggle="tooltip" title="Edit Bio">
+                    <i class="fa fa-pencil-square-o"></i>
+                  </a>
+            {% endif %}
+                </div>
+              </div>
+        {% endif %}
+    {% if not img_right %}
+              <div class="team-desc">
+                <h5>{{featured.role}}</h5>
+                <h3>{{featured.bio.name}}</h3>
+                <p>{{featured.bio.bio | truncatechars:175}}
+ 	        {% if featured.bio.bio|length > 175 %}
+		<a class="more-link" href="#" data-toggle="modal" data-target="#{{featured.bio.pk}}_modal" data-backdrop="true" >
+                    (more)</a>
+		{% endif %}</p>
+              </div>
+    {% endif %}
+                {% include "people_modal.tmpl" with item=featured.bio %}
+            </div>
+          </div>
+    {% cycle '' '</div>' '' '</div>' %}
+
+{% endfor %}
+
+        </div>
+      </div>
+    </section>
+    <!-- Featured Performers Section End -->

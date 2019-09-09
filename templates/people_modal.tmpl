@@ -1,0 +1,42 @@
+{% load thumbnail %}
+<!-- People Modal Start -->
+              <div class="modal fade" id="{{item.pk}}_modal" role="dialog">
+              <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{item.name}}{{item.b_title}}</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                  {% if item.img %}
+		      <div class="col-xs-6 col-xs-push-6">
+                         <a href="{{item.img.url}}">
+			   {% if scale %}
+		             <img src="{% thumbnail item.img 250x250%}" alt="Photo" >
+			   {% else %}
+		             <img src="{% thumbnail item.img 250x250 crop upscale subject_location=item.img.subject_location %}" alt="Photo" >
+			   {% endif %}
+		         </a>
+                      </div>
+                      <div class="col-xs-6 col-xs-pull-6">
+                  {% else %}
+                      <div class="col-xs-12">
+		  {%endif%}
+                      {{item.bio | safe}}{{item.b_description | safe}}
+                  {% if item.homepage %}
+ 		      <br><br>
+		      <b><a href="{{item.homepage}}" class="gallery_modal_icon"><i class="icon-link"></i>&nbsp;&nbsp; Website</a></b>
+	          {% endif %}
+                  {% if item.website %}
+ 		      <br><br>
+		      <b><a href="{{item.website}}" class="gallery_modal_icon"><i class="icon-link"></i>&nbsp;&nbsp; Website</a></b>
+	          {% endif %}
+                      </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div></div></div>
+<!-- People Modal End -->
