@@ -47,6 +47,26 @@ except:
     DEFAULT_FROM_EMAIL = 'gbetest@burlesque-expo.com'
     EMAIL_BACKEND = 'post_office.EmailBackend'
 
+
+
+#  Logging settings.
+#  Local path and filename to write logs to
+try:
+    LOG_FILE
+except:
+    LOG_FILE = 'logs/main.log'
+#  Available levels are DEBUG, INFO, WARNING, ERROR, and CRITICAL
+try:
+    LOG_LEVEL
+except:
+    LOG_LEVEL = 'INFO'
+#  Format for the log file.  Should begin with a timestamp and the log level.
+try:
+    LOG_FORMAT
+except:
+    LOG_FORMAT = '%(asctime)s::%(levelname)s::%(funcName)s - %(message)s'
+
+
 # TIME_FORMAT is often used for ending times of events, or when you
 # do not need to give the date, such as in calendar grids
 try:
@@ -82,21 +102,3 @@ except:
     DAY_FORMAT = "%A"
 
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
-
-
-#  Logging settings.
-#  Local path and filename to write logs to
-try:
-    LOG_FILE
-except:
-    LOG_FILE = 'logs/main.log'
-#  Available levels are DEBUG, INFO, WARNING, ERROR, and CRITICAL
-try:
-    LOG_LEVEL
-except:
-    LOG_LEVEL = 'INFO'
-#  Format for the log file.  Should begin with a timestamp and the log level.
-try:
-    LOG_FORMAT
-except:
-    LOG_FORMAT = '%(asctime)s::%(levelname)s::%(funcName)s - %(message)s'
