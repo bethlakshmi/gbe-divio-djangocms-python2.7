@@ -34,6 +34,7 @@ INSTALLED_APPS.extend([
     "ticketing",
     "gbe",
     "post_office",
+    'import_export',
 ])
 
 try:

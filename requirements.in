@@ -19,3 +19,4 @@ https://control.divio.com/api/v1/apps/serve/django-filer/1.5.0/0436c013-652d-408
 # </INSTALLED_ADDONS>
 django-post_office==3.2.1
 django-model-utils==3.2.0
+django-import-export==1.2.0
