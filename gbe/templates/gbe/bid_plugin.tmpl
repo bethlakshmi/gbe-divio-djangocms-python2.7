@@ -1,0 +1,21 @@
+{% if form.errors %}
+<p style= "color:red"> There is an error on the form.</p>
+{% endif %}
+{% if errors %}
+  {% for error in errors %}
+    <p style= "color:red">{{error}}</p>
+  {% endfor %}
+{% endif %}
+
+<form action="{{bid_destination}}" method="post" enctype="multipart/form-data">
+
+{% include "form_table_wrapper.tmpl" %}
+
+{% if nodraft %}
+<input type="submit" name="submit" value="{{nodraft}}">
+{% else %}
+<input type="submit" name="draft" value="Save Draft">
+<input type="submit" name="submit" value="Submit For Approval">
+{% endif %}
+
+</form>

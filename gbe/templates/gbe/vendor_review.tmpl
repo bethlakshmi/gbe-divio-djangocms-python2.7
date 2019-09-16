@@ -1,0 +1,36 @@
+{% load thumbnail %}
+ {% if vendor %}<div class="row">
+  <div class="col-xs-12"><h3 class="readonlyform">The Vendor</h3></div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">Company or business name:</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">{{vendor.b_title}}</div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">Description of Goods or Services:</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">{{vendor.b_description | safe}}</div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">Company website:</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">{% if vendor.website %}
+   <a href="{{vendor.website}}">Web Site</a>{%else%}No Website{% endif %}</div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">Business Address:</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">{{vendor.address}}</div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">Publish my business address:</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">
+   {% if vendor.publish_physical_address %}Yes{% else %}
+  No{%endif %}</div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">Help Wanted:</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">
+  {% if vendor.want_help %}Yes{% else %}
+  No{%endif %}</div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">
+   Tell Us About the Person You'd Like to Hire :</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">{{vendor.help_description}}&nbsp;</div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">I'd like someone to help me... :</div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info"><ul>
+{% for help_time in vendor.get_help_times_display %}
+  <li>{{ help_time }}</li>
+{% endfor %}
+  </ul></div>
+  <div class="col-md-4 col-sm-4 col-xs-12 read-only-label">Logo:</h3></div>
+  <div class="col-md-8 col-sm-8 col-xs-12 read-only-info">
+  {% if vendor.img %}
+    <img src="{% thumbnail vendor.img 350x350 crop=scale subject_location=performer.img.subject_location %}" class="sched_bio_image">
+  {% else %} &nbsp;{% endif %}
+  </div>
+ </div>{% endif %}

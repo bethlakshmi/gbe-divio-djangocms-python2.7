@@ -1,0 +1,74 @@
+{% if details %}
+    <div class="modal fade" id="{{details.occurrence.pk}}_eval_modal" role="dialog">
+      <div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{details.title}} - Evaluations</h4>
+        </div>
+      <div class="modal-body">
+	<div class="row"><div class="col-xs-12">
+	  <h2>Description</h2>
+	  {{ details.description |safe }}<br><br>
+  <table id="eval_detail" class="order-column" cellspacing="0" width="100%">
+    <thead>
+    <tr class="bid-table">
+      <th class="bid-table rotate-review">
+	Responder
+      </th>
+      {% for question in details.questions %}
+      <th class="bid-table rotate-review">
+	<div><span>
+	  {% if question.question|length > 15 %}
+	    <a href="#" data-toggle="tooltip" title="{{ header_item }}">
+            {{ question.question|truncatechars:15 }}</a>
+	  {% else %}
+	    {{ question.question }}
+	  {% endif %}
+	</span></div></th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tfoot>
+    <tr class="bid-table">
+      <th class="bid-table rotate-review">
+	Responder
+      </th>
+      {% for question in details.questions %}
+      <th class="bid-table rotate-review">
+	<div><span>
+	  {% if question.question|length > 15 %}
+	    <a href="#" data-toggle="tooltip" title="{{ header_item }}">
+            {{ question.question|truncatechars:15 }}</a>
+	  {% else %}
+	    {{ question.question }}
+	  {% endif %}
+	</span></div></th>
+      {% endfor %}
+    </tr>
+    </tfoot>
+    <tbody>
+      <tr class="bid-table">
+    {% for eval in details.evaluations %}
+      {% ifchanged eval.profile %}
+	{% if not forloop.first %}
+        </tr>
+        <tr class="bid-table">
+        {% endif %}
+            <td class="bid-table">{{ eval.profile }}</td>
+      {% endifchanged %}
+	    <td class="bid-table">{{ eval.answer }}</td>
+    {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+  </div></div></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div></div></div>
+
+<script>
+$(document).ready(function(){
+  $('#{{details.occurrence.pk}}_eval_modal').modal('show');
+});
+</script>
+{% endif %}

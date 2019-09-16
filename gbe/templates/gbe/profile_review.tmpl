@@ -1,0 +1,96 @@
+{% extends 'base.tmpl' %}
+{% load staticfiles %}
+
+{% block title %}
+   Manage Users
+{% endblock %}
+
+{% block head %}
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
+{% endblock %}
+{% block content %}
+  <p class="vanilla">{{title}} </p>
+  <h2 class="review-title">Manage Users</h2>
+
+  <p>This list includes only active users.  Inactive users can be viewed only
+  in the administration pages.  To reactivate a missing user, contact an
+  admin.</p>
+
+  <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
+  press "Shift" to sort a secondary column.</div>
+  <br/>
+  <div>
+    Toggle column(s):
+    {% for header_item in header %}
+      <a class="toggle-vis" data-column="{{ forloop.counter0 }}">
+	{{ header_item }}</a>{% if not forloop.last %} - {% endif %}
+    {% endfor %}
+  </div>
+  <br/>
+  <table id="profile_review" class="order-column" cellspacing="0" width="100%">
+    <thead>
+    <tr class="bid-table">
+      {% for header_item in header %}
+      <th class="bid-table">{{ header_item }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tfoot>
+    <tr class="bid-table">
+      {% for header_item in header %}
+      <th class="bid-table">{{ header_item }}</th>
+      {% endfor %}
+    </tfoot>
+    <tbody>
+    {% for row in rows %}
+      <tr class="bid-table">
+        {% for value in row.profile %}
+        <td class="bid-table">{{ value }}</td>	
+	{% endfor %}
+	<td class="bid-table">
+	  {{ row.contact_info.contact_email }}<br/>
+	  ({{ row.contact_info.purchase_email}})<br/>
+	  {{ row.contact_info.phone }}
+	</td>
+        <td class="bid-table">
+	  <div class="btn-group" role="group" aria-label="...">
+          {%for action in row.actions %}
+	   <a href="{{ action.url }}" data-toggle="tooltip" title="{{ action.text }}">
+            <button type="button" class="btn btn-default btn-sm">
+	      {% if action.text == 'Update' %}
+	        <i class="icon-pencil"></i>
+	      {% elif action.text == 'Welcome Letter' %}
+	        <i class="icon-list"></i>
+	      {% elif action.text == 'Delete' %}
+	        <i class="icon-trash"></i>
+	      {% elif action.text == 'View Landing Page' %}
+	        <i class="icon-eye"></i>
+	      {% elif action.text == 'Email' %}
+	        <i class="icon-envelope"></i>
+	      {% endif %}
+	    </button></a>
+          {%endfor%}
+        </div></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <script>
+  $(document).ready(function() {
+    var table = $('#profile_review').DataTable();
+
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+  } );
+  </script>
+{% endblock %}
+

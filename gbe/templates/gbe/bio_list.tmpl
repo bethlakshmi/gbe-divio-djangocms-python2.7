@@ -1,0 +1,51 @@
+{% extends "base.tmpl" %}
+{% load staticfiles cms_tags %}
+{% load thumbnail %}
+
+{% block title %}
+  Great Burlesque Exposition: {{title}}
+{% endblock %}
+
+{% block content %}
+   
+   <H1 class="listheader">{{title}}</H1>
+   <div class=body>
+     {{view_header_text | safe}}
+ 
+   </div>
+   <div>
+   {% for conf in conferences %}
+     <a href = "{{ bio_url }}?conference={{ conf.conference_slug }}">
+     {{conf.conference_slug}}</a>&nbsp;|&nbsp;
+   {% endfor %}
+   </div>
+   <div class="bios container">        
+   {% for teacher in bios %}
+     <div class="row">
+      <div class="col-md-8 col-sm-6 col-xs-12">
+        <h2>About {{teacher.bio.name}}</h2>
+	{% for class in teacher.classes %}
+	  <b>{{ class.role }}</b> -
+	  {% if class.detail_id %}
+	  <a href='{% url 'scheduling:detail_view' class.detail_id  %}'>
+	  {{ class.event }}</a></br>
+	{% else %}
+	  {{ class.event }}</br>
+	{% endif %}
+	{% endfor %}
+	</br>
+        {{teacher.bio.bio |safe}}
+        <br><br>
+      </div>
+      <div class="col-md-4 col-sm-6 col-xs-12">
+        {% if teacher.bio.img %}
+        <img src="{% thumbnail teacher.bio.img 350x350 crop=scale subject_location=teacher.bio.img.subject_location %}" class="sched_bio_image">
+        {% else %}
+        {% static_placeholder "default_performer" %}
+
+        {% endif %}
+      </div>
+     </div>
+    {% endfor %}
+   </div>
+{% endblock %}

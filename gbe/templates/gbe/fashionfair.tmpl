@@ -1,0 +1,90 @@
+{% extends "base.tmpl" %}
+{% load thumbnail %}
+{% block title %}
+  Great Burlesque Exposition: Fashion Fair
+{% endblock %}
+
+{% block head %}
+      {% include "gray_grids_css.tmpl" %}
+{% endblock head %}
+
+{% block content %}
+
+   <H1 class="subtitle">Shop 'til You Drop!</H1>
+   <div class="body font_regular">
+      {{ user_message.description|safe}}
+   </div>
+
+    <section id="team" class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 perf-div">
+            <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Vendors</h2>
+          </div>
+{% for vendor in vendors %}
+{% cycle True True False False as img_right silent %}
+    {% cycle '<div class="row">' '' '<div class="row">' '' %}
+          <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="single-member wow fadeInRight" data-wow-delay="0.2s">
+    {% if img_right %}
+              <div class="team-desc">
+                <h3 class="vendor-header">{{vendor.b_title}}</h3>
+                <p>{{vendor.b_description | safe | truncatechars:175 }}
+		{% if vendor.b_description|length > 175 %}
+		<a class="more-link" href="#" data-toggle="modal" data-target="#{{vendor.pk}}_modal" data-backdrop="true" >
+                    (more)</a>
+		{% endif %}</p>
+              </div>
+    {% endif %}
+              <div class="team-img vendor-img {% if img_right %}vendor-right{%else%}vendor-left{% endif %}">
+      {% if vendor.img %}
+                <img src="{% thumbnail vendor.img 250x250 %}" alt="">
+      {% else %}
+                <img src="/static/img/defaultvendorlogo.png" alt="">
+      {% endif %}
+                <div id="vendor-icon" class="social-icon">
+            {% if vendor.img %}
+                  <a class="social" href="{{vendor.img.url}}">
+                    <i class="fa fa-eye"></i>
+                  </a>
+	    {% endif %}
+            {% if vendor.website %}
+                  <a class="social" href="{{vendor.website}}" target="_blank">
+                    <i class="fa fa-link"></i>
+                  </a>
+            {% endif %}
+                  <a class="social" href="#" data-toggle="modal" data-target="#{{vendor.pk}}_modal" data-backdrop="true" >
+                    <i class="fa fa-external-link"></i>
+                  </a>
+            {% if request.user.is_superuser %}</br></br>{% if vendor.img %}
+                  <a class="social" href="/admin/filer/image/{{vendor.img.pk}}/?_pick=file&_popup=1" target="_blank">
+                    <i class="fa fa-pencil"></i>
+                  </a>{% endif %}
+                  <a class="social" href="/admin/gbe/vendor/{{vendor.pk}}" target="_blank">
+                    <i class="fa fa-pencil-square-o"></i>
+                  </a>
+            {% endif %}
+                </div>
+              </div>
+    {% if not img_right %}
+              <div class="team-desc">
+                <h3 class="vendor-header">{{vendor.b_title}}</h3>
+                <p>{{vendor.b_description | safe | truncatechars:175 }}
+	       {% if vendor.b_description|length > 175 %}
+		<a class="more-link" href="#" data-toggle="modal" data-target="#{{vendor.pk}}_modal" data-backdrop="true" >
+                    (more)</a>
+		{% endif %}</p>
+                </p>
+              </div>
+    {% endif %}
+                {% include "people_modal.tmpl" with item=vendor scale=True %}
+            </div>
+          </div>
+    {% cycle '' '</div>' '' '</div>' %}
+
+{% endfor %}
+
+        </div>
+      </div>
+    </section>
+{% endblock %}

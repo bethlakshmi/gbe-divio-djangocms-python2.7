@@ -1,0 +1,4 @@
+{% if schedule %}{% for row in schedule %}
+    - {{ row.event }}: {{ row.time }} ({{ row.location }})
+  {% endfor %}{% else %}
+  No events{% endif %}

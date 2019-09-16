@@ -1,0 +1,18 @@
+  <table style="border: 1px solid black; padding: 2px; border-collapse:collapse; font-weight: bold;">
+  <tr style="background-color: rgb(221, 221, 221);;">
+    <th>Schedule Item</th>
+    <th>Role</th>
+    <th>Location</th>
+    <th>Time</th>
+  </tr>
+  {% for booking in bookings %}
+  <tr {% if booking.role != 'Interested' %}style="font-weight: bold;"{% endif %}>
+    <td><a href="http://{{ site }}{% url 'scheduling:detail_view' booking.event.eventitem.eventitem_id %}">
+      {{ booking.event }}</a></td>
+    <td>{{booking.role}} </td>    
+    <td>{{booking.event.location}} </td>    
+    <td>{{booking.event.starttime|date:"g:i A"}}</td>
+  </tr>
+  {% endfor %}
+
+  </table>

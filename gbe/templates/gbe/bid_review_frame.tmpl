@@ -1,0 +1,63 @@
+{% extends 'base.tmpl' %}
+{% load staticfiles %}
+
+{% block title %}
+   Review Bids
+{% endblock %}
+
+{% block content %}
+  
+  {% if form.errors %}
+    <p style= "color:red"> There is an error on the form.  </p>
+  {% endif %}
+  <p class="vanilla">{{title}} </p>
+  <div class="review-pane">
+    <h2 class="review-title">Bid Information</h2>
+    <h3> {{ conference.conference_name }} </h3> 
+    {% if old_bid %}
+    <h3> This bid is for a conference which has already happened </h3>
+    {% endif %}
+<div class="review container">
+  {% if readonlyform %}
+    {% include "readonly_form_table.tmpl" %}
+  {% endif %}
+    {% include "gbe/class_review.tmpl"%}
+    {% include "gbe/vendor_review.tmpl"%}
+    {% include "gbe/performer_review.tmpl"%}
+</div>
+  </div>
+  <div class="bid_review container">
+    <div class="row">
+ 
+    {% block review_form %}
+    {% endblock %}
+
+    {% if actionURL %}
+    {% block review_results %}
+    {% endblock %}
+    <div class="side_box col-md-4 col-sm-12">
+      <h2>Bid Control for Coordinator</h2>
+        {% if actionform.errors %}
+        <p style= "color:red"> There is an error on the form.  </p>
+          {% for field in actionform.visible_fields %}
+            <ul>
+              {% if field.errors %}
+              <li>{{ field.errors }}</li>
+              {% endif %}
+            </ul>
+          {% endfor %}
+        {% endif %}
+        <form action="{{ actionURL }}" method="post">
+        {% csrf_token %}
+        <table>
+          {{ actionform.as_table }}
+        </table>
+        <br><br>
+        <input type="submit" value="Submit Form"> 
+        </form>
+    </div>
+    {% endif %}
+    </div>
+  </div>
+  
+{% endblock %}

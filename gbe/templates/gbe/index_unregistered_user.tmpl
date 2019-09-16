@@ -1,0 +1,16 @@
+{% extends "base.tmpl" %}
+{% block title %}
+  Great Burlesque Exposition 
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+{% else %}
+    <p>Welcome, new user. Please log in.</p>
+{% endif %}
+    {% for event in events_list %}
+    {{ event }}
+    {% endfor %}
+
+{% endblock %}

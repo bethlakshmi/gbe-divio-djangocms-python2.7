@@ -1,0 +1,152 @@
+{% extends 'base.tmpl' %}
+{% load gbe_tags %}
+{% load staticfiles %}
+
+{% block title %}
+   Review Bids
+{% endblock %}
+
+{% block head %}
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+{% endblock %}
+
+{% block content %}
+
+
+  <p class="vanilla">{{title}} </p>
+  <h2 class="review-title">{{area|title}} Info for {{this_show}}</h2>
+  <br/>
+      {% include "conference_picker.tmpl" %}
+  <br/>
+
+  {% if messages %}
+      <script>
+    alert("{% for message in messages %}{{message.tags|capfirst}}: {{message}}\n{% endfor %}");
+      </script>
+  {% endif %}
+
+  Also view:
+  {% for show in all_shows %}
+    {% if show.title != "Wait List" and show.title != "----------" %}
+    {% if show.eventitem_id == this_show.eventitem_id %}
+      <b>{{show}} (Current)</b>
+    {% else %}
+    <a href="{% url 'reporting:view_techinfo'%}?show_id={{show.eventitem_id}}&area={{area}}">
+      {{show}}</a>
+    {% endif %}
+    {% if not forloop.last %} | {% endif %}
+    {% endif %}
+  {% endfor %}
+
+{% if techinfo %}
+
+    </br></br>
+  {% if scheduling_link and scheduling_link|length > 0 %}
+    <a href="{{scheduling_link}}">Schedule Acts for this Show</a> |
+  {% endif %}
+    <a href="{% url 'reporting:act_techinfo_review' this_show.eventitem_id%}">
+      Show Summary Info</a> |
+    {% for option in area_options %}
+      {% if area == option%}
+	<b>Show {{option|title}} Info (Current)</b>
+      {% else %}
+      <a href="{% url 'reporting:view_techinfo'%}?show_id={{this_show.eventitem_id}}&area={{option}}">
+        Show {{option|title}} Info</a>
+      {% endif %}
+    {% if not forloop.last %} | {% endif %}
+    {% endfor %}
+<br><br>
+
+  <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
+  press "Shift" to sort a secondary column.</div>
+  <br/>
+  <div>
+    Toggle column(s):
+    {% for header_item in header %}
+      <a class="toggle-vis" data-column="{{ forloop.counter0 }}">
+	{{ header_item }}</a>{% if not forloop.last %} - {% endif %}
+    {% endfor %}
+  </div>
+  <br/>
+  <table id="bid_review" class="order-column" cellspacing="0" width="100%">
+    <thead>
+      <tr class="bid-table">
+      {% for header_item in header %}
+        <th class="bid-table">{{ header_item }}</th>
+      {% endfor %}
+      </tr>
+    </thead>
+    <tfoot>
+      <tr class="bid-table">
+      {% for header_item in header %}
+        <th class="bid-table">{{ header_item }}</th>
+      {% endfor %}
+      </tr>
+    </tfoot>
+    <tbody>
+    {% for info in techinfo %}
+      <tr class="bid-table" >
+      {% for item in info %}
+	<td class="bid-table">
+	{% if item.0 == "File"%}
+	  {% if item.1 %}
+	    <a href="{{ item.1.url }}">{{ item.2 }}</a>
+	  {% else %}
+	    {{ item.2 }}
+	  {% endif %}
+        {% elif item.0 == "Person" %}
+	    <a href='mailto:{{item.1}}'>
+            {{item.2}}</a>
+        {% elif item.0 == "List" %}
+	  {% for list_item in item %}
+	    {% if not forloop.first and list_item|length > 0%}
+              {{list_item}}, <br/>
+	    {% elif not forloop.first%}
+              <i>None</i>, <br/>
+	    {% endif %}
+	  {% endfor %}
+        {% else %}
+          {{ item }}
+	{% endif %}
+        </td>
+      {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <br><br>
+  Download <a href='{% url 'reporting:act_techinfo_download' this_show.eventitem_id %}'>All Details</a>
+  as a .csv file.
+  <br>
+  Download <a href="{% url 'reporting:download_tracks_for_show' this_show.pk %}">all audio tracks</a> for this show as a zipped tar archive</br>
+{% else %}
+    <br>
+    There are no available acts.  That may mean that:
+    <ul>
+    <li>The show has not been scheduled - check the scheduler</li>
+    <li>There are no acts in the show - check bid review for acts</li>
+    <li>The show identified does not exist - please pick from the list above...</li>
+    </ul>
+{% endif %}
+
+  <script>
+  $(document).ready(function() {
+    var table = $('#bid_review').DataTable({
+      "columnDefs": [
+        { "width": "5%", "targets": 0 }
+      ]
+    } );
+ 
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+ 
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+ 
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+  } );
+  </script>
+{% endblock %}

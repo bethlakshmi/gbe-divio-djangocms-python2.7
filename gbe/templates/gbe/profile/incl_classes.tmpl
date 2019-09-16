@@ -1,0 +1,36 @@
+<div class = 'class_section'>
+  {% if proposed_classes %} 
+  <span class='heading classes'> 
+    <b>Class Bids</b>
+  </span><br>
+    {% for class in proposed_classes %}
+      <div class='class'>
+        {% if class.submitted %}
+          <a href = '{% url 'gbe:class_view' class.id%}'> {{ class }} </a>
+          (Click to view) 
+          {% for value, state in acceptance_states %}
+            {% if value = class.accepted %}
+              - {{state}}
+            {%endif%}
+          {% endfor %}
+          <br>
+        {% else %}
+       	  <a href='{% url 'gbe:class_edit' class.id %}'>{{ class }} </a>
+	  (Click to edit)<br>
+        {% endif %}
+      </div>          
+      {% for alert in class.alerts %}
+        <span class='alert'>{{alert | safe }}</a>
+      {% endfor %}
+
+    {% if historical %}
+    <ul>
+      <li><a href='{% url 'gbe:clone_bid' bid_type='Class' bid_id=class.id %}'>Clone this class</a></li>
+    </ul>
+    {% endif %}
+  {% endfor %}
+  {% else %}
+    {{ profile.display_name }} has not proposed any classes<br>
+  {% endif %}
+      <a href='{% url 'gbe:class_create' %}'>Propose a{%if proposed_classes%}nother{%endif%} class</a>
+</div>

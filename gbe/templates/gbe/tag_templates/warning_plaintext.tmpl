@@ -1,0 +1,7 @@
+{% if warnings %}
+  {% for warning in warnings%}
+    - {{ warning.time }} working for {{ warning.event }} - as {{ warning.interest}},
+       managed by {{ warning.lead }}{% endfor %}
+{% else %}
+  No warnings
+{% endif %}

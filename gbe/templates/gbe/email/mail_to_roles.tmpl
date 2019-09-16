@@ -1,0 +1,43 @@
+{% extends 'gbe/email/mail_to_group.tmpl' %}
+
+{% block title %}
+  Send Email to Bidders
+{% endblock %}
+
+{% block select_recipent_form %}
+  <label class="form-check-label"><font color=red>*</font></label> indicates a required field<br>
+  <form class="form-inline" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row email-select">
+    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.conference %}
+    </div>
+    <div class="row email-select">
+    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.roles %}
+    {% if specify_event_form.events in specify_event_form.visible_fields %}
+    </div>
+    <div class="row email-select">
+      {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=specify_event_form.events %}
+    {% endif%}
+    {% if specify_event_form.staff_areas in specify_event_form.visible_fields %}
+    </div>
+    <div class="row email-select">
+      {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=specify_event_form.staff_areas %}
+    {% endif%}
+    {% if specify_event_form.event_collections in specify_event_form.visible_fields %}
+    </div>
+    <div class="row email-select">
+      {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=specify_event_form.event_collections %}
+    {% endif%}
+      <div class="form-group col-md-1 col-xs-12">
+        {% if specify_event_form %}
+         <input type="submit" class="email-submit" name="refine" value="Refine">
+        {% else %}
+         <input type="submit" class="email-submit" name="filter" value="Filter">
+        {% endif %}
+      </div></div>
+    {% if specify_event_form %}
+    <div class="row email-select"><div class="form-group col-xs-12">
+     If the optional fields are left blank, all available events will be used in the search.
+    </div></div>{% endif %}
+    </form>
+{% endblock %}

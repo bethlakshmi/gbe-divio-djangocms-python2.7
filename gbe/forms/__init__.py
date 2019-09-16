@@ -1,6 +1,5 @@
 # usermanagement forms
 from contact_form import ContactForm
-'''
 from participant_form import ParticipantForm
 from profile_admin_form import ProfileAdminForm
 from profile_preferences_form import ProfilePreferencesForm
@@ -61,4 +60,3 @@ from stage_info_form import (
     StageInfoSubmitForm
 )
 from vendor_cue_info_form import VendorCueInfoForm
-'''

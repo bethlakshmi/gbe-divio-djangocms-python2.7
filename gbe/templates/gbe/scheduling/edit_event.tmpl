@@ -1,0 +1,79 @@
+{% extends 'base.tmpl' %}
+
+{% block title %}
+{{ edit_title }}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+    <!-- Fonts -->
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
+    {{ event_form.media }}
+{% endblock %}
+{% block content %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <a data-toggle="collapse" href="#collapse1">
+        {{ edit_title }} Details
+      </a>
+    </h3>
+  </div>
+  <div id="collapse1" class="panel-collapse collapse {% if start_open %}in{% endif %}">
+  <div class="panel-body">
+  <form action="{{edit_url}}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% include "gbe/scheduling/event_booking.tmpl" with form=event_form %}
+    <div class="form-row pull-right">
+      {% if createform or worker_alloc_forms %}
+      <input type="submit" class="event_wizard_button" name="edit_event" value="Save and Continue">
+      <input type="submit" class="event_wizard_button" name="edit_event" value="Save and Exit">
+    {% else %}
+      <input type="submit" class="event_wizard_button" name="edit_event" value="Finish">
+    {% endif %}
+    </div>
+  </form>
+  </div></div>
+</div>
+{% if createform %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <a data-toggle="collapse" href="#collapse2">
+      Manage Volunteer Opportunities</a>
+    </h3>
+  </div>
+  <div id="collapse2" class="panel-collapse collapse {% if volunteer_open %}in{% endif %}">
+  <div class="panel-body">
+    {% include "gbe/scheduling/manage_opps.tmpl" %}
+  </div></div>
+</div>
+{% endif %}
+{% if createslotform %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <a data-toggle="collapse" href="#collapse3">
+      Manage Rehearsal Slots</a></h3>
+  </div>
+  <div id="collapse3" class="panel-collapse collapse {% if rehearsal_open %}in{% endif %}">
+  <div class="panel-body">
+    {% include "gbe/scheduling/manage_slots.tmpl" %}
+  </div></div>
+</div>
+{% endif %}
+{% if worker_alloc_forms %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <a data-toggle="collapse" href="#collapse4">
+      Manage Volunteers</a></h3>
+  </div>
+  <div id="collapse4" class="panel-collapse collapse {% if worker_open %}in{% endif %}">
+  <div class="panel-body">
+    {% include "gbe/scheduling/allocate_volunteers.tmpl" %}
+  </div></div>
+</div>
+{% endif %}
+{% endblock %}

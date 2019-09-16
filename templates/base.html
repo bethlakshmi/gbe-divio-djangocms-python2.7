@@ -50,6 +50,9 @@
                     {% show_menu 0 100 100 100 "includes/menu.html" %}
                 {% endwith %}
             </ul>
+	    {% if not user.is_authenticated %}
+	    {% include "registration/login_popover.tmpl" %}
+	    {% endif %}
         </div>
     </nav>
      <div class="panel panel-default">

@@ -1,0 +1,68 @@
+{% extends 'base.tmpl' %}
+
+{% block title %}
+  Create Event
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      {% if second_form %}<a data-toggle="collapse" href="#collapse1">{% endif %}
+      {% block first_title %}
+        {% if selection_form %}
+          Select Event Type: {{ event_type }}</a>
+        {% else %}Select Event Type{% endif %}
+      {% endblock %}
+      {% if second_form %}</a>{% endif %}
+    </h3>
+  </div>
+  {% if second_form %}<div id="collapse1" class="panel-collapse collapse">{% endif %}
+  <div class="panel-body">
+  {% block first_form %}
+    {% if selection_form %}
+      {% if selection_form.errors %}<p style= "color:red"> There is an error on the form.</p>{% endif %}
+      <font color="red">{{ selection_form.non_field_errors }}</font>
+      <form action="{% url 'scheduling:create_event_wizard' conference_slug %}" method="get" enctype="multipart/form-data">
+        <div class="form-row"><div class="form-group">
+          {{ selection_form.event_type }}
+          {% if selection_form.event_type.errors %}
+            <font color="red">{{ selection_form.event_type.errors }}</font>
+          {% endif %}
+        </div></div>
+    {% endif %}
+    <div class="form-row pull-right">
+      <input type="submit" class="event_wizard_button" name="pick_event" value="Next">
+    </div>
+  </form>
+  {% endblock %}
+  </div>{% if second_form %}</div>{% endif %}
+</div>
+{% if second_form %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      {% if third_form %}<a data-toggle="collapse" href="#collapse2">
+      {{ second_title }}</a>
+      {% else %}{{ second_title }}{% endif %}
+    </h3>
+  </div>
+  {% if third_form %}<div id="collapse2" class="panel-collapse collapse">{% endif %}
+  <div class="panel-body">
+    {% block second_form %}
+    {% endblock %}
+  </div>{% if third_form %}</div>{% endif %}
+</div>
+{% endif %}
+{% if third_form %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{ third_title }}</h3>
+  </div>
+  <div class="panel-body">
+    {% block third_form %}
+    {% endblock %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

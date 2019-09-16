@@ -1,0 +1,19 @@
+ {% if class %}<div class="row">
+  <div class="col-xs-12"><h3 class="readonlyform">The Class</h3></div>
+  <div class="col-md-3 col-sm-4 col-xs-12 read-only-label">Title:</div>
+  <div class="col-md-9 col-sm-8 col-xs-12 read-only-info">{{class.b_title}}</div>
+  <div class="col-md-3 col-sm-4 col-xs-12 read-only-label">Description:</div>
+  <div class="col-md-9 col-sm-8 col-xs-12 read-only-info">{{class.b_description | safe}}</div>
+  <div class="col-md-3 col-sm-4 col-xs-12 read-only-label">Maximum Students:</div>
+  <div class="col-md-9 col-sm-8 col-xs-12 read-only-info">{{class.maximum_enrollment}}</div>
+  <div class="col-md-3 col-sm-4 col-xs-12 read-only-label">Materials Fee:</div>
+  <div class="col-md-9 col-sm-8 col-xs-12 read-only-info">{{class.fee}}</div>
+  <div class="col-md-3 col-sm-4 col-xs-12 read-only-label">Length in Minutes:</div>
+  <div class="col-md-9 col-sm-8 col-xs-12 read-only-info">{{class.length_minutes}}</div>
+  <div class="col-md-3 col-sm-4 col-xs-12 read-only-label">Previously Taught At:</div>
+  <div class="col-md-9 col-sm-8 col-xs-12 read-only-info">{{class.history}}</div>
+{% for label, details in scheduling_info.display_info %}
+  <div class="col-md-3 col-sm-4 col-xs-12 read-only-label">{{label}}:</div>
+  <div class="col-md-9 col-sm-8 col-xs-12 read-only-info">{{ details }}</div>
+{% endfor %}
+ </div>{% endif %}

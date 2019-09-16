@@ -1,0 +1,21 @@
+   <div class="form-row">
+   <div class="form-group col-md-2 col-xs-12">
+    <label class="form-check-label" id="{{ field.name }}">
+     {% if field.errors %}
+      <font color="red">!&nbsp;&nbsp;
+     {% endif %}
+     {{ field.label }}:&nbsp;&nbsp;
+     {% if field.errors %}
+      </font>
+     {% endif %}</label>
+   </div>
+   <div class="form-group col-md-10 col-xs-12">
+     {% for checkbox in field %}
+      <label class="checkbox-inline gbe-filter" id="{{ checkbox.id_for_label }}">
+      {{ checkbox.tag }}{{ checkbox.label_tag }}
+      {{ checkbox.choice_label }}
+      </label>{% endfor %}
+      {% if field.errors %}
+        <font color="red">{{ field.errors }}</font>
+      {% endif %}
+   </div></div>

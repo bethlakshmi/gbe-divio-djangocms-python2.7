@@ -1,0 +1,33 @@
+{% extends 'base.tmpl' %}
+{% load recaptcha2 %}
+
+{% block head %}
+      {% recaptcha_init %}
+{% endblock %}
+
+{% block title %}
+   Register For An Account
+{% endblock %}
+
+{% block content %}
+<H3>Create an Account</H3>
+
+In order to do most other things at The Expo, we need you to register
+for a free account.  If you're planning on applying to perform, want to
+teach, or are going to be a vendor or a volunteer, you need to
+register.  You do <b>not</b> need to register if all you're doing is
+buying tickets.
+
+
+  {% if form.errors %}
+    <p style= "color:red"> We've experienced an error, please try again, or contact our support team. </p>
+
+  {% endif %}
+   <p class="vanilla">Register for an account </p>
+   <form action="" method="post">
+
+   {% include "form_table.tmpl" %}
+   <input type="submit" value="Register"> 
+   </form>
+
+{% endblock %}

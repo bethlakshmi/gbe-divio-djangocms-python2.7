@@ -1,0 +1,19 @@
+{% extends "base.tmpl" %}
+{% block title %}
+  Great Burlesque Exposition: {{ event.title }}
+{% endblock %}
+
+{% block content %}
+  Event:
+  <div id=event_title> {{event.title}}
+  </div>
+
+  <div id=event_time> {{event.event_start}}<br>{{event.event_end}}
+  </div>
+  <div id=event_short_desc> {{event.short_desc}}  
+  </div>
+  <div id=event_long_desc> {{event.long_desc}}  
+  </div>
+  
+
+{% endblock %}

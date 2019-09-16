@@ -30,11 +30,13 @@ aldryn_addons.settings.load(locals())
 
 INSTALLED_APPS.extend([
     # add your project specific apps here
+    "tinymce",
     "scheduler",
     "ticketing",
     "gbe",
     "post_office",
     'import_export',
+    'snowpenguin.django.recaptcha2',
 ])
 
 try:
@@ -80,6 +82,9 @@ try:
     DATE_FORMAT
 except:
     DATE_FORMAT = "%a, %b %-d"
+try:
+    URL_DATE
+except:
     URL_DATE = "%m-%d-%Y"
 try:
     DATETIME_FORMAT
@@ -103,4 +108,22 @@ try:
 except:
     DAY_FORMAT = "%A"
 
-USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
+USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com'
+
+RECAPTCHA_PRIVATE_KEY = '6Le0dx0UAAAAACNZynxCx5mUovu3M1Au3XFeeFKN'
+RECAPTCHA_PUBLIC_KEY = '6Le0dx0UAAAAAFGd_HJzX22FdzhwI-GCh8nCoXoU'
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,paste,searchreplace, insertdatetime",
+    'theme': "advanced",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+    'theme_advanced_buttons1': "bold,italic,underline,|,justifyleft," +
+    "justifycenter,justifyright,fontselect,fontsizeselect,formatselect," +
+    "forecolor,backcolor",
+    'theme_advanced_buttons2': "cut,copy,paste,|,bullist,numlist,|," +
+    "outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview," +
+    "|,search, replace",
+    'theme_advanced_buttons3': "insertdate,inserttime,|,advhr,,removeformat," +
+    "|,sub,sup,|,charmap,emotions, tablecontrols",
+}

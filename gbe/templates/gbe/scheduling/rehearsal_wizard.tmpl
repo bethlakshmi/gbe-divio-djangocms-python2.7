@@ -1,0 +1,36 @@
+{% extends 'gbe/scheduling/event_wizard.tmpl' %}
+
+{% block head %}
+  {{ third_form.media }}
+{% endblock %}
+
+{% block second_form %}
+<form action="" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% if second_form.errors %}
+    <p style= "color:red"> There is an error on the form.</p>
+  {% endif %}
+  <font color="red">{{ second_form.non_field_errors }}</font>
+    <div class="form-group single-radio">
+      <h4>Pick a show for this rehearsal slot, or make a new one:</h4>
+      {{ second_form.show }}
+        {% if second_form.show.errors %}
+          <font color="red">{{ second_form.show.errors }}</font>
+        {% endif %}
+    </div>
+  <div class="form-row pull-right">
+    <input type="submit" class="next" name="pick_show" value="Next">
+  </div>
+</form>
+{% endblock %}
+
+{% block third_form %}
+<form action="" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+      {% include "gbe/scheduling/event_booking.tmpl" with form=third_form %}
+
+  <div class="form-row pull-right">
+    <input type="submit" class="next" name="set_opp" value="Finish">
+  </div>
+</form>
+{% endblock %}

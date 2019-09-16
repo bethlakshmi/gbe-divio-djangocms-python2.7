@@ -1,0 +1,10 @@
+	{% if performers %}
+	   <span class='heading classes'> 
+	   Class Items
+	   </span><br>
+	  {% for class in classes %}
+	     <span class='class'>{{ class }} </span> <br>
+	  {% endfor %}
+	{% else %}
+	   {{ profile.display_name }} is not listed as teaching any classes <br>
+	{% endif %}

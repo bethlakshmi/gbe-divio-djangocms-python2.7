@@ -1,0 +1,26 @@
+
+<div class = 'ticket_section'>
+  <h3>
+    {% if profile.display_name %}
+      {{ profile.display_name }}'s
+    {% else %}
+      Your
+    {% endif %} Tickets
+  </h3>	
+  {% if tickets %}
+    {% for conf in tickets %}
+      <div class='conf_tickets'>
+      {{conf.conference}}:<br>
+      {% for ticket in conf.tickets %}
+        <div class='ticket'>
+	{{ticket.title}} - {{ticket.number_of_tickets}} 
+        </div> 
+      {% endfor %}
+      </div>
+    {% endfor %}
+  {% else %}
+      No tickets have been purchased, if {{profile.purchase_email}} is not 
+      the email you used when  purchasing tickets, please contact us for an update.
+      <br>
+  {% endif %}
+</div>

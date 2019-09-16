@@ -1,0 +1,102 @@
+
+
+<div class=side_box>
+  <h2>Volunteer Management</h2>
+  <p># = Number of Volunteers Needed</p>
+  <i class="fa fa-pencil" aria-hidden="true"></i> - Edit &nbsp;&nbsp;||&nbsp;&nbsp;
+  <i class="fa fa-clone" aria-hidden="true"></i> - Copy &nbsp;&nbsp;||&nbsp;&nbsp;
+  <i class="fa fa-users" aria-hidden="true"></i> - Setup Staff &nbsp;&nbsp;||&nbsp;&nbsp;
+  <i class="fa fa-times" aria-hidden="true"></i> - Delete &nbsp;&nbsp;||&nbsp;&nbsp;
+  <i class="fa fa-plus" aria-hidden="true"></i> - Create
+  <br><br>
+  <table class="event_opps">
+    <tr> 
+    {% for header in actionheaders %}
+      <th>{{ header }}</th>
+    {% endfor %}
+      <th>Action</th>
+    </tr>
+    {% for form in actionform %}
+    <tr class="{% if changed_id == form.opp_sched_id.value %}changed{% else %}event_opp_row{% endif %}">
+      <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
+      	    enctype="multipart/form-data">
+        {% csrf_token %}
+	{% for field in form.visible_fields %}
+	  <td>
+          {{ field }}
+          {% if field.errors %}
+	    <span class="opps-errors">
+              {{ field.errors }}
+	    </span>
+          {% endif %}
+	  </td> 	{% endfor %}	    	
+	{% for field in form.hidden_fields %}
+	  {{field}}
+	{% endfor %}
+	  <td>
+	    <div class="btn-group" role="group" aria-label="...">
+	      <a href="#" data-toggle="tooltip" title="Edit">
+                <button class="btn btn-default btn-xs" type="submit" name="edit" value="Edit">
+	          <i class="fa fa-pencil" aria-hidden="true"></i>
+	        </button>
+	      </a>
+	      <a href="#" data-toggle="tooltip" title="Copy">
+  	        <button class="btn btn-default btn-xs" type="submit" name="duplicate" value="Copy">
+	          <i class="fa fa-clone" aria-hidden="true"></i>
+                </button>
+	      </a>
+	      <a href="#" data-toggle="tooltip" title="Setup Staff">
+                <button class="btn btn-default btn-xs" type="submit" name="allocate" value="Staff">
+         	    <i class="fa fa-users" aria-hidden="true"></i>
+                </button>
+	      </a>
+	      <a href="#" data-toggle="tooltip" title="Delete">
+	        <button class="btn btn-default btn-xs" type="submit" name="delete" value="Delete">
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+	      </a>
+	    </div>
+	  </td>
+      </form>	      
+    </tr>
+    {% endfor %}
+    <tr class="event_opp_row">
+      <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
+      	    enctype="multipart/form-data">
+	{% csrf_token %}
+	{% for field in createform.visible_fields %}
+	  <td>
+          {{ field }}
+          {% if field.errors %}
+	    <span class="opps-errors">
+              {{ field.errors }}
+	    </span>
+          {% endif %}
+	  </td>
+	{% endfor %}	    		      
+	{% for field in createform.hidden_fields %}
+	  {{field}}
+	{% endfor %}
+ 	<td>
+	  <div class="btn-group" role="group" aria-label="...">
+	    <a href="#" data-toggle="tooltip" title="Create New">
+              <button class="btn btn-default btn-xs" type="submit" name="create" value="Create">
+	        <i class="fa fa-plus" aria-hidden="true"></i>
+	      </button>
+	    </a>
+	  </div>
+	</td>
+
+      </form>	      
+    </tr>
+  </table>
+  {% if staff_id %}
+  <table> 
+  <tr>
+  <td><a href="{%url 'reporting:staff_area' staff_id %}">See Schedule</a>
+  </td>
+  </tr>
+  </table>
+ {% endif %}
+  <br><br>
+</div>

@@ -1,0 +1,123 @@
+{% extends 'gbe/bid_review_frame.tmpl' %}
+{% load staticfiles %}
+{% block review_form %}
+<div class="reviewer_col col-md-4 col-sm-12">
+  <h2>Review Information</h2>
+    <form action="" method="post">
+      {% csrf_token %}
+<table class="flex_review">
+  <tr class="flex_review_row"><th>&nbsp;</th><th class="horizontal-input"><ul>
+    <li>N/A</li><li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul></th>
+  </tr>
+  {% if notes_form.non_field_errors %}
+  <tr class="flex_review_row"><td>
+  <font color="red">{{ notes_form.non_field_errors }}</font>
+  </td></tr>
+  {% endif %}
+  {% for flex_eval_form in form %}
+    {% if form.non_field_errors %}
+  <tr class="flex_review_row"><td>
+  <font color="red">{{ form.non_field_errors }}</font>
+  </td></tr>
+    {% endif %}
+    {% for field in flex_eval_form.visible_fields %}
+    <tr class="flex_review_row"><td><label for="{{ field.name }}" class="control-label">	      
+            {% if field.errors %}
+              <font color="red">!&nbsp;&nbsp;
+            {% endif %}
+	    {{ field.label_tag }}
+            {% if field.errors %}</font>{% endif %} 
+            {% if field.help_text %}
+                <span class="dropt" title="Help">
+                <img src= "{% static "img/question.png" %}" alt="?"/>
+                  <span style="width:300px;float:right;text-align:left;font-weight:normal;">
+                  {{ field.help_text }}
+                  </span>
+                </span>
+            {% endif %}
+      </label></td>
+      <td class="horizontal-input">
+      {{ field }}
+      </td>
+    {% for hidden in flex_eval_form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+    </tr>
+      {% if field.errors %}
+    <tr class="flex_review_row">
+ 	    <label for="field.name">	      
+              <font color="red">{{ field.errors }}</font>
+            </label>
+    </tr>
+    {% endif %}
+  {% endfor %}{% endfor %}
+  {% for field in notes_form.visible_fields %}
+    <tr class="flex_review_row"><td><label for="{{ field.name }}" class="control-label">	      
+      {% if field.errors %}
+      <font color="red">!&nbsp;&nbsp;
+      {% endif %}
+      {{ field.label_tag }}
+      {% if field.errors %}</font>{% endif %} 
+      {% if field.help_text %}
+        <span class="dropt" title="Help">
+          <img src= "{% static "img/question.png" %}" alt="?"/>
+            <span style="width:300px;float:right;text-align:left;font-weight:normal;">
+              {{ field.help_text }}
+            </span>
+        </span>
+      {% endif %}
+    </label></td><td colspan="7">&nbsp;</td>
+    <tr><td colspan="8">{{ field }}</td></tr>
+    </tr>
+      {% if field.errors %}
+    <tr class="flex_review_row">
+ 	    <label for="field.name">	      
+              <font color="red">{{ field.errors }}</font>
+            </label>
+    </tr>
+  {% endif %}
+    {% for hidden in notes_form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+  {% endfor %}
+</table>
+        <input type="submit" value="Submit Form"> 
+      </form>
+    </div>
+{% endblock %}
+{% block review_results %}{% if review_results %}
+<div class="col-md-4 col-sm-12">
+  <h2>Detailed Reviews</h2>
+  <table class="flex_review" border="1">
+    <tr class="flex_review_row">
+        <th>&nbsp;</th>
+      {% for reviewer in reviewers %}
+        <th class="rotate"><div><span>{{reviewer}}</span></div></th>
+      {% endfor %}
+        <th class="rotate"><div><span>Average</span></div></th>
+    </tr>
+  {% for category, evaluations in review_results %}
+    <tr class="flex_review_row">
+      <td><b>{{ category.category }}</b>{% if category.help_text %}
+        <span class="dropt" title="Help">
+          <img src= "{% static "img/question.png" %}" alt="?"/>
+            <span style="width:300px;float:right;text-align:left;">
+              {{ category.help_text }}
+            </span>
+        </span>{% endif %}
+      </td>
+    {% for evaluation in evaluations %}
+      <td>{{evaluation}}</td>
+    {% endfor %}
+    </tr>
+  {% endfor %}
+    </tr>
+  </table>
+  <br>
+  {% for note in notes %}
+    <b>Comment - {{ note.evaluator}} :</b><br>
+    {{ note.notes }}
+    <br><br>
+  {% endfor %}
+</div>
+{% endif %}{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.tmpl" %}
+{% block title %}
+  Great Burlesque Exposition 
+{% endblock %}
+
+{% block content %}
+    <p>Welcome, {{ profile.display_name }}.</p>
+    {% if alerts %}
+    Hey!
+    <ul class=profile_alerts>
+    {% for alert in alerts %}
+    <li>{{ alert}}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+
+    {% for event in events_list %}
+    {{ event }}
+    {% endfor %}
+
+{% endblock %}

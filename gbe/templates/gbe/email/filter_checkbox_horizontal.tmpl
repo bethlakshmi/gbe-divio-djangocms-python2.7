@@ -1,0 +1,21 @@
+      <div class="form-group col-md-2 col-xs-12">
+        <label class="form-check-label" id="{{ field.name }}">
+          {% if field.errors %}
+            <font color="red">!&nbsp;&nbsp;
+          {% elif field.css_classes == 'required'%}
+            <font color="red">*</font>
+          {% endif %}
+          {{ field.label }}:&nbsp;&nbsp;</label>
+          {% if field.errors %}
+            </font>
+          {% endif %}
+      </div>
+      <div class="form-group col-md-9 col-xs-12">
+      {% for checkbox in field %}
+        <label class="checkbox-inline email-margin-left" id="{{ checkbox.id_for_label }}">
+          {{ checkbox.tag }}{{ checkbox.choice_label }}
+        </label>{% endfor %}
+        {% if field.errors %}
+          {{ field.errors }}
+        {% endif %}
+      </div>

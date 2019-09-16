@@ -1,7 +1,5 @@
 from django.conf.urls import url
 from django.contrib.auth.views import *
-
-'''
 from gbe.views import (
     ActChangeStateView,
     AdminProfileView,
@@ -55,8 +53,6 @@ from gbe.views import (
     VolunteerChangeStateView,
 
 )
-'''
-from gbe.views import HandleUserContactEmailView
 
 # NOTE: in general, url patterns should end with '/?$'. This
 # means "match the preceding patter, plus an optional final '?',
@@ -65,14 +61,10 @@ from gbe.views import HandleUserContactEmailView
 # Which is what we usually want.
 
 urlpatterns = [
-    url(r'^user_contact/?$',
-        HandleUserContactEmailView,
-        name='handle_user_contact_email'),
     #  landing page
     url(r'^gbe/?',
-        HandleUserContactEmailView, name='home'),
-]
-'''
+        LandingPageView, name='home'),
+
     #  bios
     url(r'^bios/teachers/?$',
         BiosTeachersView, name='bios_teacher'),
@@ -254,10 +246,11 @@ urlpatterns = [
         name="password_reset_confirm"),
     url(r'^accounts/password/reset/complete/?$',
         password_reset_complete),
+
     #  registration & user management
     url(r'^user_contact/?$',
         HandleUserContactEmailView,
-        name='handle_user_contact_email')
+        name='handle_user_contact_email'),
     url(r'^profile/manage/?$',
         ReviewProfilesView,
         name='manage_users'),
@@ -270,5 +263,4 @@ urlpatterns = [
     url(r'^profile/landing_page/(\d+)/?$',
         LandingPageView,
         name='admin_landing_page')
-)
-'''
+]

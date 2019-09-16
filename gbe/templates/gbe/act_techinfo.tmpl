@@ -1,0 +1,205 @@
+{% extends 'base.tmpl' %}
+
+{% block title %}
+   {{page_title}}
+{% endblock %}
+
+{% block content %}
+<p>{{view_header_text | safe}}
+  <div class="review-pane">
+
+  {%if readonlyform %}
+    {%include "readonly_form_table.tmpl"%}
+  {% endif%}
+  
+  </div>
+  
+  <h2>{{view_title}}</h2>
+
+  {% if form.errors %}
+    <p style= "color:red"> There is an error on the form.  </p>
+
+  {% endif %}
+  {% if errors %}
+    {% for error in errors %}
+    <p style= "color:red">{{error}}</p>
+    {% endfor %}
+  {% endif %}
+
+   <form action="" method="post" enctype="multipart/form-data">
+    
+<h3>Rehearsal Scheduling</h3>
+    {% include "gbe/rehearsal_select.tmpl" %}
+    {% if not rehearsal_forms%}
+       <font color='red'>We have no rehearsal slots currently available.  Please contact us if you have not yet signed up
+       for a rehearsal slot and wish to.</font>
+    {% endif %}
+
+<h3>Great Burlesque Exposition of 2016 Tech Form </h3>    
+<b>Instructions to performers:</b>
+
+<p>
+Please note that we are limited in what special requests we are able to
+meet.  We are not able to provide prop items, specialty equipment
+(poles, trapezes, trap doors, etc.) or unusual lighting equipment
+(video projectors, UV lights), so you must provide us with whatever
+additional equipment we need.
+</p>
+
+   {% include "form_table_wrapper.tmpl" %}
+
+{%if cue_type != 'None'%}
+
+<span class="formtitle">Cue Sheet Instructions</span>
+<p>
+Please fill out the form as completely as possible.  Please try to keep
+color and cue descriptions simple.  We cannot hit a cue if we do not know
+what you mean, or the described event is hard to see.
+Please keep cue descriptions and instruction as concise as possible, and give
+times for triggers if possible.  It you are requesting multiple cues please
+provide both a warning and an event for the lighting board operator to cue on.
+The warning is so the lighting board operator knows that the cue is
+coming up very soon, within 10 seconds.  
+</p>
+
+<p>
+No act can have more than three lighting states, which includes the starting state.  All acts are
+preceded by a moment of darkness after the MC leaves the stage.  This allows performers to set on
+stage before the lights come up if they wish to.   If you make no changes, we will use the same
+lighting throughout your act.
+</p>
+Some useful definitions:<br>
+<ul>
+  <li><b>Follow Spot:</b> A spotlight that follows the performer on the stage</li>
+  <li><b>Backlight:</b> a bright, white light at the back of the stage pointing at the audience.
+      Good for silhouettes, not good for your entire act.</li>
+  <li><b>Center Spot:</b> a fixed circle of white light which covers the middle of the stage</li>
+  <li><b>Cyc Light:</b> the cyc is the curtain at the back wall of the stage.  It can be a variety of colors.</li>
+  <li><b>Wash:</b> the general color of lighting on the stage</li>
+</ul>
+
+So a completed form might look something like:<br><br>
+{%if cue_type == 'Theater'%}
+<table class="bid-table">
+  <tr class="bid-table">
+    <th class="bid-table">Cue #</th>
+    <th class="bid-table">Cue Off of...</th>
+    <th class="bid-table">Follow spot</th>
+    <th class="bid-table">Backlight</th>
+    <th class="bid-table">Center Spot</th>
+    <th class="bid-table">Cyc Light</th>
+    <th class="bid-table">Wash</th>
+    <th class="bid-table">Sound</th>
+  </tr>
+  <tr class="bid-table">
+    <td class="bid-form">0</td>
+    <td class="bid-form">MC exit</td>
+    <td class="bid-form">Purple</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">Play music</td>
+  </tr>
+  <tr class="bid-table">
+    <td class="bid-form">1</td>
+    <td class="bid-form">When I get off the chair</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">ON</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">Red</td>
+    <td class="bid-form">Purple</td>
+  </tr>
+  <tr class="bid-table">
+    <td class="bid-form">2</td>
+    <td class="bid-form">I drop the boa and reveal the pasties</td>
+    <td class="bid-form">white</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">ON</td>
+    <td class="bid-form">Pink</td>
+    <td class="bid-form">Pink</td>	
+  </tr>
+</table>
+{%else%}
+<table class="bid-table">
+  <tr class="bid-table">
+    <th class="bid-table">Cue #</th>
+    <th class="bid-table">Cue Off of...</th>
+    <th class="bid-table">Follow spot</th>
+    <th class="bid-table">Wash</th>
+    <th class="bid-table" >Sound</th>
+  </tr>
+  <tr class="bid-table">
+    <td class="bid-form">0</td>
+    <td class="bid-form">Performer set on stage</td>
+    <td class="bid-form">Purple</td>
+    <td class="bid-form">Red</td>
+    <td class="bid-form" style="width:200px">Start music after I come in, put the briefcase on the table, and take
+    out the newspaper.</td>
+  </tr>
+  <tr class="bid-table">
+    <td class="bid-form">1</td>
+    <td class="bid-form">I go down into the audience</td>
+    <td class="bid-form">Pink</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">&nbsp;</td>
+  </tr>
+  <tr class="bid-table">
+    <td class="bid-form">1</td>
+    <td class="bid-form">I go back onto the stage</td>
+    <td class="bid-form">OFF</td>
+    <td class="bid-form">Blue</td>
+    <td class="bid-form">&nbsp;</td>
+  </tr>
+</table>
+{%endif%}
+</br>
+</br>
+<span class="formtitle">Cue Sheet</span>
+
+  <table class="bid-table">
+    <tr class="bid-table">
+      {% for field in cues.0.visible_fields %}
+      <th class="bid-table">{{ field.label }}</th>
+      {% endfor %}
+    </tr>
+    {% for cue in cues %}
+      <tr class="bid-table">
+        {% for field in cue.visible_fields %}
+	  <td class="bid-form">
+              {% if field.errors %}
+              <font color="red">!</font>&nbsp;&nbsp;
+              {% endif %}
+              {%if field.readonly%}
+                readonly
+              {%else%}
+                {{ field }}
+              {%endif%}
+              {% if field.errors %}
+              </br>
+              <font color="red">{{ field.errors }}</font>
+              {% endif %}
+          </td>
+        {% endfor %}
+        
+        {# Include the hidden fields #}
+        {% for hidden in cue.hidden_fields %}
+        {{ hidden }}
+                      {% if hidden.errors %}
+              <font color="red">{{ hidden.errors }}</font>
+              {% endif %}
+        {% endfor %}
+      </tr>
+    {%endfor%}
+  </table>
+{%endif%}
+<br><br>  
+   {% if nodraft %}
+    <input type="submit" name="submit" value="{{nodraft}}">
+   {% else %}
+   <input type="submit" name="draft" value="Save Draft">
+   <input type="submit" name="submit" value="Submit For Approval">
+   {% endif %}
+   </form>
+   
+{% endblock %}

@@ -1,0 +1,22 @@
+<div class = 'show_section'>	
+  {% if shows %}
+    <span class='heading shows'>
+      <b>Shows {{ profile.display_name }} is appearing in:</b>
+    </span><br>
+    {% for show, act in shows %}
+      {% if show.is_current %}{% ifchanged show %}
+        {% if not forloop.first %}</ul></div>{% endif %}
+        <div class='show'> 
+           <a href="{% url 'scheduling:detail_view' show.eventitem_id%}">
+            {{ show }}</a>
+           <ul>{% endifchanged %}
+        <li>{{ act }}</li>
+      {% endif%}
+    {% endfor %}
+    </ul></div>
+  {% else %}
+    {{ profile.display_name }} is not scheduled for any shows at this time.
+    <br>
+  {% endif %}
+</div>
+

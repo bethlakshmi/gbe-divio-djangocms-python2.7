@@ -1,0 +1,46 @@
+<div class = "schedule_section">
+  <h3>
+    {% if profile.display_name %}
+      {{ profile.display_name }}'s
+    {% else %}
+       Your
+     {% endif %} 
+       Schedule
+  </h3>	
+    {% for booking in bookings %}
+      {% with cs=booking.conference.status %}
+        {% if cs != "completed" and not historical or cs == "completed" and historical %}
+          {% ifchanged booking.conference %}
+	    <h4>{{booking.conference}}</h4>
+          {% endifchanged%}
+          <div class='event'>
+	    {% if booking.role == "Interested"%}
+	    <a href="{% url 'scheduling:set_favorite' booking.id "off" %}?next={{ request.get_full_path }}"
+	       class="detail_link" data-toggle="tooltip" title="Remove from Schedule">
+            <i class="fa fa-star" aria-hidden="true"></i></a>
+	    {% else %}
+	    <a href="#"
+	       class="detail_link-disabled" data-toggle="tooltip" title="Contact the Coordintor to Change Booking">
+            <i class="fa fa-star" aria-hidden="true"></i></a>
+	    {% endif %}
+            {{booking.starttime}}, 
+            <a href="{% url 'scheduling:detail_view' booking.eventitem_id%}">
+            {{ booking.title }}
+	    </a>
+	    {% if not historical %}
+	      {% if booking.role == "Teacher" or booking.role == "Moderator" %}
+              <a class="bid-button" href="#" data-toggle="modal" data-target="#{{booking.eventitem_id}}_interest_modal" data-backdrop="true" title="View Attendee Contact Info">
+		<span class="badge">{{ booking.interested|length }}</span>
+	      </a>
+              {% include "gbe/interest_list.tmpl" with class=booking %}
+	    {% endif %}{% endif %}
+            {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=booking.evaluate %}
+	  </div>
+        {%endif%}
+      {% endwith %}
+    {% empty %}
+      {{ profile.display_name }} is not scheduled for anything at this time.
+    {% endfor %}
+
+</div>
+
