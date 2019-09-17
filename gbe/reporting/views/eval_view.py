@@ -16,7 +16,7 @@ from gbe.models import (
     Performer,
     UserMessage,
 )
-from expo.settings import (
+from settings import (
     DATE_FORMAT,
     DATETIME_FORMAT,
     TIME_FORMAT,

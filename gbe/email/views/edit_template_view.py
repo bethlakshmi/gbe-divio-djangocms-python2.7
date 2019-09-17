@@ -24,7 +24,7 @@ from gbe.email.functions import (
     get_mail_content,
     get_user_email_templates,
 )
-from expo.gbe_logging import log_func
+from gbe_logging import log_func
 from gbe.functions import validate_perms
 
 

@@ -1,0 +1,37 @@
+{% extends "base.tmpl" %}
+{% block title %}
+   Select Event Type
+{% endblock %}
+
+{% block content %}
+{% if type_options %}
+<h3>Select event type to schedule</h3>
+   <form action="" method="post" enctype="multipart/form-data">
+   {% csrf_token %}
+<select name = "event_type" id="event_type">
+{% for name in type_options   %}
+    <option value="{{ name }}">{{ name }}</option>
+{% endfor %}
+</select>
+{% elif show_options%}
+<h3>Select a current or upcoming show to schedule</h3>
+   <form action="" method="post" enctype="multipart/form-data">
+   {% csrf_token %}
+<select name = "show_id" id="show_id">
+{% for show in show_options   %}
+    <option value="{{ show.pk }}">{{ show }}</option>
+{% endfor %}
+</select>
+{% endif %}
+
+<br>
+   <input type="submit" name="submit" value="Submit">
+
+</form>
+
+<hr>
+<table>
+  </tr>
+  {% include "scheduler/export_calendar.tmpl" %}
+</table>
+{% endblock %}

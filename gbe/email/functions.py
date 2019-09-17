@@ -242,7 +242,7 @@ def send_warnings_to_staff(bidder,
                 'warnings': warnings},
             )
 
-'''
+
 def get_user_email_templates(user):
     template_set = []
     for priv in user.get_email_privs():
@@ -284,4 +284,3 @@ def get_user_email_templates(user):
         template_set += unique_email_templates['scheduling']
     return sorted(template_set,
                   key=lambda item: (item['name'], item['category']))
-'''

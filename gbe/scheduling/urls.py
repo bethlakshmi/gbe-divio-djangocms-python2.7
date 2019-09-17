@@ -1,8 +1,4 @@
-from django.conf.urls import (
-    patterns,
-    url,
-)
-
+from django.conf.urls import url
 from gbe.scheduling.views import (
     ClassWizardView,
     CopyOccurrenceView,
@@ -32,8 +28,7 @@ from gbe.scheduling.views import (
 # "foo" or "foo/", but not on "foo/bar" or "foo!".
 # Which is what we usually want.
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^scheduling/manage/?$',
         ManageEventsView.as_view(), name='manage_event_list'),
     url(r'^scheduling/manage/(?P<conference_slug>[-\w]+)/?$',
@@ -98,4 +93,4 @@ urlpatterns = patterns(
         ListEventsView.as_view(), name='event_list'),
     url(r'^scheduling/details/(?P<eventitem_id>\d+)/?$',
         EventDetailView.as_view(), name='detail_view'),
-)
+]

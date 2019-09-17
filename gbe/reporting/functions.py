@@ -3,7 +3,7 @@ from gbe.functions import (
     get_conference_by_slug,
     validate_perms,
 )
-from expo.gbe_logging import logger
+from gbe_logging import logger
 from django.core.urlresolvers import reverse
 
 

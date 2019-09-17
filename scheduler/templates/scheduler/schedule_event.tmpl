@@ -1,0 +1,23 @@
+{% extends "base.tmpl" %}
+{% block title %}
+  Great Burlesque Exposition: Schedule Event
+{% endblock %}
+
+{% block content %}
+  
+
+
+   <form action="" method="post" enctype="multipart/form-data">
+
+    {% for field in form.fields %}
+    {{field}}
+    {% endfor %}
+
+
+   <input type="submit" name="submit" value="Submit">
+
+   </form>
+
+  
+
+{% endblock %}

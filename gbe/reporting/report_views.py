@@ -20,8 +20,8 @@ from gbe.functions import (
     get_conference_by_slug,
     validate_perms,
 )
-from expo.gbe_logging import logger
-from expo.settings import DATETIME_FORMAT
+from gbe_logging import logger
+from settings import DATETIME_FORMAT
 from django.utils.formats import date_format
 from gbe.reporting.functions import prep_act_tech_info
 

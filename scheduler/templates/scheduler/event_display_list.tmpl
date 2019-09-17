@@ -1,0 +1,55 @@
+{% extends "base.tmpl" %}
+{% block title %}
+  Great Burlesque Exposition: {{title}}
+{% endblock %}
+
+{% block content %}
+   
+   <H1 class="listheader">{{title}}</H1>
+   <div class="body font_regular">
+     {{view_header_text | safe}}
+   </div>
+   {% include "conference_list.tmpl" %}
+   {% for event in events %}
+   <div class="listblock" id={{class.id}}>
+      <h2 class="listsubheader">
+      {{event.eventitem.payload.title}}
+      </h2>
+      <a href='{{event.detail}}'><span>more...</span></a>
+      <div class="listdetails font_regular">
+	{% if event.eventitem.bios %}
+        <label class="listlabel">Presented by:</label>
+	{% endif %}
+	{% for bio in event.eventitem.bios %}
+	  {{ bio.name }},
+	{% endfor %}
+        <br>
+	{% if event.scheduled_events %}
+	<label class="listlabel">Time(s):</label>
+	  {% for sched_event in event.scheduled_events %}
+	  {{ sched_event.start_time|date:_("DATETIME_FORMAT") }} - {{ sched_event.end_time|date:_("TIME_FORMAT") }}
+	  {% endfor %}
+	{% endif %}
+	<br>
+	{% for name, value in event.eventitem.payload.details.items %}
+            <label class="sched_detail">
+	    {% for label_name, label_value in labels.items%}
+	       {% if name == label_name %}
+	          {{label_value}}:
+	       {% endif %}
+	    {% empty %}
+	      {{value |safe }}:
+	    {% endfor %}
+	    </label> {{value | safe}}<br>
+	{% endfor %}
+      </div>
+      <div class="listdesc">
+	 {{event.eventitem.payload.description | safe}}
+      </div>
+   </div>
+   <hr class="listline">
+   {% empty %}
+     <div><b>Stay tuned! Updates coming soon!</b></div>
+   {% endfor %} 
+
+{% endblock %}

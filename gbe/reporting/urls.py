@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from gbe.reporting.views import (
@@ -23,8 +23,7 @@ from gbe.reporting import (
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^reports/?$',
         list_reports,
         name='report_list'),
@@ -86,5 +85,4 @@ urlpatterns = patterns(
 
     url(r'^reports/view_techinfo/?$',
         view_techinfo, name='view_techinfo'),
-
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

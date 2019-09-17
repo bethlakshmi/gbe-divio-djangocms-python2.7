@@ -1,7 +1,4 @@
-from django.conf.urls import (
-    patterns,
-    url,
-)
+from django.conf.urls import url
 
 from gbe.email.views import (
     EditTemplateView,
@@ -17,8 +14,7 @@ from gbe.email.views import (
 # "foo" or "foo/", but not on "foo/bar" or "foo!".
 # Which is what we usually want.
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^email/edit_template/(?P<template_name>[\w|\W]+)/?$',
         EditTemplateView.as_view(), name='edit_template'),
     url(r'^email/list_template/?$',
@@ -29,4 +25,4 @@ urlpatterns = patterns(
         MailToPersonView.as_view(), name='mail_to_individual'),
     url(r'^email/mail_to_roles/?$',
         MailToRolesView.as_view(), name='mail_to_roles'),
-)
+]

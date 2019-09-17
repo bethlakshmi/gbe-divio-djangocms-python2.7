@@ -1,0 +1,34 @@
+{% extends "base.tmpl" %}
+{% load staticfiles %}
+{% block title %}
+  Great Burlesque Expo: Title here
+{% endblock %}
+
+{% block content %}
+<p><font color="red">RED</font> highlighting means that the owner of this act has deactivated their account.</p>
+   <table>
+   <tr>
+	<th>Performer</th>
+	<th>Act Title</th>
+	<th>Show</th>
+	<th>Order</th>
+   </tr>   
+    <form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+	{% for form, state in forms %}
+	   <tr {% if not state %}bgcolor="red"{% endif %}>
+	      {% for field in form %}
+	         <td>{{ field }} </td> 
+		
+ 	      {% endfor  %}
+	   </tr>
+	{% endfor %}
+
+   </table> 
+
+  <input type = "submit" name="submit" value="Submit">
+  
+  </form>
+
+
+{% endblock %}
