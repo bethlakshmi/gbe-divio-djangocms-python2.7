@@ -1,12 +1,11 @@
 from model_utils.managers import InheritanceManager
 from django.db.models import (
     CharField,
+    DurationField,
     TextField,
     AutoField,
     ForeignKey,
 )
-
-from gbe.expomodelfields import DurationField
 from scheduler.models import EventItem
 from gbe.models import (
     Conference,

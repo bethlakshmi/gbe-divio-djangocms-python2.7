@@ -10,7 +10,6 @@ from scheduler.data_transfer import (
 from datetime import datetime, timedelta
 from model_utils.managers import InheritanceManager
 from gbetext import *
-from gbe.expomodelfields import DurationField
 from settings import (
     DATETIME_FORMAT,
     DAY_FORMAT,)
@@ -63,7 +62,6 @@ class Schedulable(models.Model):
             return "No Start Time"
 
     class Meta:
-        verbose_name_plural = 'Schedulable Items'
         abstract = True
 
 
@@ -518,10 +516,7 @@ class EventItem (models.Model):
             ).distinct().order_by('role', '_item')
         return people
 
-    @property
-    def duration(self):
-        child = self.child()
-        return child.sched_duration
+    # removed duration property in divio/django 1.11 upgrade
 
     @property
     def describe(self):
@@ -538,6 +533,7 @@ class EventItem (models.Model):
         return unicode(self.describe)
 
 
+
 class Event(Schedulable):
     '''
     An Event is a schedulable item with a conference model item as its payload.
@@ -546,7 +542,6 @@ class Event(Schedulable):
     eventitem = models.ForeignKey(EventItem, related_name="scheduler_events")
     starttime = models.DateTimeField(blank=True)
     max_volunteer = models.PositiveIntegerField(default=0)
-    schedulable_ptr_id = models.AutoField(primary_key=True)
 
     def get_open_rehearsals(self):
         rehearsals = [
@@ -801,7 +796,6 @@ class ResourceAllocation(Schedulable):
     objects = InheritanceManager()
     event = models.ForeignKey(Event, related_name="resources_allocated")
     resource = models.ForeignKey(Resource, related_name="allocations")
-    schedulable_ptr_id = models.AutoField(primary_key=True)
 
     @property
     def start_time(self):

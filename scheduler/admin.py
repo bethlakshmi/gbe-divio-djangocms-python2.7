@@ -10,7 +10,7 @@ from import_export.resources import ModelResource
 
 
 class ResourceAllocationAdmin(ImportExportActionModelAdmin):
-    list_display = ('schedulable_ptr_id',
+    list_display = ('id',
                     'event',
                     'event_type',
                     'resource',
@@ -52,7 +52,7 @@ class EventItemAdmin(admin.ModelAdmin):
 
 
 class EventAdmin(ImportExportModelAdmin):
-    list_display = ('schedulable_ptr_id', 'eventitem', 'starttime', 'max_volunteer')
+    list_display = ('id', 'eventitem', 'starttime', 'max_volunteer')
     list_filter = ['starttime',
                    'max_volunteer',
                    'eventitem__event__e_conference', ]

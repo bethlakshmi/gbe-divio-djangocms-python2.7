@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db.models import (
     BooleanField,
     CharField,
+    DurationField,
     FileField,
     ForeignKey,
     Model,
@@ -17,7 +18,6 @@ from gbetext import (
     stage_lighting_options,
 )
 from gbe_forms_text import *
-from gbe.expomodelfields import DurationField
 
 
 ###################
