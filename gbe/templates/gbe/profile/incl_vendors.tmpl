@@ -11,7 +11,7 @@
             {{ vendor }} 
           </a>(Click to view)
           {% for value, state in acceptance_states %}
-            {% if value = vendor.accepted %}
+            {% if value == vendor.accepted %}
               - {{state}}
             {%endif%}
           {% endfor %}

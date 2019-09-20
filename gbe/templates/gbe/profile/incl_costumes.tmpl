@@ -11,7 +11,7 @@
             {{ costume }}
           </a>(Click to view)
           {% for value, state in acceptance_states %}
-            {% if value = costume.accepted %}
+            {% if value == costume.accepted %}
               - {{state}}
             {%endif%}
           {% endfor %}

@@ -7,13 +7,13 @@
     {% if personae or troupes or combos %}
       {% for performer in personae %}
         {% with edit_view_name='gbe:persona_edit' view_name='gbe:persona_edit' %}
-        {% include 'gbe/profile/incl_performer_block.tmpl' %}
-	{% endwith %}
+          {% include 'gbe/profile/incl_performer_block.tmpl' %}
+	      {% endwith %}
       {% endfor %}
       {% for performer in troupes %}
         {% with edit_view_name='gbe:troupe_edit' view_name='gbe:troupe_view' %}
           {% include 'gbe/profile/incl_performer_block.tmpl' %}
-	{% endwith %}
+	      {% endwith %}
       {% endfor %}
     {%endif%}
   {% else %}

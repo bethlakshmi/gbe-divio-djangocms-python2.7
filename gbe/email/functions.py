@@ -1,8 +1,7 @@
-'''
 from gbe.models import (
     EmailTemplateSender,
 )
-'''
+
 from django.contrib.auth.models import User
 from django.conf import settings
 from post_office import mail
@@ -67,7 +66,7 @@ def get_mail_content(base):
         htmlcontent = htmlfile.read()
     return (textcontent, htmlcontent)
 
-'''
+
 def get_or_create_template(name, base, subject):
     try:
         template = EmailTemplate.objects.get(name=name)
@@ -91,7 +90,6 @@ def get_or_create_template(name, base, subject):
         sender.save()
 
     return template
-'''
 
 def send_bid_state_change_mail(
         bid_type,

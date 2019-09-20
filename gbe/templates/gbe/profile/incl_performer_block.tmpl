@@ -37,7 +37,7 @@
      <div class="gbe_no_pic">&nbsp;</div>
   {% endif %}
   <div class="performer_text">
-    {% if performer.contact = profile %}
+    {% if performer.contact == profile %}
       <a href='{% url edit_view_name performer.resourceitem_id %}'>
         {{ performer }}
       </a><br>
