@@ -11,7 +11,8 @@ from django.core.validators import (
     MinValueValidator,
     MaxValueValidator
 )
-
+from settings import DATETIME_FORMAT
+from django.utils.formats import date_format
 from gbe.models import (
     Biddable,
     Persona,
@@ -75,7 +76,7 @@ class Costume(Biddable):
         return [name,
                 self.b_title,
                 self.act_title,
-                self.updated_at.astimezone(pytz.timezone('America/New_York')),
+                date_format(self.updated_at, "DATETIME_FORMAT"),
                 acceptance_states[self.accepted][1]]
 
     @property

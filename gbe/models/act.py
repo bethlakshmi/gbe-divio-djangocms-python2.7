@@ -25,6 +25,8 @@ from gbetext import (
     video_options,
 )
 from scheduler.models import ActItem
+from settings import DATETIME_FORMAT
+from django.utils.formats import date_format
 
 
 class Act (Biddable, ActItem):
@@ -133,7 +135,7 @@ class Act (Biddable, ActItem):
 
         return [self.performer.name,
                 self.b_title,
-                self.updated_at.astimezone(pytz.timezone('America/New_York')),
+                date_format(self.updated_at, "DATETIME_FORMAT"),
                 acceptance_states[self.accepted][1],
                 castings]
 
