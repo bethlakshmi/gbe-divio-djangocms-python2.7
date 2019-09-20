@@ -73,7 +73,7 @@
                     {% if choice_id != 'SH1' or "u'SH1'" in field.value %}
                       <li>{{ choice_label }}</li>
                     {%endif%}
-                  {% elif choice_id and choice_id = field.value %}
+                  {% elif choice_id and choice_id == field.value %}
                     </ul>{{ choice_label }}<ul>
                   {% elif choice_id >= 0 and choice_id <= 100 %}
                     {% for idagain in choice_id|make_list %}
@@ -81,7 +81,7 @@
                         <li>{{ choice_label }}</li>
                       {% endif %}
                     {% endfor %}
-                  {% else %}
+                  {% elif choice_id %}
                     {% for id, label in choice_label %}
                       {% if id == field.value %}
                       <li>{{ label }}</li>

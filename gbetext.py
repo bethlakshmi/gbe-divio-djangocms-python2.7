@@ -56,7 +56,7 @@ profile_alerts = {'onsite_phone': ONSITE_PHONE,
 
 ACT_COMPLETE_NOT_SUBMITTED = ("This act is complete and can be submitted "
                               "whenever you like. "
-                              "<a href = '{% url 'gbe:act_edit' act_id %}'>"
+                              "<a href = \"%s\">"
                               "Review and Submit Now </a>")
 ACT_COMPLETE_SUBMITTED = ("This act is complete and has been submitted for "
                           "review.")

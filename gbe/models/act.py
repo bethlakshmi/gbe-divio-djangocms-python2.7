@@ -27,6 +27,7 @@ from gbetext import (
 from scheduler.models import ActItem
 from settings import DATETIME_FORMAT
 from django.utils.formats import date_format
+from django.core.urlresolvers import reverse
 
 
 class Act (Biddable, ActItem):
@@ -167,17 +168,18 @@ class Act (Biddable, ActItem):
         if self.complete:
             if self.submitted:
                 this_act_alerts.append(
-                    act_alerts['act_complete_submitted'] % self.id)
+                    act_alerts['act_complete_submitted'])
             else:
                 this_act_alerts.append(
-                    act_alerts['act_complete_not_submitted'] % self.id)
+                    act_alerts['act_complete_not_submitted'] % reverse(
+                        "act_edit", urlconf='gbe.urls', args=[self.id]))
         else:
             if self.submitted:
                 this_act_alerts.append(
-                    act_alerts['act_incomplete_submitted'] % self.id)
+                    act_alerts['act_incomplete_submitted'])
             else:
                 this_act_alerts.append(
-                    act_alerts['act_incomplete_not_submitted'] % self.id)
+                    act_alerts['act_incomplete_not_submitted'])
         return this_act_alerts
 
     @property
