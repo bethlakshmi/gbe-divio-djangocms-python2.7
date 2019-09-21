@@ -1005,7 +1005,7 @@ select[multiple].input-group-sm>.form-control,select[multiple].input-group-sm>.i
 .navbar-right{float:right!important;margin-right:0px}
 .navbar-right~.navbar-right{margin-right:0}
 }
-.navbar-default{background-color:rgba(229,229,229,.49);border-color:transparent;font-family: "TwentiethCenturyPoster";font-size: 18px;}
+.navbar-default{background-color:rgba(229,229,229,.49);border-color:transparent;font-family: "TwentiethCenturyPoster";font-size: 18px;padding:0px;}
 .navbar-default .navbar-brand:focus,.navbar-default .navbar-brand:hover{color:#000;background-color:transparent}
 .navbar-default .navbar-nav>li>a:focus,.navbar-default .navbar-nav>li>a:hover{color:#af1515;background-color:transparent}
 .navbar-default .navbar-nav>.active>a,.navbar-default .navbar-nav>.active>a:focus,.navbar-default .navbar-nav>.active>a:hover{color:#000;background-color:#ebebeb; text-shadow: 0px 0px 8px #F03;}

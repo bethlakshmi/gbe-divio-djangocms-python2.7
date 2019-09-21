@@ -28,7 +28,7 @@
    {% if nodraft %}
     <input type="submit" name="submit" value="{{nodraft}}">
    {% else %}
-   <input type="submit" name="draft" value="Save Draft">
+   <input type="submit" name="draft" formnovalidate value="Save Draft">
    <input type="submit" name="submit" value="Submit For Approval">
    {% endif %}
    </form>
