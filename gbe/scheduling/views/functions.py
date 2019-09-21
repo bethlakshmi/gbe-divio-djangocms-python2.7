@@ -33,6 +33,7 @@ from settings import DATETIME_FORMAT
 from django.http import Http404
 from gbetext import event_labels
 from gbe_forms_text import event_settings
+from datetime import timedelta
 
 
 def get_start_time(data):
@@ -223,7 +224,8 @@ def shared_groundwork(request, kwargs, permissions):
 
 
 def setup_event_management_form(conference, item, occurrence, context):
-    duration = float(item.duration.total_minutes())/60
+    duration = float(item.duration.total_seconds())/timedelta(
+        hours=1).total_seconds()
     initial_form_info = {
         'duration': duration,
         'max_volunteer': occurrence.max_volunteer,

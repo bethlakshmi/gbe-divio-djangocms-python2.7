@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.utils.formats import date_format
+from datetime import timedelta
 from settings import (
     DATE_FORMAT,
     DATETIME_FORMAT,
@@ -94,9 +95,8 @@ class ManageEventsView(View):
                 'start':  occurrence.start_time.strftime(DATETIME_FORMAT),
                 'title': occurrence.eventitem.event.e_title,
                 'location': occurrence.location,
-                'duration': occurrence.eventitem.event.duration.hours(
-                    ) + float(
-                    occurrence.eventitem.event.duration.minutes())/60,
+                'duration': occurrence.eventitem.event.duration.total_seconds(
+                    ) / timedelta(hours=1).total_seconds(),
                 'type': events.filter(
                     eventitem_id=occurrence.eventitem.eventitem_id
                     ).get_subclass().event_type,

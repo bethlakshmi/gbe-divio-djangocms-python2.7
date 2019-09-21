@@ -21,6 +21,7 @@ from settings import (
     TIME_FORMAT,
 )
 from django.utils.formats import date_format
+import pytz
 
 
 class Volunteer(Biddable):
@@ -119,6 +120,8 @@ class Volunteer(Biddable):
         for window in self.available_windows.all():
             starttime = window.start_timestamp()
             endtime = window.end_timestamp()
+            start = pytz.utc.localize(start)
+            end = pytz.utc.localize(end)
             if start == starttime:
                 available = "Available"
             elif (start > starttime and

@@ -1,0 +1,45 @@
+{% extends "base.tmpl" %}
+{% load staticfiles %}
+{% block title %}
+  Great Burlesque Exposition 
+{% endblock %}
+{% block content %}
+
+<H3>
+Click the button below to Synchronize Transactions with BPT.
+</H3>
+
+There are currently {{ transactions.count }} Transaction(s) associated with {{ purchasers.count }} Purchaser(s) in the system.
+<br>
+<br>
+The ticketing system was last synchronized at {{sync_time|date:"D d M Y"}} {{sync_time|time:"H:i:s"}} {{sync_time|date:"T"}}.
+<br>
+<br>
+
+{% if error %}
+<font color=red>
+{{error}}
+<br>
+Note:  You may need to update the ticket item list before processing transactions.
+<br>
+<br>
+</font>
+{% endif %}
+
+{% if count >= 0 %}
+Results:  {{count}} new transactions were added to the system.
+<br>
+<br>
+{% endif %}
+
+
+<form method="POST" action={% url 'ticketing:transactions' %} enctype="multipart/form-data">
+{% csrf_token %}
+    <input type="hidden" name="Sync" value="1">
+    <input type="submit" value="Synchronize with Brown Paper Tickets"> 
+</form>
+
+{% endblock %}
+
+
+

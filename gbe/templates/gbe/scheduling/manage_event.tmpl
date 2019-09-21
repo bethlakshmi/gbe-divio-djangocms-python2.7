@@ -37,16 +37,16 @@
    </div>
    <div class="form-group col-md-10 col-xs-12">
      {% for checkbox in selection_form.staff_area %}
-      <div class="form-group col-md-4 col-sm-4 col-xs-12 checkbox-box{%if alt_id|slugify == checkbox.choice_value|slugify %}-success{%endif%}">
+      <div class="form-group col-md-4 col-sm-4 col-xs-12 checkbox-box{%if alt_id|slugify == checkbox.data.value|slugify %}-success{%endif%}">
       <label class="checkbox-inline gbe-filter" id="{{ checkbox.id_for_label }}">
       {{ checkbox.tag }}
       {{ checkbox.choice_label }}&nbsp;
       {% if conference.status != "completed" %}
-      <a href="{% url "scheduling:edit_staff" checkbox.choice_value %}" data-toggle="tooltip" title="Edit" class="detail_link">
+      <a href="{% url "scheduling:edit_staff" checkbox.data.value %}" data-toggle="tooltip" title="Edit" class="detail_link">
        <i class="fa fa-pencil-square" aria-hidden="true"></i>
       </a>
      {% endif %}
-      <a href="{% url "scheduling:copy_staff_schedule" checkbox.choice_value %}" data-toggle="tooltip" title="Copy" class="detail_link">
+      <a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link">
        <i class="fa fa-files-o" aria-hidden="true"></i>
       </a>
       </label>

@@ -130,7 +130,7 @@ class ManageWorkerView(View):
             else:
                 rank = 0
             conflict_response = get_conflicts(
-                self.occurrence,
+                self.occurrence.pk,
                 volunteer.profile.user_object,
                 labels=[self.conference.conference_slug])
             conflicts = None

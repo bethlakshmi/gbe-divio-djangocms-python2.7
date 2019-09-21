@@ -37,9 +37,8 @@ class Schedulable(models.Model):
 
     @property
     def start_time(self):
-        child = Schedulable.objects.get_subclass(id=self.id)
         try:
-            return child.starttime
+            return self.starttime
         except:
             return None
 
@@ -516,8 +515,6 @@ class EventItem (models.Model):
             ).distinct().order_by('role', '_item')
         return people
 
-    # removed duration property in divio/django 1.11 upgrade
-
     @property
     def describe(self):
         try:
@@ -710,7 +707,7 @@ class Event(Schedulable):
 
     @property
     def duration(self):
-        return self.eventitem.duration
+        return self.eventitem.child().sched_duration
 
     # get castings as in what acts have been booked for this event
     @property

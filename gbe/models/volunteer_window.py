@@ -40,6 +40,8 @@ class VolunteerWindow(Model):
         endtime = self.end_timestamp()
         has_conflict = False
 
+        start = pytz.utc.localize(start)
+        end = pytz.utc.localize(end)
         if start == starttime:
             has_conflict = True
         elif (start > starttime and
