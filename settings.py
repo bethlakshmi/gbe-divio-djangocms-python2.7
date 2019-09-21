@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 INSTALLED_ADDONS = [
-    # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
+    # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is
+    # auto-generated. Manual changes will be overwritten.
     'aldryn-addons',
     'aldryn-django',
     'aldryn-sso',
@@ -50,8 +51,6 @@ except:
     EMAIL_USE_TLS = False
     DEFAULT_FROM_EMAIL = 'gbetest@burlesque-expo.com'
     EMAIL_BACKEND = 'post_office.EmailBackend'
-
-
 
 #  Logging settings.
 #  Local path and filename to write logs to
@@ -127,3 +126,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_buttons3': "insertdate,inserttime,|,advhr,,removeformat," +
     "|,sub,sup,|,charmap,emotions, tablecontrols",
 }
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'gbe.auth.EmailUsernameAuth',
+]
