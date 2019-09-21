@@ -12,7 +12,7 @@ from gbe.models import (
     StaffArea,
 )
 from settings import (
-    DATE_FORMAT,
+    GBE_DATE_FORMAT,
     DATETIME_FORMAT
 )
 from gbe_forms_text import (
@@ -27,7 +27,7 @@ class TargetDay(ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s - %s" % (
             obj.conference.conference_slug,
-            obj.day.strftime(DATE_FORMAT))
+            obj.day.strftime(GBE_DATE_FORMAT))
 
 
 class CopyEventPickDayForm(Form):

@@ -180,7 +180,7 @@ def send_daily_schedule_mail(schedules, day, slug):
                 'site': Site.objects.get_current().domain,
                 'badge_name': user.profile.get_badge_name(),
                 'bookings': bookings,
-                'day': day.strftime(settings.DATE_FORMAT)},
+                'day': day.strftime(settings.GBE_DATE_FORMAT)},
             priority="medium")
 
 

@@ -77,10 +77,8 @@ try:
 except:
     TIME_FORMAT = "%-I:%M %p"
 
-try:
-    DATE_FORMAT
-except:
-    DATE_FORMAT = "%a, %b %-d"
+GBE_DATE_FORMAT = "%a, %b %-d"
+
 try:
     URL_DATE
 except:
@@ -90,7 +88,7 @@ try:
 except:
     # Default DATETIME_FORMAT - see 'man date' for format options
     # DATETIME_FORMAT = "%I:%M %p"
-    DATETIME_FORMAT = DATE_FORMAT+" "+TIME_FORMAT
+    DATETIME_FORMAT = GBE_DATE_FORMAT+" "+TIME_FORMAT
 
 try:
     SHORT_DATETIME_FORMAT

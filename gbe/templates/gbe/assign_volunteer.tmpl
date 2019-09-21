@@ -134,7 +134,7 @@
             </td>
             <td class="bid-table">
               {% if event_window.window %}
-                {{event_window.window.day.day|date:_("DATE_FORMAT")}},
+                {{event_window.window.day.day|date:_("GBE_DATE_FORMAT")}},
                 {{event_window.window.start|date:_("TIME_FORMAT") }} -
                 {{event_window.window.end|date:_("TIME_FORMAT")}}
               {% endif %}

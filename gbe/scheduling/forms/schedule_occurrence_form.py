@@ -17,7 +17,7 @@ from gbe.functions import (
 from datetime import time
 from gbe_forms_text import schedule_occurrence_labels
 from settings import (
-    DATE_FORMAT,
+    GBE_DATE_FORMAT,
     TIME_FORMAT
 )
 
@@ -31,7 +31,7 @@ conference_times = [(time(mins/60, mins % 60),
 
 class DayChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
-        return obj.day.strftime(DATE_FORMAT)
+        return obj.day.strftime(GBE_DATE_FORMAT)
 
 
 class ScheduleOccurrenceForm(Form):

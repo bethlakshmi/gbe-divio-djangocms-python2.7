@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from django.utils.formats import date_format
 from datetime import timedelta
 from settings import (
-    DATE_FORMAT,
+    GBE_DATE_FORMAT,
     DATETIME_FORMAT,
     TIME_FORMAT,
     URL_DATE,
@@ -55,7 +55,7 @@ class ManageEventsView(View):
 
         day_list = []
         for day in self.conference.conferenceday_set.all():
-            day_list += [(day.pk, day.day.strftime(DATE_FORMAT))]
+            day_list += [(day.pk, day.day.strftime(GBE_DATE_FORMAT))]
         select_form = SelectEventForm(request.GET,
                                       prefix=self.conference.conference_slug)
         select_form.fields['day'].choices = day_list
@@ -80,7 +80,8 @@ class ManageEventsView(View):
                     prefix=conf.conference_slug)
                 conf_day_list = []
                 for day in conf.conferenceday_set.all():
-                    conf_day_list += [(day.pk, day.day.strftime(DATE_FORMAT))]
+                    conf_day_list += [(day.pk, 
+                        day.day.strftime(GBE_DATE_FORMAT))]
                 hidden_form.fields['day'].choices = conf_day_list
                 context['other_forms'] += [hidden_form]
         return context
