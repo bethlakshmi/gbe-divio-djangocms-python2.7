@@ -15,9 +15,9 @@
 
 CKEDITOR.stylesSet.add( 'default', [
 	/* GBE Styles */
-	{ name: '20th Century Poster',
+	{ name: 'Vast Shadow',
 	  element: 'h2',
-	  styles: { 'font-family': 'TwentiethCenturyPoster',
+	  styles: { 'font-family': 'Vast Shadow', cursive,
 	            'font-size': '20px',
 		    'color': '#000;'}},
 	{ name: 'Font Large',

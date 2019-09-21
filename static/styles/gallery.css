@@ -21,8 +21,7 @@ div.imageGalleryItem.default>a>img{
 }
 
 @font-face {
-  font-family: 'TwentiethCenturyPoster';
-  src: url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.eot?#iefix") format("embedded-opentype"), url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.woff") format("woff"), url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.ttf") format("truetype"), url("http://s3.amazonaws.com/content.sitezoogle.com/system/fonts/TwentiethCenturyPoster/TwentiethCenturyPoster.svg#TwentiethCentury") format("svg");
+  font-family: 'Vast Shadow', cursive;;
   font-style: normal;
   font-weight: normal; }
   

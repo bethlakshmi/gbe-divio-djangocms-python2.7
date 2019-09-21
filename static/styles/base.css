@@ -7,7 +7,7 @@ body {
 
 /* Used in django CMS provided styles, do not delete */
 .subtitle{
-  font-family: "TwentiethCenturyPoster";
+  font-family: 'Vast Shadow', cursive;
   font-size: 20px;
   color: #000;
   letter-spacing: normal;
@@ -126,7 +126,7 @@ button.login-button {
   margin-top: 3px;
   margin-right: 3px;
   border-radius: 4px;
-  font-family: "TwentiethCenturyPoster";
+  font-family: 'Vast Shadow', cursive;
   font-size: 18px;
   padding-left: 16px;
   padding-right: 16px;
@@ -443,14 +443,14 @@ td.describe
 
 .listheader
 {
-  font-family: "TwentiethCenturyPoster";
+  font-family: 'Vast Shadow', cursive;
   font-size: 30px;
   color: #333333;
 }
 
 .perf-head
 {
-  font-family: "TwentiethCenturyPoster";
+  font-family: 'Vast Shadow', cursive;
   font-size: 30px;
   color: white;
 }
@@ -598,7 +598,7 @@ td.describe
 .sched_detail_title
 {
   color: #333333;
-  font-family: TwentiethCenturyPoster;
+  font-family: 'Vast Shadow', cursive;
   font-size: 30px;
 }
 .sched_detail
@@ -1057,7 +1057,7 @@ td.form_field.long_choice > ul > li
 }
 .formtitle
 {
-  font-family: "TwentiethCenturyPoster";
+  font-family: 'Vast Shadow', cursive;
   font-size: 20px;
   color: black;
 }

@@ -1,0 +1,19 @@
+{% load i18n menu_tags cache %}
+
+{% for child in children %}
+    <li class="child{% if child.selected %} active{% endif %}{% if child.ancestor %} ancestor{% endif %}{% if child.sibling %} sibling{% endif %}{% if child.descendant %} descendant{% endif %}{% if child.children %} dropdown{% endif %}">
+
+        <a {% if child.children %}class="dropdown-toggle" data-toggle="dropdown"{% endif %} href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
+            <span>{{ child.get_menu_title }}</span>{% if child.children|length %}<span class="caret"></span>{% endif %}
+        </a>
+
+        {% if child.children %}
+            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                {% show_menu from_level to_level extra_inactive extra_active "dropdown.tmpl" "" "" child %}
+            </ul>
+        {% endif %}
+
+    </li>
+    {% if class and forloop.last and not forloop.parentloop %}{% endif %}
+
+{% endfor %}
