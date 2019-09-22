@@ -43,12 +43,12 @@ try:
     EMAIL_BACKEND
     DEFAULT_FROM_EMAIL
 except:
-    EMAIL_HOST = 'localhost'
-    EMAIL_PORT = 1025
-    EMAIL_HOST_USER = ''
-    EMAIL_HOST_PASSWORD = ''
-    EMAIL_USE_TLS = False
-    DEFAULT_FROM_EMAIL = 'gbetest@burlesque-expo.com'
+    EMAIL_HOST = 'secure135.inmotionhosting.com'
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = 'mail@burlesque-expo.com'
+    EMAIL_HOST_PASSWORD = '_uWeK9,+tR5^'
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
     EMAIL_BACKEND = 'post_office.EmailBackend'
 
 #  Logging settings.
