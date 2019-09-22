@@ -20,14 +20,14 @@ class SelectBidderForm(Form):
     error_css_class = 'error'
     conference = MultiConferenceField(
         queryset=Conference.objects.all().order_by('conference_name'),
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=True,)
     bid_type = MultipleChoiceField(
         required=True,
-        widget=CheckboxSelectMultiple())
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}))
     state = MultipleChoiceField(
         choices=((('Draft', 'Draft'),) + acceptance_states),
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=True)
 
 

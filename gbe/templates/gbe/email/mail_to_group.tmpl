@@ -10,15 +10,12 @@
 {% if request.user.is_superuser %}
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <div class="row email-select">
-      <div class="col-sm-10">&nbsp;</div>
-      <div class="col-sm-2">
+    <div class="row email-select justify-content-end">
         <form class="form-inline" action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <button class="btn btn-lg dropdown-toggle email-button" type="submit" name="everyone" value="Everyone">
-        <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;Email Everyone</button>
+        <button class="btn btn-lg email-button" type="submit" name="everyone" value="Everyone">
+        <i class="fas fa-envelope"></i>&nbsp;&nbsp;Email Everyone</button>
         </form>
-      </div>
     </div>
   </div>
 </div>
@@ -49,7 +46,9 @@
   </div>
   <div class="panel-body">
       {% include "form_table_wrapper.tmpl" with forms=recipient_info %}
-      {% if everyone %}<input id="id_everyone" name="everyone" type="hidden" value="Everyone" />{% endif %}
+      {% if everyone %}
+        <input id="id_everyone" name="everyone" type="hidden" value="Everyone" />
+      {% endif %}
       <div class="panel-group">
         <div class="panel panel-default">
           <div class="panel-heading">

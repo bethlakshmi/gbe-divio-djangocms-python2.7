@@ -15,11 +15,11 @@ class SelectRoleForm(Form):
     error_css_class = 'error'
     conference = MultiConferenceField(
         queryset=Conference.objects.all().order_by('conference_slug'),
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=True,)
     roles = MultipleChoiceField(
         required=True,
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         choices=role_options)
 
 

@@ -151,19 +151,22 @@ class MailToRolesView(MailToFilterView):
                     self.specify_event_form.fields[
                         'events'] = ModelMultipleChoiceField(
                         queryset=self.event_queryset,
-                        widget=CheckboxSelectMultiple(),
+                        widget=CheckboxSelectMultiple(
+                            attrs={'class': 'form-check-input'}),
                         required=False)
                 if self.staff_queryset:
                     self.specify_event_form.fields[
                         'staff_areas'] = ModelMultipleChoiceField(
                         queryset=self.staff_queryset,
-                        widget=CheckboxSelectMultiple(),
+                        widget=CheckboxSelectMultiple(
+                            attrs={'class': 'form-check-input'}),
                         required=False)
                 if len(self.event_collect_choices) > 0:
                     self.specify_event_form.fields[
                         'event_collections'] = MultipleChoiceField(
                         required=False,
-                        widget=CheckboxSelectMultiple(),
+                        widget=CheckboxSelectMultiple(
+                            attrs={'class': 'form-check-input'}),
                         choices=self.event_collect_choices)
         else:
             self.select_form = SelectRoleForm(

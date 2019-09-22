@@ -16,7 +16,7 @@ class AdHocEmailForm(Form):
     error_css_class = 'error'
     to = MultipleChoiceField(
         required=True,
-        widget=CheckboxSelectMultiple())
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}))
     sender = EmailField(required=True,
                         label="From")
     subject = CharField(widget=TextInput(attrs={'size': '79'}))

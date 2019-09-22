@@ -210,10 +210,11 @@ div.side_box {
 }
 @media (min-width:1200px){.email-select{width:1050px}
 }
-.email-select{padding:0px}
+.email-select{padding:0px;}
 #id_email-select-conference{width:250px}
 .email-submit{text-align:center}
 
+.form-inline label.email-label{justify-content: flex-start;}
 
 @media (min-width:768px){.bid_review{width:680px}
 }
