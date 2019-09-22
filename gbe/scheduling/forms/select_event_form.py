@@ -16,20 +16,20 @@ class SelectEventForm(Form):
     required_css_class = 'required'
     error_css_class = 'error'
     day = MultipleChoiceField(
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
     calendar_type = MultipleChoiceField(
         choices=calendar_type_options.items(),
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
     staff_area = ModelMultipleChoiceField(
         queryset=StaffArea.objects.all().order_by("conference", "slug"),
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
     volunteer_type = ModelMultipleChoiceField(
         queryset=AvailableInterest.objects.filter(
             visible=True).order_by("interest"),
-        widget=CheckboxSelectMultiple(),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
 
 

@@ -26,7 +26,7 @@
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
    <div class="form-row">
    <div class="form-group col-md-2 col-xs-12">
-    <label class="form-check-label" id="{{ selection_form.staff_area.name }}">
+    <label class="form-check-label horizontal-label" id="{{ selection_form.staff_area.name }}">
      {% if selection_form.staff_area.errors %}
       <font color="red">!&nbsp;&nbsp;
      {% endif %}
@@ -38,18 +38,19 @@
    <div class="form-group col-md-10 col-xs-12">
      {% for checkbox in selection_form.staff_area %}
       <div class="form-group col-md-4 col-sm-4 col-xs-12 checkbox-box{%if alt_id|slugify == checkbox.data.value|slugify %}-success{%endif%}">
-      <label class="checkbox-inline gbe-filter" id="{{ checkbox.id_for_label }}">
+      <div class="form-check-inline">
+      <label class="form-check-label staff-checkbox-label" id="{{ checkbox.id_for_label }}">
       {{ checkbox.tag }}
       {{ checkbox.choice_label }}&nbsp;
       {% if conference.status != "completed" %}
-      <a href="{% url "scheduling:edit_staff" checkbox.data.value %}" data-toggle="tooltip" title="Edit" class="detail_link">
+      &nbsp;<a href="{% url "scheduling:edit_staff" checkbox.data.value %}" data-toggle="tooltip" title="Edit" class="detail_link">
        <i class="fa fa-pencil-square" aria-hidden="true"></i>
       </a>
      {% endif %}
-      <a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link">
+      &nbsp;<a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link">
        <i class="fa fa-files-o" aria-hidden="true"></i>
       </a>
-      </label>
+      </label></div>
      </div>
      {% endfor %}
       {% if selection_form.staff_area.errors %}
@@ -58,7 +59,7 @@
    </div></div>
    <div class="form-row">
    <div class="form-group col-md-1 col-xs-12">
-    <label class="form-check-label" id="{{ selection_form.volunteer_type.name }}">
+    <label class="form-check-label horizontal-label" id="{{ selection_form.volunteer_type.name }}">
      {% if selection_form.volunteer_type.errors %}
       <font color="red">!&nbsp;&nbsp;
      {% endif %}
@@ -70,10 +71,11 @@
    <div class="form-group col-md-9 col-xs-12">
      {% for checkbox in selection_form.volunteer_type %}
       <div class="form-group col-md-3 col-sm-4 col-xs-12">
-       <label class="checkbox-inline gbe-filter" id="{{ checkbox.id_for_label }}">
-      {{ checkbox.tag }}
-      {{ checkbox.choice_label }}
-      </label></div>{% endfor %}
+        <div class="form-check-inline">
+        <label class="form-check-label checkbox-label gbe-filter" id="{{ checkbox.id_for_label }}">
+        {{ checkbox.tag }}
+        {{ checkbox.choice_label }}
+        </label></div></div>{% endfor %}
       {% if selection_form.volunteer_type.errors %}
        <div class="form-group col-md-9 col-xs-12">
         <font color="red">{{ selection_form.volunteer_type.errors }}</font>

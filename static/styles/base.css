@@ -214,7 +214,7 @@ div.side_box {
 #id_email-select-conference{width:250px}
 .email-submit{text-align:center}
 
-.form-inline label.email-label{justify-content: flex-start;}
+.form-inline label.horizontal-label{justify-content: flex-start;}
 
 @media (min-width:768px){.bid_review{width:680px}
 }
@@ -1107,7 +1107,7 @@ div.hierarchy-1
 }
 .scheduling-area {
   background-color: rgb(221, 221, 221);
-  padding: 5px;
+  padding: 15px;
 }
 .scheduling-area > .form-row > .form-group {
   min-height: 26px;
@@ -1118,8 +1118,7 @@ div.hierarchy-1
 .checkbox-box {
     border-radius: 15px;
     border: 1px solid grey;
-    margin: 5px;
-    padding: 0px 5px 5px 5px;
+    padding-bottom: 3px;
 }
 .checkbox-box-success {
     border-radius: 15px;
