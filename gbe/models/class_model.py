@@ -17,7 +17,7 @@ from gbe.models import (
     Profile,
     visible_bid_query,
 )
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 from gbetext import (
     acceptance_states,
@@ -125,7 +125,7 @@ class Class(Biddable, Event):
         return [self.b_title,
                 self.teacher,
                 self.type,
-                date_format(self.updated_at, "DATETIME_FORMAT"),
+                date_format(self.updated_at, "GBE_DATETIME_FORMAT"),
                 acceptance_states[self.accepted][1]]
 
     @property

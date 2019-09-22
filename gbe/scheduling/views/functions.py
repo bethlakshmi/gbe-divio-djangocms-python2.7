@@ -29,7 +29,7 @@ from gbe.models import (
     Room,
     UserMessage,
 )
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from django.http import Http404
 from gbetext import event_labels
 from gbe_forms_text import event_settings
@@ -80,7 +80,7 @@ def show_general_status(request, status_response, view):
         if warning.occurrence:
             message_text += '<br>- Conflicting booking: %s, Start Time: %s' % (
                 str(warning.occurrence),
-                warning.occurrence.starttime.strftime(DATETIME_FORMAT))
+                warning.occurrence.starttime.strftime(GBE_DATETIME_FORMAT))
         messages.warning(
             request,
             '%s  %s' % (user_message[0].description, message_text))
@@ -109,7 +109,7 @@ def show_scheduling_occurrence_status(request, occurrence_response, view):
                 user_message[0].description,
                 str(occurrence_response.occurrence),
                 occurrence_response.occurrence.starttime.strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
 
 
 #

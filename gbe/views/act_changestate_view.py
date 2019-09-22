@@ -11,10 +11,7 @@ from scheduler.models import (
     Event as sEvent,
     ResourceAllocation,
 )
-from settings import (
-    DATETIME_FORMAT,
-    DAY_FORMAT,
-    )
+from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 from gbe.views import BidChangeStateView
 from gbe.models import (
@@ -77,7 +74,9 @@ class ActChangeStateView(BidChangeStateView):
                         "%s is booked for - %s - %s" % (
                             str(worker),
                             str(problem),
-                            date_format(problem.starttime, "DATETIME_FORMAT")
+                            date_format(
+                                problem.starttime,
+                                "GBE_DATETIME_FORMAT")
                         )
                     )
 

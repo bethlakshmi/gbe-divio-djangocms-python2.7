@@ -8,7 +8,7 @@ from gbe.models import (
     StaffArea,
 )
 from scheduler.idd import get_occurrences
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 
 
 class PickVolunteerTopicForm(Form):
@@ -45,7 +45,7 @@ class PickVolunteerTopicForm(Form):
                     event_choices[event.event_type] += [
                         (item.pk, "%s - %s" % (
                             event.e_title,
-                            item.start_time.strftime(DATETIME_FORMAT)))]
+                            item.start_time.strftime(GBE_DATETIME_FORMAT)))]
             if len(event_choices['Show']) > 0:
                 complete_choices += [('Shows', event_choices['Show'])]
             if len(event_choices['Special']) > 0:

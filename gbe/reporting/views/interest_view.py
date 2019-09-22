@@ -16,7 +16,7 @@ from gbe.models import (
     Performer,
     UserMessage,
 )
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from gbetext import interested_report_explain_msg
 
 
@@ -55,7 +55,7 @@ def interest_view(request):
         display_item = {
             'id': occurrence.id,
             'sort_start': occurrence.start_time,
-            'start':  occurrence.start_time.strftime(DATETIME_FORMAT),
+            'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
             'title': class_event.e_title,
             'location': occurrence.location,
             'teachers': teachers,

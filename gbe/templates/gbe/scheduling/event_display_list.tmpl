@@ -44,8 +44,8 @@
 	  {% for sched_event in event.scheduled_events %}
 	    {% include "gbe/scheduling/favorite_star.tmpl"%}
             {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=sched_event.evaluate %}
-            {{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT") }} -
-	    {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT") }}
+            {{ sched_event.occurrence.start_time|date:_("GBE_DATETIME_FORMAT") }} -
+	    {{ sched_event.occurrence.end_time|date:_("GBE_TIME_FORMAT") }}
 	  <br/>
 	  {% endfor %}
           </div></div>

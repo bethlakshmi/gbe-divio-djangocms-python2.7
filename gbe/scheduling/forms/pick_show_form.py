@@ -5,7 +5,7 @@ from django.forms import (
 )
 from gbe.models import Show
 from scheduler.idd import get_occurrences
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 
 
 class PickShowForm(Form):
@@ -37,6 +37,7 @@ class PickShowForm(Form):
                     choices += [
                         (occurrence.pk, "%s - %s" % (
                             event.e_title,
-                            occurrence.start_time.strftime(DATETIME_FORMAT)))]
+                            occurrence.start_time.strftime(
+                                GBE_DATETIME_FORMAT)))]
             choices += [("", "Make New Show")]
             self.fields['show'].choices = choices

@@ -17,8 +17,8 @@
 	<div class="col-xs-12 sched-sub-box">
 	  <div class="col-xs-11 ">
   	    <label class="sched_detail">Time:</label>
-	    {{ occurrence.start_time|date:_("DATETIME_FORMAT")}} -
-	    {{ occurrence.end_time|date:_("TIME_FORMAT")}}
+	    {{ occurrence.start_time|date:_("GBE_DATETIME_FORMAT")}} -
+	    {{ occurrence.end_time|date:_("GBE_TIME_FORMAT")}}
 	  </div>
 	  <div class="col-xs-11 ">
 	    {% for presenter in presenters %}

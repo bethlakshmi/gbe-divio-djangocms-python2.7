@@ -27,7 +27,7 @@
 	{% if event.scheduled_events %}
 	<label class="listlabel">Time(s):</label>
 	  {% for sched_event in event.scheduled_events %}
-	  {{ sched_event.start_time|date:_("DATETIME_FORMAT") }} - {{ sched_event.end_time|date:_("TIME_FORMAT") }}
+	  {{ sched_event.start_time|date:_("GBE_DATETIME_FORMAT") }} - {{ sched_event.end_time|date:_("GBE_TIME_FORMAT") }}
 	  {% endfor %}
 	{% endif %}
 	<br>

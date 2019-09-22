@@ -10,9 +10,7 @@ from scheduler.data_transfer import (
 from datetime import datetime, timedelta
 from model_utils.managers import InheritanceManager
 from gbetext import *
-from settings import (
-    DATETIME_FORMAT,
-    DAY_FORMAT,)
+from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 from django.core.exceptions import MultipleObjectsReturned
 import pytz
@@ -625,7 +623,7 @@ class Event(Schedulable):
         uses the Person from the data_transfer objects.
         '''
         warnings = []
-        time_format = DATETIME_FORMAT
+        time_format = GBE_DATETIME_FORMAT
 
         worker = None
         if person.public_id:

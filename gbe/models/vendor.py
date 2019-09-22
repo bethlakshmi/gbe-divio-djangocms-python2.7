@@ -17,7 +17,7 @@ from gbetext import (
 )
 from gbe_forms_text import vendor_schedule_options
 from filer.fields.image import FilerImageField
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 
 
@@ -79,7 +79,7 @@ class Vendor(Biddable):
         return [self.profile.display_name,
                 self.b_title,
                 self.website,
-                date_format(self.updated_at, "DATETIME_FORMAT"),
+                date_format(self.updated_at, "GBE_DATETIME_FORMAT"),
                 acceptance_states[self.accepted][1]]
 
     @property

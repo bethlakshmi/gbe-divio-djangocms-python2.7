@@ -38,7 +38,7 @@
   	    {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
 	  <div class="col-xs-11 ">
-  	    <label class="sched_detail">Time:</label> {{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT")}}<br>
+  	    <label class="sched_detail">Time:</label> {{ sched_event.occurrence.start_time|date:_("GBE_DATETIME_FORMAT")}} - {{ sched_event.occurrence.end_time|date:_("GBE_TIME_FORMAT")}}<br>
 	    <label class="sched_detail">Location:</label>  {{ sched_event.occurrence.location }}<br>
 	  </div>
 	</div>

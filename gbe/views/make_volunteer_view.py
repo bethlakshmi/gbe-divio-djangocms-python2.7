@@ -31,7 +31,7 @@ from gbe.email.functions import (
     send_schedule_update_mail,
     send_warnings_to_staff,
 )
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from scheduler.idd import (
     get_all_container_bookings,
     get_schedule,
@@ -98,7 +98,7 @@ class MakeVolunteerView(MakeBidView):
                     conflicts += [conflict.event]
                     warning = {
                         'time': conflict.event.starttime.strftime(
-                            DATETIME_FORMAT),
+                            GBE_DATETIME_FORMAT),
                         'event': str(conflict.event),
                         'interest': conflict.event.eventitem.child(
                             ).volunteer_category_description,

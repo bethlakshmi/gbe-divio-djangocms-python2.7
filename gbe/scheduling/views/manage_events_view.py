@@ -12,8 +12,7 @@ from django.utils.formats import date_format
 from datetime import timedelta
 from settings import (
     GBE_DATE_FORMAT,
-    DATETIME_FORMAT,
-    TIME_FORMAT,
+    GBE_DATETIME_FORMAT,
     URL_DATE,
 )
 from gbe.models import (
@@ -93,7 +92,7 @@ class ManageEventsView(View):
             display_item = {
                 'id': occurrence.id,
                 'sort_start': occurrence.start_time,
-                'start':  occurrence.start_time.strftime(DATETIME_FORMAT),
+                'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
                 'title': occurrence.eventitem.event.e_title,
                 'location': occurrence.location,
                 'duration': occurrence.eventitem.event.duration.total_seconds(

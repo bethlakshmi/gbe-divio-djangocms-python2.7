@@ -16,7 +16,7 @@ from gbe.models import (
     Performer,
     UserMessage,
 )
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from gbetext import eval_report_explain_msg
 from gbe.scheduling.views.functions import (
     show_general_status,
@@ -78,7 +78,7 @@ def eval_view(request, occurrence_id=None):
             'id': occurrence.id,
             'eventitem_id': class_event.eventitem_id,
             'sort_start': occurrence.start_time,
-            'start':  occurrence.start_time.strftime(DATETIME_FORMAT),
+            'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
             'title': class_event.e_title,
             'teachers': teachers,
             'interested': len(interested),

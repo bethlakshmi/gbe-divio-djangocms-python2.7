@@ -21,7 +21,7 @@ from gbe.functions import (
     validate_perms,
 )
 from gbe_logging import logger
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 from gbe.reporting.functions import prep_act_tech_info
 
@@ -236,7 +236,7 @@ def export_act_techinfo(request, show_id):
         rehearsals = ""
         for rehearsal in act.get_scheduled_rehearsals():
             rehearsals += date_format(
-                rehearsal.start_time, "DATETIME_FORMAT") + ", "
+                rehearsal.start_time, "GBE_DATETIME_FORMAT") + ", "
 
         start = [act.order,
                  act.b_title.encode('utf-8').strip(),

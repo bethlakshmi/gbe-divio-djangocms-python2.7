@@ -13,7 +13,7 @@ from gbe.models import (
 )
 from settings import (
     GBE_DATE_FORMAT,
-    DATETIME_FORMAT
+    GBE_DATETIME_FORMAT
 )
 from gbe_forms_text import (
     copy_mode_labels,
@@ -79,7 +79,7 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
                 for occurrence in response.occurrences:
                     choices += [(occurrence.pk, "%s - %s" % (
                         str(occurrence),
-                        occurrence.start_time.strftime(DATETIME_FORMAT)))]
+                        occurrence.start_time.strftime(GBE_DATETIME_FORMAT)))]
         else:
             areas = StaffArea.objects.exclude(
                 conference__status="completed")

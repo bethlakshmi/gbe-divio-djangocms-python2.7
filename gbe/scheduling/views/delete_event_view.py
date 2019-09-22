@@ -13,7 +13,7 @@ from scheduler.idd import (
 from gbe.scheduling.views.functions import show_general_status
 from gbe.models import UserMessage
 from gbe.functions import validate_perms
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 
 
 class DeleteEventView(View):
@@ -70,7 +70,7 @@ class DeleteEventView(View):
                     user_message[0].description,
                     title,
                     start_time.strftime(
-                        DATETIME_FORMAT)))
+                        GBE_DATETIME_FORMAT)))
         return HttpResponseRedirect(self.redirect_to)
 
     def dispatch(self, *args, **kwargs):

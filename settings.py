@@ -71,38 +71,21 @@ except:
 
 # TIME_FORMAT is often used for ending times of events, or when you
 # do not need to give the date, such as in calendar grids
-try:
-    TIME_FORMAT
-except:
-    TIME_FORMAT = "%-I:%M %p"
-
+GBE_TIME_FORMAT = "%-I:%M %p"
 GBE_DATE_FORMAT = "%a, %b %-d"
+GBE_DATETIME_FORMAT = GBE_DATE_FORMAT+" "+GBE_TIME_FORMAT
+GBE_SHORT_DATETIME_FORMAT = "%a, "+GBE_TIME_FORMAT
+#GBE_DAY_FORMAT = "%A"
 
 try:
     URL_DATE
 except:
     URL_DATE = "%m-%d-%Y"
-try:
-    DATETIME_FORMAT
-except:
-    # Default DATETIME_FORMAT - see 'man date' for format options
-    # DATETIME_FORMAT = "%I:%M %p"
-    DATETIME_FORMAT = GBE_DATE_FORMAT+" "+TIME_FORMAT
-
-try:
-    SHORT_DATETIME_FORMAT
-except:
-    SHORT_DATETIME_FORMAT = "%a, "+TIME_FORMAT
 
 try:
     DURATION_FORMAT
 except:
     DURATION_FORMAT = "%-I:%M"
-
-try:
-    DAY_FORMAT
-except:
-    DAY_FORMAT = "%A"
 
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com'
 

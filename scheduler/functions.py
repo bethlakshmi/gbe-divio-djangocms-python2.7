@@ -14,9 +14,8 @@ from random import choice
 
 import math
 from settings import (
-    DATETIME_FORMAT,
-    TIME_FORMAT,
-    DATE_FORMAT,
+    GBE_DATETIME_FORMAT,
+    GBE_TIME_FORMAT,
 )
 from django.utils.formats import date_format
 from django.core.urlresolvers import reverse
@@ -150,8 +149,8 @@ def calendar_export(conference=None,
         get_current_conference_slug,
     )
     from expo.settings import (
-        DATETIME_FORMAT,
-        TIME_FORMAT,
+        GBE_DATETIME_FORMAT,
+        GBE_TIME_FORMAT,
         )
     import string
 
@@ -214,12 +213,12 @@ def calendar_export(conference=None,
                 (date_format(event['start_time'], 'DATE_FORMAT')
                  .replace(',', ''))
             csv_line = csv_line + '"%s",' % \
-                (date_format(event['start_time'], 'TIME_FORMAT')
+                (date_format(event['start_time'], 'GBE_TIME_FORMAT')
                  .replace('a.m.', 'AM').replace('p.m.', 'PM')
                  .replace('am', 'AM').replace('pm', 'PM')
                  .replace('noon', '12 PM').replace('midnight', '12 AM'))
             csv_line = csv_line + '"%s",' % \
-                (date_format(event['stop_time'], 'TIME_FORMAT')
+                (date_format(event['stop_time'], 'GBE_TIME_FORMAT')
                  .replace('a.m.', 'AM').replace('p.m.', 'PM')
                  .replace('am', 'AM').replace('pm', 'PM')
                  .replace('noon', '12 PM').replace('midnight', '12 AM'))
