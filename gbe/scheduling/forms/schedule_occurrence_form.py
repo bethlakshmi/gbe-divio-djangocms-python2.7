@@ -18,14 +18,14 @@ from datetime import time
 from gbe_forms_text import schedule_occurrence_labels
 from settings import (
     GBE_DATE_FORMAT,
-    TIME_FORMAT
+    GBE_TIME_FORMAT
 )
 
 
 time_start = 8 * 60
 time_stop = 24 * 60
 conference_times = [(time(mins/60, mins % 60),
-                     time(mins/60, mins % 60).strftime(TIME_FORMAT))
+                     time(mins/60, mins % 60).strftime(GBE_TIME_FORMAT))
                     for mins in range(time_start, time_stop, 30)]
 
 
