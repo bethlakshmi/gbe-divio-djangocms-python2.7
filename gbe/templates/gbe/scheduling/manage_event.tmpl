@@ -1,11 +1,10 @@
 {% extends "base.tmpl" %}
-{% load staticfiles %}
+{% load staticfiles sekizai_tags %}
 {% block title %}
   Manage Expo Schedule
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 {% endblock %}
 
@@ -156,6 +155,8 @@
 {% endif %}
  </div>
 </div>
+{% addtoblock "js" %}
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script>
   $(document).ready(function() {
     var table = $('#event_review').DataTable({
@@ -175,4 +176,7 @@
     } );
 } );
 </script>
+{% endaddtoblock %}
 {% endblock %}
+
+

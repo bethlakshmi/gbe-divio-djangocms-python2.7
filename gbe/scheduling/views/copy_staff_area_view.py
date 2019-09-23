@@ -12,7 +12,7 @@ from datetime import (
     datetime,
     timedelta
 )
-from settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from django.utils.text import slugify
 from django.contrib import messages
 from gbe.models import UserMessage
@@ -78,7 +78,7 @@ class CopyStaffAreaView(CopyCollectionsView):
         new_title = self.area.title
         new_slug = self.area.slug
         if conference == self.area.conference:
-            now = datetime.now().strftime(DATETIME_FORMAT)
+            now = datetime.now().strftime(GBE_DATETIME_FORMAT)
             new_title = "%s - New - %s" % (
                 self.area.title,
                 now)

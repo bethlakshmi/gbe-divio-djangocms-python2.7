@@ -1,5 +1,5 @@
 {% extends 'base.tmpl' %}
-{% load staticfiles %}
+{% load staticfiles sekizai_tags %}
 
 {% block title %}
    Review Bids
@@ -7,7 +7,6 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
 {% endblock %}
 {% block content %}
@@ -78,15 +77,13 @@
     {% endfor %}
     </tbody>
   </table>
-
+{% addtoblock "js" %}
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script>
   $(document).ready(function() {
     var table = $('#bid_review').DataTable({
         "paging": false,
-        "columnDefs": [
-            {"targets": [ 2 ], "visible": false },
-	    {"targets": 13, "orderable": false, }],
-	"order": [[ 13, "desc" ]]});
+        "columnDefs": [{"targets": [ 2 ], "visible": false },]});
 
     $('a.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
@@ -99,4 +96,5 @@
     } );
 } );
   </script>
+{% endaddtoblock %}
 {% endblock %}

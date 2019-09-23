@@ -16,10 +16,6 @@ from gbe.models import (
     visible_bid_query,
     VolunteerWindow,
 )
-from settings import (
-    GBE_DATETIME_FORMAT,
-    GBE_TIME_FORMAT,
-)
 from django.utils.formats import date_format
 import pytz
 
@@ -86,8 +82,8 @@ class Volunteer(Biddable):
         commitments = ''
 
         for event in self.profile.get_schedule(self.b_conference):
-            start_time = date_format(event.start_time, "GBE_DATETIME_FORMAT")
-            end_time = date_format(event.end_time, "GBE_TIME_FORMAT")
+            start_time = date_format(event.start_time, 'DATETIME_FORMAT')
+            end_time = date_format(event.end_time, 'TIME_FORMAT')
 
             commitment_string = "%s - %s to %s, \n " % (
                 str(event),

@@ -25,7 +25,6 @@ from gbetext import (
     video_options,
 )
 from scheduler.models import ActItem
-from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 from django.core.urlresolvers import reverse
 
@@ -136,7 +135,7 @@ class Act (Biddable, ActItem):
 
         return [self.performer.name,
                 self.b_title,
-                date_format(self.updated_at, "GBE_DATETIME_FORMAT"),
+                date_format(self.updated_at, 'DATETIME_FORMAT'),
                 acceptance_states[self.accepted][1],
                 castings]
 

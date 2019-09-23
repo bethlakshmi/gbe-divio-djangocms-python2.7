@@ -32,7 +32,7 @@ class ReviewBidListView(View):
 
     def review_query(self, bids):
         return self.bid_evaluation_type.objects.filter(
-            bid=bids).select_related(
+            bid__in=bids).select_related(
                 'evaluator').order_by('bid', 'evaluator')
 
     def row_hook(self, bid, row):
@@ -97,5 +97,6 @@ class ReviewBidListView(View):
             return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
 
         self.conference_slugs = Conference.all_slugs()
+
         return render(request, self.template,
                       self.get_context_dict())
