@@ -24,7 +24,7 @@
   <div>
     Toggle column(s):
     {% for header_item in header %}
-      <a class="toggle-vis" data-column="{{ forloop.counter0 }}">
+      <a class="toggle-vis" id="gbe-table-select" data-column="{{ forloop.counter0 }}">
 	{{ header_item }}</a>{% if not forloop.last %} - {% endif %}
     {% endfor %}
   </div>
