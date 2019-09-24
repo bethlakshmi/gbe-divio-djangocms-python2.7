@@ -1,0 +1,40 @@
+[
+{
+    "pk": 1, 
+    "model": "scheduler.resourceitem", 
+    "fields": {}
+},
+{
+    "pk": 2, 
+    "model": "scheduler.resourceitem", 
+    "fields": {}
+},
+{
+    "pk": 1, 
+    "model": "scheduler.locationitem", 
+    "fields": {}
+},
+{
+    "pk": 2, 
+    "model": "scheduler.locationitem", 
+    "fields": {}
+},
+{
+    "pk": 1, 
+    "model": "gbe.room", 
+    "fields": {
+        "capacity": 20, 
+        "name": "Crispus Attucks", 
+        "overbook_size": 100
+    }
+},
+{
+    "pk": 2, 
+    "model": "gbe.room", 
+    "fields": {
+        "capacity": 20, 
+        "name": "John Hancock A", 
+        "overbook_size": 100
+    }
+}
+]

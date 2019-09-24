@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+<result>success</result>
+<resultcode>000000</resultcode>
+<note/>
+<totalprices>12</totalprices>
+<price>
+	<price_id>3652649</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>0.00</value>
+	<service_fee>0.00</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>4513068</price_id>
+	<live>y</live>
+	<name>Whole Shebang</name>
+	<value>125.00</value>
+	<service_fee>5.37</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>3652650</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>350.00</value>
+	<service_fee>13.24</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>3652651</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>275.00</value>
+	<service_fee>10.62</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>3652652</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>225.00</value>
+	<service_fee>8.87</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>3652644</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>150.00</value>
+	<service_fee>6.24</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>36</price_available>
+	
+</price>
+<price>
+	<price_id>3652645</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>175.00</value>
+	<service_fee>7.12</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>3652648</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>125.00</value>
+	<service_fee>5.37</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>48</price_available>
+	
+</price>
+<price>
+	<price_id>4506839</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>99.00</value>
+	<service_fee>4.46</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>4506838</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>99.00</value>
+	<service_fee>4.46</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>4506065</price_id>
+	<live>n</live>
+	<name>Whole Shebang</name>
+	<value>40.00</value>
+	<service_fee>2.39</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>50</price_available>
+	
+</price>
+<price>
+	<price_id>3652647</price_id>
+	<live>n</live>
+	<name>Whole Shebang 2016 -$99</name>
+	<value>99.00</value>
+	<service_fee>4.46</service_fee>
+	<venue_fee>0.00</venue_fee>
+	<price_available>0</price_available>
+	
+</price>
+
+</document>

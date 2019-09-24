@@ -25,3 +25,10 @@ pytz==2019.2
 django-tinymce==2.8.0
 reportlab==3.5.23
 pep8
+django-nose==1.4.6
+coverage
+factory-boy==2.12.0
+mock==2.0.0
+pytest==4.6.5
+pytest-django==3.5.1
+pytest-cov==2.7.1
