@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+<result>success</result>
+<resultcode>000000</resultcode>
+<note/>
+<item>
+	<order_time>2014-08-16 00:26:56</order_time>
+	<date_id>1092152</date_id>
+	<price_id>3255985</price_id>
+	<quantity>1</quantity>
+	<fname>John</fname>
+	<lname>Smith</lname>
+	<address/>
+	<city/>
+	<state/>
+	<zip/>
+	<country>United States</country>
+	<email>test@tickets.com</email>
+	<phone>111-222-3333</phone>
+	<cc>N/A</cc>
+	<shipping_method>Will Call</shipping_method>
+	<order_notes/>
+	<ticket_number>A12345678</ticket_number>
+	<section/>
+	<row/>
+	<seat/>
+	<tracker_id>tracker12345</tracker_id>
+</item>
+</document>

@@ -111,3 +111,4 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'gbe.auth.EmailUsernameAuth',
 ]
+FIXTURE_DIRS = ('expo/tests/fixtures',)
