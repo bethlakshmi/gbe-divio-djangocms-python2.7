@@ -3,12 +3,12 @@ from cms.plugin_pool import plugin_pool
 from django.utils.translation import ugettext as _
 from gbe.forms import (
     ContactForm,
-#    ClassProposalForm,
+    ClassProposalForm,
 )
 from cms.models.pluginmodel import CMSPlugin
 from django.core.urlresolvers import reverse
 
-'''
+
 class ClassIdeaPlugin(CMSPluginBase):
     model = CMSPlugin
     module = _("GBE Plugins")
@@ -22,7 +22,6 @@ class ClassIdeaPlugin(CMSPluginBase):
                                                    urlconf='gbe.urls'),
                         'nodraft': 'Submit'})
         return context
-'''
 
 class ContactFormPlugin(CMSPluginBase):
     model = CMSPlugin
@@ -70,7 +69,7 @@ class AdRotatorPlugin(CMSPluginBase):
     render_template = 'gbe/ad-rotator.tmpl'
 '''
 # register the plugins
-#plugin_pool.register_plugin(ClassIdeaPlugin)
+plugin_pool.register_plugin(ClassIdeaPlugin)
 plugin_pool.register_plugin(ContactFormPlugin)
 #plugin_pool.register_plugin(SubscribeEmailPlugin)
 plugin_pool.register_plugin(GoFundMePlugin)

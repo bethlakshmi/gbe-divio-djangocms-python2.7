@@ -105,11 +105,12 @@ class TestClassWizard(TestCase):
             self.url,
             data=data,
             follow=True)
+        print response.content
         self.assertContains(
             response,
-            '<input checked="checked" id="id_accepted_class_1" ' +
-            'name="accepted_class" type="radio" value="%d" />' %
-            self.test_class.pk)
+            ('<input type="radio" name="accepted_class" value="%d" ' +
+             'checked id="id_accepted_class_1" />') %
+             self.test_class.pk)
 
     def test_invalid_form(self):
         login_as(self.privileged_user, self)
@@ -132,23 +133,23 @@ class TestClassWizard(TestCase):
             follow=True)
         self.assertContains(
             response,
-            '<input checked="checked" id="id_accepted_class_0" ' +
-            'name="accepted_class" type="radio" value="" />')
+            '<input type="radio" name="accepted_class" value="" checked ' +
+            'id="id_accepted_class_0" />')
         self.assertContains(
             response,
             'Make New Class')
         self.assertContains(
             response,
-            'type="number" value="1"')
+            'name="duration" value="1"')
         self.assertContains(
             response,
             '<option value="%d">%s</option>' % (
                 self.day.pk,
-                self.day.day.strftime(DATE_FORMAT)
+                self.day.day.strftime(GBE_DATE_FORMAT)
             ))
         self.assertContains(
             response,
-            '<option value="%s" selected="selected">%s</option>' % (
+            '<option value="%s" selected>%s</option>' % (
                 'Teacher',
                 'Teacher'))
 
@@ -165,16 +166,16 @@ class TestClassWizard(TestCase):
             self.test_class.b_title)
         self.assertContains(
             response,
-            'type="number" value="1.0"')
+            'type="number" name="duration" value="1.0"')
         self.assertContains(
             response,
             '<option value="%d">%s</option>' % (
                 self.day.pk,
-                self.day.day.strftime(DATE_FORMAT)
+                self.day.day.strftime(GBE_DATE_FORMAT)
             ))
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
+            '<option value="%d" selected>%s</option>' % (
                 self.test_class.teacher.pk,
                 str(self.test_class.teacher)))
 
@@ -200,7 +201,7 @@ class TestClassWizard(TestCase):
         self.assertContains(response, "Moderator")
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
+            '<option value="%d" selected>%s</option>' % (
                 panel.teacher.pk,
                 str(panel.teacher)))
 
@@ -214,7 +215,7 @@ class TestClassWizard(TestCase):
         occurrence = Event.objects.filter(eventitem=self.test_class)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -227,7 +228,7 @@ class TestClassWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.day.day.strftime(DATE_FORMAT))
+                self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
@@ -248,7 +249,7 @@ class TestClassWizard(TestCase):
             eventitem__eventitem_id=new_class.eventitem_id)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -261,7 +262,7 @@ class TestClassWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.day.day.strftime(DATE_FORMAT))
+                self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
