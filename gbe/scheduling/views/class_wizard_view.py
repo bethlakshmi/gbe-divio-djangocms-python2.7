@@ -16,6 +16,7 @@ from gbe.views.class_display_functions import get_scheduling_info
 from gbe.models import Class
 from gbe.scheduling.views import EventWizardView
 from gbe.duration import Duration
+from datetime import timedelta
 from django.contrib import messages
 from gbe.models import UserMessage
 from gbe_forms_text import (
@@ -95,8 +96,8 @@ class ClassWizardView(EventWizardView):
                     working_class.e_title)
                 context['third_form'] = ClassBookingForm(
                     instance=working_class)
-                duration = working_class.duration.hours() + float(
-                    working_class.duration.minutes())/60
+                duration = working_class.duration.total_seconds(
+                    ) / timedelta(hours=1).total_seconds()
                 context['scheduling_info'] = get_scheduling_info(working_class)
             else:
                 context['third_form'] = ClassBookingForm()

@@ -760,14 +760,17 @@ class Event(Schedulable):
         - if this event starts first, but bleeds into the other event by
         overlapping end_time - it's a conflict
         '''
+        self_start = self.start_time.replace(tzinfo=pytz.utc)
+        other_start = other_event.start_time.replace(tzinfo=pytz.utc)
+        self_end = self.end_time.replace(tzinfo=pytz.utc)
+        other_end = other_event.end_time.replace(tzinfo=pytz.utc)
+
         is_conflict = False
-        if self.start_time == other_event.start_time:
+        if self_start == other_start:
             is_conflict = True
-        elif (self.start_time > other_event.start_time and
-              self.start_time < other_event.end_time):
+        elif (self_start > other_start and self_start < other_end):
             is_conflict = True
-        elif (self.start_time < other_event.start_time and
-              self.end_time > other_event.start_time):
+        elif (self_start < other_start and self_end > other_start):
             is_conflict = True
         return is_conflict
 

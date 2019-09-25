@@ -79,8 +79,8 @@ class ManageEventsView(View):
                     prefix=conf.conference_slug)
                 conf_day_list = []
                 for day in conf.conferenceday_set.all():
-                    conf_day_list += [(day.pk, 
-                        day.day.strftime(GBE_DATE_FORMAT))]
+                    conf_day_list += [(day.pk,
+                                       day.day.strftime(GBE_DATE_FORMAT))]
                 hidden_form.fields['day'].choices = conf_day_list
                 context['other_forms'] += [hidden_form]
         return context

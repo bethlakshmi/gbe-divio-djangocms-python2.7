@@ -120,9 +120,9 @@ def assert_event_was_picked_in_wizard(response, event_type):
         for subitem in header[1]:
             if event_type == subitem[0]:
                 checked_button = (
-                    '<input checked="checked" id="id_event_type_' +
-                    '%d_%d" name="event_type" type="radio" value="%s" />') % (
-                    x, y, event_type)
+                    '<input type="radio" name="event_type" value="%s"' +
+                    ' required checked id="id_event_type_%d_%d" />') % (
+                    event_type, x, y)
             y += 1
         x += 1
     assert '<a data-toggle="collapse" href="#collapse1">' in response.content

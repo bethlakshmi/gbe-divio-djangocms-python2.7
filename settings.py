@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 INSTALLED_ADDONS = [
-    # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
+    # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags 
+    # is auto-generated. Manual changes will be overwritten.
     'aldryn-addons',
     'aldryn-django',
     'aldryn-sso',
@@ -75,7 +76,7 @@ GBE_TIME_FORMAT = "%-I:%M %p"
 GBE_DATE_FORMAT = "%a, %b %-d"
 GBE_DATETIME_FORMAT = GBE_DATE_FORMAT+" "+GBE_TIME_FORMAT
 GBE_SHORT_DATETIME_FORMAT = "%a, "+GBE_TIME_FORMAT
-#GBE_DAY_FORMAT = "%A"
+# GBE_DAY_FORMAT = "%A"
 
 try:
     URL_DATE
