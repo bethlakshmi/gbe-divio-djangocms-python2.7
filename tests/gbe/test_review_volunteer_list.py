@@ -21,10 +21,6 @@ from tests.functions.gbe_functions import (
 )
 from scheduler.models import Event as sEvent
 from datetime import datetime, date, time
-from expo.settings import (
-    DATETIME_FORMAT,
-    TIME_FORMAT,
-)
 from django.utils.formats import date_format
 import pytz
 from scheduler.models import (

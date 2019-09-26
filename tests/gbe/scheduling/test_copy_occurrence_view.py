@@ -58,12 +58,12 @@ class TestCopyOccurrence(TestCase):
     def assert_good_mode_form(self, response, title, date):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
-                            self.context.conf_day.day.strftime(DATE_FORMAT))
+                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertContains(response, copy_mode_choices[0][1])
         self.assertContains(response, copy_mode_choices[1][1])
         self.assertContains(response, "%s - %s" % (
             title,
-            date.strftime(DATETIME_FORMAT)))
+            date.strftime(GBE_DATETIME_FORMAT)))
 
     def test_create_event_unauthorized_user(self):
         login_as(ProfileFactory(), self)
@@ -88,7 +88,7 @@ class TestCopyOccurrence(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
-                            self.context.conf_day.day.strftime(DATE_FORMAT))
+                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertNotContains(response, copy_mode_choices[0][1])
 
     def test_authorized_user_get_w_child_events(self):
@@ -171,7 +171,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     another_day.day,
                     self.context.opp_event.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
 
     def test_authorized_user_pick_mode_include_parent(self):
         another_day = ConferenceDayFactory(conference=self.context.conference)
@@ -314,7 +314,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     target_context.days[0].day,
                     show_context.opp_event.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
 
     def test_copy_child_parent_events(self):
         another_day = ConferenceDayFactory()
@@ -352,7 +352,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     another_day.day,
                     show_context.opp_event.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
         assert_alert_exists(
             response,
             'success',
@@ -362,7 +362,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
 
     def test_copy_child_not_like_parent(self):
         another_day = ConferenceDayFactory()
@@ -402,7 +402,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     another_day.day + timedelta(1),
                     opp_sched.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
         new_vol_opp = Event.objects.get(pk=max_pk)
         self.assertEqual(new_vol_opp.max_volunteer, opp_sched.max_volunteer)
         self.assertEqual(new_vol_opp.location, opp_sched.location)
@@ -422,7 +422,7 @@ class TestCopyOccurrence(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=data, follow=True)
         max_pk = Event.objects.latest('pk').pk
-        redirect_url = "%s?%s-day=%d&filter=Filter&new=[%sL]" % (
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=[%s]" % (
             reverse('manage_event_list',
                     urlconf='gbe.scheduling.urls',
                     args=[another_day.conference.conference_slug]),
@@ -439,7 +439,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
         self.assertContains(response, "Occurrence has been updated.<br>", 1)
 
     def test_copy_bad_second_form(self):

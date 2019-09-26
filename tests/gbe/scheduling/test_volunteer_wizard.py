@@ -16,6 +16,7 @@ from tests.contexts import (
 from scheduler.models import Event
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_radio_state,
     grant_privilege,
     login_as,
 )
@@ -159,10 +160,11 @@ class TestVolunteerWizard(TestCase):
                 'pick_topic': True,
                 'volunteer_topic': ""},
             follow=True)
-        self.assertContains(
-            response,
-            '<input checked="checked" id="id_volunteer_topic_3_0" ' +
-            'name="volunteer_topic" type="radio" value="" />')
+        assert_radio_state(response, 
+                           "volunteer_topic", 
+                           "id_volunteer_topic_3_0", 
+                           "", 
+                           True)
         self.assertContains(
             response,
             'Make New Volunteer Opportunity')
@@ -178,7 +180,7 @@ class TestVolunteerWizard(TestCase):
         occurrence = Event.objects.order_by('pk').last()
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -191,7 +193,7 @@ class TestVolunteerWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.special_volunteer.window.day.day.strftime(DATE_FORMAT))
+                self.special_volunteer.window.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,

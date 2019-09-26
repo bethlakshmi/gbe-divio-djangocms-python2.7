@@ -32,7 +32,6 @@ from tests.functions.gbe_functions import (
     set_image,
 )
 from tests.contexts import ActTechInfoContext
-from expo.settings import TIME_FORMAT
 from django.utils.formats import date_format
 from gbetext import interested_explain_msg
 from datetime import (

@@ -7,7 +7,7 @@ if sys.executable != INTERP:
     os.execl(INTERP, INTERP, *sys.argv)
 # Setup paths and environment variables
 sys.path.append(os.getcwd())
-os.environ['DJANGO_SETTINGS_MODULE'] = 'expo.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 # Set the application
 import django.core.handlers.wsgi
 from paste.exceptions.errormiddleware import ErrorMiddleware

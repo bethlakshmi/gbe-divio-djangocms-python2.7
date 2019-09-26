@@ -130,6 +130,6 @@ def assert_event_was_picked_in_wizard(response, event_type):
 
 
 def assert_role_choice(response, role_type):
-    assert '<option value="%s" selected="selected">%s</option>' % (
+    assert '<option value="%s" selected>%s</option>' % (
         role_type,
         role_type) in response.content

@@ -35,7 +35,7 @@ from gbetext import (
     default_volunteer_no_interest_msg
 )
 from gbe.models import UserMessage
-from expo.settings import DATETIME_FORMAT
+from settings import GBE_DATETIME_FORMAT
 from post_office.models import EmailTemplate
 from django.core import mail
 
@@ -281,7 +281,7 @@ class TestEditVolunteer(TestCase):
     def test_remove_available_window_conflict(self):
         response, context = self.post_conflict(staff=False)
         assert 'Warning', "<li>%s working for %s - as %s" % (
-            context.window.start_time.strftime(DATETIME_FORMAT),
+            context.window.start_time.strftime(GBE_DATETIME_FORMAT),
             str(context.opportunity),
             context.opportunity.child(
                 ).volunteer_category_description
@@ -302,7 +302,7 @@ class TestEditVolunteer(TestCase):
             form,
             follow=True)
         assert 'Warning', "<li>%s working for %s - as %s" % (
-            context.window.start_time.strftime(DATETIME_FORMAT),
+            context.window.start_time.strftime(GBE_DATETIME_FORMAT),
             str(context.opportunity),
             context.opportunity.child(
                 ).volunteer_category_description
@@ -311,7 +311,7 @@ class TestEditVolunteer(TestCase):
     def test_conflict_w_staff_lead(self):
         response, context = self.post_conflict(staff=True)
         assert 'Warning', "<li>%s working for %s - as %s" % (
-            context.window.start_time.strftime(DATETIME_FORMAT),
+            context.window.start_time.strftime(GBE_DATETIME_FORMAT),
             str(context.opportunity),
             context.opportunity.child(
                 ).volunteer_category_description

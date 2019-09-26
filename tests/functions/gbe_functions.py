@@ -130,6 +130,16 @@ def assert_hidden_value(response, field_id, name, value, max_length=None):
             field_id, name, value) in response.content
 
 
+def assert_radio_state(response, name, button_id, value, checked=False):
+    checked_state = ""
+    if checked:
+        checked_state = "checked "
+    checked_button = (
+        '<input type="radio" name="%s" value="%s" %sid="%s" />' % (
+                    name, value, checked_state, button_id))
+    assert checked_button in response.content
+
+
 def assert_has_help_text(response, help_text):
     assert '<span class="dropt" title="Help">' in response.content
     assert '<img src= "/static/img/question.png" alt="?"/>' in response.content

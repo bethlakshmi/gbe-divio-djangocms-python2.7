@@ -20,6 +20,7 @@ from tests.functions.gbe_functions import (
 from tests.functions.gbe_scheduling_functions import (
     assert_event_was_picked_in_wizard,
     assert_good_sched_event_form_wizard,
+    assert_role_choice,
 )
 from settings import GBE_DATE_FORMAT
 
@@ -147,11 +148,7 @@ class TestClassWizard(TestCase):
                 self.day.pk,
                 self.day.day.strftime(GBE_DATE_FORMAT)
             ))
-        self.assertContains(
-            response,
-            '<option value="%s" selected>%s</option>' % (
-                'Teacher',
-                'Teacher'))
+        assert_role_choice(response, 'Teacher')
 
     def test_auth_user_load_class(self):
         login_as(self.privileged_user, self)

@@ -148,10 +148,6 @@ def calendar_export(conference=None,
         get_conference_by_slug,
         get_current_conference_slug,
     )
-    from expo.settings import (
-        GBE_DATETIME_FORMAT,
-        GBE_TIME_FORMAT,
-        )
     import string
 
     if conference is None:

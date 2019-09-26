@@ -22,7 +22,6 @@ from scheduler.models import (
 )
 from gbe.models import UserMessage
 from gbetext import default_update_act_tech
-from expo.settings import TIME_FORMAT
 from django.utils.formats import date_format
 
 

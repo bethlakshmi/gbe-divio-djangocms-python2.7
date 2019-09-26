@@ -5,11 +5,6 @@ from django.test import Client
 from django.core.exceptions import PermissionDenied
 from datetime import datetime, date, time
 from django.core.urlresolvers import reverse
-from expo.settings import (
-    DATETIME_FORMAT,
-    TIME_FORMAT,
-    SHORT_DATETIME_FORMAT,
-)
 from django.utils.formats import date_format
 import pytz
 import re

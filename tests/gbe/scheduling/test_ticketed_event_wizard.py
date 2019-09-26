@@ -165,12 +165,12 @@ class TestTicketedEventWizard(TestCase):
             'Make New Class')
         self.assertContains(
             response,
-            'type="number" value="1"')
+            'name="duration" value="1"')
         self.assertContains(
             response,
             '<option value="%d">%s</option>' % (
                 self.day.pk,
-                self.day.day.strftime(DATE_FORMAT)
+                self.day.day.strftime(GBE_DATE_FORMAT)
             ))
 
     def test_create_master(self):
@@ -186,7 +186,7 @@ class TestTicketedEventWizard(TestCase):
             eventitem__eventitem_id=new_class.eventitem_id)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -199,7 +199,7 @@ class TestTicketedEventWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.day.day.strftime(DATE_FORMAT))
+                self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
@@ -220,7 +220,7 @@ class TestTicketedEventWizard(TestCase):
             eventitem__eventitem_id=new_class.eventitem_id)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -233,7 +233,7 @@ class TestTicketedEventWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.day.day.strftime(DATE_FORMAT))
+                self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
@@ -264,7 +264,7 @@ class TestTicketedEventWizard(TestCase):
             eventitem__eventitem_id=new_class.eventitem_id)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -277,7 +277,7 @@ class TestTicketedEventWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.day.day.strftime(DATE_FORMAT))
+                self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
@@ -319,7 +319,7 @@ class TestTicketedEventWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.day.day.strftime(DATE_FORMAT))
+                self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertEqual(
             new_show.cue_sheet, "Alternate"
@@ -359,7 +359,7 @@ class TestTicketedEventWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.day.day.strftime(DATE_FORMAT))
+                self.day.day.strftime(GBE_DATE_FORMAT))
             )
 
     def test_auth_user_bad_user_assign(self):
@@ -424,7 +424,7 @@ class TestTicketedEventWizard(TestCase):
             eventitem__eventitem_id=new_class.eventitem_id)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -466,7 +466,7 @@ class TestTicketedEventWizard(TestCase):
             eventitem__eventitem_id=new_class.eventitem_id)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
@@ -520,7 +520,7 @@ class TestTicketedEventWizard(TestCase):
             eventitem__eventitem_id=new_class.eventitem_id)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
