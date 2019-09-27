@@ -8,7 +8,6 @@ from gbe.models import StaffArea
 from tinymce.widgets import TinyMCE
 from gbe.forms.common_queries import visible_profiles
 
-
 class StaffAreaForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'

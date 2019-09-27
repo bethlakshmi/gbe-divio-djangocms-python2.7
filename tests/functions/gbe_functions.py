@@ -139,6 +139,14 @@ def assert_radio_state(response, name, button_id, value, checked=False):
                     name, value, checked_state, button_id))
     assert checked_button in response.content
 
+def assert_option_state(response, value, text, selected=False):
+    selected_state = ""
+    if selected:
+        selected_state = " selected"
+    option_state = (
+        '<option value="%s"%s>%s</option>' % (
+                    value, selected_state, text))
+    assert option_state in response.content
 
 def assert_has_help_text(response, help_text):
     assert '<span class="dropt" title="Help">' in response.content

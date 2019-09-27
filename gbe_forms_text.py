@@ -953,3 +953,6 @@ costume_proposal_labels = {
         know?',
     'picture':  'Picture of the costume'
 }
+
+valid_model_error = '''Select a valid choice. That choice is not one of the \
+    available choices.'''

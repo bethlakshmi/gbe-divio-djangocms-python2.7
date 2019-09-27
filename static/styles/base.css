@@ -537,12 +537,6 @@ td.describe
   padding: 8px;
   margin-bottom: 8px;
 }
-@media (min-width:768px){.sched_times{width:690px}
-}
-@media (min-width:992px){.sched_times{width:900px}
-}
-@media (min-width:1200px){.sched_times{width:1100px}
-}
 .detail_link, .detail_link:visited {color: black;}
 .sched-sub-box > .detail_link,  .sched-sub-box > .detail_link-detail_disable {
     text-align: center;

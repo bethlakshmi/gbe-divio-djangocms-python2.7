@@ -11,6 +11,7 @@ from tests.factories.gbe_factories import (
 from gbe.models import StaffArea
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -102,7 +103,7 @@ class TestStaffAreaWizard(TestCase):
             follow=True)
         self.assertContains(
             response,
-            "That choice is not one of the available choices.")
+            "Something unusual has happened.")
 
     def test_auth_user_dup_slug(self):
         login_as(self.privileged_user, self)
@@ -157,16 +158,11 @@ class TestStaffAreaWizard(TestCase):
             'Staff area has been created.<br>Title: %s' % (
                 data['title'])
             )
+        assert_option_state(response, self.room.pk, str(self.room), True)
+        assert_option_state(response, self.privileged_user.profile.pk, 
+                            str(self.privileged_user.profile), 
+                            True)
+
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.room.pk,
-                str(self.room)))
-        self.assertContains(
-            response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.privileged_user.profile.pk,
-                str(self.privileged_user.profile)))
-        self.assertContains(
-            response,
-            'name="default_volunteers" type="number" value="3"')
+            'name="default_volunteers" value="3"')

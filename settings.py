@@ -112,3 +112,5 @@ AUTHENTICATION_BACKENDS = [
     'gbe.auth.EmailUsernameAuth',
 ]
 FIXTURE_DIRS = ('expo/tests/fixtures',)
+
+EVALUATION_WINDOW = 4

@@ -194,3 +194,5 @@ try:
     MEDIA_ROOT
 except:
     MEDIA_ROOT = os.path.join(BASE_DIR, "data/media")
+
+EVALUATION_WINDOW = 4
