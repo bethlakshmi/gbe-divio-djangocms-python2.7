@@ -39,7 +39,7 @@ from datetime import timedelta
 def get_start_time(data):
     day = data['day'].day
     time_parts = map(int, data['time'].split(":"))
-    starttime = time(*time_parts, tzinfo=pytz.utc)
+    starttime = time(*time_parts)
     return datetime.combine(day, starttime)
 
 

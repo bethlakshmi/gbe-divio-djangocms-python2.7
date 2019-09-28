@@ -29,8 +29,7 @@ def set_eval_info(answers, occurrence_id, person):
     new_answers = []
     if len(response.errors) > 0:
         return EvalInfoResponse(errors=response.errors)
-    if response.occurrence.starttime > datetime.now(
-            tz=pytz.timezone('America/New_York')) - timedelta(
+    if response.occurrence.starttime > datetime.now() - timedelta(
             hours=settings.EVALUATION_WINDOW):
         return EvalInfoResponse(
             warnings=[Warning(

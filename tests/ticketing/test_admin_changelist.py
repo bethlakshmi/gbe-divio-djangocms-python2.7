@@ -12,7 +12,7 @@ from tests.factories.ticketing_factories import(
 from django.contrib.admin.sites import AdminSite
 
 
-class SchedulerChangeListTests(TestCase):
+class TicketingChangeListTests(TestCase):
     def setUp(self):
         self.client = Client()
         password = 'mypassword'

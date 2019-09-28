@@ -11,16 +11,18 @@ from gbe.duration import (
     timedelta_to_duration,
 )
 from random import choice
-
-import math
-from settings import (
-    GBE_DATETIME_FORMAT,
-    GBE_TIME_FORMAT,
+from gbe.functions import (
+    get_conference_by_slug,
+    get_current_conference_slug,
 )
+import string
+import math
+from django.contrib.sites.models import Site
 from django.utils.formats import date_format
 from django.core.urlresolvers import reverse
 import pytz
-
+from scheduler.models import Location
+from gbe.functions import get_gbe_schedulable_items
 
 utc = pytz.timezone('UTC')
 
@@ -36,9 +38,6 @@ def event_info(confitem_type='Show',
     Using the scheduleable items for the current conference, get a list
     of dicts for the dates selected
     '''
-    from scheduler.models import Location
-    from gbe.functions import get_gbe_schedulable_items
-
     confitems_list = get_gbe_schedulable_items(
         confitem_type,
         filter_type,
@@ -52,14 +51,14 @@ def event_info(confitem_type='Show',
         loc_allocs += l.allocations.all()
 
     scheduled_events = []
+    scheduled_event_ids = []
     for alloc in loc_allocs:
-        start_t = alloc.event.start_time
-        stop_t = alloc.event.start_time + alloc.event.duration
+        start_t = utc.localize(alloc.event.start_time)
+        stop_t = utc.localize(alloc.event.start_time + alloc.event.duration)
         if start_t < cal_times[1] and stop_t >= cal_times[0]:
             scheduled_events += [alloc.event]
+            scheduled_event_ids += [alloc.event.eventitem_id]
 
-    scheduled_event_ids = [
-        alloc.event.eventitem_id for alloc in scheduled_events]
     events_dict = {}
     for index in range(len(scheduled_event_ids)):
         for confitem in confitems_list:
@@ -141,14 +140,8 @@ def calendar_export(conference=None,
     #  TODO: Add ability to filter on a users schedule for things like
     #  volunteer shifts.
 
-    from django.contrib.sites.models import Site
     url = 'http://'  # Want to find this through Site or similar
     site = Site.objects.get_current().domain
-    from gbe.functions import (
-        get_conference_by_slug,
-        get_current_conference_slug,
-    )
-    import string
 
     if conference is None:
         conference = get_current_conference_slug()
@@ -163,14 +156,14 @@ def calendar_export(conference=None,
         event_types = ['Show',
                        'Class',
                        'Special Event',
-                       'Master Class',
-                       'Drop-In Class',
+                       'Master',
+                       'Drop-In',
                        ]
     if event_types == 'Show' or event_types == u'Show':
         event_types == ['Show',
                         'Special Event',
-                        'Master Class',
-                        'Drop-In Class',
+                        'Master',
+                        'Drop-In',
                         ]
     if type(event_types) in (type(''), type(u'')):
         event_types = [event_types]
@@ -209,17 +202,21 @@ def calendar_export(conference=None,
                 (date_format(event['start_time'], 'DATE_FORMAT')
                  .replace(',', ''))
             csv_line = csv_line + '"%s",' % \
-                (date_format(event['start_time'], 'GBE_TIME_FORMAT')
+                (date_format(event['start_time'], 'TIME_FORMAT')
                  .replace('a.m.', 'AM').replace('p.m.', 'PM')
                  .replace('am', 'AM').replace('pm', 'PM')
                  .replace('noon', '12 PM').replace('midnight', '12 AM'))
             csv_line = csv_line + '"%s",' % \
-                (date_format(event['stop_time'], 'GBE_TIME_FORMAT')
+                (date_format(event['stop_time'], 'TIME_FORMAT')
                  .replace('a.m.', 'AM').replace('p.m.', 'PM')
                  .replace('am', 'AM').replace('pm', 'PM')
                  .replace('noon', '12 PM').replace('midnight', '12 AM'))
             csv_line = csv_line + '"%s",' % (event['location'])
-            csv_line = csv_line + '"%s",' % (event['type'].split('.')[0])
+            first_type, second_type = event['type'].split('.')
+            if first_type == "GenericEvent":
+                csv_line = csv_line + '"%s",' % (second_type)
+            else:
+                csv_line = csv_line + '"%s",' % (first_type)
             description = event['description'].replace('\n', '') \
                                               .replace('\r', '') \
                                               .replace('"', '') \

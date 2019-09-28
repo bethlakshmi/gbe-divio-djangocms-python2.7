@@ -164,15 +164,14 @@ def get_gbe_schedulable_items(confitem_type,
         filter_type, confitem_type = confitem_type, 'Class'
     elif confitem_type in ['Special Event',
                            'Volunteer Opportunity',
-                           'Master Class',
-                           'Drop-In Class']:
+                           'Master',
+                           'Drop-In']:
         filter_type, confitem_type = confitem_type, 'GenericEvent'
 
     if not conference:
         conference = Conference.current_conf()
     confitem_class = eval(confitem_type)
     confitems_list = confitem_class.objects.filter(e_conference=conference)
-
     if filter_type is not None:
         confitems_list = [
             confitem for confitem in confitems_list if

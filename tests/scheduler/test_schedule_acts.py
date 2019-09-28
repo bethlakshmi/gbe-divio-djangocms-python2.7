@@ -58,7 +58,7 @@ class TestScheduleActs(TestCase):
                 self.assertNotContains(response, str(act.performer))
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
+            '<option value="%d" selected>%s</option>' % (
                 self.context.sched_event.pk,
                 self.context.show.e_title)
             )
@@ -182,8 +182,8 @@ class TestScheduleActs(TestCase):
         self.assert_good_form_display(response)
         allocation = self.context.sched_event.resources_allocated.filter(
             resource__actresource___item=self.context.acts[0]).first()
-        input_text = '<input id="id_allocation_%d-order" ' + \
-                     'name="allocation_%d-order" type="number" value="2" />'
+        input_text = '<input type="number" name="allocation_%d-order" ' + \
+                     'value="2" required id="id_allocation_%d-order" />'
         self.assertContains(
             response,
             input_text % (allocation.pk, allocation.pk)

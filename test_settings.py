@@ -30,7 +30,7 @@ except:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected')
     STATIC_URL = '/static/'
     LOGIN_REDIRECT_URL = '/'
-    LOGIN_URL = 'aldryn_sso_login'
+    LOGIN_URL = '/login/'
 
 INSTALLED_APPS = [
     'aldryn_addons',
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'aldryn_sso',
     'djangocms_admin_style',
     'django.contrib.admin',
     'django.contrib.staticfiles',
@@ -170,16 +169,6 @@ except:
     ALDRYN_DJANGO_ENABLE_GIS = False
     ALDRYN_SITES_DOMAINS = {}
     ALDRYN_SITES_REDIRECT_PERMANENT = False
-    ALDRYN_SSO_ALWAYS_REQUIRE_LOGIN = False
-    ALDRYN_SSO_ENABLE_AUTO_SSO_LOGIN = True
-    ALDRYN_SSO_ENABLE_LOCALDEV = True
-    ALDRYN_SSO_ENABLE_LOGIN_FORM = True
-    ALDRYN_SSO_ENABLE_SSO_LOGIN = False
-    ALDRYN_SSO_HIDE_USER_MANAGEMENT = False
-    ALDRYN_SSO_LOGIN_WHITE_LIST = [
-        u'/admin/~cmscloud-api/check-uninstall/',
-        u'/admin/cms/page/resolve/']
-    ALDRYN_SSO_OVERIDE_ADMIN_LOGIN_VIEW = True
     ALLOWED_HOSTS = ['localhost', '*']
     SITE_ID = 1
     IS_RUNNING_DEVSERVER = False
