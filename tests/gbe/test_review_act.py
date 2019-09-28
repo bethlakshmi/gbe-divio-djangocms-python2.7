@@ -1,5 +1,4 @@
 from django.core.urlresolvers import reverse
-from django.core.exceptions import PermissionDenied
 import nose.tools as nt
 from django.test import TestCase
 from django.test import Client

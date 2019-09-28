@@ -224,7 +224,6 @@ def process_bpt_order_list():
                                  event.bpt_event_id,
                                  client_id)
         order_list_xml = perform_bpt_api_call(order_list_call)
-
         if order_list_xml is not None:
             for bpt_order in order_list_xml.findall('.//item'):
                 ticket_number = bpt_order.find('ticket_number').text

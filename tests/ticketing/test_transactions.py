@@ -107,7 +107,7 @@ class TestTransactions(TestCase):
             Transaction,
             reference='A12345678')
         nt.assert_equal(str(transaction.order_date),
-                        "2014-08-16 00:26:56+00:00")
+                        "2014-08-15 19:26:56")
         nt.assert_equal(transaction.shipping_method, 'Will Call')
         nt.assert_equal(transaction.order_notes, 'None')
         nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')

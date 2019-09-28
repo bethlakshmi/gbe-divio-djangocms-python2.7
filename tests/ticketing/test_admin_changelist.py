@@ -24,10 +24,10 @@ class SchedulerChangeListTests(TestCase):
 
     def test_get_ticketitem_active(self):
         ticket = TicketItemFactory(live=True, has_coupon=False)
-        response = self.client.get('/admin/ticketing/ticketitem/')
+        response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
         assert "True" in response.content
 
     def test_get_eventcontainer_conference(self):
         ticket = TicketItemFactory()
-        response = self.client.get('/admin/ticketing/ticketitem/')
+        response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
         assert str(ticket.bpt_event.conference) in response.content

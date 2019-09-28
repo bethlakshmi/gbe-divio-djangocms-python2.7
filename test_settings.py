@@ -97,6 +97,8 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
 
+DEBUG = True
+
 try:
     SECRET_KEY
 except:
@@ -132,27 +134,25 @@ except:
                 'django.template.loaders.eggs.Loader']},
         'BACKEND': 'django.template.backends.django.DjangoTemplates'}]
 
-try:
-    MIDDLEWARE_CLASSES
-except:
-    MIDDLEWARE_CLASSES = [
-        'cms.middleware.utils.ApphookReloadMiddleware',
-        'django.middleware.gzip.GZipMiddleware',
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-        'aldryn_django.middleware.LanguagePrefixFallbackMiddleware',
-        'django.middleware.locale.LocaleMiddleware',
-        'django.contrib.sites.middleware.CurrentSiteMiddleware',
-        'aldryn_sites.middleware.SiteMiddleware',
-        'django.middleware.security.SecurityMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        'cms.middleware.user.CurrentUserMiddleware',
-        'cms.middleware.page.CurrentPageMiddleware',
-        'cms.middleware.toolbar.ToolbarMiddleware',
-        'cms.middleware.language.LanguageCookieMiddleware']
+
+MIDDLEWARE_CLASSES = [
+    'cms.middleware.utils.ApphookReloadMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'aldryn_django.middleware.LanguagePrefixFallbackMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    'aldryn_sites.middleware.SiteMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware']
 
 try:
     ROOT_URLCONF

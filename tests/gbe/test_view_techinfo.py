@@ -18,7 +18,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from expo.settings import DATETIME_FORMAT
+from settings import DATETIME_FORMAT
 from django.utils.formats import date_format
 
 
