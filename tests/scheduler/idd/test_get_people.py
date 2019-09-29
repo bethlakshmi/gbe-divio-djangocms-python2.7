@@ -25,4 +25,11 @@ class TestGetPeople(TestCase):
         label = LabelFactory(allocation=booking)
         response = get_people(labels=[context.conference.conference_slug],
                               roles=["Performer"])
-        self.assertEqual(response.people[1].label, label.text)
+        target_person = None
+        for person in response.people:
+            if act.performer.user_object == person.user:
+                target_person = person
+            else:
+                self.assertNotEqual(person.label, label.text)
+        self.assertIsNotNone(target_person)
+        self.assertEqual(target_person.label, label.text)

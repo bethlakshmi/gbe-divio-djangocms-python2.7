@@ -6,7 +6,6 @@ from factory import (
 )
 import scheduler.models as sched
 from datetime import datetime
-from django.utils import timezone
 from tests.factories.gbe_factories import (
     GenericEventFactory,
     ProfileFactory,
@@ -74,8 +73,7 @@ class EventItemFactory(DjangoModelFactory):
 
 class SchedEventFactory(DjangoModelFactory):
     eventitem = SubFactory(GenericEventFactory)
-    starttime = timezone.make_aware(datetime(2015, 02, 4),
-                                    timezone.get_current_timezone())
+    starttime = datetime(2015, 02, 4)
     max_volunteer = 0
 
     class Meta:
