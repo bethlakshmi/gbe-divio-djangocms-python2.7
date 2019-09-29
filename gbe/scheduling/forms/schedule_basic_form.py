@@ -51,7 +51,7 @@ class ScheduleBasicForm(ModelForm):
             conference = kwargs['instance'].e_conference
             if 'initial' in kwargs and 'duration' not in kwargs['initial']:
                 kwargs['initial']['duration'] = float(
-                    kwargs['instance'].duration.total_minutes())/60
+                    kwargs['instance'].duration.total_seconds())/3600
         else:
             conference = kwargs.pop('conference')
         super(ScheduleBasicForm, self).__init__(*args, **kwargs)

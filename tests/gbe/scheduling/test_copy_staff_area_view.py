@@ -43,6 +43,8 @@ from gbetext import no_conf_day_msg
 class TestCopyOccurrence(TestCase):
     view_name = 'copy_staff_schedule'
     copy_date_format = "%a, %b %-d, %Y %-I:%M %p"
+    copy_children_only_checked = '<input type="radio" name="copy_mode" ' + \
+        'value="copy_children_only" required checked id="id_copy_mode_0" />'
 
     def setUp(self):
         self.context = StaffAreaContext()
@@ -59,7 +61,7 @@ class TestCopyOccurrence(TestCase):
     def assert_good_mode_form(self, response, title):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
-                            self.context.conf_day.day.strftime(DATE_FORMAT))
+                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertContains(response, copy_mode_choices[0][1])
         self.assertContains(response, copy_mode_choices[1][1])
 
@@ -80,7 +82,7 @@ class TestCopyOccurrence(TestCase):
             args=[self.context.area.pk+100],
             urlconf='gbe.scheduling.urls')
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_authorized_user_get_no_conf_days(self):
@@ -112,7 +114,7 @@ class TestCopyOccurrence(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
-                            self.context.conf_day.day.strftime(DATE_FORMAT))
+                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertNotContains(response, copy_mode_choices[0][1])
 
     def test_authorized_user_get_w_child_events(self):
@@ -137,11 +139,10 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input checked="checked" id="id_copy_mode_0" name="copy_mode" ' +
-            'type="radio" value="copy_children_only" />')
+            self.copy_children_only_checked)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">' % (
+            '<option value="%d" selected>' % (
                 target_context.area.pk))
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
@@ -160,11 +161,10 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input checked="checked" id="id_copy_mode_0" name="copy_mode" ' +
-            'type="radio" value="copy_children_only" />')
+            self.copy_children_only_checked)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">' % (
+            '<option value="%d" selected>' % (
                 target_context.area.pk))
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
@@ -202,7 +202,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     target_day.day,
                     self.vol_opp.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
 
     def test_copy_child_parent_events(self):
         another_day = ConferenceDayFactory()
@@ -242,7 +242,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     another_day.day,
                     self.vol_opp.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
 
     def test_copy_child_parent_events_same_conf(self):
         data = {
@@ -282,7 +282,7 @@ class TestCopyOccurrence(TestCase):
                 datetime.combine(
                     self.context.conf_day.day,
                     self.vol_opp.starttime.time()).strftime(
-                    DATETIME_FORMAT)))
+                    GBE_DATETIME_FORMAT)))
 
     def test_copy_only_parent_event(self):
         another_day = ConferenceDayFactory()

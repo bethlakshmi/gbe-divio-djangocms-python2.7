@@ -107,7 +107,7 @@ class TestCopyOccurrence(TestCase):
             args=[self.context.sched_event.pk+100],
             urlconf='gbe.scheduling.urls')
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_authorized_user_get_show(self):
@@ -190,11 +190,11 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input checked="checked" id="id_copy_mode_1" name="copy_mode" ' +
-            'type="radio" value="include_parent" />')
+            '<input type="radio" name="copy_mode" value="include_parent" ' + 
+            'required checked id="id_copy_mode_1" />')
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">' % another_day.pk)
+            '<option value="%d" selected>' % another_day.pk)
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
             show_context.opportunity.e_title,
@@ -269,11 +269,12 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input checked="checked" id="id_copy_mode_0" name="copy_mode" ' +
-            'type="radio" value="copy_children_only" />')
+            '<input type="radio" name="copy_mode" ' + \
+            'value="copy_children_only" required checked ' + \
+            'id="id_copy_mode_0" />')
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">' % (
+            '<option value="%d" selected>' % (
                 target_context.sched_event.pk))
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (

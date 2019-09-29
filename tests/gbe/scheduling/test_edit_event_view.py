@@ -14,6 +14,7 @@ from gbe.models import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -84,21 +85,19 @@ class TestEditEventView(TestCase):
         self.assertContains(response, "Finish")
         self.assertContains(response, self.context.event.e_title)
         self.assertContains(response, self.context.event.e_description)
-        self.assertContains(
-            response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.context.conf_day.pk,
-                self.context.conf_day.day.strftime(DATE_FORMAT)))
+        assert_option_state(response,
+                            self.context.conf_day.pk,
+                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT),
+                            True)
         self.assertContains(response,
-                            'name="max_volunteer" type="number" value="7" />')
+                            'name="max_volunteer" value="7"')
         self.assertContains(
             response,
-            'name="duration" step="any" type="number" value="1.5" />')
-        self.assertContains(
-            response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.staff_lead.pk,
-                str(self.staff_lead)))
+            'name="duration" value="1.5"')
+        assert_option_state(response,
+                            self.staff_lead.pk,
+                            str(self.staff_lead),
+                            True)
 
     def test_authorized_user_can_also_get_volunteer_mgmt(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
@@ -107,17 +106,16 @@ class TestEditEventView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Volunteer Management")
         self.assertContains(response, "Save and Continue")
+        assert_option_state(response,
+                            self.context.conf_day.pk,
+                            self.context.conf_day.day.strftime("%b. %-d, %Y"),
+                            True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.context.conf_day.pk,
-                self.context.conf_day.day.strftime("%b. %-d, %Y")))
+            'name="new_opp-max_volunteer" value="7"')
         self.assertContains(
             response,
-            'name="new_opp-max_volunteer" type="number" value="7" />')
-        self.assertContains(
-            response,
-            'name="new_opp-duration" step="any" type="number" value="1.5" />')
+            'name="new_opp-duration" value="1.5"')
 
     def test_authorized_user_can_access_rehearsal(self):
         self.context = ShowContext()
@@ -150,26 +148,24 @@ class TestEditEventView(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            'name="opp_event_id" type="hidden" value="%d" />' % (
+            'type="hidden" name="opp_event_id" value="%d"' % (
                 vol_context.opportunity.pk)
         )
         self.assertContains(
             response,
-            'name="opp_sched_id" type="hidden" value="%d" />' % (
+            'type="hidden" name="opp_sched_id" value="%d"' % (
                 vol_context.opp_event.pk)
         )
+        assert_option_state(response,
+                            vol_context.window.day.pk,
+                            vol_context.window.day.day.strftime("%b. %-d, %Y"),
+                            True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                vol_context.window.day.pk,
-                vol_context.window.day.day.strftime("%b. %-d, %Y")),
-            3)
+            'name="max_volunteer" value="2"')
         self.assertContains(
             response,
-            'name="max_volunteer" type="number" value="2" />')
-        self.assertContains(
-            response,
-            'name="duration" step="any" type="number" value="1.0" />')
+            'name="duration" value="1.0"')
 
     def test_bad_conference(self):
         login_as(self.privileged_user, self)
@@ -178,7 +174,7 @@ class TestEditEventView(TestCase):
             args=["BadConf",
                   self.context.sched_event.pk],
             urlconf='gbe.scheduling.urls')
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_bad_occurrence_id(self):
@@ -208,7 +204,7 @@ class TestEditEventView(TestCase):
             follow=True)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.context.conference.conference_slug]),
@@ -221,7 +217,7 @@ class TestEditEventView(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.extra_day.day.strftime(DATE_FORMAT))
+                self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
@@ -246,20 +242,19 @@ class TestEditEventView(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.extra_day.day.strftime(DATE_FORMAT))
+                self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(response, data['e_title'])
         self.assertContains(response, data['e_description'])
-        self.assertContains(
-            response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.extra_day.pk,
-                self.extra_day.day.strftime(DATE_FORMAT)))
+        assert_option_state(response,
+                            self.extra_day.pk,
+                            self.extra_day.day.strftime(GBE_DATE_FORMAT),
+                            True)
         self.assertContains(response,
-                            'name="max_volunteer" type="number" value="3" />')
+                            'name="max_volunteer" value="3"')
         self.assertContains(
             response,
-            'name="duration" step="any" type="number" value="2.5" />')
+            'name="duration" value="2.5"')
 
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)

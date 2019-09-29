@@ -57,7 +57,7 @@ class TestEventDetailView(TestCase):
             self.view_name,
             urlconf="gbe.scheduling.urls",
             args=[bad_id_for(EventItem)])
-        response = self.client.get(bad_url)
+        response = self.client.get(bad_url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_unsched_class(self):

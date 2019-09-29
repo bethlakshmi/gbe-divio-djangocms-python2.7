@@ -159,7 +159,7 @@ class TestCalendarView(TestCase):
                       urlconf='gbe.scheduling.urls',
                       args=['Conference'])
         data = {'day': "02-02-2016"}
-        response = self.client.get(url, data=data)
+        response = self.client.get(url, data=data, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_invalid_day(self):
@@ -170,14 +170,14 @@ class TestCalendarView(TestCase):
                       urlconf='gbe.scheduling.urls',
                       args=['Conference'])
         data = {'day': "DEADBEEF"}
-        response = self.client.get(url, data=data)
+        response = self.client.get(url, data=data, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_bad_cal_type(self):
         url = reverse('calendar',
                       urlconf='gbe.scheduling.urls',
                       args=['Bad'])
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_one_day(self):
