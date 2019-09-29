@@ -143,8 +143,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware', #
     'aldryn_django.middleware.LanguagePrefixFallbackMiddleware',
     'django.middleware.locale.LocaleMiddleware', #
-    'django.contrib.sites.middleware.CurrentSiteMiddleware',
-    'aldryn_sites.middleware.SiteMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware', #
+    'aldryn_sites.middleware.SiteMiddleware', #
     'django.middleware.security.SecurityMiddleware', #
     'django.middleware.common.CommonMiddleware', #
     'django.middleware.clickjacking.XFrameOptionsMiddleware', #
@@ -201,3 +201,18 @@ except:
     MEDIA_ROOT = os.path.join(BASE_DIR, "data/media")
 
 EVALUATION_WINDOW = 4
+
+THUMBNAIL_CACHE_DIMENSIONS = True
+THUMBNAIL_HIGH_RESOLUTION = False
+THUMBNAIL_OPTIMIZE_COMMAND = {}
+THUMBNAIL_PRESERVE_EXTENSIONS = ['png', 'gif']
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters')
+THUMBNAIL_QUALITY = 90
+THUMBNAIL_SOURCE_GENERATORS = ('easy_thumbnails.source_generators.pil_image',)  
+
+RECAPTCHA_PRIVATE_KEY = '6Le0dx0UAAAAACNZynxCx5mUovu3M1Au3XFeeFKN'
+RECAPTCHA_PUBLIC_KEY = '6Le0dx0UAAAAAFGd_HJzX22FdzhwI-GCh8nCoXoU'

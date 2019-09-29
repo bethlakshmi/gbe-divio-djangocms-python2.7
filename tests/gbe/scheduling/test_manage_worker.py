@@ -13,6 +13,7 @@ from tests.contexts import StaffAreaContext
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_email_template_used,
+    assert_option_state,
     grant_privilege,
     is_login_page,
     login_as,
@@ -68,27 +69,27 @@ class TestManageWorker(TestCase):
                              role="Volunteer",
                              allocations=2):
         if volunteer == -1:
-            self.assertContains(
-                response,
-                '<option value="" selected="selected">---------</option>')
+            assert_option_state(response, 
+                                "", 
+                                "---------", 
+                                True)
         else:
-            self.assertContains(
-                response,
-                '<option value="' + str(volunteer.pk) +
-                '" selected="selected">' + str(volunteer) + '</option>')
+            assert_option_state(response, 
+                                str(volunteer.pk), 
+                                str(volunteer), 
+                                True)
+        assert_option_state(response, 
+                            role, 
+                            role, 
+                            True)
         self.assertContains(
             response,
-            '<option value="' + role +
-            '" selected="selected">' + role +
-            '</option>')
+            '<input type="hidden" name="alloc_id" value="' +
+            str(alloc.pk) + '" id="id_alloc_id" />')
         self.assertContains(
             response,
-            '<input id="id_alloc_id" name="alloc_id" type="hidden" value="' +
-            str(alloc.pk) + '" />')
-        self.assertContains(
-            response,
-            '<input id="id_label" maxlength="100" name="label" type="text" ' +
-            'value="' + notes + '" />')
+            '<input type="text" name="label" value="' + notes + \
+            '" id="id_label" maxlength="100" />')
         self.assertContains(
             response,
             '<form method="POST" action="%s' % (reverse(
@@ -310,14 +311,14 @@ class TestManageWorker(TestCase):
                         args=[self.context.conference.conference_slug,
                               self.volunteer_opp.pk]),
                 self.alloc.pk))
+        assert_option_state(response, 
+                            str(self.volunteer.pk), 
+                            str(self.volunteer), 
+                            False)
         self.assertNotContains(
             response,
-            '<option value="' + str(self.volunteer.pk) +
-            '" selected="selected">' + str(self.volunteer) + '</option>')
-        self.assertNotContains(
-            response,
-            '<input id="id_alloc_id" name="alloc_id" type="hidden" value="' +
-            str(self.alloc.pk) + '" />')
+            '<input type="hidden" name="alloc_id" value="' +
+            str(self.alloc.pk) + '" id="id_alloc_id" />')
         self.assertContains(
             response,
             '<form method="POST" action="%s' % (reverse(

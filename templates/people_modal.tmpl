@@ -10,7 +10,7 @@
                 <div class="modal-body">
                   <div class="row">
                   {% if item.img %}
-		      <div class="col-xs-6 col-xs-push-6">
+		      <div class="col-6 col-push-6">
                          <a href="{{item.img.url}}">
 			   {% if scale %}
 		             <img src="{% thumbnail item.img 250x250%}" alt="Photo" >
@@ -19,9 +19,9 @@
 			   {% endif %}
 		         </a>
                       </div>
-                      <div class="col-xs-6 col-xs-pull-6">
+                      <div class="col-6 col-pull-6">
                   {% else %}
-                      <div class="col-xs-12">
+                      <div class="col-12">
 		  {%endif%}
                       {{item.bio | safe}}{{item.b_description | safe}}
                   {% if item.homepage %}

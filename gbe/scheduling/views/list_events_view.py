@@ -153,9 +153,8 @@ class ListEventsView(View):
                         item.calendar_type == 'Volunteer'):
                     favorite_link = None
                 if (self.event_type == 'Class') and (
-                        occurrence.start_time < (datetime.now(
-                            tz=pytz.timezone('America/New_York')
-                            ) - timedelta(hours=settings.EVALUATION_WINDOW))
+                        occurrence.start_time < (datetime.now() - timedelta(
+                            hours=settings.EVALUATION_WINDOW))
                         ) and (
                         role not in ("Teacher", "Performer", "Moderator")
                         ) and (

@@ -177,7 +177,6 @@ class ManageWorkerView(View):
         if not form.is_valid():
             context = None
             if request.POST['alloc_id'] == '-1':
-                form.data['alloc_id'] = -1
                 context = {'new_worker_alloc_form': form}
             else:
                 is_present = test_booking(

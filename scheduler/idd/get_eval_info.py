@@ -24,8 +24,7 @@ def get_eval_info(occurrence_id=None, person=None, visible=True):
         if len(response.errors) > 0:
             return EvalInfoResponse(errors=response.errors)
         occurrences += [response.occurrence]
-        if response.occurrence.starttime > (datetime.now(
-                tz=pytz.timezone('America/New_York')) - timedelta(
+        if response.occurrence.starttime > (datetime.now() - timedelta(
                 hours=settings.EVALUATION_WINDOW)):
             return EvalInfoResponse(
                 warnings=[Warning(

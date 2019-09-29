@@ -31,12 +31,12 @@
       {% if eventitem.scheduled_events %}
       <div class="sched_times container-fluid">
 	{% for sched_event in schedule_items %}
-	<div class="col-xs-12 sched-sub-box">
-	  <div class="col-xs-1 sched-sub-box">
+	<div class="col-12 sched-sub-box">
+	  <div class="col-1 sched-sub-box">
   	    {% include "gbe/scheduling/favorite_star.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable"%}
   	    {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
-	  <div class="col-xs-11 ">
+	  <div class="col-11 ">
   	    <label class="sched_detail">Time:</label> {{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT")}}<br>
 	    <label class="sched_detail">Location:</label>  {{ sched_event.occurrence.location }}<br>
 	  </div>
@@ -57,7 +57,7 @@
     <div class="bio_block font_regular container">
       {% for worker in eventitem.people %}
       <div class="row bio_row">
-        <div class="col-md-8 col-sm-7 col-xs-12">
+        <div class="col-md-8 col-sm-7 col-12">
 	{%if worker.role == "Staff Lead"%}
 	  <h2 class="bio_name subtitle">{{worker.role}} - {{worker.person.display_name}}</h2>
         {%else%}
@@ -67,7 +67,7 @@
         <br><br>
         </div>
         {% if worker.person.img %}
-          <div class="col-md-3 col-sm-4 col-xs-12">
+          <div class="col-md-3 col-sm-4 col-12">
           <img src="{% thumbnail worker.person.img 300x300 crop upscale subject_location=worker.person.img.subject_location %}" class="sched_bio_image">
           </div>
         {% endif %}

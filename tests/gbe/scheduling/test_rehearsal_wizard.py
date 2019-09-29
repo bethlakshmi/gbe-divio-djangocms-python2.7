@@ -120,4 +120,4 @@ class TestRehearsalWizard(TestCase):
             reverse('create_ticketed_event_wizard',
                     urlconf='gbe.scheduling.urls',
                     args=[self.current_conference.conference_slug,
-                          "show"]))
+                          "show"])+"?")
