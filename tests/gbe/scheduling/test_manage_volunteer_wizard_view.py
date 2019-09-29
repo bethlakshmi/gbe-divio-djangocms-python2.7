@@ -13,6 +13,7 @@ from scheduler.models import (
     EventLabel,
 )
 from tests.functions.gbe_functions import (
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -22,6 +23,8 @@ from tests.contexts import (
 )
 from gbe.models import AvailableInterest
 from django.utils.formats import date_format
+from django.db.models import Max
+from scheduler.models import Event
 
 
 class TestManageVolunteerWizard(TestCase):
@@ -78,26 +81,33 @@ class TestManageVolunteerWizard(TestCase):
 
     def assert_volunteer_type_selector(self, response, selected_interest=None):
         if selected_interest:
-            assert ('<select id="id_volunteer_type" name="volunteer_type">'
+            assert ('<select name="volunteer_type" id="id_volunteer_type">'
                     in response.content)
         else:
-            assert ('<select id="id_new_opp-volunteer_type" '
-                    'name="new_opp-volunteer_type">') in response.content
+            assert ('<select name="new_opp-volunteer_type" '
+                    'id="id_new_opp-volunteer_type">') in response.content
         assert '<option value="">---------</option>' in response.content
         for i in AvailableInterest.objects.all():
             if selected_interest and i == selected_interest:
-                assert '<option value="%d" selected="selected">%s</option>' % (
-                    i.pk, i.interest) in response.content
+                assert_option_state(
+                    response, 
+                    i.pk, 
+                    i.interest,
+                    True)
             elif i.visible:
-                assert '<option value="%d">%s</option>' % (
-                    i.pk, i.interest) in response.content
+                assert_option_state(
+                    response, 
+                    i.pk, 
+                    i.interest,
+                    False)
             else:
                 assert i.interest not in response.content
 
     def test_no_login_gives_error(self):
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[self.context.conference.conference_slug, "1"])
+                      args=[self.context.conference.conference_slug,
+                      "1"])
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
 
@@ -105,7 +115,8 @@ class TestManageVolunteerWizard(TestCase):
         login_as(ProfileFactory(), self)
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[self.context.conference.conference_slug, "1"])
+                      args=[self.context.conference.conference_slug,
+                      "1"])
         response = self.client.post(url, follow=True)
         self.assertEqual(response.status_code, 403)
 
@@ -152,8 +163,8 @@ class TestManageVolunteerWizard(TestCase):
 
         self.assertContains(
             response,
-            '<input id="id_e_title" maxlength="128" name="e_title" ' +
-            'type="text" value="New Volunteer Opportunity" />')
+            '<input type="text" name="e_title" value="New Volunteer ' + \
+            'Opportunity" required id="id_e_title" maxlength="128" />')
 
     def test_create_opportunity_for_staff_area(self):
         staff_context = StaffAreaContext(conference=self.context.conference)
@@ -192,24 +203,24 @@ class TestManageVolunteerWizard(TestCase):
 
         self.assertContains(
             response,
-            '<input id="id_e_title" maxlength="128" name="e_title" ' +
-            'type="text" value="New Volunteer Opportunity" />')
+            '<input type="text" name="e_title" value="New Volunteer ' + \
+            'Opportunity" required id="id_e_title" maxlength="128" />')
 
     def test_create_opportunity_bad_parent(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
         login_as(self.privileged_profile, self)
+        max_id = Event.objects.aggregate(Max('pk'))['pk__max']+1
         self.url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[self.context.conference.conference_slug,
-                  self.context.sched_event.pk+1])
+            args=[self.context.conference.conference_slug, max_id])
         response = self.client.post(
             self.url,
             data=self.get_new_opp_data(self.context),
             follow=True)
         self.assertContains(
             response,
-            "Occurrence id %d not found" % (self.context.sched_event.pk+1))
+            "Occurrence id %d not found" % (max_id))
 
     def test_create_opportunity_bad_area(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -259,9 +270,9 @@ class TestManageVolunteerWizard(TestCase):
         for opp in opps:
             self.assertContains(
                 response,
-                '<input id="id_e_title" maxlength="128" '
-                'name="e_title" type="text" value="%s" />' % (
-                    opp.child_event.eventitem.child().e_title))
+                ('<input type="text" name="e_title" value="%s" ' + 
+                'required id="id_e_title" maxlength="128" />') % (
+                opp.child_event.eventitem.child().e_title))
             if opp.child_event != self.context.opp_event:
                 self.assertRedirects(
                     response,
@@ -293,8 +304,8 @@ class TestManageVolunteerWizard(TestCase):
         self.assertTrue(len(opps), 1)
         self.assertContains(
             response,
-            '<input id="id_e_title" maxlength="128" name="e_title" ' +
-            'type="text" value="Modify Volunteer Opportunity" />')
+            '<input type="text" name="e_title" value="Modify Volunteer ' + 
+            'Opportunity" required id="id_e_title" maxlength="128" />')
 
     def test_edit_opportunity_change_room(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -330,8 +341,8 @@ class TestManageVolunteerWizard(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<input id="id_e_title" maxlength="128" name="e_title" ' +
-            'type="text" value="Modify Volunteer Opportunity" />')
+            '<input type="text" name="e_title" value="Modify Volunteer ' + 
+            'Opportunity" required id="id_e_title" maxlength="128" />')
         self.assertContains(
             response,
             '<ul class="errorlist"><li>This field is required.</li></ul>')

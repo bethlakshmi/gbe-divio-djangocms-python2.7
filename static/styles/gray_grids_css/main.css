@@ -404,13 +404,6 @@ a.more-link:hover{
   background: #f0f3f5;
 }
 
-@media (min-width:768px){#team .container{width:680px}
-}
-@media (min-width:992px){#team .container{width:900px}
-}
-@media (min-width:1200px){#team .container{width:1100px}
-}
-
 /* ==========================================================================
    Pricing Table Style
    ========================================================================== */
