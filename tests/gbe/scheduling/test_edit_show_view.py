@@ -22,6 +22,8 @@ from django.utils.formats import date_format
 
 class TestEditShowWizard(TestCase):
     view_name = 'manage_show_opp'
+    title_field = '<input type="text" name="e_title" value="%s" ' + \
+        'required id="id_e_title" maxlength="128" />'
 
     def setUp(self):
         self.client = Client()
@@ -97,8 +99,8 @@ class TestEditShowWizard(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            '<input id="id_current_acts" name="current_acts" ' +
-            'readonly="readonly" type="number" value="1" />')
+            '<input type="number" name="current_acts" value="1" ' + \
+            'readonly="readonly" id="id_current_acts" />')
 
     def test_good_user_get_empty_room_rehearsal(self):
         rehearsal, slot = self.context.make_rehearsal(room=False)
@@ -106,7 +108,7 @@ class TestEditShowWizard(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
+            '<option value="%d" selected>%s</option>' % (
                 self.context.room.pk,
                 str(self.context.room)),
             4)
@@ -160,8 +162,7 @@ class TestEditShowWizard(TestCase):
 
         self.assertContains(
             response,
-            '<input id="id_e_title" maxlength="128" name="e_title" ' +
-            'type="text" value="New Rehearsal Slot" />')
+            self.title_field % "New Rehearsal Slot")
 
     def test_create_slot_error(self):
         login_as(self.privileged_profile, self)
@@ -201,9 +202,7 @@ class TestEditShowWizard(TestCase):
         for slot in slots:
             self.assertContains(
                 response,
-                '<input id="id_e_title" maxlength="128" '
-                'name="e_title" type="text" value="%s" />' % (
-                    slot.child_event.eventitem.child().e_title))
+                self.title_field % (slot.child_event.eventitem.child().e_title))
             self.assertRedirects(
                 response,
                 "%s?changed_id=%d&rehearsal_open=True" % (
@@ -235,8 +234,7 @@ class TestEditShowWizard(TestCase):
         self.assertTrue(len(slots), 1)
         self.assertContains(
             response,
-            '<input id="id_e_title" maxlength="128" name="e_title" ' +
-            'type="text" value="Modify Rehearsal Slot" />')
+            self.title_field % "Modify Rehearsal Slot")
         self.assertContains(response, self.room.name)
 
     def test_edit_error(self):
@@ -253,8 +251,7 @@ class TestEditShowWizard(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<input id="id_e_title" maxlength="128" name="e_title" ' +
-            'type="text" value="Modify Rehearsal Slot" />')
+            self.title_field % "Modify Rehearsal Slot")
         self.assertContains(
             response,
             '<ul class="errorlist"><li>This field is required.</li></ul>')

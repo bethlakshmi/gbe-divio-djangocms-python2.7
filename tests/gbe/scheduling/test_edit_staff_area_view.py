@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+from django.db.models import Max
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
     ProfileFactory,
@@ -14,6 +16,7 @@ from gbe.models import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -74,14 +77,14 @@ class TestEditStaffAreaView(TestCase):
         self.assertContains(response, "Edit Staff Area Details")
         self.assertContains(response, self.context.area.title)
         self.assertContains(response, self.context.area.description)
+        assert_option_state(
+            response,
+            self.context.staff_lead.profile.pk,
+            str(self.context.staff_lead.profile),
+            True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.context.staff_lead.profile.pk,
-                str(self.context.staff_lead.profile)))
-        self.assertContains(
-            response,
-            'name="default_volunteers" type="number" value="7"')
+            'name="default_volunteers" value="7"')
 
     def test_authorized_user_can_get_volunteer_mgmt(self):
         self.context.area.default_location = self.room
@@ -94,10 +97,10 @@ class TestEditStaffAreaView(TestCase):
         self.assertContains(response, "Save and Continue")
         self.assertContains(
             response,
-            'name="new_opp-max_volunteer" type="number" value="7" />')
+            'name="new_opp-max_volunteer" value="7"')
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
+            '<option value="%d" selected>%s</option>' % (
                 self.room.pk,
                 str(self.room)), 2)
 
@@ -113,22 +116,22 @@ class TestEditStaffAreaView(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            'name="opp_event_id" type="hidden" value="%d" />' % (
+            'name="opp_event_id" value="%d"' % (
                 vol_opp.eventitem.event_id)
         )
         self.assertContains(
             response,
-            'name="opp_sched_id" type="hidden" value="%d" />' % (
+            'name="opp_sched_id" value="%d"' % (
                 vol_opp.pk)
         )
+        assert_option_state(
+            response,
+            self.context.conf_day.pk,
+            self.context.conf_day.day.strftime("%b. %-d, %Y"),
+            True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.context.conf_day.pk,
-                self.context.conf_day.day.strftime("%b. %-d, %Y")))
-        self.assertContains(
-            response,
-            'name="max_volunteer" type="number" value="7" />')
+            'name="max_volunteer" value="7"')
 
     def test_bad_staff_area(self):
         login_as(self.privileged_user, self)
@@ -176,19 +179,19 @@ class TestEditStaffAreaView(TestCase):
                 data['title']))
         self.assertContains(response, data['title'])
         self.assertContains(response, data['description'])
+        assert_option_state(
+            response,
+            self.privileged_user.profile.pk,
+            str(self.privileged_user.profile),
+            True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.privileged_user.profile.pk,
-                str(self.privileged_user.profile)))
-        self.assertContains(
-            response,
-            'name="default_volunteers" type="number" value="3" />')
+            'name="default_volunteers" value="3"')
 
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)
         data = self.edit_area()
-        data['staff_lead'] = "bad role"
+        data['staff_lead'] = User.objects.aggregate(Max('pk'))['pk__max']+1
         response = self.client.post(
             self.url,
             data=data,

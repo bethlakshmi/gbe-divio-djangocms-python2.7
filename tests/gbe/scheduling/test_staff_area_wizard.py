@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+from django.db.models import Max
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     StaffAreaFactory,
@@ -96,14 +98,14 @@ class TestStaffAreaWizard(TestCase):
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)
         data = self.edit_area()
-        data['staff_lead'] = "bad role"
+        data['staff_lead'] = User.objects.aggregate(Max('pk'))['pk__max']+1
         response = self.client.post(
             self.url,
             data=data,
             follow=True)
         self.assertContains(
             response,
-            "Something unusual has happened.")
+            "That choice is not one of the available choices.")
 
     def test_auth_user_dup_slug(self):
         login_as(self.privileged_user, self)
