@@ -10,6 +10,7 @@ from gbe.models import (
     AvailableInterest,
     StaffArea
 )
+from django.db.models.functions import Lower
 
 
 class SelectEventForm(Form):
@@ -28,7 +29,7 @@ class SelectEventForm(Form):
         required=False)
     volunteer_type = ModelMultipleChoiceField(
         queryset=AvailableInterest.objects.filter(
-            visible=True).order_by("interest"),
+            visible=True).order_by(Lower("interest")),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
 

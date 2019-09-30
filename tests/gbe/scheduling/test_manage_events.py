@@ -63,19 +63,19 @@ class TestEventList(TestCase):
             value,
             checked=True):
         if checked:
-            checked = 'checked="checked" '
+            checked = 'checked '
         else:
             checked = ''
-        template_input = '<input %sid="id_%s-%s_%d" name="%s-%s" ' + \
-                         'type="checkbox" value="%d" />'
+        template_input = '<input type="checkbox" name="%s-%s" value="%d" ' + \
+             '%sclass="form-check-input" id="id_%s-%s_%d" />'
         assert_string = template_input % (
+            conf_slug,
+            input_field,
+            value,
             checked,
             conf_slug,
             input_field,
-            input_index,
-            conf_slug,
-            input_field,
-            value)
+            input_index)
         self.assertContains(response, assert_string)
 
     def assert_hidden_input_selected(
@@ -86,15 +86,16 @@ class TestEventList(TestCase):
             input_index,
             value,
             exists=True):
-        template_input = '<input id="id_%s-%s_%d" name="%s-%s" ' + \
-            'type="hidden" value="%d" />'
+        template_input = '<input type="hidden" name="%s-%s" value="%d"' + \
+            ' id="id_%s-%s_%d" />'
+
         assert_string = template_input % (
             conf_slug,
             input_field,
-            input_index,
+            value,
             conf_slug,
             input_field,
-            value)
+            input_index)
         if exists:
             self.assertContains(response, assert_string)
         else:
@@ -133,10 +134,10 @@ class TestEventList(TestCase):
                  old_conf_day.conference.conference_slug))
         self.assertContains(
             response,
-            self.day.day.strftime(DATE_FORMAT))
+            self.day.day.strftime(GBE_DATE_FORMAT))
         self.assertNotContains(
             response,
-            old_conf_day.day.strftime(DATE_FORMAT))
+            old_conf_day.day.strftime(GBE_DATE_FORMAT))
 
     def test_good_user_get_interests(self):
         old_interest = AvailableInterestFactory(
@@ -202,10 +203,10 @@ class TestEventList(TestCase):
                  self.day.conference.conference_slug))
         self.assertContains(
             response,
-            old_conf_day.day.strftime(DATE_FORMAT))
+            old_conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertNotContains(
             response,
-            self.day.day.strftime(DATE_FORMAT))
+            self.day.day.strftime(GBE_DATE_FORMAT))
 
     def test_good_user_get_no_create_edit(self):
         old_conf_day = ConferenceDayFactory(
