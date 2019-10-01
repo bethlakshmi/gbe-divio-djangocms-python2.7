@@ -60,8 +60,9 @@ class TestCopyOccurrence(TestCase):
 
     def assert_good_mode_form(self, response, title):
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,
-                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
+        self.assertContains(
+            response,
+            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertContains(response, copy_mode_choices[0][1])
         self.assertContains(response, copy_mode_choices[1][1])
 
@@ -113,8 +114,9 @@ class TestCopyOccurrence(TestCase):
             urlconf='gbe.scheduling.urls')
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,
-                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
+        self.assertContains(
+            response,
+            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertNotContains(response, copy_mode_choices[0][1])
 
     def test_authorized_user_get_w_child_events(self):

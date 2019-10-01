@@ -85,10 +85,11 @@ class TestEditEventView(TestCase):
         self.assertContains(response, "Finish")
         self.assertContains(response, self.context.event.e_title)
         self.assertContains(response, self.context.event.e_description)
-        assert_option_state(response,
-                            self.context.conf_day.pk,
-                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT),
-                            True)
+        assert_option_state(
+            response,
+            self.context.conf_day.pk,
+            self.context.conf_day.day.strftime(GBE_DATE_FORMAT),
+            True)
         self.assertContains(response,
                             'name="max_volunteer" value="7"')
         self.assertContains(

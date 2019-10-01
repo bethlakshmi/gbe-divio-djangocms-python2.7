@@ -10,6 +10,7 @@ from tests.factories.gbe_factories import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -76,7 +77,7 @@ class TestEditVolunteer(TestCase):
             reverse('edit_event',
                     urlconf='gbe.scheduling.urls',
                     args=[self.context.conference.conference_slug,
-                          self.context.sched_event.pk]))
+                          self.context.sched_event.pk]) + "?")
 
     def test_authorized_user_can_access_event(self):
         login_as(self.privileged_user, self)
@@ -86,11 +87,11 @@ class TestEditVolunteer(TestCase):
         self.assertContains(response, "Finish")
         self.assertContains(response, self.context.opportunity.e_title)
         self.assertContains(response, self.context.opportunity.e_description)
-        self.assertContains(
+        assert_option_state(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.context.conf_day.pk,
-                self.context.conf_day.day.strftime(DATE_FORMAT)))
+            self.context.conf_day.pk,
+            self.context.conf_day.day.strftime(GBE_DATE_FORMAT),
+            True)
 
     def test_authorized_user_can_also_get_volunteer_mgmt(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
@@ -101,10 +102,10 @@ class TestEditVolunteer(TestCase):
         self.assertContains(response, "Save and Continue")
         self.assertContains(
             response,
-            '<option value="" selected="selected">---------</option>')
+            '<option value="" selected>---------</option>')
         self.assertContains(
             response,
-            'id="id_alloc_id" name="alloc_id" type="hidden" value="-1" />')
+            'type="hidden" name="alloc_id" value="-1" id="id_alloc_id" />')
 
     def test_vol_is_booked(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
@@ -112,17 +113,16 @@ class TestEditVolunteer(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            '"id_alloc_id" name="alloc_id" type="hidden" value="%d" />' % (
-                self.context.allocation.pk)
-        )
+            'type="hidden" name="alloc_id" value="%d" id="id_alloc_id" />' % (
+                self.context.allocation.pk))
+        assert_option_state(
+            response,
+            self.context.profile.pk,
+            self.context.profile.display_name,
+            True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.context.profile.pk,
-                self.context.profile.display_name))
-        self.assertContains(
-            response,
-            '<option value="Volunteer" selected="selected">Volunteer</option>',
+            '<option value="Volunteer" selected>Volunteer</option>',
             3)
 
     def test_bad_occurrence_id(self):
@@ -151,7 +151,7 @@ class TestEditVolunteer(TestCase):
             follow=True)
         self.assertRedirects(
             response,
-            "%s?%s-day=%d&filter=Filter&new=[%dL]" % (
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[self.context.conference.conference_slug]),
@@ -164,7 +164,7 @@ class TestEditVolunteer(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.extra_day.day.strftime(DATE_FORMAT))
+                self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
@@ -189,20 +189,22 @@ class TestEditVolunteer(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.extra_day.day.strftime(DATE_FORMAT))
+                self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(response, data['e_title'])
         self.assertContains(response, data['e_description'])
+        assert_option_state(
+            response,
+            self.extra_day.pk,
+            self.extra_day.day.strftime(GBE_DATE_FORMAT),
+            True)
         self.assertContains(
             response,
-            '<option value="%d" selected="selected">%s</option>' % (
-                self.extra_day.pk,
-                self.extra_day.day.strftime(DATE_FORMAT)))
-        self.assertContains(response,
-                            'name="max_volunteer" type="number" value="3" />')
+            'name="max_volunteer" value="3" required id="id_max_volunteer" />')
         self.assertContains(
             response,
-            'name="duration" step="any" type="number" value="2.5" />')
+            'name="duration" value="2.5" max="12" step="any" ' +
+            'required id="id_duration" min="0.5" />')
 
     def test_auth_user_bad_schedule_assign(self):
         login_as(self.privileged_user, self)

@@ -57,8 +57,9 @@ class TestCopyOccurrence(TestCase):
 
     def assert_good_mode_form(self, response, title, date):
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,
-                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
+        self.assertContains(
+            response,
+            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertContains(response, copy_mode_choices[0][1])
         self.assertContains(response, copy_mode_choices[1][1])
         self.assertContains(response, "%s - %s" % (
@@ -87,8 +88,9 @@ class TestCopyOccurrence(TestCase):
             urlconf='gbe.scheduling.urls')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,
-                            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
+        self.assertContains(
+            response,
+            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertNotContains(response, copy_mode_choices[0][1])
 
     def test_authorized_user_get_w_child_events(self):
@@ -190,7 +192,7 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input type="radio" name="copy_mode" value="include_parent" ' + 
+            '<input type="radio" name="copy_mode" value="include_parent" ' +
             'required checked id="id_copy_mode_1" />')
         self.assertContains(
             response,
@@ -269,8 +271,8 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input type="radio" name="copy_mode" ' + \
-            'value="copy_children_only" required checked ' + \
+            '<input type="radio" name="copy_mode" ' +
+            'value="copy_children_only" required checked ' +
             'id="id_copy_mode_0" />')
         self.assertContains(
             response,

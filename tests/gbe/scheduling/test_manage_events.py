@@ -67,7 +67,7 @@ class TestEventList(TestCase):
         else:
             checked = ''
         template_input = '<input type="checkbox" name="%s-%s" value="%d" ' + \
-             '%sclass="form-check-input" id="id_%s-%s_%d" />'
+                         '%sclass="form-check-input" id="id_%s-%s_%d" />'
         assert_string = template_input % (
             conf_slug,
             input_field,

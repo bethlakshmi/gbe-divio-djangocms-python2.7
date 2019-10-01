@@ -161,8 +161,8 @@ class TestStaffAreaWizard(TestCase):
                 data['title'])
             )
         assert_option_state(response, self.room.pk, str(self.room), True)
-        assert_option_state(response, self.privileged_user.profile.pk, 
-                            str(self.privileged_user.profile), 
+        assert_option_state(response, self.privileged_user.profile.pk,
+                            str(self.privileged_user.profile),
                             True)
 
         self.assertContains(

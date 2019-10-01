@@ -69,18 +69,18 @@ class TestManageWorker(TestCase):
                              role="Volunteer",
                              allocations=2):
         if volunteer == -1:
-            assert_option_state(response, 
-                                "", 
-                                "---------", 
+            assert_option_state(response,
+                                "",
+                                "---------",
                                 True)
         else:
-            assert_option_state(response, 
-                                str(volunteer.pk), 
-                                str(volunteer), 
+            assert_option_state(response,
+                                str(volunteer.pk),
+                                str(volunteer),
                                 True)
-        assert_option_state(response, 
-                            role, 
-                            role, 
+        assert_option_state(response,
+                            role,
+                            role,
                             True)
         self.assertContains(
             response,
@@ -88,7 +88,7 @@ class TestManageWorker(TestCase):
             str(alloc.pk) + '" id="id_alloc_id" />')
         self.assertContains(
             response,
-            '<input type="text" name="label" value="' + notes + \
+            '<input type="text" name="label" value="' + notes +
             '" id="id_label" maxlength="100" />')
         self.assertContains(
             response,
@@ -311,9 +311,9 @@ class TestManageWorker(TestCase):
                         args=[self.context.conference.conference_slug,
                               self.volunteer_opp.pk]),
                 self.alloc.pk))
-        assert_option_state(response, 
-                            str(self.volunteer.pk), 
-                            str(self.volunteer), 
+        assert_option_state(response,
+                            str(self.volunteer.pk),
+                            str(self.volunteer),
                             False)
         self.assertNotContains(
             response,

@@ -90,15 +90,15 @@ class TestManageVolunteerWizard(TestCase):
         for i in AvailableInterest.objects.all():
             if selected_interest and i == selected_interest:
                 assert_option_state(
-                    response, 
-                    i.pk, 
-                    i.interest,
+                    response,
+                    i.pk,
+                    i.interest
                     True)
             elif i.visible:
                 assert_option_state(
-                    response, 
-                    i.pk, 
-                    i.interest,
+                    response,
+                    i.pk,
+                    i.interest
                     False)
             else:
                 assert i.interest not in response.content
@@ -107,7 +107,7 @@ class TestManageVolunteerWizard(TestCase):
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[self.context.conference.conference_slug,
-                      "1"])
+                            "1"])
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
 
@@ -116,7 +116,7 @@ class TestManageVolunteerWizard(TestCase):
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[self.context.conference.conference_slug,
-                      "1"])
+                            "1"])
         response = self.client.post(url, follow=True)
         self.assertEqual(response.status_code, 403)
 
@@ -163,7 +163,7 @@ class TestManageVolunteerWizard(TestCase):
 
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="New Volunteer ' + \
+            '<input type="text" name="e_title" value="New Volunteer ' +
             'Opportunity" required id="id_e_title" maxlength="128" />')
 
     def test_create_opportunity_for_staff_area(self):
@@ -203,7 +203,7 @@ class TestManageVolunteerWizard(TestCase):
 
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="New Volunteer ' + \
+            '<input type="text" name="e_title" value="New Volunteer ' +
             'Opportunity" required id="id_e_title" maxlength="128" />')
 
     def test_create_opportunity_bad_parent(self):
@@ -270,9 +270,9 @@ class TestManageVolunteerWizard(TestCase):
         for opp in opps:
             self.assertContains(
                 response,
-                ('<input type="text" name="e_title" value="%s" ' + 
-                'required id="id_e_title" maxlength="128" />') % (
-                opp.child_event.eventitem.child().e_title))
+                ('<input type="text" name="e_title" value="%s" ' +
+                 'required id="id_e_title" maxlength="128" />') % (
+                 opp.child_event.eventitem.child().e_title))
             if opp.child_event != self.context.opp_event:
                 self.assertRedirects(
                     response,
@@ -304,7 +304,7 @@ class TestManageVolunteerWizard(TestCase):
         self.assertTrue(len(opps), 1)
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="Modify Volunteer ' + 
+            '<input type="text" name="e_title" value="Modify Volunteer ' +
             'Opportunity" required id="id_e_title" maxlength="128" />')
 
     def test_edit_opportunity_change_room(self):
@@ -341,7 +341,7 @@ class TestManageVolunteerWizard(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="Modify Volunteer ' + 
+            '<input type="text" name="e_title" value="Modify Volunteer ' +
             'Opportunity" required id="id_e_title" maxlength="128" />')
         self.assertContains(
             response,

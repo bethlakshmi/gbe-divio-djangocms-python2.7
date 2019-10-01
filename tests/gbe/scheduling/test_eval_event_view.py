@@ -119,16 +119,23 @@ class TestEvalEventView(TestCase):
         self.assertNotContains(response, q4.question)
         self.assertNotContains(response, q4.help_text)
         n = 0
-        grade_input = '<input id="id_question%d_%d" name="question%d" ' + \
-                      'type="radio" value="%s" />'
-        answer_textarea = '<textarea cols="40" id="id_question%d" ' + \
-                          'name="question%d" rows="10">'
-        boolean_checkbox = '<input id="id_question%d" name="question%d" ' + \
-                           'type="checkbox" />'
+
+        grade_input = '<input type="radio" name="question%d" value="%s" ' + \
+                      'required %sid="id_question%d_%d" />'
+        answer_textarea = '<textarea name="question%d" rows="10" ' + \
+            'cols="40" id="id_question%d">'
+
+        boolean_checkbox = '<input type="checkbox" name="question%d" ' + \
+            'id="id_question%d" />'
         for grade in new_grade_options:
+            g = grade[0]
+            checked = ""
+            if grade[0] is None:
+                g = ""
+                checked = "checked "
             self.assertContains(
                 response,
-                grade_input % (q1.pk, n, q1.pk, grade[0]))
+                grade_input % (q1.pk, g, checked, q1.pk, n, ))
             n = n + 1
         self.assertContains(
             response,

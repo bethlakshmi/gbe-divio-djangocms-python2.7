@@ -81,28 +81,16 @@ class TestViewList(TestCase):
         login_as(ProfileFactory(), self)
         response = self.client.get(
             reverse("event_list",
-                    urlconf="gbe.scheduling.urls"))
+                    urlconf="gbe.scheduling.urls"),
+            follow=True)
         self.assertEqual(404, response.status_code)
-
-    def test_view_list_event_type_not_case_sensitive(self):
-        param = 'class'
-        url_lower = reverse("event_list",
-                            urlconf="gbe.scheduling.urls",
-                            args=[param.lower()])
-
-        url_upper = reverse("event_list",
-                            urlconf="gbe.scheduling.urls",
-                            args=[param.upper()])
-
-        assert (self.client.get(url_lower).content ==
-                self.client.get(url_upper).content)
 
     def test_view_list_event_type_not_in_list_titles(self):
         param = 'classification'
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=[param])
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_view_list_only_classes(self):
@@ -121,6 +109,15 @@ class TestViewList(TestCase):
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
         self.assertFalse(show.e_title in response.content)
+        self.assertFalse(generic_event.e_title in response.content)
+        self.assertTrue(accepted_class.e_title in response.content)
+
+        url = reverse("event_list",
+                      urlconf="gbe.scheduling.urls",
+                      args=['class'])
+        response = self.client.get(url)
+        self.assertFalse(show.e_title in response.content)
+        self.assertFalse(generic_event.e_title in response.content)
         self.assertTrue(accepted_class.e_title in response.content)
 
     def test_interested_in_event(self):

@@ -111,7 +111,7 @@ class TestClassWizard(TestCase):
             response,
             ('<input type="radio" name="accepted_class" value="%d" ' +
              'checked id="id_accepted_class_1" />') %
-             self.test_class.pk)
+            self.test_class.pk)
 
     def test_invalid_form(self):
         login_as(self.privileged_user, self)

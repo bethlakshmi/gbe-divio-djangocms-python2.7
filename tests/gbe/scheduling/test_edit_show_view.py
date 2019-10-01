@@ -99,7 +99,7 @@ class TestEditShowWizard(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            '<input type="number" name="current_acts" value="1" ' + \
+            '<input type="number" name="current_acts" value="1" ' +
             'readonly="readonly" id="id_current_acts" />')
 
     def test_good_user_get_empty_room_rehearsal(self):
@@ -202,7 +202,8 @@ class TestEditShowWizard(TestCase):
         for slot in slots:
             self.assertContains(
                 response,
-                self.title_field % (slot.child_event.eventitem.child().e_title))
+                self.title_field % (
+                    slot.child_event.eventitem.child().e_title))
             self.assertRedirects(
                 response,
                 "%s?changed_id=%d&rehearsal_open=True" % (

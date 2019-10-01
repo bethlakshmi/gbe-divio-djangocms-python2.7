@@ -160,10 +160,10 @@ class TestVolunteerWizard(TestCase):
                 'pick_topic': True,
                 'volunteer_topic': ""},
             follow=True)
-        assert_radio_state(response, 
-                           "volunteer_topic", 
-                           "id_volunteer_topic_3_0", 
-                           "", 
+        assert_radio_state(response,
+                           "volunteer_topic",
+                           "id_volunteer_topic_3_0",
+                           "",
                            True)
         self.assertContains(
             response,
@@ -193,8 +193,8 @@ class TestVolunteerWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.special_volunteer.window.day.day.strftime(GBE_DATE_FORMAT))
-            )
+                self.special_volunteer.window.day.day.strftime(
+                    GBE_DATE_FORMAT)))
         self.assertContains(
             response,
             '<tr class="bid-table success">\n       ' +
