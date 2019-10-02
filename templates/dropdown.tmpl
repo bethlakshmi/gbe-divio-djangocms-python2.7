@@ -2,10 +2,10 @@
 {% for child in children %}
   {%if child.children%}
     <li class="dropdown dropdown-submenu">
-    	<a class="dropdown-toggle dropdown-item" href="#" id="dropdown-{{ child.get_menu_title|slugify }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    	<a class="dropdown-toggle dropdown-item" href="#" id="gbe_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     	{{ child.get_menu_title }}</a>
   {%else%}
-    <li><a class="dropdown-item "  href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
+    <li><a class="dropdown-item "  id="gbe_dropdown" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
         {{ child.get_menu_title }}
     </a>
   {%endif%}
