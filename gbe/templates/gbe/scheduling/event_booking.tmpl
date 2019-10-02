@@ -166,6 +166,11 @@ Changing fields in this section will change them in all calendar items.
     </div>
   {% endif %}
 
+<div><br><br></div>
+<!-- this br thing above is here to make it possible to click on and edit the 
+     fields above this section.  If you hate it, then fix it, but make sure 
+     all fields can be clicked on and edited in the 2-3 most common browsers -->
+
 {% if worker_formset %}
     <div class="event_booking {% if scheduling_info %}col-md-7 col-sm-6 {% endif %}col-12">
       <h4>Staffing</h4>

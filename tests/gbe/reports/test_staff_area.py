@@ -89,7 +89,7 @@ class TestStaffArea(TestCase):
             "%s?area=Staff" %
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
-                    args=[context.area.pk+100]))
+                    args=[context.area.pk+100]), follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_staff_area_with_inactive(self):

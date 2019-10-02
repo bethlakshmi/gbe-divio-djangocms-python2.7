@@ -75,5 +75,5 @@ class TestVolunteerTypeArea(TestCase):
             reverse('volunteer_type',
                     urlconf="gbe.reporting.urls",
                     args=[context.opportunity.e_conference.conference_slug,
-                          context.interest.interest.pk+100]))
+                          context.interest.interest.pk+100]), follow=True)
         self.assertEqual(response.status_code, 404)
