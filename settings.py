@@ -106,11 +106,10 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_buttons3': "insertdate,inserttime,|,advhr,,removeformat," +
     "|,sub,sup,|,charmap,emotions, tablecontrols",
 }
-
+'''
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'gbe.auth.EmailUsernameAuth',
 ]
+'''
 FIXTURE_DIRS = ('expo/tests/fixtures',)
-
-EVALUATION_WINDOW = 4
