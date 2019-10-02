@@ -113,3 +113,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 '''
 FIXTURE_DIRS = ('expo/tests/fixtures',)
+
+EVALUATION_WINDOW = 4
