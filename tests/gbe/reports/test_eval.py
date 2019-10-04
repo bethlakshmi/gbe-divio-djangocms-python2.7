@@ -97,10 +97,10 @@ class TestEval(TestCase):
         self.assertContains(response, '<td class="bid-table">0</td>')
         self.assertContains(response, '<td class="bid-table">2</td>')
         self.assertContains(response, grade1.question.question)
-        self.assertContains(response, bool1.question.question)
+        self.assertNotContains(response, bool1.question.question)
         self.assertNotContains(response, text1.question.question)
         self.assertContains(response, '<td class="bid-table">3.5</td>')
-        self.assertContains(response, '<td class="bid-table">0.5</td>')
+        self.assertNotContains(response, '<td class="bid-table">0.5</td>')
         self.assertContains(response, reverse(
             'evaluation_detail',
             urlconf='gbe.reporting.urls',
@@ -133,7 +133,7 @@ class TestEval(TestCase):
             args=[self.context.sched_event.id]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, grade1.question.question, 5)
-        self.assertContains(response, bool1.question.question, 5)
+        self.assertContains(response, bool1.question.question, 2)
         self.assertContains(response, text1.question.question, 2)
         self.assertContains(response, grade1.profile.profile.display_name)
         self.assertContains(response, grade2.profile.profile.display_name)

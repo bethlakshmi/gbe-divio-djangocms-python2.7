@@ -1,3 +1,4 @@
+{% load staticfiles sekizai_tags %}
 {% if details %}
     <div class="modal fade" id="{{details.occurrence.pk}}_eval_modal" role="dialog">
       <div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">
@@ -36,7 +37,7 @@
       <th class="bid-table rotate-review">
 	<div><span>
 	  {% if question.question|length > 15 %}
-	    <a href="#" data-toggle="tooltip" title="{{ header_item }}">
+	    <a href="#" data-toggle="tooltip" title="{{ question.question }}">
             {{ question.question|truncatechars:15 }}</a>
 	  {% else %}
 	    {{ question.question }}
@@ -65,10 +66,11 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div></div></div>
-
+{% addtoblock "js" %}
 <script>
 $(document).ready(function(){
   $('#{{details.occurrence.pk}}_eval_modal').modal('show');
 });
 </script>
+{% endaddtoblock %}
 {% endif %}

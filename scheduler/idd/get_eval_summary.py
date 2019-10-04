@@ -26,24 +26,15 @@ def get_eval_summary(labels, visible=True):
     else:
         base = EventEvalQuestion.objects.all()
 
-    questions = base.exclude(answer_type="text").order_by(
+    questions = base.filter(answer_type="grade").order_by(
         'order')
 
     for question in questions:
-        summary = None
-        if question.answer_type == "boolean":
-            summary = EventEvalBoolean.objects.filter(
+        summaries[question.pk] = EventEvalGrade.objects.filter(
                 event__in=response.occurrences,
                 question=question).values(
                 'event').annotate(
                 summary=Avg('answer'))
-        if question.answer_type == "grade":
-            summary = EventEvalGrade.objects.filter(
-                event__in=response.occurrences,
-                question=question).values(
-                'event').annotate(
-                summary=Avg('answer'))
-        summaries[question.pk] = summary
 
     count_question = EventEvalQuestion.objects.filter(
         visible=True,
