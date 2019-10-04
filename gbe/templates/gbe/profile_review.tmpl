@@ -1,12 +1,11 @@
 {% extends 'base.tmpl' %}
-{% load staticfiles %}
+{% load staticfiles sekizai_tags %}
 
 {% block title %}
    Manage Users
 {% endblock %}
 
 {% block head %}
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
 {% endblock %}
@@ -77,6 +76,8 @@
     {% endfor %}
     </tbody>
   </table>
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script>
   $(document).ready(function() {
     var table = $('#profile_review').DataTable();
@@ -92,5 +93,6 @@
     } );
   } );
   </script>
+{% endaddtoblock %}
 {% endblock %}
 

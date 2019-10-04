@@ -22,7 +22,7 @@ except:
 try:
     BASE_DIR
 except:
-    BASE_DIR = '/app'
+    BASE_DIR = ''
 
 try:
     STATIC_URL
@@ -198,7 +198,7 @@ except:
 try:
     MEDIA_ROOT
 except:
-    MEDIA_ROOT = os.path.join(BASE_DIR, "data/media")
+    MEDIA_ROOT = os.path.join(BASE_DIR, "/data/media")
 
 EVALUATION_WINDOW = 4
 
