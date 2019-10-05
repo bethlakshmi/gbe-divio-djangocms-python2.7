@@ -140,7 +140,7 @@ class TestReviewVolunteer(TestCase):
         login_as(ProfileFactory(), self)
         bad_id = bad_id_for(Volunteer)
         url = reverse(self.view_name, args=[bad_id], urlconf="gbe.urls")
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_review_volunteer_fetch_by_post(self):

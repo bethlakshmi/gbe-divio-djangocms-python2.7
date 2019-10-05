@@ -94,7 +94,7 @@ class TestCloneBid(TestCase):
                       kwargs={'bid_type': 'Steakknife',
                               'bid_id': bid.id})
         login_as(bid.performer.contact, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_clone_bid_wrong_user(self):

@@ -112,5 +112,5 @@ class TestViewTroupe(TestCase):
                       urlconf='gbe.urls')
         login_as(random.user_object, self)
 
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)

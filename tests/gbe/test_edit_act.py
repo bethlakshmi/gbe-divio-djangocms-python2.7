@@ -101,7 +101,7 @@ class TestEditAct(TestCase):
                       args=[0],
                       urlconf="gbe.urls")
         login_as(profile, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_edit_act_profile_is_not_contact(self):
@@ -112,7 +112,7 @@ class TestEditAct(TestCase):
                       urlconf="gbe.urls")
 
         login_as(user, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_edit_act_user_has_no_profile(self):

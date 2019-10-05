@@ -8,7 +8,7 @@ from django.shortcuts import (
 )
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.forms import ModelChoiceField
+from django.forms import ModelMultipleChoiceField
 from gbe_logging import log_func
 from gbe.forms import TroupeForm
 from gbe.functions import (
@@ -47,7 +47,7 @@ def ViewTroupeView(request, troupe_id=None):
         raise Http404
     performer_form = TroupeForm(instance=troupe,
                                 prefix="The Troupe")
-    performer_form.fields['membership'] = ModelChoiceField(
+    performer_form.fields['membership'] = ModelMultipleChoiceField(
         queryset=troupe.membership.all())
     owner = get_participant_form(
             troupe.contact,

@@ -7,7 +7,10 @@ from django.shortcuts import(
     render,
     get_object_or_404,
 )
-from django.forms import ModelChoiceField
+from django.forms import (
+    ModelChoiceField,
+    ModelMultipleChoiceField,
+)
 from gbe_logging import log_func
 from gbe.forms import TroupeForm
 from gbe.models import (
@@ -59,7 +62,8 @@ def EditTroupeView(request, troupe_id=None):
     if request.method == 'POST':
         form = TroupeForm(request.POST, request.FILES, instance=troupe)
         if form.is_valid():
-            form.save(commit=True)
+            new_troupe = form.save()
+            #raise Exception(form.data['membership'])
             user_message = UserMessage.objects.get_or_create(
                 view='EditTroupeView',
                 code="UPDATE_TROUPE",

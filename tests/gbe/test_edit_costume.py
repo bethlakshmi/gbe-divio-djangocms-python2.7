@@ -85,7 +85,7 @@ class TestEditCostume(TestCase):
                       args=[0],
                       urlconf='gbe.urls')
         login_as(ProfileFactory(), self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_edit_costume_profile_is_not_contact(self):
@@ -95,7 +95,7 @@ class TestEditCostume(TestCase):
                       args=[costume.pk],
                       urlconf='gbe.urls')
         login_as(PersonaFactory().performer_profile, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_edit_costume_no_profile(self):
@@ -117,7 +117,7 @@ class TestEditCostume(TestCase):
                       urlconf='gbe.urls')
         data = self.get_costume_form(invalid=True)
         login_as(costume.profile, self)
-        response = self.client.post(url, data=data)
+        response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_edit_bid_post_no_submit(self):

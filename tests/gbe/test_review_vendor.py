@@ -117,5 +117,5 @@ class TestReviewVendor(TestCase):
         login_as(ProfileFactory(), self)
         bad_id = bad_id_for(Vendor)
         url = reverse(self.view_name, args=[bad_id], urlconf="gbe.urls")
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)

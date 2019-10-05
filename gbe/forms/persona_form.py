@@ -67,6 +67,7 @@ class PersonaForm (ModelForm):
                 performer.img = None
         if commit:
             performer.save()
+            self.save_m2m()
 
         return performer
 

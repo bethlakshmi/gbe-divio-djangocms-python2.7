@@ -37,7 +37,7 @@ class TestCreateTroupe(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        expected_loc = 'http://testserver/update_profile?next=/troupe/create'
+        expected_loc = '/update_profile?next=/troupe/create'
         self.assertEqual(location(response), expected_loc)
 
     def test_create_troupe_performer_exists(self):
@@ -87,6 +87,7 @@ class TestEditTroupe(TestCase):
             data=data,
             follow=True
         )
+        self.assertEqual(troupe.membership.first(), persona)
         return response, data
 
     def test_get_edit_troupe(self):
@@ -143,7 +144,7 @@ class TestEditTroupe(TestCase):
         request = self.factory.get('/troupe/edit/%d' % troupe.pk)
         login_as(profile, self)
         response = self.client.get(url)
-        expected_loc = 'http://testserver/performer/create?next=/troupe/create'
+        expected_loc = '/performer/create?next=/troupe/create'
         self.assertEqual(expected_loc, location(response))
         self.assertEqual(response.status_code, 302)
 
