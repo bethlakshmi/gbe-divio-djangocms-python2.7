@@ -41,12 +41,12 @@ def _create_scheduled_show_with_acts(conference=None, qty=6):
             event=sEvent,
             resource=ar)
     return show, sEvent, acts
- 
-   
+
+
 class TestReports(TestCase):
     '''Tests for index view'''
     view_name = 'act_techinfo_review'
-    
+
     def setUp(self):
         self.client = Client()
         self.profile = ProfileFactory()

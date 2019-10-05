@@ -22,7 +22,7 @@ except:
 try:
     BASE_DIR
 except:
-    BASE_DIR = ''
+    BASE_DIR = '/app'
 
 try:
     STATIC_URL

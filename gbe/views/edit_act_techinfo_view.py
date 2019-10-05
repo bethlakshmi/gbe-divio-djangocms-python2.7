@@ -36,6 +36,7 @@ from gbe.forms import (
 from scheduler.models import Event as sEvent
 from gbetext import default_update_act_tech
 from django.utils.formats import date_format
+from django.core.management import call_command
 
 
 def set_rehearsal_forms(shows, act):
@@ -167,6 +168,8 @@ def EditActTechInfoView(request, act_id):
         if forms_valid:
             for f in techforms:
                 f.save()
+            call_command('sync_audio_downloads',
+                 unsync_all=True)
         tech = act.tech
         if forms_valid and tech.is_complete and not cue_fail:
             user_message = UserMessage.objects.get_or_create(
