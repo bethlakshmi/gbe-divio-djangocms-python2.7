@@ -8,16 +8,16 @@ def assert_checkbox(response,
                     checked=True,
                     prefix="email-select"):
     if checked:
-        checked_string = 'checked="checked" '
+        checked_string = 'checked '
     else:
         checked_string = ''
-    checkbox = '<input %sid="id_%s-%s_%s"' + \
-        ' name="%s-%s" type="checkbox" value="%s" />%s'
-    assert checkbox % (checked_string,
+    checkbox = '<input type="checkbox" name="%s-%s" value="%s" ' + \
+        '%sclass="form-check-input" id="id_%s-%s_%s" />%s'
+    assert checkbox % (prefix,
+                       field_name,
+                       value,
+                       checked_string,
                        prefix,
                        field_name,
                        position,
-                       prefix,
-                       field_name,
-                       value,
                        label) in response.content

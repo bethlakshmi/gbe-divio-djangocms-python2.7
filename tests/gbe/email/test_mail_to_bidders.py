@@ -112,7 +112,7 @@ class TestMailToBidder(TestCase):
             "Act")
         self.assertNotContains(
             response,
-            "Class")
+            '"Class"')
         self.assertNotContains(response, "Email Everyone")
 
     def test_full_login_first_get_2_conf(self):
@@ -300,8 +300,9 @@ class TestMailToBidder(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input id="id_sender" name="sender" type="email" ' +
-            'value="%s" />' % (self.privileged_profile.user_object.email))
+            '<input type="email" name="sender" ' +
+            'value="%s" required id="id_sender" />' % (
+                self.privileged_profile.user_object.email))
 
     def test_pick_no_admin_fixed_email(self):
         act_bid = ActFactory(submitted=True)
@@ -315,8 +316,9 @@ class TestMailToBidder(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input id="id_sender" name="sender" type="hidden" ' +
-            'value="%s" />' % (reduced_profile.user_object.email))
+            '<input type="hidden" name="sender" ' +
+            'value="%s" id="id_sender" />' % (
+                reduced_profile.user_object.email))
 
     def test_send_email_success_status(self):
         login_as(self.privileged_profile, self)
@@ -446,8 +448,8 @@ class TestMailToBidder(TestCase):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
-        to_string = '<input checked="checked" id="id_to_0" name="to" ' + \
-            'type="checkbox" value="%s" />%s'
+        to_string = '<input type="checkbox" name="to" value="%s" checked ' + \
+            'class="form-check-input" id="id_to_0" />%s'
         self.assertContains(
             response,
             to_string % (self.context.teacher.contact.user_object.email,
@@ -502,8 +504,9 @@ class TestMailToBidder(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input checked="checked" id="id_email-select-state_4" ' +
-            'name="email-select-state" type="checkbox" value="3" />')
+            '<input type="checkbox" name="email-select-state" value="3" ' + \
+            'checked class="form-check-input" id="id_email-select-state_4" ' +
+            '/>')
 
     def test_pick_no_post_action(self):
         second_class = ClassFactory(accepted=2)

@@ -74,7 +74,7 @@ class TestMailToPerson(TestCase):
         response = self.client.get(reverse(
             self.view_name,
             urlconf="gbe.email.urls",
-            args=[self.to_profile.resourceitem_id+100]))
+            args=[self.to_profile.resourceitem_id+100]), follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_alt_permissions(self):
@@ -95,16 +95,18 @@ class TestMailToPerson(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            '<input id="id_sender" name="sender" type="email" ' +
-            'value="%s" />' % (self.privileged_profile.user_object.email))
+            '<input type="email" name="sender" ' +
+            'value="%s" required id="id_sender" />' % (
+                self.privileged_profile.user_object.email))
 
     def test_pick_no_admin_fixed_email(self):
         reduced_profile = self.reduced_login()
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            '<input id="id_sender" name="sender" type="hidden" ' +
-            'value="%s" />' % (reduced_profile.user_object.email))
+            '<input type="hidden" name="sender" ' +
+            'value="%s" id="id_sender" />' % (
+                reduced_profile.user_object.email))
 
     def test_send_email_success_status(self):
         login_as(self.privileged_profile, self)

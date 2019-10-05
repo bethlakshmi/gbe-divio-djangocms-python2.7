@@ -37,7 +37,7 @@
                     <i class="fa fa-link"></i>
                   </a>
             {% endif %}
-                  <a class="social" href="#" data-toggle="modal" data-target="#{{featured.bio.pk}}_modal" data-backdrop="true" data-toggle="tooltip" title="More...">
+                  <a class="social" href="#" data-toggle="modal" data-target="#Modal{{featured.bio.pk}}" data-backdrop="true" data-toggle="tooltip" title="More...">
                     <i class="fa fa-external-link"></i>
                   </a>
             {% if request.user.is_superuser %}</br></br>{% if featured.bio.img %}

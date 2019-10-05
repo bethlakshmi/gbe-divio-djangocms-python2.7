@@ -81,12 +81,6 @@
                         <li>{{ choice_label }}</li>
                       {% endif %}
                     {% endfor %}
-                  {% elif choice_id %}
-                    {% for id, label in choice_label %}
-                      {% if id == field.value %}
-                      <li>{{ label }}</li>
-                      {% endif %}
-                    {% endfor %}
                   {% endif %}
                 {% endfor %}
               {% endif %}

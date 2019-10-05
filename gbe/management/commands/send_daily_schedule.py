@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from expo.gbe_logging import logger
+from gbe_logging import logger
 from gbe.email.views import schedule_email
 
 

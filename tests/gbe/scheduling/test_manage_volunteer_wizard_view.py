@@ -92,13 +92,13 @@ class TestManageVolunteerWizard(TestCase):
                 assert_option_state(
                     response,
                     i.pk,
-                    i.interest
+                    i.interest,
                     True)
             elif i.visible:
                 assert_option_state(
                     response,
                     i.pk,
-                    i.interest
+                    i.interest,
                     False)
             else:
                 assert i.interest not in response.content

@@ -1,7 +1,7 @@
 from gbe.models import (
     EmailTemplateSender,
 )
-
+from settings import GBE_DATE_FORMAT
 from django.contrib.auth.models import User
 from django.conf import settings
 from post_office import mail
@@ -9,7 +9,7 @@ from post_office.models import EmailTemplate
 import os
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-#from gbe.models import Show
+from gbe.models import Show
 from gbetext import (
     acceptance_states,
     email_template_desc,
@@ -180,7 +180,7 @@ def send_daily_schedule_mail(schedules, day, slug):
                 'site': Site.objects.get_current().domain,
                 'badge_name': user.profile.get_badge_name(),
                 'bookings': bookings,
-                'day': day.strftime(settings.GBE_DATE_FORMAT)},
+                'day': day.strftime(GBE_DATE_FORMAT)},
             priority="medium")
 
 
