@@ -41,7 +41,7 @@ class TestAdminProfile(TestCase):
                       args=[no_such_id],
                       urlconf="gbe.urls")
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_unauthorized_user(self):

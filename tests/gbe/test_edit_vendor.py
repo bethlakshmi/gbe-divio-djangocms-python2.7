@@ -1,4 +1,3 @@
-from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import RequestFactory
@@ -79,7 +78,7 @@ class TestEditVendor(TestCase):
                       args=[0],
                       urlconf="gbe.urls")
         login_as(ProfileFactory(), self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_edit_vendor_no_profile(self):
@@ -88,15 +87,16 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)
-        self.assertEqual(
-            location(response),
-            'http://testserver/update_profile?next=/vendor/create')
+        self.assertRedirects(
+            response,
+            reverse('profile_update', 
+                    urlconf='gbe.urls') + '?next=/vendor/create')
 
     def test_edit_vendor_wrong_user(self):
         vendor = VendorFactory()
         login_as(ProfileFactory(), self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_vendor_edit_post_form_not_valid(self):
@@ -201,6 +201,7 @@ class TestEditVendor(TestCase):
         self.assertContains(response, vendor.img.url)
 
     def test_edit_change_image(self):
+        ProfileFactory(user_object__username="admin_img")
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'r')
         picture = File(pic_filename)
         vendor = VendorFactory()

@@ -150,8 +150,7 @@ class TestCreateVolunteer(TestCase):
             response,
             "id_b_title",
             "b_title",
-            'volunteer bid: %s' % self.profile.display_name,
-            128)
+            'volunteer bid: %s' % self.profile.display_name)
 
     def test_volunteer_submit_make_message(self):
         response, data = self.post_volunteer_submission()

@@ -100,6 +100,7 @@ class TestEditPersona(TestCase):
         self.assertEqual(persona_reloaded.name, new_name)
 
     def test_edit_persona_change_image(self):
+        ProfileFactory(user_object__username="admin_img")
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'r')
         picture = File(pic_filename)
 

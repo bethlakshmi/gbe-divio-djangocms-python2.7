@@ -217,14 +217,10 @@ THUMBNAIL_SOURCE_GENERATORS = ('easy_thumbnails.source_generators.pil_image',)
 RECAPTCHA_PRIVATE_KEY = '6Le0dx0UAAAAACNZynxCx5mUovu3M1Au3XFeeFKN'
 RECAPTCHA_PUBLIC_KEY = '6Le0dx0UAAAAAFGd_HJzX22FdzhwI-GCh8nCoXoU'
 
-try:
-    EMAIL_BACKEND
-    DEFAULT_FROM_EMAIL
-except:
-    EMAIL_HOST = 'secure135.inmotionhosting.com'
-    EMAIL_PORT = 465
-    EMAIL_HOST_USER = 'mail@burlesque-expo.com'
-    EMAIL_HOST_PASSWORD = '_uWeK9,+tR5^'
-    EMAIL_USE_TLS = True
-    DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
-    EMAIL_BACKEND = 'post_office.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'gbe.auth.EmailUsernameAuth',
+]

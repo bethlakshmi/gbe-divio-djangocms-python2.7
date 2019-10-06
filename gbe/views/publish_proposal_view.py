@@ -1,16 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import (
+  get_object_or_404,
+  render,
+)
 from django.http import (
     HttpResponse,
     HttpResponseRedirect,
 )
 from django.core.urlresolvers import reverse
-from django.template import (
-    loader,
-    RequestContext,
-    Context,
-)
-
 from gbe_logging import log_func
 from gbe.forms import ProposalPublishForm
 from gbe.functions import validate_perms
@@ -41,19 +38,14 @@ def PublishProposalView(request, class_id):
             return HttpResponseRedirect(reverse('proposal_review_list',
                                                 urlconf='gbe.urls'))
         else:
-            template = loader.get_template('gbe/bid.tmpl')
-            context = RequestContext(request,
-                                     {'forms': [form],
-                                      'page_title': page_title,
-                                      'view_title': view_title,
-                                      'nodraft': submit_button})
-            return HttpResponse(template.render(context))
+            context = {'forms': [form],
+                       'page_title': page_title,
+                       'view_title': view_title,
+                       'nodraft': submit_button}
     else:
         form = ProposalPublishForm(instance=the_class)
-        template = loader.get_template('gbe/bid.tmpl')
-        context = RequestContext(request,
-                                 {'forms': [form],
-                                  'page_title': page_title,
-                                  'view_title': view_title,
-                                  'nodraft': submit_button})
-        return HttpResponse(template.render(context))
+        context = {'forms': [form],
+                   'page_title': page_title,
+                   'view_title': view_title,
+                   'nodraft': submit_button}
+    return render(request, 'gbe/bid.tmpl', context)

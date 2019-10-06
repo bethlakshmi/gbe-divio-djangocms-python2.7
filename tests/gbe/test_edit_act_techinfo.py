@@ -12,6 +12,7 @@ from tests.factories.gbe_factories import (
 from tests.contexts import ActTechInfoContext
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_option_state,
     login_as,
     is_login_page,
     is_profile_update_page,
@@ -194,13 +195,12 @@ class TestEditActTechInfo(TestCase):
             '    <th class="bid-table">Wash</th>\n' +
             '    <th class="bid-table">Sound</th>\n' +
             '  </tr>')
-        self.assertContains(
-            response,
-            '<option value="' + str(context.rehearsal.id) +
-            '" selected="selected">' +
+        assert_option_state(
+            response, 
+            str(context.rehearsal.id), 
             "%s: %s" % (context.rehearsal.as_subtype.e_title,
                         date_format(context.rehearsal.starttime,
-                                    "TIME_FORMAT")) + '</option>')
+                                    "TIME_FORMAT")), True)
 
     def test_edit_act_techinfo_good_readonly_on_get(self):
         context = ActTechInfoContext(schedule_rehearsal=True)

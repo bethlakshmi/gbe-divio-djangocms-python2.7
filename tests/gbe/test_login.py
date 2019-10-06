@@ -26,7 +26,7 @@ class TestIndex(TestCase):
             username=self.profile.user_object.email,
             email=self.profile.user_object.email,
             password='foo')
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertContains(response, "Your Account")
 
     def test_bad_password_w_email(self):

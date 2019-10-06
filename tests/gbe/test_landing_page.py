@@ -110,20 +110,20 @@ class TestIndex(TestCase):
 
         self.current_sched = SchedEventFactory(
             eventitem=current_opportunity,
-            starttime=datetime(2016, 2, 5, 12, 30, 0, 0, pytz.utc),
+            starttime=datetime(2016, 2, 5, 12, 30, 0, 0),
             max_volunteer=10)
         self.previous_sched = SchedEventFactory(
             eventitem=previous_opportunity,
-            starttime=datetime(2015, 2, 25, 12, 30, 0, 0, pytz.utc),
+            starttime=datetime(2015, 2, 25, 12, 30, 0, 0),
             max_volunteer=10)
 
         self.current_class_sched = SchedEventFactory(
             eventitem=self.current_class,
-            starttime=datetime(2016, 2, 5, 2, 30, 0, 0, pytz.utc),
+            starttime=datetime(2016, 2, 5, 2, 30, 0, 0),
             max_volunteer=10)
         self.previous_class_sched = SchedEventFactory(
             eventitem=self.previous_class,
-            starttime=datetime(2015, 2, 25, 2, 30, 0, 0, pytz.utc),
+            starttime=datetime(2015, 2, 25, 2, 30, 0, 0),
             max_volunteer=10)
 
         worker = WorkerFactory(_item=self.profile, role='Volunteer')
