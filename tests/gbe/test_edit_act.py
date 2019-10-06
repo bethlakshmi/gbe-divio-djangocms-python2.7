@@ -170,9 +170,8 @@ class TestEditAct(TestCase):
 
     def test_edit_bid_post_no_submit(self):
         response = self.post_edit_paid_act_draft()
-        redirect_tuple = ('http://testserver/gbe', 302)
-        self.assertTrue(redirect_tuple in response.redirect_chain)
-        self.assertTrue('Profile View' in response.content)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        self.assertContains(response, 'Profile View')
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''

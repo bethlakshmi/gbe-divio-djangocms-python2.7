@@ -44,6 +44,7 @@ class TestCreateClass(TestCase):
                 'theclass-maximum_enrollment': 20,
                 'theclass-fee': 0,
                 'theclass-schedule_constraints': ['0'],
+                'theclass-space_needs': "",
                 }
         if submit:
             data['submit'] = 1
@@ -71,10 +72,10 @@ class TestCreateClass(TestCase):
         response = self.client.get(
             url,
             follow=True)
-        redirect = (('http://testserver/performer/create'
-                     '?next=/class/create',
-                     302))
-        nt.assert_true(redirect in response.redirect_chain)
+        self.assertRedirects(
+            response, 
+            reverse("persona_create", 
+                    urlconf='gbe.urls') + "?next=/class/create")
         expected_string = "Tell Us About Your Stage Persona"
         nt.assert_true(expected_string in response.content)
         nt.assert_equal(response.status_code, 200)
@@ -89,9 +90,10 @@ class TestCreateClass(TestCase):
         response = self.client.get(
             url,
             follow=True)
-        redirect = ('http://testserver/performer/create?next=/class/create',
-                    302)
-        assert redirect in response.redirect_chain
+        self.assertRedirects(
+            response, 
+            reverse("persona_create", 
+                    urlconf='gbe.urls') + "?next=/class/create")
         title = '<h2 class="subtitle">Tell Us About Your Stage Persona</h2>'
         assert title in response.content
         assert response.status_code == 200
@@ -124,8 +126,8 @@ class TestCreateClass(TestCase):
         should redirect to home'''
         response, data = self.post_bid(submit=False)
         self.assertEqual(200, response.status_code)
-        assert 'Profile View' in response.content
-        assert data['theclass-b_title'] in response.content
+        self.assertContains(response, 'Profile View')
+        self.assertContains(response, data['theclass-b_title'])
 
     def test_class_bid_post_invalid_form_no_submit(self):
         url = reverse(self.view_name,

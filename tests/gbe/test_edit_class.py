@@ -73,7 +73,7 @@ class TestEditClass(TestCase):
                       args=[0],
                       urlconf='gbe.urls')
         login_as(PersonaFactory().performer_profile, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_edit_class_profile_is_not_contact(self):
@@ -82,7 +82,7 @@ class TestEditClass(TestCase):
                       args=[klass.pk],
                       urlconf='gbe.urls')
         login_as(PersonaFactory().performer_profile, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_class_edit_post_form_not_valid(self):
@@ -102,8 +102,7 @@ class TestEditClass(TestCase):
         should redirect to home'''
         response, data = self.post_class_edit_draft()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(('http://testserver/gbe', 302)
-                        in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
@@ -119,8 +118,7 @@ class TestEditClass(TestCase):
     def test_edit_class_post_with_submit(self):
         response, data = self.post_class_edit_submit()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(('http://testserver/gbe', 302)
-                        in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         # should test some change to class
 
     def test_edit_bid_verify_info_popup_text(self):
@@ -148,8 +146,7 @@ class TestEditClass(TestCase):
     def test_edit_class_post_with_submit(self):
         response, data = self.post_class_edit_submit()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(('http://testserver/gbe', 302)
-                        in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         # should test some change to class
 
     def test_class_submit_make_message(self):

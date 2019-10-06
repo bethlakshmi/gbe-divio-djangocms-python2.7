@@ -52,7 +52,7 @@ class TestAdminProfile(TestCase):
                       args=[no_such_id],
                       urlconf="gbe.urls")
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         nt.assert_equal(404, response.status_code)
 
     def test_get(self):
@@ -76,8 +76,8 @@ class TestAdminProfile(TestCase):
         data = self.get_form()
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=data, follow=True)
-        nt.assert_true(('http://testserver/profile/manage', 302) in
-                       response.redirect_chain)
+        self.assertRedirects(response,
+                             reverse('manage_users', urlconf='gbe.urls'))
         nt.assert_equal(200, response.status_code)
 
     def test_post_invalid_form(self):

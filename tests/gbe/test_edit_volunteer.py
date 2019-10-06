@@ -145,7 +145,7 @@ class TestEditVolunteer(TestCase):
                       urlconf='gbe.urls',
                       args=[0])
         login_as(ProfileFactory(), self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_edit_volunteer_profile_is_not_coordinator(self):
@@ -155,7 +155,7 @@ class TestEditVolunteer(TestCase):
                       urlconf='gbe.urls',
                       args=[volunteer.pk])
         login_as(ProfileFactory(), self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         self.assertEqual(403, response.status_code)
 
     def test_edit_volunteer_profile_is_owner(self):
@@ -210,8 +210,7 @@ class TestEditVolunteer(TestCase):
             response,
             "id_b_title",
             "b_title",
-            context.bid.b_title,
-            128)
+            context.bid.b_title)
 
     def test_volunteer_edit_get_rank(self):
         context = VolunteerContext()

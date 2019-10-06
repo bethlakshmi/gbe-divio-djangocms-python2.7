@@ -125,16 +125,14 @@ class TestEditCostume(TestCase):
         should redirect to home'''
         response = self.post_edit_costume_draft()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(('http://testserver/gbe', 302)
-                        in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
 
     def test_edit_bid_post_submit(self):
         '''edit_costume, not submitting and no other problems,
         should redirect to home'''
         response = self.post_edit_costume_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(('http://testserver/gbe', 302)
-                        in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
 
     def test_edit_bid_post_invalid(self):
         '''edit_costume, not submitting and no other problems,

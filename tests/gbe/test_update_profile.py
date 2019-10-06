@@ -93,8 +93,8 @@ class TestUpdateProfile(TestCase):
         login_as(pref.profile.user_object, self)
         response = self.client.get(url)
         self.assertTrue(
-            '<input checked="checked" id="id_how_heard_6" name="how_heard" ' +
-            'type="checkbox" value="Word of mouth" />' in response.content)
+            '<input type="checkbox" name="how_heard" value="Word of mouth" ' +
+            'checked id="id_how_heard_6" />' in response.content)
 
     def test_update_profile_post_empty_display_name(self):
         data = self.get_form()

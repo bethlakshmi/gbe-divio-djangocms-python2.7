@@ -13,7 +13,6 @@ from gbe.functions import (
     validate_perms,
 )
 from gbe_logging import logger
-from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 from gbe.reporting.functions import prep_act_tech_info
 
@@ -142,7 +141,7 @@ def build_techinfo(show_id, area='all'):
             rehearsals = ""
             for rehearsal in act.get_scheduled_rehearsals():
                 rehearsals += date_format(
-                    rehearsal.start_time, "GBE_DATETIME_FORMAT") + ", "
+                    rehearsal.start_time, "DATETIME_FORMAT") + ", "
             tech_row += [
                 stage_info[1],
                 rehearsals,

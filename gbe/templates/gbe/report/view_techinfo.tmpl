@@ -1,14 +1,13 @@
 {% extends 'base.tmpl' %}
 {% load gbe_tags %}
-{% load staticfiles %}
+{% load staticfiles sekizai_tags %}
 
 {% block title %}
    Act Tech Report
 {% endblock %}
 
 {% block head %}
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 {% endblock %}
 
 {% block content %}
@@ -129,7 +128,8 @@
     <li>The show identified does not exist - please pick from the list above...</li>
     </ul>
 {% endif %}
-
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script>
   $(document).ready(function() {
     var table = $('#bid_review').DataTable({
@@ -149,4 +149,5 @@
     } );
   } );
   </script>
+{% endaddtoblock %}
 {% endblock %}

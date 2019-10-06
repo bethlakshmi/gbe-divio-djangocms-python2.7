@@ -74,8 +74,7 @@ class TestConferenceVolunteer(TestCase):
         response = self.client.post(url,
                                     data=data,
                                     follow=True)
-        nt.assert_true(('http://testserver/gbe', 302)
-                       in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         expected_string = 'Your profile needs an update'
         nt.assert_true(expected_string in response.content)
         nt.assert_equal(response.status_code, 200)
@@ -94,8 +93,7 @@ class TestConferenceVolunteer(TestCase):
         response = self.client.post(url,
                                     data=data,
                                     follow=True)
-        nt.assert_true(('http://testserver/gbe', 302)
-                       in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         expected_string = 'Your profile needs an update'
         nt.assert_true(expected_string in response.content)
 
@@ -121,8 +119,8 @@ class TestConferenceVolunteer(TestCase):
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(ProfileFactory(), self)
         response = self.client.get(url, follow=True)
-        nt.assert_true(
-            ('http://testserver/performer/create?next=/conference/volunteer',
-             302)
-            in response.redirect_chain)
+        self.assertRedirects(
+            response, 
+            reverse("persona_create", 
+                    urlconf='gbe.urls') + "?next=/conference/volunteer")
         nt.assert_equal(response.status_code, 200)

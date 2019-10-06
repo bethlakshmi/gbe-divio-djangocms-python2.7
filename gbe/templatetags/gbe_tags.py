@@ -1,9 +1,5 @@
 from django import template
 from django.conf import settings
-from settings import (
-    GBE_DATETIME_FORMAT,
-    GBE_TIME_FORMAT,
-)
 from django.utils.formats import date_format
 
 register = template.Library()
@@ -33,9 +29,9 @@ def build_schedule_context(profile):
     events = profile.volunteer_schedule()
     schedule = [
         {'event': str(event),
-         'time': "%s - %s" % (date_format(event.starttime, "GBE_DATETIME_FORMAT"),
+         'time': "%s - %s" % (date_format(event.starttime, "DATETIME_FORMAT"),
                               date_format(event.starttime + event.duration,
-                                          "GBE_TIME_FORMAT")),
+                                          "TIME_FORMAT")),
          'location': str(event.location)}
         for event in events]
     return {'schedule': schedule}

@@ -15,6 +15,7 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.functions.gbe_functions import (
+    assert_option_state,
     clear_conferences,
     current_conference,
     grant_privilege,
@@ -62,7 +63,7 @@ class TestReviewAct(TestCase):
                 str(self.eval_cat.pk) + '-bid': int(bid.pk),
                 'notes': "some notes",
                 'evaluator': int(reviewer.pk),
-                'bid': int(bid.pk),}
+                'bid': int(bid.pk)}
         if invalid:
             data[str(self.eval_cat.pk) + '-ranking'] = "cheese"
         return data
@@ -89,16 +90,16 @@ class TestReviewAct(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         evaluator_input = (
-            '<input id="id_%d-evaluator" name="%d-evaluator" ' +
-            'type="hidden" value="%d" />') % (
+            '<input type="hidden" name="%d-evaluator" value="%d" ' +
+            'id="id_%d-evaluator" />') % (
             self.eval_cat.pk,
+            self.privileged_profile.pk,
+            self.eval_cat.pk)
+        bid_id_input = ('<input type="hidden" name="%d-bid" ' +
+                        'value="%d" id="id_%d-bid" />') % (
             self.eval_cat.pk,
-            self.privileged_profile.pk)
-        bid_id_input = ('<input id="id_%d-bid" name="%d-bid" type="hidden" ' +
-                        'value="%d" />') % (
-            self.eval_cat.pk,
-            self.eval_cat.pk,
-            self.act.pk)
+            self.act.pk,
+            self.eval_cat.pk)
         self.assertContains(response, bid_id_input)
         self.assertContains(response, evaluator_input)
 
@@ -181,12 +182,12 @@ class TestReviewAct(TestCase):
         login_as(self.privileged_user, self)
 
         response = self.client.get(url)
-        chosen_item = ('<input checked="checked" id="id_%d-ranking_%d" ' +
-                       'name="%d-ranking" type="radio" value="%d" />')
+        chosen_item = ('<input type="radio" name="%d-ranking" value="%d" ' +
+                       'checked id="id_%d-ranking_%d" />')
         test_result = chosen_item % (evaluation.category.pk,
-                                     evaluation.ranking+1,
+                                     evaluation.ranking,
                                      evaluation.category.pk,
-                                     evaluation.ranking)
+                                     evaluation.ranking+1)
         self.assertContains(response, test_result)
         self.assertContains(response, evaluation.category.category)
         self.assertContains(response, evaluation.category.help_text)
@@ -406,22 +407,15 @@ class TestReviewAct(TestCase):
     def test_review_default_role_present(self):
         response = self.get_act_w_roles(self.act)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '<option value="" selected="selected">Regular Act</option>')
+        assert_option_state(response, "", "Regular Act", True)
 
     def test_review_special_role_present(self):
         response = self.get_act_w_roles(self.act)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '<option value="Hosted by...">Hosted by...</option>')
+        assert_option_state(response, "Hosted by...", "Hosted by...", False)
 
     def test_review_special_role_already_cast(self):
         context = ActTechInfoContext(act_role="Hosted by...")
         response = self.get_act_w_roles(context.act)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '<option value="Hosted by..." selected="selected"' +
-            '>Hosted by...</option>')
+        assert_option_state(response, "Hosted by...", "Hosted by...", True)

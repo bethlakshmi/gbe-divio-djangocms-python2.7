@@ -86,8 +86,7 @@ class TestCreateCostume(TestCase):
         should redirect to home'''
         response, data = self.post_costume_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(('http://testserver/gbe', 302)
-                        in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         self.assertTrue("Your Account" in response.content)
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['b_title'])
@@ -97,8 +96,7 @@ class TestCreateCostume(TestCase):
         should redirect to home'''
         response, data = self.post_costume_draft()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(('http://testserver/gbe', 302)
-                        in response.redirect_chain)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         self.assertTrue("Your Account" in response.content)
         self.assertContains(response, "(Click to edit)")
         self.assertContains(response, data['b_title'])

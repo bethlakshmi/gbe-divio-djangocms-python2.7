@@ -1,3 +1,4 @@
+{% load staticfiles sekizai_tags %}
 {% comment %}
 
 included in event edit flow. Show WorkerAllocationForms
@@ -143,7 +144,8 @@ included in event edit flow. Show WorkerAllocationForms
   There are no available volunteers in the current set of volunteer bids.
 {% endif %}
 </div>
-
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script>
   $(document).ready(function() {
     var table = $('#volunteer_info').DataTable( {
@@ -163,3 +165,4 @@ included in event edit flow. Show WorkerAllocationForms
     } );
 } );
   </script>
+{% endaddtoblock %}

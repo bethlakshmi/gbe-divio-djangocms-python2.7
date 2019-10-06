@@ -26,6 +26,7 @@ class TestRegisterPersona(TestCase):
         self.factory = RequestFactory()
         self.client = Client()
         self.profile = ProfileFactory()
+        ProfileFactory(user_object__username="admin_img")
 
     def submit_persona(self, image=None):
         login_as(self.profile, self)
@@ -107,8 +108,8 @@ class TestRegisterPersona(TestCase):
                   },
             follow=True)
         assert response.status_code == 200
-        redirect = ('http://testserver/troupe/create', 302)
-        assert redirect in response.redirect_chain
+        self.assertRedirects(response, 
+                             reverse('troupe_create', urlconf='gbe.urls'))
         assert "Tell Us About Your Troupe" in response.content
         self.assertNotIn('<div class="alert alert-success">', response.content)
 

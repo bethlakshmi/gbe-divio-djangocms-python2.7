@@ -107,12 +107,12 @@ def assert_rank_choice_exists(response, interest, selection=None):
     assert '<label for="id_%d-rank">%s:</label>' % (
         interest.pk,
         interest.interest) in response.content
-    assert '<select id="id_%d-rank" name="%d-rank">' % (
+    assert '<select name="%d-rank" id="id_%d-rank">' % (
         interest.pk,
         interest.pk) in response.content
     for value, text in rank_interest_options:
         if selection and selection == value:
-            assert '<option value="%d" selected="selected">%s</option>' % (
+            assert '<option value="%d" selected>%s</option>' % (
                 value, text) in response.content
         else:
             assert '<option value="%d">%s</option>' % (
@@ -121,13 +121,13 @@ def assert_rank_choice_exists(response, interest, selection=None):
 
 def assert_hidden_value(response, field_id, name, value, max_length=None):
     if max_length:
-        x = '<input id="%s" maxlength="%d" name="%s" type="hidden" ' + \
-            'value="%s" />'
+        x = '<input type="hidden" name="%s" value="%s" id="%s" ' + \
+            'maxlength="%d" />'
         assert x % (
-            field_id, max_length, name, value) in response.content
+            name, value, field_id, max_length) in response.content
     else:
-        assert '<input id="%s" name="%s" type="hidden" value="%s" />' % (
-            field_id, name, value) in response.content
+        assert '<input type="hidden" name="%s" value="%s" id="%s" />' % (
+            name, value, field_id) in response.content
 
 
 def assert_radio_state(response, name, button_id, value, checked=False):
@@ -207,6 +207,7 @@ def assert_right_mail_right_addresses(
         expected_subject,
         to_email_array,
         from_email=settings.DEFAULT_FROM_EMAIL):
+    print 'outbox: %d' % len(mail.outbox)
     assert num_email == len(mail.outbox)
     msg = mail.outbox[queue_order]
     assert msg.subject == expected_subject

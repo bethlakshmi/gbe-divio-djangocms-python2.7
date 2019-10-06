@@ -13,8 +13,9 @@ from gbe.forms import (
     ClassProposalForm,
 )
 
+
 class ClassIdeaPluginTests(TestCase):
-    
+
     def test_plugin_context(self):
         placeholder = Placeholder.objects.create(slot='test')
         model_instance = add_plugin(
@@ -35,8 +36,9 @@ class ClassIdeaPluginTests(TestCase):
         self.assertIn('nodraft', context)
         self.assertEqual(context['nodraft'], 'Submit')
 
+
 class ContactFormPluginTests(TestCase):
-    
+
     def test_plugin_context(self):
         placeholder = Placeholder.objects.create(slot='test')
         model_instance = add_plugin(

@@ -166,7 +166,7 @@ Changing fields in this section will change them in all calendar items.
     </div>
   {% endif %}
 
-<div><br><br></div>
+<div><br><br><br></div>
 <!-- this br thing above is here to make it possible to click on and edit the 
      fields above this section.  If you hate it, then fix it, but make sure 
      all fields can be clicked on and edited in the 2-3 most common browsers -->
@@ -178,8 +178,8 @@ Changing fields in this section will change them in all calendar items.
     </div>
    <div class="clearfix visible-sm"></div>
  {% for worker_form in worker_formset %}
-  <div class="form-group">
-    <div class="col-lg-2 col-md-3 col-sm-3 col-6">
+  <div class="form-group {% if scheduling_info %}col-md-7 col-sm-6 col-12{% endif %}">
+    <div class="col-lg-4 col-md-3 col-sm-3 col-6">
     {{ worker_form.role }}
     </div>
     <div class="{% if scheduling_info %}col-lg-5 col-md-4{% else %}col-md-9 col-lg-10{% endif %} col-sm-9 col-6">

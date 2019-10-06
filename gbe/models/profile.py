@@ -66,7 +66,10 @@ class Profile(WorkerItem):
 
     @property
     def how_heard_list(self):
-        return eval(self.how_heard)
+        if self.how_heard:
+            return eval(self.how_heard)
+        else:
+            return "None"
 
     @property
     def complete(self):

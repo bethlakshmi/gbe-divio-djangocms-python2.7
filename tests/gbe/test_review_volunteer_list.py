@@ -123,7 +123,7 @@ class TestReviewVolunteerList(TestCase):
         current_opportunity.save()
         booked_sched = sEvent(
             eventitem=current_opportunity,
-            starttime=datetime(2016, 2, 6, 9, 0, 0, 0, pytz.utc),
+            starttime=datetime(2016, 2, 6, 9, 0, 0, 0),
             max_volunteer=1)
         booked_sched.save()
         worker = Worker(_item=self.volunteer.profile, role='Volunteer')
@@ -166,7 +166,7 @@ class TestReviewVolunteerList(TestCase):
         past_opportunity.save()
         booked_sched = sEvent(
             eventitem=past_opportunity,
-            starttime=datetime(2016, 2, 6, 9, 0, 0, 0, pytz.utc),
+            starttime=datetime(2016, 2, 6, 9, 0, 0, 0),
             max_volunteer=1)
         booked_sched.save()
         worker = Worker(_item=self.volunteer.profile, role='Volunteer')
