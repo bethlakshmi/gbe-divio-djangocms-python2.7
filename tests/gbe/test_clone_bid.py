@@ -12,7 +12,6 @@ from tests.factories.gbe_factories import (
 from gbe.models import (
     Act,
     Class,
-    Conference,
     UserMessage
 )
 from tests.functions.gbe_functions import (
@@ -98,7 +97,8 @@ class TestCloneBid(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_clone_bid_wrong_user(self):
-        Conference.objects.all().delete()
+        # apparently cleaning is not needed, causes problem in Djang 1.11
+        # Conference.objects.all().delete()
         bid = ActFactory(b_conference=self.old_conference)
         Act.objects.filter(b_title=bid.b_title,
                            b_conference=self.current_conference).delete()

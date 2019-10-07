@@ -73,6 +73,7 @@ class Class(Biddable, Event):
         new_class.space_needs = self.space_needs
         new_class.physical_restrictions = self.physical_restrictions
         new_class.multiple_run = self.multiple_run
+        new_class.duration = self.duration
         new_class.e_title = self.e_title
         new_class.e_description = self.e_description
         new_class.e_conference = Conference.objects.filter(
