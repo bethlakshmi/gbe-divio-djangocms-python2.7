@@ -134,7 +134,7 @@
             </td>
             <td class="bid-table">
               {% if event_window.window %}
-                {{event_window.window.day.day|date:_("GBE_DATE_FORMAT")}},
+                {{event_window.window.day.day|date:_("DATE_FORMAT")}},
                 {{event_window.window.start|date:_("TIME_FORMAT") }} -
                 {{event_window.window.end|date:_("TIME_FORMAT")}}
               {% endif %}
@@ -154,9 +154,9 @@
 <a href="{% url 'scheduling:detail_view' event_window.eventitem.eventitem_id%}">
                 {{event_window.eventitem}}
               </a></td>
-            <td class="bid-table">{{event_window.occurrence.start_time|date:_("GBE_SHORT_DATETIME_FORMAT") }}</td>
+            <td class="bid-table">{{event_window.occurrence.start_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
             <td class="bid-table">
-            {{event_window.occurrence.end_time|date:_("GBE_SHORT_DATETIME_FORMAT") }}</td>
+            {{event_window.occurrence.end_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
             <td class="bid-table">
               {% if event_window.parent_event %}
 <a href="{% url 'scheduling:edit_event' event_window.eventitem.child.e_conference.conference_slug event_window.parent_event.pk%}">

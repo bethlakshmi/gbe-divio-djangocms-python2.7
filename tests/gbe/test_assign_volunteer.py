@@ -49,7 +49,7 @@ class TestAssignVolunteer(TestCase):
         context = StaffAreaContext()
 
         current_sched = context.add_volunteer_opp()
-        current_sched.starttime = datetime(2016, 2, 5, 12, 0, 0, 0, pytz.utc)
+        current_sched.starttime = datetime(2016, 2, 5, 12, 0, 0, 0)
         current_sched.max_volunteer = 10
         current_sched.save()
 
@@ -91,7 +91,7 @@ class TestAssignVolunteer(TestCase):
                       args=[volunteer.pk],
                       urlconf='gbe.urls')
         login_as(ProfileFactory(), self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         nt.assert_equal(403, response.status_code)
 
     def test_assign_volunteers_no_profile(self):
@@ -101,7 +101,7 @@ class TestAssignVolunteer(TestCase):
                       args=[volunteer.pk],
                       urlconf='gbe.urls')
         login_as(UserFactory(), self)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         nt.assert_equal(403, response.status_code)
 
     def test_assign_volunteers_old_bid(self):
@@ -182,7 +182,7 @@ class TestAssignVolunteer(TestCase):
 
         rehearsal_slot = SchedEventFactory(
             eventitem=rehearsal,
-            starttime=datetime(2016, 2, 6, 13, 0, 0, 0, pytz.utc),
+            starttime=datetime(2016, 2, 6, 13, 0, 0, 0),
             max_volunteer=10)
         EventLabelFactory(event=rehearsal_slot,
                           text=data['context'].conference.conference_slug)
@@ -215,7 +215,7 @@ class TestAssignVolunteer(TestCase):
                 status='completed'))
 
         past_opp = past_context.add_volunteer_opp()
-        past_opp.starttime = datetime(2015, 2, 25, 6, 0, 0, 0, pytz.utc)
+        past_opp.starttime = datetime(2015, 2, 25, 6, 0, 0, 0)
         past_opp.eventitem.max_volunteer = 10
         past_opp.eventitem.save()
 
@@ -243,7 +243,7 @@ class TestAssignVolunteer(TestCase):
 
         booked_sched = SchedEventFactory(
             eventitem=data['current_sched'].eventitem,
-            starttime=datetime(2016, 2, 6, 9, 0, 0, 0, pytz.utc),
+            starttime=datetime(2016, 2, 6, 9, 0, 0, 0),
             max_volunteer=1)
         data['context'].book_volunteer(
             booked_sched,
@@ -290,7 +290,7 @@ class TestAssignVolunteer(TestCase):
 
         unavail_sched = SchedEventFactory(
             eventitem=data['current_sched'].eventitem,
-            starttime=datetime(2016, 2, 7, 12, 0, 0, 0, pytz.utc),
+            starttime=datetime(2016, 2, 7, 12, 0, 0, 0),
             max_volunteer=10)
         EventLabelFactory(event=unavail_sched,
                           text=data['context'].conference.conference_slug)

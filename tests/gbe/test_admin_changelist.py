@@ -29,21 +29,21 @@ class GBEChangeListTests(TestCase):
 
     def test_get_volunteer_interest_conference(self):
         obj = VolunteerInterestFactory()
-        response = self.client.get('/admin/gbe/volunteerinterest/')
+        response = self.client.get('/admin/gbe/volunteerinterest/', follow=True)
         assert str(obj.volunteer.b_conference) in response.content
 
     def test_get_volunteer_window_conference(self):
         obj = VolunteerWindowFactory()
-        response = self.client.get('/admin/gbe/volunteerwindow/')
+        response = self.client.get('/admin/gbe/volunteerwindow/', follow=True)
         assert str(obj.day.conference) in response.content
 
     def test_get_event_subclass(self):
         obj = GenericEventFactory()
-        response = self.client.get('/admin/gbe/event/')
+        response = self.client.get('/admin/gbe/event/', follow=True)
         assert "GenericEvent" in response.content
 
     def test_get_event_no_subclass(self):
         obj = EventFactory()
-        response = self.client.get('/admin/gbe/event/')
+        response = self.client.get('/admin/gbe/event/', follow=True)
         assert "Event" in response.content
         assert str(obj) in response.content
