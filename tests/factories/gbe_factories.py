@@ -195,7 +195,7 @@ class ActFactory(DjangoModelFactory):
     tech = SubFactory(TechInfoFactory)
     video_link = ""
     video_choice = ""
-    shows_preferences = ""
+    shows_preferences = "[]"
     why_you = "why_you field for test Act"
     b_conference = SubFactory(ConferenceFactory)
 
@@ -258,8 +258,7 @@ class ClassFactory(DjangoModelFactory):
     run_before = LazyAttribute(
         lambda a:
         "run_before for test Class %s" % a.e_title)
-    schedule_constraints = LazyAttribute(
-        lambda a: "schedule constraints for test Class %s" % a.e_title)
+    schedule_constraints = "[]"
     space_needs = ''
     physical_restrictions = LazyAttribute(
         lambda a: "physical restrictions for test Class %s" % a.e_title)

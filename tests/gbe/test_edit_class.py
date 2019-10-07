@@ -132,16 +132,32 @@ class TestEditClass(TestCase):
         self.assertTrue(
             'We will do our best to accommodate' in response.content)
 
-    def test_edit_bid_verify_avoided_constraints(self):
-        klass = ClassFactory()
+    def test_edit_bid_verify_constraints(self):
+        klass = ClassFactory(schedule_constraints="[u'0']", 
+                             avoided_constraints="[u'1', u'2']")
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
         login_as(klass.teacher.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('I Would Prefer to Avoid' in response.content)
-        self.assertTrue('Submit a Class' in response.content)
+        constraint_selected = '<input type="checkbox" name="theclass-%s" ' + \
+            'value="%d" checked id="id_theclass-%s_%d" />'
+        self.assertTrue(constraint_selected % (
+            "schedule_constraints",
+            0,
+            "schedule_constraints",
+            0) in response.content)
+        self.assertTrue(constraint_selected % (
+            "avoided_constraints",
+            1,
+            "avoided_constraints",
+            1) in response.content)
+        self.assertTrue(constraint_selected % (
+            "avoided_constraints",
+            2,
+            "avoided_constraints",
+            2) in response.content)      
 
     def test_edit_class_post_with_submit(self):
         response, data = self.post_class_edit_submit()

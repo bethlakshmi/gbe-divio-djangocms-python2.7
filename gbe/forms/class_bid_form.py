@@ -14,6 +14,7 @@ from gbe_forms_text import (
     class_schedule_options,
 )
 from tinymce.widgets import TinyMCE
+from gbe.functions import jsonify
 
 
 class ClassBidDraftForm(ModelForm):
@@ -57,6 +58,17 @@ class ClassBidDraftForm(ModelForm):
                   'space_needs']
         help_texts = classbid_help_texts
         labels = classbid_labels
+
+    def __init__(self, *args, **kwargs):
+        super(ClassBidDraftForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            obj_data = self.instance.__dict__ 
+            if obj_data['schedule_constraints']:
+                self.initial['schedule_constraints'] = jsonify(
+                    obj_data['schedule_constraints'])
+            if obj_data['avoided_constraints']:
+                self.initial['avoided_constraints'] = jsonify(
+                    obj_data['avoided_constraints'])
 
 
 class ClassBidForm(ClassBidDraftForm):

@@ -20,6 +20,12 @@ from gbetext import (
     no_login_msg,
     full_login_msg,
 )
+import json
+
+
+def jsonify(data):
+    return json.loads(data.replace("u'", "'").replace("'", '"'))
+    #output is [u'a', u'k']  
 
 
 def validate_profile(request, require=False):

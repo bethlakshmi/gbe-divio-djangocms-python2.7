@@ -21,6 +21,7 @@ from gbetext import (
 from gbe.expoformfields import (
     DurationFormField,
 )
+from gbe.functions import jsonify
 
 
 class ActEditDraftForm(ModelForm):
@@ -82,6 +83,17 @@ class ActEditDraftForm(ModelForm):
         labels = act_bid_labels
         help_texts = act_help_texts
         widgets = {'b_conference': HiddenInput()}
+
+    def __init__(self, *args, **kwargs):
+        super(ActEditDraftForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            obj_data = self.instance.__dict__ 
+            if obj_data['shows_preferences']:
+                self.initial['shows_preferences'] = jsonify(
+                    obj_data['shows_preferences'])
+            if obj_data['other_performance']:
+                self.initial['other_performance'] = jsonify(
+                    obj_data['other_performance'])
 
 
 class ActEditForm(ActEditDraftForm):

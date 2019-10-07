@@ -175,7 +175,8 @@ class TestEditAct(TestCase):
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
-        act = ActFactory()
+        act = ActFactory(shows_preferences="[u'0']",
+                         other_performance="[u'1', u'3']")
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
@@ -184,6 +185,23 @@ class TestEditAct(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Propose an Act' in response.content)
+        constraint_selected = '<input type="checkbox" name="theact-%s" ' + \
+            'value="%d" checked id="id_theact-%s_%d" />'
+        self.assertTrue(constraint_selected % (
+            "shows_preferences",
+            0,
+            "shows_preferences",
+            0) in response.content)
+        self.assertTrue(constraint_selected % (
+            "other_performance",
+            1,
+            "other_performance",
+            1) in response.content)
+        self.assertTrue(constraint_selected % (
+            "other_performance",
+            3,
+            "other_performance",
+            3) in response.content)    
 
     def test_edit_act_submit_make_message(self):
         response = self.post_edit_paid_act_submission()
