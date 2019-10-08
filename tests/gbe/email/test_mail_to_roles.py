@@ -159,7 +159,6 @@ class TestMailToRoles(TestCase):
         self.assertNotContains(
             response,
             interested.user_object.email)
-        print response.content
         assert_checkbox(
             response,
             "event_collections",
@@ -431,7 +430,6 @@ class TestMailToRoles(TestCase):
             'refine': True,
         }
         response = self.client.post(self.url, data=data, follow=True)
-        print response
         self.assertNotContains(
             response,
             self.context.teacher.contact.user_object.email)

@@ -166,7 +166,6 @@ class TestEditCostume(TestCase):
         data['b_description'] = ''
         login_as(costume.profile, self)
         response = self.client.post(url, data=data)
-        print response.content
         self.assertContains(response, 'This field is required.', count=2)
 
     def test_edit_bid_not_post(self):

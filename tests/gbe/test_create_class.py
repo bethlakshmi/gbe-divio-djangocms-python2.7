@@ -182,7 +182,6 @@ class TestCreateClass(TestCase):
         data['theclass-avoided_constraints'] = ['0']
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
-        print response.content
         self.assertContains(
             response, "Available times conflict with unavailable times.  " +
             "Conflicts are: Friday Afternoon")

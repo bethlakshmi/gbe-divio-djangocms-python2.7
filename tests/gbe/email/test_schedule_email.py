@@ -13,7 +13,6 @@ from datetime import (
     time,
     timedelta,
 )
-import pytz
 from gbe.email.views import schedule_email
 from django.conf import settings
 
@@ -36,9 +35,8 @@ class TestScheduleEmail(TestCase):
 
     def test_send_to_teacher(self):
         start_time = datetime.combine(
-            datetime.now(tz=pytz.timezone('America/New_York')).date(
-                ) + timedelta(days=1),
-            time(0, 0, 0, 0, tzinfo=pytz.utc))
+            datetime.now().date() + timedelta(days=1),
+            time(0, 0, 0, 0))
         context = ClassContext(starttime=start_time)
         num = schedule_email()
         self.assertEqual(1, num)
@@ -54,11 +52,9 @@ class TestScheduleEmail(TestCase):
 
     def test_send_for_show(self):
         start_time = datetime.combine(
-            datetime.now(tz=pytz.timezone('America/New_York')).date(
-                ) + timedelta(days=1),
-            time(0, 0, 0, 0, tzinfo=pytz.utc))
+            datetime.now().date() + timedelta(days=1),
+            time(0, 0, 0, 0))
         show_context = ShowContext(starttime=start_time)
-        print show_context.days.first().day
         context = ActTechInfoContext(
             show=show_context.show,
             sched_event=show_context.sched_event,

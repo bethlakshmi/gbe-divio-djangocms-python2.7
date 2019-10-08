@@ -48,7 +48,6 @@ class TestClassChangestate(TestCase):
                             urlconf='gbe.scheduling.urls',
                             args=[self.klass.b_conference.conference_slug])
         response = self.client.post(sched_url)
-        print response
         assert self.klass.b_title in response.content
 
     def test_class_changestate_unauthorized_user(self):

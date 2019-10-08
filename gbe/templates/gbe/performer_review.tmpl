@@ -2,11 +2,15 @@
 {% if performer %}
  <div class="row top-buffer">
   <div class="col-12"><h3 class="readonlyform">The Presenter</h3></div>
-  <div class="col-md-4 col-sm-6 col-12">
+</div>
+<div class="card-columns">
   {% if performer.img %}
-    <img src="{% thumbnail performer.img 350x350 crop=scale subject_location=performer.img.subject_location %}" class="sched_bio_image">
-  {% else %} &nbsp;{% endif %}
+  <div class="card">
+    <img src="{% thumbnail performer.img 350x350 crop=scale subject_location=performer.img.subject_location %}" class="card-img-top sched_bio_image">
   </div>
+  {% else %} &nbsp;{% endif %}
+  <div class="card">
+
   <div class="col-md-3 col-sm-3 col-12 read-only-label">Stage Name:</div>
   <div class="col-md-5 col-sm-3 col-12 read-only-info">{{performer.name}}</div>
   <div class="col-md-3 col-sm-3 col-12 read-only-label">Web Site:</div>
@@ -18,7 +22,7 @@
   <div class="col-md-5 col-sm-3 col-12 read-only-info">{{performer.awards}}</div>
   <div class="col-md-3 col-sm-12 col-12 read-only-label">Bio:</div>
   <div class="col-md-5 col-sm-12 col-12 read-only-info">{{performer.bio|safe}}</div>
- </div>
+ </div></div>
  {% if display_contact_info %}
  <div class="row top-buffer">
   <div class="col-12"><h3 class="readonlyform">Contact Information</h3></div>

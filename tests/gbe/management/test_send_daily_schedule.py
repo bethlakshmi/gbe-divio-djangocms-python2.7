@@ -11,7 +11,6 @@ from datetime import (
     time,
     timedelta,
 )
-import pytz
 
 
 class TestSendDailySchedule(TestCase):
@@ -24,9 +23,8 @@ class TestSendDailySchedule(TestCase):
 
     def test_call_command(self):
         start_time = datetime.combine(
-            datetime.now(tz=pytz.timezone('America/New_York')).date(
-                ) + timedelta(days=1),
-            time(0, 0, 0, 0, tzinfo=pytz.utc))
+            datetime.now().date() + timedelta(days=1),
+            time(0, 0, 0, 0))
         context = ClassContext(starttime=start_time)
         call_command("send_daily_schedule")
         queued_email = Email.objects.filter(

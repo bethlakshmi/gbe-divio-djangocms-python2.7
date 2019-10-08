@@ -106,7 +106,6 @@ class TestClassWizard(TestCase):
             self.url,
             data=data,
             follow=True)
-        print response.content
         self.assertContains(
             response,
             ('<input type="radio" name="accepted_class" value="%d" ' +
