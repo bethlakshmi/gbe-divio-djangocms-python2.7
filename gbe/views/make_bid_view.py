@@ -183,6 +183,7 @@ class MakeBidView(View):
             return HttpResponseRedirect(redirect)
 
         user_message = self.set_up_post(request)
+
         if not self.check_validity(request):
             return self.get_invalid_response(request)
 

@@ -39,6 +39,11 @@ INSTALLED_APPS.extend([
     'snowpenguin.django.recaptcha2',
 ])
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
+ADMINS = [('Betty','betty@burlesque-expo.com')]
+USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
+
 try:
     EMAIL_BACKEND
     DEFAULT_FROM_EMAIL

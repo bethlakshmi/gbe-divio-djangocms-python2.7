@@ -4,6 +4,8 @@ from scheduler.data_transfer import (
     ScheduleItem,
 )
 from scheduler.models import ResourceAllocation
+from settings import GBE_DATETIME_FORMAT
+import pytz
 
 
 # DEPRECATE - not really deprecate, but totally rework when model
@@ -15,15 +17,17 @@ def get_schedule(user=None,
                  roles=[]):
     basic_filter = ResourceAllocation.objects.all()
     sched_items = []
+
     if len(labels) > 0:
         basic_filter = basic_filter.filter(
                 event__eventlabel__text__in=labels)
+    dates = ""
     if start_time:
         basic_filter = basic_filter.filter(
-            event__starttime__gte=start_time)
+            event__starttime__gte=start_time.replace(tzinfo=None))
     if end_time:
         basic_filter = basic_filter.filter(
-            event__starttime__lt=end_time)
+            event__starttime__lt=end_time.replace(tzinfo=None))
     if len(roles) > 0:
         basic_filter = basic_filter.filter(
             resource__worker__role__in=roles,

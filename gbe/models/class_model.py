@@ -54,7 +54,7 @@ class Class(Biddable, Event):
     space_needs = CharField(max_length=128,
                             choices=space_options,
                             blank=True,
-                            default='Please Choose an Option')
+                            default='')
     physical_restrictions = TextField(blank=True)
     multiple_run = CharField(max_length=20,
                              choices=yesno_options, default="No")

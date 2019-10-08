@@ -50,7 +50,7 @@ class TestMakeBid(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self.conference.conference_name in response.content)
 
-    def test_volunteer_conflict_sends_notification_w_bid_details(self):
+    def test_class_posting_sends_mail_to_reviewers(self):
         privileged_profile = ProfileFactory()
         grant_privilege(
             privileged_profile.user_object,
@@ -77,6 +77,7 @@ class TestMakeBid(TestCase):
                 'submit': 1,
                 }
         response = self.client.post(url, data=data, follow=True)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         assert_right_mail_right_addresses(
             0,
             1,

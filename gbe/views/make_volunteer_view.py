@@ -89,7 +89,6 @@ class MakeVolunteerView(MakeBidView):
                     start_time=window.start_time,
                     end_time=window.end_time,
                     labels=[self.bid_object.b_conference.conference_slug])
-
             # choosing to error silently here, because the function does not
             # have any errors yet, and because this is a public user case
             for conflict in conflict_check.schedule_items:

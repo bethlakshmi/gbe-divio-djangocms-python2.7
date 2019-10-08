@@ -114,6 +114,15 @@ class TestEditVolunteer(TestCase):
             follow=True)
         return response, context
 
+    def test_volunteer_conflict_sends_warning_to_staff(self):
+        response, context = self.post_conflict(staff=True)
+        assert_right_mail_right_addresses(
+            1,
+            3,
+            "URGENT: Volunteer Schedule Conflict Occurred",
+            [self.privileged_profile.contact_email,
+             context.profile.contact_email])
+
     def test_volunteer_conflict_sends_warning_to_areastaff(self):
         context = VolunteerContext()
         area = StaffAreaFactory(conference=context.conference,
@@ -170,8 +179,8 @@ class TestEditVolunteer(TestCase):
         self.assertTrue('I am Available....' in response.content)
 
     def test_volunteer_edit_post_form_not_valid(self):
-        '''volunteer_edit, if form not valid, should return
-        to VolunteerEditForm'''
+        # volunteer_edit, if form not valid, should return
+        # to VolunteerEditForm
         context = VolunteerContext()
         url = reverse('volunteer_edit',
                       urlconf='gbe.urls',
@@ -186,8 +195,8 @@ class TestEditVolunteer(TestCase):
         self.assertTrue('Volunteer at the Expo' in response.content)
 
     def test_volunteer_edit_post_form_valid(self):
-        '''volunteer_edit, if form not valid, should return
-        to VolunteerEditForm'''
+        # volunteer_edit, if form not valid, should return
+        # to VolunteerEditForm
         response, context = self.edit_volunteer()
         expected_string = ("Bid Information for %s" %
                            context.conference.conference_name)
@@ -323,15 +332,6 @@ class TestEditVolunteer(TestCase):
             3,
             "A change has been made to your Volunteer Schedule!",
             [context.profile.contact_email])
-
-    def test_volunteer_conflict_sends_warning_to_staff(self):
-        response, context = self.post_conflict(staff=True)
-        assert_right_mail_right_addresses(
-            1,
-            3,
-            "URGENT: Volunteer Schedule Conflict Occurred",
-            [self.privileged_profile.contact_email,
-             context.profile.contact_email])
 
     def test_volunteer_conflict_sends_warning_to_active_staff(self):
         ProfileFactory(user_object__is_active=False)

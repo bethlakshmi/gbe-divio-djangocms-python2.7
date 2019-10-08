@@ -208,6 +208,8 @@ def assert_right_mail_right_addresses(
         to_email_array,
         from_email=settings.DEFAULT_FROM_EMAIL):
     print 'outbox: %d' % len(mail.outbox)
+    for item in mail.outbox:
+        print "mail subject" + item.subject
     assert num_email == len(mail.outbox)
     msg = mail.outbox[queue_order]
     assert msg.subject == expected_subject
