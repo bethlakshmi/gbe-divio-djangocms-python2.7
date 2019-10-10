@@ -184,7 +184,7 @@ class TestProcessBPTOrderList(TestCase):
         user.delete()
 
     @patch('urllib2.urlopen', autospec=True)
-    def test_get_transaction_user(self, m_urlopen):
+    def test_get_transaction_profile(self, m_urlopen):
         '''
            match to a user with no purchase_email, but matching email
         '''

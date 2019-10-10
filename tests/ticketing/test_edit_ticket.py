@@ -45,8 +45,8 @@ class TestEditTicketItem(TestCase):
         user = gbe_factories.ProfileFactory.create().user_object
         login_as(user, self)
         response = self.client.get(self.url)
-        print response.status_code
-        print response.content
+        nt.assert_equal(response.status_code, 403)
+
 
     def test_edit_ticket_bad_ticketitem(self):
         '''
@@ -57,9 +57,8 @@ class TestEditTicketItem(TestCase):
         response = self.client.get(reverse(
             self.view_name,
             args=[200],
-            urlconf='ticketing.urls'))
-        print response.status_code
-        print response.content
+            urlconf='ticketing.urls'), follow=True)
+        nt.assert_equal(response.status_code, 404)
 
     def test_get_new_ticketitem(self):
         '''
@@ -149,14 +148,18 @@ class TestEditTicketItem(TestCase):
         '''
             Good form, good user, delete item that doesn't exist - get an error
         '''
+        self.url = reverse(
+            self.view_name,
+            args=[self.ticketitem.pk+1],
+            urlconf='ticketing.urls')
         delete_ticket = self.get_ticketitem_form()
         delete_ticket['delete_item'] = ''
         login_as(self.privileged_user, self)
         response = self.client.post(
             self.url,
-            data=delete_ticket)
-        print response.status_code
-        print response.content
+            data=delete_ticket,
+            follow=True)
+        nt.assert_equal(response.status_code, 404)
 
     def test_delete_ticket_with_transactions(self):
         '''

@@ -122,7 +122,7 @@ class TestReviewClass(TestCase):
         self.assertRedirects(response, redirect_url)
         self.assertTrue(is_login_page(response))
 
-    def test_bad_user(self):
+    def test_basic_user(self):
         klass = ClassFactory()
         reviewer = ProfileFactory()
         grant_privilege(reviewer, 'Class Reviewers')

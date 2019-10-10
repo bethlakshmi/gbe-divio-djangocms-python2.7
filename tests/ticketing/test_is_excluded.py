@@ -109,7 +109,7 @@ class TestIsExcluded(TestCase):
             self.teacher.performer_profile,
             self.conference))
 
-    def test_condition_role_exclusion(self):
+    def test_condition_role_exclusion_no_event(self):
         '''
             condition does not have any exclusions for this particular case
         '''

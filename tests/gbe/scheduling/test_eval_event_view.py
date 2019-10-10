@@ -246,40 +246,6 @@ class TestEvalEventView(TestCase):
             'Warning',
             one_eval_msg)
 
-    def test_set_eval(self):
-        q1 = EventEvalQuestionFactory(answer_type="grade")
-        q2 = EventEvalQuestionFactory(answer_type="text")
-        q3 = EventEvalQuestionFactory(answer_type="boolean")
-
-        login_as(self.profile, self)
-        response = self.client.post(
-            self.url,
-            data={
-                'question%d' % self.q0.pk: "A",
-                'question%d' % q1.pk: "B",
-                'question%d' % q2.pk: "This is Test Text.",
-                'question%d' % q3.pk: True,
-                },
-            follow=True)
-        assert_alert_exists(
-            response,
-            'info',
-            'Info',
-            eval_success_msg)
-        self.assertEqual(
-            2,
-            EventEvalGrade.objects.filter(
-                event=self.context.sched_event).count())
-        self.assertEqual(
-            1,
-            EventEvalComment.objects.filter(
-                event=self.context.sched_event).count())
-        self.assertEqual(
-            1,
-            EventEvalBoolean.objects.filter(
-                event=self.context.sched_event).count())
-        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-
     def test_invalid_eval(self):
         login_as(self.profile, self)
         response = self.client.post(

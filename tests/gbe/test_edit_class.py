@@ -115,12 +115,6 @@ class TestEditClass(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Submit a Class' in response.content)
 
-    def test_edit_class_post_with_submit(self):
-        response, data = self.post_class_edit_submit()
-        self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        # should test some change to class
-
     def test_edit_bid_verify_info_popup_text(self):
         klass = ClassFactory()
         url = reverse(self.view_name,

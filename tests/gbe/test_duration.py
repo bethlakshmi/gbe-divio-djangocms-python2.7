@@ -82,7 +82,7 @@ def test_divmod_by_int():
                     duration.__divmod__(50))
 
 
-def test_divmod_by_int():
+def test_divmod_by_duration():
     duration1 = Duration(500)
     duration2 = Duration(10)
     nt.assert_equal((duration1 / duration2, duration1 % duration2),

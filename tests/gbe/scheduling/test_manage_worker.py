@@ -405,7 +405,7 @@ class TestManageWorker(TestCase):
             '%d for occurrence id %d.' % (self.alloc.pk + 100,
                                           self.volunteer_opp.pk))
 
-    def test_post_form_edit_exiting_allocation(self):
+    def test_post_form_edit_exiting_alloc_used_email_tmpl(self):
         new_volunteer = ProfileFactory()
         data = self.get_edit_data()
         data['worker'] = new_volunteer.pk,

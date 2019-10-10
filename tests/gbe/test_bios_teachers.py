@@ -37,12 +37,6 @@ class TestBiosTeachers(TestCase):
         self.client = Client()
         self.performer = PersonaFactory()
 
-    def get_class_form(self):
-        return {'name': 'someone@host.com',
-                'title': 'some class name',
-                'proposal': 'some class description'
-                }
-
     def test_bios_teachers_no_conf_slug(self):
         current_context = ClassContext(conference=current_conference())
         other_conference = ConferenceFactory(status="ended")

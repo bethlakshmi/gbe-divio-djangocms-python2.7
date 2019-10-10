@@ -10,7 +10,6 @@
   </div>
   {% else %} &nbsp;{% endif %}
   <div class="card">
-
   <div class="col-md-3 col-sm-3 col-12 read-only-label">Stage Name:</div>
   <div class="col-md-5 col-sm-3 col-12 read-only-info">{{performer.name}}</div>
   <div class="col-md-3 col-sm-3 col-12 read-only-label">Web Site:</div>
@@ -22,7 +21,8 @@
   <div class="col-md-5 col-sm-3 col-12 read-only-info">{{performer.awards}}</div>
   <div class="col-md-3 col-sm-12 col-12 read-only-label">Bio:</div>
   <div class="col-md-5 col-sm-12 col-12 read-only-info">{{performer.bio|safe}}</div>
- </div></div>
+ </div>
+</div> <!-- card container end -->
  {% if display_contact_info %}
  <div class="row top-buffer">
   <div class="col-12"><h3 class="readonlyform">Contact Information</h3></div>

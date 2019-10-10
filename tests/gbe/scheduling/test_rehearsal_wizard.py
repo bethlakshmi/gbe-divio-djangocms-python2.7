@@ -41,23 +41,6 @@ class TestRehearsalWizard(TestCase):
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
 
-    def create_opp(self):
-        data = {
-            'type': 'Volunteer',
-            'e_conference': self.current_conference.pk,
-            'e_title': "Test Volunteer Wizard #%d" % self.room.pk,
-            'e_description': 'Description',
-            'max_volunteer': 0,
-            'day': self.special_volunteer.window.day.pk,
-            'time': '11:00:00',
-            'duration': 2.5,
-            'location': self.room.pk,
-            'alloc_0-role': 'Staff Lead',
-            'alloc_0-worker': self.staff_area.staff_lead.pk,
-            'set_opp': 'Finish',
-        }
-        return data
-
     def test_authorized_user_can_access(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)

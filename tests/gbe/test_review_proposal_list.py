@@ -23,12 +23,6 @@ class TestReviewProposalList(TestCase):
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Class Coordinator')
 
-    def get_class_form(self):
-        return {'name': 'someone@host.com',
-                'title': 'some class name',
-                'proposal': 'some class description'
-                }
-
     def test_review_proposal_list_authorized_user(self):
         proposal = ClassProposalFactory()
         url = reverse(self.view_name, urlconf='gbe.urls')

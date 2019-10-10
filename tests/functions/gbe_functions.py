@@ -67,10 +67,6 @@ def is_login_page(response):
     return 'I forgot my username or password!' in response.content
 
 
-def is_profile_update_page(response):
-    return 'Your privacy is very important to us' in response.content
-
-
 def location(response):
     response_dict = dict(response.items())
     return response_dict['Location']
@@ -88,10 +84,6 @@ def current_conference():
 
 def clear_conferences():
     Conference.objects.all().delete()
-
-
-def reload(object):
-    return type(object).objects.get(pk=object.pk)
 
 
 def assert_alert_exists(response, tag, label, text):
@@ -119,15 +111,9 @@ def assert_rank_choice_exists(response, interest, selection=None):
                 value, text) in response.content
 
 
-def assert_hidden_value(response, field_id, name, value, max_length=None):
-    if max_length:
-        x = '<input type="hidden" name="%s" value="%s" id="%s" ' + \
-            'maxlength="%d" />'
-        assert x % (
-            name, value, field_id, max_length) in response.content
-    else:
-        assert '<input type="hidden" name="%s" value="%s" id="%s" />' % (
-            name, value, field_id) in response.content
+def assert_hidden_value(response, field_id, name, value):
+    assert '<input type="hidden" name="%s" value="%s" id="%s" />' % (
+        name, value, field_id) in response.content
 
 
 def assert_radio_state(response, name, button_id, value, checked=False):

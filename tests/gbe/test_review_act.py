@@ -20,9 +20,7 @@ from tests.functions.gbe_functions import (
     current_conference,
     grant_privilege,
     login_as,
-    reload,
 )
-from tests.functions.scheduler_functions import assert_selected
 from gbe.models import (
     ActBidEvaluation,
     FlexibleEvaluation,

@@ -30,10 +30,6 @@ class Schedulable(models.Model):
     objects = InheritanceManager()
 
     @property
-    def duration(self):
-        return self._duration
-
-    @property
     def start_time(self):
         try:
             return self.starttime
@@ -43,20 +39,6 @@ class Schedulable(models.Model):
     @property
     def end_time(self):
         return self.starttime + self.duration
-
-    def __unicode__(self):
-        if self.start_time:
-            return "Start: " + str(
-                self.start_time.astimezone(pytz.timezone('UTC')))
-        else:
-            return "No Start Time"
-
-    def __str__(self):
-        if self.start_time:
-            return "Start: " + str(
-                self.starttime.astimezone(pytz.timezone('UTC')))
-        else:
-            return "No Start Time"
 
     class Meta:
         abstract = True

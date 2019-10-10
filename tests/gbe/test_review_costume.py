@@ -30,13 +30,11 @@ class TestReviewCostume(TestCase):
         grant_privilege(self.coordinator, 'Costume Reviewers')
         grant_privilege(self.coordinator, 'Costume Coordinator')
 
-    def get_form(self, bid, evaluator, invalid=False):
+    def get_form(self, bid, evaluator):
         data = {'vote': 3,
                 'notes': "Foo",
                 'bid': bid.pk,
                 'evaluator': evaluator.pk}
-        if invalid:
-            del(data['vote'])
         return data
 
     def test_review_costume_all_well(self):
