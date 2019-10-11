@@ -18,7 +18,7 @@
                 <h3>{{featured.bio.name}}</h3>
                 <p>{{featured.bio.bio | truncatechars:175 | safe }}
  	        {% if featured.bio.bio|length > 175 %}
-		<a class="more-link" href="#" data-toggle="modal" data-target="#{{featured.bio.pk}}_modal" data-backdrop="true" >
+		<a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{featured.bio.pk}}" data-backdrop="true" >
                     (more)</a>
 		{% endif %}</p>
               </div>
@@ -55,9 +55,9 @@
               <div class="team-desc">
                 <h5>{{featured.role}}</h5>
                 <h3>{{featured.bio.name}}</h3>
-                <p>{{featured.bio.bio | truncatechars:175}}
+                <p>{{featured.bio.bio | truncatechars:175 | safe}}
  	        {% if featured.bio.bio|length > 175 %}
-		<a class="more-link" href="#" data-toggle="modal" data-target="#{{featured.bio.pk}}_modal" data-backdrop="true" >
+		<a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{featured.bio.pk}}" data-backdrop="true" >
                     (more)</a>
 		{% endif %}</p>
               </div>

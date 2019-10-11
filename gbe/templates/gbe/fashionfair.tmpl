@@ -20,18 +20,19 @@
         <div class="row">
           <div class="col-md-12 perf-div">
             <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Vendors</h2>
-          </div>
+          </div></div>
 {% for vendor in vendors %}
+
 {% cycle True True False False as img_right silent %}
     {% cycle '<div class="row">' '' '<div class="row">' '' %}
-          <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="col-md-6 col-sm-12 col-12">
             <div class="single-member wow fadeInRight" data-wow-delay="0.2s">
     {% if img_right %}
               <div class="team-desc">
                 <h3 class="vendor-header">{{vendor.b_title}}</h3>
                 <p>{{vendor.b_description | safe | truncatechars:175 }}
 		{% if vendor.b_description|length > 175 %}
-		<a class="more-link" href="#" data-toggle="modal" data-target="#{{vendor.pk}}_modal" data-backdrop="true" >
+		<a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{vendor.pk}}" data-backdrop="true" >
                     (more)</a>
 		{% endif %}</p>
               </div>
@@ -53,7 +54,7 @@
                     <i class="fa fa-link"></i>
                   </a>
             {% endif %}
-                  <a class="social" href="#" data-toggle="modal" data-target="#{{vendor.pk}}_modal" data-backdrop="true" >
+                  <a class="social" href="#" data-toggle="modal" data-target="#Modal{{vendor.pk}}" data-backdrop="true" >
                     <i class="fa fa-external-link"></i>
                   </a>
             {% if request.user.is_superuser %}</br></br>{% if vendor.img %}
@@ -71,7 +72,7 @@
                 <h3 class="vendor-header">{{vendor.b_title}}</h3>
                 <p>{{vendor.b_description | safe | truncatechars:175 }}
 	       {% if vendor.b_description|length > 175 %}
-		<a class="more-link" href="#" data-toggle="modal" data-target="#{{vendor.pk}}_modal" data-backdrop="true" >
+		<a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{vendor.pk}}" data-backdrop="true" >
                     (more)</a>
 		{% endif %}</p>
                 </p>
@@ -83,8 +84,6 @@
     {% cycle '' '</div>' '' '</div>' %}
 
 {% endfor %}
-
-        </div>
       </div>
     </section>
 {% endblock %}
