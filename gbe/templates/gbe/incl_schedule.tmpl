@@ -29,7 +29,7 @@
 	    </a>
 	    {% if not historical %}
 	      {% if booking.role == "Teacher" or booking.role == "Moderator" %}
-              <a class="bid-button" href="#" data-toggle="modal" data-target="#{{booking.eventitem_id}}_interest_modal" data-backdrop="true" title="View Attendee Contact Info">
+              <a class="bid-button" href="#" data-toggle="modal" data-target="#Modal{{booking.eventitem_id}}" data-backdrop="true" title="View Attendee Contact Info">
 		<span class="badge">{{ booking.interested|length }}</span>
 	      </a>
               {% include "gbe/interest_list.tmpl" with class=booking %}

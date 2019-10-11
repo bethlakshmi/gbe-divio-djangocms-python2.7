@@ -1,10 +1,11 @@
-    <div class="modal fade" id="{{class.eventitem_id}}_interest_modal" role="dialog">
-      <div class="modal-dialog"><div class="modal-content"><div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <div class="modal" id="Modal{{class.eventitem_id}}" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+        <div class="modal-header">
         <h4 class="modal-title">{{class.title}} - Interested Attendee Contact List</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
       <div class="modal-body">
-	<div class="row"><div class="col-xs-12">
+	<div class="row"><div class="col-12">
 	  {{ interested_info |safe }}<br><br>
 	  <ul style="list-style: none;">
 	{% for person in class.interested %}
