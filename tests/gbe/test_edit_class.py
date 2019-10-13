@@ -127,7 +127,7 @@ class TestEditClass(TestCase):
             'We will do our best to accommodate' in response.content)
 
     def test_edit_bid_verify_constraints(self):
-        klass = ClassFactory(schedule_constraints="[u'0']", 
+        klass = ClassFactory(schedule_constraints="[u'0']",
                              avoided_constraints="[u'1', u'2']")
         url = reverse(self.view_name,
                       args=[klass.pk],
@@ -151,7 +151,7 @@ class TestEditClass(TestCase):
             "avoided_constraints",
             2,
             "avoided_constraints",
-            2) in response.content)      
+            2) in response.content)
 
     def test_edit_class_post_with_submit(self):
         response, data = self.post_class_edit_submit()

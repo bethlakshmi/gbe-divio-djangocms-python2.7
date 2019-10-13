@@ -201,7 +201,7 @@ class TestEditAct(TestCase):
             "other_performance",
             3,
             "other_performance",
-            3) in response.content)    
+            3) in response.content)
 
     def test_edit_act_submit_make_message(self):
         response = self.post_edit_paid_act_submission()

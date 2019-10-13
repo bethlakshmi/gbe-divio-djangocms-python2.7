@@ -195,8 +195,8 @@ class TestEditActTechInfo(TestCase):
             '    <th class="bid-table">Sound</th>\n' +
             '  </tr>')
         assert_option_state(
-            response, 
-            str(context.rehearsal.id), 
+            response,
+            str(context.rehearsal.id),
             "%s: %s" % (context.rehearsal.as_subtype.e_title,
                         date_format(context.rehearsal.starttime,
                                     "TIME_FORMAT")), True)

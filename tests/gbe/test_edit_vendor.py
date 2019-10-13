@@ -89,7 +89,7 @@ class TestEditVendor(TestCase):
         self.assertEqual(302, response.status_code)
         self.assertRedirects(
             response,
-            reverse('profile_update', 
+            reverse('profile_update',
                     urlconf='gbe.urls') + '?next=/vendor/create')
 
     def test_edit_vendor_wrong_user(self):

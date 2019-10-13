@@ -120,7 +120,7 @@ class TestConferenceVolunteer(TestCase):
         login_as(ProfileFactory(), self)
         response = self.client.get(url, follow=True)
         self.assertRedirects(
-            response, 
-            reverse("persona_create", 
+            response,
+            reverse("persona_create",
                     urlconf='gbe.urls') + "?next=/conference/volunteer")
         nt.assert_equal(response.status_code, 200)

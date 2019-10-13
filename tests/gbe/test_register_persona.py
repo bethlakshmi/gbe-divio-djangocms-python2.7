@@ -108,7 +108,7 @@ class TestRegisterPersona(TestCase):
                   },
             follow=True)
         assert response.status_code == 200
-        self.assertRedirects(response, 
+        self.assertRedirects(response,
                              reverse('troupe_create', urlconf='gbe.urls'))
         assert "Tell Us About Your Troupe" in response.content
         self.assertNotIn('<div class="alert alert-success">', response.content)

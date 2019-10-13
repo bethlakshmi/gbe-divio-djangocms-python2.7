@@ -761,7 +761,7 @@ div.gbe-alert
   border-bottom: 4px solid #C78785;
 }
 
-.device-small > li.active {
+.device-small > li > a.active {
   border-bottom: 4px solid #8e0e0a;;
   position: relative;
 }

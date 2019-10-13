@@ -59,7 +59,6 @@ class TestCreateClass(TestCase):
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
-
     def test_bid_class_no_personae(self):
         '''class_bid, when profile has no personae,
         should redirect to persona_create'''
@@ -71,8 +70,8 @@ class TestCreateClass(TestCase):
             url,
             follow=True)
         self.assertRedirects(
-            response, 
-            reverse("persona_create", 
+            response,
+            reverse("persona_create",
                     urlconf='gbe.urls') + "?next=/class/create")
         title = '<h2 class="subtitle">Tell Us About Your Stage Persona</h2>'
         assert title in response.content
