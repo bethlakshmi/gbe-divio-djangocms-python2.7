@@ -1435,3 +1435,4 @@ td.visible-print,th.visible-print{display:table-cell!important}
 .hidden-print{display:none!important}
 }
 ul#id_to{margin-left:0px;position: relative;}
+#filter-button{margin-bottom:8px;}

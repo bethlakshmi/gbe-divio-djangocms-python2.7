@@ -17,8 +17,8 @@
     <font color="red">{{ copy_mode.non_field_errors }}</font>
     <form action="" method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      <div class="form-row"><div class="form-group"><div class="col-xs-12">
-	<label for="{{copy_mode.copy_mode.name}}" class="control-label">	      
+      <div class="form-row"><div class="form-group"><div class="col-12">
+	<label for="{{copy_mode.copy_mode.name}}" class="control-label">   
           {{ copy_mode.copy_mode.label_tag }}
         </label>
         <br>

@@ -22,10 +22,10 @@
 
     <!-- Tab panes -->
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active col col-xs-12 col-sm-4" id="news" style="padding: 4px">
+        <div role="tabpanel" class="tab-pane active col col-12 col-sm-12 col-md-4" id="news" style="padding: 4px">
 	  {% include 'gbe/incl_lp_left.tmpl' %}
 	</div>
-        <div role="tabpanel" class="tab-pane col-xs-12 col-sm-4" id="on_site" style="padding: 4px">
+        <div role="tabpanel" class="tab-pane col-12 col-sm-12 col-md-4" id="on_site" style="padding: 4px">
 	  {% if profile and bookings %}
              <div class='landing_box'>
                {% include 'gbe/incl_schedule.tmpl' %}
@@ -39,7 +39,7 @@
     	    {% endif %}
           {% include 'gbe/profile/incl_performer.tmpl' %}
         </div>
-        <div role="tabpanel" class="tab-pane col-xs-12 col-sm-4" id="to-do" style="padding: 4px">
+        <div role="tabpanel" class="tab-pane col-12 col-sm-12 col-md-4" id="to-do" style="padding: 4px">
 	  {% if profile %}
             <div class='landing_box'>
                 {% include 'gbe/incl_lp_right.tmpl' %}

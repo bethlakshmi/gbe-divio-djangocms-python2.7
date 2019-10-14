@@ -28,7 +28,7 @@
     <div class="row email-select">
       {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=specify_event_form.event_collections %}
     {% endif%}
-      <div class="form-group col-md-1 col-xs-12">
+      <div class="form-group col-md-1 col-12">
         {% if specify_event_form %}
          <input type="submit" class="email-submit" name="refine" value="Refine">
         {% else %}
@@ -36,7 +36,7 @@
         {% endif %}
       </div></div>
     {% if specify_event_form %}
-    <div class="row email-select"><div class="form-group col-xs-12">
+    <div class="row email-select"><div class="form-group col-12">
      If the optional fields are left blank, all available events will be used in the search.
     </div></div>{% endif %}
     </form>

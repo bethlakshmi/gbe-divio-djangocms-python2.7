@@ -18,7 +18,7 @@
  </div>
  <div class="row header2">
   {% if this_day %}
-   <div class="col-xs-1 backward">
+   <div class="col-1 backward">
     {% if prev_date %}<a href="?day={{ prev_date }}" data-toggle="tooltip" title="{{ prev_date }}">
       <button class="btn btn-default" type="submit" name="{{ prev_date }}" value="{{ prev_date }}">
     {% else %}<a href="#">
@@ -27,8 +27,8 @@
         <i class="fa fa-step-backward" aria-hidden="true"></i>
       </button>
     </a></div>
-    <div class="col-xs-10">{{ this_day.day | date:"l" }} - {{ this_day }}</div>
-    <div class="col-xs-1 forward">
+    <div class="col-10">{{ this_day.day | date:"l" }} - {{ this_day }}</div>
+    <div class="col-1 forward">
      {% if next_date %}<a href="?day={{ next_date }}" data-toggle="tooltip" title="{{ next_date }}">
       <button class="btn btn-default" type="submit" name="{{ next_date }}" value="{{ next_date }}">
     {% else %}<a href="#">
@@ -38,7 +38,7 @@
       </button>
     </a></div>
   {% else %}
-    <div class="col-xs-12">This calendar is not currently available.</div>
+    <div class="col-12">This calendar is not currently available.</div>
   {% endif %}
  </div>
 {% for occurrence in occurrences %}
@@ -49,7 +49,7 @@
    </div>
    <div class="row event-row">
   {% endifchanged %}
-    <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-xs-12 {{occurrence.highlight}}">
+    <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-12 {{occurrence.highlight}}">
      {% include "gbe/scheduling/favorite_star.tmpl" with sched_event=occurrence %}
      {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=occurrence.evaluate %}
      {{ occurrence.start }}-{{ occurrence.end }}<br>
