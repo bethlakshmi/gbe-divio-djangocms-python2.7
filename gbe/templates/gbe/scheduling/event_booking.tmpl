@@ -19,7 +19,7 @@ Changing fields in this section will change them in all calendar items.
 {# Include the visible fields #}
   {% for field in form.visible_fields %}
     <div class="form-group"><div class="row">
-      <div class="col-md-3 col-12">
+      <div class="col-lg-3 col-xs-12">
 	<label for="{{field.name}}" class="control-label">	      
           {% if field.errors %}
             <font color="red">!&nbsp;&nbsp;
@@ -34,7 +34,7 @@ Changing fields in this section will change them in all calendar items.
               {{ field.help_text }}
           </span></span>{% endif %}
       </label></div>
-      <div class="col-md-9 col-12">
+      <div class="col-lg-9 col-xs-12">
 	{{ field }}
         {% if field.errors %}
       </div>
@@ -70,7 +70,7 @@ Changing fields in this section will change them in all calendar items.
     {% endif %}
     <div class="form-group">
       {% if scheduling_form.day %}
-      <div class="col-md-1 col-sm-3 col-5 event-booking-cell">
+      <div class="col-lg-2 col-md-2 col-sm-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.day.name}}" class="control-label">	      
           {% if scheduling_form.day.errors %}
             <font color="red">!&nbsp;&nbsp;
@@ -80,7 +80,7 @@ Changing fields in this section will change them in all calendar items.
           {{ scheduling_form.day.label_tag }}
           {% if scheduling_form.day.errors %}</font>{% endif %} 
       </label></div>
-      <div class="col-md-2 col-sm-3 col-7 event-booking-cell">
+      <div class="col-lg-2 col-md-4 col-sm-3 col-xs-7 event-booking-cell">
 	{{ scheduling_form.day }}
         {% if scheduling_form.day.errors %}
  	<br/><label>
@@ -89,7 +89,7 @@ Changing fields in this section will change them in all calendar items.
       </div>
       {% endif %}
       {% if scheduling_form.time %}
-      <div class="col-md-2 col-sm-3 col-5 event-booking-cell">
+      <div class="col-lg-2 col-md-2 col-sm-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.time.name}}" class="control-label">	      
           {% if scheduling_form.time.errors %}
             <font color="red">!&nbsp;&nbsp;
@@ -99,7 +99,7 @@ Changing fields in this section will change them in all calendar items.
           {{ scheduling_form.time.label_tag }}
           {% if scheduling_form.time.errors %}</font>{% endif %} 
       </label></div>
-      <div class="col-md-2 col-sm-3 col-7 event-booking-cell">
+      <div class="col-lg-2 col-md-4 col-sm-3 col-xs-7 event-booking-cell">
 	{{ scheduling_form.time }}
         {% if scheduling_form.time.errors %}
  	<br/><label>
@@ -108,7 +108,7 @@ Changing fields in this section will change them in all calendar items.
       </div>
       {% endif %}
       {% if scheduling_form.duration %}
-      <div class="col-md-3 col-sm-3 col-12 event-booking-cell">
+      <div class="col-lg-2 col-md-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.duration.name}}" class="control-label">	      
           {% if scheduling_form.duration.errors %}
             <font color="red">!&nbsp;&nbsp;
@@ -118,7 +118,7 @@ Changing fields in this section will change them in all calendar items.
           {{ scheduling_form.duration.label_tag }}
           {% if scheduling_form.duration.errors %}</font>{% endif %} 
       </label></div>
-      <div class="col-md-2 col-sm-3 col-12 event-booking-cell">
+      <div class="col-lg-2 col-md-2 col-xs-7 event-booking-cell">
 	{{ scheduling_form.duration }}
         {% if scheduling_form.duration.errors %}
  	<br/><label>
@@ -127,7 +127,7 @@ Changing fields in this section will change them in all calendar items.
       </div>
       {% endif %}
       {% if scheduling_form.max_volunteer in scheduling_form.visible_fields %}
-      <div class="col-md-3 col-sm-3 col-12 event-booking-cell">
+      <div class="col-lg-2 col-md-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.max_volunteer.name}}" class="control-label">	      
           {% if scheduling_form.max_volunteer.errors %}
             <font color="red">!&nbsp;&nbsp;
@@ -137,7 +137,7 @@ Changing fields in this section will change them in all calendar items.
           {{ scheduling_form.max_volunteer.label_tag }}
           {% if scheduling_form.max_volunteer.errors %}</font>{% endif %} 
       </label></div>
-      <div class="col-md-3 col-sm-3 col-12 event-booking-cell">
+      <div class="col-lg-2 col-md-3 col-xs-7 event-booking-cell">
 	{{ scheduling_form.max_volunteer }}
         {% if scheduling_form.max_volunteer.errors %}
  	<label>
@@ -146,7 +146,7 @@ Changing fields in this section will change them in all calendar items.
       </div>
       {% endif %}
     {% if not scheduling_info %}<div class="clearfix visible-sm"></div>{% endif %}
-      <div class="col-md-3 col-sm-3 col-12 event-booking-cell">
+      <div class="col-lg-2 col-md-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.location.name}}" class="control-label">	      
           {% if scheduling_form.location.errors %}
             <font color="red">!&nbsp;&nbsp;
@@ -156,7 +156,7 @@ Changing fields in this section will change them in all calendar items.
           {{ scheduling_form.location.label_tag }}
           {% if scheduling_form.location.errors %}</font>{% endif %} 
       </label></div>
-      <div class="col-md-3 col-sm-6 col-12 event-booking-cell">
+      <div class="col-lg-2 col-md-3 col-xs-7 event-booking-cell">
 	{{ scheduling_form.location }}
         {% if scheduling_form.location.errors %}
  	<br/><label>

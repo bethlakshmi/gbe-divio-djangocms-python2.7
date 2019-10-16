@@ -1,5 +1,5 @@
    <div class="form-row">
-   <div class="form-group col-md-2 col-xs-12">
+   <div class="form-group col-md-2 col-12">
     <label class="form-check-label horizontal-label" id="{{ field.name }}">
      {% if field.errors %}
       <font color="red">!&nbsp;&nbsp;
@@ -9,7 +9,7 @@
       </font>
      {% endif %}</label>
    </div>
-   <div class="form-group col-md-10 col-xs-12">
+   <div class="form-group col-md-10 col-12">
      {% for checkbox in field %}
       <div class="form-check-inline">
       <label class="form-check-label checkbox-label gbe-filter" id="{{ checkbox.id_for_label }}">
