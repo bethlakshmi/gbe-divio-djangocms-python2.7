@@ -513,7 +513,7 @@ td.describe
 .sched_block
 {
     margin: 10px;
-    width: 100%;
+    width: 98%;
 }
 .sched_desc
 {
@@ -559,9 +559,9 @@ td.describe
     margin: 10px;
     padding: 10px;
 }
-@media (min-width:768px){.bio_block{width:680px}
+@media (min-width:768px){.bio_block{width:640px}
 }
-@media (min-width:992px){.bio_block{width:900px}
+@media (min-width:992px){.bio_block{width:880px}
 }
 @media (min-width:1200px){.bio_block{width:1100px}
 }

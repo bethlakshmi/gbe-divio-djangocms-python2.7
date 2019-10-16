@@ -57,7 +57,7 @@
     <div class="bio_block font_regular container">
       {% for worker in eventitem.people %}
       <div class="row bio_row">
-        <div class="col-md-8 col-sm-7 col-12">
+        <div class="col-lg-7 col-md-5 col-12">
 	{%if worker.role == "Staff Lead"%}
 	  <h2 class="bio_name subtitle">{{worker.role}} - {{worker.person.display_name}}</h2>
         {%else%}
@@ -67,7 +67,7 @@
         <br><br>
         </div>
         {% if worker.person.img %}
-          <div class="col-md-3 col-sm-4 col-12">
+          <div class="col-md-3 col-12">
           <img src="{% thumbnail worker.person.img 300x300 crop upscale subject_location=worker.person.img.subject_location %}" class="sched_bio_image">
           </div>
         {% endif %}
