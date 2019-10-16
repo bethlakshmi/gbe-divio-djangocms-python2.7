@@ -12,7 +12,7 @@ from tests.functions.gbe_functions import (
 from tests.contexts.show_context import ShowContext
 
 
-class TestEventList(TestCase):
+class TestTemplateList(TestCase):
     view_name = 'list_template'
 
     def setUp(self):

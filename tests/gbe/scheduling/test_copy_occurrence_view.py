@@ -136,10 +136,8 @@ class TestCopyOccurrence(TestCase):
             urlconf='gbe.scheduling.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        self.assert_good_mode_form(
-            response,
-            target_context.bid.e_title,
-            target_context.sched_event.start_time)
+        #  copying ONLY volunteer events is OK, but copying the class is not
+        self.assertEqual(403, response.status_code)
 
     def test_copy_single_event(self):
         another_day = ConferenceDayFactory(
@@ -461,3 +459,18 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(response,
                             "bad is not one of the available choices.")
+
+    def test_copy_class_not_supported(self):
+        another_day = ConferenceDayFactory()
+        target_context = ClassContext()
+        url = reverse(self.view_name,
+                      args=[target_context.sched_event.pk],
+                      urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'include_parent',
+            'copy_to_day': another_day.pk,
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=data, follow=True)
+        self.assertEqual(403, response.status_code)

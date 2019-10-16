@@ -89,6 +89,15 @@ class ManageEventsView(View):
         display_list = []
         events = Event.objects.filter(e_conference=self.conference)
         for occurrence in occurrences:
+            event_type = events.filter(
+                    eventitem_id=occurrence.eventitem.eventitem_id
+                    ).get_subclass().event_type
+            if event_type == "Class":
+                copy_link = None
+            else:
+                copy_link = reverse('copy_event_schedule',
+                                    urlconf='gbe.scheduling.urls',
+                                    args=[occurrence.id])
             display_item = {
                 'id': occurrence.id,
                 'sort_start': occurrence.start_time,
@@ -97,9 +106,7 @@ class ManageEventsView(View):
                 'location': occurrence.location,
                 'duration': occurrence.eventitem.event.duration.total_seconds(
                     ) / timedelta(hours=1).total_seconds(),
-                'type': events.filter(
-                    eventitem_id=occurrence.eventitem.eventitem_id
-                    ).get_subclass().event_type,
+                'type': event_type,
                 'current_volunteer': occurrence.volunteer_count,
                 'max_volunteer': occurrence.max_volunteer,
                 'detail_link': reverse(
@@ -109,9 +116,7 @@ class ManageEventsView(View):
                 'delete_link': reverse('delete_occurrence',
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.id]),
-                'copy_link': reverse('copy_event_schedule',
-                                     urlconf='gbe.scheduling.urls',
-                                     args=[occurrence.id])}
+                'copy_link': copy_link}
             if self.conference.status != "completed":
                 display_item['edit_link'] = reverse(
                     'edit_event',

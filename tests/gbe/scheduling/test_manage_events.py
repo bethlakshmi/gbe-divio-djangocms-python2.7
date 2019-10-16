@@ -34,9 +34,10 @@ from datetime import (
 )
 
 
-class TestEventList(TestCase):
+class TestManageEventList(TestCase):
     view_name = 'manage_event_list'
-
+    conf_tab = '<li role="presentation" %s><a href="%s?" ' + \
+        'class="gbe-tab" >%s</a></li>'
     def setUp(self):
         AvailableInterest.objects.all().delete()
         self.client = Client()
@@ -117,21 +118,24 @@ class TestEventList(TestCase):
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        s = '<li role="presentation" class="active">\n' + \
-            '   <a href = "%s?">%s</a></li>'
         self.assertContains(
             response,
-            s % (reverse(self.view_name,
-                         urlconf="gbe.scheduling.urls",
-                         args=[self.day.conference.conference_slug]),
-                 self.day.conference.conference_slug))
-        s = '<li role="presentation" >\n   <a href = "%s?">%s</a></li>'
+            self.conf_tab % (
+                'class="active"', 
+                reverse(self.view_name,
+                        urlconf="gbe.scheduling.urls",
+                        args=[self.day.conference.conference_slug]),
+                self.day.conference.conference_slug))
+        s = '<li role="presentation" >\n   <a href = "%s?" ' + \
+            'class="gbe-tab" >%s</a></li>'
         self.assertContains(
             response,
-            s % (reverse(self.view_name,
-                         urlconf="gbe.scheduling.urls",
-                         args=[old_conf_day.conference.conference_slug]),
-                 old_conf_day.conference.conference_slug))
+            self.conf_tab % (
+                '', 
+                reverse(self.view_name,
+                        urlconf="gbe.scheduling.urls",
+                        args=[old_conf_day.conference.conference_slug]),
+                old_conf_day.conference.conference_slug))
         self.assertContains(
             response,
             self.day.day.strftime(GBE_DATE_FORMAT))
@@ -188,19 +192,20 @@ class TestEventList(TestCase):
                       args=[old_conf_day.conference.conference_slug])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        s = '<li role="presentation" class="active">\n' + \
-            '   <a href = "%s?">%s</a></li>'
         self.assertContains(
             response,
-            s % (url,
-                 old_conf_day.conference.conference_slug))
-        s = '<li role="presentation" >\n   <a href = "%s?">%s</a></li>'
+            self.conf_tab % (
+                'class="active"',
+                url,
+                old_conf_day.conference.conference_slug))
         self.assertContains(
             response,
-            s % (reverse(self.view_name,
-                         urlconf="gbe.scheduling.urls",
-                         args=[self.day.conference.conference_slug]),
-                 self.day.conference.conference_slug))
+            self.conf_tab % (
+                '',
+                reverse(self.view_name,
+                        urlconf="gbe.scheduling.urls",
+                        args=[self.day.conference.conference_slug]),
+                self.day.conference.conference_slug))
         self.assertContains(
             response,
             old_conf_day.day.strftime(GBE_DATE_FORMAT))
@@ -255,6 +260,13 @@ class TestEventList(TestCase):
             0,
             0,
             checked=False)
+        # conference class bids do not yet have copy feature.
+        self.assertNotContains(
+            response,
+            'href="%s" data-toggle="tooltip" title="Copy"' %(
+                reverse("copy_event_schedule",
+                        urlconf="gbe.scheduling.urls",
+                        args=[self.class_context.sched_event.pk])))
 
     def test_good_user_get_conference_bad_filter(self):
         login_as(self.privileged_profile, self)

@@ -1,5 +1,8 @@
 from gbe.scheduling.views import CopyCollectionsView
-from django.http import Http404
+from django.http import (
+    Http404,
+    HttpResponseForbidden,
+)
 from scheduler.idd import (
     create_occurrence,
     get_occurrence,
@@ -28,6 +31,8 @@ class CopyOccurrenceView(CopyCollectionsView):
         if not response.occurrence:
             raise Http404
         self.occurrence = response.occurrence
+        if self.occurrence.as_subtype.__class__.__name__ == "Class":
+            return HttpResponseForbidden("Class copy is not yet available")
         self.start_day = self.occurrence.starttime.date()
         response = get_occurrences(parent_event_id=self.occurrence_id)
         self.children = response.occurrences
