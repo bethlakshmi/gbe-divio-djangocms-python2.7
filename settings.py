@@ -48,11 +48,11 @@ try:
     EMAIL_BACKEND
     DEFAULT_FROM_EMAIL
 except:
-    EMAIL_HOST = 'secure135.inmotionhosting.com'
-    EMAIL_PORT = 465
-    EMAIL_HOST_USER = 'mail@burlesque-expo.com'
-    EMAIL_HOST_PASSWORD = '_uWeK9,+tR5^'
-    EMAIL_USE_TLS = True
+    #EMAIL_HOST = 'secure135.inmotionhosting.com'
+    #EMAIL_PORT = 465
+    #EMAIL_HOST_USER = 'mail@burlesque-expo.com'
+    #EMAIL_HOST_PASSWORD = '_uWeK9,+tR5^'
+    #EMAIL_USE_TLS = True
     DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
     EMAIL_BACKEND = 'post_office.EmailBackend'
 
