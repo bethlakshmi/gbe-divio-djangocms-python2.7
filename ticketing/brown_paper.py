@@ -156,7 +156,8 @@ def get_bpt_price_list(bpt_events=None):
     ti_list = []
 
     if not bpt_events:
-        bpt_events = BrownPaperEvents.objects.all()
+         bpt_events = BrownPaperEvents.objects.exclude(
+            conference__status="completed")
     for event in bpt_events:
         set_bpt_event_detail(event)
 
