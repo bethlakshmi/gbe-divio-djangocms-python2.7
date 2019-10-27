@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 INSTALLED_ADDONS = [
     # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
@@ -39,22 +40,22 @@ INSTALLED_APPS.extend([
     'snowpenguin.django.recaptcha2',
 ])
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'post_office.EmailBackend'
 DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 ADMINS = [('Betty','betty@burlesque-expo.com')]
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
 
-try:
-    EMAIL_BACKEND
-    DEFAULT_FROM_EMAIL
-except:
-    #EMAIL_HOST = 'secure135.inmotionhosting.com'
-    #EMAIL_PORT = 465
-    #EMAIL_HOST_USER = 'mail@burlesque-expo.com'
-    #EMAIL_HOST_PASSWORD = '_uWeK9,+tR5^'
+if os.environ['STAGE'] == 'local':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+''' don't use these with Divio Cloud - they just don't work.
+    Also, because they go to our git hubs, it exposes the password.
+    #EMAIL_HOST = 
+    #EMAIL_PORT = 
+    #EMAIL_HOST_USER = 
+    #EMAIL_HOST_PASSWORD = 
     #EMAIL_USE_TLS = True
-    DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
-    EMAIL_BACKEND = 'post_office.EmailBackend'
+'''
 
 #  Logging settings.
 #  Local path and filename to write logs to

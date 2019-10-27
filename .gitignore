@@ -5,6 +5,7 @@
 *.pot
 .DS_Store
 .coverage/
+htmlcov/
 .eggs/
 .idea/
 .project/
