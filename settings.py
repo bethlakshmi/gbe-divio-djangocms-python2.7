@@ -46,10 +46,10 @@ ADMINS = [('Betty','betty@burlesque-expo.com')]
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
 
 try:
-    if os.environ['EMAIL_URL'] == 'local':
+    if os.environ['STAGE'] == 'local':
        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 except:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    pass
 
 ''' don't use these with Divio Cloud - they just don't work.
     Also, because they go to our git hubs, it exposes the password.
