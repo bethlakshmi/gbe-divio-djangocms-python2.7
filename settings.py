@@ -45,7 +45,10 @@ DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 ADMINS = [('Betty','betty@burlesque-expo.com')]
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
 
-if os.environ['STAGE'] == 'local':
+try:
+    if os.environ['EMAIL_URL'] == 'local':
+       EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+except:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 ''' don't use these with Divio Cloud - they just don't work.

@@ -19,7 +19,7 @@ class SelectBidderForm(Form):
     required_css_class = 'required'
     error_css_class = 'error'
     conference = MultiConferenceField(
-        queryset=Conference.objects.all().order_by('conference_name'),
+        queryset=Conference.objects.all().order_by('conference_slug'),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=True,)
     bid_type = MultipleChoiceField(
