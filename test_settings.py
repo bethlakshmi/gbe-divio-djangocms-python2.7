@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 """
 
+os.environ["DEBUG"] = "False"
 
 try:
     from settings import *
@@ -95,9 +96,6 @@ INSTALLED_APPS = [
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
-
-DEBUG = True
-
 try:
     SECRET_KEY
 except:

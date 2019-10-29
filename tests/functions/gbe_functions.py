@@ -27,6 +27,7 @@ from django.conf import settings
 from django.core.files import File
 from django.contrib.auth.models import User
 from filer.models.imagemodels import Image
+from settings import DEFAULT_FROM_EMAIL
 
 
 def _user_for(user_or_profile):
@@ -170,7 +171,8 @@ def assert_email_template_used(
     assert 1 == len(mail.outbox)
     msg = mail.outbox[0]
     assert msg.subject == expected_subject
-    assert msg.from_email == email
+    header = {'Reply-to': unicode(email, 'utf-8')}
+    assert msg.extra_headers == header
     return msg
 
 
@@ -193,11 +195,12 @@ def assert_right_mail_right_addresses(
         expected_subject,
         to_email_array,
         from_email=settings.DEFAULT_FROM_EMAIL):
+    header = {'Reply-to': unicode(from_email, 'utf-8')}
     assert num_email == len(mail.outbox)
     msg = mail.outbox[queue_order]
     assert msg.subject == expected_subject
     assert msg.to == to_email_array
-    assert msg.from_email == from_email
+    assert msg.extra_headers == header
 
 
 def assert_queued_email(to_list, subject, message, sender):
@@ -205,7 +208,8 @@ def assert_queued_email(to_list, subject, message, sender):
         status=2,
         subject=subject,
         html_message=message,
-        from_email=sender,
+        headers={'Reply-to': sender},
+        from_email=DEFAULT_FROM_EMAIL
         )
     for recipient in to_list:
         assert queued_email.filter(

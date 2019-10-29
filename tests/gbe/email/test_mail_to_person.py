@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test import Client
 from tests.factories.gbe_factories import ProfileFactory
 from tests.functions.gbe_functions import (

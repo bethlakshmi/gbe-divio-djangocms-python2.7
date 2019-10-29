@@ -45,9 +45,23 @@ DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 ADMINS = [('Betty','betty@burlesque-expo.com')]
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
 
+''' We have 3 deployments now - 
+       - (1) Live server (no DEBUG, no STAGE) - use public email that works
+       - (2) Test server in Divio cloud (DEBUG = True, no STAGE value)
+              - use a working email account on same email service, but limit
+                what email is sent and use a different DEFAULT_FROM_EMAIL
+       - (3) Local developer machine (DEBUG = True... mostly, STAGE=='local')
+              - don't send email.  Use email backend that logs email 
+'''
 try:
     if os.environ['STAGE'] == 'local':
        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+except:
+    pass
+
+try:
+    if DEBUG:
+        DEFAULT_FROM_EMAIL = 'Testmail@burlesque-expo.com'
 except:
     pass
 
@@ -56,7 +70,7 @@ except:
     #EMAIL_HOST = 
     #EMAIL_PORT = 
     #EMAIL_HOST_USER = 
-    #EMAIL_HOST_PASSWORD = 
+    #EMAIL_HOST_PASSWORD = !!  really really never use !!
     #EMAIL_USE_TLS = True
 '''
 

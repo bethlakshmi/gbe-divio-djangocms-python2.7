@@ -30,10 +30,11 @@ def mail_send_gbe(to_list,
 
     try:
         mail.send(to_list,
-                  from_address,
+                  settings.DEFAULT_FROM_EMAIL,
                   template=template,
                   context=context,
                   priority=priority,
+                  headers={'Reply-to': from_address},
                   )
     except:
         return "EMAIL_SEND_ERROR"

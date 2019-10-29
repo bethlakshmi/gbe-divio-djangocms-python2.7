@@ -7,6 +7,10 @@ from gbe.models import UserMessage
 from gbe.email.forms import AdHocEmailForm
 from gbetext import send_email_success_msg
 from post_office import mail
+from settings import (
+    DEFAULT_FROM_EMAIL,
+    DEBUG
+)
 
 
 class MailView(View):
@@ -34,11 +38,18 @@ class MailView(View):
                 sender = request.user.email
 
             for email in mail_form.cleaned_data['to']:
+                # if we're in DEBUG mode, let the sender send to only self
+                subject = mail_form.cleaned_data['subject']
+                target = email
+                if DEBUG:
+                    subject = "TO: %s - %s" % (email, subject)
+                    target = sender
                 email_batch += [{
-                    'sender': sender,
-                    'recipients': [email],
-                    'subject': mail_form.cleaned_data['subject'],
-                    'html_message': mail_form.cleaned_data['html_message'], }]
+                    'sender': DEFAULT_FROM_EMAIL,
+                    'recipients': [target],
+                    'subject': subject,
+                    'html_message': mail_form.cleaned_data['html_message'],
+                    'headers': {'Reply-to': sender},}]
                 if len(recipient_string) > 0:
                     recipient_string = "%s, %s" % (recipient_string, email)
                 else:
