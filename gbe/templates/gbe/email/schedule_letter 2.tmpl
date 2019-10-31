@@ -1,0 +1,15 @@
+{{ badge_name }}'s Schedule for {{ day }},
+
+Welcome!  Here's a schedule for your participation in the expo!
+Keep in mind that some times (like rehearsals) are generalities and that late
+shifts in class schedules could not be printed.
+
+  {% for booking in bookings %}
+  - Schedule Item:{{ booking.event }}
+    - Role: {{booking.role}} 
+    - Location: {{booking.event.location}} 
+    - Time: {{booking.event.starttime|date:"g:i A"}}
+  </tr>
+  {% endfor %}
+
+  </table>

@@ -1,0 +1,35 @@
+  {% if costumes %}
+   <div class='costume_section'>
+    <span class='heading costumes'>
+      <b>Costume Display Proposals</b>
+    </span><br>
+    {% for costume in costumes %}
+
+      <div class='vendor'>
+        {% if costume.submitted or historical %}
+          <a href = '{% url 'gbe:costume_view' costume.id%}'> 
+            {{ costume }}
+          </a>(Click to view)
+          {% for value, state in acceptance_states %}
+            {% if value == costume.accepted %}
+              - {{state}}
+            {%endif%}
+          {% endfor %}
+          <br>
+        {% else %}
+          <a href = '{% url 'gbe:costume_edit' costume.id %}'> 
+            {{ costume }} 
+          </a>(Click to edit)
+          <br>
+      {% endif %}
+      </div> 
+      {% for alert in costume.alerts %}
+        <span class='alert'> {{ alert|safe}}</span> <br>	      	 
+      {% endfor %}
+
+    {% endfor %}
+    <br>
+    <a href='{% url 'gbe:costume_create' %}'>Propose a new costume display</a></li>
+   </div>
+  {% endif %}
+

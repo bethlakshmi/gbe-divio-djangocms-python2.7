@@ -1,0 +1,22 @@
+{% extends 'gbe/email/mail_to_group.tmpl' %}
+
+{% block title %}
+  Send Email to Bidders
+{% endblock %}
+
+{% block select_recipent_form %}
+  <form class="form-inline" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row email-select">
+    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.conference %}
+    </div>
+    <div class="row email-select">
+    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.bid_type %}
+    </div>
+    <div class="row email-select">
+    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.state %}
+      <div class="form-group col-md-1 col-12">
+         <input type="submit" class="email-submit" name="filter" value="Filter">
+      </div></div>
+    </form>
+{% endblock %}

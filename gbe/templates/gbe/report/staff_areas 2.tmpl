@@ -1,0 +1,79 @@
+{% extends 'base.tmpl' %}
+{% load staticfiles %}
+
+{% block title %}
+   Review Staffing
+{% endblock %}
+
+{% block content %}
+
+{% include "conference_picker.tmpl" %}
+<br><br>
+<div class="panel panel-primary">
+  <div class="panel-heading"><h2 class="review-title">Staff Areas</h2></div>
+  <table class="table">
+    <tr>
+      {% for header_item in header %}
+      <th>{{ header_item }}</th>
+      {% endfor %}
+    </tr>
+    {% for area in areas %}
+      <tr>
+        <td>{{area.title}}</td>
+        <td>
+ 	  {{area.staff_lead}}
+        </td>
+        <td>
+          <a href="{%url 'reporting:staff_area' area.pk %}?area=Staff">
+	    Get Staff Schedule</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading"><h2 class="review-title">Shows</h2></div>
+  <table class="table">
+    <tr>
+      {% for header_item in header %}
+      <th>{{ header_item }}</th>
+      {% endfor %}
+    </tr>
+    {% for show in shows %}
+      <tr>
+        <td>{{show.e_title}}</td>
+        <td>
+ 	  {% for worker in show.roles %}
+            {{worker.role}} - {{worker.workeritem}}
+ 	  {% endfor %}	
+        </td>
+        <td>
+          <a href="{%url 'reporting:staff_area' show.eventitem_id %}?area=Show">
+	    Get Show Schedule</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+<div class="panel panel-primary">
+  <div class="panel-heading"><h2 class="review-title">Volunteer Type</h2></div>
+    <table class="table">
+    <tr>
+      <th>Type</th>
+      <th>Check Staffing</th>
+    </tr>
+    {% for type in volunteer_types %}
+      <tr>
+        <td>{{type.interest}}</td>
+        <td>
+          <a href="{%url 'reporting:volunteer_type' conference.conference_slug type.pk %}">
+	    Get Staff Schedule</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+
+{% endblock %}
+

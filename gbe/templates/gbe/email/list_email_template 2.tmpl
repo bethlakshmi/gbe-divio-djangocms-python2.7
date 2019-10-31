@@ -1,0 +1,28 @@
+{% extends 'base.tmpl' %}
+
+{% block title %}
+   {{page_title}}
+{% endblock %}
+
+{% block content %}
+<h2 class="subtitle">{{view_title}}</h2>
+<div class="email_list container">
+{% for email_template in email_templates %}
+  {% ifchanged email_template.category %}
+ <div class="row">
+  <div class="col-12"><h3>{{ email_template.category|title }} Email Templates</h3></div>
+ </div>
+{% endifchanged %}
+ <div class="row  {% cycle 'email-list-even' 'email-list-odd'%}">
+  <div class="col-12 col-md-4 col-lg-3">
+   <a href="{% url 'email:edit_template' email_template.name %}">
+    {{ email_template.name }}
+   </a>
+  </div>
+  <div class="col-12 col-md-8 col-lg-9">
+    {{ email_template.description }}
+  </div>
+ </div>
+{% endfor %}
+</div>
+{% endblock %}

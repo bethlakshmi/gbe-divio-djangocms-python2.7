@@ -1,0 +1,64 @@
+{% extends 'base_print.tmpl' %}
+{% load staticfiles %}
+
+{% block title %}
+   Printable Schedules
+{% endblock %}
+
+{% block content %}
+
+{% include "conference_picker.tmpl" %}
+
+{% for schedule in schedules %}
+{% if schedule.bookings %}  
+  <h3>{{ schedule.person.get_badge_name }}'s Schedule</h3>
+  <i>Welcome!  Here's a schedule for your participation in the expo!
+  Keep in mind that some times (like rehearsals) are generalities and that late
+  shifts in class schedules could not be printed.</i><br><br>
+  
+  <table class='sched-table'>
+  <tr class='sched-header'>
+    <th class='sched-header'>Schedule Item</th>
+    <th class='sched-header'>Role</th>
+    <th class='sched-header'>Location</th>
+    <th class='sched-header'>Day</th>
+    <th class='sched-header'>Time</th>
+  {% for booking in schedule.bookings %}
+  <tr class='sched-table {% if booking.role == 'Interested' %}interested-sched{% else %}dedicated-sched{% endif %}'>
+    <td class='sched-table'>{{ booking.event | safe }}</td>
+    <td class='sched-table'>{{booking.role}} </td>    
+    <td class='sched-table'>{{booking.event.location}} </td>    
+    <td class='sched-table'>{{booking.event.starttime.date}} </td>
+    <td class='sched-table'>{{booking.event.starttime.time}} </td>
+  </tr>
+  {% endfor %}
+  </table>
+<br>
+{% endif %}
+{% if schedule.ticket_items or schedule.role_items%}
+  <h3>{{ schedule.person.get_badge_name }}'s GBE Package Checklist</h3>
+  <ul>
+  {% for criteria in schedule.ticket_items %}
+    <li>Purchased {{criteria.count}} of {{criteria.ticket}}, for each item include:</li>
+    <ul>
+      {% for item in criteria.items%}
+        <li>{{item}}</li>
+      {%endfor%}
+    </ul>
+  {% endfor %}
+  {% for role, items in schedule.role_items.items %}
+    {% if role %}
+    <li>Thank you for being a {{role}}, your package includes:</li>
+    {% endif %}
+    <ul>
+      {% for item in items%}
+        <li>{{item}}</li>
+      {%endfor%}
+    </ul>
+  {% endfor %}
+  </ul>
+{% endif %}
+-----BREAK-----
+{% endfor %}
+{% endblock %}
+

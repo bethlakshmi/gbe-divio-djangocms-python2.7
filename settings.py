@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 INSTALLED_ADDONS = [
     # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
@@ -39,22 +40,13 @@ INSTALLED_APPS.extend([
     'snowpenguin.django.recaptcha2',
 ])
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'post_office.EmailBackend'
 DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 ADMINS = [('Betty','betty@burlesque-expo.com')]
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
 
-try:
-    EMAIL_BACKEND
-    DEFAULT_FROM_EMAIL
-except:
-    #EMAIL_HOST = 'secure135.inmotionhosting.com'
-    #EMAIL_PORT = 465
-    #EMAIL_HOST_USER = 'mail@burlesque-expo.com'
-    #EMAIL_HOST_PASSWORD = '_uWeK9,+tR5^'
-    #EMAIL_USE_TLS = True
-    DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
-    EMAIL_BACKEND = 'post_office.EmailBackend'
+if os.environ["DEBUG"] == "True":
+    DEFAULT_FROM_EMAIL = 'Testmail@burlesque-expo.com'
 
 #  Logging settings.
 #  Local path and filename to write logs to

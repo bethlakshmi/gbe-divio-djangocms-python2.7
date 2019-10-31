@@ -1,0 +1,36 @@
+  {% if vendors %}
+   <div class='vendor_section'>
+    <span class='heading vendors'>
+      <b>Vendor Bids</b>
+    </span><br>
+    {% for vendor in vendors %}
+
+      <div class='vendor'>
+        {% if vendor.submitted %}
+          <a href = '{% url 'gbe:vendor_view' vendor.id%}'> 
+            {{ vendor }} 
+          </a>(Click to view)
+          {% for value, state in acceptance_states %}
+            {% if value == vendor.accepted %}
+              - {{state}}
+            {%endif%}
+          {% endfor %}
+          <br>
+        {% else %}
+          <a href = '{% url 'gbe:vendor_edit' vendor.id %}'> 
+            {{ vendor }} 
+          </a>(Click to edit)
+          <br>
+      {% endif %}
+      </div> 
+      {% for alert in vendor.alerts %}
+        <span class='alert'> {{ alert|safe}}</span> <br>	      	 
+      {% endfor %}
+
+    {% endfor %}
+    <ul class="rightsidebar">
+      <li><a href='{% url 'gbe:vendor_create' %}'>Propose a new business</a></li>
+    </ul>    
+   </div>
+  {% endif %}
+
