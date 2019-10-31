@@ -41,12 +41,13 @@ INSTALLED_APPS.extend([
 ])
 
 EMAIL_BACKEND = 'post_office.EmailBackend'
-DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 ADMINS = [('Betty','betty@burlesque-expo.com')]
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
 
-if os.environ["DEBUG"] == "True":
-    DEFAULT_FROM_EMAIL = 'Testmail@burlesque-expo.com'
+try:
+    DEFAULT_FROM_EMAIL = os.environ["DEFAULT_FROM_EMAIL"]
+except:
+    DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 
 #  Logging settings.
 #  Local path and filename to write logs to
