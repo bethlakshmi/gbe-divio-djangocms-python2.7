@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 
 INSTALLED_ADDONS = [
     # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
@@ -40,39 +39,22 @@ INSTALLED_APPS.extend([
     'snowpenguin.django.recaptcha2',
 ])
 
-EMAIL_BACKEND = 'post_office.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 ADMINS = [('Betty','betty@burlesque-expo.com')]
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
 
-''' We have 3 deployments now - 
-       - (1) Live server (no DEBUG, no STAGE) - use public email that works
-       - (2) Test server in Divio cloud (DEBUG = True, no STAGE value)
-              - use a working email account on same email service, but limit
-                what email is sent and use a different DEFAULT_FROM_EMAIL
-       - (3) Local developer machine (DEBUG = True... mostly, STAGE=='local')
-              - don't send email.  Use email backend that logs email 
-'''
 try:
-    if os.environ['STAGE'] == 'local':
-       EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND
+    DEFAULT_FROM_EMAIL
 except:
-    pass
-
-try:
-    if DEBUG:
-        DEFAULT_FROM_EMAIL = 'Testmail@burlesque-expo.com'
-except:
-    pass
-
-''' don't use these with Divio Cloud - they just don't work.
-    Also, because they go to our git hubs, it exposes the password.
-    #EMAIL_HOST = 
-    #EMAIL_PORT = 
-    #EMAIL_HOST_USER = 
-    #EMAIL_HOST_PASSWORD = !!  really really never use !!
+    #EMAIL_HOST = 'secure135.inmotionhosting.com'
+    #EMAIL_PORT = 465
+    #EMAIL_HOST_USER = 'mail@burlesque-expo.com'
+    #EMAIL_HOST_PASSWORD = '_uWeK9,+tR5^'
     #EMAIL_USE_TLS = True
-'''
+    DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
+    EMAIL_BACKEND = 'post_office.EmailBackend'
 
 #  Logging settings.
 #  Local path and filename to write logs to
