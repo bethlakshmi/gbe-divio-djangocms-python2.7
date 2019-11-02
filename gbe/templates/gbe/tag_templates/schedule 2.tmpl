@@ -1,9 +1,0 @@
-{% if schedule %}
-  <ul>
-  {% for row in schedule %}
-    <li>{{ row.event }}: {{ row.time }} ({{ row.location }})</li>
-  {% endfor %}
-  </ul>
-{% else %}
-  <p>No events</p>
-{% endif %}

@@ -928,7 +928,7 @@ select[multiple].input-group-sm>.form-control,select[multiple].input-group-sm>.i
 .tab-content>.active{display:block}
 .nav-tabs .dropdown-menu{margin-top:-1px;border-top-right-radius:0;border-top-left-radius:0}
 .navbar{margin-bottom:-2px;border:1px solid transparent; display:block;}
-.navbar-collapse{overflow-x:visible;padding-right:15px;padding-left:15px;border-top:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);-webkit-overflow-scrolling:touch}
+.navbar-collapse{overflow-x:visible;padding-right:5px;padding-left:5px;border-top:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);-webkit-overflow-scrolling:touch}
 .navbar-collapse.in{overflow-y:auto}
 @media (min-width:768px){.navbar{border-radius:4px}
 .navbar-header{float:left}
@@ -967,7 +967,7 @@ select[multiple].input-group-sm>.form-control,select[multiple].input-group-sm>.i
 @media (min-width:768px){.navbar-toggler{display:none}
 .navbar-nav{float:left;margin:0}
 .navbar-nav>li{float:left}
-.navbar-nav>li>a#gbe_header_menu{padding:15px; }
+.navbar-nav>li>a#gbe_header_menu{padding:15px 7px 15px; }
 }
 .navbar-form{padding:10px 15px;border-top:1px solid transparent;border-bottom:1px solid transparent;-webkit-box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 rgba(255,255,255,.1);margin:8px -15px}
 @media (min-width:768px){.navbar-form .form-control-static,.navbar-form .form-group{display:inline-block}
@@ -999,7 +999,7 @@ select[multiple].input-group-sm>.form-control,select[multiple].input-group-sm>.i
 .navbar-right{float:right!important;margin-right:0px}
 .navbar-right~.navbar-right{margin-right:0}
 }
-.navbar-default{background-color:rgba(229,229,229,.49);border-color:transparent;font-family: 'Vast Shadow', cursive;font-size: 18px;padding:0px;}
+.navbar-default{background-color:rgba(229,229,229,.49);border-color:transparent;font-family: 'Vast Shadow', cursive;font-size: 17px;padding:0px;}
 .navbar-default .navbar-brand:focus,.navbar-default .navbar-brand:hover{color:#000;background-color:transparent}
 .navbar-default navbar-nav>li>a#gbe_header_menu:focus,.navbar-default .navbar-nav>li>a#gbe_header_menu:hover{color:#af1515;background-color:transparent}
 .navbar-default .navbar-nav>.active>a,.navbar-default .navbar-nav>.active>a:focus,.navbar-default .navbar-nav>.active>a:hover{color:#000;background-color:#ebebeb; text-shadow: 0px 0px 8px #F03;}
