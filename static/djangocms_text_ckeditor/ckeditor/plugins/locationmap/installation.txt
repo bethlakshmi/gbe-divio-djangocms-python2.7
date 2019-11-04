@@ -1,0 +1,11 @@
+1. Extract the downloaded file (locationmap.zip)
+2. Copy the �locationmap� folder to �ckeditor/plugins/� folder
+3. Open the file �ckeditor/config.js�
+4. Add these line:
+	config.extraPlugins = �locationmap�;
+	config.locationMapPath = 'path/to/your/root/folder/';
+5. If you're using ckfinder you may also add this line:
+	config.ckfinder = true;
+6. Copy the �googlemap.html� (not the locationmap/googlemap.html) to your root folder (e.g. 'path/to/your/root/folder/')
+7. Make sure to clear your browser's cache
+8. Done

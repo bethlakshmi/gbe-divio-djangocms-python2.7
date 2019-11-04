@@ -1,0 +1,8 @@
+v 2.1 - July 28, 2014
+	- fixed some bugs
+
+v 2.0 - July 23, 2014
+	- converted to a widget
+
+v 1.0
+	- initial release
