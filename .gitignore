@@ -1,3 +1,5 @@
+# <DEFAULT>  # Warning: text inside the DEFAULT tags is auto-generated. Manual changes will be overwritten.
+# </DEFAULT>
 *.py[cod]
 *$py.class
 *.egg-info
