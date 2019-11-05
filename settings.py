@@ -191,3 +191,10 @@ CKEDITOR_SETTINGS = {
     'toolbarCanCollapse': False,
 }
 
+try:
+    MC_API_KEY = os.environ["MC_API_KEY"]
+    MC_API_URL = os.environ["MC_API_URL"]
+    MC_API_USER = os.environ["MC_API_USER"]
+    MC_API_ID = os.environ["MC_API_ID"]
+except:
+    pass

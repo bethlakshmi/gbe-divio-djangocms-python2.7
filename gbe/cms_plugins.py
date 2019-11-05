@@ -33,13 +33,11 @@ class ContactFormPlugin(CMSPluginBase):
         context.update({'contact_form': ContactForm()})
         return context
 
-'''
 class SubscribeEmailPlugin(CMSPluginBase):
     model = CMSPlugin
     module = _("GBE Plugins")
     name = _("Subscribe to Email")  # name of the plugin in the interface
     render_template = 'gbe/email_subscribe.tmpl'
-'''
 
 class GoFundMePlugin(CMSPluginBase):
     model = CMSPlugin
@@ -71,7 +69,7 @@ class AdRotatorPlugin(CMSPluginBase):
 # register the plugins
 plugin_pool.register_plugin(ClassIdeaPlugin)
 plugin_pool.register_plugin(ContactFormPlugin)
-#plugin_pool.register_plugin(SubscribeEmailPlugin)
+plugin_pool.register_plugin(SubscribeEmailPlugin)
 plugin_pool.register_plugin(GoFundMePlugin)
 plugin_pool.register_plugin(ShareOnFacebookPlugin)
 plugin_pool.register_plugin(FollowOnFacebookPlugin)
