@@ -15,7 +15,7 @@ https://control.divio.com/api/v1/apps/serve/djangocms-snippet/2.2.0/7acefb85-0c1
 https://control.divio.com/api/v1/apps/serve/djangocms-style/2.2.0/a8b508f7-543c-49ab-804b-77bed033c7af/djangocms-style-2.2.0.tar.gz#egg=djangocms-style==2.2.0
 https://control.divio.com/api/v1/apps/serve/djangocms-text-ckeditor/3.8.0/b89646ad-5f01-4762-aa29-52600645e6de/djangocms-text-ckeditor-3.8.0.tar.gz#egg=djangocms-text-ckeditor==3.8.0
 https://control.divio.com/api/v1/apps/serve/djangocms-video/2.2.0/facb7d0e-0636-4b44-80e7-351b1faf58fc/djangocms-video-2.2.0.tar.gz#egg=djangocms-video==2.2.0
-https://control.divio.com/api/v1/apps/serve/django-filer/1.5.0/0436c013-652d-4086-9d85-082368a36c5e/django-filer-1.5.0.tar.gz#egg=django-filer==1.5.0
+https://control.divio.com/api/v1/apps/serve/django-filer/1.6.0/ea2f6055-3bc9-4bf7-a341-e1901ac15269/django-filer-1.6.0.tar.gz#egg=django-filer==1.6.0
 # </INSTALLED_ADDONS>
 django-post_office==3.2.1
 django-model-utils==3.2.0
