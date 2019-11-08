@@ -10,7 +10,6 @@ INSTALLED_ADDONS = [
     'aldryn-common',
     'djangocms-bootstrap4',
     'djangocms-file',
-    'djangocms-googlemap',
     'djangocms-history',
     'djangocms-icon',
     'djangocms-link',
