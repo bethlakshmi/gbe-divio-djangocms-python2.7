@@ -127,7 +127,6 @@ FIXTURE_DIRS = ('expo/tests/fixtures',)
 EVALUATION_WINDOW = 4
 TEXT_CKEDITOR_BASE_PATH = os.path.join(STATIC_URL,
                                        'djangocms_text_ckeditor/ckeditor/')
-'''
 CKEDITOR_SETTINGS = {
     'stylesSet': [
         {'name': 'Vast Shadow',
@@ -164,33 +163,9 @@ CKEDITOR_SETTINGS = {
         {'name': 'Inserted Text', 'element': 'ins' },
         {'name': 'Cited Work', 'element': 'cite' },
         {'name': 'Inline Quotation', 'element': 'q' },
-    ],
-    'disableNativeSpellChecker': False,
-    'language': 'en',
-    'toolbar': 'CMS2',
-    'toolbar_CMS2': [
-        {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
-        {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll', '-', 'Scayt']},
-        ['cmsplugins', 'cmswidget'],
-        ['Maximize', ''],
-        ['Source', '-', 'ShowBlocks'],
-        '/',
-        {'name': 'basicstyles',
-         'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting',
-                   'RemoveFormat']},
-        {'name': 'paragraph',
-         'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
-                   'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-        {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
-        {'name': 'insert', 'items': ['Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak']},
-        '/',
-        {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
-        {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-    ],
-    'skin': 'moonocolor',
-    'toolbarCanCollapse': False,
+    ]
 }
-'''
+
 try:
     MC_API_KEY = os.environ["MC_API_KEY"]
     MC_API_URL = os.environ["MC_API_URL"]
