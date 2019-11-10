@@ -127,6 +127,7 @@ FIXTURE_DIRS = ('expo/tests/fixtures',)
 EVALUATION_WINDOW = 4
 TEXT_CKEDITOR_BASE_PATH = os.path.join(STATIC_URL,
                                        'djangocms_text_ckeditor/ckeditor/')
+'''
 CKEDITOR_SETTINGS = {
     'stylesSet': [
         {'name': 'Vast Shadow',
@@ -189,7 +190,7 @@ CKEDITOR_SETTINGS = {
     'skin': 'moonocolor',
     'toolbarCanCollapse': False,
 }
-
+'''
 try:
     MC_API_KEY = os.environ["MC_API_KEY"]
     MC_API_URL = os.environ["MC_API_URL"]
