@@ -110,6 +110,7 @@ class ProfilePreferencesAdmin(admin.ModelAdmin):
 
 class RoomAdmin(admin.ModelAdmin):
     list_display = ('name', 'capacity', 'overbook_size')
+    list_filter = ['conference']
 
 
 class ShowAdmin(admin.ModelAdmin):
