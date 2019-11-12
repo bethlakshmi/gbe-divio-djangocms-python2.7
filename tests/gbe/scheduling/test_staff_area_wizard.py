@@ -28,6 +28,7 @@ class TestStaffAreaWizard(TestCase):
     def setUp(self):
         self.room = RoomFactory()
         self.current_conference = ConferenceFactory(accepting_bids=True)
+        self.room.conferences.add(self.current_conference)
         self.url = reverse(
             self.view_name,
             args=[self.current_conference.conference_slug],

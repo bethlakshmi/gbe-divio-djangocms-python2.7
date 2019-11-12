@@ -51,6 +51,7 @@ class TestTicketedEventWizard(TestCase):
         self.room = RoomFactory()
         self.teacher = PersonaFactory()
         self.current_conference = ConferenceFactory(accepting_bids=True)
+        self.room.conferences.add(self.current_conference)
         self.day = ConferenceDayFactory(conference=self.current_conference)
         self.url = reverse(
             self.view_name,

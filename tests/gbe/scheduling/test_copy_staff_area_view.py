@@ -7,7 +7,6 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ConferenceDayFactory,
     ProfileFactory,
-    RoomFactory,
 )
 from scheduler.models import Event
 from gbe.models import StaffArea

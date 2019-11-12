@@ -49,6 +49,7 @@ class ShowContext:
         self.acts = [act]
         self.show = ShowFactory(e_conference=self.conference)
         self.room = room or RoomFactory()
+        self.room.conferences.add(self.conference)
         self.sched_event = None
         self.sched_event = self.schedule_instance(room=self.room,
                                                   starttime=starttime)

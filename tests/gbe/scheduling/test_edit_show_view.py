@@ -34,6 +34,7 @@ class TestEditShowWizard(TestCase):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         self.room = RoomFactory()
         self.context = ShowContext()
+        self.room.conferences.add(self.context.conference)
         self.url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",

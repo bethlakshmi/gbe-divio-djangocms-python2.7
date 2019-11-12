@@ -56,6 +56,7 @@ class StaffAreaContext:
                 starttime=noon(self.conf_day))
         if not room:
             room = RoomFactory()
+        room.conferences.add(self.conference)
 
         ResourceAllocationFactory(
             event=volunteer_sched_event,

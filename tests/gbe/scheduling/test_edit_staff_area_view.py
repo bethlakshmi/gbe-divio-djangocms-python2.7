@@ -43,6 +43,7 @@ class TestEditStaffAreaView(TestCase):
         self.context = StaffAreaContext()
         self.context.area.default_volunteers = 7
         self.context.area.save()
+        self.room.conferences.add(self.context.conference)
         self.url = reverse(
             self.view_name,
             args=[self.context.area.pk],

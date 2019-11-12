@@ -40,6 +40,7 @@ class TestManageVolunteerWizard(TestCase):
         self.avail_interest = AvailableInterestFactory()
         self.room = RoomFactory()
         self.context = VolunteerContext()
+        self.room.conferences.add(self.context.conference)
         self.url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",

@@ -16,7 +16,7 @@ class Room(LocationItem):
     name = CharField(max_length=50)
     capacity = IntegerField()
     overbook_size = IntegerField()
-    conference = ManyToManyField(Conference)
+    conferences = ManyToManyField(Conference)
     address = TextField(max_length=500, blank=True)
     map_link = URLField(blank=True)
 
