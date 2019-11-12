@@ -63,3 +63,5 @@ class ScheduleOccurrenceForm(Form):
         self.fields['day'].queryset = get_conference_days(
             conference,
             open_to_public)
+        self.fields['location'].queryset = Room.objects.filter(
+            conference=conference)

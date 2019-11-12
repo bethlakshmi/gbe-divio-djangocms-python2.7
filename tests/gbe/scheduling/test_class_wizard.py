@@ -34,6 +34,7 @@ class TestClassWizard(TestCase):
         self.teacher = PersonaFactory()
         self.current_conference = ConferenceFactory(accepting_bids=True)
         self.day = ConferenceDayFactory(conference=self.current_conference)
+        self.room = RoomFactory(conference=self.current_conference)
         self.test_class = ClassFactory(b_conference=self.current_conference,
                                        e_conference=self.current_conference,
                                        accepted=3,
