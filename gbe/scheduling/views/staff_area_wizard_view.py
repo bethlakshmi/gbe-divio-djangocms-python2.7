@@ -42,7 +42,9 @@ class StaffAreaWizardView(EventWizardView):
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
-        context['second_form'] = StaffAreaForm(request.POST)
+        context['second_form'] = StaffAreaForm(
+            request.POST,
+            initial={'conference':  self.conference})
         if context['second_form'].is_valid():
             new_event = context['second_form'].save()
             user_message = UserMessage.objects.get_or_create(

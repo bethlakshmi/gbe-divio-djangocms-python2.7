@@ -104,6 +104,7 @@ class TestEditShowWizard(TestCase):
             'readonly="readonly" id="id_current_acts" />')
 
     def test_good_user_get_empty_room_rehearsal(self):
+        not_this_room = RoomFactory()
         rehearsal, slot = self.context.make_rehearsal(room=False)
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url, follow=True)
@@ -113,6 +114,7 @@ class TestEditShowWizard(TestCase):
                 self.context.room.pk,
                 str(self.context.room)),
             4)
+        self.assertNotContains(response, str(not_this_room))
 
     def test_good_user_get_bad_occurrence_id(self):
         login_as(self.privileged_user, self)

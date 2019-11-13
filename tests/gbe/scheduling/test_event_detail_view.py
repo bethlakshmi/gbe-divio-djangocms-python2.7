@@ -87,6 +87,16 @@ class TestEventDetailView(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, response.content.count(staff_lead.display_name))
 
+    def test_location_full_room_display(self):
+        self.context.room.address = "The place where I live"
+        self.context.room.map_link = "http://place.where/i/live"
+        self.context.room.save()
+
+        response = self.client.get(self.url)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, self.context.room.address)
+        self.assertContains(response, self.context.room.map_link)
+
     def test_bio_grid(self):
         self.context.performer.homepage = "www.testhomepage.com"
         self.context.performer.save()
