@@ -181,8 +181,9 @@ class TestStaffAreaWizard(TestCase):
             self.url,
             data=data,
             follow=True)
-        self.assertContains(response, "Select a valid choice. That choice " + \
-            "is not one of the available choices.")
+        self.assertContains(
+            response,
+            "That choice is not one of the available choices.")
 
     def test_room_to_conf_mapping(self):
         not_now_room = RoomFactory()

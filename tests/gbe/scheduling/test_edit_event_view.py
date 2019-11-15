@@ -290,7 +290,7 @@ class TestEditEventView(TestCase):
             data=data,
             follow=True)
         self.assertContains(
-            response, 
+            response,
             "That choice is not one of the available choices.")
 
     def test_auth_user_bad_generic_booking_assign(self):

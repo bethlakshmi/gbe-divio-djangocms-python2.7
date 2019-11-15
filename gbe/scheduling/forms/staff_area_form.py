@@ -11,6 +11,7 @@ from gbe.models import (
 from tinymce.widgets import TinyMCE
 from gbe.forms.common_queries import visible_profiles
 
+
 class StaffAreaForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
@@ -20,6 +21,7 @@ class StaffAreaForm(ModelForm):
     staff_lead = ModelChoiceField(
         queryset=visible_profiles,
         required=False)
+
     class Meta:
         model = StaffArea
         fields = '__all__'

@@ -166,7 +166,8 @@ event_collect_choices = [
                 ("Drop-In", "All Drop-In Classes"),
                 ("Volunteer", "All Volunteer Events")]
 copy_mode_labels = {
-    'copy_mode': "How would you like to copy this event?"
+    'copy_mode': "How would you like to copy this event?",
+    'room': "Choose the default room"
 }
 copy_mode_choices = [
     ("copy_children_only",
@@ -174,7 +175,12 @@ copy_mode_choices = [
     ("include_parent",
      "Include this event and all sub events, make new event on ")
 ]
-
+copy_errors = {
+  'room_conf_mismatch': "This room is not available for the conference on this day.",
+  'no_target': " Must choose the target event when copying sub-events.",
+  'no_day': " Must choose a day when copying all events.",
+  'room_target_mismatch': "This room is not available for the conference of the chosen event."
+}
 inform_about_options = [('Exhibiting Art or Costumes',
                          'Exhibiting Art or Costumes'),
                         ('Performing', 'Performing'),

@@ -6,9 +6,10 @@ from django.forms import (
 )
 from gbe.models import (
     ConferenceDay,
-    Show,
     Class,
     GenericEvent,
+    Room,
+    Show,
     StaffArea,
 )
 from settings import (
@@ -18,6 +19,7 @@ from settings import (
 from gbe_forms_text import (
     copy_mode_labels,
     copy_mode_choices,
+    copy_errors,
 )
 from scheduler.idd import get_occurrences
 from django.db.models.fields import BLANK_CHOICE_DASH
@@ -42,7 +44,21 @@ class CopyEventPickDayForm(Form):
             conference__status="completed").order_by('day'),
         required=False
         )
+    room = ModelChoiceField(
+        queryset=Room.objects.filter(
+            conferences__status__in=("ongoing", "upcoming")
+            ).order_by('name').distinct(),
+        required=True)
 
+    def clean(self):
+        cleaned_data = super(CopyEventPickDayForm, self).clean()
+        copy_to_day = cleaned_data.get("copy_to_day")
+        room = cleaned_data.get("room")
+        if copy_to_day and not room.conferences.filter(
+                pk=copy_to_day.conference.pk).exists():
+            msg = copy_errors['room_conf_mismatch']
+            self.add_error('room', msg)
+        return cleaned_data
 
 class CopyEventPickModeForm(CopyEventPickDayForm):
     '''
@@ -54,6 +70,12 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
 
     target_event = ChoiceField(choices=[],
                                required=False)
+    room = ModelChoiceField(
+        queryset=Room.objects.filter(
+            conferences__status__in=("ongoing", "upcoming")
+            ).order_by('name').distinct(),
+        required=True,
+        label=copy_mode_labels['room'])
 
     def __init__(self, *args, **kwargs):
         event_type = None
@@ -94,8 +116,9 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
         copy_to_day = cleaned_data.get("copy_to_day")
         if copy_mode:
             if copy_mode == copy_mode_choices[0][0] and not target_event:
-                msg = " Must choose the target event when copying sub-events."
+                msg = copy_errors['no_target']
                 self.add_error('target_event', msg)
             if copy_mode == copy_mode_choices[1][0] and not copy_to_day:
-                msg = " Must choose a day when copying all events."
+                msg = copy_errors['no_day']
                 self.add_error('copy_to_day', msg)
+        return cleaned_data
