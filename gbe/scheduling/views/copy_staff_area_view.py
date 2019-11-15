@@ -55,7 +55,8 @@ class CopyStaffAreaView(CopyCollectionsView):
     def make_context(self, request, post=None):
         context = {
             'first_title': "Copying - %s" % self.area.title,
-            'event_type': "Staff"}
+            'event_type': "Staff",
+            'room': self.area.default_location}
         return super(CopyStaffAreaView, self).make_context(request,
                                                            context,
                                                            post)
@@ -72,9 +73,10 @@ class CopyStaffAreaView(CopyCollectionsView):
         else:
             delta = area.conference.conferenceday_set.order_by("day").first(
                 ).day - self.start_day
-        return second_title, delta
+        return second_title, delta, area.conference
 
-    def copy_root(self, request, delta, conference):
+    def copy_root(self, request, delta, conference, room):
+        new_area_room = room
         new_title = self.area.title
         new_slug = self.area.slug
         if conference == self.area.conference:
@@ -85,12 +87,15 @@ class CopyStaffAreaView(CopyCollectionsView):
             new_slug = "%s_new_%s" % (
                 self.area.slug,
                 slugify(now))
+        if self.area.default_location.conferences.filter(
+                pk=conference.pk).exists():
+            new_area_room = self.area.default_location
         new_area = StaffArea(
             conference=conference,
             title=new_title,
             slug=new_slug,
             description=self.area.description,
-            default_location=self.area.default_location,
+            default_location=new_area_room,
             default_volunteers=self.area.default_volunteers
         )
         new_area.save()
@@ -107,7 +112,8 @@ class CopyStaffAreaView(CopyCollectionsView):
                 new_area.title))
         return new_area
 
-    def copy_event(self, occurrence, delta, conference, root=None):
+    def copy_event(self, occurrence, delta, conference, room, root=None):
+        new_event_room = room
         gbe_event_copy = occurrence.as_subtype
         gbe_event_copy.pk = None
         gbe_event_copy.event_id = None
@@ -119,12 +125,15 @@ class CopyStaffAreaView(CopyCollectionsView):
                   gbe_event_copy.calendar_type]
         if root:
             labels += [root.slug]
+        if occurrence.location.as_subtype.conferences.filter(
+                pk=conference.pk).exists():
+            new_event_room = occurrence.location
 
         response = create_occurrence(
             gbe_event_copy.eventitem_id,
             occurrence.starttime + delta,
             max_volunteer=occurrence.max_volunteer,
-            locations=[occurrence.location],
+            locations=[new_event_room],
             labels=labels
         )
         return response

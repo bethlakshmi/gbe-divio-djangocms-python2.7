@@ -60,6 +60,7 @@ class CopyEventPickDayForm(Form):
             self.add_error('room', msg)
         return cleaned_data
 
+
 class CopyEventPickModeForm(CopyEventPickDayForm):
     '''
     Form for selecting the type of event to create
