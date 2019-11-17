@@ -87,8 +87,9 @@ class CopyStaffAreaView(CopyCollectionsView):
             new_slug = "%s_new_%s" % (
                 self.area.slug,
                 slugify(now))
-        if self.area.default_location.conferences.filter(
-                pk=conference.pk).exists():
+        if (not self.area.default_location) or (
+                self.area.default_location.conferences.filter(
+                    pk=conference.pk).exists()):
             new_area_room = self.area.default_location
         new_area = StaffArea(
             conference=conference,

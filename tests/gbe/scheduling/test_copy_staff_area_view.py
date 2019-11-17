@@ -7,11 +7,14 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ConferenceDayFactory,
     ProfileFactory,
+    RoomFactory,
 )
 from scheduler.models import Event
 from gbe.models import StaffArea
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_hidden_value,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -125,15 +128,44 @@ class TestCopyOccurrence(TestCase):
             response,
             self.context.area.title)
 
+    def test_authorized_user_get_default_room(self):
+        room = self.context.get_room()
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assert_good_mode_form(
+            response,
+            self.context.area.title)
+        assert_option_state(
+            response,
+            room.pk,
+            room.name)
+
+    def test_authorized_user_get_default_room_preset(self):
+        room = self.context.get_room()
+        self.context.area.default_location = room
+        self.context.area.save()
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assert_good_mode_form(
+            response,
+            self.context.area.title)
+        assert_option_state(
+            response,
+            room.pk,
+            room.name,
+            True)
+
     def test_authorized_user_pick_mode_only_children(self):
         target_context = StaffAreaContext()
         delta = timedelta(days=340)
         target_day = ConferenceDayFactory(
             conference=target_context.conference,
             day=self.context.conf_day.day + delta)
+        new_room = target_context.get_room()
         data = {
             'copy_mode': 'copy_children_only',
             'target_event': target_context.area.pk,
+            'room': new_room.pk,
             'pick_mode': "Next",
         }
         login_as(self.privileged_user, self)
@@ -150,12 +182,14 @@ class TestCopyOccurrence(TestCase):
             self.vol_opp.eventitem.e_title,
             (self.vol_opp.start_time + delta).strftime(
                         self.copy_date_format)))
+        assert_hidden_value(response, "id_room", "room", new_room.pk)
 
     def test_authorized_user_pick_mode_children_same_conf(self):
         target_context = StaffAreaContext(conference=self.context.conference)
         data = {
             'copy_mode': 'copy_children_only',
             'target_event': target_context.area.pk,
+            'room': target_context.get_room().pk,
             'pick_mode': "Next",
         }
         login_as(self.privileged_user, self)
@@ -177,10 +211,12 @@ class TestCopyOccurrence(TestCase):
         target_day = ConferenceDayFactory(
             conference=target_context.conference,
             day=self.context.conf_day.day + timedelta(days=340))
+        new_room = target_context.get_room()
         data = {
             'copy_mode': 'copy_children_only',
             'target_event': target_context.area.pk,
             'copied_event': self.vol_opp.pk,
+            'room': new_room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -194,23 +230,17 @@ class TestCopyOccurrence(TestCase):
             target_day.pk,
             str([max_pk]),)
         self.assertRedirects(response, redirect_url)
-        assert_alert_exists(
-            response,
-            'success',
-            'Success',
-            'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                self.vol_opp.eventitem.e_title,
-                datetime.combine(
-                    target_day.day,
-                    self.vol_opp.starttime.time()).strftime(
-                    GBE_DATETIME_FORMAT)))
+        self.assertContains(response, new_room)
 
     def test_copy_child_parent_events(self):
         another_day = ConferenceDayFactory()
+        another_room = RoomFactory()
+        another_room.conferences.add(another_day.conference)
         data = {
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk,
             'copied_event': self.vol_opp.pk,
+            'room': another_room.room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -250,6 +280,7 @@ class TestCopyOccurrence(TestCase):
             'copy_mode': 'include_parent',
             'copy_to_day': self.context.conf_day.pk,
             'copied_event': self.vol_opp.pk,
+            'room': self.vol_opp.location.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -285,11 +316,27 @@ class TestCopyOccurrence(TestCase):
                     self.vol_opp.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
 
+    def test_copy_child_parent_events_keep_room(self):
+        new_room = self.context.get_room()
+        data = {
+            'copy_mode': 'include_parent',
+            'copy_to_day': self.context.conf_day.pk,
+            'copied_event': self.vol_opp.pk,
+            'room': new_room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(response, new_room.name)
+
     def test_copy_only_parent_event(self):
         another_day = ConferenceDayFactory()
+        another_room = RoomFactory()
+        another_room.conferences.add(another_day.conference)
         data = {
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk,
+            'room': another_room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -304,12 +351,31 @@ class TestCopyOccurrence(TestCase):
             max_area.pk,)
         self.assertRedirects(response, redirect_url)
         self.assertRedirects(response, redirect_url)
+        self.assertFalse(max_area.default_location)
         assert_alert_exists(
             response,
             'success',
             'Success',
             'A new Staff Area was created.<br>Staff Area: %s' % (
                 max_area.title))
+
+    def test_copy_parent_event_change_room(self):
+        another_day = ConferenceDayFactory()
+        another_room = RoomFactory()
+        another_room.conferences.add(another_day.conference)
+        orig_room = self.context.get_room()
+        self.context.area.default_location = orig_room
+        self.context.area.save()
+        data = {
+            'copy_mode': 'include_parent',
+            'copy_to_day': another_day.pk,
+            'room': another_room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        max_area = StaffArea.objects.latest('pk')
+        self.assertEqual(another_room, max_area.default_location)
 
     def test_copy_child_event_fail_no_conf(self):
         target_context = StaffAreaContext()
@@ -321,6 +387,7 @@ class TestCopyOccurrence(TestCase):
             'copy_mode': 'copy_children_only',
             'target_event': target_context.area.pk,
             'copied_event': self.vol_opp.pk,
+            'room': target_context.get_room().pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
