@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     ConferenceFactory,
     ConferenceDayFactory,
+    GenericEventFactory,
     ProfileFactory,
     RoomFactory,
 )
@@ -17,7 +18,6 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from gbe_forms_text import event_type_options
 from tests.functions.gbe_scheduling_functions import (
     assert_event_was_picked_in_wizard,
     assert_good_sched_event_form_wizard,
@@ -128,6 +128,28 @@ class TestCopyOccurrence(TestCase):
             response,
             target_event.room.pk,
             target_event.room.name)
+
+    def test_authorized_user_get_w_child_events_special(self):
+        original_event = GenericEventFactory(type='Special')
+        target_event = GenericEventFactory(type='Special')
+        target_context = VolunteerContext(event=target_event)
+        original_context = VolunteerContext(event=original_event)
+        original_context.add_opportunity()
+        url = reverse(
+            self.view_name,
+            args=[original_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.get(url)
+        self.assert_good_mode_form(
+            response,
+            target_context.event.e_title,
+            target_context.sched_event.start_time)
+        assert_option_state(
+            response,
+            target_context.room.pk,
+            target_context.room.name)
+        self.assertContains(response, target_event.e_title)
 
     def test_bad_occurrence(self):
         url = reverse(
@@ -356,9 +378,9 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(response, copy_errors['room_target_mismatch'])
 
-    def test_copy_child_event(self):
+    def test_copy_child_event_preserve_room(self):
         show_context = VolunteerContext()
-        target_context = ShowContext()
+        target_context = ShowContext(room=show_context.room)
         url = reverse(
             self.view_name,
             args=[show_context.sched_event.pk],
@@ -381,6 +403,8 @@ class TestCopyOccurrence(TestCase):
             target_context.days[0].pk,
             str([max_pk]),)
         self.assertRedirects(response, redirect_url)
+        self.assertContains(response, show_context.room.name)
+        self.assertNotContains(response, self.context.room.name)
         assert_alert_exists(
             response,
             'success',

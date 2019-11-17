@@ -70,7 +70,8 @@ class CopyOccurrenceView(CopyCollectionsView):
         new_event_room = room
         if root:
             parent_event_id = root.pk
-        if (not set_room) and occurrence.location.as_subtype.conferences.filter(
+        if (not set_room) and \
+                occurrence.location.as_subtype.conferences.filter(
                 pk=conference.pk).exists():
             new_event_room = occurrence.location
         gbe_event_copy = occurrence.as_subtype
