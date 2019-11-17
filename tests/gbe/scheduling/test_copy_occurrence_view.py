@@ -7,10 +7,13 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ConferenceDayFactory,
     ProfileFactory,
+    RoomFactory,
 )
 from scheduler.models import Event
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_hidden_value,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -35,6 +38,7 @@ from tests.contexts import (
 from gbe_forms_text import (
     copy_mode_labels,
     copy_mode_choices,
+    copy_errors,
 )
 from string import replace
 
@@ -92,6 +96,25 @@ class TestCopyOccurrence(TestCase):
             self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertNotContains(response, copy_mode_choices[0][1])
 
+    def test_authorized_user_get_right_rooms(self):
+        not_this_room = RoomFactory()
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
+        self.assertNotContains(response, not_this_room.name)
+        assert_option_state(
+            response,
+            self.context.room.pk,
+            self.context.room.name,
+            True)
+
     def test_authorized_user_get_w_child_events(self):
         target_event = VolunteerContext()
         self.context.add_opportunity()
@@ -101,6 +124,10 @@ class TestCopyOccurrence(TestCase):
             response,
             target_event.event.e_title,
             target_event.sched_event.start_time)
+        assert_option_state(
+            response,
+            target_event.room.pk,
+            target_event.room.name)
 
     def test_bad_occurrence(self):
         url = reverse(
@@ -142,8 +169,11 @@ class TestCopyOccurrence(TestCase):
         another_day = ConferenceDayFactory(
             conference=self.context.conference,
             day=self.context.conf_day.day + timedelta(days=1))
+        other_room = RoomFactory()
+        other_room.conferences.add(another_day.conference)
         data = {
             'copy_to_day': another_day.pk,
+            'room': other_room.pk,
             'pick_mode': "Next",
         }
         login_as(self.privileged_user, self)
@@ -161,6 +191,8 @@ class TestCopyOccurrence(TestCase):
             another_day.pk,
             str([max_pk]),)
         self.assertRedirects(response, redirect_url)
+        print response
+        self.assertContains(response, other_room.name)
         assert_alert_exists(
             response,
             'success',
@@ -172,6 +204,22 @@ class TestCopyOccurrence(TestCase):
                     self.context.opp_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
 
+    def test_copy_single_event_room_conf_mismatch(self):
+        another_day = ConferenceDayFactory(
+            day=self.context.conf_day.day + timedelta(days=1))
+        data = {
+            'copy_to_day': another_day.pk,
+            'room': self.context.room.pk,
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(response, copy_errors['room_conf_mismatch'])
+
     def test_authorized_user_pick_mode_include_parent(self):
         another_day = ConferenceDayFactory(conference=self.context.conference)
         show_context = VolunteerContext()
@@ -182,6 +230,7 @@ class TestCopyOccurrence(TestCase):
         data = {
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk,
+            'room': self.context.room.pk,
             'pick_mode': "Next",
         }
         delta = another_day.day - show_context.sched_event.starttime.date()
@@ -193,7 +242,12 @@ class TestCopyOccurrence(TestCase):
             'required checked id="id_copy_mode_1" />')
         self.assertContains(
             response,
+            '<input type="radio" name="copy_mode" value="include_parent" ' +
+            'required checked id="id_copy_mode_1" />')
+        self.assertContains(
+            response,
             '<option value="%d" selected>' % another_day.pk)
+        assert_hidden_value(response, "id_room", "room", self.context.room.pk)
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
             show_context.opportunity.e_title,
@@ -210,6 +264,7 @@ class TestCopyOccurrence(TestCase):
         data = {
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk + 100,
+            'room': self.context.room.pk,
             'pick_mode': "Next",
         }
         login_as(self.privileged_user, self)
@@ -226,13 +281,14 @@ class TestCopyOccurrence(TestCase):
             urlconf='gbe.scheduling.urls')
         data = {
             'copy_mode': 'include_parent',
+            'room': self.context.room.pk,
             'pick_mode': "Next",
         }
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(
             response,
-            'Must choose a day when copying all events.')
+            copy_errors['no_day'])
 
     def test_authorized_user_pick_mode_no_event(self):
         show_context = VolunteerContext()
@@ -242,13 +298,14 @@ class TestCopyOccurrence(TestCase):
             urlconf='gbe.scheduling.urls')
         data = {
             'copy_mode': 'copy_children_only',
+            'room': self.context.room.pk,
             'pick_mode': "Next",
         }
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(
             response,
-            'Must choose the target event when copying sub-events.')
+            copy_errors['no_target'])
 
     def test_authorized_user_pick_mode_only_children(self):
         show_context = VolunteerContext()
@@ -260,6 +317,7 @@ class TestCopyOccurrence(TestCase):
         data = {
             'copy_mode': 'copy_children_only',
             'target_event': target_context.sched_event.pk,
+            'room': target_context.room.pk,
             'pick_mode': "Next",
         }
         delta = target_context.sched_event.starttime.date(
@@ -281,6 +339,23 @@ class TestCopyOccurrence(TestCase):
             (show_context.opp_event.start_time + delta).strftime(
                         self.copy_date_format)))
 
+    def test_authorized_user_pick_mode_parent_room_mismatch(self):
+        show_context = VolunteerContext()
+        target_context = ShowContext()
+        url = reverse(
+            self.view_name,
+            args=[show_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'copy_children_only',
+            'target_event': target_context.sched_event.pk,
+            'room': self.context.room.pk,
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, copy_errors['room_target_mismatch'])
+
     def test_copy_child_event(self):
         show_context = VolunteerContext()
         target_context = ShowContext()
@@ -292,6 +367,7 @@ class TestCopyOccurrence(TestCase):
             'copy_mode': 'copy_children_only',
             'target_event': target_context.sched_event.pk,
             'copied_event': show_context.opp_event.pk,
+            'room': self.context.room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -316,6 +392,27 @@ class TestCopyOccurrence(TestCase):
                     show_context.opp_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
 
+    def test_copy_child_change_room(self):
+        show_context = VolunteerContext()
+        target_context = ShowContext()
+        show_context.conference.status_code = 'completed'
+        show_context.conference.save()
+        url = reverse(
+            self.view_name,
+            args=[show_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'copy_children_only',
+            'target_event': target_context.sched_event.pk,
+            'copied_event': show_context.opp_event.pk,
+            'room': target_context.room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, target_context.room.name, 2)
+        self.assertNotContains(response, show_context.room.name)
+
     def test_copy_child_parent_events(self):
         another_day = ConferenceDayFactory()
         show_context = VolunteerContext()
@@ -327,6 +424,7 @@ class TestCopyOccurrence(TestCase):
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk,
             'copied_event': show_context.opp_event.pk,
+            'room': self.context.room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -377,6 +475,7 @@ class TestCopyOccurrence(TestCase):
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk,
             'copied_event': opp_sched.pk,
+            'room': self.context.room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -417,6 +516,7 @@ class TestCopyOccurrence(TestCase):
         data = {
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk,
+            'room': self.context.room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
@@ -452,6 +552,7 @@ class TestCopyOccurrence(TestCase):
             'copy_mode': 'include_parent',
             'copy_to_day': another_day.pk,
             'copied_event': "bad",
+            'room': self.context.room.pk,
             'pick_event': "Finish",
         }
         login_as(self.privileged_user, self)
