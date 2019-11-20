@@ -400,6 +400,20 @@ class Profile(WorkerItem):
                             doing_it = True
         return doing_it
 
+    def email_allowed(self, email_type):
+        if not self.user_object.is_active:
+            return False
+        else:
+            try:
+                method_name='send_'+str(email_type)
+                method=getattr(self.preferences, 
+                               method_name, 
+                               lambda :'Invalid')
+                return method
+            except: 
+                raise Exception(self.display_name)
+                return True
+
     def __str__(self):
         return self.display_name
 
