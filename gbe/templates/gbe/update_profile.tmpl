@@ -1,4 +1,5 @@
 {% extends 'base.tmpl' %}
+{% load staticfiles %}
 
 {% block title %}
   Update Your Profile
@@ -8,17 +9,7 @@
 <p class="vanilla">
 <span class='header'><h3>{%if display_name%}{{display_name}}'s{%else%}Your{%endif%} Profile</h3></span><br>
 
-Your privacy is very important to us. We promise that your information
-will not be sold or traded. That said, we need your complete and
-accurate contact information in order to alert you to important
-aspects of the event: your ticket purchases and personal schedule,
-news, events, and deadlines. Your profile information will be visible
-to the department head associated with any role or activity you've
-elected to be involved with (that is, if you're performing, our
-selection committee and stage managers will be able to see your
-profile information. If you're teaching, the conference committee
-members and staff will be able to see your profile information,
-etc.).
+{{ email_note }}
 </p>
  
 <form method="POST" action="" enctype="multipart/form-data">
@@ -31,14 +22,28 @@ etc.).
 <div class="row">
 <div class="col-md-6">
   {% for form in left_forms %}
-    {% include "form_table.tmpl" %}
+    {% include "form_table.tmpl" with two_col=True %}
   {% endfor %}
 </div>
 <div class="col-md-6">
   {% for form in right_forms %}
-  {%include "form_table.tmpl" %}
+  {% include "form_table.tmpl" with two_col=True %}
   {% endfor %}
-</div>
+<div class="card card-body bg-light">
+  <h3>Email Options</h3>
+  {% for field in email_form.visible_fields%}
+  <div class="row">
+    <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
+    <div class="col-lg-11 col-md-10 col-xs-10">
+      {{ field.label }}{% if field.help_text %}
+      <span class="dropt" title="Help">
+        <img src= "{% static "img/question.png" %}" alt="?"/>
+          <span style="width:200px;float:right;text-align:left;">
+          {{ field.help_text }}
+          </span></span>{% endif %}</div>
+  </div>
+  {% endfor %}
+</div></div>
 </div>
 </div>
   <input type="submit" value="Update my account"> 

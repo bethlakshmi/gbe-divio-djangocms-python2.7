@@ -456,6 +456,16 @@ look spectacular!<P><I>The Vintage Fashion Fair</I> is also home to our \
 No need to run out into the cold or even up to the hotel restaurant! \
 Attendees of <I>The Great Burlesque Exposition</I> can fortify themselves \
 with soups, wraps, fresh fruit, and more... all at very reasonable prices!'''
+email_pref_note = '''Your privacy is very important to us. We promise that 
+your information will not be sold or traded. That said, we need your complete 
+and accurate contact information in order to alert you to important aspects of 
+the event: your ticket purchases and personal schedule, news, events, and 
+deadlines. Your profile information will be visible to the department head 
+associated with any role or activity you've elected to be involved with (that 
+is, if you're performing, our selection committee and stage managers will be 
+able to see your profile information. If you're teaching, the conference 
+committee members and staff will be able to see your profile information,
+etc.).'''
 save_email_template_success_msg = '''The email template has been saved.  \
 Your updates will be applied to all future automated messages using this \
 template.  The Email Template name is '''
