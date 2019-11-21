@@ -26,10 +26,11 @@ def schedule_email():
                 target_day+timedelta(days=1),
                 time(0, 0, 0, 0)))
     for item in sched_resp.schedule_items:
-        if item.user in personal_schedules:
-            personal_schedules[item.user] += [item]
-        else:
-            personal_schedules[item.user] = [item]
+        if item.user.profile.email_allowed('daily_schedule'):
+            if item.user in personal_schedules:
+                personal_schedules[item.user] += [item]
+            else:
+                personal_schedules[item.user] = [item]
     send_daily_schedule_mail(
         personal_schedules,
         target_day,

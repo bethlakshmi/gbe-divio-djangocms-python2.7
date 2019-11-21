@@ -47,7 +47,7 @@ profile_preferences_labels = {
     'send_bid_notifications': (
       'Email me offers and updates based on my proposals to GBE'),
     'send_role_notifications': (
-      'Email me offers and updates based on roles I''ve had at GBE'),
+      'Email me offers and updates based on roles I\'ve had at GBE'),
     'send_schedule_change_notifications': (
       'Email me when my schedule at GBE changes'),
 }
