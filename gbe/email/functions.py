@@ -142,28 +142,28 @@ def send_bid_state_change_mail(
 
 
 def send_schedule_update_mail(participant_type, profile):
-    name = '%s schedule update' % (participant_type.lower())
-    template = get_or_create_template(
-        name,
-        "volunteer_schedule_update",
-        "A change has been made to your %s Schedule!" % (
+    if profile.email_allowed('schedule_change_notifications'):
+        name = '%s schedule update' % (participant_type.lower())
+        template = get_or_create_template(
+            name,
+            "volunteer_schedule_update",
+            "A change has been made to your %s Schedule!" % (
                 participant_type))
-    return mail_send_gbe(
-        profile.contact_email,
-        template.sender.from_email,
-        template=name,
-        context={
-            'site': Site.objects.get_current().domain,
-            'profile': profile,
-            'landing_page_url': "http://%s%s" % (
-                Site.objects.get_current().domain,
-                reverse('home',
-                        urlconf='gbe.urls')),
-            'landing_page_link': "<a href='http://%s%s'>Personal Page</a>" % (
-                Site.objects.get_current().domain,
-                reverse('home',
-                        urlconf='gbe.urls'))},
-    )
+        return mail_send_gbe(
+            profile.contact_email,
+            template.sender.from_email,
+            template=name,
+            context={
+                'site': Site.objects.get_current().domain,
+                'profile': profile,
+                'landing_page_url': "http://%s%s" % (
+                    Site.objects.get_current().domain,
+                    reverse('home',
+                            urlconf='gbe.urls')),
+                'landing_page_link': "<a href='http://%s%s'>Personal Page</a>" % (
+                    Site.objects.get_current().domain,
+                    reverse('home',
+                            urlconf='gbe.urls'))},)
 
 
 def send_daily_schedule_mail(schedules, day, slug):
