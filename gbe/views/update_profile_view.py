@@ -96,10 +96,14 @@ def UpdateProfileView(request):
                                         'last_name': request.user.last_name,
                                         'display_name': display_name,
                                         'how_heard': how_heard_initial})
-        if len(profile.preferences.inform_about.strip()) > 0:
-            inform_initial = eval(profile.preferences.inform_about)
-        else:
-            inform_initial = []
+        inform_initial = []
+        try:
+            if len(profile.preferences.inform_about.strip()) > 0:
+                inform_initial = eval(profile.preferences.inform_about)
+        except ProfilePreferences.DoesNotExist:
+            pref = ProfilePreferences(profile=profile)
+            pref.save()
+
         prefs_form = ProfilePreferencesForm(prefix='prefs',
                                             instance=profile.preferences,
                                             initial={'inform_about':

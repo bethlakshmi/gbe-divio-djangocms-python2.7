@@ -25,6 +25,7 @@ from gbetext import (
     states_options,
 )
 
+
 phone_regex = '(\d{3}[-\.]?\d{3}[-\.]?\d{4})'
 
 
@@ -401,6 +402,7 @@ class Profile(WorkerItem):
         return doing_it
 
     def email_allowed(self, email_type):
+        from gbe.models import ProfilePreferences
         if not self.user_object.is_active:
             return False
         else:
@@ -410,9 +412,10 @@ class Profile(WorkerItem):
                                method_name, 
                                lambda :'Invalid')
                 return method
-            except: 
-                raise Exception(self.display_name)
-                return True
+            except ProfilePreferences.DoesNotExist:
+                pref = ProfilePreferences(profile=self)
+                pref.save()
+        return True
 
     def __str__(self):
         return self.display_name

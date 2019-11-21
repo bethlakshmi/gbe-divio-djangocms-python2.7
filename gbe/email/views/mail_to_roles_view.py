@@ -44,6 +44,7 @@ class MailToRolesView(MailToFilterView):
                             'Volunteer Coordinator',
                             ]
     template = 'gbe/email/mail_to_roles.tmpl'
+    email_type = 'role_notifications'
 
     def setup_event_queryset(self, is_superuser, priv_list, conferences):
         # build event field based on privs
@@ -288,7 +289,8 @@ class MailToRolesView(MailToFilterView):
         for person in people:
             person_contact = (person.user.email,
                               person.user.profile.display_name)
-            if person.user.is_active and person_contact not in to_list:
+            if person.user.profile.email_allowed(
+                    self.email_type) and person_contact not in to_list:
                 to_list += [person_contact]
         return sorted(to_list, key=lambda s: s[1].lower())
 
