@@ -24,7 +24,4 @@ class PurchasedTicketContext:
             self.profile = ProfileFactory(
                 user_object=self.transaction.purchaser.matched_to_user
             )
-        if conference:
-            self.conference = conference
-        else:
-            self.conference = ConferenceFactory()
+        self.conference = conference or ConferenceFactory()

@@ -78,9 +78,9 @@ INSTALLED_APPS = [
     u'djangocms_bootstrap4.contrib.bootstrap4_tabs',
     u'djangocms_bootstrap4.contrib.bootstrap4_utilities',
     u'djangocms_file',
-    u'djangocms_history', 
+    u'djangocms_history',
     u'djangocms_snippet',
-    u'djangocms_style', 
+    u'djangocms_style',
     u'djangocms_text_ckeditor',
     u'djangocms_video',
     u'filer',
@@ -93,7 +93,8 @@ INSTALLED_APPS = [
     'gbe',
     'post_office',
     'import_export',
-    'snowpenguin.django.recaptcha2']
+    'snowpenguin.django.recaptcha2'
+]
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
@@ -212,7 +213,7 @@ THUMBNAIL_PROCESSORS = (
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters')
 THUMBNAIL_QUALITY = 90
-THUMBNAIL_SOURCE_GENERATORS = ('easy_thumbnails.source_generators.pil_image',)  
+THUMBNAIL_SOURCE_GENERATORS = ('easy_thumbnails.source_generators.pil_image',)
 
 RECAPTCHA_PRIVATE_KEY = '6Le0dx0UAAAAACNZynxCx5mUovu3M1Au3XFeeFKN'
 RECAPTCHA_PUBLIC_KEY = '6Le0dx0UAAAAAFGd_HJzX22FdzhwI-GCh8nCoXoU'

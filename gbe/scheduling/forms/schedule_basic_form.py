@@ -57,6 +57,8 @@ class ScheduleBasicForm(ModelForm):
         super(ScheduleBasicForm, self).__init__(*args, **kwargs)
         self.fields['day'] = ModelChoiceField(
             queryset=conference.conferenceday_set.all())
+        self.fields['location'] = ModelChoiceField(
+            queryset=Room.objects.filter(conferences=conference))
 
     def clean_duration(self):
         data = Duration(minutes=self.cleaned_data['duration']*60)

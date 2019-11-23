@@ -33,29 +33,19 @@ class StaffAreaContext:
         self.area = area or StaffAreaFactory(conference=self.conference,
                                              staff_lead=self.staff_lead)
 
-    def add_volunteer_opp(self,
-                          volunteer_sched_event=None,
-                          room=None):
+    def add_volunteer_opp(self):
         if not self.conference.conferenceday_set.exists():
-            if volunteer_sched_event:
-                self.conf_day = ConferenceDayFactory(
-                    day=volunteer_sched_event.starttime.date(),
-                    conference=self.conference)
-            else:
-                self.conf_day = ConferenceDayFactory(
-                    conference=self.conference)
+            self.conf_day = ConferenceDayFactory(
+                conference=self.conference)
         else:
             self.conf_day = self.conference.conferenceday_set.first()
-        if not volunteer_sched_event:
-            vol_event = GenericEventFactory(e_conference=self.conference,
-                                            type="Volunteer"
-                                            )
-            volunteer_sched_event = SchedEventFactory(
-                eventitem=vol_event,
-                max_volunteer=self.area.default_volunteers,
-                starttime=noon(self.conf_day))
-        if not room:
-            room = RoomFactory()
+        vol_event = GenericEventFactory(e_conference=self.conference,
+                                        type="Volunteer")
+        volunteer_sched_event = SchedEventFactory(
+            eventitem=vol_event,
+            max_volunteer=self.area.default_volunteers,
+            starttime=noon(self.conf_day))
+        room = self.get_room()
 
         ResourceAllocationFactory(
             event=volunteer_sched_event,
@@ -80,3 +70,8 @@ class StaffAreaContext:
             event=volunteer_sched_event,
             resource=WorkerFactory(_item=volunteer, role=role))
         return (volunteer, booking)
+
+    def get_room(self):
+        room = RoomFactory()
+        room.conferences.add(self.conference)
+        return room

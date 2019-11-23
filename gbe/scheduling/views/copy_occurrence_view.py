@@ -43,7 +43,8 @@ class CopyOccurrenceView(CopyCollectionsView):
             'first_title': "Copying - %s: %s" % (
                 self.occurrence.eventitem.event.e_title,
                 self.occurrence.starttime.strftime(self.copy_date_format)),
-            'event_type': self.occurrence.as_subtype.event_type}
+            'event_type': self.occurrence.as_subtype.event_type,
+            'room': self.occurrence.location.as_subtype}
         return super(CopyOccurrenceView, self).make_context(request,
                                                             context,
                                                             post)
@@ -56,12 +57,23 @@ class CopyOccurrenceView(CopyCollectionsView):
             event.e_conference.conference_slug,
             event.e_title)
         delta = response.occurrence.starttime.date() - self.start_day
-        return second_title, delta
+        return second_title, delta, event.e_conference
 
-    def copy_event(self, occurrence, delta, conference, root=None):
+    def copy_event(self,
+                   occurrence,
+                   delta,
+                   conference,
+                   room,
+                   root=None,
+                   set_room=False):
         parent_event_id = None
+        new_event_room = room
         if root:
             parent_event_id = root.pk
+        if (not set_room) and \
+                occurrence.location.as_subtype.conferences.filter(
+                pk=conference.pk).exists():
+            new_event_room = occurrence.location
         gbe_event_copy = occurrence.as_subtype
         gbe_event_copy.pk = None
         gbe_event_copy.event_id = None
@@ -77,18 +89,19 @@ class CopyOccurrenceView(CopyCollectionsView):
             gbe_event_copy.eventitem_id,
             occurrence.starttime + delta,
             max_volunteer=occurrence.max_volunteer,
-            locations=[occurrence.location],
+            locations=[new_event_room],
             parent_event_id=parent_event_id,
             labels=labels
         )
         return response
 
-    def copy_root(self, request, delta, conference):
+    def copy_root(self, request, delta, conference, room):
         new_occurrence = None
         response = self.copy_event(
             self.occurrence,
             delta,
-            conference)
+            conference,
+            room)
         show_scheduling_occurrence_status(
             request,
             response,

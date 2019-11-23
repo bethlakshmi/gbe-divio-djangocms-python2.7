@@ -302,10 +302,10 @@ def room_schedule(request, room_id=None):
         conference = conf.Conference.current_conf()
 
     if room_id:
-        rooms = [get_object_or_404(sched.LocationItem,
+        rooms = [get_object_or_404(conf.Room,
                                    resourceitem_id=room_id)]
     else:
-        rooms = sched.LocationItem.objects.all()
+        rooms = conf.Room.objects.filter(conferences=conference)
 
     conf_days = conference.conferenceday_set.all()
     tmp_days = []
@@ -359,7 +359,7 @@ def room_setup(request):
     conf_days = tmp_days
 
     viewer_profile = validate_perms(request, 'any', require=True)
-    rooms = sched.LocationItem.objects.all()
+    rooms = conf.Room.objects.filter(conferences=conference)
 
     # rearrange the data into the format of:
     #  - room & date of booking

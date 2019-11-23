@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.db.models import Max
 from tests.factories.gbe_factories import (
     ConferenceFactory,
@@ -10,7 +9,10 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     RoomFactory,
 )
-from gbe.models import StaffArea
+from gbe.models import (
+    Profile,
+    StaffArea,
+)
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_option_state,
@@ -28,6 +30,7 @@ class TestStaffAreaWizard(TestCase):
     def setUp(self):
         self.room = RoomFactory()
         self.current_conference = ConferenceFactory(accepting_bids=True)
+        self.room.conferences.add(self.current_conference)
         self.url = reverse(
             self.view_name,
             args=[self.current_conference.conference_slug],
@@ -98,7 +101,7 @@ class TestStaffAreaWizard(TestCase):
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)
         data = self.edit_area()
-        data['staff_lead'] = User.objects.aggregate(Max('pk'))['pk__max']+1
+        data['staff_lead'] = Profile.objects.aggregate(Max('pk'))['pk__max']+1
         response = self.client.post(
             self.url,
             data=data,
@@ -168,3 +171,24 @@ class TestStaffAreaWizard(TestCase):
         self.assertContains(
             response,
             'name="default_volunteers" value="3"')
+
+    def test_create_not_avail_room_fails(self):
+        not_now_room = RoomFactory()
+        login_as(self.privileged_user, self)
+        data = self.edit_area()
+        data['default_location'] = not_now_room.pk
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertContains(
+            response,
+            "That choice is not one of the available choices.")
+
+    def test_room_to_conf_mapping(self):
+        not_now_room = RoomFactory()
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.room.name)
+        self.assertNotContains(response, not_now_room.name)

@@ -14,6 +14,7 @@ from gbe_forms_text import (
 from gbe.models import (
     Event,
     ConferenceDay,
+    Room,
 )
 
 
@@ -34,6 +35,12 @@ class CopyEventForm(Form):
     copy_mode = ChoiceField(choices=copy_mode_choices,
                             required=False,
                             widget=HiddenInput)
+    room = ModelChoiceField(
+        queryset=Room.objects.filter(
+            conferences__status__in=("ongoing", "upcoming")
+            ).order_by('name').distinct(),
+        required=True,
+        widget=HiddenInput)
 
     target_event = IntegerField(
         required=False,

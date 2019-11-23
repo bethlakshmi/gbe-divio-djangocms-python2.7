@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.db.models import Max
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
@@ -12,6 +11,7 @@ from tests.factories.gbe_factories import (
 from scheduler.models import Event
 from gbe.models import (
     GenericEvent,
+    Profile,
     Show,
 )
 from tests.functions.gbe_functions import (
@@ -43,6 +43,7 @@ class TestEditStaffAreaView(TestCase):
         self.context = StaffAreaContext()
         self.context.area.default_volunteers = 7
         self.context.area.save()
+        self.room.conferences.add(self.context.conference)
         self.url = reverse(
             self.view_name,
             args=[self.context.area.pk],
@@ -191,7 +192,7 @@ class TestEditStaffAreaView(TestCase):
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)
         data = self.edit_area()
-        data['staff_lead'] = User.objects.aggregate(Max('pk'))['pk__max']+1
+        data['staff_lead'] = Profile.objects.aggregate(Max('pk'))['pk__max']+1
         response = self.client.post(
             self.url,
             data=data,
@@ -199,3 +200,24 @@ class TestEditStaffAreaView(TestCase):
         self.assertContains(
             response,
             "That choice is not one of the available choices.")
+
+    def test_create_not_avail_room_fails(self):
+        not_now_room = RoomFactory()
+        login_as(self.privileged_user, self)
+        data = self.edit_area()
+        data['default_location'] = not_now_room.pk
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertContains(
+            response,
+            "That choice is not one of the available choices.")
+
+    def test_room_to_conf_mapping(self):
+        not_now_room = RoomFactory()
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.room.name)
+        self.assertNotContains(response, not_now_room.name)

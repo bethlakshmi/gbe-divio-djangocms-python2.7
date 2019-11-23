@@ -8,15 +8,34 @@
   {{ first_title }}
 {% endblock %}
 {% block first_form %}
+  <form action="" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
   {% if pick_day %}
-    <form action="" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ pick_day }}
+    <h4>Choose Day and Room</h4>
+    <p>
+      Choose the target day of the conference and an event at the same time will be made.
+      If the room has changed between the previous conference and the new conference, please update the room.  Rooms from previous conferences will not be available here.</p>
+      {% if pick_day.errors %}<p style= "color:red"> There is an error on the form.</p>{% endif %}
+    <div class="row">
+    {% for field in pick_day %}
+      <div class="col-lg-2 col-md-2 col-sm-6 col-xs-5">
+        <label for="{{field.name}}" class="control-label">        
+          {% if field.errors %}<font color="red">!
+          {% elif field.css_classes == 'required' %}<font color="red">*</font>
+          {% endif %} 
+          {{ field.label_tag }}
+          {% if field.errors %}</font>{% endif %} 
+      </label></div>
+      <div class="col-lg-3 col-md-4 col-sm-6 col-xs-7">
+        {{ field }}
+        {% if field.errors %}<br/><label>
+        <font color="red">{{ field.errors }}</font></label>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
   {% elif copy_mode %}
     {% if copy_mode.errors %}<p style= "color:red"> There is an error on the form.</p>{% endif %}
     <font color="red">{{ copy_mode.non_field_errors }}</font>
-    <form action="" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
       <div class="form-row"><div class="form-group"><div class="col-12">
 	<label for="{{copy_mode.copy_mode.name}}" class="control-label">   
           {{ copy_mode.copy_mode.label_tag }}
@@ -37,7 +56,24 @@
             {{ copy_mode.copy_mode.errors }}
             </ul></font>
           {% endif %}
-      </div></div></div>
+      </div>
+      <div class="col-12"><label for="{{field.name}}" class="control-label">
+        <br>
+          {% if copy_mode.room.errors %}<font color="red">!
+          {% elif copy_mode.room.css_classes == 'required' %}<font color="red">*</font>
+          {% endif %} 
+          {{ copy_mode.room.label_tag }}&nbsp;&nbsp;
+          {% if copy_mode.room.errors %}</font>{% endif %} 
+      </label>{{ copy_mode.room }}
+      {% if copy_mode.room.errors or copy_mode.room.errors %}
+            <br/><font color="red"><ul>
+            {{ copy_mode.room.errors }}
+            </ul></font>
+          {% endif %}
+    </div>
+    <div class="col-12">The default room is used for any case where the original
+      room isn't available for the target conference.
+    </div></div></div>
     {% endif %}
     <div class="form-row pull-right">
       <input type="submit" class="event_wizard_button" name="pick_mode" value="Next">
