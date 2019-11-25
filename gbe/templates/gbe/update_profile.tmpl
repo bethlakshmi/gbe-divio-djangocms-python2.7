@@ -26,13 +26,10 @@
   {% endfor %}
 </div>
 <div class="col-md-6">
-  {% for form in right_forms %}
-  {% include "form_table.tmpl" with two_col=True %}
-  {% endfor %}
-<div class="card card-body bg-light">
+<div class="card card-body bg-light {% if email_focus %}shadow border-danger{% endif %}">
   <h3>Email Options</h3>
   {% for field in email_form.visible_fields%}
-  <div class="row">
+  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
     <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
     <div class="col-lg-11 col-md-10 col-xs-10">
       {{ field.label }}{% if field.help_text %}
@@ -43,7 +40,12 @@
           </span></span>{% endif %}</div>
   </div>
   {% endfor %}
-</div></div>
+</div>
+<br>
+  {% for form in right_forms %}
+  {% include "form_table.tmpl" with two_col=True %}
+  {% endfor %}
+</div>
 </div>
 </div>
   <input type="submit" value="Update my account"> 

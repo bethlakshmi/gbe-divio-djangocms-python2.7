@@ -108,11 +108,20 @@ def UpdateProfileView(request):
                                             instance=profile.preferences,
                                             initial={'inform_about':
                                                      inform_initial})
+        email_focus = None
+        email_initial = {}
+        if 'email_disable' in request.GET:
+            email_focus = str(request.GET['email_disable'])
+            email_initial = {
+                email_focus: False,
+            }
         email_form = EmailPreferencesForm(prefix='email_pref',
-                                          instance=profile.preferences)
+                                          instance=profile.preferences,
+                                          initial=email_initial)
         return render(request, 'gbe/update_profile.tmpl',
                       {'left_forms': [form], 
                        'right_forms': [prefs_form],
                        'email_form': email_form,
                        'email_note': email_pref_message[0].description,
+                       'email_focus': email_focus,
                       })
