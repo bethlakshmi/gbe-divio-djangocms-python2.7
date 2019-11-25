@@ -37,9 +37,21 @@
   	    {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
 	  <div class="col-11 ">
-  	    <label class="sched_detail">Time:</label> {{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT")}}<br>
-	    <label class="sched_detail">Location:</label>  {{ sched_event.occurrence.location }}<br>
-	  </div>
+      <div class="row">
+        <div class="col-3 col-md-2 col-lg-1"><label class="sched_detail">Time:</label></div>
+        <div class="col-8 col-md-9 col-lg-10">{{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
+        {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT")}}</div>
+      </div><div class="row">
+	      <div class="col-3 col-md-2 col-lg-1"><label class="sched_detail">Location:</label></div>
+        <div class="col-8 col-md-9 col-lg-10">{{ sched_event.occurrence.location }}
+          {% if sched_event.occurrence.location.as_subtype.address %}
+            <br>{{sched_event.occurrence.location.as_subtype.address}}{% endif %}
+          {% if sched_event.occurrence.location.as_subtype.map_link %}
+            <br><a href="{{sched_event.occurrence.location.as_subtype.map_link}}">
+              Link to Map</div>a>{% endif %}
+        </div>
+	    </div>
+    </div>
 	</div>
 	{% endfor %}
       </div>

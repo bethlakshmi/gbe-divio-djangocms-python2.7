@@ -37,7 +37,7 @@ class PersonaForm (ModelForm):
         help_text=persona_help_texts['bio'])
 
     def __init__(self, *args, **kwargs):
-        super(ModelForm, self).__init__(*args, **kwargs)
+        super(PersonaForm, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
             self.fields['upload_img'] = ImageField(
                 help_text=persona_help_texts['promo_image'],
@@ -47,7 +47,7 @@ class PersonaForm (ModelForm):
             )
 
     def save(self, commit=True):
-        performer = super(ModelForm, self).save(commit=False)
+        performer = super(PersonaForm, self).save(commit=False)
         if commit and self['upload_img'] and (
                 self['upload_img'].value() != performer.img):
             if self['upload_img'].value():

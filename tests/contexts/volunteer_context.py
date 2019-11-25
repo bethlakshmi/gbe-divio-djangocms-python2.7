@@ -62,6 +62,8 @@ class VolunteerContext():
             e_conference=self.conference)
         self.role = role or "Volunteer"
         self.room = RoomFactory()
+        self.room.conferences.add(self.conference)
+
         self.sched_event = SchedEventFactory(
             eventitem=self.event.eventitem_ptr,
             starttime=datetime.combine(self.window.day.day,

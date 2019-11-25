@@ -35,6 +35,7 @@ class TestVolunteerWizard(TestCase):
         self.room = RoomFactory()
         self.show_volunteer = VolunteerContext()
         self.current_conference = self.show_volunteer.conference
+        self.room.conferences.add(self.current_conference)
         self.special_volunteer = VolunteerContext(
             event=GenericEventFactory(
                 e_conference=self.current_conference))

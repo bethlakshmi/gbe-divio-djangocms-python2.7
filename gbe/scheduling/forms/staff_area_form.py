@@ -4,9 +4,13 @@ from django.forms import (
     HiddenInput,
     ModelChoiceField,
 )
-from gbe.models import StaffArea
+from gbe.models import (
+    Room,
+    StaffArea,
+)
 from tinymce.widgets import TinyMCE
 from gbe.forms.common_queries import visible_profiles
+
 
 class StaffAreaForm(ModelForm):
     required_css_class = 'required'
@@ -22,3 +26,13 @@ class StaffAreaForm(ModelForm):
         model = StaffArea
         fields = '__all__'
         widgets = {'conference': HiddenInput()}
+
+    def __init__(self, *args, **kwargs):
+        super(StaffAreaForm, self).__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            self.fields['default_location'].queryset = Room.objects.filter(
+                conferences=kwargs.get('instance').conference)
+        elif 'initial' in kwargs:
+            initial = kwargs.pop('initial')
+            self.fields['default_location'].queryset = Room.objects.filter(
+                conferences=initial['conference'])

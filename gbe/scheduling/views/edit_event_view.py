@@ -11,7 +11,6 @@ from django.core.urlresolvers import reverse
 from gbe.models import (
     Conference,
     Event,
-    Room,
 )
 from gbe.views.class_display_functions import get_scheduling_info
 from gbe.scheduling.forms import PersonAllocationForm

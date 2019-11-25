@@ -33,6 +33,7 @@ class TestRehearsalWizard(TestCase):
         self.room = RoomFactory()
         self.show_volunteer = VolunteerContext()
         self.current_conference = self.show_volunteer.conference
+        self.room.conferences.add(self.current_conference)
         self.url = reverse(
             self.view_name,
             args=[self.current_conference.conference_slug],

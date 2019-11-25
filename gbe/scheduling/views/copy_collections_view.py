@@ -17,6 +17,8 @@ from gbe.scheduling.views.functions import (
     show_scheduling_occurrence_status,
 )
 from datetime import timedelta
+from django.forms.utils import ErrorList
+from gbe_forms_text import copy_errors
 
 
 class CopyCollectionsView(View):
@@ -39,9 +41,12 @@ class CopyCollectionsView(View):
         if self.children and len(self.children) > 0:
             context['copy_mode'] = CopyEventPickModeForm(
                 post,
-                event_type=context['event_type'])
+                event_type=context['event_type'],
+                initial={'room': context['room']})
         else:
-            context['pick_day'] = CopyEventPickDayForm(post)
+            context['pick_day'] = CopyEventPickDayForm(
+                post,
+                initial={'room': context['room']})
             context['pick_day'].fields['copy_to_day'].empty_label = None
             context['pick_day'].fields['copy_to_day'].required = True
         return context
@@ -49,9 +54,21 @@ class CopyCollectionsView(View):
     def validate_and_proceed(self, request, context):
         make_copy = False
         if 'copy_mode' in context.keys() and context['copy_mode'].is_valid():
+            proceed_to_second = True
             if context['copy_mode'].cleaned_data[
                     'copy_mode'] == "copy_children_only":
-                context['second_title'], delta = self.get_copy_target(context)
+                context['second_title'], delta, conference = \
+                    self.get_copy_target(context)
+                # Because the error check requires knowing how to get the
+                # target's conference
+                if not context['copy_mode'].cleaned_data[
+                        'room'].conferences.filter(
+                            pk=conference.pk).exists():
+                    errors = context['copy_mode']._errors.setdefault(
+                        "room",
+                        ErrorList())
+                    errors.append(copy_errors['room_target_mismatch'])
+                    proceed_to_second = False
             elif context['copy_mode'].cleaned_data[
                     'copy_mode'] == "include_parent":
                 context['second_title'] = "Create Copy at %s: %s" % (
@@ -60,9 +77,10 @@ class CopyCollectionsView(View):
                     str(context['copy_mode'].cleaned_data['copy_to_day']))
                 delta = context['copy_mode'].cleaned_data[
                     'copy_to_day'].day - self.start_day
-            context['second_form'] = self.make_event_picker(
-                request,
-                delta)
+            if proceed_to_second:
+                context['second_form'] = self.make_event_picker(
+                    request,
+                    delta)
         elif 'pick_day' in context.keys() and context['pick_day'].is_valid():
             make_copy = True
         return make_copy, context
@@ -86,6 +104,7 @@ class CopyCollectionsView(View):
         if form.is_valid():
             copied_ids = []
             alt_id = None
+            room = form.cleaned_data['room']
             if form.cleaned_data['copy_mode'] == "copy_children_only":
                 (new_root,
                  target_day,
@@ -98,7 +117,8 @@ class CopyCollectionsView(View):
                 new_root = self.copy_root(
                     request,
                     delta,
-                    form.cleaned_data['copy_to_day'].conference)
+                    form.cleaned_data['copy_to_day'].conference,
+                    room)
                 if new_root and new_root.__class__.__name__ == "Event":
                     copied_ids += [new_root.pk]
                 else:
@@ -110,6 +130,7 @@ class CopyCollectionsView(View):
                     response.occurrence,
                     delta,
                     conference,
+                    room,
                     new_root)
                 show_scheduling_occurrence_status(
                     request,
@@ -160,7 +181,9 @@ class CopyCollectionsView(View):
                 response = self.copy_event(
                     self.occurrence,
                     delta,
-                    target_day.conference)
+                    target_day.conference,
+                    context['pick_day'].cleaned_data['room'],
+                    set_room=True)
                 show_scheduling_occurrence_status(
                     request,
                     response,

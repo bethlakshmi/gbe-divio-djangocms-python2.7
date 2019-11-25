@@ -47,6 +47,7 @@ class ActTechInfoContext():
             eventitem=self.show.eventitem_ptr)
         room_name = room_name or "Dining Room"
         self.room = RoomFactory(name=room_name)
+        self.room.conferences.add(self.conference)
         if not sched_event:
             ResourceAllocationFactory(
                 event=self.sched_event,

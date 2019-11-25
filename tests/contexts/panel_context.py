@@ -26,6 +26,7 @@ class PanelContext:
                                        e_conference=self.conference,
                                        accepted=3)
         self.room = room or RoomFactory()
+        self.room.conferences.add(self.conference)
         self.sched_event = None
         self.sched_event = self.schedule_instance(room=self.room,
                                                   starttime=starttime)
