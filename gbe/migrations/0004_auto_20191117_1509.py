@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     # written at the same time as #11, no cross dependancy
     dependencies = [
-        ('gbe', '0002_auto_20191110_1321'),
+        ('gbe', '0003_auto_20191111_2140'),
     ]
 
     operations = [

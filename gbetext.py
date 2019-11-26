@@ -470,6 +470,11 @@ save_email_template_success_msg = '''The email template has been saved.  \
 Your updates will be applied to all future automated messages using this \
 template.  The Email Template name is '''
 send_email_success_msg = '''A mail was successfully sent to '''
+unsubscribe_text = '''<br><br><div style="text-align: center;"><small> \
+This email has been sent by the www.burlesque-expo.com email system<br> \
+<a href="http://%s">Update email preferences</a><small></div>'''
+unsub_footer_include = "{% include 'gbe/email/unsub_footer.tmpl' %}"
+unsub_footer_plain_include = "{% include 'gbe/email/unsub_footer_plain.tmpl' %}"
 to_list_empty_msg = '''No recipients were found for your search criteria.  \
                     Please try something else'''
 unknown_request = '''This request makes no sense'''
