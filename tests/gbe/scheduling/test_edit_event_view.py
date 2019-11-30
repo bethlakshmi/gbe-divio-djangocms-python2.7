@@ -43,6 +43,8 @@ class TestEditEventView(TestCase):
         self.context.event.duration = Duration(hours=1, minutes=30)
         self.context.event.save()
         self.room = self.context.room
+        # because there was a bug around duplicate room names
+        RoomFactory(name=self.room.name)
         self.staff_lead = self.context.set_staff_lead()
         self.extra_day = ConferenceDayFactory(
             conference=self.context.conference,

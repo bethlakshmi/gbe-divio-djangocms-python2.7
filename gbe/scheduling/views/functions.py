@@ -26,7 +26,6 @@ from gbe.models import (
     Event,
     Performer,
     Profile,
-    Room,
     UserMessage,
 )
 from settings import GBE_DATETIME_FORMAT
@@ -250,9 +249,6 @@ def setup_event_management_form(conference, item, occurrence, context):
 
 
 def update_event(scheduling_form, occurrence_id, people_formset=[]):
-    room = get_object_or_404(
-        Room,
-        name=scheduling_form.cleaned_data['location'])
     start_time = get_start_time(scheduling_form.cleaned_data)
     people = []
     for assignment in people_formset:
@@ -267,7 +263,7 @@ def update_event(scheduling_form, occurrence_id, people_formset=[]):
         start_time,
         scheduling_form.cleaned_data['max_volunteer'],
         people=people,
-        locations=[room])
+        locations=[scheduling_form.cleaned_data['location']])
     return response
 
 

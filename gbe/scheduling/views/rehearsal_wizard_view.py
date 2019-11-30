@@ -7,7 +7,6 @@ from django.core.urlresolvers import reverse
 from gbe.scheduling.forms import (
     GenericBookingForm,
     PickShowForm,
-    ScheduleOccurrenceForm,
 )
 from gbe.scheduling.views import EventWizardView
 from gbe.duration import Duration
