@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='room',
-            name='map_link',
-            field=models.URLField(blank=True),
+            name='map_embed',
+            field=models.TextField(blank=True, max_length=1000),
         ),
     ]

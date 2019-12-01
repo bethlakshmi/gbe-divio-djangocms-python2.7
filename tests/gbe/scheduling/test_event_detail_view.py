@@ -89,13 +89,14 @@ class TestEventDetailView(TestCase):
 
     def test_location_full_room_display(self):
         self.context.room.address = "The place where I live"
-        self.context.room.map_link = "http://place.where/i/live"
+        self.context.room.map_embed = \
+            '<iframe src="https://www.google.com/></iframe>'
         self.context.room.save()
 
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, self.context.room.address)
-        self.assertContains(response, self.context.room.map_link)
+        self.assertContains(response, self.context.room.map_embed)
 
     def test_bio_grid(self):
         self.context.performer.homepage = "www.testhomepage.com"

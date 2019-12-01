@@ -13,10 +13,7 @@ from scheduler.idd import (
     get_occurrences,
     update_occurrence,
 )
-from gbe.models import (
-    GenericEvent,
-    Room,
-)
+from gbe.models import GenericEvent
 from django.views.generic import View
 from gbe.scheduling.forms import VolunteerOpportunityForm
 from gbe.scheduling.views.functions import (
@@ -207,7 +204,7 @@ class ManageVolWizardView(View):
     def get_basic_form_settings(self):
         self.event = self.event_form.save(commit=False)
         data = self.event_form.cleaned_data
-        self.room = get_object_or_404(Room, name=data['location'])
+        self.room = data['location']
         self.max_volunteer = 0
         if data['max_volunteer']:
                 self.max_volunteer = data['max_volunteer']
