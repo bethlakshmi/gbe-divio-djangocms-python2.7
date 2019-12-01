@@ -92,8 +92,8 @@ except:
 
 USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com'
 
-RECAPTCHA_PRIVATE_KEY = '6Le0dx0UAAAAACNZynxCx5mUovu3M1Au3XFeeFKN'
-RECAPTCHA_PUBLIC_KEY = '6Le0dx0UAAAAAFGd_HJzX22FdzhwI-GCh8nCoXoU'
+RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
+RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 
 TINYMCE_DEFAULT_CONFIG = {
     'plugins': "table,paste,searchreplace, insertdatetime",
