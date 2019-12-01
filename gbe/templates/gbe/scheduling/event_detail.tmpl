@@ -32,26 +32,30 @@
       <div class="sched_times container-fluid">
 	{% for sched_event in schedule_items %}
 	<div class="col-12 sched-sub-box">
-	  <div class="col-1 sched-sub-box">
+	  <div class="col-1 col-xs-2 col-md-1 col-lg-1 sched-sub-box">
   	    {% include "gbe/scheduling/favorite_star.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable"%}
   	    {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
-	  <div class="col-11 ">
+	  <div class="col-11 col-xs-10 col-md-5 col-lg-6">
       <div class="row">
-        <div class="col-3 col-md-2 col-lg-1"><label class="sched_detail">Time:</label></div>
-        <div class="col-8 col-md-9 col-lg-10">{{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
+        <div class="col-3"><label class="sched_detail">Time:</label></div>
+        <div class="col-8">{{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
         {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT")}}</div>
-      </div><div class="row">
-	      <div class="col-3 col-md-2 col-lg-1"><label class="sched_detail">Location:</label></div>
-        <div class="col-8 col-md-9 col-lg-10">{{ sched_event.occurrence.location }}
+      </div>
+      <div class="row">
+	      <div class="col-3"><label class="sched_detail">Location:</label></div>
+        <div class="col-8">{{ sched_event.occurrence.location }}
           {% if sched_event.occurrence.location.as_subtype.address %}
-            <br>{{sched_event.occurrence.location.as_subtype.address}}{% endif %}
-          {% if sched_event.occurrence.location.as_subtype.map_link %}
-            <br><a href="{{sched_event.occurrence.location.as_subtype.map_link}}">
-              Link to Map</div>{% endif %}
+            <br>{{sched_event.occurrence.location.as_subtype.address | safe}}<br><br>
+          {% endif %}
         </div>
 	    </div>
     </div>
+    {% if sched_event.occurrence.location.as_subtype.map_embed %}
+    <div class="col-12 col-md-4 col-lg-5 sched-sub-box">
+      {{sched_event.occurrence.location.as_subtype.map_embed | safe}}
+    </div>
+    {% endif %}
 	</div>
 	{% endfor %}
       </div>
