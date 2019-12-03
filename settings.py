@@ -40,8 +40,7 @@ INSTALLED_APPS.extend([
 ])
 
 EMAIL_BACKEND = 'post_office.EmailBackend'
-ADMINS = [('Betty','betty@burlesque-expo.com')]
-USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com' 
+ADMINS = [('Betty','betty@burlesque-expo.com', 'Scratch', 'info@burlesque-expo.com')]
 
 try:
     DEFAULT_FROM_EMAIL = os.environ["DEFAULT_FROM_EMAIL"]
@@ -90,7 +89,8 @@ try:
 except:
     DURATION_FORMAT = "%-I:%M"
 
-USER_CONTACT_RECIPIENT_ADDRESSES = 'betty@burlesque-expo.com'
+USER_CONTACT_RECIPIENT_ADDRESSES = ['betty@burlesque-expo.com', 
+                                    'info@burlesque-expo.com']
 
 RECAPTCHA_PRIVATE_KEY = "6Lf1dx0UAAAAANMxh-BqrW_9IU-0n4OZyWin6sGB"
 RECAPTCHA_PUBLIC_KEY = "6Lf1dx0UAAAAAMcHUhPsGFc7LUQWHQOfiUWKx1m1"
