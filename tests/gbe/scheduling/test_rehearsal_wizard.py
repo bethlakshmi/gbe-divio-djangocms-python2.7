@@ -6,7 +6,6 @@ from tests.factories.gbe_factories import (
     GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
-    RoomFactory,
 )
 from tests.contexts import (
     StaffAreaContext,
@@ -30,7 +29,6 @@ class TestRehearsalWizard(TestCase):
     view_name = 'rehearsal_wizard'
 
     def setUp(self):
-        self.room = RoomFactory()
         self.show_volunteer = VolunteerContext()
         self.current_conference = self.show_volunteer.conference
         self.url = reverse(

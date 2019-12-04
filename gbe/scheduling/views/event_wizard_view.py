@@ -15,10 +15,7 @@ from gbe.scheduling.forms import (
     PersonAllocationForm,
     PickEventForm,
 )
-from gbe.models import (
-    Conference,
-    Room,
-)
+from gbe.models import Conference
 from gbe.scheduling.views.functions import (
     get_start_time,
     show_scheduling_occurrence_status,
@@ -131,9 +128,6 @@ class EventWizardView(View):
         return validity
 
     def book_event(self, scheduling_form, people_formset, working_class):
-        room = get_object_or_404(
-            Room,
-            name=scheduling_form.cleaned_data['location'])
         start_time = get_start_time(scheduling_form.cleaned_data)
         labels = [self.conference.conference_slug]
         if working_class.calendar_type:
@@ -151,7 +145,7 @@ class EventWizardView(View):
                 start_time,
                 scheduling_form.cleaned_data['max_volunteer'],
                 people=people,
-                locations=[room],
+                locations=[scheduling_form.cleaned_data['location']],
                 labels=labels)
         return response
 

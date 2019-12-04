@@ -31,9 +31,12 @@ class TestClassWizard(TestCase):
 
     def setUp(self):
         self.room = RoomFactory()
+        # because there was a bug around duplicate room names
+        RoomFactory(name=self.room.name)
         self.teacher = PersonaFactory()
         self.current_conference = ConferenceFactory(accepting_bids=True)
         self.day = ConferenceDayFactory(conference=self.current_conference)
+        self.room.conferences.add(self.current_conference)
         self.test_class = ClassFactory(b_conference=self.current_conference,
                                        e_conference=self.current_conference,
                                        accepted=3,

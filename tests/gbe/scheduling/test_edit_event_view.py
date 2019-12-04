@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
     GenericEventFactory,
-    ProfileFactory,
     RoomFactory,
+    ProfileFactory,
 )
 from scheduler.models import Event
 from gbe.models import (
@@ -43,6 +43,8 @@ class TestEditEventView(TestCase):
         self.context.event.duration = Duration(hours=1, minutes=30)
         self.context.event.save()
         self.room = self.context.room
+        # because there was a bug around duplicate room names
+        RoomFactory(name=self.room.name)
         self.staff_lead = self.context.set_staff_lead()
         self.extra_day = ConferenceDayFactory(
             conference=self.context.conference,
@@ -279,6 +281,19 @@ class TestEditEventView(TestCase):
             data=data,
             follow=True)
         self.assertContains(response, "This field is required.")
+
+    def test_auth_user_bad_room_assign(self):
+        not_this_room = RoomFactory()
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['location'] = not_this_room.pk
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertContains(
+            response,
+            "That choice is not one of the available choices.")
 
     def test_auth_user_bad_generic_booking_assign(self):
         login_as(self.privileged_user, self)

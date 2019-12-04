@@ -39,7 +39,10 @@ class TestManageVolunteerWizard(TestCase):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         self.avail_interest = AvailableInterestFactory()
         self.room = RoomFactory()
+        # because there was a bug around duplicate room names
+        RoomFactory(name=self.room.name)
         self.context = VolunteerContext()
+        self.room.conferences.add(self.context.conference)
         self.url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
