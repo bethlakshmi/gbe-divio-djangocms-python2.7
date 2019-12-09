@@ -166,6 +166,12 @@ CKEDITOR_SETTINGS = {
     ]
 }
 
+# Put this in settings.py
+POST_OFFICE = {
+    'BATCH_SIZE': 30,
+    'THREADS_PER_PROCESS': 1,
+}
+
 try:
     MC_API_KEY = os.environ["MC_API_KEY"]
     MC_API_URL = os.environ["MC_API_URL"]
