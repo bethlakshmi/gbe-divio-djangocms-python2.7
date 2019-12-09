@@ -17,25 +17,25 @@ participant_labels = {
 
 profile_preferences_help_texts = {
     'in_hotel':  'It is helpful for us to know who\'s staying in the hotel.',
-    'send_daily_schedule':  '''The evening before any day on which you are 
-        participating in a part of the Expo, you'll receive an email with 
-        your daily schedule from our site.  Turning off this item will disable 
-        that feature.''',
-    'send_bid_notifications':  '''From time to time, the staff of GBE sends 
-        emails to the people who have offered to participate in the current 
-        or previous Expos.  Turning off this item will disable all 
-        communication of that sort, although coordinators of areas in which 
-        you have committed to participate in this year's events may still 
+    'send_daily_schedule':  '''The evening before any day on which you are \
+        participating in a part of the Expo, you'll receive an email with \
+        your daily schedule from our site.  Turning off this item will \
+        disable that feature.''',
+    'send_bid_notifications':  '''From time to time, the staff of GBE sends \
+        emails to the people who have offered to participate in the current \
+        or previous Expos.  Turning off this item will disable all \
+        communication of that sort, although coordinators of areas in which \
+        you have committed to participate in this year's events may still \
         contact you individually.''',
-    'send_role_notifications':  '''From time to time, the staff of GBE send 
-        emails to people who have or will in the future acted as volunteers, 
-        performers, teachers, vendors, etc.  Turning off this item will 
-        disable all communication of that sort, although coordinators of 
-        areas in which you have committed to participate in this year's 
+    'send_role_notifications':  '''From time to time, the staff of GBE send \
+        emails to people who have or will in the future acted as volunteers, \
+        performers, teachers, vendors, etc.  Turning off this item will \
+        disable all communication of that sort, although coordinators of \
+        areas in which you have committed to participate in this year's \
         events may still contact you individually.''',
-    'send_schedule_change_notifications':  '''The GBE system will 
-        automatically email you when a part of the expo you are interested 
-        or participating in has changed.  Turning off this item will 
+    'send_schedule_change_notifications':  '''The GBE system will \
+        automatically email you when a part of the expo you are interested \
+        or participating in has changed.  Turning off this item will \
         automatically disable that automated notification.''',
 }
 

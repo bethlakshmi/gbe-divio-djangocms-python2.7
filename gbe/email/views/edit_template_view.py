@@ -131,7 +131,7 @@ class EditTemplateView(View):
                           self.make_context())
         else:
             # special handling for unsubscribe, so users can't hack it
-            if self.template.name in ("daily schedule", 
+            if self.template.name in ("daily schedule",
                                       "volunteer schedule update"):
                 self.template = self.form.save(commit=False)
                 if unsub_footer_include not in self.template.html_content:

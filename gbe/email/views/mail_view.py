@@ -47,7 +47,7 @@ class MailView(View):
             else:
                 footer = unsubscribe_text % (
                     Site.objects.get_current().domain + reverse(
-                        'profile_update', 
+                        'profile_update',
                         urlconf='gbe.urls'
                         ) + "?email_disable=send_%s" % self.email_type)
             message = mail_form.cleaned_data['html_message'] + footer
@@ -64,7 +64,7 @@ class MailView(View):
                     'recipients': [target],
                     'subject': subject,
                     'html_message': message,
-                    'headers': {'Reply-to': sender},}]
+                    'headers': {'Reply-to': sender}, }]
                 if len(recipient_string) > 0:
                     recipient_string = "%s, %s" % (recipient_string, email)
                 else:

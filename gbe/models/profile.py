@@ -407,10 +407,10 @@ class Profile(WorkerItem):
             return False
         else:
             try:
-                method_name='send_'+str(email_type)
-                method=getattr(self.preferences, 
-                               method_name, 
-                               lambda :'Invalid')
+                method_name = 'send_'+str(email_type)
+                method = getattr(self.preferences,
+                                 method_name,
+                                 lambda: 'Invalid')
                 return method
             except ProfilePreferences.DoesNotExist:
                 pref = ProfilePreferences(profile=self)

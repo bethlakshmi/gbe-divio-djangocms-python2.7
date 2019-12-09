@@ -92,6 +92,7 @@ def get_or_create_template(name, base, subject):
 
     return template
 
+
 def send_bid_state_change_mail(
         bid_type,
         email,
@@ -160,13 +161,15 @@ def send_schedule_update_mail(participant_type, profile):
                     Site.objects.get_current().domain,
                     reverse('home',
                             urlconf='gbe.urls')),
-                'landing_page_link': "<a href='http://%s%s'>Personal Page</a>" % (
+                'landing_page_link': "<a href='http://%s%s'>%s</a>" % (
                     Site.objects.get_current().domain,
                     reverse('home',
-                            urlconf='gbe.urls')),
+                            urlconf='gbe.urls'),
+                    "Personal Page"),
                 'unsubscribe_link': reverse(
-                    'profile_update', 
-                    urlconf='gbe.urls') + "?email_disable=send_schedule_change_notifications"
+                    'profile_update',
+                    urlconf='gbe.urls'
+                    ) + "?email_disable=send_schedule_change_notifications"
                 },)
 
 
@@ -188,8 +191,9 @@ def send_daily_schedule_mail(schedules, day, slug, email_type):
                 'bookings': bookings,
                 'day': day.strftime(GBE_DATE_FORMAT),
                 'unsubscribe_link': reverse(
-                    'profile_update', 
-                    urlconf='gbe.urls') + "?email_disable=send_%s" % email_type},
+                    'profile_update',
+                    urlconf='gbe.urls') + "?email_disable=send_%s" % email_type
+                },
             priority="medium")
 
 

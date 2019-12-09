@@ -73,12 +73,13 @@ def UpdateProfileView(request):
                 redirect_to = reverse('home', urlconf='gbe.urls')
             return HttpResponseRedirect(redirect_to)
         else:
-            return render(request, 'gbe/update_profile.tmpl',
-                          {'left_forms': [form], 
-                           'right_forms': [prefs_form],
-                           'email_form': email_form,
-                           'email_note': email_pref_message[0].description,
-                          })
+            return render(
+                request,
+                'gbe/update_profile.tmpl',
+                {'left_forms': [form],
+                 'right_forms': [prefs_form],
+                 'email_form': email_form,
+                 'email_note': email_pref_message[0].description})
 
     else:
         if profile.display_name.strip() == '':
@@ -119,9 +120,8 @@ def UpdateProfileView(request):
                                           instance=profile.preferences,
                                           initial=email_initial)
         return render(request, 'gbe/update_profile.tmpl',
-                      {'left_forms': [form], 
+                      {'left_forms': [form],
                        'right_forms': [prefs_form],
                        'email_form': email_form,
                        'email_note': email_pref_message[0].description,
-                       'email_focus': email_focus,
-                      })
+                       'email_focus': email_focus})
