@@ -22,11 +22,13 @@ from gbetext import (
     send_email_success_msg,
     to_list_empty_msg,
     unknown_request,
+    unsubscribe_text,
 )
 from django.contrib.auth.models import User
 from gbe.models import Conference
 from post_office.models import Email
 from tests.functions.gbe_email_functions import assert_checkbox
+from django.contrib.sites.models import Site
 
 
 class TestMailToBidder(TestCase):
@@ -47,6 +49,10 @@ class TestMailToBidder(TestCase):
         self.context = ClassContext()
         self.url = reverse(self.view_name,
                            urlconf="gbe.email.urls")
+        self.footer = unsubscribe_text % (
+            Site.objects.get_current().domain + reverse(
+                'profile_update',
+                urlconf='gbe.urls') + "?email_disable=send_bid_notifications")
 
     def reduced_login(self):
         reduced_profile = ProfileFactory()
@@ -354,7 +360,7 @@ class TestMailToBidder(TestCase):
         assert_queued_email(
             [self.context.teacher.contact.user_object.email, ],
             data['subject'],
-            data['html_message'],
+            data['html_message'] + self.footer,
             data['sender'],
             )
 
@@ -376,7 +382,7 @@ class TestMailToBidder(TestCase):
         assert_queued_email(
             [second_bid.performer.contact.user_object.email, ],
             data['subject'],
-            data['html_message'],
+            data['html_message'] + self.footer,
             reduced_profile.user_object.email,
             )
 
@@ -536,7 +542,7 @@ class TestMailToBidder(TestCase):
             assert_queued_email(
                 [user.email, ],
                 data['subject'],
-                data['html_message'],
+                data['html_message'] + self.footer,
                 data['sender'],
                 )
 

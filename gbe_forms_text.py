@@ -17,22 +17,22 @@ participant_labels = {
 
 profile_preferences_help_texts = {
     'in_hotel':  'It is helpful for us to know who\'s staying in the hotel.',
-    'send_daily_schedule':  '''The evening before any day on which you are \
-        participating in a part of the Expo, you'll receive an email with \
-        your daily schedule from our site.  Turning off this item will \
-        disable that feature.''',
-    'send_bid_notifications':  '''From time to time, the staff of GBE sends \
-        emails to the people who have offered to participate in the current \
-        or previous Expos.  Turning off this item will disable all \
-        communication of that sort, although coordinators of areas in which \
-        you have committed to participate in this year's events may still \
-        contact you individually.''',
-    'send_role_notifications':  '''From time to time, the staff of GBE send \
-        emails to people who have or will in the future acted as volunteers, \
-        performers, teachers, vendors, etc.  Turning off this item will \
-        disable all communication of that sort, although coordinators of \
-        areas in which you have committed to participate in this year's \
-        events may still contact you individually.''',
+    'send_daily_schedule':  '''We'll mail you your schedule for the next day \
+        (on Friday, you get Saturday's schedule). This includes any classes \
+        you are teaching or have expressed interest in, any volunteer shifts, \
+        any scheduled rehearsals, etc. Opting out will disable this \
+        feature.''',
+    'send_bid_notifications':  '''If you have applied to teach, volunteer, or \
+        perform in the past, we may reach out to you to see if you want do \
+        one or more of those things again. Opting out will keep you from \
+        receiving those emails, but will not prevent you from getting \
+        individual emails about your current commitments.''',
+    'send_role_notifications':  '''If you have taught, volunteered, performed,\
+        sold stuff, or displayed stuff in the past, we may reach out to you to\
+        see if you want do one or more of those things again. Opting out will \
+        keep you from receiving those emails, but will not prevent you from \
+        potentially getting individual emails about your current \
+        commitments.''',
     'send_schedule_change_notifications':  '''The GBE system will \
         automatically email you when a part of the expo you are interested \
         or participating in has changed.  Turning off this item will \
@@ -43,11 +43,11 @@ profile_preferences_labels = {
     'inform_about': 'Please let me know about...',
     'in_hotel': 'I am staying at the hotel',
     'show_hotel_infobox': ('Show hotel booking info on your landing page?'),
-    'send_daily_schedule': ('Email my next day schedule every evening'),
+    'send_daily_schedule': ('Send me my schedule'),
     'send_bid_notifications': (
-      'Email me offers and updates based on my proposals to GBE'),
+      'Email me based on my past and current proposals'),
     'send_role_notifications': (
-      'Email me offers and updates based on roles I\'ve had at GBE'),
+      'Email me based on my past and current activities'),
     'send_schedule_change_notifications': (
       'Email me when my schedule at GBE changes'),
 }

@@ -24,11 +24,13 @@ from gbetext import (
     send_email_success_msg,
     to_list_empty_msg,
     unknown_request,
+    unsubscribe_text,
 )
 from django.contrib.auth.models import User
 from gbe.models import Conference
 from gbetext import role_options
 from gbe_forms_text import role_option_privs
+from django.contrib.sites.models import Site
 
 
 class TestMailToRoles(TestCase):
@@ -55,6 +57,10 @@ class TestMailToRoles(TestCase):
         self.context = ClassContext()
         self.url = reverse(self.view_name,
                            urlconf="gbe.email.urls")
+        self.footer = unsubscribe_text % (
+            Site.objects.get_current().domain + reverse(
+                'profile_update',
+                urlconf='gbe.urls') + "?email_disable=send_role_notifications")
 
     def class_coord_login(self):
         limited_profile = ProfileFactory()
@@ -599,7 +605,7 @@ class TestMailToRoles(TestCase):
         assert_queued_email(
             [volunteer.user_object.email, ],
             data['subject'],
-            data['html_message'],
+            data['html_message'] + self.footer,
             data['sender'],
             )
 

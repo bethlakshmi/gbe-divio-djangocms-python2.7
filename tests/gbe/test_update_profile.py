@@ -3,19 +3,24 @@ from django.test import Client
 from django.core.urlresolvers import reverse
 from tests.contexts import VolunteerContext
 from tests.factories.gbe_factories import (
+    ProfileFactory,
     ProfilePreferencesFactory,
     UserFactory,
     UserMessageFactory
 )
 from gbe.models import (
     Conference,
+    ProfilePreferences,
     UserMessage
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as
 )
-from gbetext import default_update_profile_msg
+from gbetext import (
+    default_update_profile_msg,
+    email_pref_note,
+)
 
 
 class TestUpdateProfile(TestCase):
@@ -26,6 +31,7 @@ class TestUpdateProfile(TestCase):
         UserMessage.objects.all().delete()
         self.client = Client()
         self.counter = 0
+        self.profile = ProfilePreferencesFactory().profile
 
     def get_form(self, invalid=False):
         self.counter += 1
@@ -46,19 +52,21 @@ class TestUpdateProfile(TestCase):
                 'how_heard': 'Facebook',
                 'prefs-inform_about': 'Performing',
                 'in_hotel': True,
-                'show_hotel_infobox': False}
+                'show_hotel_infobox': False,
+                'email_pref-send_daily_schedule': True,
+                'email_pref-send_bid_notifications': False,
+                'email_pref-send_role_notifications': False,
+                'email_pref-send_schedule_change_notifications': True, }
         if invalid:
             del(data['first_name'])
         return data
 
     def post_profile(self, redirect=None, form=None):
-        profile = ProfilePreferencesFactory().profile
-
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
         if redirect:
             url = url + "?next=" + redirect
-        login_as(profile, self)
+        login_as(self.profile, self)
         if not form:
             data = self.get_form()
         else:
@@ -80,10 +88,21 @@ class TestUpdateProfile(TestCase):
                       urlconf='gbe.urls')
         login_as(pref.profile.user_object, self)
         response = self.client.get(url)
-        self.assertTrue(
+        self.assertContains(
+            response,
             "%s %s" % (
                 pref.profile.user_object.first_name,
-                pref.profile.user_object.last_name) in response.content)
+                pref.profile.user_object.last_name))
+
+    def test_update_profile_no_preferences(self):
+        profile = ProfileFactory()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(profile.user_object, self)
+        response = self.client.get(url)
+        self.assertContains(
+            response,
+            "Email Options")
 
     def test_update_profile_how_heard(self):
         pref = ProfilePreferencesFactory(
@@ -92,30 +111,67 @@ class TestUpdateProfile(TestCase):
                       urlconf='gbe.urls')
         login_as(pref.profile.user_object, self)
         response = self.client.get(url)
-        self.assertTrue(
+        self.assertContains(
+            response,
             '<input type="checkbox" name="how_heard" value="Word of mouth" ' +
-            'checked id="id_how_heard_6" />' in response.content)
+            'checked id="id_how_heard_6" />')
+
+    def test_update_profile_email_settings(self):
+        pref = ProfilePreferencesFactory(
+            send_bid_notifications=False)
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(pref.profile.user_object, self)
+        response = self.client.get(url)
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="email_pref-send_daily_schedule" ' +
+            'checked id="id_email_pref-send_daily_schedule" />')
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="email_pref-send_bid_notifications"' +
+            ' id="id_email_pref-send_bid_notifications" />')
+        self.assertContains(response, email_pref_note.replace("'", "&#39;"))
+
+    def test_update_profile_disable_email(self):
+        pref = ProfilePreferencesFactory()
+        url = reverse(
+            self.view_name,
+            urlconf='gbe.urls'
+            ) + "?email_disable=send_schedule_change_notifications"
+        login_as(pref.profile.user_object, self)
+        response = self.client.get(url)
+        self.assertContains(
+            response,
+            '<input type="checkbox" ' +
+            'name="email_pref-send_schedule_change_notifications"' +
+            ' id="id_email_pref-send_schedule_change_notifications" />')
+        self.assertContains(
+            response,"shadow-red")
 
     def test_update_profile_post_empty_display_name(self):
         data = self.get_form()
         data['display_name'] = ""
         data['purchase_email'] = ""
         response = self.post_profile(form=data)
-        self.assertTrue(
+        self.assertContains(
+            response,
             "%s %s" % (data['first_name'].title(),
-                       data['last_name'].title()) in response.content)
+                       data['last_name'].title()))
 
     def test_update_profile_post_cleanup_display_name(self):
         data = self.get_form()
         data['display_name'] = " trim me   nocaps"
         response = self.post_profile(form=data)
-        self.assertTrue(
-            "Trim Me Nocaps" in response.content)
+        self.assertContains(response, "Trim Me Nocaps")
 
     def test_update_profile_post_valid_form(self):
         response = self.post_profile()
-        self.assertTrue("Your Account" in response.content)
+        self.assertContains(response, "Your Account")
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
+        preferences = ProfilePreferences.objects.get(profile=self.profile)
+        self.assertTrue(preferences.send_daily_schedule)
+        self.assertFalse(preferences.send_bid_notifications)
 
     def test_update_profile_post_valid_redirect(self):
         context = VolunteerContext()
@@ -126,14 +182,12 @@ class TestUpdateProfile(TestCase):
         self.assertRedirects(response, redirect)
 
     def test_update_profile_post_invalid_form(self):
-        profile = ProfilePreferencesFactory().profile
-
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(profile, self)
+        login_as(self.profile, self)
         data = self.get_form(invalid=True)
         response = self.client.post(url, data=data, follow=True)
-        self.assertTrue("Update Profile" in response.content)
+        self.assertContains(response, "Your Profile")
         self.assertEqual(response.status_code, 200)
 
     def test_update_profile_make_message(self):
