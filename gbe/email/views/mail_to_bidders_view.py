@@ -115,10 +115,14 @@ class MailToBiddersView(MailToFilterView):
         recipient_info = SecretBidderInfoForm(request.POST,
                                               prefix="email-select")
         recipient_info.fields['bid_type'].choices = self.bid_type_choices
-
         return render(
             request,
             self.template,
             {"selection_form": self.select_form,
              "email_form": email_form,
-             "recipient_info": [recipient_info]})
+             "recipient_info": [recipient_info],
+             "group_filter_note": self.filter_note()},)
+
+    def filter_preferences(self, basic_filter):
+        return basic_filter.filter(
+            profile__preferences__send_bid_notifications=True)

@@ -479,6 +479,10 @@ unsub_footer_plain_include = \
 to_list_empty_msg = '''No recipients were found for your search criteria.  \
                     Please try something else'''
 unknown_request = '''This request makes no sense'''
+group_filter_note = '''The recipients listed here include only active users,
+who have agreed to be contacted by the Expo.  Disabled users and users who
+have set their preference to not receive email of this kind will not be
+included.'''
 link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
 create_ticket_event_success_msg = "Created and linked a new BPT Event: "

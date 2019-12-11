@@ -326,7 +326,12 @@ class MailToRolesView(MailToFilterView):
         context = self.get_select_forms()
         context["email_form"] = email_form
         context["recipient_info"] = [recipient_info, event_info]
+        context["group_filter_note"] = self.filter_note()
         return render(
             request,
             self.template,
             context)
+
+    def filter_preferences(self, basic_filter):
+        return basic_filter.filter(
+            profile__preferences__send_role_notifications=True)

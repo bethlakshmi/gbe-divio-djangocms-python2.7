@@ -14,7 +14,11 @@ from tests.functions.gbe_functions import (
 from tests.contexts.show_context import ShowContext
 from django.conf import settings
 from post_office.models import EmailTemplate
-from gbetext import save_email_template_success_msg
+from gbetext import (
+    save_email_template_success_msg,
+    unsub_footer_include,
+    unsub_footer_plain_include,
+)
 
 
 class TestEditEmailTemplate(TestCase):
@@ -121,11 +125,16 @@ class TestEditEmailTemplate(TestCase):
         self.assertContains(response, save_email_template_success_msg)
         self.assertEqual(updated.sender.from_email, data['sender'])
         self.assertEqual(updated.sender.template.subject, data['subject'])
-        self.assertEqual(updated.sender.template.content, "New Content")
-        self.assertEqual(updated.sender.template.html_content,
-                         data['html_content'])
+        self.assertEqual(
+            updated.sender.template.content, 
+            "New Content" + unsub_footer_plain_include)
+        self.assertEqual(
+            updated.sender.template.html_content,
+            data['html_content'] + unsub_footer_include)
 
     def test_template_not_exists_w_post(self):
+        # This is both a test of what happens when a new tempate is posted
+        #  AND the case when the template doesn't need a footer.
         grant_privilege(self.privileged_profile.user_object,
                         'Volunteer Coordinator')
         login_as(self.privileged_profile, self)
@@ -145,8 +154,72 @@ class TestEditEmailTemplate(TestCase):
         self.assertEqual(updated.sender.from_email, data['sender'])
         self.assertEqual(updated.sender.template.subject, data['subject'])
         self.assertEqual(updated.sender.template.content, "New Content")
-        self.assertEqual(updated.sender.template.html_content,
-                         data['html_content'])
+        self.assertEqual(
+            updated.sender.template.html_content,
+            data['html_content'])
+
+    def test_post_includes_footer(self):
+        grant_privilege(self.privileged_profile.user_object,
+                        'Volunteer Coordinator')
+        login_as(self.privileged_profile, self)
+        data = self.get_template_post()
+        data['html_content'] = "keep the footer" + unsub_footer_include
+        response = self.client.post(self.url, data=data, follow=True)
+        updated = EmailTemplate.objects.get(name=self.sender.template.name)
+        self.assertRedirects(
+            response,
+            reverse('list_template', urlconf='gbe.email.urls'))
+        self.assertContains(response, save_email_template_success_msg)
+        self.assertEqual(updated.sender.from_email, data['sender'])
+        self.assertEqual(updated.sender.template.subject, data['subject'])
+        self.assertEqual(
+            updated.sender.template.content, 
+            "keep the footer" + unsub_footer_plain_include)
+        self.assertEqual(
+            updated.sender.template.html_content,
+            data['html_content'])
+
+    def test_daily_schedule_keeps_footer(self):
+        grant_privilege(self.privileged_profile.user_object,
+                        'Volunteer Coordinator')
+        login_as(self.privileged_profile, self)
+        data = self.get_template_post()
+        data['name'] = "daily schedule"
+        response = self.client.post(self.url, data=data, follow=True)
+        updated = EmailTemplate.objects.get(name=data['name'])
+        self.assertRedirects(
+            response,
+            reverse('list_template', urlconf='gbe.email.urls'))
+        self.assertContains(response, save_email_template_success_msg)
+        self.assertEqual(updated.sender.from_email, data['sender'])
+        self.assertEqual(updated.sender.template.subject, data['subject'])
+        self.assertEqual(
+            updated.sender.template.content, 
+            "New Content" + unsub_footer_plain_include)
+        self.assertEqual(
+            updated.sender.template.html_content,
+            data['html_content'] + unsub_footer_include)
+
+    def test_template_update_includes_footer(self):
+        grant_privilege(self.privileged_profile.user_object,
+                        'Volunteer Coordinator')
+        login_as(self.privileged_profile, self)
+        data = self.get_template_post()
+        data['html_content'] = "New Content" + unsub_footer_include
+        response = self.client.post(self.url, data=data, follow=True)
+        updated = EmailTemplate.objects.get(name=self.sender.template.name)
+        self.assertRedirects(
+            response,
+            reverse('list_template', urlconf='gbe.email.urls'))
+        self.assertContains(response, save_email_template_success_msg)
+        self.assertEqual(updated.sender.from_email, data['sender'])
+        self.assertEqual(updated.sender.template.subject, data['subject'])
+        self.assertEqual(
+            updated.sender.template.content, 
+            "New Content" + unsub_footer_plain_include)
+        self.assertEqual(
+            updated.sender.template.html_content,
+            data['html_content'])
 
     def test_post_bad_data(self):
         grant_privilege(self.privileged_profile.user_object,

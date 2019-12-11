@@ -43,6 +43,10 @@ class TestManageWorker(TestCase):
             args=[self.context.conference.conference_slug,
                   self.volunteer_opp.pk],
             urlconf="gbe.scheduling.urls")
+        self.unsub_link = Site.objects.get_current().domain + reverse(
+            'profile_update',
+            urlconf='gbe.urls'
+            ) + "?email_disable=send_schedule_change_notifications"
 
     def get_edit_data(self):
         data = self.get_either_data()
@@ -345,6 +349,7 @@ class TestManageWorker(TestCase):
         assert("http://%s%s" % (
             Site.objects.get_current().domain,
             reverse('home', urlconf='gbe.urls')) in msg.body)
+        assert(self.unsub_link in msg.body)
 
     def test_post_form_valid_notification_template_fail(self):
         EmailTemplateSenderFactory(
@@ -412,8 +417,9 @@ class TestManageWorker(TestCase):
         data['role'] = 'Producer',
         login_as(self.privileged_profile, self)
         response = self.client.post(self.url, data=data, follow=True)
-        assert_email_template_used(
+        msg = assert_email_template_used(
             "A change has been made to your Volunteer Schedule!")
+        assert(self.unsub_link in msg.body)
 
     def test_post_form_edit_notification_template_fail(self):
         EmailTemplateSenderFactory(

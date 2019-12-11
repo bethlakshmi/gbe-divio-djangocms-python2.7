@@ -19,6 +19,7 @@ from tests.contexts.class_context import (
 )
 from gbetext import (
     acceptance_states,
+    group_filter_note,
     send_email_success_msg,
     to_list_empty_msg,
     unknown_request,
@@ -144,8 +145,22 @@ class TestMailToBidder(TestCase):
             'everyone': "Everyone",
         }
         response = self.client.post(self.url, data=data, follow=True)
+        print response.content
         for user in User.objects.exclude(username="limbo"):
             self.assertContains(response, user.email)
+
+    def test_pick_everyone_except_unsubscribed(self):
+        self.context.teacher.contact.preferences.send_bid_notifications = False
+        self.context.teacher.contact.preferences.save()
+        login_as(self.privileged_profile, self)
+        data = {
+            'everyone': "Everyone",
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response, 
+            self.context.teacher.contact.user_object.email)
+        self.assertContains(response, group_filter_note)
 
     def test_pick_everyone_no_priv(self):
         self.reduced_login()
