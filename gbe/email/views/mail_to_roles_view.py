@@ -334,4 +334,5 @@ class MailToRolesView(MailToFilterView):
 
     def filter_preferences(self, basic_filter):
         return basic_filter.filter(
-            profile__preferences__send_role_notifications=True)
+            Q(profile__preferences__isnull=True) | 
+            Q(profile__preferences__send_role_notifications=True))

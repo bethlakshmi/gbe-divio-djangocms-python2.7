@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     ConferenceFactory,
     ProfileFactory,
+    ProfilePreferencesFactory,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -150,8 +151,9 @@ class TestMailToBidder(TestCase):
             self.assertContains(response, user.email)
 
     def test_pick_everyone_except_unsubscribed(self):
-        self.context.teacher.contact.preferences.send_bid_notifications = False
-        self.context.teacher.contact.preferences.save()
+        ProfilePreferencesFactory(
+            profile=self.context.teacher.contact,
+            send_bid_notifications=False)
         login_as(self.privileged_profile, self)
         data = {
             'everyone': "Everyone",
