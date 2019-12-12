@@ -125,5 +125,5 @@ class MailToBiddersView(MailToFilterView):
 
     def filter_preferences(self, basic_filter):
         return basic_filter.filter(
-            Q(profile__preferences__isnull=True) | 
+            Q(profile__preferences__isnull=True) |
             Q(profile__preferences__send_bid_notifications=True))

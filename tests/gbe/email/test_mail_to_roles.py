@@ -160,7 +160,7 @@ class TestMailToRoles(TestCase):
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertNotContains(
-            response, 
+            response,
             self.context.teacher.contact.user_object.email)
         self.assertContains(response, group_filter_note)
 

@@ -429,7 +429,7 @@ class TestManageWorker(TestCase):
         data['worker'] = new_volunteer.pk,
         data['role'] = 'Producer',
         ProfilePreferencesFactory(
-            profile=new_volunteer, 
+            profile=new_volunteer,
             send_schedule_change_notifications=False)
         login_as(self.privileged_profile, self)
         response = self.client.post(self.url, data=data, follow=True)

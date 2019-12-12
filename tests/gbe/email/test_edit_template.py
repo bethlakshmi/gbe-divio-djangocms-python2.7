@@ -126,7 +126,7 @@ class TestEditEmailTemplate(TestCase):
         self.assertEqual(updated.sender.from_email, data['sender'])
         self.assertEqual(updated.sender.template.subject, data['subject'])
         self.assertEqual(
-            updated.sender.template.content, 
+            updated.sender.template.content,
             "New Content" + unsub_footer_plain_include)
         self.assertEqual(
             updated.sender.template.html_content,
@@ -173,7 +173,7 @@ class TestEditEmailTemplate(TestCase):
         self.assertEqual(updated.sender.from_email, data['sender'])
         self.assertEqual(updated.sender.template.subject, data['subject'])
         self.assertEqual(
-            updated.sender.template.content, 
+            updated.sender.template.content,
             "keep the footer" + unsub_footer_plain_include)
         self.assertEqual(
             updated.sender.template.html_content,
@@ -194,7 +194,7 @@ class TestEditEmailTemplate(TestCase):
         self.assertEqual(updated.sender.from_email, data['sender'])
         self.assertEqual(updated.sender.template.subject, data['subject'])
         self.assertEqual(
-            updated.sender.template.content, 
+            updated.sender.template.content,
             "New Content" + unsub_footer_plain_include)
         self.assertEqual(
             updated.sender.template.html_content,
@@ -215,7 +215,7 @@ class TestEditEmailTemplate(TestCase):
         self.assertEqual(updated.sender.from_email, data['sender'])
         self.assertEqual(updated.sender.template.subject, data['subject'])
         self.assertEqual(
-            updated.sender.template.content, 
+            updated.sender.template.content,
             "New Content" + unsub_footer_plain_include)
         self.assertEqual(
             updated.sender.template.html_content,

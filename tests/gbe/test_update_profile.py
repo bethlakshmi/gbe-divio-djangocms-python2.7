@@ -147,7 +147,7 @@ class TestUpdateProfile(TestCase):
             'name="email_pref-send_schedule_change_notifications"' +
             ' id="id_email_pref-send_schedule_change_notifications" />')
         self.assertContains(
-            response,"shadow-red")
+            response, "shadow-red")
 
     def test_update_profile_post_empty_display_name(self):
         data = self.get_form()
