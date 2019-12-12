@@ -146,7 +146,6 @@ class TestMailToBidder(TestCase):
             'everyone': "Everyone",
         }
         response = self.client.post(self.url, data=data, follow=True)
-        print response.content
         for user in User.objects.exclude(username="limbo"):
             self.assertContains(response, user.email)
 
@@ -189,6 +188,22 @@ class TestMailToBidder(TestCase):
         self.assertNotContains(
             response,
             second_context.teacher.contact.user_object.email)
+
+    def test_exclude_unsubscribed(self):
+        ProfilePreferencesFactory(
+            profile=self.context.teacher.contact,
+            send_bid_notifications=False)
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': self.priv_list,
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            self.context.teacher.contact.user_object.email)
 
     def test_pick_class_bidder(self):
         second_bid = ActFactory()
@@ -241,6 +256,23 @@ class TestMailToBidder(TestCase):
             response,
             self.context.teacher.contact.user_object.email)
         self.assertContains(
+            response,
+            second_bid.teacher.contact.user_object.email)
+
+    def test_draft_exclude_unsubscribed(self):
+        second_bid = ClassFactory()
+        ProfilePreferencesFactory(
+            profile=second_bid.teacher.contact,
+            send_bid_notifications=False)
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': self.priv_list,
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
             response,
             second_bid.teacher.contact.user_object.email)
 

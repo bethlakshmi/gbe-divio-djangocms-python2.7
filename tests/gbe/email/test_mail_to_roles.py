@@ -5,6 +5,7 @@ from tests.factories.gbe_factories import (
     GenericEventFactory,
     ConferenceFactory,
     ProfileFactory,
+    ProfilePreferencesFactory,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -21,6 +22,7 @@ from tests.contexts import (
     VolunteerContext,
 )
 from gbetext import (
+    group_filter_note,
     send_email_success_msg,
     to_list_empty_msg,
     unknown_request,
@@ -134,6 +136,34 @@ class TestMailToRoles(TestCase):
             extra_conf.pk,
             extra_conf.conference_slug)
 
+    def test_pick_everyone(self):
+        second_context = ClassContext()
+        ProfilePreferencesFactory(
+            profile=second_context.teacher.contact)
+
+        login_as(self.privileged_profile, self)
+        data = {
+            'everyone': "Everyone",
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        for user in User.objects.exclude(username="limbo"):
+            self.assertContains(response, user.email)
+
+    def test_pick_everyone_except_unsubscribed(self):
+        ProfilePreferencesFactory(
+            profile=self.context.teacher.contact,
+            send_role_notifications=False)
+
+        login_as(self.privileged_profile, self)
+        data = {
+            'everyone': "Everyone",
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response, 
+            self.context.teacher.contact.user_object.email)
+        self.assertContains(response, group_filter_note)
+
     def test_pick_conf_teacher(self):
         second_context = ClassContext()
         login_as(self.privileged_profile, self)
@@ -149,6 +179,21 @@ class TestMailToRoles(TestCase):
         self.assertNotContains(
             response,
             second_context.teacher.contact.user_object.email)
+
+    def test_exclude_unsubscribed(self):
+        ProfilePreferencesFactory(
+            profile=self.context.teacher.contact,
+            send_role_notifications=False)
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-roles': self.role_list,
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            self.context.teacher.contact.user_object.email)
 
     def test_pick_class_teacher(self):
         interested = self.context.set_interest()

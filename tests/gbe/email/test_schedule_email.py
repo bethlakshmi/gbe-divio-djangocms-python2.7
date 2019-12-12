@@ -1,6 +1,9 @@
 from django.test import TestCase
 from django.test import Client
-from tests.factories.gbe_factories import ConferenceDayFactory
+from tests.factories.gbe_factories import (
+    ConferenceDayFactory,
+    ProfilePreferencesFactory,
+)
 from tests.contexts import (
     ActTechInfoContext,
     ClassContext,
@@ -83,3 +86,20 @@ class TestScheduleEmail(TestCase):
         self.assertTrue(context.show.e_title in second.html_message)
         self.assertTrue(
             context.rehearsal.eventitem.event.e_title in second.html_message)
+
+    def test_exclude_unsubscribed(self):
+        start_time = datetime.combine(
+            datetime.now().date() + timedelta(days=1),
+            time(0, 0, 0, 0))
+        context = ClassContext(starttime=start_time)
+        ProfilePreferencesFactory(
+            profile=context.teacher.contact,
+            send_daily_schedule=False)
+        num = schedule_email()
+        self.assertEqual(0, num)
+        queued_email = Email.objects.filter(
+            status=2,
+            subject=self.subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 0)
