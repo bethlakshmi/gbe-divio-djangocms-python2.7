@@ -205,6 +205,21 @@ class TestMailToBidder(TestCase):
             response,
             self.context.teacher.contact.user_object.email)
 
+    def test_exclude_inactive(self):
+        self.context.teacher.contact.user_object.is_active = False
+        self.context.teacher.contact.user_object.save()
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': self.priv_list,
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            self.context.teacher.contact.user_object.email)
+
     def test_pick_class_bidder(self):
         second_bid = ActFactory()
         login_as(self.privileged_profile, self)
