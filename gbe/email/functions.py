@@ -92,6 +92,7 @@ def get_or_create_template(name, base, subject):
 
     return template
 
+
 def send_bid_state_change_mail(
         bid_type,
         email,

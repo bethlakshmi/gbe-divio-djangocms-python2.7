@@ -196,11 +196,11 @@ class MakeBidView(View):
         if 'submit' in request.POST.keys():
             if not self.fee_paid():
                 dynamic_message = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="NOT_PAID_INSTRUCTIONS",
-                defaults={
-                    'summary': "%s Not Paid" % self.bid_type,
-                    'description': payment_needed_msg})
+                    view=self.__class__.__name__,
+                    code="NOT_PAID_INSTRUCTIONS",
+                    defaults={
+                        'summary': "%s Not Paid" % self.bid_type,
+                        'description': payment_needed_msg})
                 page_title = '%s Payment' % self.bid_type
                 return render(
                     request,

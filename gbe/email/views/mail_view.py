@@ -49,7 +49,7 @@ class MailView(View):
                     'recipients': [target],
                     'subject': subject,
                     'html_message': mail_form.cleaned_data['html_message'],
-                    'headers': {'Reply-to': sender},}]
+                    'headers': {'Reply-to': sender}, }]
                 if len(recipient_string) > 0:
                     recipient_string = "%s, %s" % (recipient_string, email)
                 else:

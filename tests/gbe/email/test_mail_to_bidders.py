@@ -504,7 +504,7 @@ class TestMailToBidder(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input type="checkbox" name="email-select-state" value="3" ' + \
+            '<input type="checkbox" name="email-select-state" value="3" ' +
             'checked class="form-check-input" id="id_email-select-state_4" ' +
             '/>')
 
