@@ -1,6 +1,9 @@
 from django.test import TestCase
 from django.test import Client
-from tests.factories.gbe_factories import ConferenceDayFactory
+from tests.factories.gbe_factories import (
+    ConferenceDayFactory,
+    ProfilePreferencesFactory,
+)
 from tests.contexts import (
     ActTechInfoContext,
     ClassContext,
@@ -15,6 +18,9 @@ from datetime import (
 )
 from gbe.email.views import schedule_email
 from django.conf import settings
+from gbetext import unsubscribe_text
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 
 
 class TestScheduleEmail(TestCase):
@@ -23,6 +29,9 @@ class TestScheduleEmail(TestCase):
     def setUp(self):
         self.client = Client()
         Email.objects.all().delete()
+        self.unsub_link = Site.objects.get_current().domain + reverse(
+            'profile_update',
+            urlconf='gbe.urls') + "?email_disable=send_daily_schedule"
 
     def test_no_conference_day(self):
         num = schedule_email()
@@ -47,6 +56,7 @@ class TestScheduleEmail(TestCase):
             )
         self.assertEqual(queued_email.count(), 1)
         self.assertTrue(context.bid.e_title in queued_email[0].html_message)
+        self.assertTrue(self.unsub_link in queued_email[0].html_message)
         self.assertTrue(
             context.teacher.user_object.email in queued_email[0].to)
 
@@ -70,8 +80,26 @@ class TestScheduleEmail(TestCase):
         first = queued_email.filter(
             to=show_context.performer.performer_profile.user_object.email)[0]
         self.assertTrue(show_context.show.e_title in first.html_message)
+        self.assertTrue(self.unsub_link in queued_email[0].html_message)
         second = queued_email.filter(
             to=context.performer.performer_profile.user_object.email)[0]
         self.assertTrue(context.show.e_title in second.html_message)
         self.assertTrue(
             context.rehearsal.eventitem.event.e_title in second.html_message)
+
+    def test_exclude_unsubscribed(self):
+        start_time = datetime.combine(
+            datetime.now().date() + timedelta(days=1),
+            time(0, 0, 0, 0))
+        context = ClassContext(starttime=start_time)
+        ProfilePreferencesFactory(
+            profile=context.teacher.contact,
+            send_daily_schedule=False)
+        num = schedule_email()
+        self.assertEqual(0, num)
+        queued_email = Email.objects.filter(
+            status=2,
+            subject=self.subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 0)
