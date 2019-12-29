@@ -20,7 +20,6 @@ from gbetext import (
     no_profile_msg,
     no_login_msg,
     full_login_msg,
-    payment_needed_msg,
 )
 
 
@@ -37,7 +36,7 @@ class MakeBidView(View):
                 view=self.__class__.__name__,
                 code="PROFILE_INCOMPLETE",
                 defaults={
-                    'summary': "Profile Incomplete",
+                    'summary': "%s Profile Incomplete",
                     'description': no_profile_msg})
             messages.warning(request, user_message[0].description)
             return '%s?next=%s' % (
@@ -195,18 +194,11 @@ class MakeBidView(View):
 
         if 'submit' in request.POST.keys():
             if not self.fee_paid():
-                dynamic_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="NOT_PAID_INSTRUCTIONS",
-                    defaults={
-                        'summary': "%s Not Paid" % self.bid_type,
-                        'description': payment_needed_msg})
                 page_title = '%s Payment' % self.bid_type
                 return render(
                     request,
-                    'dynamic_message.tmpl',
-                    {'dynamic_message': dynamic_message[0].description % (
-                        self.fee_link),
+                    'gbe/please_pay.tmpl',
+                    {'link': self.fee_link,
                      'page_title': page_title})
             else:
                 redirect = self.submit_bid(request)

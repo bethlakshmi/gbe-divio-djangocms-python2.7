@@ -18,15 +18,13 @@ from tests.functions.gbe_functions import (
 )
 from gbetext import (
     default_vendor_submit_msg,
-    default_vendor_draft_msg,
-    payment_needed_msg,
+    default_vendor_draft_msg
 )
 from gbe.models import (
     UserMessage,
     Vendor,
 )
 from django.core.files import File
-from gbe.ticketing_idd_interface import vendor_submittal_link
 
 
 class TestEditVendor(TestCase):
@@ -124,8 +122,6 @@ class TestEditVendor(TestCase):
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTrue("Vendor Payment" in response.content)
-        self.assertContains(response, payment_needed_msg % (
-            vendor_submittal_link(vendor.profile.user_object.id)))
 
     def test_vendor_edit_post_form_valid_submit_paid_wrong_conf(self):
         vendor = VendorFactory()

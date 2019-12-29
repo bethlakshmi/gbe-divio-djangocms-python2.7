@@ -20,10 +20,8 @@ from gbetext import (
     default_act_submit_msg,
     default_act_draft_msg,
     default_act_title_conflict,
-    payment_needed_msg,
 )
 from gbe.models import UserMessage
-from gbe.ticketing_idd_interface import performer_act_submittal_link
 
 
 class TestEditAct(TestCase):
@@ -153,9 +151,6 @@ class TestEditAct(TestCase):
             data=self.get_act_form(act, submit=True))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Act Payment' in response.content)
-        self.assertContains(response, payment_needed_msg % (
-            performer_act_submittal_link(
-                act.performer.performer_profile.user_object.id)))
 
     def test_act_edit_post_form_submit_paid_other_year(self):
         act = ActFactory()
