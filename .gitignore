@@ -45,3 +45,5 @@ env/
 *.css.map
 npm-debug.log
 package-lock.json
+scheduler/idd/.set_eval_info 2.pyc.icloud
+*.icloud
