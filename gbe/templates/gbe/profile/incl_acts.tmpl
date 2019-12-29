@@ -17,7 +17,7 @@
             </li>
             {% endif %}
         {% elif act.performer.contact == profile %}
-	  {{ act }} - Not submitted
+	  <span class="shadow-red"><b>{{ act }}</b></span> - Not submitted
 	<ul>
 	    <li><a href = '{% url 'gbe:act_edit' act.id %}'> View/edit </a>
 	       this act bid</li>
