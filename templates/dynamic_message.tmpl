@@ -1,0 +1,11 @@
+{% extends 'base.tmpl' %}
+{% load staticfiles %}
+
+{% block title %}
+   {{page_title}}
+{% endblock %}
+
+{% block content %}
+{{ dynamic_message | safe }}
+
+{% endblock %}
