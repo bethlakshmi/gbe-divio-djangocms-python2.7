@@ -28,6 +28,7 @@ class MailToBiddersView(MailToFilterView):
                             'Volunteer Coordinator',
                             ]
     template = 'gbe/email/mail_to_bidders.tmpl'
+    email_type = 'bid_notifications'
 
     def groundwork(self, request, args, kwargs):
         self.bid_type_choices = []
@@ -74,13 +75,14 @@ class MailToBiddersView(MailToFilterView):
             for bid in eval(bid_type).objects.filter(query):
                 bidder = (bid.profile.user_object.email,
                           bid.profile.display_name)
-                if bid.profile.user_object.is_active and bidder not in to_list:
+                if bid.profile.email_allowed(
+                        self.email_type) and bidder not in to_list:
                     to_list += [bidder]
             if draft:
                 for bid in eval(bid_type).objects.filter(draft_query):
                     bidder = (bid.profile.user_object.email,
                               bid.profile.display_name)
-                    if bid.profile.user_object.is_active and (
+                    if bid.profile.email_allowed(self.email_type) and (
                             bidder not in to_list):
                         to_list += [bidder]
         return sorted(to_list, key=lambda s: s[1].lower())
@@ -113,10 +115,15 @@ class MailToBiddersView(MailToFilterView):
         recipient_info = SecretBidderInfoForm(request.POST,
                                               prefix="email-select")
         recipient_info.fields['bid_type'].choices = self.bid_type_choices
-
         return render(
             request,
             self.template,
             {"selection_form": self.select_form,
              "email_form": email_form,
-             "recipient_info": [recipient_info]})
+             "recipient_info": [recipient_info],
+             "group_filter_note": self.filter_note()},)
+
+    def filter_preferences(self, basic_filter):
+        return basic_filter.filter(
+            Q(profile__preferences__isnull=True) |
+            Q(profile__preferences__send_bid_notifications=True))

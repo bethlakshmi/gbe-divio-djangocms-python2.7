@@ -19,6 +19,7 @@ class MailToPersonView(MailView):
                          'Conference Coordinator',
                          'Vendor Coordinator',
                          'Ticketing - Admin']
+    email_type = "individual"
 
     def groundwork(self, request, args, kwargs):
         self.user = validate_perms(request, self.email_permissions)

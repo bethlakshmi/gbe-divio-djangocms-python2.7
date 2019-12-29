@@ -40,7 +40,10 @@ INSTALLED_APPS.extend([
 ])
 
 EMAIL_BACKEND = 'post_office.EmailBackend'
-ADMINS = [('Betty','betty@burlesque-expo.com', 'Scratch', 'info@burlesque-expo.com')]
+ADMINS = [('Betty',
+           'betty@burlesque-expo.com',
+           'Scratch',
+           'info@burlesque-expo.com')]
 
 try:
     DEFAULT_FROM_EMAIL = os.environ["DEFAULT_FROM_EMAIL"]
@@ -89,7 +92,7 @@ try:
 except:
     DURATION_FORMAT = "%-I:%M"
 
-USER_CONTACT_RECIPIENT_ADDRESSES = ['betty@burlesque-expo.com', 
+USER_CONTACT_RECIPIENT_ADDRESSES = ['betty@burlesque-expo.com',
                                     'info@burlesque-expo.com']
 
 RECAPTCHA_PRIVATE_KEY = "6Lf1dx0UAAAAANMxh-BqrW_9IU-0n4OZyWin6sGB"
@@ -115,11 +118,11 @@ AUTHENTICATION_BACKENDS = [
     'gbe.auth.EmailUsernameAuth',
 ]
 DJANGOCMS_STYLE_CHOICES = [
-    'container', 
-    'content', 
-    'font_large', 
-    'subtitle', 
-    'teaser'
+    'container',
+    'content',
+    'font_large',
+    'subtitle',
+    'teaser',
 ]
 
 FIXTURE_DIRS = ('expo/tests/fixtures',)
@@ -153,17 +156,23 @@ CKEDITOR_SETTINGS = {
         {'name': 'Marker',
          'element': 'span',
          'attributes': {'class': 'marker'}},
-        {'name': 'Big', 'element': 'big' },
-        {'name': 'Small', 'element': 'small' },
-        {'name': 'Typewriter', 'element': 'tt' },
-        {'name': 'Computer Code','element': 'code' },
-        {'name': 'Keyboard Phrase', 'element': 'kbd' },
-        {'name': 'Sample Text', 'element': 'samp' },
-        {'name': 'Deleted Text', 'element': 'del' },
-        {'name': 'Inserted Text', 'element': 'ins' },
-        {'name': 'Cited Work', 'element': 'cite' },
-        {'name': 'Inline Quotation', 'element': 'q' },
+        {'name': 'Big', 'element': 'big'},
+        {'name': 'Small', 'element': 'small'},
+        {'name': 'Typewriter', 'element': 'tt'},
+        {'name': 'Computer Code', 'element': 'code'},
+        {'name': 'Keyboard Phrase', 'element': 'kbd'},
+        {'name': 'Sample Text', 'element': 'samp'},
+        {'name': 'Deleted Text', 'element': 'del'},
+        {'name': 'Inserted Text', 'element': 'ins'},
+        {'name': 'Cited Work', 'element': 'cite'},
+        {'name': 'Inline Quotation', 'element': 'q'},
     ]
+}
+
+# Put this in settings.py
+POST_OFFICE = {
+    'BATCH_SIZE': 30,
+    'THREADS_PER_PROCESS': 1,
 }
 
 try:

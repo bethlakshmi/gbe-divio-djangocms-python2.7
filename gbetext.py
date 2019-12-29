@@ -456,13 +456,33 @@ look spectacular!<P><I>The Vintage Fashion Fair</I> is also home to our \
 No need to run out into the cold or even up to the hotel restaurant! \
 Attendees of <I>The Great Burlesque Exposition</I> can fortify themselves \
 with soups, wraps, fresh fruit, and more... all at very reasonable prices!'''
+email_pref_note = '''Your privacy is very important to us. We promise that \
+your information will not be sold or traded. That said, we need your complete \
+and accurate contact information in order to alert you to important aspects \
+of the event: your ticket purchases and personal schedule, news, events, and \
+deadlines. Your profile information will be visible to the department head \
+associated with any role or activity you've elected to be involved with (that \
+is, if you're performing, our selection committee and stage managers will be \
+able to see your profile information. If you're teaching, the conference \
+committee members and staff will be able to see your profile information, \
+etc.).'''
 save_email_template_success_msg = '''The email template has been saved.  \
 Your updates will be applied to all future automated messages using this \
 template.  The Email Template name is '''
 send_email_success_msg = '''A mail was successfully sent to '''
+unsubscribe_text = '''<br><br><div style="text-align: center;"><small> \
+This email has been sent by the www.burlesque-expo.com email system<br> \
+<a href="http://%s">Update email preferences</a><small></div>'''
+unsub_footer_include = "{% include 'gbe/email/unsub_footer.tmpl' %}"
+unsub_footer_plain_include = \
+    "{% include 'gbe/email/unsub_footer_plain.tmpl' %}"
 to_list_empty_msg = '''No recipients were found for your search criteria.  \
                     Please try something else'''
 unknown_request = '''This request makes no sense'''
+group_filter_note = '''The recipients listed here include only active users,
+who have agreed to be contacted by the Expo.  Disabled users and users who
+have set their preference to not receive email of this kind will not be
+included.'''
 link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
 create_ticket_event_success_msg = "Created and linked a new BPT Event: "

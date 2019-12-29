@@ -18,7 +18,11 @@ from gbe.models import (
     EmailTemplateSender,
     UserMessage,
 )
-from gbetext import save_email_template_success_msg
+from gbetext import (
+    save_email_template_success_msg,
+    unsub_footer_include,
+    unsub_footer_plain_include,
+)
 from gbe.email.forms import EmailTemplateForm
 from gbe.email.functions import (
     get_mail_content,
@@ -126,7 +130,23 @@ class EditTemplateView(View):
                           'gbe/email/edit_email_template.tmpl',
                           self.make_context())
         else:
-            self.template = self.form.save()
+            # special handling for unsubscribe, so users can't hack it
+            if self.form.cleaned_data['name'] in (
+                    "daily schedule",
+                    "volunteer schedule update"):
+                self.template = self.form.save(commit=False)
+                if unsub_footer_include not in self.template.html_content:
+                    self.template.html_content = self.template.html_content + \
+                        unsub_footer_include
+                    self.template.content = self.template.content + \
+                        unsub_footer_plain_include
+                elif unsub_footer_include in self.template.content:
+                    self.template.content = self.template.content.replace(
+                        unsub_footer_include,
+                        unsub_footer_plain_include)
+                self.template.save()
+            else:
+                self.template = self.form.save()
             if EmailTemplateSender.objects.filter(
                     template=self.template).exists():
                 self.template.sender.from_email = self.form.cleaned_data[

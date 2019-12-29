@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     ConferenceFactory,
     ProfileFactory,
+    ProfilePreferencesFactory,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -19,14 +20,17 @@ from tests.contexts.class_context import (
 )
 from gbetext import (
     acceptance_states,
+    group_filter_note,
     send_email_success_msg,
     to_list_empty_msg,
     unknown_request,
+    unsubscribe_text,
 )
 from django.contrib.auth.models import User
 from gbe.models import Conference
 from post_office.models import Email
 from tests.functions.gbe_email_functions import assert_checkbox
+from django.contrib.sites.models import Site
 
 
 class TestMailToBidder(TestCase):
@@ -47,6 +51,10 @@ class TestMailToBidder(TestCase):
         self.context = ClassContext()
         self.url = reverse(self.view_name,
                            urlconf="gbe.email.urls")
+        self.footer = unsubscribe_text % (
+            Site.objects.get_current().domain + reverse(
+                'profile_update',
+                urlconf='gbe.urls') + "?email_disable=send_bid_notifications")
 
     def reduced_login(self):
         reduced_profile = ProfileFactory()
@@ -141,6 +149,20 @@ class TestMailToBidder(TestCase):
         for user in User.objects.exclude(username="limbo"):
             self.assertContains(response, user.email)
 
+    def test_pick_everyone_except_unsubscribed(self):
+        ProfilePreferencesFactory(
+            profile=self.context.teacher.contact,
+            send_bid_notifications=False)
+        login_as(self.privileged_profile, self)
+        data = {
+            'everyone': "Everyone",
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            self.context.teacher.contact.user_object.email)
+        self.assertContains(response, group_filter_note)
+
     def test_pick_everyone_no_priv(self):
         self.reduced_login()
         data = {
@@ -166,6 +188,37 @@ class TestMailToBidder(TestCase):
         self.assertNotContains(
             response,
             second_context.teacher.contact.user_object.email)
+
+    def test_exclude_unsubscribed(self):
+        ProfilePreferencesFactory(
+            profile=self.context.teacher.contact,
+            send_bid_notifications=False)
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': self.priv_list,
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            self.context.teacher.contact.user_object.email)
+
+    def test_exclude_inactive(self):
+        self.context.teacher.contact.user_object.is_active = False
+        self.context.teacher.contact.user_object.save()
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': self.priv_list,
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            self.context.teacher.contact.user_object.email)
 
     def test_pick_class_bidder(self):
         second_bid = ActFactory()
@@ -218,6 +271,23 @@ class TestMailToBidder(TestCase):
             response,
             self.context.teacher.contact.user_object.email)
         self.assertContains(
+            response,
+            second_bid.teacher.contact.user_object.email)
+
+    def test_draft_exclude_unsubscribed(self):
+        second_bid = ClassFactory()
+        ProfilePreferencesFactory(
+            profile=second_bid.teacher.contact,
+            send_bid_notifications=False)
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': self.priv_list,
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
             response,
             second_bid.teacher.contact.user_object.email)
 
@@ -354,7 +424,7 @@ class TestMailToBidder(TestCase):
         assert_queued_email(
             [self.context.teacher.contact.user_object.email, ],
             data['subject'],
-            data['html_message'],
+            data['html_message'] + self.footer,
             data['sender'],
             )
 
@@ -376,7 +446,7 @@ class TestMailToBidder(TestCase):
         assert_queued_email(
             [second_bid.performer.contact.user_object.email, ],
             data['subject'],
-            data['html_message'],
+            data['html_message'] + self.footer,
             reduced_profile.user_object.email,
             )
 
@@ -504,7 +574,7 @@ class TestMailToBidder(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input type="checkbox" name="email-select-state" value="3" ' + \
+            '<input type="checkbox" name="email-select-state" value="3" ' +
             'checked class="form-check-input" id="id_email-select-state_4" ' +
             '/>')
 
@@ -536,7 +606,7 @@ class TestMailToBidder(TestCase):
             assert_queued_email(
                 [user.email, ],
                 data['subject'],
-                data['html_message'],
+                data['html_message'] + self.footer,
                 data['sender'],
                 )
 

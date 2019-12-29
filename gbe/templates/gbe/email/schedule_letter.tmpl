@@ -9,7 +9,6 @@ shifts in class schedules could not be printed.
     - Role: {{booking.role}} 
     - Location: {{booking.event.location}} 
     - Time: {{booking.event.starttime|date:"g:i A"}}
-  </tr>
   {% endfor %}
 
-  </table>
+{% include 'gbe/email/unsub_footer_plain.tmpl' %}
