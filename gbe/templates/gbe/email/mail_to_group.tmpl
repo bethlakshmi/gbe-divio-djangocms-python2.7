@@ -45,6 +45,8 @@
     <h3 class="panel-title">Send Email</h3>
   </div>
   <div class="panel-body">
+    {% if group_filter_note %}
+    {{ group_filter_note | safe }}<br/><br/>{% endif %}
       {% include "form_table_wrapper.tmpl" with forms=recipient_info %}
       {% if everyone %}
         <input id="id_everyone" name="everyone" type="hidden" value="Everyone" />
@@ -62,17 +64,20 @@
             </div>
           </div>
         </div>
-      </div>
+      </div><!-- end panel group -->
      {% if email_form.sender in email_form.visible_fields %}
        {% include "form_field.tmpl" with field=email_form.sender %}
+       <!-- end sender -->
      {% else %}
       {{ email_form.sender }}
      {% endif %}
      {% include "form_field.tmpl" with field=email_form.subject %}
+     <!-- end subject -->
      {% include "form_field.tmpl" with field=email_form.html_message %}
+     <!-- end message -->
       <input type="submit" class="email-submit" name="send" value="Send">
-  </div>
-</div>
+  </div><!-- end panel body -->
+</div><!-- end panel primary -->
 </form>
 {% endif %}
 {% endblock %}

@@ -21,7 +21,8 @@
     <div class="form-group">
 	<div class="container">
 	<div class="row">
-	<div class="col-md-4">
+  {% if two_col %}<div class="col-md-5">
+  {% else %}<div class="col-md-4">{% endif %}
 	<label for="{{field.name}}" class="control-label">	      
             {% if field.errors %}
               <font color="red">!</font>&nbsp;&nbsp;
@@ -51,7 +52,9 @@
             {% endif %}
 	</label>
 	</div>
-	<div class="col-md-8{% if field.field.choices|length > 7 %} long_choice{%endif%}">
+  {% if two_col %}<div class="col-md-7{% if field.field.choices|length > 7 %} long_choice{%endif%}">
+	{% else %}<div class="col-md-8{% if field.field.choices|length > 7 %} long_choice{%endif%}">
+  {% endif %}
             {{ field }}
 	</div>
 	</div>

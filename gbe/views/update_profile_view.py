@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from gbe_logging import log_func
 from gbe.forms import (
+    EmailPreferencesForm,
     ParticipantForm,
     ProfilePreferencesForm,
 )
@@ -15,7 +16,10 @@ from gbe.models import (
     UserMessage
 )
 from gbe.functions import validate_profile
-from gbetext import default_update_profile_msg
+from gbetext import (
+    default_update_profile_msg,
+    email_pref_note,
+)
 
 
 @login_required
@@ -31,6 +35,12 @@ def UpdateProfileView(request):
         profile.preferences.save()
         profile.save()
 
+    email_pref_message = UserMessage.objects.get_or_create(
+        view="UpdateProfileView",
+        code="EMAIL_PREF_NOTE",
+        defaults={
+            'summary': "Email Preference Settings Note",
+            'description': email_pref_note})
     if request.method == 'POST':
         form = ParticipantForm(request.POST,
                                instance=profile,
@@ -39,14 +49,15 @@ def UpdateProfileView(request):
         prefs_form = ProfilePreferencesForm(request.POST,
                                             instance=profile.preferences,
                                             prefix='prefs')
-        if form.is_valid():
+        email_form = EmailPreferencesForm(request.POST,
+                                          instance=profile.preferences,
+                                          prefix='email_pref')
+        if form.is_valid() and prefs_form.is_valid() and email_form.is_valid():
             form.save(commit=True)
             if profile.purchase_email.strip() == '':
                 profile.purchase_email = request.user.email.strip()
-            if prefs_form.is_valid():
-                prefs_form.save(commit=True)
-                profile.preferences = prefs_form.save()
-            profile.save()
+            prefs_form.save(commit=True)
+            email_form.save(commit=True)
 
             form.save()
             user_message = UserMessage.objects.get_or_create(
@@ -62,8 +73,13 @@ def UpdateProfileView(request):
                 redirect_to = reverse('home', urlconf='gbe.urls')
             return HttpResponseRedirect(redirect_to)
         else:
-            return render(request, 'gbe/update_profile.tmpl',
-                          {'left_forms': [form], 'right_forms': [prefs_form]})
+            return render(
+                request,
+                'gbe/update_profile.tmpl',
+                {'left_forms': [form],
+                 'right_forms': [prefs_form],
+                 'email_form': email_form,
+                 'email_note': email_pref_message[0].description})
 
     else:
         if profile.display_name.strip() == '':
@@ -81,14 +97,31 @@ def UpdateProfileView(request):
                                         'last_name': request.user.last_name,
                                         'display_name': display_name,
                                         'how_heard': how_heard_initial})
-        if len(profile.preferences.inform_about.strip()) > 0:
-            inform_initial = eval(profile.preferences.inform_about)
-        else:
-            inform_initial = []
+        inform_initial = []
+        try:
+            if len(profile.preferences.inform_about.strip()) > 0:
+                inform_initial = eval(profile.preferences.inform_about)
+        except ProfilePreferences.DoesNotExist:
+            pref = ProfilePreferences(profile=profile)
+            pref.save()
+
         prefs_form = ProfilePreferencesForm(prefix='prefs',
                                             instance=profile.preferences,
                                             initial={'inform_about':
                                                      inform_initial})
-
+        email_focus = None
+        email_initial = {}
+        if 'email_disable' in request.GET:
+            email_focus = str(request.GET['email_disable'])
+            email_initial = {
+                email_focus: False,
+            }
+        email_form = EmailPreferencesForm(prefix='email_pref',
+                                          instance=profile.preferences,
+                                          initial=email_initial)
         return render(request, 'gbe/update_profile.tmpl',
-                      {'left_forms': [form], 'right_forms': [prefs_form]})
+                      {'left_forms': [form],
+                       'right_forms': [prefs_form],
+                       'email_form': email_form,
+                       'email_note': email_pref_message[0].description,
+                       'email_focus': email_focus})
