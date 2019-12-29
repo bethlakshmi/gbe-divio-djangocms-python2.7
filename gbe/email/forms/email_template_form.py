@@ -23,9 +23,9 @@ class EmailTemplateForm(ModelForm):
 
     def save(self, commit=True):
         template = super(EmailTemplateForm, self).save(commit=False)
+        template.content = strip_tags(self.cleaned_data['html_content'])
         # do custom stuff
         if commit:
-            template.content = strip_tags(self.cleaned_data['html_content'])
             template.save()
         return template
 

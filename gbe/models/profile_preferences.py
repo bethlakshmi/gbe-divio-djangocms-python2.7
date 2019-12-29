@@ -22,6 +22,11 @@ class ProfilePreferences(Model):
     inform_about = TextField(blank=True)
     show_hotel_infobox = BooleanField(default=True)
 
+    send_daily_schedule = BooleanField(default=True)
+    send_bid_notifications = BooleanField(default=True)
+    send_role_notifications = BooleanField(default=True)
+    send_schedule_change_notifications = BooleanField(default=True)
+
     class Meta:
         verbose_name_plural = 'profile preferences'
         app_label = "gbe"

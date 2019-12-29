@@ -11,6 +11,7 @@ from gbe.email.functions import send_daily_schedule_mail
 
 
 def schedule_email():
+    email_type = 'daily_schedule'
     personal_schedules = {}
     boston_today = datetime.now().date()
     target_day = boston_today + timedelta(days=1)
@@ -26,12 +27,14 @@ def schedule_email():
                 target_day+timedelta(days=1),
                 time(0, 0, 0, 0)))
     for item in sched_resp.schedule_items:
-        if item.user in personal_schedules:
-            personal_schedules[item.user] += [item]
-        else:
-            personal_schedules[item.user] = [item]
+        if item.user.profile.email_allowed(email_type):
+            if item.user in personal_schedules:
+                personal_schedules[item.user] += [item]
+            else:
+                personal_schedules[item.user] = [item]
     send_daily_schedule_mail(
         personal_schedules,
         target_day,
-        conf_day.conference.conference_slug)
+        conf_day.conference.conference_slug,
+        email_type)
     return len(personal_schedules)

@@ -6,7 +6,10 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from gbe.models import UserMessage
 from gbe.email.views import MailView
-from gbetext import unknown_request
+from gbetext import (
+    group_filter_note,
+    unknown_request,
+)
 from gbe.functions import validate_perms
 from django.contrib.auth.models import User
 
@@ -22,13 +25,17 @@ class MailToFilterView(MailView):
                 info forms for preparing the email recipient list
             - filter_emails(request) - set up the filter form, when there is an
               error
+            - filter_preferences(query) - filter for users who have opted out
+              of being contacted by this filter.  Should take a User filter.
     '''
     def get_everyone(self, request):
         to_list = []
         if not request.user.is_superuser:
             return to_list
-        for user_object in User.objects.filter(
-                is_active=True).exclude(username="limbo").order_by('email'):
+        filter_everyone = self.filter_preferences(
+            User.objects.filter(is_active=True).exclude(
+                username="limbo"))
+        for user_object in filter_everyone.order_by('email'):
             if hasattr(user_object, 'profile') and len(
                     user_object.profile.display_name) > 0:
                 to_list += [(user_object.email,
@@ -54,16 +61,25 @@ class MailToFilterView(MailView):
                 'gbe/email/mail_to_bidders.tmpl',
                 {"selection_form": self.select_form})
         email_form = self.setup_email_form(request, to_list)
-
         return render(
             request,
             'gbe/email/mail_to_bidders.tmpl',
             {"selection_form": self.select_form,
              "email_form": email_form,
-             "everyone": True})
+             "everyone": True,
+             "group_filter_note": self.filter_note()})
 
     def get_select_forms(self):
         return {"selection_form": self.select_form}
+
+    def filter_note(self):
+        user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="GROUP_FILTER_INFO",
+                defaults={
+                    'summary': "Help for the user of any group email feature",
+                    'description': group_filter_note})
+        return user_message[0].description
 
     def select_form_is_valid(self):
         return self.select_form.is_valid()
