@@ -13,7 +13,8 @@ from tests.functions.gbe_functions import (
     login_as,
     location,
     assert_alert_exists,
-    make_vendor_app_purchase
+    make_vendor_app_purchase,
+    make_vendor_app_ticket
 )
 from gbetext import (
     default_vendor_submit_msg,
@@ -62,7 +63,7 @@ class TestCreateVendor(TestCase):
                                     follow=True)
         return response, data
 
-    def post_paid_vendor_draft(self):
+    def post_unpaid_vendor_draft(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
         login_as(self.profile, self)
@@ -76,12 +77,19 @@ class TestCreateVendor(TestCase):
     def test_create_vendor_post_form_valid(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        response, data = self.post_paid_vendor_draft()
+        bpt_event_id = make_vendor_app_ticket(self.conference)
+        response, data = self.post_unpaid_vendor_draft()
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Profile View' in response.content)
+        draft_string = (
+            '<span class="shadow-red"><b>%s</b></span> '
+            ) % data['thebiz-b_title']
         self.assertContains(response, "(Click to edit)")
-        self.assertContains(response, data['thebiz-b_title'])
+        self.assertContains(response, draft_string)
+        ticket_link = "%d/%s" % (self.profile.user_object.id, bpt_event_id)
+        print response.content
+        self.assertContains(response, ticket_link)
 
     def test_create_vendor_post_form_valid_submit(self):
         url = reverse(self.view_name, urlconf='gbe.urls')
@@ -165,7 +173,7 @@ class TestCreateVendor(TestCase):
             response, 'success', 'Success', default_vendor_submit_msg)
 
     def test_vendor_draft_make_message(self):
-        response, data = self.post_paid_vendor_draft()
+        response, data = self.post_unpaid_vendor_draft()
         self.assertEqual(200, response.status_code)
         assert_alert_exists(
             response, 'success', 'Success', default_vendor_draft_msg)
@@ -183,7 +191,7 @@ class TestCreateVendor(TestCase):
         msg = UserMessageFactory(
             view='MakeVendorView',
             code='DRAFT_SUCCESS')
-        response, data = self.post_paid_vendor_draft()
+        response, data = self.post_unpaid_vendor_draft()
         self.assertEqual(200, response.status_code)
         assert_alert_exists(
             response, 'success', 'Success', msg.description)

@@ -16,6 +16,7 @@ from tests.functions.gbe_functions import (
     current_conference,
     assert_alert_exists,
     make_act_app_purchase,
+    make_act_app_ticket,
     post_act_conflict,
 )
 from gbetext import (
@@ -71,7 +72,7 @@ class TestCreateAct(TestCase):
         response = self.client.post(url, data=act_form, follow=True)
         return response, act_form
 
-    def post_paid_act_draft(self):
+    def post_unpaid_act_draft(self):
         current_conference()
         login_as(self.performer.performer_profile, self)
         POST = self.get_act_form()
@@ -115,27 +116,26 @@ class TestCreateAct(TestCase):
 
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
-        current_conference()
         login_as(self.performer.performer_profile, self)
         POST = self.get_act_form()
         POST.update({'submit': ''})
         response = self.client.post(self.url, data=POST)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Fee has not been Paid' in response.content)
 
     def test_act_bid_post_no_submit(self):
         '''act_bid, not submitting and no other problems,
         should redirect to home'''
-        current_conference()
-        response, data = self.post_paid_act_draft()
+        make_act_app_purchase(self.current_conference,
+                              self.performer.performer_profile.user_object)
+        response, data = self.post_unpaid_act_draft()
         self.assertEqual(response.status_code, 200)
-        act_name = data['theact-b_title']
         expected_string = (
             '<span class="shadow-red"><b>%s</b></span> - Not submitted'
-            ) % act_name
+            ) % data['theact-b_title']
         assert expected_string in response.content
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
+        self.assertContains(response, 'Fee has been paid, submit NOW!')
 
     def test_act_bid_not_post(self):
         '''act_bid, not post, not paid should take us to bid process'''
@@ -218,7 +218,7 @@ class TestCreateAct(TestCase):
         msg = UserMessageFactory(
             view='MakeActView',
             code='DRAFT_SUCCESS')
-        response, data = self.post_paid_act_draft()
+        response, data = self.post_unpaid_act_draft()
         self.assertEqual(200, response.status_code)
         assert_alert_exists(
             response, 'success', 'Success', msg.description)

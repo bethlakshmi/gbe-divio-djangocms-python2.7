@@ -202,6 +202,7 @@ class TestIndex(TestCase):
         self.assert_event_is_not_present(response, self.previous_sched)
         self.assert_event_is_present(response, self.current_class_sched)
         self.assert_event_is_not_present(response, self.previous_class_sched)
+        self.assertNotContains(response, "shadow-red")
 
     def test_historical_view(self):
         url = reverse('home', urlconf='gbe.urls')

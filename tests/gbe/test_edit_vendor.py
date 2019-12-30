@@ -114,6 +114,8 @@ class TestEditVendor(TestCase):
         response = self.post_edit_paid_vendor_draft()
         self.assertEqual(response.status_code, 200)
         self.assertTrue("Profile View" in response.content)
+        assert_alert_exists(
+            response, 'success', 'Success', default_vendor_draft_msg)
 
     def test_vendor_edit_post_form_valid_submit_not_paid(self):
         vendor = VendorFactory()
@@ -191,12 +193,6 @@ class TestEditVendor(TestCase):
         self.assertEqual(response.status_code, 200)
         assert_alert_exists(
             response, 'success', 'Success', default_vendor_submit_msg)
-
-    def test_vendor_draft_make_message(self):
-        response = self.post_edit_paid_vendor_draft()
-        self.assertEqual(200, response.status_code)
-        assert_alert_exists(
-            response, 'success', 'Success', default_vendor_draft_msg)
 
     def test_vendor_submit_has_message(self):
         msg = UserMessageFactory(
