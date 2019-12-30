@@ -22,6 +22,7 @@ from gbetext import (
     default_act_submit_msg,
     default_act_draft_msg,
     default_act_title_conflict,
+    fee_instructions,
 )
 from gbe.models import (
     Conference,
@@ -129,16 +130,38 @@ class TestCreateAct(TestCase):
         response, data = self.post_paid_act_draft()
         self.assertEqual(response.status_code, 200)
         act_name = data['theact-b_title']
-        expected_string = "%s - Not submitted" % act_name
+        expected_string = (
+            '<span class="shadow-red"><b>%s</b></span> - Not submitted'
+            ) % act_name
         assert expected_string in response.content
-        self.assertContains(response, data['theact-b_title'])
+        assert_alert_exists(
+            response, 'success', 'Success', default_act_draft_msg)
 
     def test_act_bid_not_post(self):
-        '''act_bid, not post, should take us to bid process'''
+        '''act_bid, not post, not paid should take us to bid process'''
+        login_as(self.performer.performer_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Propose an Act')
+        self.assertContains(response, fee_instructions)
+        self.assertContains(response, 'value="Pay Fee"')
+
+    def test_act_bid_not_post(self):
+        '''act_bid, not post, not paid should take us to bid process'''
+        make_act_app_purchase(self.current_conference,
+                              self.performer.performer_profile.user_object)
+        msg = UserMessageFactory(
+            view='MakeActView',
+            code='BID_INSTRUCTIONS',
+            summary="Act Bid Instructions",
+            description="Test Bid Instructions Message")
         login_as(self.performer.performer_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Propose an Act' in response.content)
+        self.assertNotContains(response, fee_instructions)
+        self.assertContains(response, "Test Bid Instructions Message")
+        self.assertContains(response, 'value="Submit For Approval"')
 
     def test_act_submit_paid_act(self):
         response, data = self.post_paid_act_submission()
@@ -181,12 +204,6 @@ class TestCreateAct(TestCase):
         self.assertEqual(response.status_code, 200)
         assert_alert_exists(
             response, 'success', 'Success', default_act_submit_msg)
-
-    def test_act_draft_make_message(self):
-        response, data = self.post_paid_act_draft()
-        self.assertEqual(200, response.status_code)
-        assert_alert_exists(
-            response, 'success', 'Success', default_act_draft_msg)
 
     def test_act_submit_has_message(self):
         msg = UserMessageFactory(

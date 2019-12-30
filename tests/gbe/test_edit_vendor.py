@@ -143,6 +143,11 @@ class TestEditVendor(TestCase):
 
     def test_edit_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''
+        msg = UserMessageFactory(
+            view='MakeVendorView',
+            code='FEE_MESSAGE',
+            summary="Vendor Bid Instructions",
+            description="Test Fee Instructions Message")
         vendor = VendorFactory()
         login_as(vendor.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
@@ -151,6 +156,22 @@ class TestEditVendor(TestCase):
         self.assertTrue(
             '<h2 class="subtitle">Vendor Application</h2>'
             in response.content)
+        self.assertContains(response, "Test Fee Instructions Message")
+        self.assertContains(response, 'value="Pay Fee"')
+
+    def test_edit_paid_bid_get(self):
+        '''edit_bid, not post, should take us to edit process'''
+        vendor = VendorFactory()
+        make_vendor_app_purchase(vendor.b_conference,
+                                 vendor.profile.user_object)
+        login_as(vendor.profile, self)
+        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            '<h2 class="subtitle">Vendor Application</h2>'
+            in response.content)
+        self.assertContains(response, 'value="Submit For Approval"')
 
     def test_edit_bid_get_no_help(self):
         '''edit_bid, not post, should take us to edit process'''
