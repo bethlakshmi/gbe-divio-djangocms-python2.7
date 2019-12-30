@@ -45,6 +45,7 @@ class MakeCostumeView(MakeBidView):
     draft_form = CostumeBidDraftForm
     prefix = None
     bid_class = Costume
+    instructions = costume_proposal_form_text
 
     def groundwork(self, request, args, kwargs):
         redirect = super(
@@ -120,7 +121,6 @@ class MakeCostumeView(MakeBidView):
     def make_context(self, request):
         context = super(MakeCostumeView, self).make_context(request)
         context['forms'] = [self.form, self.details_form]
-        context['view_header_text'] = costume_proposal_form_text
         return context
 
     def check_validity(self, request):

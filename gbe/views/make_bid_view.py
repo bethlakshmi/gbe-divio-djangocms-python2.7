@@ -30,6 +30,7 @@ class MakeBidView(View):
     fee_link = None
     popup_text = None
     has_draft = True
+    instructions = ''
 
     def groundwork(self, request, args, kwargs):
         self.owner = validate_profile(request, require=False)
@@ -96,7 +97,7 @@ class MakeBidView(View):
             code="BID_INSTRUCTIONS",
             defaults={
                 'summary': "%s Bid Instructions" % self.bid_type,
-                'description': ''})
+                'description': self.instructions})
         context = {
             'conference': self.conference,
             'forms': [self.form],
@@ -105,7 +106,7 @@ class MakeBidView(View):
             'draft_fields': self.draft_fields,
             'submit_fields': self.submit_fields,
             'fee_paid': paid,
-            'instructions': instructions[0].description,
+            'view_header_text': instructions[0].description,
             }
         if not paid:
             user_message = UserMessage.objects.get_or_create(
