@@ -19,6 +19,7 @@ from gbe.email.functions import notify_reviewers_on_bid_change
 from gbetext import (
     no_profile_msg,
     no_login_msg,
+    fee_instructions,
     full_login_msg,
     payment_needed_msg,
 )
@@ -88,14 +89,32 @@ class MakeBidView(View):
         self.make_post_forms(request, the_form)
         return user_message
 
-    def make_context(self):
+    def make_context(self, request):
+        paid = self.fee_paid()
+        instructions = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="BID_INSTRUCTIONS",
+            defaults={
+                'summary': "%s Bid Instructions" % self.bid_type,
+                'description': ''})
         context = {
             'conference': self.conference,
             'forms': [self.form],
             'page_title': self.page_title,
             'view_title': self.view_title,
             'draft_fields': self.draft_fields,
-            'submit_fields': self.submit_fields}
+            'submit_fields': self.submit_fields,
+            'fee_paid': paid,
+            'instructions': instructions[0].description,
+            }
+        if not paid:
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="FEE_MESSAGE",
+                defaults={
+                    'summary': "%s Pre-submit Message" % self.bid_type,
+                    'description': fee_instructions})
+            messages.info(request, user_message[0].description)
         return context
 
     def get_create_form(self, request):
@@ -113,7 +132,7 @@ class MakeBidView(View):
         return render(
             request,
             'gbe/bid.tmpl',
-            self.make_context()
+            self.make_context(request)
         )
 
     def check_validity(self, request):
@@ -127,7 +146,7 @@ class MakeBidView(View):
 
     def get_invalid_response(self, request):
         self.set_up_form()
-        context = self.make_context()
+        context = self.make_context(request)
         return render(
             request,
             'gbe/bid.tmpl',
@@ -210,6 +229,8 @@ class MakeBidView(View):
                      'page_title': page_title})
             else:
                 redirect = self.submit_bid(request)
+        elif 'payfee' in request.POST.keys():
+            redirect = self.fee_link
         messages.success(request, user_message[0].description)
         return HttpResponseRedirect(
             redirect or reverse('home', urlconf='gbe.urls'))

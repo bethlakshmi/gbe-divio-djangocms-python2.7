@@ -11,7 +11,7 @@ class MakeSummerActView(MakeActView):
     submit_form = SummerActForm
     draft_form = SummerActDraftForm
 
-    def make_context(self):
-        context = super(MakeActView, self).make_context()
+    def make_context(self, request):
+        context = super(MakeActView, self).make_context(request)
         context['popup_text'] = summer_act_popup_text
         return context
