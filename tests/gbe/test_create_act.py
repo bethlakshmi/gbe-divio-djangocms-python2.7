@@ -154,7 +154,7 @@ class TestCreateAct(TestCase):
                 bpt_event_id),
             target_status_code=404)
 
-    def test_act_bid_not_post(self):
+    def test_act_bid_not_paid(self):
         '''act_bid, not post, not paid should take us to bid process'''
         login_as(self.performer.performer_profile, self)
         response = self.client.get(self.url)
