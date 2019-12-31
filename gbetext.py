@@ -417,7 +417,7 @@ existing_volunteer_msg = \
 fee_instructions = '''<a href="{{fee_link}}" target="_blank">Make Payment at \
 Brown Paper Tickets</a><br>Our records show that you have not paid your \
 related fees.  You can pay at Brown Paper Tickets by pressing the "Pay Fee" \
-button below.  Once the fee is paid, please return to this form and submit 
+button below.  Once the fee is paid, please return to this form and submit \
 your draft.  In the meantime, pressing either button will safe a draft of \
 your application.'''
 payment_needed_msg = '''

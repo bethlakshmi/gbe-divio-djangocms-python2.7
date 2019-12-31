@@ -474,8 +474,8 @@ class TestIndex(TestCase):
         make_act_app_purchase(self.current_conf,
                               self.profile.user_object)
         self.paid_act = ActFactory(performer=self.performer,
-                                     submitted=False,
-                                     b_conference=self.current_conf)
+                                   submitted=False,
+                                   b_conference=self.current_conf)
         expected_string = (
             '<span class="shadow-red"><b>%s</b></span> - Not submitted'
             ) % self.paid_act.b_title
