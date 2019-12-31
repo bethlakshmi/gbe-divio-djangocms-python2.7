@@ -29,6 +29,9 @@ from gbe.models import (
     Conference,
     UserMessage,
 )
+from gbe.ticketing_idd_interface import (
+    performer_act_submittal_link,
+)
 
 
 class TestCreateAct(TestCase):
@@ -136,6 +139,20 @@ class TestCreateAct(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
         self.assertContains(response, 'Fee has been paid, submit NOW!')
+
+    def test_act_bid_payfee(self):
+        '''users has unpaid act, and chooses to pay the fee'''
+        bpt_event_id = make_act_app_ticket(self.current_conference)
+        login_as(self.performer.performer_profile, self)
+        POST = self.get_act_form()
+        POST['payfee'] = 1
+        response = self.client.post(self.url, data=POST, follow=True)
+        self.assertRedirects(
+            response,
+            "/en/event/ID-%d/%s/" % (
+                self.performer.performer_profile.user_object.id,
+                bpt_event_id),
+            target_status_code=404)
 
     def test_act_bid_not_post(self):
         '''act_bid, not post, not paid should take us to bid process'''
