@@ -8,32 +8,29 @@
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
 {% endblock %}
-{{ instructions }}
 {% block content %}
 <div>
   <h2>Volunteer for {{ conference }}</h2>
+  <div>{{ instructions | safe }}</div><br>
   <div>
     Toggle column(s):
     <a class="toggle-vis" id="gbe-table-select" data-column="1">
-	Date</a> -
-      <a class="toggle-vis" id="gbe-table-select" data-column="2">
 	Name</a> -
-      <a class="toggle-vis" id="gbe-table-select" data-column="3">
+      <a class="toggle-vis" id="gbe-table-select" data-column="2">
 	Start</a> -
-      <a class="toggle-vis" id="gbe-table-select" data-column="4">
+      <a class="toggle-vis" id="gbe-table-select" data-column="3">
 	End</a> -
-      <a class="toggle-vis" id="gbe-table-select" data-column="5">
+      <a class="toggle-vis" id="gbe-table-select" data-column="4">
 	Area</a>
   </div>
   <div>
-  <form action="{{ actionURL }}" method="post">
+  <form action="{% url 'gbe:volunteer_signup' %}" method="post">
     {% csrf_token %}
     <input type='hidden' id="id_accepted" name="accepted" value="3">
     <table id="volunteer_signup" class="order-column table table-bordered" cellspacing="0" width="100%">
       <thead>
         <tr class="bid-table">
             <th class="bid-table">&nbsp;</th>
-            <th class="bid-table">Date</th>
             <th class="bid-table">Name</th>
             <th class="bid-table">Start</th>
             <th class="bid-table">End</th>
@@ -43,7 +40,6 @@
       <tfoot>
         <tr class="bid-table">
             <th class="bid-table">&nbsp;</th>
-            <th class="bid-table">Date</th>
             <th class="bid-table">Name</th>
             <th class="bid-table">Start</th>
             <th class="bid-table">End</th>
@@ -59,26 +55,34 @@
                 {% if opportunity.booked %}checked="checked"{% endif %}/>
             </td>
             <td class="bid-table">
-              {{opportunity.occurrence.starttime}}
-            </td>
-            <td class="bid-table">
-<a href="{% url 'scheduling:detail_view' opportunity.eventitem.eventitem_id%}">
                 {{opportunity.eventitem}}
-              </a></td>
+                {% if opportunity.eventitem.child.e_description %}
+                &nbsp;<span class="dropt" title="Info">
+                  <i class="fas fa-info-circle"></i>
+                  <span style="width:200px;float:right;text-align:left;">
+                  {{opportunity.eventitem.child.e_description | safe}}
+                  </span>
+                </span>{% else %}
+                {% for area in opportunity.staff_areas %}
+                {% if area.description %}
+                &nbsp;<span class="dropt" title="AreaInfo">
+                  <i class="fas fa-info-circle"></i>
+                  <span style="width:200px;float:right;text-align:left;">
+                  {{area.description | safe}}
+                  </span>
+                </span>{% endif %}{% endfor %}{% endif %}
+            </td>
             <td class="bid-table">{{opportunity.occurrence.start_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
             <td class="bid-table">
             {{opportunity.occurrence.end_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
             <td class="bid-table">
               {% if opportunity.parent_event %}
-<a href="{% url 'scheduling:edit_event' opportunity.eventitem.child.e_conference.conference_slug opportunity.parent_event.pk%}">
+<a href="{% url 'scheduling:detail_view' opportunity.parent_event.eventitem.pk%}">
                 {{opportunity.parent_event}}
-              </a><br>
-	      {% endif %}
+              </a>
+	            {% endif %}
               {% for area in opportunity.staff_areas %}
-<a href="{% url 'scheduling:edit_staff' area.id %}">
-                {{area}}
-              </a><br>
-	    {% endfor %}
+                {{area}}{% endfor %}
             </td>
         </tr>
         {% endfor%}

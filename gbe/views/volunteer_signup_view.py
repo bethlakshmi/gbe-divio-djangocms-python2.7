@@ -73,7 +73,8 @@ class VolunteerSignupView(View):
         volunteer_events = Event.objects.filter(
             e_conference=self.conference)
         for event in response.occurrences:
-            if event.foreign_event_id not in rehearsals:
+            if (event.extra_volunteers() < 0 or event.pk in booking_ids) and (
+                    event.foreign_event_id not in rehearsals):
                 volunteer_opp = {
                     'occurrence': event,
                     'booked': event.pk in booking_ids,
