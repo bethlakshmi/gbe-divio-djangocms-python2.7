@@ -27,7 +27,11 @@ from gbe.scheduling.views.functions import show_general_status
 from scheduler.idd import (
     get_occurrences,
     get_schedule,
+    remove_person,
+    set_person,
 )
+from scheduler.data_transfer import Person
+from gbe.email.functions import send_schedule_update_mail
 
 
 class VolunteerSignupView(View):
@@ -131,7 +135,30 @@ class VolunteerSignupView(View):
     @log_func
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        pass
+        redirect = self.groundwork(request, args, kwargs)
+        if redirect:
+            return HttpResponseRedirect(redirect)
+        remove_response = remove_person(
+            user=self.profile.user_object,
+            labels=[self.conference.conference_slug],
+            roles=['Volunteer'])
+        show_general_status(request, remove_response, self.__class__.__name__)
+
+        person = Person(
+            user=self.profile.user_object,
+            public_id=self.profile.pk,
+            role='Volunteer')
+        for assigned_event in request.POST.getlist('events'):
+            set_response = set_person(
+                assigned_event,
+                person)
+            show_general_status(request,
+                                set_response,
+                                self.__class__.__name__)
+
+        send_schedule_update_mail('Volunteer', self.profile)
+        # not checking status of sending email, as this is a public thread
+        return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
 
     def dispatch(self, *args, **kwargs):
         return super(VolunteerSignupView, self).dispatch(*args, **kwargs)
