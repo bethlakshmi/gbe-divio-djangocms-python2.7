@@ -1,15 +1,12 @@
 {% extends 'base.tmpl' %}
-{% load staticfiles %}
+{% load staticfiles sekizai_tags %}
 
 {% block title %}
   Assign Volunteer Slots
 {% endblock %}
-
 {% block head %}
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
 {% endblock %}
-
 {% block content %}
 <div class="special_functions">
   <a href="{% url 'gbe:volunteer_review_list' %}">Review All Volunteers</a> <br/>
@@ -72,30 +69,30 @@
   </div>
   <div>
     Toggle column(s):
-    <a class="toggle-vis" data-column="1">
+    <a class="toggle-vis" id="gbe-table-select" data-column="1">
 	Window</a> -
-      <a class="toggle-vis" data-column="2">
+      <a class="toggle-vis" id="gbe-table-select" data-column="2">
 	Pref</a> -
-      <a class="toggle-vis" data-column="3">
+      <a class="toggle-vis" id="gbe-table-select" data-column="3">
 	Event</a> -
-      <a class="toggle-vis" data-column="4">
+      <a class="toggle-vis" id="gbe-table-select" data-column="4">
 	Start</a> -
-      <a class="toggle-vis" data-column="5">
+      <a class="toggle-vis" id="gbe-table-select" data-column="5">
 	End</a> -
-      <a class="toggle-vis" data-column="6">
+      <a class="toggle-vis" id="gbe-table-select" data-column="6">
 	Parent</a> -
-      <a class="toggle-vis" data-column="7">
+      <a class="toggle-vis" id="gbe-table-select" data-column="7">
 	Have</a> -
-      <a class="toggle-vis" data-column="8">
+      <a class="toggle-vis" id="gbe-table-select" data-column="8">
 	Need</a> -
-      <a class="toggle-vis" data-column="9">
+      <a class="toggle-vis" id="gbe-table-select" data-column="9">
 	Full</a>
   </div>
   <div>
   <form action="{{ actionURL }}" method="post">
     {% csrf_token %}
     <input type='hidden' id="id_accepted" name="accepted" value="3">
-    <table id="assign_volunteer" class="order-column" cellspacing="0" width="100%">
+    <table id="assign_volunteer" class="order-column table table-bordered" cellspacing="0" width="100%">
       <thead>
         <tr class="bid-table">
             <th class="bid-table">&nbsp;</th>
@@ -186,21 +183,24 @@
     <input type="submit" value="Submit Form"> 
   </div>
 </div>
-<script>
+</form>
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script>
   $(document).ready(function() {
-    var table = $('#assign_volunteer').DataTable();
- 
+    var table = $('#assign_volunteer').DataTable({
+        "paging": false});
+
     $('a.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
- 
+
         // Get the column API object
         var column = table.column( $(this).attr('data-column') );
- 
+
         // Toggle the visibility
         column.visible( ! column.visible() );
     } );
 } );
   </script>
-</form>
-
+{% endaddtoblock %}
 {% endblock %}

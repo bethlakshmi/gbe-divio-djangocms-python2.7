@@ -519,6 +519,7 @@ class Event(Schedulable):
     eventitem = models.ForeignKey(EventItem, related_name="scheduler_events")
     starttime = models.DateTimeField(blank=True)
     max_volunteer = models.PositiveIntegerField(default=0)
+    approval_needed = models.BooleanField(default=False)
 
     def get_open_rehearsals(self):
         rehearsals = [

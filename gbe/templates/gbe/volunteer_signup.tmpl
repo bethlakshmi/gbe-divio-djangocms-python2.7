@@ -1,0 +1,111 @@
+{% extends 'base.tmpl' %}
+{% load staticfiles sekizai_tags %}
+
+{% block title %}
+  Volunteer Signup
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+{% endblock %}
+{{ instructions }}
+{% block content %}
+<div>
+  <h2>Volunteer for {{ conference }}</h2>
+  <div>
+    Toggle column(s):
+    <a class="toggle-vis" id="gbe-table-select" data-column="1">
+	Date</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="2">
+	Name</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="3">
+	Start</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="4">
+	End</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="5">
+	Area</a>
+  </div>
+  <div>
+  <form action="{{ actionURL }}" method="post">
+    {% csrf_token %}
+    <input type='hidden' id="id_accepted" name="accepted" value="3">
+    <table id="volunteer_signup" class="order-column table table-bordered" cellspacing="0" width="100%">
+      <thead>
+        <tr class="bid-table">
+            <th class="bid-table">&nbsp;</th>
+            <th class="bid-table">Date</th>
+            <th class="bid-table">Name</th>
+            <th class="bid-table">Start</th>
+            <th class="bid-table">End</th>
+            <th class="bid-table">Area</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr class="bid-table">
+            <th class="bid-table">&nbsp;</th>
+            <th class="bid-table">Date</th>
+            <th class="bid-table">Name</th>
+            <th class="bid-table">Start</th>
+            <th class="bid-table">End</th>
+            <th class="bid-table">Area</th>
+        </tr>
+      </tfoot>
+      <tbody>
+        {% for opportunity in volunteer_opps %}
+        <tr class="bid-table {% if opportunity.booked and opportunity.occurrence.approval_needed%}info{% elif opportunity.booked %}success{% endif %}">
+            <td class="bid-table">
+              <input id="id_events_{{ forloop.counter0 }}"
+                name="events" type="checkbox" value="{{opportunity.occurrence.pk}}"
+                {% if opportunity.booked %}checked="checked"{% endif %}/>
+            </td>
+            <td class="bid-table">
+              {{opportunity.occurrence.starttime}}
+            </td>
+            <td class="bid-table">
+<a href="{% url 'scheduling:detail_view' opportunity.eventitem.eventitem_id%}">
+                {{opportunity.eventitem}}
+              </a></td>
+            <td class="bid-table">{{opportunity.occurrence.start_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
+            <td class="bid-table">
+            {{opportunity.occurrence.end_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
+            <td class="bid-table">
+              {% if opportunity.parent_event %}
+<a href="{% url 'scheduling:edit_event' opportunity.eventitem.child.e_conference.conference_slug opportunity.parent_event.pk%}">
+                {{opportunity.parent_event}}
+              </a><br>
+	      {% endif %}
+              {% for area in opportunity.staff_areas %}
+<a href="{% url 'scheduling:edit_staff' area.id %}">
+                {{area}}
+              </a><br>
+	    {% endfor %}
+            </td>
+        </tr>
+        {% endfor%}
+      </tbody>
+    </table>
+    <br><br>
+    <input type="submit" value="Submit Form"> 
+  </div>
+</div>
+</form>
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script>
+  $(document).ready(function() {
+    var table = $('#volunteer_signup').DataTable({
+        "paging": false});
+
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+} );
+  </script>
+{% endaddtoblock %}
+{% endblock %}
