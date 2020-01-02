@@ -56,6 +56,17 @@ class VolunteerSignupView(View):
         self.conference = Conference.objects.filter(
                     accepting_bids=True).first()
 
+    def get_bookings(self, request):
+        sched_response = get_schedule(
+            user=self.profile.user_object,
+            labels=[self.conference.conference_slug, ],
+            roles=['Volunteer', ])
+        show_general_status(request, sched_response, "VolunteerSignup")
+        booking_ids = []
+        for schedule_item in sched_response.schedule_items:
+            booking_ids += [schedule_item.event.pk]
+        return request, booking_ids
+
     def make_context(self, request):
         volunteer_opps = []
         response = get_occurrences(
@@ -65,14 +76,7 @@ class VolunteerSignupView(View):
         rehearsals = GenericEvent.objects.filter(
             type='Rehearsal Slot', e_conference=self.conference
             ).values_list('eventitem_id', flat=True)
-        sched_response = get_schedule(
-            user=self.profile.user_object,
-            labels=[self.conference.conference_slug, ],
-            roles=['Volunteer', ])
-        show_general_status(request, sched_response, "VolunteerSignup")
-        booking_ids = []
-        for schedule_item in sched_response.schedule_items:
-            booking_ids += [schedule_item.event.pk]
+        request, booking_ids = self.get_bookings(request)
 
         volunteer_events = Event.objects.filter(
             e_conference=self.conference)
@@ -138,23 +142,34 @@ class VolunteerSignupView(View):
         redirect = self.groundwork(request, args, kwargs)
         if redirect:
             return HttpResponseRedirect(redirect)
-        remove_response = remove_person(
-            user=self.profile.user_object,
-            labels=[self.conference.conference_slug],
-            roles=['Volunteer'])
-        show_general_status(request, remove_response, self.__class__.__name__)
+        selected_events = []
+        for event in request.POST.getlist('events'):
+            selected_events += [int(event)]
+        request, booking_ids = self.get_bookings(request)
+        remove_ids = []
+        for booking_id in booking_ids:
+            if booking_id not in selected_events:
+                remove_ids += [booking_id]
+        if len(remove_ids) > 0:
+            remove_response = remove_person(
+                user=self.profile.user_object,
+                occurrence_ids=remove_ids)
+            show_general_status(request,
+                                remove_response,
+                                self.__class__.__name__)
 
         person = Person(
             user=self.profile.user_object,
             public_id=self.profile.pk,
             role='Volunteer')
-        for assigned_event in request.POST.getlist('events'):
-            set_response = set_person(
-                assigned_event,
-                person)
-            show_general_status(request,
-                                set_response,
-                                self.__class__.__name__)
+        for assigned_event in selected_events:
+            if assigned_event not in booking_ids:
+                set_response = set_person(
+                    assigned_event,
+                    person)
+                show_general_status(request,
+                                    set_response,
+                                    self.__class__.__name__)
 
         send_schedule_update_mail('Volunteer', self.profile)
         # not checking status of sending email, as this is a public thread
