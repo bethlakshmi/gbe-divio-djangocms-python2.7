@@ -8,7 +8,7 @@
       <div class='vendor'>
         {% if vendor.submitted %}
           <a href = '{% url 'gbe:vendor_view' vendor.id%}'> 
-            {{ vendor }} 
+            <i class="fas fa-check-circle text-success"></i> {{ vendor }} 
           </a>(Click to view)
           {% for value, state in acceptance_states %}
             {% if value == vendor.accepted %}
@@ -17,20 +17,25 @@
           {% endfor %}
           <br>
         {% else %}
-          <a href = '{% url 'gbe:vendor_edit' vendor.id %}'> 
-            {{ vendor }} 
-          </a>(Click to edit)
+          <a href='{% url 'gbe:vendor_edit' vendor.id %}' class='text-danger'> 
+            <i class="fas fa-arrow-alt-circle-right"></i> <b>{{ vendor }}</b>
+          </a>(Click to edit) - {% if vendor_paid %}
+              Fee has been paid, submit NOW!{% elif vendor_pay_link %}
+              <a href = '{{vendor_pay_link}}'>Pay Fee</a>{% else %}
+              Payment instructions coming soon.{% endif %}
           <br>
       {% endif %}
-      </div> 
-      {% for alert in vendor.alerts %}
-        <span class='alert'> {{ alert|safe}}</span> <br>	      	 
-      {% endfor %}
-
+      </div>
     {% endfor %}
-    <ul class="rightsidebar">
-      <li><a href='{% url 'gbe:vendor_create' %}'>Propose a new business</a></li>
-    </ul>    
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+    <a class="btn btn-dark" href='{% url 'gbe:vendor_create' %}' role="button">
+        Propose Business</a>  
+    </div>
+  </div>
+</div><br>
    </div>
   {% endif %}
 

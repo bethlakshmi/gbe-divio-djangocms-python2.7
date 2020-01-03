@@ -6,7 +6,7 @@
     {% for act in acts %}
       <div class='act'>
         {% if act.submitted %}
-	        {{ act }} - {{act.get_accepted_display}} 
+	        <i class="fas fa-check-circle text-success"></i> {{ act }} - {{act.get_accepted_display}} 
           <ul>
             <li> 
               <a href = '{% url 'gbe:act_view' act.id %}'>View</a> act
@@ -17,24 +17,27 @@
             </li>
             {% endif %}
         {% elif act.performer.contact == profile %}
-	  {{ act }} - Not submitted
+	  <span class="text-danger"><i class="fas fa-arrow-alt-circle-right"></i> 
+      <b>{{ act }}</b></span> - Not submitted
 	<ul>
 	    <li><a href = '{% url 'gbe:act_edit' act.id %}'> View/edit </a>
 	       this act bid</li>
+      <li>{% if act_paid %}Fee has been paid, submit NOW!{% elif act_pay_link %}
+          <a href = '{{act_pay_link}}'>Pay Fee</a>{% else %}Payment instructions coming soon.{% endif %}
 	  {% endif %}
 	  {% if historical and act.performer.contact == profile %}
       <li><a href='{% url 'gbe:clone_bid' bid_type='Act' bid_id=act.id %}'>Clone this act</a></li>
     {% endif %}
-	  </ul>
-       </div> 	         
-        {% for alert in act.alerts %}
-          <span class='alert'> {{ alert|safe}}</span> <br>	      	 
-        {% endfor %}
+	  </ul></div>
     {% endfor %}
 {% else %}
   {{ profile.display_name }} has no acts listed.	   
   {% endif %}
-    <a href='{% url 'gbe:act_create' %}'>Propose an{% if acts %}other{% endif %} act</a>
-
-
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <a class="btn btn-dark" role="button" href='{% url 'gbe:act_create' %}'>Propose Act</a>
+    </div>
+  </div>
+</div><br>
 </div>

@@ -29,7 +29,11 @@
     <input type="submit" name="submit" value="{{nodraft}}">
    {% else %}
    <input type="submit" name="draft" formnovalidate value="Save Draft">
-   <input type="submit" name="submit" value="Submit For Approval">
+     {% if fee_paid %}
+     <input type="submit" name="submit" value="Submit For Approval">
+     {% else %}
+     <input type="submit" name="payfee" formnovalidate value="Pay Fee">
+     {% endif %}
    {% endif %}
    </form>
 

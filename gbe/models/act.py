@@ -94,16 +94,6 @@ class Act (Biddable, ActItem):
         return self.accepted == 3
 
     @property
-    def schedule_headers(self):
-        # This list can change
-        return ['Performer',
-                'Act Title',
-                'Photo Link',
-                'Video Link',
-                'Bio Link',
-                'Order']
-
-    @property
     def visible(self, current=True):
         return self.accepted == 3
 
@@ -139,12 +129,6 @@ class Act (Biddable, ActItem):
                 acceptance_states[self.accepted][1],
                 castings]
 
-    @property
-    def complete(self):
-        return (self.performer.complete and
-                len(self.b_title) > 0 and
-                len(self.b_description) > 0)
-
     def validate_unique(self, *args, **kwargs):
         # conference, title and performer contact should all be unique before
         # the act is saved.
@@ -157,29 +141,6 @@ class Act (Biddable, ActItem):
             raise ValidationError({
                 NON_FIELD_ERRORS: [act_not_unique, ]
             })
-
-    @property
-    def alerts(self):
-        '''
-        Return a list of alerts pertaining to this object
-        '''
-        this_act_alerts = []
-        if self.complete:
-            if self.submitted:
-                this_act_alerts.append(
-                    act_alerts['act_complete_submitted'])
-            else:
-                this_act_alerts.append(
-                    act_alerts['act_complete_not_submitted'] % reverse(
-                        "act_edit", urlconf='gbe.urls', args=[self.id]))
-        else:
-            if self.submitted:
-                this_act_alerts.append(
-                    act_alerts['act_incomplete_submitted'])
-            else:
-                this_act_alerts.append(
-                    act_alerts['act_incomplete_not_submitted'])
-        return this_act_alerts
 
     @property
     def bidder_is_active(self):

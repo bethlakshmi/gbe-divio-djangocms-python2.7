@@ -414,6 +414,12 @@ default_volunteer_no_bid_msg = \
 existing_volunteer_msg = \
     "You've already offered to volunteer, " + \
     "would you like to update your proposal?"
+fee_instructions = '''<a href="{{fee_link}}" target="_blank">Make Payment at \
+Brown Paper Tickets</a><br>Our records show that you have not paid your \
+related fees.  You can pay at Brown Paper Tickets by pressing the "Pay Fee" \
+button below.  Once the fee is paid, please return to this form and submit \
+your draft.  In the meantime, pressing either button will safe a draft of \
+your application.'''
 payment_needed_msg = '''
 <FONT SIZE="+2">
 Thank you for submitting your work for The Great Burlesque Expo!</FONT>

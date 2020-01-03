@@ -14,6 +14,7 @@ from tests.functions.gbe_functions import (
     login_as,
     location,
     make_vendor_app_purchase,
+    make_vendor_app_ticket,
     set_image,
 )
 from gbetext import (
@@ -114,6 +115,8 @@ class TestEditVendor(TestCase):
         response = self.post_edit_paid_vendor_draft()
         self.assertEqual(response.status_code, 200)
         self.assertTrue("Profile View" in response.content)
+        assert_alert_exists(
+            response, 'success', 'Success', default_vendor_draft_msg)
 
     def test_vendor_edit_post_form_valid_submit_not_paid(self):
         vendor = VendorFactory()
@@ -126,6 +129,23 @@ class TestEditVendor(TestCase):
         self.assertTrue("Vendor Payment" in response.content)
         self.assertContains(response, payment_needed_msg % (
             vendor_submittal_link(vendor.profile.user_object.id)))
+
+    def test_vendor_bid_payfee(self):
+        '''users has unpaid act, and chooses to pay the fee'''
+        vendor = VendorFactory()
+        login_as(vendor.profile, self)
+        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
+        data = self.get_vendor_form()
+        data['thebiz-profile'] = vendor.profile.pk
+        data['payfee'] = 1
+        bpt_event_id = make_vendor_app_ticket(vendor.b_conference)
+        response = self.client.post(url, data, follow=True)
+        self.assertRedirects(
+            response,
+            "/en/event/ID-%d/%s/" % (
+                vendor.profile.user_object.id,
+                bpt_event_id),
+            target_status_code=404)
 
     def test_vendor_edit_post_form_valid_submit_paid_wrong_conf(self):
         vendor = VendorFactory()
@@ -143,6 +163,11 @@ class TestEditVendor(TestCase):
 
     def test_edit_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''
+        msg = UserMessageFactory(
+            view='MakeVendorView',
+            code='FEE_MESSAGE',
+            summary="Vendor Bid Instructions",
+            description="Test Fee Instructions Message")
         vendor = VendorFactory()
         login_as(vendor.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
@@ -151,6 +176,22 @@ class TestEditVendor(TestCase):
         self.assertTrue(
             '<h2 class="subtitle">Vendor Application</h2>'
             in response.content)
+        self.assertContains(response, "Test Fee Instructions Message")
+        self.assertContains(response, 'value="Pay Fee"')
+
+    def test_edit_paid_bid_get(self):
+        '''edit_bid, not post, should take us to edit process'''
+        vendor = VendorFactory()
+        make_vendor_app_purchase(vendor.b_conference,
+                                 vendor.profile.user_object)
+        login_as(vendor.profile, self)
+        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            '<h2 class="subtitle">Vendor Application</h2>'
+            in response.content)
+        self.assertContains(response, 'value="Submit For Approval"')
 
     def test_edit_bid_get_no_help(self):
         '''edit_bid, not post, should take us to edit process'''
@@ -170,12 +211,6 @@ class TestEditVendor(TestCase):
         self.assertEqual(response.status_code, 200)
         assert_alert_exists(
             response, 'success', 'Success', default_vendor_submit_msg)
-
-    def test_vendor_draft_make_message(self):
-        response = self.post_edit_paid_vendor_draft()
-        self.assertEqual(200, response.status_code)
-        assert_alert_exists(
-            response, 'success', 'Success', default_vendor_draft_msg)
 
     def test_vendor_submit_has_message(self):
         msg = UserMessageFactory(
