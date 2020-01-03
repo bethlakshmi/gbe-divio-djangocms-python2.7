@@ -83,7 +83,7 @@ class TestCreateVendor(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Profile View' in response.content)
         draft_string = (
-            '<span class="shadow-red"><b>%s</b></span> '
+            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
             ) % data['thebiz-b_title']
         self.assertContains(response, "(Click to edit)")
         self.assertContains(response, draft_string)

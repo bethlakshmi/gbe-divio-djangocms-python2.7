@@ -133,7 +133,7 @@ class TestCreateAct(TestCase):
         response, data = self.post_unpaid_act_draft()
         self.assertEqual(response.status_code, 200)
         expected_string = (
-            '<span class="shadow-red"><b>%s</b></span> - Not submitted'
+            '<b>%s</b></span> - Not submitted'
             ) % data['theact-b_title']
         assert expected_string in response.content
         assert_alert_exists(

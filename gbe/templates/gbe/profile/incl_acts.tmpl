@@ -22,8 +22,8 @@
 	<ul>
 	    <li><a href = '{% url 'gbe:act_edit' act.id %}'> View/edit </a>
 	       this act bid</li>
-      <li>{% if act_paid %}Fee has been paid, submit NOW!{% else %}
-          <a href = '{{act_pay_link}}'>Pay Fee</a>{% endif %}
+      <li>{% if act_paid %}Fee has been paid, submit NOW!{% elif act_pay_link %}
+          <a href = '{{act_pay_link}}'>Pay Fee</a>{% else %}Payment instructions coming soon.{% endif %}
 	  {% endif %}
 	  {% if historical and act.performer.contact == profile %}
       <li><a href='{% url 'gbe:clone_bid' bid_type='Act' bid_id=act.id %}'>Clone this act</a></li>

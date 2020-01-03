@@ -209,7 +209,7 @@ class TestIndex(TestCase):
         self.assert_event_is_not_present(response, self.previous_sched)
         self.assert_event_is_present(response, self.current_class_sched)
         self.assert_event_is_not_present(response, self.previous_class_sched)
-        self.assertNotContains(response, "shadow-red")
+        self.assertNotContains(response, "text-danger")
 
     def test_historical_view(self):
         url = reverse('home', urlconf='gbe.urls')
@@ -460,7 +460,7 @@ class TestIndex(TestCase):
                                      submitted=False,
                                      b_conference=self.current_conf)
         expected_string = (
-            '<span class="shadow-red"><b>%s</b></span> - Not submitted'
+            '<b>%s</b></span> - Not submitted'
             ) % self.unpaid_act.b_title
         bpt_event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
@@ -477,7 +477,7 @@ class TestIndex(TestCase):
                                    submitted=False,
                                    b_conference=self.current_conf)
         expected_string = (
-            '<span class="shadow-red"><b>%s</b></span> - Not submitted'
+            '<b>%s</b></span> - Not submitted'
             ) % self.paid_act.b_title
         bpt_event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
@@ -493,7 +493,7 @@ class TestIndex(TestCase):
             submitted=False,
             b_conference=self.current_conf)
         expected_string = (
-            '<span class="shadow-red"><b>%s</b></span>'
+            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
             ) % self.unpaid_vendor.b_title
         bpt_event_id = make_vendor_app_ticket(self.current_conf)
         response = self.get_landing_page()
@@ -511,7 +511,7 @@ class TestIndex(TestCase):
             submitted=False,
             b_conference=self.current_conf)
         expected_string = (
-            '<span class="shadow-red"><b>%s</b></span>'
+            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
             ) % self.paid_vendor.b_title
         bpt_event_id = make_vendor_app_ticket(self.current_conf)
         response = self.get_landing_page()
