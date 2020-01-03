@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from gbetext import calendar_type as calendar_type_options
 from django.utils.formats import date_format
 from settings import (
-    TIME_FORMAT,
+    GBE_TIME_FORMAT,
     URL_DATE,
 )
 from datetime import (
@@ -118,8 +118,8 @@ class ShowCalendarView(View):
             event = events.filter(pk=occurrence.eventitem.event.pk).first()
             hour = occurrence.start_time.strftime("%-I:00 %p")
             occurrence_detail = {
-                'start':  occurrence.start_time.strftime(TIME_FORMAT),
-                'end': occurrence.end_time.strftime(TIME_FORMAT),
+                'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
+                'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
                 'title': event.e_title,
                 'location': occurrence.location,
                 'hour': hour,
