@@ -30,6 +30,10 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
     set_image,
+    make_vendor_app_purchase,
+    make_vendor_app_ticket,
+    make_act_app_ticket,
+    make_act_app_purchase,
 )
 from tests.contexts import ActTechInfoContext
 from django.utils.formats import date_format
@@ -166,6 +170,11 @@ class TestIndex(TestCase):
             urlconf="gbe.scheduling.urls",
             args=[event.eventitem.eventitem_id]))
 
+    def get_landing_page(self):
+        self.url = reverse('home', urlconf='gbe.urls')
+        login_as(self.profile, self)
+        return self.client.get(self.url)
+
     def test_no_profile(self):
         url = reverse('home', urlconf="gbe.urls")
         login_as(UserFactory(), self)
@@ -175,9 +184,7 @@ class TestIndex(TestCase):
     def test_landing_page_path(self):
         '''Basic test of landing_page view
         '''
-        url = reverse('home', urlconf='gbe.urls')
-        login_as(self.profile, self)
-        response = self.client.get(url)
+        response = self.get_landing_page()
         self.assertEqual(response.status_code, 200)
         content = response.content
         does_not_show_previous = (
@@ -202,6 +209,7 @@ class TestIndex(TestCase):
         self.assert_event_is_not_present(response, self.previous_sched)
         self.assert_event_is_present(response, self.current_class_sched)
         self.assert_event_is_not_present(response, self.previous_class_sched)
+        self.assertNotContains(response, "text-danger")
 
     def test_historical_view(self):
         url = reverse('home', urlconf='gbe.urls')
@@ -307,9 +315,7 @@ class TestIndex(TestCase):
 
     def test_profile_image(self):
         set_image(self.performer)
-        url = reverse('home', urlconf='gbe.urls')
-        login_as(self.profile, self)
-        response = self.client.get(url)
+        response = self.get_landing_page()
         self.assertContains(response, self.performer.name)
         self.assertContains(response, self.performer.img.url)
 
@@ -366,16 +372,14 @@ class TestIndex(TestCase):
         context = ClassContext(
             conference=self.current_conf)
         context.set_interest(self.profile)
-        url = reverse('home', urlconf='gbe.urls')
-        login_as(self.profile, self)
-        response = self.client.get(url)
+        response = self.get_landing_page()
         set_fav_link = reverse(
             "set_favorite",
             args=[context.sched_event.pk, "off"],
             urlconf="gbe.scheduling.urls")
         self.assertContains(response, "%s?next=%s" % (
             set_fav_link,
-            url))
+            self.url))
 
     def test_teacher_interest(self):
         '''Basic test of landing_page view
@@ -386,9 +390,7 @@ class TestIndex(TestCase):
         interested = []
         for i in range(0, 3):
             interested += [context.set_interest()]
-        url = reverse('home', urlconf='gbe.urls')
-        login_as(self.profile, self)
-        response = self.client.get(url)
+        response = self.get_landing_page()
         for person in interested:
             self.assertContains(
                 response,
@@ -426,16 +428,14 @@ class TestIndex(TestCase):
             starttime=datetime.now()-timedelta(days=1))
         context.set_interest(self.profile)
         context.setup_eval()
-        url = reverse('home', urlconf='gbe.urls')
-        login_as(self.profile, self)
-        response = self.client.get(url)
+        response = self.get_landing_page()
         eval_link = reverse(
             "eval_event",
             args=[context.sched_event.pk, ],
             urlconf="gbe.scheduling.urls")
         self.assertContains(response, "%s?next=%s" % (
             eval_link,
-            url))
+            self.url))
 
     def test_eval_answered(self):
         '''Basic test of landing_page view
@@ -445,14 +445,78 @@ class TestIndex(TestCase):
             starttime=datetime.now()-timedelta(days=1))
         context.set_interest(self.profile)
         context.set_eval_answerer(self.profile)
-        url = reverse('home', urlconf='gbe.urls')
-        login_as(self.profile, self)
-        response = self.client.get(url)
+        response = self.get_landing_page()
         eval_link = reverse(
             "eval_event",
             args=[context.sched_event.pk, ],
             urlconf="gbe.scheduling.urls")
         self.assertNotContains(response, "%s?next=%s" % (
             eval_link,
-            url))
+            self.url))
         self.assertContains(response, "You have already rated this class")
+
+    def test_unpaid_act_draft(self):
+        self.unpaid_act = ActFactory(performer=self.performer,
+                                     submitted=False,
+                                     b_conference=self.current_conf)
+        expected_string = (
+            '<b>%s</b></span> - Not submitted'
+            ) % self.unpaid_act.b_title
+        bpt_event_id = make_act_app_ticket(self.current_conf)
+        response = self.get_landing_page()
+        self.assertContains(response, expected_string)
+        self.assertContains(response, "%d/%s" % (self.profile.user_object.id,
+                                                 bpt_event_id))
+
+    def test_paid_act_draft(self):
+        make_act_app_purchase(self.current_conf,
+                              self.profile.user_object)
+        make_act_app_purchase(self.current_conf,
+                              self.profile.user_object)
+        self.paid_act = ActFactory(performer=self.performer,
+                                   submitted=False,
+                                   b_conference=self.current_conf)
+        expected_string = (
+            '<b>%s</b></span> - Not submitted'
+            ) % self.paid_act.b_title
+        bpt_event_id = make_act_app_ticket(self.current_conf)
+        response = self.get_landing_page()
+        self.assertContains(response, expected_string)
+        self.assertNotContains(response, "%d/%s" % (
+            self.profile.user_object.id,
+            bpt_event_id))
+        self.assertContains(response, "Fee has been paid, submit NOW!")
+
+    def test_unpaid_vendor_draft(self):
+        self.unpaid_vendor = VendorFactory(
+            profile=self.profile,
+            submitted=False,
+            b_conference=self.current_conf)
+        expected_string = (
+            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
+            ) % self.unpaid_vendor.b_title
+        bpt_event_id = make_vendor_app_ticket(self.current_conf)
+        response = self.get_landing_page()
+        self.assertContains(response, expected_string)
+        self.assertContains(response, "%d/%s" % (self.profile.user_object.id,
+                                                 bpt_event_id))
+
+    def test_paid_vendor_draft(self):
+        make_vendor_app_purchase(self.current_conf,
+                                 self.profile.user_object)
+        make_vendor_app_purchase(self.current_conf,
+                                 self.profile.user_object)
+        self.paid_vendor = VendorFactory(
+            profile=self.profile,
+            submitted=False,
+            b_conference=self.current_conf)
+        expected_string = (
+            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
+            ) % self.paid_vendor.b_title
+        bpt_event_id = make_vendor_app_ticket(self.current_conf)
+        response = self.get_landing_page()
+        self.assertContains(response, expected_string)
+        self.assertNotContains(response, "%d/%s" % (
+            self.profile.user_object.id,
+            bpt_event_id))
+        self.assertContains(response, "Fee has been paid, submit NOW!")

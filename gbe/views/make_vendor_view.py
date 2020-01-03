@@ -61,8 +61,8 @@ class MakeVendorView(MakeBidView):
                        'physical_address': self.owner.address}
         return initial
 
-    def make_context(self):
-        context = super(MakeVendorView, self).make_context()
+    def make_context(self, request):
+        context = super(MakeVendorView, self).make_context(request)
         context['fee_link'] = self.fee_link
         return context
 

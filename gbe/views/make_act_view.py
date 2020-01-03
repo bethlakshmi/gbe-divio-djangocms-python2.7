@@ -102,8 +102,8 @@ class MakeActView(MakeBidView):
         q = Performer.objects.filter(contact=self.owner)
         self.form.fields['performer'] = ModelChoiceField(queryset=q)
 
-    def make_context(self):
-        context = super(MakeActView, self).make_context()
+    def make_context(self, request):
+        context = super(MakeActView, self).make_context(request)
         context['fee_link'] = self.fee_link
         return context
 
@@ -138,7 +138,7 @@ class MakeActView(MakeBidView):
     def get_invalid_response(self, request):
         return display_invalid_act(
             request,
-            self.make_context(),
+            self.make_context(request),
             self.form,
             self.conference,
             self.owner,
