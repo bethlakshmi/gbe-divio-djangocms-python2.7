@@ -10,7 +10,6 @@ from django.shortcuts import (
 )
 from gbe.models import (
     Conference,
-    Event,
     GenericEvent,
     StaffArea,
     UserMessage,
@@ -18,6 +17,7 @@ from gbe.models import (
 from gbe_logging import log_func
 from gbe.functions import validate_profile
 from gbetext import (
+    invalid_volunteer_event,
     no_profile_msg,
     no_login_msg,
     full_login_msg,
@@ -25,6 +25,7 @@ from gbetext import (
 )
 from gbe.scheduling.views.functions import show_general_status
 from scheduler.idd import (
+    get_occurrence,
     get_occurrences,
     get_schedule,
     remove_person,
@@ -50,8 +51,7 @@ class VolunteerSignupView(View):
             messages.warning(request, user_message[0].description)
             return '%s?next=%s' % (
                 reverse('profile_update', urlconf='gbe.urls'),
-                reverse('%s_create' % self.bid_type.lower(),
-                        urlconf='gbe.urls'))
+                reverse('volunteer_signup', urlconf='gbe.urls'))
 
         self.conference = Conference.objects.filter(
                     accepting_bids=True).first()
@@ -78,8 +78,6 @@ class VolunteerSignupView(View):
             ).values_list('eventitem_id', flat=True)
         request, booking_ids = self.get_bookings(request)
 
-        volunteer_events = Event.objects.filter(
-            e_conference=self.conference)
         for event in response.occurrences:
             if (event.extra_volunteers() < 0 or event.pk in booking_ids) and (
                     event.foreign_event_id not in rehearsals):
@@ -109,8 +107,7 @@ class VolunteerSignupView(View):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated():
             follow_on = '?next=%s' % reverse(
-                '%s_create' % self.bid_type.lower(),
-                urlconf='gbe.urls')
+                'volunteer_signup', urlconf='gbe.urls')
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="USER_NOT_LOGGED_IN",
@@ -147,29 +144,51 @@ class VolunteerSignupView(View):
             selected_events += [int(event)]
         request, booking_ids = self.get_bookings(request)
         remove_ids = []
+        rehearsals = GenericEvent.objects.filter(
+            type='Rehearsal Slot', e_conference=self.conference
+            ).values_list('eventitem_id', flat=True)
         for booking_id in booking_ids:
             if booking_id not in selected_events:
                 remove_ids += [booking_id]
         if len(remove_ids) > 0:
             remove_response = remove_person(
                 user=self.profile.user_object,
+                labels=[self.conference.conference_slug],
+                roles=['Volunteer', 'Pending Volunteer'],
                 occurrence_ids=remove_ids)
             show_general_status(request,
                                 remove_response,
                                 self.__class__.__name__)
-
-        person = Person(
-            user=self.profile.user_object,
-            public_id=self.profile.pk,
-            role='Volunteer')
         for assigned_event in selected_events:
             if assigned_event not in booking_ids:
-                set_response = set_person(
-                    assigned_event,
-                    person)
-                show_general_status(request,
-                                    set_response,
-                                    self.__class__.__name__)
+                response = get_occurrence(assigned_event)
+                show_general_status(request, response, "VolunteerSignup")
+                if response.occurrence and (
+                        response.occurrence.extra_volunteers() < 0) and (
+                        event.foreign_event_id not in rehearsals):
+                    allowed_role = "Volunteer"
+                    if response.occurrence.approval_needed:
+                        allowed_role = "Pending Volunteer"
+                    set_response = set_person(
+                        assigned_event,
+                        Person(
+                            user=self.profile.user_object,
+                            public_id=self.profile.pk,
+                            role=allowed_role))
+                    show_general_status(request,
+                                        set_response,
+                                        self.__class__.__name__)
+                elif response.occurrence:
+                    user_message = UserMessage.objects.get_or_create(
+                        view=self.__class__.__name__,
+                        code="INVALID_EVENT",
+                        defaults={
+                            'summary': "Invalid Event (event name appended)",
+                            'description': invalid_volunteer_event})
+                    messages.error(
+                        request,
+                        user_message[0].description + str(
+                            response.occurrence.eventitem))
 
         send_schedule_update_mail('Volunteer', self.profile)
         # not checking status of sending email, as this is a public thread

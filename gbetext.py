@@ -277,7 +277,8 @@ role_options = (
     ('Staff Lead', "Staff Lead"),
     ('Teacher', "Teacher"),
     ('Technical Director', "Technical Director"),
-    ('Volunteer', "Volunteer"),)
+    ('Volunteer', "Volunteer"),
+    ('Pending Volunteer', "Pending Volunteer"),)
 
 act_casting_label = "Section"
 
@@ -418,6 +419,9 @@ volunteer_signup_instructions = '''The following are the currently available \
 volunteer opportunities.  Check any items you'd like to volunteer for.  Green 
 rows show events you're previously signed up for.  Blue rows show opportunities
 you've signed up for that are pending approval.
+'''
+invalid_volunteer_event = '''The following event is not currently available.  \
+It may have just reached a maximum number of volunteers. Unavailable event is \
 '''
 payment_needed_msg = '''
 <FONT SIZE="+2">
