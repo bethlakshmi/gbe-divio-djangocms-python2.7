@@ -32,5 +32,12 @@
   {% else %}
     {{ profile.display_name }} has not proposed any classes<br>
   {% endif %}
-      <a href='{% url 'gbe:class_create' %}'>Propose a{%if proposed_classes%}nother{%endif%} class</a>
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <a class="btn btn-dark" role="button" href='{% url 'gbe:class_create' %}'>Propose Class</a>
+    </div>
+  </div>
+</div><br>
 </div>

@@ -33,5 +33,11 @@
 {% else %}
   {{ profile.display_name }} has no acts listed.	   
   {% endif %}
-    <a href='{% url 'gbe:act_create' %}'>Propose an{% if acts %}other{% endif %} act</a>
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <a class="btn btn-dark" role="button" href='{% url 'gbe:act_create' %}'>Propose Act</a>
+    </div>
+  </div>
+</div><br>
 </div>

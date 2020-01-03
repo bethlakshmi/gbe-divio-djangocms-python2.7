@@ -26,9 +26,15 @@
       {% endif %}
       </div>
     {% endfor %}
-    <ul class="rightsidebar">
-      <li><a href='{% url 'gbe:vendor_create' %}'>Propose a new business</a></li>
-    </ul>    
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+    <a class="btn btn-dark" href='{% url 'gbe:vendor_create' %}' role="button">
+        Propose Business</a>  
+    </div>
+  </div>
+</div><br>
    </div>
   {% endif %}
 
