@@ -16,16 +16,21 @@ from tests.functions.gbe_functions import (
     current_conference,
     assert_alert_exists,
     make_act_app_purchase,
+    make_act_app_ticket,
     post_act_conflict,
 )
 from gbetext import (
     default_act_submit_msg,
     default_act_draft_msg,
     default_act_title_conflict,
+    fee_instructions,
 )
 from gbe.models import (
     Conference,
     UserMessage,
+)
+from gbe.ticketing_idd_interface import (
+    performer_act_submittal_link,
 )
 
 
@@ -70,7 +75,7 @@ class TestCreateAct(TestCase):
         response = self.client.post(url, data=act_form, follow=True)
         return response, act_form
 
-    def post_paid_act_draft(self):
+    def post_unpaid_act_draft(self):
         current_conference()
         login_as(self.performer.performer_profile, self)
         POST = self.get_act_form()
@@ -114,31 +119,66 @@ class TestCreateAct(TestCase):
 
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
-        current_conference()
         login_as(self.performer.performer_profile, self)
         POST = self.get_act_form()
         POST.update({'submit': ''})
         response = self.client.post(self.url, data=POST)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Fee has not been Paid' in response.content)
 
     def test_act_bid_post_no_submit(self):
         '''act_bid, not submitting and no other problems,
         should redirect to home'''
-        current_conference()
-        response, data = self.post_paid_act_draft()
+        make_act_app_purchase(self.current_conference,
+                              self.performer.performer_profile.user_object)
+        response, data = self.post_unpaid_act_draft()
         self.assertEqual(response.status_code, 200)
-        act_name = data['theact-b_title']
-        expected_string = "%s - Not submitted" % act_name
+        expected_string = (
+            '<b>%s</b></span> - Not submitted'
+            ) % data['theact-b_title']
         assert expected_string in response.content
-        self.assertContains(response, data['theact-b_title'])
+        assert_alert_exists(
+            response, 'success', 'Success', default_act_draft_msg)
+        self.assertContains(response, 'Fee has been paid, submit NOW!')
+
+    def test_act_bid_payfee(self):
+        '''users has unpaid act, and chooses to pay the fee'''
+        bpt_event_id = make_act_app_ticket(self.current_conference)
+        login_as(self.performer.performer_profile, self)
+        POST = self.get_act_form()
+        POST['payfee'] = 1
+        response = self.client.post(self.url, data=POST, follow=True)
+        self.assertRedirects(
+            response,
+            "/en/event/ID-%d/%s/" % (
+                self.performer.performer_profile.user_object.id,
+                bpt_event_id),
+            target_status_code=404)
+
+    def test_act_bid_not_paid(self):
+        '''act_bid, not post, not paid should take us to bid process'''
+        login_as(self.performer.performer_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Propose an Act')
+        self.assertContains(response, fee_instructions)
+        self.assertContains(response, 'value="Pay Fee"')
 
     def test_act_bid_not_post(self):
-        '''act_bid, not post, should take us to bid process'''
+        '''act_bid, not post, not paid should take us to bid process'''
+        make_act_app_purchase(self.current_conference,
+                              self.performer.performer_profile.user_object)
+        msg = UserMessageFactory(
+            view='MakeActView',
+            code='BID_INSTRUCTIONS',
+            summary="Act Bid Instructions",
+            description="Test Bid Instructions Message")
         login_as(self.performer.performer_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Propose an Act' in response.content)
+        self.assertNotContains(response, fee_instructions)
+        self.assertContains(response, "Test Bid Instructions Message")
+        self.assertContains(response, 'value="Submit For Approval"')
 
     def test_act_submit_paid_act(self):
         response, data = self.post_paid_act_submission()
@@ -182,12 +222,6 @@ class TestCreateAct(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_act_submit_msg)
 
-    def test_act_draft_make_message(self):
-        response, data = self.post_paid_act_draft()
-        self.assertEqual(200, response.status_code)
-        assert_alert_exists(
-            response, 'success', 'Success', default_act_draft_msg)
-
     def test_act_submit_has_message(self):
         msg = UserMessageFactory(
             view='MakeActView',
@@ -201,7 +235,7 @@ class TestCreateAct(TestCase):
         msg = UserMessageFactory(
             view='MakeActView',
             code='DRAFT_SUCCESS')
-        response, data = self.post_paid_act_draft()
+        response, data = self.post_unpaid_act_draft()
         self.assertEqual(200, response.status_code)
         assert_alert_exists(
             response, 'success', 'Success', msg.description)

@@ -29,7 +29,13 @@
 
     {% endfor %}
     <br>
-    <a href='{% url 'gbe:costume_create' %}'>Propose a new costume display</a></li>
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+        <a class="btn btn-dark" role="button" href='{% url 'gbe:costume_create' %}'>Propose Costume Display</a></li>
+    </div>
+  </div>
+</div><br>
    </div>
   {% endif %}
 

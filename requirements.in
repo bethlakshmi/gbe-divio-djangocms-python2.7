@@ -34,3 +34,4 @@ pytest-django==3.5.1
 pytest-cov==2.7.1
 openpyxl==2.4.9
 easy-thumbnails==2.6
+pillow==6.2.1

@@ -62,8 +62,8 @@ class MakeClassView(MakeBidView):
             performer_profile_id=self.owner.resourceitem_id)
         self.form.fields['teacher'] = ModelChoiceField(queryset=q)
 
-    def make_context(self):
-        context = super(MakeClassView, self).make_context()
+    def make_context(self, request):
+        context = super(MakeClassView, self).make_context(request)
         context['popup_text'] = avoided_constraints_popup_text
         return context
 

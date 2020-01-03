@@ -1,8 +1,4 @@
-  {% if fee_link %}
-    {% include 'payment_info.tmpl' %}
-    {% comment %} I feel dirty even doing this, but it's quick and gets the noise out of the template
-    {%endcomment %} 
-  {% endif %}
+  {{ instructions | safe }}
   <p>
     <font color=red>*</font> indicates a required field
     {% if not nodraft and draft_fields %}

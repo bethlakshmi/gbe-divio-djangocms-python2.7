@@ -245,10 +245,10 @@ class MakeVolunteerView(MakeBidView):
         self.formset += [self.form]
         return render(request,
                       'gbe/bid.tmpl',
-                      self.make_context())
+                      self.make_context(request))
 
-    def make_context(self):
-        context = super(MakeVolunteerView, self).make_context()
+    def make_context(self, request):
+        context = super(MakeVolunteerView, self).make_context(request)
         context['forms'] = self.formset
         context['nodraft'] = 'Submit'
         return context
@@ -274,7 +274,7 @@ class MakeVolunteerView(MakeBidView):
 
         return render(request,
                       'gbe/bid.tmpl',
-                      self.make_context())
+                      self.make_context(request))
 
     def set_valid_form(self, request):
         if self.bid_edit:

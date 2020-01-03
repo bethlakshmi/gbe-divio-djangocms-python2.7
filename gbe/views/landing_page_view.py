@@ -17,12 +17,17 @@ from gbe.models import (
 )
 from gbe.ticketing_idd_interface import (
     get_purchased_tickets,
+    performer_act_submittal_link,
+    verify_performer_app_paid,
+    verify_vendor_app_paid,
+    vendor_submittal_link,
 )
 from gbetext import (
     acceptance_states,
     interested_explain_msg,
 )
 from gbe.functions import (
+    get_current_conference,
     validate_perms,
     validate_profile,
 )
@@ -110,7 +115,7 @@ def LandingPageView(request, profile_id=None, historical=False):
                             args=[booking.event.pk, ],
                             urlconf='gbe.scheduling.urls')
             bookings += [booking_item]
-
+        current_conf = get_current_conference()
         context = {
             'profile': viewer_profile,
             'historical': historical,
@@ -131,6 +136,16 @@ def LandingPageView(request, profile_id=None, historical=False):
             'acceptance_states': acceptance_states,
             'admin_message': admin_message,
             'bookings': bookings,
+            'act_paid': verify_performer_app_paid(
+                viewer_profile.user_object.username,
+                current_conf),
+            'vendor_paid': verify_vendor_app_paid(
+                viewer_profile.user_object.username,
+                current_conf),
+            'act_pay_link': performer_act_submittal_link(
+                viewer_profile.user_object.id),
+            'vendor_pay_link': vendor_submittal_link(
+                viewer_profile.user_object.id),
             }
         if not historical:
             user_message = UserMessage.objects.get_or_create(

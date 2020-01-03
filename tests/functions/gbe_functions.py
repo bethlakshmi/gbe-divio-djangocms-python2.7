@@ -126,6 +126,7 @@ def assert_radio_state(response, name, button_id, value, checked=False):
                     name, value, checked_state, button_id))
     assert checked_button in response.content
 
+
 def assert_option_state(response, value, text, selected=False):
     selected_state = ""
     if selected:
@@ -134,6 +135,7 @@ def assert_option_state(response, value, text, selected=False):
         '<option value="%s"%s>%s</option>' % (
                     value, selected_state, text))
     assert option_state in response.content
+
 
 def assert_has_help_text(response, help_text):
     assert '<span class="dropt" title="Help">' in response.content
@@ -226,6 +228,14 @@ def make_act_app_purchase(conference, user_object):
     return transaction
 
 
+def make_act_app_ticket(conference):
+    bpt_event = BrownPaperEventsFactory(conference=conference,
+                                        act_submission_event=True)
+    ticket_id = "%s-1111" % (bpt_event.bpt_event_id)
+    ticket = TicketItemFactory(ticket_id=ticket_id)
+    return bpt_event.bpt_event_id
+
+
 def post_act_conflict(conference, performer, data, url, testcase):
     original = ActFactory(
         b_conference=conference,
@@ -248,6 +258,14 @@ def make_vendor_app_purchase(conference, user_object):
     ticket = TicketItemFactory(ticket_id=ticket_id)
     transaction = TransactionFactory(ticket_item=ticket,
                                      purchaser=purchaser)
+
+
+def make_vendor_app_ticket(conference):
+    bpt_event = BrownPaperEventsFactory(conference=conference,
+                                        vendor_submission_event=True)
+    ticket_id = "%s-1111" % (bpt_event.bpt_event_id)
+    ticket = TicketItemFactory(ticket_id=ticket_id)
+    return bpt_event.bpt_event_id
 
 
 def make_admission_purchase(conference,
