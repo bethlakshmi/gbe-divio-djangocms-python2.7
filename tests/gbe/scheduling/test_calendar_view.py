@@ -62,6 +62,12 @@ class TestCalendarView(TestCase):
             '<div class="col-lg-12">%s' % (
                 self.showcontext.conference.conference_name))
         self.assertContains(response, self.showcontext.show.e_title)
+        self.assertContains(
+            response, 
+            self.showcontext.sched_event.starttime.strftime("%-I:%M %p"))
+        self.assertContains(
+            response, 
+            self.showcontext.sched_event.end_time.strftime("%-I:%M %p"))
         self.assertNotContains(response, self.other_show.show.e_title)
         self.assertNotContains(response, self.classcontext.bid.e_title)
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
