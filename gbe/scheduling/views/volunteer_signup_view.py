@@ -36,7 +36,7 @@ from gbe.scheduling.views.functions import show_general_status
 from django.conf import settings
 
 
-class ShowCalendarView(View):
+class VolunteerSignupView(View):
     template = 'gbe/scheduling/calendar.tmpl'
     calendar_type = None
     conference = None
@@ -51,13 +51,9 @@ class ShowCalendarView(View):
 
     def process_inputs(self, request, args, kwargs):
         context = {}
-        self.calendar_type = None
+        self.calendar_type = "Volunteer"
         self.conference = None
         self.this_day = None
-        if "calendar_type" in kwargs:
-            self.calendar_type = kwargs['calendar_type']
-            if self.calendar_type not in calendar_type_options.values():
-                raise Http404
 
         if "day" in self.request.GET:
             try:
@@ -127,37 +123,23 @@ class ShowCalendarView(View):
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.eventitem.pk]),
             }
-            if self.conference.status != "completed":
-                occurrence_detail['favorite_link'] = reverse(
-                    'set_favorite',
+            if self.conference.status != "completed" and (
+                    self.calendar_type == "Volunteer"):
+                occurrence_detail['volunteer_link'] = reverse(
+                    'set_volunteer',
                     args=[occurrence.pk, 'on'],
                     urlconf='gbe.scheduling.urls')
-                if role == "Interested":
-                    occurrence_detail['favorite_link'] = reverse(
-                        'set_favorite',
+                if role == "Volunteer" or role == "Pending Volunteer":
+                    occurrence_detail['volunteer_link'] = reverse(
+                        'set_volunteer',
                         args=[occurrence.pk, 'off'],
                         urlconf='gbe.scheduling.urls')
                 elif role is not None:
-                    occurrence_detail['favorite_link'] = "disabled"
+                    occurrence_detail['volunteer_link'] = "disabled"
+                elif occurrence.extra_volunteers() >= 0:
+                    occurrence_detail['volunteer_link'] = "full"
                 if role:
                     occurrence_detail['highlight'] = role.lower()
-            if (self.calendar_type == 'Volunteer') and (
-                    'favorite_link' in occurrence_detail) and (
-                    occurrence_detail['favorite_link'] != "disabled"):
-                occurrence_detail['favorite_link'] = None
-            if (self.calendar_type == 'Conference') and (
-                    occurrence.start_time < (datetime.now() - timedelta(
-                        hours=settings.EVALUATION_WINDOW))
-                    ) and (
-                    role not in ("Teacher", "Performer", "Moderator")) and (
-                    eval_occurrences is not None):
-                if occurrence in eval_occurrences:
-                    occurrence_detail['evaluate'] = "disabled"
-                else:
-                    occurrence_detail['evaluate'] = reverse(
-                        'eval_event',
-                        args=[occurrence.pk, ],
-                        urlconf='gbe.scheduling.urls')
             display_list += [occurrence_detail]
             if hour in hour_block_size:
                 hour_block_size[hour] += 1
@@ -206,4 +188,4 @@ class ShowCalendarView(View):
         return render(request, self.template, context)
 
     def dispatch(self, *args, **kwargs):
-        return super(ShowCalendarView, self).dispatch(*args, **kwargs)
+        return super(VolunteerSignupView, self).dispatch(*args, **kwargs)

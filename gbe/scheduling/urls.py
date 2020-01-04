@@ -20,6 +20,7 @@ from gbe.scheduling.views import (
     ShowCalendarView,
     StaffAreaWizardView,
     TicketedEventWizardView,
+    VolunteerSignupView,
     VolunteerWizardView,
 )
 
@@ -82,6 +83,8 @@ urlpatterns = [
     url(r'^scheduling/copy_staff/(?P<staff_id>\d+)/?$',
         CopyStaffAreaView.as_view(), name='copy_staff_schedule'),
 
+    url(r'^scheduling/volunteer_signup/?$',
+        VolunteerSignupView.as_view(), name='voluteer_signup'),
     url(r'^calendar/(?P<calendar_type>[-\w]+)/?$',
         ShowCalendarView.as_view(), name='calendar'),
     url(r'^scheduling/evaluate/(?P<occurrence_id>\d+)/?$',
