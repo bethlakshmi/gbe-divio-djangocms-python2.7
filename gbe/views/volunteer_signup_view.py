@@ -165,7 +165,7 @@ class VolunteerSignupView(View):
                 show_general_status(request, response, "VolunteerSignup")
                 if response.occurrence and (
                         response.occurrence.extra_volunteers() < 0) and (
-                        event.foreign_event_id not in rehearsals):
+                        response.occurrence.foreign_event_id not in rehearsals):
                     allowed_role = "Volunteer"
                     if response.occurrence.approval_needed:
                         allowed_role = "Pending Volunteer"

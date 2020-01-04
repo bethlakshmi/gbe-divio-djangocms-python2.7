@@ -28,10 +28,12 @@ div.interested {
     background-color: #f3e1e5;
 }
 
-div.teacher, div.performer, div.volunteer {
+div.teacher, div.performer, div.volunteer, div.panelist, div.moderator {
     background-color: #f3e1e5;
 }
-
+div.pending-volunteer {
+    background-color: #d9edf7;
+}
 .calendar-container {
     border:  #6E6E6E solid 1px;
 }

@@ -1,0 +1,11 @@
+     {% if sched_event.volunteer_link and sched_event.volunteer_link != "disabled" and  sched_event.volunteer_link != "full" %}
+      <a href="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}"
+         class="detail_link cal-favorite" data-toggle="tooltip"
+         title="{%if sched_event.vol_highlight == "volunteer" %}Remove from Schedule{% elif sched_event.vol_highlight == "pending volunteer" %}Withdraw from pending volunteer offer{% else %}Volunteer{% endif %}">
+       <i class="{%if sched_event.vol_highlight == "volunteer" or sched_event.vol_highlight == "pending volunteer"%}fas{% else %}far{% endif %} fa-hand-paper {{size}}" aria-hidden="true"></i></a>
+      </a>
+     {% elif sched_event.volunteer_link %}
+      <a href="#" class="volunteer-detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"
+         title="{% if sched_event.volunteer_link == "disabled" %}You are a {{ sched_event.vol_highlight }} - contact the coordinator to change your schedule{% elif sched_event.volunteer_link == "full" %}This event has as many volunteers as it needs{% endif %}">
+       <i class="fas fa-hand-paper {{size}}" aria-hidden="true"></i></a>
+     {% endif %}

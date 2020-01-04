@@ -158,6 +158,24 @@ class ShowCalendarView(View):
                         'eval_event',
                         args=[occurrence.pk, ],
                         urlconf='gbe.scheduling.urls')
+            if self.calendar_type == "Volunteer":
+                occurrence_detail['favorite_link'] = None
+                occurrence_detail['volunteer_link'] = reverse(
+                    'set_volunteer',
+                    args=[occurrence.pk, 'on'],
+                    urlconf='gbe.scheduling.urls')
+                if role == "Volunteer" or role == "Pending Volunteer":
+                    occurrence_detail['volunteer_link'] = reverse(
+                        'set_volunteer',
+                        args=[occurrence.pk, 'off'],
+                        urlconf='gbe.scheduling.urls')
+                elif role is not None:
+                    occurrence_detail['volunteer_link'] = "disabled"
+                elif occurrence.extra_volunteers() >= 0:
+                    occurrence_detail['volunteer_link'] = "full"
+
+                if role:
+                    occurrence_detail['vol_highlight'] = role.lower()
             display_list += [occurrence_detail]
             if hour in hour_block_size:
                 hour_block_size[hour] += 1

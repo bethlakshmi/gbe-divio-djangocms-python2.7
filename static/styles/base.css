@@ -545,6 +545,9 @@ td.describe
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.volunteer-detail_link-disabled, .volunteer-detail_link-disabled:hover, .volunteer-detail_link-disabled:active, .volunteer-detail_link-disabled:visited {
+  color: #807d7d;
+}
 .detail_link:hover, .detail_link:active {
     color: #6E6E6E;
 }
