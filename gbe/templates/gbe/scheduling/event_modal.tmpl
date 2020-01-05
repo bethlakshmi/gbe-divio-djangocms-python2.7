@@ -1,0 +1,16 @@
+<!-- Event Modal Start -->
+              <div class="modal" id="Modal{{occurrence.eventitem.pk}}" role="dialog">
+              <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{occurrence.title}}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                      {{occurrence.description | safe}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div></div></div>
+<!-- Event Modal End -->

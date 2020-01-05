@@ -23,7 +23,9 @@
     color:  #6E6E6E solid 1px;
     background-color: #E4BDC5;
 }
-
+div.shadow_event {
+    background-color: #e6e6e6;
+}
 div.interested {
     background-color: #f3e1e5;
 }

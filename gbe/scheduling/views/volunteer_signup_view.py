@@ -34,10 +34,11 @@ from scheduler.idd import (
 from scheduler.data_transfer import Person
 from gbe.scheduling.views.functions import show_general_status
 from django.conf import settings
+from collections import OrderedDict
 
 
 class VolunteerSignupView(View):
-    template = 'gbe/scheduling/calendar.tmpl'
+    template = 'gbe/scheduling/calendar_with_shadow.tmpl'
     calendar_type = None
     conference = None
     this_day = None
@@ -71,6 +72,9 @@ class VolunteerSignupView(View):
         else:
             self.conference = get_current_conference()
 
+        # volunteer events happen on non-public days, as well, but we'll
+        # default to a public day to start navigation as those tend to have
+        # more need for help.
         if not self.this_day:
             self.this_day = get_conference_days(
                 self.conference,
@@ -83,17 +87,12 @@ class VolunteerSignupView(View):
             'this_day': self.this_day,
         }
         if self.this_day:
-            open_to_public = [True]
-            if self.calendar_type == "Volunteer":
-                open_to_public = [True, False]
             if ConferenceDay.objects.filter(
-                    day=self.this_day.day+timedelta(days=1),
-                    open_to_public__in=open_to_public).exists():
+                    day=self.this_day.day+timedelta(days=1)).exists():
                 context['next_date'] = (self.this_day.day+timedelta(days=1)
                                         ).strftime(URL_DATE)
             if ConferenceDay.objects.filter(
-                    day=self.this_day.day-timedelta(days=1),
-                    open_to_public__in=open_to_public).exists():
+                    day=self.this_day.day-timedelta(days=1)).exists():
                 context['prev_date'] = (self.this_day.day-timedelta(days=1)
                                         ).strftime(URL_DATE)
 
@@ -104,6 +103,7 @@ class VolunteerSignupView(View):
                                  personal_schedule=None,
                                  eval_occurrences=None):
         display_list = []
+        hour_display_list = OrderedDict()
         events = Event.objects.filter(e_conference=self.conference)
         hour_block_size = {}
         for occurrence in occurrences:
@@ -118,10 +118,8 @@ class VolunteerSignupView(View):
                 'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
                 'title': event.e_title,
                 'location': occurrence.location,
-                'hour': hour,
-                'detail_link': reverse('detail_view',
-                                       urlconf='gbe.scheduling.urls',
-                                       args=[occurrence.eventitem.pk]),
+                'description': event.e_description,
+                'eventitem': occurrence.eventitem,
             }
             if self.conference.status != "completed" and (
                     self.calendar_type == "Volunteer"):
@@ -141,11 +139,38 @@ class VolunteerSignupView(View):
                 if role:
                     occurrence_detail['highlight'] = role.lower()
             display_list += [occurrence_detail]
+            if (hour in hour_display_list):
+                hour_display_list[hour][
+                    'starting_events'] += [occurrence_detail]
+            else:
+                hour_display_list[hour] = {
+                    'starting_events': [occurrence_detail],
+                    'continuing_events': [],
+                }
+            start_time_copy = occurrence.start_time
+            each_hour = start_time_copy.replace(
+                minute=0,
+                second=0,
+                microsecond=0) + timedelta(hours=1)
+            print occurrence
+            while each_hour < occurrence.end_time:
+                print each_hour
+                hour_key = each_hour.strftime("%-I:00 %p")
+                if (hour_key in hour_display_list):
+                    hour_display_list[hour_key][
+                        'continuing_events'] += [occurrence_detail]
+                else:
+                    hour_display_list[hour_key] = {
+                        'starting_events': [],
+                        'continuing_events': [occurrence_detail],
+                    }
+                each_hour = each_hour + timedelta(hours=1)
             if hour in hour_block_size:
                 hour_block_size[hour] += 1
             else:
                 hour_block_size[hour] = 1
-        return max(hour_block_size.values()), display_list
+
+        return max(hour_block_size.values()), display_list, hour_display_list
 
     def get(self, request, *args, **kwargs):
         context = self.process_inputs(request, args, kwargs)
@@ -177,7 +202,8 @@ class VolunteerSignupView(View):
                 else:
                     eval_occurrences = None
             max_block_size, context[
-                'occurrences'] = self.build_occurrence_display(
+                'occurrences'], context[
+                'occurrences_by_hour'] = self.build_occurrence_display(
                 response.occurrences,
                 personal_schedule,
                 eval_occurrences)

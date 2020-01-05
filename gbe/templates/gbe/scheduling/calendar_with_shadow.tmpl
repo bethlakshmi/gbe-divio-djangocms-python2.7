@@ -1,11 +1,11 @@
 {% extends "base.tmpl" %}
-{% load staticfiles %}
+{% load staticfiles sekizai_tags %}
 {% block title %}
   Calendar
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="/static/styles/calendar.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -41,21 +41,30 @@
     <div class="col-12">This calendar is not currently available.</div>
   {% endif %}
  </div>
-{% for occurrence in occurrences %}
-  {% ifchanged occurrence.hour %}
-   {% if not forloop.first %}</div>{% endif %}
+{% for hour, occurrence_set in occurrences_by_hour.items %}
    <div class="row time-row">
-    <div class="col-lg-12">{{occurrence.hour}}</div>
+    <div class="col-lg-12">{{hour}}</div>
    </div>
    <div class="row event-row">
-  {% endifchanged %}
+   {% for occurrence in occurrence_set.starting_events %}
     <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-12 {{occurrence.highlight|slugify}}">
-     {% include "gbe/scheduling/favorite_star.tmpl" with sched_event=occurrence %}
-     {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=occurrence.evaluate %}
+     {% include "gbe/scheduling/volunteer_link.tmpl" with sched_event=occurrence %}
      {{ occurrence.start }}-{{ occurrence.end }}<br>
-     <a href="{{occurrence.detail_link}}" class="detail_link">{{ occurrence.title}}</a><br>
+     {% if occurrence.description %}
+      <a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{occurrence.eventitem.pk}}" data-backdrop="true" >
+      {{ occurrence.title}}&nbsp;<i class="fas fa-info-circle"></i>
+     </a>{%else%}{{ occurrence.title}}{% endif %}<br>
      <i>{{ occurrence.location }}</i>
     </div>
+    {% include "gbe/scheduling/event_modal.tmpl"%}
+
+    {% endfor %}
+    {% for occurrence in occurrence_set.continuing_events %}
+    <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-12 shadow_event">
+      <a href="{{occurrence.eventitem.pk}}" class="detail_link">{{ occurrence.title}}</a>
+      <i>(continued...)</i>
+    </div>{% endfor %}
+  </div>
 {% endfor %}
 {% if not occurrences %}
    <div class="row event-row" style="text-align: center;">
@@ -63,6 +72,5 @@
   </div>
 {% endif %}
   </div>
-
 </div>
 {% endblock %}
