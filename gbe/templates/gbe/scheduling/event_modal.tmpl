@@ -1,13 +1,27 @@
 <!-- Event Modal Start -->
               <div class="modal" id="Modal{{occurrence.eventitem.pk}}" role="dialog">
-              <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-dialog modal-dialog-centered modal-sm">
               <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">{{occurrence.title}}</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                      {{occurrence.description | safe}}
+                  <b>Time:</b> {{ occurrence.start }}-{{ occurrence.end }}<br>
+                  <b>Location:</b> {{ occurrence.location }}<br>
+                  {% if occurrence.description %}
+                  <b>Description:</b><br>
+                  {{occurrence.description | safe}}<br>
+                  {% endif %}
+                  {% for area in occurrence.staff_areas %}
+                  <br>
+                  <b>Staff Area:</b> {{ area.title}}<br>
+                  {{ area.description | safe}}
+                  {% endfor %}
+                  {% if occurrence.parent_event %}<br>
+                  <i>This opportunity is in support of 
+<a href="{% url 'scheduling:detail_view' occurrence.parent_event.eventitem.pk%}">
+{{occurrence.parent_event}}</a></i>{% endif %}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

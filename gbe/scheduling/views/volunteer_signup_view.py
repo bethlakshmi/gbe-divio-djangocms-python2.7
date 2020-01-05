@@ -19,6 +19,7 @@ import pytz
 from gbe.models import (
     ConferenceDay,
     Event,
+    StaffArea,
 )
 from gbe.functions import (
     get_current_conference,
@@ -120,7 +121,13 @@ class VolunteerSignupView(View):
                 'location': occurrence.location,
                 'description': event.e_description,
                 'eventitem': occurrence.eventitem,
+                'staff_areas': StaffArea.objects.filter(
+                    conference=self.conference,
+                    slug__in=occurrence.labels.values_list('text', flat=True))
             }
+            if hasattr(occurrence, 'container_event'):
+                    occurrence_detail['parent_event'] = \
+                        occurrence.container_event.parent_event
             if self.conference.status != "completed" and (
                     self.calendar_type == "Volunteer"):
                 occurrence_detail['volunteer_link'] = reverse(

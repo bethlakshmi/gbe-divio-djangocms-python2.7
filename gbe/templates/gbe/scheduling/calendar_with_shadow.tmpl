@@ -50,14 +50,13 @@
     <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-12 {{occurrence.highlight|slugify}}">
      {% include "gbe/scheduling/volunteer_link.tmpl" with sched_event=occurrence %}
      {{ occurrence.start }}-{{ occurrence.end }}<br>
-     {% if occurrence.description %}
       <a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{occurrence.eventitem.pk}}" data-backdrop="true" >
       {{ occurrence.title}}&nbsp;<i class="fas fa-info-circle"></i>
-     </a>{%else%}{{ occurrence.title}}{% endif %}<br>
+     </a><br>
      <i>{{ occurrence.location }}</i>
-    </div>
-    {% include "gbe/scheduling/event_modal.tmpl"%}
+         {% include "gbe/scheduling/event_modal.tmpl"%}
 
+    </div>
     {% endfor %}
     {% for occurrence in occurrence_set.continuing_events %}
     <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-12 shadow_event">
