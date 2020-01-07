@@ -90,12 +90,15 @@ class MakeActView(MakeBidView):
                 'track_title': audio_info.track_title,
                 'track_artist': audio_info.track_artist,
                 'track_duration': audio_info.track_duration,
-                'act_duration': stage_info.act_duration}
+                'act_duration': stage_info.act_duration,}
         else:
             initial = {
                 'owner': self.owner,
                 'performer': self.personae[0],
-                'b_conference': self.conference}
+                'b_conference': self.conference,
+                'b_title': "%s Act - %s" % (
+                    self.owner, 
+                    self.conference.conference_slug)}
         return initial
 
     def set_up_form(self):
