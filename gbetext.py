@@ -414,8 +414,8 @@ default_volunteer_no_bid_msg = \
 existing_volunteer_msg = \
     "You've already offered to volunteer, " + \
     "would you like to update your proposal?"
-volunteer_signup_instructions = '''The following are the currently available \
-volunteer opportunities.  Check any items you'd like to volunteer for.  Green 
+volunteer_signup_instructions = '''The following are the currently available
+volunteer opportunities.  Check any items you'd like to volunteer for.  Green
 rows show events you're previously signed up for.  Blue rows show opportunities
 you've signed up for that are pending approval.
 '''

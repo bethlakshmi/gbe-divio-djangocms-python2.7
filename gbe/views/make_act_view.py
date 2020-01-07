@@ -97,7 +97,7 @@ class MakeActView(MakeBidView):
                 'performer': self.personae[0],
                 'b_conference': self.conference,
                 'b_title': "%s Act - %s" % (
-                    self.owner, 
+                    self.owner,
                     self.conference.conference_slug)}
         return initial
 

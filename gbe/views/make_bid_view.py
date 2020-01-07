@@ -117,11 +117,11 @@ class MakeBidView(View):
                     'description': fee_instructions})
             try:
                 messages.info(
-                    request, 
+                    request,
                     user_message[0].description % self.fee_link)
             except TypeError:
                 messages.info(
-                    request, 
+                    request,
                     user_message[0].description)
         return context
 

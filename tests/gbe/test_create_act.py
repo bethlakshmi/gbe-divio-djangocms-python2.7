@@ -161,7 +161,7 @@ class TestCreateAct(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
         self.assertContains(
-            response, 
+            response,
             fee_instructions % performer_act_submittal_link(
                 self.performer.performer_profile.user_object.id))
         self.assertContains(response, 'value="Pay Fee"')
