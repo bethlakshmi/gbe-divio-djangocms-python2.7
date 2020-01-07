@@ -414,7 +414,15 @@ default_volunteer_no_bid_msg = \
 existing_volunteer_msg = \
     "You've already offered to volunteer, " + \
     "would you like to update your proposal?"
-fee_instructions = '''<a href="{{fee_link}}" target="_blank">Make Payment at \
+volunteer_signup_instructions = '''The following are the currently available
+volunteer opportunities.  Check any items you'd like to volunteer for.  Green
+rows show events you're previously signed up for.  Blue rows show opportunities
+you've signed up for that are pending approval.
+'''
+invalid_volunteer_event = '''The following event is not currently available.  \
+It may have just reached a maximum number of volunteers. Unavailable event is \
+'''
+fee_instructions = '''<a href="%s" target="_blank">Make Payment at \
 Brown Paper Tickets</a><br>Our records show that you have not paid your \
 related fees.  You can pay at Brown Paper Tickets by pressing the "Pay Fee" \
 button below.  Once the fee is paid, please return to this form and submit \
