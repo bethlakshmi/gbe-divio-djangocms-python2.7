@@ -120,6 +120,7 @@ class VolunteerSignupView(View):
                 'title': event.e_title,
                 'location': occurrence.location,
                 'description': event.e_description,
+                'approval_needed': occurrence.approval_needed,
                 'eventitem': occurrence.eventitem,
                 'staff_areas': StaffArea.objects.filter(
                     conference=self.conference,
@@ -159,9 +160,7 @@ class VolunteerSignupView(View):
                 minute=0,
                 second=0,
                 microsecond=0) + timedelta(hours=1)
-            print occurrence
             while each_hour < occurrence.end_time:
-                print each_hour
                 hour_key = each_hour.strftime("%-I:00 %p")
                 if (hour_key in hour_display_list):
                     hour_display_list[hour_key][

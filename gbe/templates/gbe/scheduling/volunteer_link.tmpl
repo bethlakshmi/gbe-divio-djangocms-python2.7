@@ -1,8 +1,18 @@
      {% if sched_event.volunteer_link and sched_event.volunteer_link != "disabled" and  sched_event.volunteer_link != "full" %}
       <a href="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}"
-         class="detail_link cal-favorite" data-toggle="tooltip"
-         title="{%if sched_event.highlight == "volunteer" %}Remove from Schedule{% elif sched_event.highlight == "pending volunteer" %}Withdraw from pending volunteer offer{% else %}Volunteer{% endif %}">
-       <i class="{%if sched_event.highlight == "volunteer" or sched_event.highlight == "pending volunteer"%}fas{% else %}far{% endif %} fa-hand-paper {{size}}" aria-hidden="true"></i></a>
+         class="detail_link cal-favorite" data-toggle="tooltip" title="{%if sched_event.highlight == "volunteer"%}Remove from Schedule{% elif sched_event.highlight == "pending volunteer" %}Withdraw from pending volunteer offer{% else %}Volunteer{% endif %}">
+         {% if sched_event.approval_needed %}
+           {%if sched_event.highlight == "volunteer" %}
+             <img src="/static/img/approved.gif" class="volunteer-icon" alt="You're approved to volunteer"/>
+           {% elif sched_event.highlight == "pending volunteer" %}
+             <img src="/static/img/awaiting_approval.gif" class="volunteer-icon" alt="Volunteer Offer awaits approval"/>
+           {% elif not sched_event.highlight %}<img src="/static/img/needs_approval.gif" class="volunteer-icon" alt="This event needs approval"/>{% endif %}
+         {% else %}
+           {%if sched_event.highlight == "volunteer" %}
+             <img src="/static/img/volunteered.gif" class="volunteer-icon" alt="You've signed up"/>
+           {% elif not sched_event.highlight %}<img src="/static/img/not_yet_volunteered.gif" class="volunteer-icon" alt="Volunteer shift available"/>{% endif %}
+         {% endif %}
+        </a>
       </a>
      {% elif sched_event.volunteer_link %}
       <a href="#" class="volunteer-detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"

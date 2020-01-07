@@ -60,6 +60,8 @@
     {% endfor %}
     {% for occurrence in occurrence_set.continuing_events %}
     <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-12 shadow_event">
+       <a href="" class="detail_link cal-favorite" data-toggle="tooltip" title="See & Signup Above">
+         <i class="fas fa-arrow-alt-circle-up"></i></a>
       <a href="{{occurrence.eventitem.pk}}" class="detail_link">{{ occurrence.title}}</a>
       <i>(continued...)</i>
     </div>{% endfor %}

@@ -72,3 +72,7 @@ div.pending-volunteer {
 .cal-favorite {
   float: right;
 }
+
+.volunteer-icon {
+    height: 16px;
+}
