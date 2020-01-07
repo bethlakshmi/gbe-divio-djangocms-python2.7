@@ -95,7 +95,10 @@ class MakeActView(MakeBidView):
             initial = {
                 'owner': self.owner,
                 'performer': self.personae[0],
-                'b_conference': self.conference}
+                'b_conference': self.conference,
+                'b_title': "%s Act - %s" % (
+                    self.owner,
+                    self.conference.conference_slug)}
         return initial
 
     def set_up_form(self):

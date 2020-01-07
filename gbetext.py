@@ -423,7 +423,7 @@ you've signed up for that are pending approval.
 invalid_volunteer_event = '''The following event is not currently available.  \
 It may have just reached a maximum number of volunteers. Unavailable event is \
 '''
-fee_instructions = '''<a href="{{fee_link}}" target="_blank">Make Payment at \
+fee_instructions = '''<a href="%s" target="_blank">Make Payment at \
 Brown Paper Tickets</a><br>Our records show that you have not paid your \
 related fees.  You can pay at Brown Paper Tickets by pressing the "Pay Fee" \
 button below.  Once the fee is paid, please return to this form and submit \
