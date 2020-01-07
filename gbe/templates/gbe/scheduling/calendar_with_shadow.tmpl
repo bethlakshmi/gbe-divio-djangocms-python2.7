@@ -9,9 +9,6 @@
 {% endblock %}
 
 {% block content %}
-<div style="text-align: center; padding-bottom: 10px">
-{% include 'conference_list.tmpl' with conf_slug=conference.conference_slug %}
-</div>
 <div class="container calendar-container">
  <div class="row header1">
     <div class="col-lg-12">{{conference.conference_name}} - {{ calendar_type }} Calendar</div>

@@ -25,7 +25,6 @@ from gbe.functions import (
     get_current_conference,
     get_conference_days,
     get_conference_by_slug,
-    conference_slugs,
 )
 from scheduler.idd import (
     get_eval_info,
@@ -84,7 +83,6 @@ class VolunteerSignupView(View):
         context = {
             'calendar_type': self.calendar_type,
             'conference': self.conference,
-            'conference_slugs': conference_slugs(),
             'this_day': self.this_day,
         }
         if self.this_day:
