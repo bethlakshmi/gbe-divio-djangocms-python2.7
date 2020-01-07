@@ -160,7 +160,10 @@ class TestCreateAct(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
-        self.assertContains(response, fee_instructions)
+        self.assertContains(
+            response, 
+            fee_instructions % performer_act_submittal_link(
+                self.performer.performer_profile.user_object.id))
         self.assertContains(response, 'value="Pay Fee"')
 
     def test_act_bid_not_post(self):

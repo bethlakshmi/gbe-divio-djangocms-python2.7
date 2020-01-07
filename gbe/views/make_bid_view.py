@@ -115,7 +115,14 @@ class MakeBidView(View):
                 defaults={
                     'summary': "%s Pre-submit Message" % self.bid_type,
                     'description': fee_instructions})
-            messages.info(request, user_message[0].description % self.fee_link)
+            try:
+                messages.info(
+                    request, 
+                    user_message[0].description % self.fee_link)
+            except TypeError:
+                messages.info(
+                    request, 
+                    user_message[0].description)
         return context
 
     def get_create_form(self, request):
