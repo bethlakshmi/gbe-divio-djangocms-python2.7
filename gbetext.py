@@ -277,8 +277,7 @@ role_options = (
     ('Staff Lead', "Staff Lead"),
     ('Teacher', "Teacher"),
     ('Technical Director', "Technical Director"),
-    ('Volunteer', "Volunteer"),
-    ('Pending Volunteer', "Pending Volunteer"),)
+    ('Volunteer', "Volunteer"),)
 
 act_casting_label = "Section"
 
