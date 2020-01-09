@@ -78,6 +78,10 @@ div.pending-volunteer {
 .volunteer-icon {
     height: 16px;
 }
+.volunteer-icon-large {
+  float: right;
+  width: 32px;
+}
 .vol_shift_table {
     border:  0px;
     background-color: #e4e0e0;
@@ -102,6 +106,6 @@ div.pending-volunteer {
     border-right: #adadad solid 1px;
 }
 .vol_shift_event {
-    border:  #6E6E6E solid 2px;
+    border: black solid 2px;
     background-color: #E4BDC5;
 }
