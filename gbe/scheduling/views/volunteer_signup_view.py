@@ -198,6 +198,7 @@ class VolunteerSignupView(View):
                 self.start_grid_hour*60,
                 self.end_grid_hour*60,
                 15)]
+            context['col_fraction'] = 100.0/len(context['grid_list'])
 
         return render(request, self.template, context)
 

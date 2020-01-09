@@ -30,7 +30,7 @@ div.interested {
     background-color: #f3e1e5;
 }
 
-div.teacher, div.performer, div.volunteer, div.panelist, div.moderator {
+div.teacher, div.performer, div.volunteer, div.panelist, div.moderator, #volunteer {
     background-color: #f3e1e5;
 }
 div.pending-volunteer {
@@ -72,30 +72,34 @@ div.pending-volunteer {
 .cal-favorite {
   float: right;
 }
-.vol_shift {
+.vol_shift_div {
     padding: 0px;
 }
 .volunteer-icon {
     height: 16px;
 }
 .vol_shift_table {
-    border:  #6E6E6E solid 1px;
-    color:  #6E6E6E solid 1px;
-    background-color: #E4BDC5;
+    border:  0px;
+    background-color: #e4e0e0;
 }
 .vol_shift_header {
     border:  #6E6E6E solid 2px;
     font-size: 12px;
+    background-color: #E4BDC5;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 .vol_shift_hour {
     border-left:  #6E6E6E solid 2px;
+    border-top: 0px;
+    border-bottom: 0px;
 }
 .vol_shift_mid {
-    border-left:  #6E6E6E solid 1px;
-}
-.vol_shift_cell {
-    min-width: 7px;
+    border-left:  #adadad solid 1px;
+    border-top: 0px;
+    border-bottom: 0px;
 }
 .vol_shift_event {
     border:  #6E6E6E solid 2px;
+    background-color: #E4BDC5;
 }
