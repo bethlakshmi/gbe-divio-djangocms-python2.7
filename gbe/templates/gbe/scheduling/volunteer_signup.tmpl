@@ -45,18 +45,18 @@
 {% else %}
 <div class="row"><div class="col-lg-12 vol_shift_div">
 <table class="vol_shift_table" border="1px">
-  <thead><tr>{% for is_hour, hour, time in grid_list %}
+  <thead><tr>{% for is_hour, hour, time, wrap in grid_list %}
     {% if is_hour %}
     <th class="vol_shift_header" colspan="{{col_per_hour}}">{{ hour }}</th>
     {% endif %}
   {% endfor %}</tr></thead>
-  <tbody><tr class="vol-shift-row">{% for is_hour, hour, time in grid_list %}
+  <tbody><tr class="vol-shift-row">{% for is_hour, hour, time, wrap in grid_list %}
     <td width="{{col_fraction}}%" class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
   {% endfor %}
 </tr>
 {% for occurrence in occurrences %}
 <tr>
-  {% for is_hour, hour, time in grid_list %}
+  {% for is_hour, hour, time, wrap in grid_list %}
     {% if time == occurrence.object.start_time.time %}
     <td class="vol_shift_event" id="{{occurrence.highlight|slugify}}" colspan="{{occurrence.colspan}}">
       <a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{occurrence.eventitem.pk}}" data-backdrop="true" >
@@ -64,17 +64,23 @@
     {{ occurrence.start }}-{{ occurrence.end }} {{ occurrence.title}}</a>
     {% include "gbe/scheduling/event_modal.tmpl"%}
     </td>
-    {% elif time < occurrence.object.start_time.time or time >= occurrence.object.end_time.time %}
-    <td width="{{col_fraction}}%" class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
+    {% elif occurrence.object.end_time.time > occurrence.object.start_time.time %}
+      {% if time < occurrence.object.start_time.time or time >= occurrence.object.end_time.time %}
+        <td width="{{col_fraction}}%" class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
+      {% endif %}
+    {% else %}
+      {% if time < occurrence.object.start_time.time and not wrap or time > occurrence.object.end_time.time and wrap %}
+        <td width="{{col_fraction}}%" class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
+      {% endif %}
     {% endif %}
   {% endfor %}
 </tr>
 {% endfor%}
-   <tr class="vol-shift-row">{% for is_hour, hour, time in grid_list %}
+   <tr class="vol-shift-row">{% for is_hour, hour, time, wrap in grid_list %}
     <td width="{{col_fraction}}%" class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
   {% endfor %}
 </tr></tbody>
-<tfoot><tr>{% for is_hour, hour, time in grid_list %}
+<tfoot><tr>{% for is_hour, hour, time, wrap in grid_list %}
     {% if is_hour %}
     <th class="vol_shift_header" colspan="{{col_per_hour}}">{{ hour }}</th>
     {% endif %}

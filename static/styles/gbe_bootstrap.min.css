@@ -1277,7 +1277,6 @@ button.close{padding:0;cursor:pointer;background:0 0;border:0;-webkit-appearance
 .modal-backdrop.in{opacity:.5;filter:alpha(opacity=50)}
 .modal-header{padding:5px 5px 5px 10px;border-bottom:1px solid #e5e5e5; background-color:rgb(216, 216, 216)}
 .tooltip.bottom .tooltip-arrow,.tooltip.bottom-left .tooltip-arrow,.tooltip.bottom-right .tooltip-arrow{top:0;border-width:0 5px 5px;border-bottom-color:#000}
-.modal-header .close{margin-top:-2px}
 .modal-title{margin:0;line-height:1.42857143;font-family:'Vast Shadow', cursive;}
 .modal-body{position:relative;padding:15px}
 .modal-footer{padding:15px;text-align:right;border-top:1px solid #e5e5e5;  background-color:rgb(216, 216, 216)}

@@ -46,16 +46,20 @@ class VolunteerSignupView(View):
     # 0 = midnight starting day, 23 = 11 pm next day (max)
     start_grid_hour = 7
     end_grid_hour = 23
-    # number of columns per hour - 4 = 15 min granularity
+    # hack to make it possible to roll to midnight and beyond,
+    next_day_end = 2
+    # number of columns per hour - must be factor of 60, as 60/this = # min
     col_per_hour = 4
 
-    def make_time_range(self, start, stop, step):
-        iterator = float(start)
-        my_range = [iterator]
-        while iterator < stop:
-            iterator += step
-            my_range += [iterator]
-        return my_range
+    def make_time_range(self, start_min, end_min, step, wrap=False):
+        return [(mins % 60 == 0,
+                 time(mins/60, mins % 60).strftime("%-I%p"),
+                 time(mins/60, mins % 60),
+                 wrap
+                 ) for mins in range(
+                 start_min,
+                 end_min,
+                 step)]
 
     def process_inputs(self, request, args, kwargs):
         context = {}
@@ -190,14 +194,21 @@ class VolunteerSignupView(View):
             #context['start_grid_hour'] = datetime.time(hour=self.start_grid_hour)
             #context['end_grid_hour'] = datetime.time(hour=self.end_grid_hour)
             context['col_per_hour'] = self.col_per_hour
-            context['grid_list'] = [(
-                mins % 60 == 0,
-                time(mins/60, mins % 60).strftime("%-I%p"),
-                time(mins/60, mins % 60)
-                ) for mins in range(
+            context['grid_list'] = self.make_time_range(
                 self.start_grid_hour*60,
                 self.end_grid_hour*60,
-                15)]
+                60/self.col_per_hour)
+            if self.next_day_end:
+                # hack to roll around the clock
+                context['grid_list'] += self.make_time_range(
+                    self.end_grid_hour*60,
+                    (self.end_grid_hour+1)*60,
+                    60/self.col_per_hour)
+                context['grid_list'] += self.make_time_range(
+                    0,
+                    self.next_day_end*60,
+                    60/self.col_per_hour,
+                    True)
             context['col_fraction'] = 100.0/len(context['grid_list'])
 
         return render(request, self.template, context)
