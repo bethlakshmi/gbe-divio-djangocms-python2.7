@@ -38,6 +38,48 @@
     <div class="col-12">This calendar is not currently available.</div>
   {% endif %}
  </div>
+{% if not occurrences %}
+   <div class="row event-row" style="text-align: center;">
+    <div class="col-lg-12">There are no {{ calendar_type | lower }} events scheduled for this day.</div>
+  </div>
+{% else %}
+<div class="row event-row"><div class="col-lg-12 vol_shift">
+<table class="vol_shift_table" border="1px">
+  <thead><tr>{% for is_hour, hour, time in grid_list %}
+    {% if is_hour %}
+    <th class="vol_shift_header" colspan="{{col_per_hour}}">{{ hour }}</th>
+    {% endif %}
+  {% endfor %}</tr></thead>
+  <tbody><tr class="vol-shift-row">{% for is_hour, hour, time in grid_list %}
+    <td class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
+  {% endfor %}
+</tr>
+{% for occurrence in occurrences %}
+<tr>
+  {% for is_hour, hour, time in grid_list %}
+    {% if time < occurrence.object.start_time.time or time >= occurrence.object.end_time.time %}
+    <td class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
+    {% elif time == occurrence.object.start_time.time %}
+    <td class="{{occurrence.highlight|slugify}} vol_shift_event" colspan="{{occurrence.colspan}}">
+    {% include "gbe/scheduling/volunteer_link.tmpl" with sched_event=occurrence %}
+    {{ occurrence.start }}-{{ occurrence.end }} {{ occurrence.title}}
+    </td>
+    {% endif %}
+  {% endfor %}
+</tr>
+{% endfor%}
+   <tr class="vol-shift-row">{% for is_hour, hour, time in grid_list %}
+    <td class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
+  {% endfor %}
+</tr></tbody>
+<tfoot><tr>{% for is_hour, hour, time in grid_list %}
+    {% if is_hour %}
+    <th class="vol_shift_header" colspan="{{col_per_hour}}">{{ hour }}</th>
+    {% endif %}
+  {% endfor %}</tr></tfoot>
+</table>
+</div></div>
+<!--
 {% for hour, occurrence_set in occurrences_by_hour.items %}
    <div class="row time-row">
     <div class="col-lg-12">{{hour}}</div>
@@ -64,11 +106,7 @@
     </div>{% endfor %}
   </div>
 {% endfor %}
-{% if not occurrences %}
-   <div class="row event-row" style="text-align: center;">
-    <div class="col-lg-12">There are no {{ calendar_type | lower }} events scheduled for this day.</div>
-  </div>
+-->
 {% endif %}
-  </div>
 </div>
 {% endblock %}

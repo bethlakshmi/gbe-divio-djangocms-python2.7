@@ -72,7 +72,30 @@ div.pending-volunteer {
 .cal-favorite {
   float: right;
 }
-
+.vol_shift {
+    padding: 0px;
+}
 .volunteer-icon {
     height: 16px;
+}
+.vol_shift_table {
+    border:  #6E6E6E solid 1px;
+    color:  #6E6E6E solid 1px;
+    background-color: #E4BDC5;
+}
+.vol_shift_header {
+    border:  #6E6E6E solid 2px;
+    font-size: 12px;
+}
+.vol_shift_hour {
+    border-left:  #6E6E6E solid 2px;
+}
+.vol_shift_mid {
+    border-left:  #6E6E6E solid 1px;
+}
+.vol_shift_cell {
+    min-width: 7px;
+}
+.vol_shift_event {
+    border:  #6E6E6E solid 2px;
 }

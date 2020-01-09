@@ -13,6 +13,7 @@ from settings import (
 )
 from datetime import (
     datetime,
+    time,
     timedelta,
 )
 import pytz
@@ -38,17 +39,23 @@ from collections import OrderedDict
 
 
 class VolunteerSignupView(View):
-    template = 'gbe/scheduling/calendar_with_shadow.tmpl'
+    template = 'gbe/scheduling/volunteer_signup.tmpl'
     calendar_type = None
     conference = None
     this_day = None
-    grid_map = {
-        5: 3,
-        4: 3,
-        3: 4,
-        2: 6,
-        1: 12,
-    }
+    # 0 = midnight starting day, 23 = 11 pm next day (max)
+    start_grid_hour = 7
+    end_grid_hour = 23
+    # number of columns per hour - 4 = 15 min granularity
+    col_per_hour = 4
+
+    def make_time_range(self, start, stop, step):
+        iterator = float(start)
+        my_range = [iterator]
+        while iterator < stop:
+            iterator += step
+            my_range += [iterator]
+        return my_range
 
     def process_inputs(self, request, args, kwargs):
         context = {}
@@ -102,79 +109,50 @@ class VolunteerSignupView(View):
                                  personal_schedule=None,
                                  eval_occurrences=None):
         display_list = []
-        hour_display_list = OrderedDict()
         events = Event.objects.filter(e_conference=self.conference)
-        hour_block_size = {}
         for occurrence in occurrences:
             role = None
             for booking in personal_schedule:
                 if booking.event == occurrence:
                     role = booking.role
-            event = events.filter(pk=occurrence.eventitem.event.pk).first()
-            hour = occurrence.start_time.strftime("%-I:00 %p")
-            occurrence_detail = {
-                'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
-                'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
-                'title': event.e_title,
-                'location': occurrence.location,
-                'description': event.e_description,
-                'approval_needed': occurrence.approval_needed,
-                'eventitem': occurrence.eventitem,
-                'staff_areas': StaffArea.objects.filter(
-                    conference=self.conference,
-                    slug__in=occurrence.labels.values_list('text', flat=True))
-            }
-            if hasattr(occurrence, 'container_event'):
-                    occurrence_detail['parent_event'] = \
-                        occurrence.container_event.parent_event
-            if self.conference.status != "completed" and (
-                    self.calendar_type == "Volunteer"):
+            # if this isn't something they can signup or un-signup for, skip
+            if occurrence.extra_volunteers() < 0 or (
+                    role is not None and role not in (
+                        "Volunteer", 
+                        "Pending Volunteer")):
+                event = events.filter(pk=occurrence.eventitem.event.pk).first()
+                occurrence_detail = {
+                    'object': occurrence,
+                    'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
+                    'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
+                    'colspan': (
+                        occurrence.duration.total_seconds() * self.col_per_hour
+                        )/3600,
+                    'title': event.e_title,
+                    'location': occurrence.location,
+                    'description': event.e_description,
+                    'approval_needed': occurrence.approval_needed,
+                    'eventitem': occurrence.eventitem,
+                    'staff_areas': StaffArea.objects.filter(
+                        conference=self.conference,
+                        slug__in=occurrence.labels.values_list('text',
+                                                               flat=True))
+                }
+                if hasattr(occurrence, 'container_event'):
+                        occurrence_detail['parent_event'] = \
+                            occurrence.container_event.parent_event
+                toggle_state = "on"
+                if role:
+                    toggle_state = "off"
+                    occurrence_detail['highlight'] = role.lower()
                 occurrence_detail['volunteer_link'] = reverse(
                     'set_volunteer',
-                    args=[occurrence.pk, 'on'],
+                    args=[occurrence.pk, toggle_state],
                     urlconf='gbe.scheduling.urls')
-                if role == "Volunteer" or role == "Pending Volunteer":
-                    occurrence_detail['volunteer_link'] = reverse(
-                        'set_volunteer',
-                        args=[occurrence.pk, 'off'],
-                        urlconf='gbe.scheduling.urls')
-                elif role is not None:
-                    occurrence_detail['volunteer_link'] = "disabled"
-                elif occurrence.extra_volunteers() >= 0:
-                    occurrence_detail['volunteer_link'] = "full"
-                if role:
-                    occurrence_detail['highlight'] = role.lower()
-            display_list += [occurrence_detail]
-            if (hour in hour_display_list):
-                hour_display_list[hour][
-                    'starting_events'] += [occurrence_detail]
-            else:
-                hour_display_list[hour] = {
-                    'starting_events': [occurrence_detail],
-                    'continuing_events': [],
-                }
-            start_time_copy = occurrence.start_time
-            each_hour = start_time_copy.replace(
-                minute=0,
-                second=0,
-                microsecond=0) + timedelta(hours=1)
-            while each_hour < occurrence.end_time:
-                hour_key = each_hour.strftime("%-I:00 %p")
-                if (hour_key in hour_display_list):
-                    hour_display_list[hour_key][
-                        'continuing_events'] += [occurrence_detail]
-                else:
-                    hour_display_list[hour_key] = {
-                        'starting_events': [],
-                        'continuing_events': [occurrence_detail],
-                    }
-                each_hour = each_hour + timedelta(hours=1)
-            if hour in hour_block_size:
-                hour_block_size[hour] += 1
-            else:
-                hour_block_size[hour] = 1
+                    
+                display_list += [occurrence_detail]
 
-        return max(hour_block_size.values()), display_list, hour_display_list
+        return display_list
 
     def get(self, request, *args, **kwargs):
         context = self.process_inputs(request, args, kwargs)
@@ -205,16 +183,22 @@ class VolunteerSignupView(View):
                     eval_occurrences = eval_response.occurrences
                 else:
                     eval_occurrences = None
-            max_block_size, context[
-                'occurrences'], context[
-                'occurrences_by_hour'] = self.build_occurrence_display(
+            context['occurrences'] = self.build_occurrence_display(
                 response.occurrences,
                 personal_schedule,
                 eval_occurrences)
-            grid_size = 2
-            if max_block_size < 6:
-                grid_size = self.grid_map[max_block_size]
-            context['grid_size'] = grid_size
+            #context['start_grid_hour'] = datetime.time(hour=self.start_grid_hour)
+            #context['end_grid_hour'] = datetime.time(hour=self.end_grid_hour)
+            context['col_per_hour'] = self.col_per_hour
+            context['grid_list'] = [(
+                mins % 60 == 0,
+                time(mins/60, mins % 60).strftime("%-I%p"),
+                time(mins/60, mins % 60)
+                ) for mins in range(
+                self.start_grid_hour*60,
+                self.end_grid_hour*60,
+                15)]
+
         return render(request, self.template, context)
 
     def dispatch(self, *args, **kwargs):
