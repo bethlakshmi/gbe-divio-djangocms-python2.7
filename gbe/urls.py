@@ -151,8 +151,6 @@ urlpatterns = [
         CreateComboView, name='combo_create'),
 
     #  volunteers
-    url(r'^volunteer/create/?$',
-        MakeVolunteerView.as_view(), name='volunteer_create'),
     url(r'^volunteer/view/(?P<bid_id>\d+)/?$',
         ViewVolunteerView.as_view(), name='volunteer_view'),
     url(r'^volunteer/edit/(?P<bid_id>\d+)/?$',

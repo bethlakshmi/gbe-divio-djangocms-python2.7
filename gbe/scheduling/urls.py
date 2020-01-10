@@ -85,6 +85,8 @@ urlpatterns = [
 
     url(r'^scheduling/volunteer_signup/?$',
         VolunteerSignupView.as_view(), name='voluteer_signup'),
+    url(r'^volunteer/create/?$',
+        VolunteerSignupView.as_view(), name='volunteer_create'),
     url(r'^calendar/(?P<calendar_type>[-\w]+)/?$',
         ShowCalendarView.as_view(), name='calendar'),
     url(r'^scheduling/evaluate/(?P<occurrence_id>\d+)/?$',

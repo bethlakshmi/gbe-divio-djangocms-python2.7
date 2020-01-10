@@ -7,6 +7,7 @@
      {% endif %} 
        Schedule
   </h3>	
+  <a href="{% url 'scheduling:voluteer_signup' %}" style="padding:1px 5px;" class="btn btn-primary btn-sm float-right">Volunteer</a>
     {% for booking in bookings %}
       {% with cs=booking.conference.status %}
         {% if cs != "completed" and not historical or cs == "completed" and historical %}
