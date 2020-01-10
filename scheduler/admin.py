@@ -58,7 +58,8 @@ class EventAdmin(ImportExportModelAdmin):
     list_display = ('id', 'eventitem', 'starttime', 'max_volunteer')
     list_filter = ['starttime',
                    'max_volunteer',
-                   'eventitem__event__e_conference', ]
+                   'eventitem__event__e_conference',
+                   'approval_needed', ]
 
 
 class EventContainerAdmin(ImportExportModelAdmin):
