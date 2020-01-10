@@ -550,6 +550,20 @@ set_favorite_msg = '''Your interest has been set and will appear on your \
                    personal schedule.'''
 unset_favorite_msg = '''Your interest has been removed and will no longer \
                    appear on your personal schedule.'''
+set_volunteer_msg = '''Thank you!  This volunteer shift has been added to \
+your schedule.'''
+unset_volunteer_msg = '''Sorry to see you go!  This volunteer shift has been \
+removed from your personal schedule.'''
+set_pending_msg = '''Thank you!  Your offer to volunteer has been sent and is \
+awaiting approval.'''
+unset_pending_msg = '''Sorry to see you go!  Your offer to volunteer has \
+been deleted.'''
+volunteer_instructions = '''Click on any event to see details and offer to \
+volunteer.  Events that show a white box are immediately available.  Events \
+with a highlighted box require approval, when you volunteer, your offer will \
+be reviewed and a response will be sent shortly.'''
+pending_note = '''This is a shift that requires approval.  When you volunteer,\
+ your offer will be reviewed and a response will be sent shortly.'''
 interested_explain_msg = '''Anyone with an account with The Great Burlesque \
 Exposition can show their interest in an event and add it to their schedule \
 by clicking on the star on our calendar or in an event description.  Starred \

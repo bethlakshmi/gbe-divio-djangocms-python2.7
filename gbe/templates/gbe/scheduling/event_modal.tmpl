@@ -25,7 +25,7 @@
 {{occurrence.parent_event}}</a></i>{% endif %}
                 </div>
                 <div class="modal-footer">
-                    <a href="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" class="btn btn-primary">{% if not occurrence.highlight %}Sign Me Up!{% else %}Withdraw{% endif %}</a>
+                    <a href="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" class="btn btn-primary">{% if not occurrence.highlight %}{% if occurrence.approval_needed %}Offer to Help!{% else %}Sign Me Up!{% endif %}{% else %}Withdraw{% endif %}</a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
               </div></div></div>
