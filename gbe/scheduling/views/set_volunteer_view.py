@@ -19,6 +19,7 @@ from gbetext import (
     set_pending_msg,
     unset_pending_msg,
 )
+from gbe.email.functions import send_schedule_update_mail
 
 
 class SetVolunteerView(View):

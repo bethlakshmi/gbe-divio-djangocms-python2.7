@@ -6,6 +6,10 @@ from django.shortcuts import (
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from gbetext import calendar_type as calendar_type_options
+from gbetext import (
+    volunteer_instructions,
+    pending_note,
+)
 from django.utils.formats import date_format
 from settings import (
     GBE_TIME_FORMAT,
@@ -21,6 +25,7 @@ from gbe.models import (
     ConferenceDay,
     Event,
     StaffArea,
+    UserMessage,
 )
 from gbe.functions import (
     get_current_conference,
@@ -90,11 +95,24 @@ class VolunteerSignupView(View):
             self.this_day = get_conference_days(
                 self.conference,
                 open_to_public=True).order_by("day").first()
-
+        instructions = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="VOLUNTEER_INSTRUCTIONS",
+            defaults={
+                'summary': "Volunteer Instructions (in header)",
+                'description': volunteer_instructions})
+        pending_instructions = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="PENDING_INSTRUCTIONS",
+            defaults={
+                'summary': "Pending Instructions (in modal, approval needed)",
+                'description': pending_note})
         context = {
             'calendar_type': self.calendar_type,
             'conference': self.conference,
             'this_day': self.this_day,
+            'view_header_text': instructions[0].description,
+            'pending_note': pending_instructions[0].description,
         }
         if self.this_day:
             if ConferenceDay.objects.filter(

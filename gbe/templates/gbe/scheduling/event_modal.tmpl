@@ -23,6 +23,9 @@
                   <i>This opportunity is in support of 
 <a href="{% url 'scheduling:detail_view' occurrence.parent_event.eventitem.pk%}">
 {{occurrence.parent_event}}</a></i>{% endif %}
+                  {% if occurrence.approval_needed %}<div class="well well-sm">
+                    {{ pending_note}}
+                  </div>{% endif %}
                 </div>
                 <div class="modal-footer">
                     <a href="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" class="btn btn-primary">{% if not occurrence.highlight %}{% if occurrence.approval_needed %}Offer to Help!{% else %}Sign Me Up!{% endif %}{% else %}Withdraw{% endif %}</a>

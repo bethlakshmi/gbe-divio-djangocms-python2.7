@@ -9,6 +9,8 @@
 {% endblock %}
 
 {% block content %}
+<h2>Volunteer for {{ conference }}</h2>
+<div>{{ view_header_text | safe }}</div><br>
 <div class="container calendar-container">
  <div class="row header1">
     <div class="col-lg-12">{{conference.conference_name}} - {{ calendar_type }} Calendar</div>
