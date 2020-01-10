@@ -30,7 +30,6 @@ from make_costume_view import MakeCostumeView
 from make_vendor_view import MakeVendorView
 from make_volunteer_view import MakeVolunteerView
 from make_summer_act_view import MakeSummerActView
-from volunteer_signup_view import VolunteerSignupView
 
 # view
 from view_act_view import ViewActView
