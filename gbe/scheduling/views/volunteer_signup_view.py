@@ -139,7 +139,7 @@ class VolunteerSignupView(View):
                     role = booking.role
             # if this isn't something they can signup or un-signup for, skip
             if occurrence.extra_volunteers() < 0 or (
-                    role is not None and role not in (
+                    role is not None and role in (
                         "Volunteer", 
                         "Pending Volunteer")):
                 event = events.filter(pk=occurrence.eventitem.event.pk).first()
