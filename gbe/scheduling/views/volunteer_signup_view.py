@@ -7,8 +7,9 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from gbetext import calendar_type as calendar_type_options
 from gbetext import (
-    volunteer_instructions,
     pending_note,
+    role_options,
+    volunteer_instructions,
 )
 from django.utils.formats import date_format
 from settings import (
@@ -191,10 +192,14 @@ class VolunteerSignupView(View):
             if request.user.is_authenticated() and hasattr(
                     request.user,
                     'profile'):
+                all_roles = []
+                for n, m in role_options:
+                    all_roles += [m]
                 sched_response = get_schedule(
                     request.user,
                     labels=[self.calendar_type,
-                            self.conference.conference_slug])
+                            self.conference.conference_slug],
+                    roles=all_roles)
                 personal_schedule = sched_response.schedule_items
                 person = Person(
                     user=request.user,
