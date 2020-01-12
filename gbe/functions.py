@@ -21,6 +21,7 @@ from gbetext import (
     full_login_msg,
 )
 import json
+from settings import GBE_DATETIME_FORMAT
 
 
 def jsonify(data):
@@ -184,3 +185,19 @@ def get_gbe_schedulable_items(confitem_type,
             confitem.type == filter_type]
 
     return confitems_list
+
+
+def make_warning_msg(warning, separator="<br>-"):
+    message_text = ''
+    if warning.details:
+        message_text += warning.details
+    if warning.user:
+        message_text += '%s Affected user: %s' % (
+            separator,
+            warning.user.profile.display_name)
+    if warning.occurrence:
+        message_text += '%s Conflicting booking: %s, Start Time: %s' % (
+            separator,
+            str(warning.occurrence),
+            warning.occurrence.starttime.strftime(GBE_DATETIME_FORMAT))
+    return message_text

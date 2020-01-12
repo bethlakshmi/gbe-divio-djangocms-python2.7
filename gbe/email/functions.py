@@ -1,7 +1,11 @@
 from gbe.models import (
     EmailTemplateSender,
 )
-from settings import GBE_DATE_FORMAT
+from settings import (
+    GBE_DATE_FORMAT,
+    GBE_DATETIME_FORMAT,
+    GBE_TIME_FORMAT,
+)
 from django.contrib.auth.models import User
 from django.conf import settings
 from post_office import mail
@@ -10,6 +14,7 @@ import os
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from gbe.models import Show
+from gbe.functions import make_warning_msg
 from gbetext import (
     acceptance_states,
     email_template_desc,
@@ -251,6 +256,44 @@ def send_warnings_to_staff(bidder,
                 'bidder': bidder,
                 'bid_type': bid_type,
                 'warnings': warnings},
+            )
+
+
+def send_volunteer_update_to_staff(
+        vol_profile, 
+        occurrence,
+        state,
+        update_response):
+    name = 'volunteer changed schedule'
+    template = get_or_create_template(
+        name,
+        "volunteer_schedule_change",
+        "Volunteer Schedule Change")
+    to_list = [user.email for user in
+               User.objects.filter(groups__name='Volunteer Coordinator',
+                                   is_active=True)]
+    state_change = "Withdrawn"
+    if state == "on":
+        if occurrence.approval_needed:
+            state_change = "Awaiting Approval"
+        else:
+            state_change = "Volunteered"
+    warnings = []
+    for warning in update_response.warnings:
+        warnings += [make_warning_msg(warning, "")]
+    if len(to_list) > 0:
+        return mail_send_gbe(
+            to_list,
+            template.sender.from_email,
+            template=name,
+            context={
+                'profile': vol_profile,
+                'occurrence': occurrence,
+                'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
+                'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
+                'error': update_response.errors,
+                'warnings': warnings,
+                'state_change': state_change},
             )
 
 
