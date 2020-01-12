@@ -13,7 +13,10 @@ from post_office.models import EmailTemplate
 import os
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from gbe.models import Show
+from gbe.models import (
+    Show,
+    StaffArea,
+)
 from gbe.functions import make_warning_msg
 from gbetext import (
     acceptance_states,
@@ -21,6 +24,7 @@ from gbetext import (
     no_profile_msg,
     unique_email_templates,
 )
+from scheduler.idd import get_all_container_bookings
 
 
 def mail_send_gbe(to_list,
@@ -29,6 +33,8 @@ def mail_send_gbe(to_list,
                   context,
                   priority='now'):
     if settings.DEBUG:
+        print "Original To List:"
+        print to_list
         to_list = []
         for admin in settings.ADMINS:
             to_list += [admin[1]]
@@ -272,6 +278,20 @@ def send_volunteer_update_to_staff(
     to_list = [user.email for user in
                User.objects.filter(groups__name='Volunteer Coordinator',
                                    is_active=True)]
+    leads = get_all_container_bookings(
+        occurrence_ids=[occurrence.pk],
+        roles=['Staff Lead', ])
+    for lead in leads.people:
+        if lead.user.email not in to_list:
+            to_list += [lead.user.email]
+    for area in StaffArea.objects.filter(
+            conference__conference_slug__in=occurrence.labels.values_list(
+                'text', 
+                flat=True),
+            slug__in=occurrence.labels.values_list('text', flat=True),
+            staff_lead__isnull=False):
+        if area.staff_lead.user_object.email not in to_list:
+            to_list += [area.staff_lead.user_object.email]
     state_change = "Withdrawn"
     if state == "on":
         if occurrence.approval_needed:
