@@ -1,6 +1,6 @@
 <div class = "schedule_section">
-  <h3>
-     <a href="{% url 'scheduling:voluteer_signup' %}" style="padding:1px 5px;" class="btn btn-primary btn-sm float-right">Volunteer</a>
+  <h3>{% if not historical %}
+     <a href="{% url 'scheduling:volunteer_signup' %}" style="padding:1px 5px;" class="btn btn-primary btn-sm float-right">Volunteer</a>{%endif%}
     {% if profile.display_name %}
       {{ profile.display_name }}'s
     {% else %}

@@ -84,7 +84,7 @@ urlpatterns = [
         CopyStaffAreaView.as_view(), name='copy_staff_schedule'),
 
     url(r'^scheduling/volunteer_signup/?$',
-        VolunteerSignupView.as_view(), name='voluteer_signup'),
+        VolunteerSignupView.as_view(), name='volunteer_signup'),
     url(r'^volunteer/create/?$',
         VolunteerSignupView.as_view(), name='volunteer_create'),
     url(r'^calendar/(?P<calendar_type>[-\w]+)/?$',
