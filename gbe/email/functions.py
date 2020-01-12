@@ -280,7 +280,7 @@ def send_volunteer_update_to_staff(
             state_change = "Volunteered"
     warnings = []
     for warning in update_response.warnings:
-        warnings += [make_warning_msg(warning, "")]
+        warnings += [make_warning_msg(warning, "", False)]
     if len(to_list) > 0:
         return mail_send_gbe(
             to_list,

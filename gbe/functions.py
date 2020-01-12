@@ -187,11 +187,11 @@ def get_gbe_schedulable_items(confitem_type,
     return confitems_list
 
 
-def make_warning_msg(warning, separator="<br>-"):
+def make_warning_msg(warning, separator="<br>-", use_user=True):
     message_text = ''
     if warning.details:
         message_text += warning.details
-    if warning.user:
+    if warning.user and use_user:
         message_text += '%s Affected user: %s' % (
             separator,
             warning.user.profile.display_name)

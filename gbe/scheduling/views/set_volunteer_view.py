@@ -73,7 +73,8 @@ class SetVolunteerView(View):
             schedule_response = set_person(occurrence_id, person)
             show_general_status(request,
                                 schedule_response,
-                                self.__class__.__name__)
+                                self.__class__.__name__,
+                                False)
             if len(schedule_response.errors) == 0 and (
                    schedule_response.booking_id):
                 user_message = UserMessage.objects.get_or_create(
