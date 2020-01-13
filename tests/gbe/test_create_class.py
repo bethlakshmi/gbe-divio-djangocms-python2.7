@@ -5,6 +5,7 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     PersonaFactory,
     ProfileFactory,
+    ProfilePreferencesFactory,
     UserMessageFactory,
 )
 from tests.functions.gbe_functions import (
@@ -14,7 +15,8 @@ from tests.functions.gbe_functions import (
 )
 from gbetext import (
     default_class_submit_msg,
-    default_class_draft_msg
+    default_class_draft_msg,
+    no_profile_msg,
 )
 from gbe.models import (
     Conference,
@@ -58,6 +60,31 @@ class TestCreateClass(TestCase):
         data = self.get_class_form(submit=submit)
         response = self.client.post(url, data=data, follow=True)
         return response, data
+
+    def test_create_no_login(self):
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(
+            response,
+            "%s?next=%s" % (
+                reverse('register', urlconf='gbe.urls'),
+                url))
+
+    def test_create_bad_profile(self):
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        cptn_tinypants = ProfileFactory(display_name="", phone="")
+        ProfilePreferencesFactory(profile=cptn_tinypants)
+        login_as(cptn_tinypants.user_object, self)
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(
+            response,
+            "%s?next=%s" % (
+                reverse('profile_update', urlconf='gbe.urls'),
+                url))
+        assert_alert_exists(
+            response, 'warning', 'Warning', no_profile_msg)
 
     def test_bid_class_no_personae(self):
         '''class_bid, when profile has no personae,

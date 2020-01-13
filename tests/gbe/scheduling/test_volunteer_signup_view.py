@@ -9,11 +9,9 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ConferenceDayFactory,
     ProfileFactory,
-    UserFactory,
     UserMessageFactory,
 )
 from tests.functions.gbe_functions import clear_conferences
-from tests.functions.scheduler_functions import noon
 from datetime import (
     date,
     datetime,
@@ -27,7 +25,6 @@ from gbe.models import (
 )
 from gbetext import (
     pending_note,
-    role_options,
     volunteer_instructions,
 )
 
