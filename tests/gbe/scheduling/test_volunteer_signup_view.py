@@ -10,6 +10,7 @@ from tests.factories.gbe_factories import (
     ConferenceDayFactory,
     ProfileFactory,
     UserFactory,
+    UserMessageFactory,
 )
 from tests.functions.gbe_functions import clear_conferences
 from tests.functions.scheduler_functions import noon
@@ -22,8 +23,14 @@ from tests.contexts import (
     ShowContext,
     StaffAreaContext,
 )
-from gbe.models import ConferenceDay
-from settings import DEBUG
+from gbe.models import (
+    UserMessage,
+)
+from gbetext import (
+    pending_note,
+    role_options,
+    volunteer_instructions,
+)
 
 
 class TestVolunteerSignupView(TestCase):
@@ -48,23 +55,22 @@ class TestVolunteerSignupView(TestCase):
         self.assertContains(
             response,
             self.staffcontext.conference.conference_name)
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, occurrence.eventitem.e_title)
         self.assertContains(
             response, 
-            self.volunteeropp.start_time.strftime("%-I:%M %p"))
+            occurrence.start_time.strftime("%-I:%M %p"))
         self.assertContains(
             response, 
-            self.volunteeropp.end_time.strftime("%-I:%M %p"))
+            occurrence.end_time.strftime("%-I:%M %p"))
         self.assertContains(response, image)
         self.assertContains(response, reverse(
             'set_volunteer',
-            args=[self.volunteeropp.pk, action],
+            args=[occurrence.pk, action],
             urlconf="gbe.scheduling.urls"))
 
     def test_signup_w_available_slot(self):
         other_conference = ConferenceFactory(
             status='completed')
-        login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertNotContains(
             response,
@@ -73,30 +79,43 @@ class TestVolunteerSignupView(TestCase):
             response, 
             self.volunteeropp, 
             "not_yet_volunteered.gif")
+        self.assertContains(response, volunteer_instructions)
+        self.assertContains(response, "btn btn-default disabled", 2)
 
     def test_signup_w_need_approval_slot(self):
         self.volunteeropp.approval_needed = True
         self.volunteeropp.save()
-        login_as(self.profile, self)
         response = self.client.get(self.url)
         self.basic_event_check(
             response, 
             self.volunteeropp, 
             "needs_approval.gif")
+        self.assertContains(response, pending_note)
 
     def test_signup_w_signed_up_slot(self):
+        UserMessage.objects.all().delete()
+        msg = UserMessageFactory(
+            view='VolunteerSignupView',
+            code='VOLUNTEER_INSTRUCTIONS')
         self.staffcontext.book_volunteer(
             volunteer_sched_event=self.volunteeropp,
             volunteer=self.profile)
         login_as(self.profile, self)
-        response = self.client.get(self.url)
+        response = self.client.get("%s?conference=%s" % (
+            self.url,
+            self.staffcontext.conference.conference_slug))
         self.basic_event_check(
             response, 
             self.volunteeropp, 
             "volunteered.gif",
             action="off")
+        self.assertContains(response, msg.description)
 
     def test_signup_w_approved_slot(self):
+        UserMessage.objects.all().delete()
+        msg = UserMessageFactory(
+            view='VolunteerSignupView',
+            code='PENDING_INSTRUCTIONS')
         self.volunteeropp.approval_needed = True
         self.volunteeropp.save()
         self.staffcontext.book_volunteer(
@@ -104,12 +123,12 @@ class TestVolunteerSignupView(TestCase):
             volunteer=self.profile)
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        print response.content
         self.basic_event_check(
             response, 
             self.volunteeropp, 
             "approved.gif",
             action="off")
+        self.assertContains(response, msg.description)
 
     def test_signup_w_pending_slot(self):
         self.volunteeropp.approval_needed = True
@@ -120,90 +139,28 @@ class TestVolunteerSignupView(TestCase):
             role="Pending Volunteer")
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        print response.content
         self.basic_event_check(
             response, 
             self.volunteeropp, 
             "awaiting_approval.gif",
             action="off")
 
-'''
-    def test_calendar_conference_w_default_conf(self):
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Conference'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-12">%s' % (
-                self.showcontext.conference.conference_name))
-        self.assertNotContains(response, self.showcontext.show.e_title)
-        self.assertNotContains(response, self.other_show.show.e_title)
-        self.assertContains(response, self.classcontext.bid.e_title)
-        self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
-
-    def test_calendar_volunteer_w_default_conf(self):
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-12">%s' % (
-                self.showcontext.conference.conference_name))
-        self.assertNotContains(response, self.showcontext.show.e_title)
-        self.assertNotContains(response, self.other_show.show.e_title)
-        self.assertNotContains(response, self.classcontext.bid.e_title)
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
-
-    def test_calendar_conference_w_default_conf_public_days(self):
-        conference_day = ConferenceDayFactory(
+    def test_other_days(self):
+        earlier_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 02, 05),
-            open_to_public=False)
-        conference_day = ConferenceDayFactory(
+            day=date(2016, 02, 05))
+        later_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 02, 07),
-            open_to_public=False)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Conference'])
-        response = self.client.get(url)
-        self.assertContains(response, "btn btn-default disabled", 2)
-        self.assertContains(response, "Feb. 6, 2016", 1)
-
-    def test_calendar_volunteer_w_default_conf_public_days(self):
-        conference_day = ConferenceDayFactory(
-            conference=self.staffcontext.conference,
-            day=date(2016, 02, 05),
-            open_to_public=False)
-        conference_day = ConferenceDayFactory(
-            conference=self.staffcontext.conference,
-            day=date(2016, 02, 07),
-            open_to_public=False)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        self.assertNotContains(response, "btn btn-default disabled")
-
-    def test_calendar_shows_requested_conference(self):
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        data = {'conference': self.other_conference.conference_slug}
-        response = self.client.get(url, data=data)
-        self.assertNotContains(response, self.showcontext.show.e_title)
-        self.assertContains(response, self.other_show.show.e_title)
+            day=date(2016, 02, 07))
+        login_as(self.profile, self)
+        response = self.client.get("%s?day=02-06-2016" % self.url)
+        self.assertContains(response, "?day=02-05-2016")
+        self.assertContains(response, "?day=02-07-2016")
 
     def test_no_conference_days(self):
         clear_conferences()
         ConferenceFactory(status='upcoming')
-        url = reverse('calendar',
-                      urlconf='gbe.scheduling.urls',
-                      args=['Conference'])
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertContains(
             response,
             'This calendar is not currently available.')
@@ -211,308 +168,51 @@ class TestVolunteerSignupView(TestCase):
     def test_bad_day(self):
         #There is a day, but that's not the day we're asking for.
         clear_conferences()
-        conference = ConferenceFactory(status='upcoming')
-        conference_day = ConferenceDayFactory(
-            conference=conference,
-            day=date(2016, 02, 06))
-        url = reverse('calendar',
-                      urlconf='gbe.scheduling.urls',
-                      args=['Conference'])
-        data = {'day': "02-02-2016"}
-        response = self.client.get(url, data=data, follow=True)
-        self.assertEqual(response.status_code, 404)
-
-    def test_invalid_day(self):
-        # There is a day, but that's not the day we're asking for.
-        url = reverse('calendar',
-                      urlconf='gbe.scheduling.urls',
-                      args=['Conference'])
-        data = {'day': "DEADBEEF"}
-        response = self.client.get(url, data=data, follow=True)
-        self.assertEqual(response.status_code, 404)
-
-    def test_bad_cal_type(self):
-        url = reverse('calendar',
-                      urlconf='gbe.scheduling.urls',
-                      args=['Bad'])
+        url = "%s?day=02-02-2016" % self.url
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
-    def test_one_day(self):
-        # There is no day but today, so no navigation
-        clear_conferences()
-        conference = ConferenceFactory(status='upcoming')
-        conference_day = ConferenceDayFactory(
-            conference=conference,
-            day=date(2016, 02, 06))
-        url = reverse('calendar',
-                      urlconf='gbe.scheduling.urls',
-                      args=['Conference'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        self.assertContains(response, "btn btn-default disabled", 2)
+    def test_no_events(self):
+        earlier_day = ConferenceDayFactory(
+            conference=self.staffcontext.conference,
+            day=date(2016, 02, 05))
+        login_as(self.profile, self)
+        response = self.client.get("%s?day=02-05-2016" % self.url)
+        self.assertContains(response, "There are no volunteer events " +
+            "scheduled for this day.")
 
-    def test_day_before(self):
-        # There is no day but today, so no navigation
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        ConferenceDayFactory(
-            conference=self.other_conference,
-            day=date(2015, 02, 07))
-        data = {'day': "02-06-2015"}
-        response = self.client.get(url, data=data)
+    def test_two_upcoming_conf(self):
+        second_conference = ConferenceFactory()
+        save_the_date = datetime(2017, 02, 06, 12, 00, 00)
+        second_day = ConferenceDayFactory(
+            conference=second_conference,
+            day=date(2017, 02, 06))
+        staffcontext = StaffAreaContext(
+            conference=second_conference,
+            starttime=save_the_date)
+        volunteeropp = staffcontext.add_volunteer_opp()
+        login_as(self.profile, self)
+        response = self.client.get("%s?conference=%s" % (
+            self.url,
+            second_conference.conference_slug))
         self.assertContains(
             response,
-            '<a href="?day=02-07-2015" ' +
-            'data-toggle="tooltip" title="02-07-2015">')
+            staffcontext.conference.conference_name)
+        self.assertContains(response, volunteeropp.eventitem.e_title)
 
-    def test_day_after(self):
-        # There is no day but today, so no navigation
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        ConferenceDayFactory(
-            conference=self.other_conference,
-            day=date(2015, 02, 07))
-        data = {'day': "02-07-2015"}
-        response = self.client.get(url, data=data)
-        self.assertContains(
-            response,
-            '<a href="?day=02-06-2015" ' +
-            'data-toggle="tooltip" title="02-06-2015">')
+    def test_no_space_in_event(self):
+        full_opp = self.staffcontext.add_volunteer_opp()
+        full_opp.max_volunteer = 0
+        full_opp.save()
 
-    def test_no_sched_events(self):
-        # There is a day, but that's not the day we're asking for.
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        ConferenceDayFactory(
-            conference=self.other_conference,
-            day=date(2015, 02, 07))
-        data = {'day': "02-07-2015"}
-        response = self.client.get(url, data=data)
-        self.assertContains(
-            response,
-            "There are no general events scheduled for this day.")
+        response = self.client.get(self.url)
+        self.assertNotContains(response, full_opp.eventitem.e_title)
 
-    def test_calendar_1_event_per_hour(self):
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-12 col-md-12 col-sm-12 col-12 ">',
-            1)
-
-    def test_calendar_2_event_per_hour(self):
-        two_opp = self.staffcontext.add_volunteer_opp()
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-6 col-md-6 col-sm-6 col-12 ">',
-            2)
-        self.assertContains(response, two_opp.eventitem.e_title)
-
-    def test_calendar_3_event_per_hour(self):
-        self.staffcontext.add_volunteer_opp()
-        three_opp = self.staffcontext.add_volunteer_opp()
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-4 col-md-4 col-sm-6 col-12 ">',
-            3)
-
-    def test_calendar_4_event_per_hour(self):
-        for n in range(0, 2):
-            self.staffcontext.add_volunteer_opp()
-        three_opp = self.staffcontext.add_volunteer_opp()
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-3 col-md-4 col-sm-6 col-12 ">',
-            4)
-
-    def test_calendar_6_event_per_hour(self):
-        for n in range(0, 4):
-            self.staffcontext.add_volunteer_opp()
-        three_opp = self.staffcontext.add_volunteer_opp()
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-2 col-md-4 col-sm-6 col-12 ">',
-            6)
-
-    def test_calendar_10_event_per_hour(self):
-        for n in range(0, 8):
-            self.staffcontext.add_volunteer_opp()
-        three_opp = self.staffcontext.add_volunteer_opp()
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-2 col-md-4 col-sm-6 col-12 ">',
-            10)
-
-    def test_logged_in_no_interest(self):
-        profile = ProfileFactory()
-        login_as(profile, self)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        set_fav_link = reverse(
-            "set_favorite",
-            args=[self.showcontext.sched_event.pk, "on"],
-            urlconf="gbe.scheduling.urls")
-        self.assertContains(response, "%s?next=%s" % (
-            set_fav_link,
-            url))
-
-    def test_logged_in_have_interest(self):
-        profile = self.showcontext.set_interest()
-        login_as(profile, self)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        set_fav_link = reverse(
-            "set_favorite",
-            args=[self.showcontext.sched_event.pk, "off"],
-            urlconf="gbe.scheduling.urls")
-        self.assertContains(response, "%s?next=%s" % (
-            set_fav_link,
-            url))
-        self.assertContains(
-            response,
-            '<div class="col-lg-12 col-md-12 col-sm-12 col-12 interested">')
-
-    def test_logged_in_no_profile(self):
-        user = UserFactory()
-        login_as(user, self)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        set_fav_link = reverse(
-            "set_favorite",
-            args=[self.showcontext.sched_event.pk, "on"],
-            urlconf="gbe.scheduling.urls")
-        self.assertContains(response, "%s?next=%s" % (
-            set_fav_link,
-            url))
-
-    def test_calendar_old_conference(self):
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        data = {'conference': self.other_conference.conference_slug}
-        response = self.client.get(url, data=data)
-        self.assertNotContains(response, self.showcontext.show.e_title)
-        set_fav_link = reverse(
-            "set_favorite",
-            args=[self.showcontext.sched_event.pk, "off"],
-            urlconf="gbe.scheduling.urls")
-        self.assertNotContains(response, "%s?next=%s" % (
-            set_fav_link,
-            url))
-        set_unfav_link = reverse(
-            "set_favorite",
-            args=[self.showcontext.sched_event.pk, "on"],
-            urlconf="gbe.scheduling.urls")
-        self.assertNotContains(response, "%s?next=%s" % (
-            set_unfav_link,
-            url))
-
-    def test_logged_in_teacher(self):
-        login_as(self.classcontext.teacher.performer_profile, self)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Conference'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
-        self.assertContains(
-            response,
-            '<div class="col-lg-12 col-md-12 col-sm-12 col-12 teacher">')
-        self.assertNotContains(response,
-                               'fa-tachometer')
-
-    def test_logged_in_performer(self):
-        login_as(self.showcontext.performer.performer_profile, self)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['General'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
-        self.assertContains(
-            response,
-            '<div class="col-lg-12 col-md-12 col-sm-12 col-12 performer">')
-
-    def test_logged_in_volunteer(self):
-        volunteer, booking = self.staffcontext.book_volunteer()
-        login_as(volunteer, self)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-6 col-md-6 col-sm-6 col-12 volunteer">')
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
-
-    def test_disabled_eval(self):
-        eval_profile = self.classcontext.set_eval_answerer()
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Conference'])
-        login_as(eval_profile, self)
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        eval_link = reverse(
-            "eval_event",
-            args=[self.classcontext.sched_event.pk, ],
-            urlconf="gbe.scheduling.urls")
-        self.assertNotContains(response, "%s?next=%s" % (
-            eval_link,
-            url))
-        self.assertContains(response, "You have already rated this class")
-
-    def test_eval_ready(self):
-        self.classcontext.setup_eval()
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Conference'])
-        data = {'day': "02-06-2016"}
-        response = self.client.get(url, data=data)
-        eval_link = reverse(
-            "eval_event",
-            args=[self.classcontext.sched_event.pk, ],
-            urlconf="gbe.scheduling.urls")
-        self.assertContains(response, "%s?next=%s" % (
-            eval_link,
-            url))
-'''
+    def test_user_is_staff_lead(self):
+        self.staffcontext.book_volunteer(
+            volunteer_sched_event=self.volunteeropp,
+            volunteer=self.profile,
+            role="Staff Lead")
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertNotContains(response, self.volunteeropp.eventitem.e_title)

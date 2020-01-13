@@ -5,7 +5,6 @@ from django.shortcuts import (
 )
 from django.http import Http404
 from django.core.urlresolvers import reverse
-from gbetext import calendar_type as calendar_type_options
 from gbetext import (
     pending_note,
     role_options,
@@ -46,7 +45,6 @@ from collections import OrderedDict
 
 class VolunteerSignupView(View):
     template = 'gbe/scheduling/volunteer_signup.tmpl'
-    calendar_type = None
     conference = None
     this_day = None
     # 0 = midnight starting day, 23 = 11 pm next day (max)
@@ -69,7 +67,6 @@ class VolunteerSignupView(View):
 
     def process_inputs(self, request, args, kwargs):
         context = {}
-        self.calendar_type = "Volunteer"
         self.conference = None
         self.this_day = None
 
@@ -109,7 +106,6 @@ class VolunteerSignupView(View):
                 'summary': "Pending Instructions (in modal, approval needed)",
                 'description': pending_note})
         context = {
-            'calendar_type': self.calendar_type,
             'conference': self.conference,
             'this_day': self.this_day,
             'view_header_text': instructions[0].description,
@@ -181,10 +177,10 @@ class VolunteerSignupView(View):
         context = self.process_inputs(request, args, kwargs)
         personal_schedule = []
         eval_occurrences = []
-        if not self.conference or not self.this_day or not self.calendar_type:
+        if not self.conference or not self.this_day:
             return render(request, self.template, context)
         response = get_occurrences(
-            labels=[self.calendar_type, self.conference.conference_slug],
+            labels=["Volunteer", self.conference.conference_slug],
             day=self.this_day.day)
         show_general_status(
             request, response, self.__class__.__name__)
@@ -197,8 +193,7 @@ class VolunteerSignupView(View):
                     all_roles += [m]
                 sched_response = get_schedule(
                     request.user,
-                    labels=[self.calendar_type,
-                            self.conference.conference_slug],
+                    labels=["Volunteer", self.conference.conference_slug],
                     roles=all_roles)
                 personal_schedule = sched_response.schedule_items
                 person = Person(

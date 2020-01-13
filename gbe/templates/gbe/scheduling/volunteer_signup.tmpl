@@ -13,7 +13,7 @@
 <div>{{ view_header_text | safe }}</div><br>
 <div class="container calendar-container">
  <div class="row header1">
-    <div class="col-lg-12">{{conference.conference_name}} - {{ calendar_type }} Calendar</div>
+    <div class="col-lg-12">{{conference.conference_name}} Calendar</div>
  </div>
  <div class="row header2">
   {% if this_day %}
@@ -42,7 +42,7 @@
  </div>
 {% if not occurrences %}
    <div class="row event-row" style="text-align: center;">
-    <div class="col-lg-12">There are no {{ calendar_type | lower }} events scheduled for this day.</div>
+    <div class="col-lg-12">There are no volunteer events scheduled for this day.</div>
   </div>
 {% else %}
 <div class="row"><div class="col-lg-12 vol_shift_div">

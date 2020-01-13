@@ -23,7 +23,6 @@ from tests.contexts import (
     StaffAreaContext,
 )
 from gbe.models import ConferenceDay
-from settings import DEBUG
 
 
 class TestCalendarView(TestCase):
