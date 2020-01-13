@@ -19,9 +19,8 @@ from datetime import (
     datetime,
 )
 from tests.contexts import (
-    ClassContext,
-    ShowContext,
     StaffAreaContext,
+    VolunteerContext,
 )
 from gbe.models import (
     UserMessage,
@@ -51,11 +50,16 @@ class TestVolunteerSignupView(TestCase):
             starttime=save_the_date)
         self.volunteeropp = self.staffcontext.add_volunteer_opp()
 
-    def basic_event_check(self, response, occurrence, image, action="on"):
+    def basic_event_check(self,
+                          response,
+                          conference,
+                          occurrence,
+                          image,
+                          action="on"):
         self.assertContains(
             response,
-            self.staffcontext.conference.conference_name)
-        self.assertContains(response, occurrence.eventitem.e_title)
+            conference.conference_name)
+        self.assertContains(response, occurrence.eventitem.child().e_title)
         self.assertContains(
             response, 
             occurrence.start_time.strftime("%-I:%M %p"))
@@ -76,7 +80,8 @@ class TestVolunteerSignupView(TestCase):
             response,
             other_conference.conference_name)
         self.basic_event_check(
-            response, 
+            response,
+            self.staffcontext.conference,
             self.volunteeropp, 
             "not_yet_volunteered.gif")
         self.assertContains(response, volunteer_instructions)
@@ -87,8 +92,9 @@ class TestVolunteerSignupView(TestCase):
         self.volunteeropp.save()
         response = self.client.get(self.url)
         self.basic_event_check(
-            response, 
-            self.volunteeropp, 
+            response,
+            self.staffcontext.conference,
+            self.volunteeropp,
             "needs_approval.gif")
         self.assertContains(response, pending_note)
 
@@ -105,8 +111,9 @@ class TestVolunteerSignupView(TestCase):
             self.url,
             self.staffcontext.conference.conference_slug))
         self.basic_event_check(
-            response, 
-            self.volunteeropp, 
+            response,
+            self.staffcontext.conference,
+            self.volunteeropp,
             "volunteered.gif",
             action="off")
         self.assertContains(response, msg.description)
@@ -124,8 +131,9 @@ class TestVolunteerSignupView(TestCase):
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.basic_event_check(
-            response, 
-            self.volunteeropp, 
+            response,
+            self.staffcontext.conference,
+            self.volunteeropp,
             "approved.gif",
             action="off")
         self.assertContains(response, msg.description)
@@ -140,10 +148,12 @@ class TestVolunteerSignupView(TestCase):
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.basic_event_check(
-            response, 
-            self.volunteeropp, 
+            response,
+            self.staffcontext.conference,
+            self.volunteeropp,
             "awaiting_approval.gif",
             action="off")
+        self.assertContains(response, self.staffcontext.area.description)
 
     def test_other_days(self):
         earlier_day = ConferenceDayFactory(
@@ -167,7 +177,6 @@ class TestVolunteerSignupView(TestCase):
 
     def test_bad_day(self):
         #There is a day, but that's not the day we're asking for.
-        clear_conferences()
         url = "%s?day=02-02-2016" % self.url
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
@@ -216,3 +225,21 @@ class TestVolunteerSignupView(TestCase):
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
+
+    def test_slot_with_show(self):
+        vol_context = VolunteerContext()
+        login_as(vol_context.profile, self)
+        response = self.client.get("%s?conference=%s" % (
+            self.url,
+            vol_context.conference.conference_slug))
+        self.basic_event_check(
+            response,
+            vol_context.conference,
+            vol_context.opp_event, 
+            "volunteered.gif",
+            action="off")
+        self.assertContains(response, vol_context.event.e_title)
+        self.assertContains(response, reverse(
+            "detail_view",
+            urlconf="gbe.scheduling.urls",
+            args=[vol_context.event.pk]))

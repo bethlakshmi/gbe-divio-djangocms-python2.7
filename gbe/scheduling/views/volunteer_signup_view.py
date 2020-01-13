@@ -125,8 +125,7 @@ class VolunteerSignupView(View):
 
     def build_occurrence_display(self,
                                  occurrences,
-                                 personal_schedule=None,
-                                 eval_occurrences=None):
+                                 personal_schedule=None):
         display_list = []
         events = Event.objects.filter(e_conference=self.conference)
         for occurrence in occurrences:
@@ -176,7 +175,6 @@ class VolunteerSignupView(View):
     def get(self, request, *args, **kwargs):
         context = self.process_inputs(request, args, kwargs)
         personal_schedule = []
-        eval_occurrences = []
         if not self.conference or not self.this_day:
             return render(request, self.template, context)
         response = get_occurrences(
@@ -201,16 +199,9 @@ class VolunteerSignupView(View):
                     public_id=request.user.profile.pk,
                     public_class="Profile")
                 eval_response = get_eval_info(person=person)
-                if len(eval_response.questions) > 0:
-                    eval_occurrences = eval_response.occurrences
-                else:
-                    eval_occurrences = None
             context['occurrences'] = self.build_occurrence_display(
                 response.occurrences,
-                personal_schedule,
-                eval_occurrences)
-            #context['start_grid_hour'] = datetime.time(hour=self.start_grid_hour)
-            #context['end_grid_hour'] = datetime.time(hour=self.end_grid_hour)
+                personal_schedule)
             context['col_per_hour'] = self.col_per_hour
             context['grid_list'] = self.make_time_range(
                 self.start_grid_hour*60,
