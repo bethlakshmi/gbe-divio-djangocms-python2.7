@@ -83,7 +83,7 @@ class SetVolunteerView(View):
                    schedule_response.booking_id):
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
-                    code="SET_%s" % role.replace(" ","_").upper(),
+                    code="SET_%s" % role.replace(" ", "_").upper(),
                     defaults={
                         'summary': default_summary,
                         'description': default_message})
@@ -107,7 +107,7 @@ class SetVolunteerView(View):
                 if schedule_response.booking_id:
                     user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
-                        code="REMOVE_%s" % role.replace(" ","_").upper(),
+                        code="REMOVE_%s" % role.replace(" ", "_").upper(),
                         defaults={
                             'summary': default_summary,
                             'description': default_message})
@@ -115,13 +115,13 @@ class SetVolunteerView(View):
         if schedule_response and schedule_response.booking_id:
             email_status = send_schedule_update_mail("Volunteer", self.owner)
             staff_status = send_volunteer_update_to_staff(
-                self.owner, 
+                self.owner,
                 occ_response.occurrence,
                 kwargs['state'],
                 schedule_response)
             if (email_status or staff_status) and validate_perms(
-                    request, 
-                    'any', 
+                    request,
+                    'any',
                     require=False):
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,

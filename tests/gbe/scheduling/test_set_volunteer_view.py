@@ -118,7 +118,7 @@ class TestSetFavorite(TestCase):
         self.context.book_volunteer(
             volunteer_sched_event=self.volunteeropp,
             volunteer=self.profile)
-        redirect_url = reverse('volunteer_signup', 
+        redirect_url = reverse('volunteer_signup',
                                urlconf="gbe.scheduling.urls")
         login_as(self.profile, self)
         response = self.client.get("%s?next=%s" % (
@@ -203,7 +203,7 @@ class TestSetFavorite(TestCase):
             volunteer_sched_event=self.volunteeropp,
             volunteer=self.profile,
             role="Pending Volunteer")
-        redirect_url = reverse('volunteer_signup', 
+        redirect_url = reverse('volunteer_signup',
                                urlconf="gbe.scheduling.urls")
         login_as(self.profile, self)
         response = self.client.get("%s?next=%s" % (

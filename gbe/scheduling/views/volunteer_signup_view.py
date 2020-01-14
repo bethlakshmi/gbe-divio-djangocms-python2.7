@@ -164,7 +164,6 @@ class VolunteerSignupView(View):
                     'set_volunteer',
                     args=[occurrence.pk, toggle_state],
                     urlconf='gbe.scheduling.urls')
-                    
                 display_list += [occurrence_detail]
 
         return display_list

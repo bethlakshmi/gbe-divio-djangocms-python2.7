@@ -26,7 +26,7 @@ from settings import GBE_DATETIME_FORMAT
 
 def jsonify(data):
     return json.loads(data.replace("u'", "'").replace("'", '"'))
-    #output is [u'a', u'k']  
+    # output is [u'a', u'k']
 
 
 def validate_profile(request, require=False):

@@ -20,6 +20,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='worker',
             name='role',
-            field=models.CharField(blank=True, choices=[(b'Interested', b'Interested'), (b'Moderator', b'Moderator'), (b'Panelist', b'Panelist'), (b'Performer', b'Performer'), (b'Producer', b'Producer'), (b'Staff Lead', b'Staff Lead'), (b'Teacher', b'Teacher'), (b'Technical Director', b'Technical Director'), (b'Volunteer', b'Volunteer'), (b'Pending Volunteer', b'Pending Volunteer')], max_length=50),
+            field=models.CharField(blank=True, choices=[
+                (b'Interested', b'Interested'),
+                (b'Moderator', b'Moderator'),
+                (b'Panelist', b'Panelist'),
+                (b'Performer', b'Performer'),
+                (b'Producer', b'Producer'),
+                (b'Staff Lead', b'Staff Lead'),
+                (b'Teacher', b'Teacher'),
+                (b'Technical Director', b'Technical Director'),
+                (b'Volunteer', b'Volunteer'),
+                (b'Pending Volunteer', b'Pending Volunteer')], max_length=50),
         ),
     ]

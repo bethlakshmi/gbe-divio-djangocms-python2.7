@@ -266,7 +266,7 @@ def send_warnings_to_staff(bidder,
 
 
 def send_volunteer_update_to_staff(
-        vol_profile, 
+        vol_profile,
         occurrence,
         state,
         update_response):
@@ -286,7 +286,7 @@ def send_volunteer_update_to_staff(
             to_list += [lead.user.email]
     for area in StaffArea.objects.filter(
             conference__conference_slug__in=occurrence.labels.values_list(
-                'text', 
+                'text',
                 flat=True),
             slug__in=occurrence.labels.values_list('text', flat=True),
             staff_lead__isnull=False):

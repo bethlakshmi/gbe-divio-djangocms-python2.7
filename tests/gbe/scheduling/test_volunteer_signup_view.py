@@ -58,10 +58,10 @@ class TestVolunteerSignupView(TestCase):
             conference.conference_name)
         self.assertContains(response, occurrence.eventitem.child().e_title)
         self.assertContains(
-            response, 
+            response,
             occurrence.start_time.strftime("%-I:%M %p"))
         self.assertContains(
-            response, 
+            response,
             occurrence.end_time.strftime("%-I:%M %p"))
         self.assertContains(response, image)
         self.assertContains(response, reverse(
@@ -79,7 +79,7 @@ class TestVolunteerSignupView(TestCase):
         self.basic_event_check(
             response,
             self.staffcontext.conference,
-            self.volunteeropp, 
+            self.volunteeropp,
             "not_yet_volunteered.gif")
         self.assertContains(response, volunteer_instructions)
         self.assertContains(response, "btn btn-default disabled", 2)
@@ -173,7 +173,7 @@ class TestVolunteerSignupView(TestCase):
             'This calendar is not currently available.')
 
     def test_bad_day(self):
-        #There is a day, but that's not the day we're asking for.
+        # There is a day, but that's not the day we're asking for.
         url = "%s?day=02-02-2016" % self.url
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
@@ -184,8 +184,9 @@ class TestVolunteerSignupView(TestCase):
             day=date(2016, 02, 05))
         login_as(self.profile, self)
         response = self.client.get("%s?day=02-05-2016" % self.url)
-        self.assertContains(response, "There are no volunteer events " +
-            "scheduled for this day.")
+        self.assertContains(
+            response,
+            "There are no volunteer events scheduled for this day.")
 
     def test_two_upcoming_conf(self):
         second_conference = ConferenceFactory()
@@ -232,7 +233,7 @@ class TestVolunteerSignupView(TestCase):
         self.basic_event_check(
             response,
             vol_context.conference,
-            vol_context.opp_event, 
+            vol_context.opp_event,
             "volunteered.gif",
             action="off")
         self.assertContains(response, vol_context.event.e_title)

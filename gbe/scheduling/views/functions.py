@@ -71,9 +71,8 @@ def show_general_status(request, status_response, view, show_user=True):
                     'summary': warning.code,
                     'description': warning.code})
         messages.warning(request, '%s  %s' % (
-            user_message[0].description, 
+            user_message[0].description,
             make_warning_msg(warning, use_user=show_user)))
-
 
 
 #

@@ -510,7 +510,6 @@ class EventItem (models.Model):
         return unicode(self.describe)
 
 
-
 class Event(Schedulable):
     '''
     An Event is a schedulable item with a conference model item as its payload.
