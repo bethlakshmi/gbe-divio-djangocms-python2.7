@@ -378,14 +378,17 @@ unique_email_templates = {
          'category': 'volunteer',
          'default_base': "bid_submitted",
          'default_subject': "Volunteer Update Occurred", },
-        {'name': 'volunteer schedule warning',
+        {'name': 'volunteer changed schedule',
          'description': '''This email is sent to the Volunteer Coordinator \
-         when a volunteer has edited their volunteer bid and there is a \
-         conflict between their current availability and their current \
-         schedule.''',
+         and the Staff Lead(s) of the changed event, when a volunteer has added \
+         or removed an event they have/had volunteered for.  This includes \
+         pending requests for events requiring approval.  It also shows any
+         conflict warnings or other errors associated with the schedule \
+         change.  NOTE - at present, it does NOT mail to the leads of the \
+         previous commitment in a case of conflict.''',
          'category': 'volunteer',
-         'default_base': "schedule_conflict",
-         'default_subject': "URGENT: Volunteer Schedule Conflict Occurred", }],
+         'default_base': "volunteer_schedule_change",
+         'default_subject': "Volunteer Schedule Change", }],
     'scheduling': [
         {'name': 'daily schedule',
          'description': '''This email is sent daily to any user with a \
