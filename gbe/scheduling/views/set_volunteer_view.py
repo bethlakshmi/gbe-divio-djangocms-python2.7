@@ -33,6 +33,10 @@ class SetVolunteerView(View):
 
     @never_cache
     def get(self, request, *args, **kwargs):
+        if request.GET.get('next', None):
+            redirect_to = request.GET['next']
+        else:
+            redirect_to = reverse('home', urlconf='gbe.urls')
         this_url = reverse(
                 'set_volunteer',
                 args=[kwargs['occurrence_id'], kwargs['state']],
@@ -48,7 +52,7 @@ class SetVolunteerView(View):
         occ_response = get_occurrence(occurrence_id)
         show_general_status(request, occ_response, self.__class__.__name__)
         if occ_response.errors:
-            return HttpResponseRedirect(request.GET['next'])
+            return HttpResponseRedirect(redirect_to)
 
         volunteers = get_bookings(
             [occurrence_id],
@@ -128,10 +132,6 @@ class SetVolunteerView(View):
                 messages.error(
                     request,
                     user_message[0].description + "status code: ")
-        if request.GET.get('next', None):
-            redirect_to = request.GET['next']
-        else:
-            redirect_to = reverse('home', urlconf='gbe.urls')
         return HttpResponseRedirect(redirect_to)
 
     def dispatch(self, *args, **kwargs):
