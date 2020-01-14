@@ -30,10 +30,16 @@ class VolunteerContext():
                  bid=None,
                  event=None,
                  opportunity=None,
-                 role=None):
+                 role=None,
+                 conference=None):
         if not event:
             self.window = VolunteerWindowFactory()
-            self.conference = self.window.day.conference
+            if not conference:
+                self.conference = self.window.day.conference
+            else:
+                self.conference = conference
+                self.window.day.conference = conference
+                self.window.day.save()
         else:
             self.conference = event.e_conference
             if not VolunteerWindow.objects.filter(
