@@ -5,6 +5,7 @@ from django.test import (
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from tests.factories.gbe_factories import (
+    EmailTemplateFactory,
     PersonaFactory,
     ProfileFactory,
     UserFactory,
@@ -275,3 +276,16 @@ class TestSetFavorite(TestCase):
             [lead.user_object.email],
             outbox_size=2,
             message_index=1)
+
+    def test_email_fail(self):
+        self.context.area.staff_lead = self.profile
+        self.context.area.save()
+        template = EmailTemplateFactory(
+            name='volunteer changed schedule',
+            content="{% include 'gbe/email/bad.tmpl' %}"
+            )
+        login_as(self.profile, self)
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('home', urlconf="gbe.urls")
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, volunteer_allocate_email_fail_msg)
