@@ -2,7 +2,8 @@
 
 <div class=side_box>
   <h2>Volunteer Management</h2>
-  <p># = Number of Volunteers Needed</p>
+  <p># = Number of Volunteers Needed<br>
+     Approve = Approval Needed for Volunteering</p>
   <i class="fa fa-pencil" aria-hidden="true"></i> - Edit &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-clone" aria-hidden="true"></i> - Copy &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-users" aria-hidden="true"></i> - Setup Staff &nbsp;&nbsp;||&nbsp;&nbsp;
@@ -12,7 +13,7 @@
   <table class="event_opps">
     <tr> 
     {% for header in actionheaders %}
-      <th>{{ header }}</th>
+      <th class="vol_header">{{ header }}</th>
     {% endfor %}
       <th>Action</th>
     </tr>

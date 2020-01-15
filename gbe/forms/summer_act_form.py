@@ -1,5 +1,4 @@
 from django.forms import (
-    BooleanField,
     CheckboxSelectMultiple,
     HiddenInput,
     MultipleChoiceField,

@@ -1,6 +1,5 @@
 import pytz
 from django.db.models import(
-    BooleanField,
     CharField,
     ForeignKey,
     OneToOneField,

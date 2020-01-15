@@ -212,7 +212,12 @@ def shared_groundwork(request, kwargs, permissions):
     return (profile, occurrence, item)
 
 
-def setup_event_management_form(conference, item, occurrence, context):
+def setup_event_management_form(
+        conference,
+        item,
+        occurrence,
+        context,
+        open_to_public=True):
     duration = float(item.duration.total_seconds())/timedelta(
         hours=1).total_seconds()
     initial_form_info = {
@@ -233,7 +238,7 @@ def setup_event_management_form(conference, item, occurrence, context):
     if 'scheduling_form' not in context:
         context['scheduling_form'] = ScheduleOccurrenceForm(
             conference=conference,
-            open_to_public=True,
+            open_to_public=open_to_public,
             initial=initial_form_info)
     return (context, initial_form_info)
 

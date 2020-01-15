@@ -13,7 +13,8 @@ def update_occurrence(occurrence_id,
                       max_volunteer=None,
                       people=None,
                       roles="All",
-                      locations=None):
+                      locations=None,
+                      approval=None):
     response = get_occurrence(occurrence_id)
     if response.errors:
         return response
@@ -22,7 +23,9 @@ def update_occurrence(occurrence_id,
         response.occurrence.starttime = start_time
     if max_volunteer is not None:
         response.occurrence.max_volunteer = max_volunteer
-    if start_time or max_volunteer:
+    if approval is not None:
+        response.occurrence.approval_needed = approval
+    if start_time or max_volunteer or approval:
         response.occurrence.save()
 
     if locations is not None:
