@@ -228,7 +228,7 @@ def setup_event_management_form(
             date=occurrence.starttime.date()),
         'time': occurrence.starttime.strftime("%H:%M:%S"),
         'location': occurrence.location,
-        'occurrence_id': occurrence.pk, 
+        'occurrence_id': occurrence.pk,
         'approval': occurrence.approval_needed}
     context['event_id'] = occurrence.pk
     context['eventitem_id'] = item.eventitem_id

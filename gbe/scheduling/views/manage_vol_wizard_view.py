@@ -212,7 +212,8 @@ class ManageVolWizardView(View):
         self.start_time = get_start_time(data)
         if 'approval' in data:
             self.approval = data['approval']
-        else: self.approval = False
+        else:
+            self.approval = False
         if self.create:
             data['labels'] = self.labels + [self.conference.conference_slug]
             if self.event.calendar_type:

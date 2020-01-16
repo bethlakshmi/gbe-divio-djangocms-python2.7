@@ -54,7 +54,7 @@ class EditVolunteerView(ManageWorkerView):
             self.item.e_conference,
             self.item,
             self.occurrence,
-            context, 
+            context,
             open_to_public=False)
         context['edit_title'] = self.title
         context['scheduling_form'].fields['approval'].widget = CheckboxInput()
