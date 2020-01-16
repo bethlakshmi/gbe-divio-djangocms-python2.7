@@ -228,7 +228,8 @@ def setup_event_management_form(
             date=occurrence.starttime.date()),
         'time': occurrence.starttime.strftime("%H:%M:%S"),
         'location': occurrence.location,
-        'occurrence_id': occurrence.pk, }
+        'occurrence_id': occurrence.pk, 
+        'approval': occurrence.approval_needed}
     context['event_id'] = occurrence.pk
     context['eventitem_id'] = item.eventitem_id
 
@@ -258,7 +259,8 @@ def update_event(scheduling_form, occurrence_id, people_formset=[]):
         start_time,
         scheduling_form.cleaned_data['max_volunteer'],
         people=people,
-        locations=[scheduling_form.cleaned_data['location']])
+        locations=[scheduling_form.cleaned_data['location']],
+        approval=scheduling_form.cleaned_data['approval'])
     return response
 
 

@@ -13,6 +13,7 @@ from gbe.scheduling.views.functions import (
     shared_groundwork,
     update_event,
 )
+from django.forms.widgets import CheckboxInput
 
 
 class EditVolunteerView(ManageWorkerView):
@@ -56,6 +57,7 @@ class EditVolunteerView(ManageWorkerView):
             context, 
             open_to_public=False)
         context['edit_title'] = self.title
+        context['scheduling_form'].fields['approval'].widget = CheckboxInput()
 
         if validate_perms(request,
                           ('Volunteer Coordinator',),
