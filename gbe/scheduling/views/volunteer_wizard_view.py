@@ -11,6 +11,7 @@ from gbe.scheduling.forms import (
 )
 from gbe.scheduling.views import EventWizardView
 from gbe.duration import Duration
+from django.forms.widgets import CheckboxInput
 
 
 class VolunteerWizardView(EventWizardView):
@@ -73,6 +74,8 @@ class VolunteerWizardView(EventWizardView):
                     conference=self.conference,
                     initial={'duration': 1,
                              'max_volunteer': 1})
+                context['scheduling_form'].fields[
+                    'approval'].widget = CheckboxInput()
                 context['worker_formset'] = self.make_formset(self.roles)
         elif 'set_opp' in request.POST.keys():
             context['third_title'] = "Make New Volunteer Opportunity"
@@ -82,6 +85,8 @@ class VolunteerWizardView(EventWizardView):
             context['scheduling_form'] = ScheduleOccurrenceForm(
                 request.POST,
                 conference=self.conference)
+            context['scheduling_form'].fields[
+                    'approval'].widget = CheckboxInput()
             context['worker_formset'] = self.make_formset(self.roles,
                                                           post=request.POST)
             if context['third_form'].is_valid(

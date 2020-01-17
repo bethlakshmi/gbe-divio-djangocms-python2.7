@@ -146,7 +146,8 @@ class EventWizardView(View):
                 scheduling_form.cleaned_data['max_volunteer'],
                 people=people,
                 locations=[scheduling_form.cleaned_data['location']],
-                labels=labels)
+                labels=labels,
+                approval=scheduling_form.cleaned_data['approval'])
         return response
 
     def finish_booking(self, request, response, day_pk):
