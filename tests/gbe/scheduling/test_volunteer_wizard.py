@@ -60,6 +60,7 @@ class TestVolunteerWizard(TestCase):
             'day': self.special_volunteer.window.day.pk,
             'time': '11:00:00',
             'duration': 2.5,
+            'approval': True,
             'location': self.room.pk,
             'alloc_0-role': 'Staff Lead',
             'alloc_0-worker': self.staff_area.staff_lead.pk,
@@ -169,6 +170,9 @@ class TestVolunteerWizard(TestCase):
         self.assertContains(
             response,
             'Make New Volunteer Opportunity')
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="approval" id="id_approval" />')
 
     def test_auth_user_create_opp(self):
         login_as(self.privileged_user, self)
@@ -200,6 +204,7 @@ class TestVolunteerWizard(TestCase):
             response,
             '<tr class="bid-table success">\n       ' +
             '<td class="bid-table">%s</td>' % data['e_title'])
+        self.assertTrue(occurrence.approval_needed)
 
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)
