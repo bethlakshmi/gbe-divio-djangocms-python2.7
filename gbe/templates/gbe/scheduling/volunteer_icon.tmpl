@@ -1,0 +1,15 @@
+     {% if occurrence.volunteer_link and occurrence.volunteer_link != "disabled" and  occurrence.volunteer_link != "full" %}
+         {% if occurrence.approval_needed %}
+           {%if occurrence.highlight == "volunteer" %}
+             <img src="/static/img/approved.gif" class="{{icon_class}}" alt="You're approved to volunteer"/>
+           {% elif occurrence.highlight == "pending volunteer" %}
+             <img src="/static/img/awaiting_approval.gif" class="{{icon_class}}" alt="Volunteer Offer awaits approval"/>
+           {% elif not occurrence.highlight %}<img src="/static/img/needs_approval.gif" class="{{icon_class}}" alt="This event needs approval"/>{% endif %}
+         {% else %}
+           {%if occurrence.highlight == "volunteer" %}
+             <img src="/static/img/volunteered.gif" class="{{icon_class}}" alt="You've signed up"/>
+           {% elif not occurrence.highlight %}<img src="/static/img/not_yet_volunteered.gif" class="{{icon_class}}" alt="Volunteer shift available"/>{% endif %}
+         {% endif %}
+     {% elif occurrence.volunteer_link %}
+       <i class="fas fa-hand-paper {{size}}" aria-hidden="true"></i>
+     {% endif %}

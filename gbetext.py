@@ -277,7 +277,8 @@ role_options = (
     ('Staff Lead', "Staff Lead"),
     ('Teacher', "Teacher"),
     ('Technical Director', "Technical Director"),
-    ('Volunteer', "Volunteer"),)
+    ('Volunteer', "Volunteer"),
+    ('Pending Volunteer', "Pending Volunteer"),)
 
 act_casting_label = "Section"
 
@@ -377,6 +378,17 @@ unique_email_templates = {
          'category': 'volunteer',
          'default_base': "bid_submitted",
          'default_subject': "Volunteer Update Occurred", },
+        {'name': 'volunteer changed schedule',
+         'description': '''This email is sent to the Volunteer Coordinator \
+         and the Staff Lead(s) of the changed event, when a volunteer has added \
+         or removed an event they have/had volunteered for.  This includes \
+         pending requests for events requiring approval.  It also shows any
+         conflict warnings or other errors associated with the schedule \
+         change.  NOTE - at present, it does NOT mail to the leads of the \
+         previous commitment in a case of conflict.''',
+         'category': 'volunteer',
+         'default_base': "volunteer_schedule_change",
+         'default_subject': "Volunteer Schedule Change", },
         {'name': 'volunteer schedule warning',
          'description': '''This email is sent to the Volunteer Coordinator \
          when a volunteer has edited their volunteer bid and there is a \
@@ -384,7 +396,7 @@ unique_email_templates = {
          schedule.''',
          'category': 'volunteer',
          'default_base': "schedule_conflict",
-         'default_subject': "URGENT: Volunteer Schedule Conflict Occurred", }],
+         'default_subject': "URGENT: Volunteer Bid Conflict Occurred", }],
     'scheduling': [
         {'name': 'daily schedule',
          'description': '''This email is sent daily to any user with a \
@@ -414,11 +426,6 @@ default_volunteer_no_bid_msg = \
 existing_volunteer_msg = \
     "You've already offered to volunteer, " + \
     "would you like to update your proposal?"
-volunteer_signup_instructions = '''The following are the currently available
-volunteer opportunities.  Check any items you'd like to volunteer for.  Green
-rows show events you're previously signed up for.  Blue rows show opportunities
-you've signed up for that are pending approval.
-'''
 invalid_volunteer_event = '''The following event is not currently available.  \
 It may have just reached a maximum number of volunteers. Unavailable event is \
 '''
@@ -549,6 +556,20 @@ set_favorite_msg = '''Your interest has been set and will appear on your \
                    personal schedule.'''
 unset_favorite_msg = '''Your interest has been removed and will no longer \
                    appear on your personal schedule.'''
+set_volunteer_msg = '''Thank you!  This volunteer shift has been added to \
+your schedule.'''
+unset_volunteer_msg = '''Sorry to see you go!  This volunteer shift has been \
+removed from your personal schedule.'''
+set_pending_msg = '''Thank you!  Your offer to volunteer has been sent and is \
+awaiting approval.'''
+unset_pending_msg = '''Sorry to see you go!  Your offer to volunteer has \
+been deleted.'''
+volunteer_instructions = '''Click on any event to see details and offer to \
+volunteer.  Events that show a white box are immediately available.  Events \
+with a highlighted box require approval, when you volunteer, your offer will \
+be reviewed and a response will be sent shortly.'''
+pending_note = '''This is a shift that requires approval.  When you volunteer,\
+ your offer will be reviewed and a response will be sent shortly.'''
 interested_explain_msg = '''Anyone with an account with The Great Burlesque \
 Exposition can show their interest in an event and add it to their schedule \
 by clicking on the star on our calendar or in an event description.  Starred \

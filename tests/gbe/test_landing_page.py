@@ -96,14 +96,6 @@ class TestIndex(TestCase):
             profile=self.profile,
             submitted=True,
             b_conference=self.previous_conf)
-        self.current_volunteer = VolunteerFactory(
-            profile=self.profile,
-            submitted=True,
-            b_conference=self.current_conf)
-        self.previous_volunteer = VolunteerFactory(
-            profile=self.profile,
-            submitted=True,
-            b_conference=self.previous_conf)
 
         # Event assignments, previous and current
         current_opportunity = GenericEventFactory(
@@ -191,18 +183,12 @@ class TestIndex(TestCase):
             self.previous_act.b_title not in content and
             self.previous_class.b_title not in content and
             self.previous_vendor.b_title not in content and
-            self.previous_costume.b_title not in content and
-            reverse('volunteer_view',
-                    urlconf='gbe.urls',
-                    args=[self.previous_volunteer.id]) not in content)
+            self.previous_costume.b_title not in content)
         shows_all_current = (
             self.current_act.b_title in content and
             self.current_class.b_title in content and
             self.current_vendor.b_title in content and
-            self.current_costume.b_title in content and
-            reverse('volunteer_edit',
-                    urlconf='gbe.urls',
-                    args=[self.current_volunteer.id]) in content)
+            self.current_costume.b_title in content)
         assert does_not_show_previous
         assert shows_all_current
         self.assert_event_is_present(response, self.current_sched)
@@ -210,6 +196,9 @@ class TestIndex(TestCase):
         self.assert_event_is_present(response, self.current_class_sched)
         self.assert_event_is_not_present(response, self.previous_class_sched)
         self.assertNotContains(response, "text-danger")
+        self.assertContains(response, reverse(
+            "volunteer_signup",
+            urlconf="gbe.scheduling.urls"))
 
     def test_historical_view(self):
         url = reverse('home', urlconf='gbe.urls')
@@ -235,6 +224,9 @@ class TestIndex(TestCase):
         self.assert_event_is_not_present(response, self.current_sched)
         self.assert_event_is_present(response, self.previous_class_sched)
         self.assert_event_is_not_present(response, self.current_class_sched)
+        self.assertNotContains(response, reverse(
+            "volunteer_signup",
+            urlconf="gbe.scheduling.urls"))
 
     def test_as_privileged_user(self):
         staff_profile = ProfileFactory()

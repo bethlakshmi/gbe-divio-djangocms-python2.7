@@ -23,7 +23,6 @@ from tests.contexts import (
     StaffAreaContext,
 )
 from gbe.models import ConferenceDay
-from settings import DEBUG
 
 
 class TestCalendarView(TestCase):
@@ -63,10 +62,10 @@ class TestCalendarView(TestCase):
                 self.showcontext.conference.conference_name))
         self.assertContains(response, self.showcontext.show.e_title)
         self.assertContains(
-            response, 
+            response,
             self.showcontext.sched_event.starttime.strftime("%-I:%M %p"))
         self.assertContains(
-            response, 
+            response,
             self.showcontext.sched_event.end_time.strftime("%-I:%M %p"))
         self.assertNotContains(response, self.other_show.show.e_title)
         self.assertNotContains(response, self.classcontext.bid.e_title)

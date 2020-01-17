@@ -23,15 +23,19 @@
     color:  #6E6E6E solid 1px;
     background-color: #E4BDC5;
 }
-
+div.shadow_event {
+    background-color: #e6e6e6;
+}
 div.interested {
     background-color: #f3e1e5;
 }
 
-div.teacher, div.performer, div.volunteer {
+div.teacher, div.performer, div.volunteer, div.panelist, div.moderator, #volunteer {
     background-color: #f3e1e5;
 }
-
+div.pending-volunteer {
+    background-color: #d9edf7;
+}
 .calendar-container {
     border:  #6E6E6E solid 1px;
 }
@@ -67,4 +71,41 @@ div.teacher, div.performer, div.volunteer {
 }
 .cal-favorite {
   float: right;
+}
+.vol_shift_div {
+    padding: 0px;
+}
+.volunteer-icon {
+    height: 16px;
+}
+.volunteer-icon-large {
+  float: right;
+  width: 32px;
+}
+.vol_shift_table {
+    border:  0px;
+    background-color: #e4e0e0;
+}
+.vol_shift_header {
+    border:  #6E6E6E solid 2px;
+    font-size: 12px;
+    background-color: #E4BDC5;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.vol_shift_hour {
+    border-left:  #6E6E6E solid 2px;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-right: #adadad solid 1px;
+}
+.vol_shift_mid {
+    border-left: #adadad solid 1px;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-right: #adadad solid 1px;
+}
+.vol_shift_event {
+    border: black solid 2px;
+    background-color: #E4BDC5;
 }

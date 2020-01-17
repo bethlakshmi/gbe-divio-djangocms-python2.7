@@ -1,0 +1,22 @@
+<p>Hello Staff Leads and Volunteer Coordinators,</p>
+
+<p>The user {{ profile.display_name }} has changed their volunteer schedule.  The change was:</p>
+
+<b>Event:</b> {{occurrence}}
+<b>Date/Time:</b> {{start}}-{{end}}
+<b>Change:</b> {{state_change}}
+
+{% if errors %}
+Errors while processing this change:<ul>{% for error in errors %}
+  <li><b>{{error.code}}</b> - {{error.details}}</li>
+{% endfor %}</ul>
+{% endif %}
+{% if warnings %}
+Warnings while processing this change:<ul>{% for warning in warnings %}
+  <li>{{warning | safe}}</li>
+{% endfor %}</ul>
+{% endif %}
+<p>
+Please review the volunteer schedule and any pending requests to volunteer as soon as possible.</p>
+
+- The Expo

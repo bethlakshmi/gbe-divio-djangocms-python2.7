@@ -51,12 +51,12 @@ class TestRegister(TestCase):
     def test_register_redirect(self):
         url = "%s?next=%s" % (
             reverse(self.view_name, urlconf='gbe.urls'),
-            reverse('volunteer_create', urlconf='gbe.urls'))
+            reverse('volunteer_create', urlconf='gbe.scheduling.urls'))
 
         response = self.client.post(url, self.get_post_data(), follow=True)
         self.assertRedirects(response, "%s?next=%s" % (
             reverse('profile_update', urlconf='gbe.urls'),
-            reverse('volunteer_create', urlconf='gbe.urls')))
+            reverse('volunteer_create', urlconf='gbe.scheduling.urls')))
 
     def test_register_post_nothing(self):
         url = reverse(self.view_name,

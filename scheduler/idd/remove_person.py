@@ -5,7 +5,7 @@ from scheduler.data_transfer import (
 )
 
 
-def remove_person(user, labels=[], roles=[]):
+def remove_person(user, labels=[], roles=[], occurrence_ids=[]):
     basic_filter = ResourceAllocation.objects.all()
     sched_items = []
     if len(labels) > 0:
@@ -14,6 +14,10 @@ def remove_person(user, labels=[], roles=[]):
     if len(roles) > 0:
         basic_filter = basic_filter.filter(
             resource__worker__role__in=roles,
+        )
+    if len(occurrence_ids) > 0:
+        basic_filter = basic_filter.filter(
+            event__pk__in=occurrence_ids,
         )
     basic_filter.filter(
         resource__worker___item__in=user.profile.personae.all()).delete()

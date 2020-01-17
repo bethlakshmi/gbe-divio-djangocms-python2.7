@@ -2,6 +2,7 @@ import pytz
 from datetime import datetime, time
 from gbe.functions import (
     get_conference_day,
+    make_warning_msg,
     validate_perms,
 )
 from django.shortcuts import (
@@ -50,7 +51,7 @@ def get_start_time(data):
 # These messages are not mutually exclusive.  Order of operation is most
 #   severe (error) to least severe (success)
 #
-def show_general_status(request, status_response, view):
+def show_general_status(request, status_response, view, show_user=True):
     for error in status_response.errors:
         user_message = UserMessage.objects.get_or_create(
                 view=view,
@@ -69,20 +70,9 @@ def show_general_status(request, status_response, view):
                 defaults={
                     'summary': warning.code,
                     'description': warning.code})
-
-        message_text = ''
-        if warning.details:
-            message_text += warning.details
-        if warning.user:
-            message_text += '<br>- Affected user: %s' % (
-                warning.user.profile.display_name)
-        if warning.occurrence:
-            message_text += '<br>- Conflicting booking: %s, Start Time: %s' % (
-                str(warning.occurrence),
-                warning.occurrence.starttime.strftime(GBE_DATETIME_FORMAT))
-        messages.warning(
-            request,
-            '%s  %s' % (user_message[0].description, message_text))
+        messages.warning(request, '%s  %s' % (
+            user_message[0].description,
+            make_warning_msg(warning, use_user=show_user)))
 
 
 #

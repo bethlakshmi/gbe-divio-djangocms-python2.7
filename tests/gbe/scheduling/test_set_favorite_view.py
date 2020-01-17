@@ -15,8 +15,6 @@ from tests.factories.scheduler_factories import (
 from tests.contexts import ClassContext
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    assert_email_template_used,
-    grant_privilege,
     login_as,
 )
 from django.shortcuts import get_object_or_404

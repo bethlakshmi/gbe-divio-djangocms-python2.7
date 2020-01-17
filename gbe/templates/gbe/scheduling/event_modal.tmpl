@@ -1,0 +1,35 @@
+<!-- Event Modal Start -->
+              <div class="modal" id="Modal{{occurrence.eventitem.pk}}" role="dialog">
+              <div class="modal-dialog modal-dialog-centered modal-sm">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{occurrence.title}}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                  {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon-large" %}
+                  <b>Time:</b> {{ occurrence.start }}-{{ occurrence.end }}<br>
+                  <b>Location:</b> {{ occurrence.location }}<br>
+                  {% if occurrence.description %}
+                  <b>Description:</b><br>
+                  {{occurrence.description | safe}}<br>
+                  {% endif %}
+                  {% for area in occurrence.staff_areas %}
+                  <br>
+                  <b>Staff Area:</b> {{ area.title}}<br>
+                  {{ area.description | safe}}
+                  {% endfor %}
+                  {% if occurrence.parent_event %}<br>
+                  <i>This opportunity is in support of 
+<a href="{% url 'scheduling:detail_view' occurrence.parent_event.eventitem.pk%}">
+{{occurrence.parent_event}}</a></i>{% endif %}
+                  {% if occurrence.approval_needed %}<div class="well well-sm">
+                    {{ pending_note}}
+                  </div>{% endif %}
+                </div>
+                <div class="modal-footer">
+                    <a href="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" class="btn btn-primary">{% if not occurrence.highlight %}{% if occurrence.approval_needed %}Offer to Help!{% else %}Sign Me Up!{% endif %}{% else %}Withdraw{% endif %}</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div></div></div>
+<!-- Event Modal End -->

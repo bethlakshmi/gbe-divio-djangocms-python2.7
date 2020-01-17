@@ -29,6 +29,10 @@ def get_schedule(user=None,
         basic_filter = basic_filter.filter(
             resource__worker__role__in=roles,
         )
+    else:
+        basic_filter = basic_filter.exclude(
+            resource__worker__role__in=["Pending Volunteer"],
+        )
     if user:
         bookable_items = user.profile.get_bookable_items()
         if len(bookable_items['acts']) > 0:

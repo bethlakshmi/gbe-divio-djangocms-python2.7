@@ -1,0 +1,20 @@
+Hello Staff Leads and Volunteer Coordinators,
+
+The user {{ profile.display_name }} has changed their volunteer 
+schedule.  The change was:
+
+Event: {{occurrence}}
+Date/Time: {{start}}-{{end}}
+Change: {{state_change}}
+
+{% if errors %}
+Errors while processing this change:{% for error in errors %}
+  - {{error.code}} - {{error.details}}{% endfor %}
+{% endif %}{% if warnings %}
+Warnings while processing this change:{% for warning in warnings %}
+  - {{warning | safe}}
+{% endfor %}{% endif %}
+Please review the volunteer schedule and any pending requests to volunteer as soon as possible.
+
+
+- The Expo

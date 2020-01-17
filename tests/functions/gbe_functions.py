@@ -169,18 +169,20 @@ def assert_email_template_create(
 
 def assert_email_template_used(
         expected_subject,
-        email=settings.DEFAULT_FROM_EMAIL):
-    assert 1 == len(mail.outbox)
-    msg = mail.outbox[0]
+        email=settings.DEFAULT_FROM_EMAIL,
+        outbox_size=1,
+        message_index=0):
+    assert outbox_size == len(mail.outbox)
+    msg = mail.outbox[message_index]
     assert msg.subject == expected_subject
     header = {'Reply-to': unicode(email, 'utf-8')}
     assert msg.extra_headers == header
     return msg
 
 
-def assert_email_recipient(to_list):
-    assert 1 == len(mail.outbox)
-    msg = mail.outbox[0]
+def assert_email_recipient(to_list, outbox_size=1, message_index=0):
+    assert outbox_size == len(mail.outbox)
+    msg = mail.outbox[message_index]
     for to_msg, to_test in zip(msg.to, to_list):
         assert to_msg == to_test
 

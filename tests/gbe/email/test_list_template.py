@@ -45,7 +45,7 @@ class TestTemplateList(TestCase):
                      "volunteer no decision",
                      "volunteer reject",
                      "volunteer schedule update",
-                     "volunteer schedule warning",
+                     "volunteer changed schedule",
                      "volunteer submission notification",
                      "volunteer update notification",
                      "volunteer wait list",
