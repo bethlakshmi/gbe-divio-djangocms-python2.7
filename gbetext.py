@@ -388,7 +388,15 @@ unique_email_templates = {
          previous commitment in a case of conflict.''',
          'category': 'volunteer',
          'default_base': "volunteer_schedule_change",
-         'default_subject': "Volunteer Schedule Change", }],
+         'default_subject': "Volunteer Schedule Change", },
+        {'name': 'volunteer schedule warning',
+         'description': '''This email is sent to the Volunteer Coordinator \
+         when a volunteer has edited their volunteer bid and there is a \
+         conflict between their current availability and their current \
+         schedule.''',
+         'category': 'volunteer',
+         'default_base': "schedule_conflict",
+         'default_subject': "URGENT: Volunteer Bid Conflict Occurred", }],
     'scheduling': [
         {'name': 'daily schedule',
          'description': '''This email is sent daily to any user with a \
@@ -418,11 +426,6 @@ default_volunteer_no_bid_msg = \
 existing_volunteer_msg = \
     "You've already offered to volunteer, " + \
     "would you like to update your proposal?"
-volunteer_signup_instructions = '''The following are the currently available \
-volunteer opportunities.  Check any items you'd like to volunteer for.  Green \
-rows show events you're previously signed up for.  Blue rows show opportunities
-you've signed up for that are pending approval.
-'''
 invalid_volunteer_event = '''The following event is not currently available.  \
 It may have just reached a maximum number of volunteers. Unavailable event is \
 '''

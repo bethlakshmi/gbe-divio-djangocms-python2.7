@@ -37,7 +37,7 @@ from gbetext import (
 from settings import GBE_DATETIME_FORMAT
 
 
-class TestSetFavorite(TestCase):
+class TestSetVolunteer(TestCase):
     view_name = "set_volunteer"
 
     def setUp(self):
@@ -248,6 +248,8 @@ class TestSetFavorite(TestCase):
              self.context.staff_lead.profile.user_object.email],
             outbox_size=2,
             message_index=1)
+        self.assertContains(response, conflict_msg)
+        assert(conflict_msg in staff_msg.body)
 
     def test_parent_event(self):
         vol_context = VolunteerContext(
@@ -276,6 +278,8 @@ class TestSetFavorite(TestCase):
             [lead.user_object.email],
             outbox_size=2,
             message_index=1)
+        self.assertContains(response, conflict_msg)
+        assert(conflict_msg in staff_msg.body)
 
     def test_email_fail(self):
         self.context.area.staff_lead = self.profile
