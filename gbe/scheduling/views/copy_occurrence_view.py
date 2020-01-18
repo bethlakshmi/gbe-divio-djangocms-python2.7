@@ -91,7 +91,8 @@ class CopyOccurrenceView(CopyCollectionsView):
             max_volunteer=occurrence.max_volunteer,
             locations=[new_event_room],
             parent_event_id=parent_event_id,
-            labels=labels
+            labels=labels,
+            approval=occurrence.approval_needed
         )
         return response
 
