@@ -213,7 +213,6 @@ class TestCopyOccurrence(TestCase):
             another_day.pk,
             str([max_pk]),)
         self.assertRedirects(response, redirect_url)
-        print response
         self.assertContains(response, other_room.name)
         assert_alert_exists(
             response,
@@ -485,12 +484,15 @@ class TestCopyOccurrence(TestCase):
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
+        self.assertNotContains(response, "bid-table approval_needed")
 
     def test_copy_child_not_like_parent(self):
         another_day = ConferenceDayFactory()
         show_context = VolunteerContext()
         opportunity, opp_sched = show_context.add_opportunity(
             start_time=show_context.sched_event.starttime + timedelta(1.3))
+        opp_sched.approval_needed = True
+        opp_sched.save()
         url = reverse(
             self.view_name,
             args=[show_context.sched_event.pk],
@@ -529,6 +531,7 @@ class TestCopyOccurrence(TestCase):
         new_vol_opp = Event.objects.get(pk=max_pk)
         self.assertEqual(new_vol_opp.max_volunteer, opp_sched.max_volunteer)
         self.assertEqual(new_vol_opp.location, opp_sched.location)
+        self.assertTrue(new_vol_opp.approval_needed)
 
     def test_copy_only_parent_event(self):
         another_day = ConferenceDayFactory()

@@ -16,7 +16,6 @@ from settings import (
     URL_DATE,
 )
 from gbe.models import (
-    AvailableInterest,
     ConferenceDay,
     Event,
     GenericEvent,
@@ -109,6 +108,7 @@ class ManageEventsView(View):
                 'type': event_type,
                 'current_volunteer': occurrence.volunteer_count,
                 'max_volunteer': occurrence.max_volunteer,
+                'approval_needed': occurrence.approval_needed,
                 'detail_link': reverse(
                     'detail_view',
                     urlconf='gbe.scheduling.urls',
@@ -152,14 +152,7 @@ class ManageEventsView(View):
             response = get_occurrences(
                 label_sets=label_set)
             occurrences += response.occurrences
-        if len(select_form.cleaned_data['volunteer_type']) > 0:
-            volunteer_event_ids = GenericEvent.objects.filter(
-                e_conference=self.conference,
-                volunteer_type__in=select_form.cleaned_data['volunteer_type']
-                ).values_list('eventitem_id', flat=True)
-            occurrences = [
-                occurrence for occurrence in occurrences
-                if occurrence.eventitem.eventitem_id in volunteer_event_ids]
+
         return self.build_occurrence_display(occurrences)
 
     @never_cache
@@ -170,8 +163,7 @@ class ManageEventsView(View):
         if context['selection_form'].is_valid() and (
                 len(context['selection_form'].cleaned_data['day']) > 0 or len(
                     context['selection_form'].cleaned_data[
-                        'calendar_type']) > 0 or len(context[
-                'selection_form'].cleaned_data['volunteer_type']) > 0 or len(
+                        'calendar_type']) > 0 or len(
                     context['selection_form'].cleaned_data['staff_area']) > 0):
             context['occurrences'] = self.get_filtered_occurrences(
                 request,
