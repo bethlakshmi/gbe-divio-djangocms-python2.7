@@ -5,7 +5,6 @@
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="/static/styles/calendar.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -30,9 +29,9 @@
     <div class="col-1 forward">
      {% if next_date %}<a href="?day={{ next_date }}" data-toggle="tooltip" title="{{ next_date }}">
       <button class="btn btn-default" type="submit" name="{{ next_date }}" value="{{ next_date }}">
-    {% else %}<a href="#">
+     {% else %}<a href="#">
       <button class="btn btn-default disabled">
-    {% endif %}
+     {% endif %}
         <i class="fa fa-step-forward" aria-hidden="true"></i>
       </button>
     </a></div>
