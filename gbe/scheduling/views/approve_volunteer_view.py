@@ -92,8 +92,7 @@ class ApproveVolunteerView(View):
             'conference_slugs': self.conference_slugs,
             'conference': self.conference}
 
-    @never_cache
-    def get(self, request, *args, **kwargs):
+    def groundwork(self, request, args, kwargs):
         self.reviewer = validate_perms(request, self.reviewer_permissions)
         if request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
@@ -101,6 +100,16 @@ class ApproveVolunteerView(View):
             self.conference = Conference.current_conf()
 
         self.conference_slugs = Conference.all_slugs()
+
+    @never_cache
+    def post(self, request, *args, **kwargs):
+        self.groundwork(request, args, kwargs)
+
+        return 0
+
+    @never_cache
+    def get(self, request, *args, **kwargs):
+        self.groundwork(request, args, kwargs)
         return render(request,
                       self.template,
                       self.make_context(self.get_list(request)))
