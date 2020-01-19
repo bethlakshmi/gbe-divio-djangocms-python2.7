@@ -18,3 +18,4 @@ from get_eval_info import get_eval_info
 from set_eval_info import set_eval_info
 from delete_occurrence import delete_occurrence
 from get_assignments import get_assignments
+from update_assignment import update_assignment

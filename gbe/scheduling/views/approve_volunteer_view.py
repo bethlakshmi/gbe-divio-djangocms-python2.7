@@ -28,7 +28,10 @@ from gbe.functions import (
     conference_list,
     validate_perms,
 )
-from scheduler.idd import get_assignments
+from scheduler.idd import (
+    get_assignments,
+    update_assignment,
+)
 from gbe.scheduling.views.functions import show_general_status
 
 
@@ -43,10 +46,10 @@ class ApproveVolunteerView(View):
         return super(ApproveVolunteerView, self).dispatch(*args, **kwargs)
 
     def get_list(self, request):
-        pending = get_assignments(roles=["Pending Volunteer"], 
-                                  labels=[self.conference.conference_slug])
-        show_general_status(
-            request, pending, self.__class__.__name__)
+        pending = get_assignments(
+            roles=["Pending Volunteer", "Waitlisted", "Rejected"], 
+            labels=[self.conference.conference_slug])
+        show_general_status(request, pending, self.__class__.__name__)
         rows = []
         for pending_offer in pending.assignments:
             row = {
@@ -58,6 +61,7 @@ class ApproveVolunteerView(View):
                     slug__in=pending_offer.occurrence.labels.values_list(
                         'text', 
                         flat=True)),
+                'state': pending_offer.person.role.split(' ', 1)[0],
                 'status': "",
                 'action_links': {
                     'approve': reverse(self.review_list_view_name,
@@ -83,6 +87,8 @@ class ApproveVolunteerView(View):
             elif pending_offer.occurrence.volunteer_count >= (
                     pending_offer.occurrence.max_volunteer):
                 row['status'] = "warning"
+            elif pending_offer.person.role == "Pending Volunteer":
+                row['status'] = "info"
             rows.append(row)
         return rows
 
@@ -98,18 +104,22 @@ class ApproveVolunteerView(View):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
         else:
             self.conference = Conference.current_conf()
-
         self.conference_slugs = Conference.all_slugs()
-
-    @never_cache
-    def post(self, request, *args, **kwargs):
-        self.groundwork(request, args, kwargs)
-
-        return 0
 
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
+        if 'action' in kwargs and 'booking_id' in kwargs:
+            role = "Pending Volunteer"
+            if kwargs['action'] == "approve":
+                role = "Volunteer"
+            elif kwargs['action'] == "waitlist":
+                role = "Waitlisted"
+            elif kwargs['action'] == "reject":
+                role = "Rejected"
+            response = update_assignment(kwargs['booking_id'], role)
+            show_general_status(request, response, self.__class__.__name__)
+
         return render(request,
                       self.template,
                       self.make_context(self.get_list(request)))
