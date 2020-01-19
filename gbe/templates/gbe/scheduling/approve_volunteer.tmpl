@@ -63,8 +63,8 @@
       <tbody>
         {% for row in rows %}
         <tr class="bid-table {{ row.status }}">
-            <td class="bid-table">
-              {{ row.volunteer }}
+            <td class="bid-table"><a href="{{row.action_links.email}}" data-toggle="tooltip" title="Email">
+              {{ row.volunteer }}</a>
             </td>
             <td class="bid-table">
 <a href="{% url 'scheduling:edit_event' conference.conference_slug row.occurrence.pk %}">
@@ -84,13 +84,13 @@
               </a><br>
       {% endfor %}</td>
             <td class="bid-table">
-              <a href="row.action_links.approve" data-toggle="tooltip" title="Approve">
+              <a href="{{row.action_links.approve}}" data-toggle="tooltip" title="Approve">
                 <button class="btn btn-default btn-xs" type="submit" name="approve" value="Approve">
               <i class="fa fa-thumbs-up" aria-hidden="true"></i></button></a>
-              <a href="row.action_links.waitlist" data-toggle="tooltip" title="Waitlist">
+              <a href="{{row.action_links.waitlist}}" data-toggle="tooltip" title="Waitlist">
                 <button class="btn btn-default btn-xs" type="submit" name="waitlist" value="Waitlist">
               <i class="fa fa-clock" aria-hidden="true"></i></button></a>
-              <a href="row.action_links.reject" data-toggle="tooltip" title="Reject">
+              <a href="{{row.action_links.reject}}" data-toggle="tooltip" title="Reject">
                 <button class="btn btn-default btn-xs" type="submit" name="reject" value="Reject">
               <i class="fa fa-window-close" aria-hidden="true"></i></button></a>
             </td>

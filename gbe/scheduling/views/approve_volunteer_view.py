@@ -71,7 +71,10 @@ class ApproveVolunteerView(View):
                     'reject': reverse(self.review_list_view_name,
                                       urlconf='gbe.scheduling.urls',
                                       args=["reject", 
-                                            pending_offer.booking_id])},   
+                                            pending_offer.booking_id]),
+                    'email': reverse('mail_to_individual',
+                                     urlconf='gbe.email.urls',
+                                     args=[pending_offer.person.public_id]),}
                 }
             if hasattr(pending_offer.occurrence, 'container_event'):
                 row['parent_event'] = pending_offer.occurrence.container_event.parent_event
