@@ -24,6 +24,18 @@ class Person(object):
         self.label = label
 
 
+class Assignment(object):
+    def __init__(self,
+                 booking=None):
+        if booking:
+            self.booking_id=booking.pk
+            self.person = Person(booking_id=self.booking_id, 
+                                 worker=booking.resource.worker)
+            self.occurrence = booking.event
+            if hasattr(booking, 'label'):
+                self.person.label = booking.label.text
+
+
 class Casting(object):
     def __init__(self,
                  booking):
@@ -118,6 +130,15 @@ class PeopleResponse(GeneralResponse):
                  errors=[]):
         self.people = people
         super(PeopleResponse, self).__init__(warnings, errors)
+
+
+class AssignmentsResponse(GeneralResponse):
+    def __init__(self,
+                 assignments=[],
+                 warnings=[],
+                 errors=[]):
+        self.assignments = assignments
+        super(AssignmentsResponse, self).__init__(warnings, errors)
 
 
 class CastingResponse(GeneralResponse):

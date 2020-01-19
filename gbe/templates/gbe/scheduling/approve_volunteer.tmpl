@@ -1,0 +1,125 @@
+{% extends 'base.tmpl' %}
+{% load staticfiles sekizai_tags %}
+
+{% block title %}
+  Approve Pending Volunteers
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+{% endblock %}
+{% block content %}
+<div>
+  <div>
+    <h2>Approve Pending Volunteers - {{ conference.conference_name }}</h2>
+  <i class="fas fa-thumbs-up"></i> - Approve &nbsp;&nbsp;||&nbsp;&nbsp;
+  <i class="fas fa-clock"></i> - Put on a Waitlist &nbsp;&nbsp;||&nbsp;&nbsp;
+  <i class="fas fa-window-close"></i> - Reject<br/><br/>
+    Toggle column(s):
+    <a class="toggle-vis" id="gbe-table-select" data-column="0">
+	Volunteer</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="1">
+	Event</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="2">
+	Start</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="3">
+	End</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="4">
+	Current</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="5">
+	Max</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="6">
+	Parent/Area</a> -
+      <a class="toggle-vis" id="gbe-table-select" data-column="7">
+	Action</a>
+  <div>
+  <form action="{{ actionURL }}" method="post">
+    {% csrf_token %}
+    <input type='hidden' id="id_accepted" name="accepted" value="3">
+    <table id="assign_volunteer" class="order-column table table-bordered" cellspacing="0" width="100%">
+      <thead>
+        <tr class="bid-table">
+            <th class="bid-table">Volunteer</th>
+            <th class="bid-table">Event</th>
+            <th class="bid-table">Start</th>
+            <th class="bid-table">End</th>
+            <th class="bid-table">Current</th>
+            <th class="bid-table">Max</th>
+            <th class="bid-table">Parent/Area</th>
+            <th class="bid-table">Action</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr class="bid-table">
+            <th class="bid-table">Volunteer</th>
+            <th class="bid-table">Event</th>
+            <th class="bid-table">Start</th>
+            <th class="bid-table">End</th>
+            <th class="bid-table">Current</th>
+            <th class="bid-table">Max</th>
+            <th class="bid-table">Parent/Area</th>
+            <th class="bid-table">Action</th>
+        </tr>
+      </tfoot>
+      <tbody>
+        {% for row in rows %}
+        <tr class="bid-table {{ row.status }}">
+            <td class="bid-table">
+              {{ row.volunteer }}
+            </td>
+            <td class="bid-table">
+<a href="{% url 'scheduling:edit_event' conference.conference_slug row.occurrence.pk %}">
+              {{ row.occurrence }}</a>
+            </td>
+            <td class="bid-table">{{row.occurrence.start_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
+            <td class="bid-table">
+            {{row.occurrence.end_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
+            <td class="bid-table">{{row.occurrence.volunteer_count|cut:" volunteers"}}</td>
+            <td class="bid-table">{{row.occurrence.max_volunteer}}</td>
+            <td class="bid-table"> {% if row.parent_event %}
+<a href="{% url 'scheduling:edit_event' conference.conference_slug row.parent_event.pk%}">
+              {{row.parent_event}}</a><br>{% endif %}
+              {% for area in row.staff_areas %}
+<a href="{% url 'scheduling:edit_staff' area.id %}">
+                {{area}}
+              </a><br>
+      {% endfor %}</td>
+            <td class="bid-table">
+              <a href="row.action_links.approve" data-toggle="tooltip" title="Approve">
+                <button class="btn btn-default btn-xs" type="submit" name="approve" value="Approve">
+              <i class="fa fa-thumbs-up" aria-hidden="true"></i></button></a>
+              <a href="row.action_links.waitlist" data-toggle="tooltip" title="Waitlist">
+                <button class="btn btn-default btn-xs" type="submit" name="waitlist" value="Waitlist">
+              <i class="fa fa-clock" aria-hidden="true"></i></button></a>
+              <a href="row.action_links.reject" data-toggle="tooltip" title="Reject">
+                <button class="btn btn-default btn-xs" type="submit" name="reject" value="Reject">
+              <i class="fa fa-window-close" aria-hidden="true"></i></button></a>
+            </td>
+        </tr>
+        {% endfor%}
+      </tbody>
+    </table>
+    <br><br>
+    <input type="submit" value="Submit Form"> 
+  </div>
+</div>
+</form>
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script>
+  $(document).ready(function() {
+    var table = $('#assign_volunteer').DataTable({
+        "paging": false});
+
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+} );
+  </script>
+{% endaddtoblock %}
+{% endblock %}
