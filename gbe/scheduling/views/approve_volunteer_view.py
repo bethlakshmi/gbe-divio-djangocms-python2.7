@@ -1,8 +1,5 @@
 from django.views.generic import View
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
+from django.shortcuts import render
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
@@ -12,15 +9,9 @@ from settings import GBE_DATETIME_FORMAT
 from gbe.models import (
     Conference,
     StaffArea,
-    Profile,
     UserMessage,
 )
-from gbe.functions import (
-    get_current_conference,
-    get_conference_by_slug,
-    conference_list,
-    validate_perms,
-)
+from gbe.functions import validate_perms
 from scheduler.idd import (
     get_assignments,
     update_assignment,
@@ -30,6 +21,10 @@ from gbetext import (
     set_volunteer_role_summary,
     set_volunteer_role_msg,
 )
+from gbe.email.functions import (
+    send_schedule_update_mail,
+    send_volunteer_update_to_staff,
+)
 
 
 class ApproveVolunteerView(View):
@@ -37,6 +32,7 @@ class ApproveVolunteerView(View):
     conference = None
     reviewer_permissions = ('Volunteer Coordinator', 'Staff Lead')
     review_list_view_name = 'approve_volunteer'
+    changed_id = -1
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -50,8 +46,7 @@ class ApproveVolunteerView(View):
         rows = []
         for pending_offer in pending.assignments:
             row = {
-                'volunteer': Profile.objects.get(
-                    pk=pending_offer.person.public_id),
+                'volunteer': pending_offer.person.user.profile,
                 'occurrence': pending_offer.occurrence,
                 'staff_areas': StaffArea.objects.filter(
                     conference=self.conference,
@@ -105,6 +100,26 @@ class ApproveVolunteerView(View):
             self.conference = Conference.current_conf()
         self.conference_slugs = Conference.all_slugs()
 
+    def send_notifications(self, request, response):
+        email_status = send_schedule_update_mail(
+            "Volunteer",
+            response.assignments[0].person.user.profile)
+        staff_status = send_volunteer_update_to_staff(
+            response.assignments[0].person.user.profile,
+            response.assignments[0].occurrence,
+            response.assignments[0].person.role,
+            response)
+        if email_status or staff_status:
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="EMAIL_FAILURE",
+                defaults={
+                    'summary': "Email Failed",
+                    'description': volunteer_allocate_email_fail_msg})
+            messages.error(
+                request,
+                user_message[0].description + "status code: ")
+
     def set_status(self, request, kwargs):
         check = False
         role = "Pending Volunteer"
@@ -127,12 +142,12 @@ class ApproveVolunteerView(View):
                     'description': set_volunteer_role_msg % role})
             full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
                 user_message[0].description,
-                str(Profile.objects.get(
-                    pk=response.assignments[0].person.public_id)),
+                str(response.assignments[0].person.user.profile),
                 str(response.assignments[0].occurrence),
                 response.assignments[0].occurrence.starttime.strftime(
                     GBE_DATETIME_FORMAT))
             messages.success(request, full_msg)
+            self.send_notifications(request, response)
 
     @never_cache
     def get(self, request, *args, **kwargs):
