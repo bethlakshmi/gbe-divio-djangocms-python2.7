@@ -305,7 +305,7 @@ class Profile(WorkerItem):
                 resources_allocated__resource__worker___item=performer)]
         events += [e for e in sEvent.objects.filter(
             resources_allocated__resource__worker___item=self).exclude(
-            resource__worker__role__in=not_scheduled_roles)]
+            resources_allocated__resource__worker__role__in=not_scheduled_roles)]
         return sorted(set(events), key=lambda event: event.start_time)
 
     # DEPRECATE, yes it's new.  Deprecate anyway, this hack gets through
