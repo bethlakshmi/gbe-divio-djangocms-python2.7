@@ -281,7 +281,7 @@ role_options = (
     ('Rejected', "Rejected"),
     ('Waitlisted', "Waitlisted"),
     ('Pending Volunteer', "Pending Volunteer"),)
-
+not_scheduled_roles = ["Pending Volunteer", "Waitlisted", "Rejected"]
 act_casting_label = "Section"
 
 vend_time_options = (

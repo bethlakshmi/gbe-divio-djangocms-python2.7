@@ -24,6 +24,7 @@ from gbetext import (
     profile_alerts,
     states_options,
 )
+from gbetext import not_scheduled_roles
 
 
 phone_regex = '(\d{3}[-\.]?\d{3}[-\.]?\d{4})'
@@ -303,7 +304,8 @@ class Profile(WorkerItem):
             events += [e for e in sEvent.objects.filter(
                 resources_allocated__resource__worker___item=performer)]
         events += [e for e in sEvent.objects.filter(
-            resources_allocated__resource__worker___item=self)]
+            resources_allocated__resource__worker___item=self).exclude(
+            resource__worker__role_in=not_scheduled_roles)]
         return sorted(set(events), key=lambda event: event.start_time)
 
     # DEPRECATE, yes it's new.  Deprecate anyway, this hack gets through

@@ -106,14 +106,16 @@ class ApproveVolunteerView(View):
         self.conference_slugs = Conference.all_slugs()
 
     def set_status(self, request, kwargs):
+        check = False
         role = "Pending Volunteer"
         if kwargs['action'] == "approve":
             role = "Volunteer"
+            check = True
         elif kwargs['action'] == "waitlist":
             role = "Waitlisted"
         elif kwargs['action'] == "reject":
             role = "Rejected"
-        response = update_assignment(kwargs['booking_id'], role)
+        response = update_assignment(kwargs['booking_id'], role, check)
         show_general_status(request, response, self.__class__.__name__)
         if response.assignments:
             self.changed_id = response.assignments[0].booking_id

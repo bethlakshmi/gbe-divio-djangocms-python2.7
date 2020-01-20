@@ -4,6 +4,7 @@ from scheduler.data_transfer import (
     ScheduleItem,
 )
 from scheduler.models import ResourceAllocation
+from gbetext import not_scheduled_roles
 
 
 # DEPRECATE - not really deprecate, but totally rework when model
@@ -31,8 +32,7 @@ def get_schedule(user=None,
         )
     else:
         basic_filter = basic_filter.exclude(
-            resource__worker__role__in=["Pending Volunteer"],
-        )
+            resource__worker__role__in=not_scheduled_roles)
     if user:
         bookable_items = user.profile.get_bookable_items()
         if len(bookable_items['acts']) > 0:
