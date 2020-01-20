@@ -3,24 +3,17 @@ from django.shortcuts import (
     get_object_or_404,
     render,
 )
-from django.http import Http404
+from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.utils.formats import date_format
-from datetime import timedelta
-from settings import (
-    GBE_DATE_FORMAT,
-    GBE_DATETIME_FORMAT,
-    URL_DATE,
-)
+from settings import GBE_DATETIME_FORMAT
 from gbe.models import (
     Conference,
-    Event,
-    GenericEvent,
     StaffArea,
     Profile,
+    UserMessage,
 )
 from gbe.functions import (
     get_current_conference,
@@ -33,6 +26,10 @@ from scheduler.idd import (
     update_assignment,
 )
 from gbe.scheduling.views.functions import show_general_status
+from gbetext import (
+    set_volunteer_role_summary,
+    set_volunteer_role_msg,
+)
 
 
 class ApproveVolunteerView(View):
@@ -82,7 +79,9 @@ class ApproveVolunteerView(View):
                 }
             if hasattr(pending_offer.occurrence, 'container_event'):
                 row['parent_event'] = pending_offer.occurrence.container_event.parent_event
-            if not row['volunteer'].is_active:
+            if pending_offer.booking_id == self.changed_id:
+                row['status'] = 'success'
+            elif not row['volunteer'].is_active:
                 row['status'] = "danger"
             elif pending_offer.occurrence.volunteer_count >= (
                     pending_offer.occurrence.max_volunteer):
@@ -98,7 +97,7 @@ class ApproveVolunteerView(View):
             'conference_slugs': self.conference_slugs,
             'conference': self.conference}
 
-    def groundwork(self, request, args, kwargs):
+    def groundwork(self, request):
         self.reviewer = validate_perms(request, self.reviewer_permissions)
         if request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
@@ -106,19 +105,38 @@ class ApproveVolunteerView(View):
             self.conference = Conference.current_conf()
         self.conference_slugs = Conference.all_slugs()
 
+    def set_status(self, request, kwargs):
+        role = "Pending Volunteer"
+        if kwargs['action'] == "approve":
+            role = "Volunteer"
+        elif kwargs['action'] == "waitlist":
+            role = "Waitlisted"
+        elif kwargs['action'] == "reject":
+            role = "Rejected"
+        response = update_assignment(kwargs['booking_id'], role)
+        show_general_status(request, response, self.__class__.__name__)
+        if response.assignments:
+            self.changed_id = response.assignments[0].booking_id
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="SET_%s" % role,
+                defaults={
+                    'summary': set_volunteer_role_summary % role,
+                    'description': set_volunteer_role_msg % role})
+            full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+                user_message[0].description,
+                str(Profile.objects.get(
+                    pk=response.assignments[0].person.public_id)),
+                str(response.assignments[0].occurrence),
+                response.assignments[0].occurrence.starttime.strftime(
+                    GBE_DATETIME_FORMAT))
+            messages.success(request, full_msg)
+
     @never_cache
     def get(self, request, *args, **kwargs):
-        self.groundwork(request, args, kwargs)
+        self.groundwork(request)
         if 'action' in kwargs and 'booking_id' in kwargs:
-            role = "Pending Volunteer"
-            if kwargs['action'] == "approve":
-                role = "Volunteer"
-            elif kwargs['action'] == "waitlist":
-                role = "Waitlisted"
-            elif kwargs['action'] == "reject":
-                role = "Rejected"
-            response = update_assignment(kwargs['booking_id'], role)
-            show_general_status(request, response, self.__class__.__name__)
+            self.set_status(request, kwargs)
 
         return render(request,
                       self.template,

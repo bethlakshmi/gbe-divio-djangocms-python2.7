@@ -554,6 +554,8 @@ create_ticket_event_success_msg = "Created and linked a new BPT Event: "
 no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
 Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
 tickets listed, users will be unable to purchase entrance to this event.'''
+set_volunteer_role_summary = "Volunteer Offer %s"
+set_volunteer_role_msg = "Volunteer offer has been set to %s: <br/>"
 set_favorite_msg = '''Your interest has been set and will appear on your \
                    personal schedule.'''
 unset_favorite_msg = '''Your interest has been removed and will no longer \
