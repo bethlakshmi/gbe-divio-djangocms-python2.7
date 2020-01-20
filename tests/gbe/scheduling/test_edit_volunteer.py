@@ -51,6 +51,7 @@ class TestEditVolunteer(TestCase):
 
     def edit_event(self):
         data = {
+            'approval': True,
             'type': 'Volunteer',
             'e_title': "Test Event Wizard",
             'e_description': 'Description',
@@ -205,6 +206,10 @@ class TestEditVolunteer(TestCase):
             response,
             'name="duration" value="2.5" max="12" step="any" ' +
             'required id="id_duration" min="0.5" />')
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="approval" checked ' +
+            'id="id_approval" />')
 
     def test_auth_user_bad_schedule_assign(self):
         login_as(self.privileged_user, self)
@@ -238,6 +243,8 @@ class TestEditVolunteer(TestCase):
         login_as(self.privileged_user, self)
         staff_context = StaffAreaContext()
         volunteer_sched_event = staff_context.add_volunteer_opp()
+        volunteer_sched_event.approval_needed = True
+        volunteer_sched_event.save()
         teacher = PersonaFactory()
         teacher, alloc = staff_context.book_volunteer(
             volunteer_sched_event=volunteer_sched_event,
@@ -248,6 +255,11 @@ class TestEditVolunteer(TestCase):
                       args=[staff_context.conference.conference_slug,
                             volunteer_sched_event.pk])
         response = self.client.get(url)
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="approval" checked ' +
+            'id="id_approval" />')
+        self.assertContains
 
     def test_inactive_user_not_listed(self):
         staff_context = StaffAreaContext()

@@ -212,7 +212,12 @@ def shared_groundwork(request, kwargs, permissions):
     return (profile, occurrence, item)
 
 
-def setup_event_management_form(conference, item, occurrence, context):
+def setup_event_management_form(
+        conference,
+        item,
+        occurrence,
+        context,
+        open_to_public=True):
     duration = float(item.duration.total_seconds())/timedelta(
         hours=1).total_seconds()
     initial_form_info = {
@@ -223,7 +228,8 @@ def setup_event_management_form(conference, item, occurrence, context):
             date=occurrence.starttime.date()),
         'time': occurrence.starttime.strftime("%H:%M:%S"),
         'location': occurrence.location,
-        'occurrence_id': occurrence.pk, }
+        'occurrence_id': occurrence.pk,
+        'approval': occurrence.approval_needed}
     context['event_id'] = occurrence.pk
     context['eventitem_id'] = item.eventitem_id
 
@@ -233,7 +239,7 @@ def setup_event_management_form(conference, item, occurrence, context):
     if 'scheduling_form' not in context:
         context['scheduling_form'] = ScheduleOccurrenceForm(
             conference=conference,
-            open_to_public=True,
+            open_to_public=open_to_public,
             initial=initial_form_info)
     return (context, initial_form_info)
 
@@ -253,7 +259,8 @@ def update_event(scheduling_form, occurrence_id, people_formset=[]):
         start_time,
         scheduling_form.cleaned_data['max_volunteer'],
         people=people,
-        locations=[scheduling_form.cleaned_data['location']])
+        locations=[scheduling_form.cleaned_data['location']],
+        approval=scheduling_form.cleaned_data['approval'])
     return response
 
 

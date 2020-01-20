@@ -14,7 +14,8 @@ def create_occurrence(foreign_event_id,
                       people=[],
                       locations=[],
                       parent_event_id=None,
-                      labels=[]):
+                      labels=[],
+                      approval=False):
     if parent_event_id:
         parent_response = get_occurrence(parent_event_id)
         if parent_response.errors:
@@ -24,7 +25,8 @@ def create_occurrence(foreign_event_id,
     response.occurrence = Event(
         eventitem=EventItem.objects.get(eventitem_id=foreign_event_id),
         starttime=start_time,
-        max_volunteer=max_volunteer)
+        max_volunteer=max_volunteer,
+        approval_needed=approval)
     response.occurrence.save()
     if len(locations) > 0:
         response.occurrence.set_locations(locations)

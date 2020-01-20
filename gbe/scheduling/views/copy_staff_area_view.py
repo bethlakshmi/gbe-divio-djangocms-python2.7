@@ -135,7 +135,8 @@ class CopyStaffAreaView(CopyCollectionsView):
             occurrence.starttime + delta,
             max_volunteer=occurrence.max_volunteer,
             locations=[new_event_room],
-            labels=labels
+            labels=labels,
+            approval=occurrence.approval_needed
         )
         return response
 

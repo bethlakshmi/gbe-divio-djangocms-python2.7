@@ -292,7 +292,6 @@ h3.readonlyform
     padding: 2px;
     vertical-align: top;
  }
- 
 .bid-form
 {
     border: 1px solid black;
@@ -300,6 +299,9 @@ h3.readonlyform
     padding: 2px;
     text-align: center;
  }
+.approval_needed {
+    background-color: #feffb9
+}
 .error_row
 {
     color: red;
@@ -1124,3 +1126,4 @@ div.hierarchy-1
     padding: 0px 2px 5px 2px;
     background-color: rgb(223, 240, 216);
 }
+.vol_header {padding: 0 3px 0 3px;}

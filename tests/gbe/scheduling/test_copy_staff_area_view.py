@@ -243,6 +243,8 @@ class TestCopyOccurrence(TestCase):
             'room': another_room.room.pk,
             'pick_event': "Finish",
         }
+        self.vol_opp.approval_needed = True
+        self.vol_opp.save()
         login_as(self.privileged_user, self)
         max_pk = Event.objects.latest('pk').pk
         response = self.client.post(self.url, data=data, follow=True)
@@ -274,6 +276,7 @@ class TestCopyOccurrence(TestCase):
                     another_day.day,
                     self.vol_opp.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
+        self.assertContains(response, "bid-table approval_needed", 2)
 
     def test_copy_child_parent_events_same_conf(self):
         data = {
@@ -315,6 +318,7 @@ class TestCopyOccurrence(TestCase):
                     self.context.conf_day.day,
                     self.vol_opp.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
+        self.assertNotContains(response, "bid-table approval_needed")
 
     def test_copy_child_parent_events_keep_room(self):
         new_room = self.context.get_room()

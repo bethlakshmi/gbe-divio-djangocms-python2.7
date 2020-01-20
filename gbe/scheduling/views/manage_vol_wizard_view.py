@@ -139,7 +139,8 @@ class ManageVolWizardView(View):
                                      'day': day,
                                      'time': time,
                                      'location': room,
-                                     'type': "Volunteer"
+                                     'type': "Volunteer",
+                                     'approval': vol_occurence.approval_needed,
                                      },
                             )
                         )
@@ -155,8 +156,8 @@ class ManageVolWizardView(View):
                 conference=conference)
 
         actionheaders = ['Title',
-                         'Volunteer Type',
                          '#',
+                         'Approve',
                          'Duration',
                          'Day',
                          'Time',
@@ -209,6 +210,10 @@ class ManageVolWizardView(View):
         if data['max_volunteer']:
                 self.max_volunteer = data['max_volunteer']
         self.start_time = get_start_time(data)
+        if 'approval' in data:
+            self.approval = data['approval']
+        else:
+            self.approval = False
         if self.create:
             data['labels'] = self.labels + [self.conference.conference_slug]
             if self.event.calendar_type:
@@ -250,7 +255,8 @@ class ManageVolWizardView(View):
                     self.max_volunteer,
                     locations=[self.room],
                     labels=data['labels'],
-                    parent_event_id=self.parent_id)
+                    parent_event_id=self.parent_id,
+                    approval=self.approval)
             else:
                 context = {'createform': self.event_form,
                            'volunteer_open': True}
@@ -273,7 +279,8 @@ class ManageVolWizardView(View):
                     data['opp_sched_id'],
                     self.start_time,
                     self.max_volunteer,
-                    locations=[self.room])
+                    locations=[self.room],
+                    approval=self.approval)
             else:
                 context = {'error_opp_form': self.event_form,
                            'volunteer_open': True}

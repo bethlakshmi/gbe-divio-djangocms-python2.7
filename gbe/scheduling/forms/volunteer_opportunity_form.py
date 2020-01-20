@@ -1,4 +1,5 @@
 from django.forms import (
+    BooleanField,
     CharField,
     HiddenInput,
     IntegerField,
@@ -18,19 +19,17 @@ class VolunteerOpportunityForm(ScheduleBasicForm):
     opp_sched_id = IntegerField(
         widget=HiddenInput(),
         required=False)
-    volunteer_type = ModelChoiceField(
-        queryset=AvailableInterest.objects.filter(visible=True),
-        required=False)
     type = CharField(
         widget=HiddenInput(),
         required=True,
         initial="Volunteer")
+    approval = BooleanField(initial=False, required=False)
 
     class Meta:
         model = GenericEvent
         fields = ['e_title',
-                  'volunteer_type',
                   'max_volunteer',
+                  'approval',
                   'duration',
                   'day',
                   'time',

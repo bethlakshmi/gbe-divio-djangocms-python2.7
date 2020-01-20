@@ -2,7 +2,6 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
-    AvailableInterestFactory,
     GenericEventFactory,
     ProfileFactory,
     RoomFactory
@@ -21,7 +20,6 @@ from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
 )
-from gbe.models import AvailableInterest
 from django.utils.formats import date_format
 from django.db.models import Max
 from scheduler.models import Event
@@ -31,13 +29,11 @@ class TestManageVolunteerWizard(TestCase):
     view_name = 'manage_vol'
 
     def setUp(self):
-        AvailableInterest.objects.all().delete()
         self.client = Client()
         self.user = ProfileFactory.create().user_object
         self.privileged_profile = ProfileFactory()
         self.privileged_user = self.privileged_profile.user_object
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
-        self.avail_interest = AvailableInterestFactory()
         self.room = RoomFactory()
         # because there was a bug around duplicate room names
         RoomFactory(name=self.room.name)
@@ -53,9 +49,9 @@ class TestManageVolunteerWizard(TestCase):
         data = {
             'create': 'create',
             'new_opp-e_title': 'New Volunteer Opportunity',
-            'new_opp-volunteer_type': self.avail_interest.pk,
             'new_opp-type': "Volunteer",
             'new_opp-max_volunteer': '1',
+            'new_opp-approval': True,
             'new_opp-duration': '1.0',
             'new_opp-day': self.context.window.day.pk,
             'new_opp-time': '10:00:00',
@@ -64,8 +60,8 @@ class TestManageVolunteerWizard(TestCase):
 
     def get_basic_data(self, context):
         data = {
+            'approval': True,
             'e_title': 'Copied Volunteer Opportunity',
-            'volunteer_type': self.avail_interest.pk,
             'type': 'Volunteer',
             'max_volunteer': '1',
             'duration': '1.0',
@@ -81,30 +77,6 @@ class TestManageVolunteerWizard(TestCase):
         data['opp_sched_id'] = self.context.opp_event.pk
         data[action] = action
         return data
-
-    def assert_volunteer_type_selector(self, response, selected_interest=None):
-        if selected_interest:
-            assert ('<select name="volunteer_type" id="id_volunteer_type">'
-                    in response.content)
-        else:
-            assert ('<select name="new_opp-volunteer_type" '
-                    'id="id_new_opp-volunteer_type">') in response.content
-        assert '<option value="">---------</option>' in response.content
-        for i in AvailableInterest.objects.all():
-            if selected_interest and i == selected_interest:
-                assert_option_state(
-                    response,
-                    i.pk,
-                    i.interest,
-                    True)
-            elif i.visible:
-                assert_option_state(
-                    response,
-                    i.pk,
-                    i.interest,
-                    False)
-            else:
-                assert i.interest not in response.content
 
     def test_no_login_gives_error(self):
         url = reverse(self.view_name,
@@ -123,13 +95,14 @@ class TestManageVolunteerWizard(TestCase):
         response = self.client.post(url, follow=True)
         self.assertEqual(response.status_code, 403)
 
-    def test_good_user_get_w_interest(self):
-        AvailableInterestFactory()
-        AvailableInterestFactory(visible=False)
+    def test_good_user_get(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url, follow=True)
-        self.assert_volunteer_type_selector(response)
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="new_opp-approval" ' +
+            'id="id_new_opp-approval" />')
 
     def test_create_opportunity(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -145,9 +118,7 @@ class TestManageVolunteerWizard(TestCase):
         for opp in opps:
             self.assertEqual(opp.child_event.eventitem.child().e_title,
                              'New Volunteer Opportunity')
-            self.assert_volunteer_type_selector(
-                response,
-                opp.child_event.eventitem.child().volunteer_type)
+            self.assertTrue(opp.child_event.approval_needed)
             self.assertRedirects(
                 response,
                 "%s?changed_id=%d&volunteer_open=True" % (
@@ -168,6 +139,10 @@ class TestManageVolunteerWizard(TestCase):
             response,
             '<input type="text" name="e_title" value="New Volunteer ' +
             'Opportunity" required id="id_e_title" maxlength="128" />')
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="approval" ' +
+            'checked id="id_approval" />')
 
     def test_create_opportunity_for_staff_area(self):
         staff_context = StaffAreaContext(conference=self.context.conference)
@@ -186,9 +161,8 @@ class TestManageVolunteerWizard(TestCase):
         for opp in opps:
             self.assertEqual(opp.eventitem.child().e_title,
                              'New Volunteer Opportunity')
-            self.assert_volunteer_type_selector(
-                response,
-                opp.eventitem.child().volunteer_type)
+            self.assertTrue(opp.approval_needed)
+
             self.assertRedirects(
                 response,
                 "%s?changed_id=%d&volunteer_open=True" % (
@@ -203,11 +177,14 @@ class TestManageVolunteerWizard(TestCase):
             self.assertEqual(EventLabel.objects.filter(
                 text="Volunteer",
                 event=opp).count(), 1)
-
         self.assertContains(
             response,
             '<input type="text" name="e_title" value="New Volunteer ' +
             'Opportunity" required id="id_e_title" maxlength="128" />')
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="approval" ' +
+            'checked id="id_approval" />')
 
     def test_create_opportunity_bad_parent(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -271,6 +248,13 @@ class TestManageVolunteerWizard(TestCase):
             parent_event=self.context.sched_event)
         self.assertTrue(len(opps), 2)
         for opp in opps:
+            checked = ""
+            if opp.child_event.approval_needed:
+                checked = "checked "
+            self.assertContains(
+                response,
+                '<input type="checkbox" name="approval" ' +
+                '%sid="id_approval" />' % checked)
             self.assertContains(
                 response,
                 ('<input type="text" name="e_title" value="%s" ' +
@@ -305,6 +289,7 @@ class TestManageVolunteerWizard(TestCase):
         opps = EventContainer.objects.filter(
             parent_event=self.context.sched_event)
         self.assertTrue(len(opps), 1)
+        self.assertTrue(opps[0].child_event.approval_needed)
         self.assertContains(
             response,
             '<input type="text" name="e_title" value="Modify Volunteer ' +

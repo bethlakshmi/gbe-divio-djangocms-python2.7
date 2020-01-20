@@ -3,12 +3,10 @@ import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
-    AvailableInterestFactory,
     ConferenceDayFactory,
     ProfileFactory,
 )
 from gbe.models import (
-    AvailableInterest,
     Conference,
     StaffArea,
 )
@@ -39,7 +37,6 @@ class TestManageEventList(TestCase):
     conf_tab = '<li role="presentation" %s><a href="%s?" ' + \
         'class="gbe-tab" >%s</a></li>'
     def setUp(self):
-        AvailableInterest.objects.all().delete()
         self.client = Client()
         self.user = ProfileFactory.create().user_object
         self.privileged_profile = ProfileFactory()
@@ -50,7 +47,6 @@ class TestManageEventList(TestCase):
         self.volunteer_context = VolunteerContext()
         self.day = self.volunteer_context.window.day
         self.class_context = ClassContext(conference=self.day.conference)
-        self.another_interest = AvailableInterestFactory(interest="one more")
         self.show_context = ShowContext(conference=self.day.conference)
         self.staff_context = StaffAreaContext(conference=self.day.conference)
         booking, self.vol_opp = self.staff_context.book_volunteer()
@@ -142,20 +138,6 @@ class TestManageEventList(TestCase):
         self.assertNotContains(
             response,
             old_conf_day.day.strftime(GBE_DATE_FORMAT))
-
-    def test_good_user_get_interests(self):
-        old_interest = AvailableInterestFactory(
-            visible=False,
-            interest="old interest")
-        login_as(self.privileged_profile, self)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            self.another_interest.interest)
-        self.assertNotContains(
-            response,
-            old_interest.interest)
 
     def test_good_user_get_staff_area(self):
         other_staff_context = StaffAreaContext()
@@ -352,42 +334,6 @@ class TestManageEventList(TestCase):
                 day.pk,
                 checked=(day == new_day))
             counter += 1
-
-    def test_good_user_get_volunteer_type(self):
-        login_as(self.privileged_profile, self)
-        data = {
-            "%s-volunteer_type" % self.day.conference.conference_slug:
-                self.volunteer_context.interest.interest.pk,
-            "filter": "Filter",
-        }
-        url = reverse(self.view_name,
-                      urlconf="gbe.scheduling.urls",
-                      args=[self.volunteer_context.conference.conference_slug])
-        response = self.client.get(url, data=data)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response,
-                            self.volunteer_context.opportunity.e_title)
-        self.assertNotContains(response, self.show_context.show.e_title)
-        self.assertNotContains(response, self.class_context.bid.e_title)
-        self.assert_visible_input_selected(
-            response,
-            self.day.conference.conference_slug,
-            "volunteer_type",
-            2,
-            self.volunteer_context.interest.interest.pk)
-
-    def test_good_user_get_bad_volunteer_type(self):
-        login_as(self.privileged_profile, self)
-        data = {
-            "%s-volunteer_type" % self.day.conference.conference_slug:
-                "bad",
-            "filter": "Filter",
-        }
-        response = self.client.get(self.url, data=data)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '&quot;bad&quot; is not a valid value for a primary key')
 
     def test_good_user_filter_staff_area(self):
         other_staff_area = StaffAreaContext(

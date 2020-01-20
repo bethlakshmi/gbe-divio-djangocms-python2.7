@@ -6,10 +6,7 @@ from django.forms import (
 )
 from django.forms.widgets import CheckboxSelectMultiple
 from gbetext import calendar_type as calendar_type_options
-from gbe.models import (
-    AvailableInterest,
-    StaffArea
-)
+from gbe.models import StaffArea
 from django.db.models.functions import Lower
 
 
@@ -27,11 +24,6 @@ class SelectEventForm(Form):
         queryset=StaffArea.objects.all().order_by("conference", "slug"),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
-    volunteer_type = ModelMultipleChoiceField(
-        queryset=AvailableInterest.objects.filter(
-            visible=True).order_by(Lower("interest")),
-        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
-        required=False)
 
 
 class HiddenSelectEventForm(Form):
@@ -46,9 +38,5 @@ class HiddenSelectEventForm(Form):
         required=False)
     staff_area = ModelMultipleChoiceField(
         queryset=StaffArea.objects.all().order_by("conference", "slug"),
-        widget=MultipleHiddenInput(),
-        required=False)
-    volunteer_type = ModelMultipleChoiceField(
-        queryset=AvailableInterest.objects.filter(visible=True),
         widget=MultipleHiddenInput(),
         required=False)

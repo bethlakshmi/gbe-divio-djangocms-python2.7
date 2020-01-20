@@ -56,38 +56,12 @@
       {% endif %}
    </div></div>
    <div class="form-row">
-   <div class="form-group col-md-1 col-12">
-    <label class="form-check-label horizontal-label" id="{{ selection_form.volunteer_type.name }}">
-     {% if selection_form.volunteer_type.errors %}
-      <font color="red">!&nbsp;&nbsp;
-     {% endif %}
-     {{ selection_form.volunteer_type.label }}:&nbsp;&nbsp;
-     {% if selection_form.volunteer_type.errors %}
-      </font>
-     {% endif %}</label>
-   </div>
-   <div class="form-group col-md-9 col-12">
-     {% for checkbox in selection_form.volunteer_type %}
-      <div class="form-group col-md-3 col-sm-4 col-12">
-        <div class="form-check-inline">
-        <label class="form-check-label checkbox-label gbe-filter" id="{{ checkbox.id_for_label }}">
-        {{ checkbox.tag }}
-        {{ checkbox.choice_label }}
-        </label></div></div>{% endfor %}
-      {% if selection_form.volunteer_type.errors %}
-       <div class="form-group col-md-9 col-12">
-        <font color="red">{{ selection_form.volunteer_type.errors }}</font>
-       </div>
-      {% endif %}
-   </div>
-   <div class="form-group col-md-2 col-12" id="filter-button">
-      <input type="submit" class="btn btn-primary" name="filter" value="Filter">
-   </div></div></form>
+   <div class="form-group col-12" id="filter-button"><br>
+      <input type="submit" class="btn btn-primary" name="filter" value="Filter"></form>
    {% if conference.status != "completed" %}
-   <div class="form-row"><div class="form-group col-md-2 col-12 pull-right">
-   </br>
       <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-primary">Create</a>
-   </div></div>{% endif %}
+   </div>{% endif %}</div>
+   Yellow = volunteers must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>
 {% if occurrences %}
  <div class="row">
@@ -133,8 +107,8 @@
        <td class="bid-table">{{ occurrence.start}}</td>
        <td class="bid-table">{{ occurrence.duration }}</td>
        <td class="bid-table">{{ occurrence.type }}</td>
-       <td class="bid-table">{{ occurrence.current_volunteer }}</td>
-       <td class="bid-table">{{ occurrence.max_volunteer }}</td>
+       <td class="bid-table{% if occurrence.approval_needed%} approval_needed{%endif%}">{{ occurrence.current_volunteer }}</td>
+       <td class="bid-table{% if occurrence.approval_needed%} approval_needed{%endif%}">{{ occurrence.max_volunteer }}</td>
        <td class="bid-table"><div class="btn-group" role="group" aria-label="...">
         <a href="{{ occurrence.detail_link }}" data-toggle="tooltip" title="View" class="btn btn-default btn-sm" id="action-button">
          <i class="fa fa-eye" aria-hidden="true"></i></a>
