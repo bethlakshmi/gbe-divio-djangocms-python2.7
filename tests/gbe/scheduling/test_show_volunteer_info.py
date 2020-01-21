@@ -64,8 +64,14 @@ class TestShowVolunteers(TestCase):
         assert ("no available volunteers" in response.content)
 
     def test_volunteer_has_conflict(self):
+        conflict, conflict_opp = self.context.add_opportunity()
+        conflict_url = reverse(
+            self.view_name,
+            args=[self.context.conference.conference_slug,
+                  conflict_opp.pk],
+            urlconf="gbe.scheduling.urls")
         login_as(self.privileged_profile, self)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.get(conflict_url, follow=True)
         assert("no available volunteers" not in response.content)
         assert_link(response, self.url)
 

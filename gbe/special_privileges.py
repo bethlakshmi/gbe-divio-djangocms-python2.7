@@ -159,6 +159,7 @@ special_menu_tree = [
                 'Class Coordinator',
                 'Costume Reviewers',
                 'Costume Coordinator',
+                'Staff Lead',
                 'Vendor Reviewers',
                 'Vendor Coordinator',
                 'Volunteer Reviewers',
