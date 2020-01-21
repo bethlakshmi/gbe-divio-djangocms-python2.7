@@ -96,9 +96,9 @@
             <td class="bid-table">
               <a href="{{row.action_links.approve}}" class="btn btn-default btn-xs" data-toggle="tooltip" title="Approve">
               <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
-              <a href="{{row.action_links.waitlist}}" class="btn btn-default btn-xs" data-toggle="tooltip" title="Waitlist">
+              <a href="{{row.action_links.waitlist}}" class="btn btn-default btn-xs{% if not row.action_links.waitlist %} disabled{% endif %}" data-toggle="tooltip" title="Waitlist">
               <i class="fa fa-clock" aria-hidden="true"></i></a>
-              <a href="{{row.action_links.reject}}" class="btn btn-default btn-xs" data-toggle="tooltip" title="Reject">
+              <a href="{{row.action_links.reject}}" class="btn btn-default btn-xs{% if not row.action_links.reject %} disabled{% endif %}" data-toggle="tooltip" title="Reject">
               <i class="fa fa-window-close" aria-hidden="true"></i></a>
             </td>
         </tr>

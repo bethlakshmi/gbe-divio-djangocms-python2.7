@@ -18,6 +18,7 @@ from scheduler.idd import (
 )
 from gbe.scheduling.views.functions import show_general_status
 from gbetext import (
+    volunter_action_map,
     set_volunteer_role_summary,
     set_volunteer_role_msg,
 )
@@ -45,18 +46,10 @@ class ApproveVolunteerView(View):
             labels=[self.conference.conference_slug])
         show_general_status(request, pending, self.__class__.__name__)
         rows = []
+        action = ""
+
         for pending_offer in pending.assignments:
-            row = {
-                'volunteer': pending_offer.person.user.profile,
-                'occurrence': pending_offer.occurrence,
-                'staff_areas': StaffArea.objects.filter(
-                    conference=self.conference,
-                    slug__in=pending_offer.occurrence.labels.values_list(
-                        'text', 
-                        flat=True)),
-                'state': pending_offer.person.role.split(' ', 1)[0],
-                'status': "",
-                'action_links': {
+            action_links = {
                     'approve': reverse(self.review_list_view_name,
                                        urlconf='gbe.scheduling.urls',
                                        args=["approve", 
@@ -72,7 +65,23 @@ class ApproveVolunteerView(View):
                     'email': reverse('mail_to_individual',
                                      urlconf='gbe.email.urls',
                                      args=[pending_offer.person.public_id]),}
-                }
+            for action, link in action_links.items():
+                if action in volunter_action_map and (
+                        volunter_action_map[action]['role'] == (
+                            pending_offer.person.role)):
+                    action_links[action] = None
+
+            row = {
+                'volunteer': pending_offer.person.user.profile,
+                'occurrence': pending_offer.occurrence,
+                'staff_areas': StaffArea.objects.filter(
+                    conference=self.conference,
+                    slug__in=pending_offer.occurrence.labels.values_list(
+                        'text', 
+                        flat=True)),
+                'state': pending_offer.person.role.split(' ', 1)[0],
+                'status': "",
+                'action_links': action_links}
             if hasattr(pending_offer.occurrence, 'container_event'):
                 row['parent_event'] = pending_offer.occurrence.container_event.parent_event
             if pending_offer.booking_id == self.changed_id:
@@ -132,18 +141,11 @@ class ApproveVolunteerView(View):
 
     def set_status(self, request, kwargs):
         check = False
-        role = "Pending Volunteer"
-        state = 0
+        role = volunter_action_map[kwargs['action']]['role']
+        state = volunter_action_map[kwargs['action']]['state']
         if kwargs['action'] == "approve":
-            role = "Volunteer"
             check = True
-            state = 3
-        elif kwargs['action'] == "waitlist":
-            role = "Waitlisted"
-            state = 2
-        elif kwargs['action'] == "reject":
-            role = "Rejected"
-            state = 1
+
         response = update_assignment(kwargs['booking_id'], role, check)
         show_general_status(request, response, self.__class__.__name__)
         if response.assignments:
