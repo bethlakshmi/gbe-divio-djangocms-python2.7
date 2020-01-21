@@ -116,6 +116,7 @@ class SetVolunteerView(View):
             email_status = send_schedule_update_mail("Volunteer", self.owner)
             staff_status = send_volunteer_update_to_staff(
                 self.owner,
+                self.owner,
                 occ_response.occurrence,
                 kwargs['state'],
                 schedule_response)

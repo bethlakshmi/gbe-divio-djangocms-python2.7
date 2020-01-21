@@ -22,6 +22,7 @@ from gbetext import (
     set_volunteer_role_msg,
 )
 from gbe.email.functions import (
+    send_bid_state_change_mail,
     send_schedule_update_mail,
     send_volunteer_update_to_staff,
 )
@@ -100,11 +101,20 @@ class ApproveVolunteerView(View):
             self.conference = Conference.current_conf()
         self.conference_slugs = Conference.all_slugs()
 
-    def send_notifications(self, request, response):
-        email_status = send_schedule_update_mail(
-            "Volunteer",
-            response.assignments[0].person.user.profile)
+    def send_notifications(self, request, response, state):
+        if state == 3:
+            email_status = send_schedule_update_mail(
+                "Volunteer",
+                response.assignments[0].person.user.profile)
+        else:
+            email_status = send_bid_state_change_mail(
+                "volunteer",
+                response.assignments[0].person.user.profile.contact_email,
+                response.assignments[0].person.user.profile.get_badge_name(),
+                response.assignments[0].occurrence,
+                state)
         staff_status = send_volunteer_update_to_staff(
+            self.reviewer,
             response.assignments[0].person.user.profile,
             response.assignments[0].occurrence,
             response.assignments[0].person.role,
@@ -123,13 +133,17 @@ class ApproveVolunteerView(View):
     def set_status(self, request, kwargs):
         check = False
         role = "Pending Volunteer"
+        state = 0
         if kwargs['action'] == "approve":
             role = "Volunteer"
             check = True
+            state = 3
         elif kwargs['action'] == "waitlist":
             role = "Waitlisted"
+            state = 2
         elif kwargs['action'] == "reject":
             role = "Rejected"
+            state = 1
         response = update_assignment(kwargs['booking_id'], role, check)
         show_general_status(request, response, self.__class__.__name__)
         if response.assignments:
@@ -147,7 +161,7 @@ class ApproveVolunteerView(View):
                 response.assignments[0].occurrence.starttime.strftime(
                     GBE_DATETIME_FORMAT))
             messages.success(request, full_msg)
-            self.send_notifications(request, response)
+            self.send_notifications(request, response, state)
 
     @never_cache
     def get(self, request, *args, **kwargs):
