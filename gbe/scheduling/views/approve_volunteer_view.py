@@ -18,7 +18,7 @@ from scheduler.idd import (
 )
 from gbe.scheduling.views.functions import show_general_status
 from gbetext import (
-    volunter_action_map,
+    volunteer_action_map,
     set_volunteer_role_summary,
     set_volunteer_role_msg,
 )
@@ -54,8 +54,8 @@ class ApproveVolunteerView(View):
                                  urlconf='gbe.email.urls',
                                  args=[pending_offer.person.public_id])}
             for action in ['approve', 'reject', 'waitlist']:
-                if action in volunter_action_map and (
-                        volunter_action_map[action]['role'] == (
+                if action in volunteer_action_map and (
+                        volunteer_action_map[action]['role'] == (
                             pending_offer.person.role)):
                     action_links[action] = None
                 else:
@@ -133,8 +133,8 @@ class ApproveVolunteerView(View):
 
     def set_status(self, request, kwargs):
         check = False
-        role = volunter_action_map[kwargs['action']]['role']
-        state = volunter_action_map[kwargs['action']]['state']
+        role = volunteer_action_map[kwargs['action']]['role']
+        state = volunteer_action_map[kwargs['action']]['state']
         if kwargs['action'] == "approve":
             check = True
 

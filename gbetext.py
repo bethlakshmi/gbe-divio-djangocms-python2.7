@@ -282,7 +282,7 @@ role_options = (
     ('Waitlisted', "Waitlisted"),
     ('Pending Volunteer', "Pending Volunteer"),)
 not_scheduled_roles = ["Pending Volunteer", "Waitlisted", "Rejected"]
-volunter_action_map = {
+volunteer_action_map = {
   'approve': {'role': "Volunteer", 'state': 3},
   'waitlist': {'role': "Waitlisted", 'state': 2},
   'reject': {'role': "Rejected", 'state': 1},
