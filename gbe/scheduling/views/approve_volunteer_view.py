@@ -50,27 +50,19 @@ class ApproveVolunteerView(View):
 
         for pending_offer in pending.assignments:
             action_links = {
-                    'approve': reverse(self.review_list_view_name,
-                                       urlconf='gbe.scheduling.urls',
-                                       args=["approve", 
-                                             pending_offer.booking_id]),
-                    'waitlist': reverse(self.review_list_view_name,
-                                        urlconf='gbe.scheduling.urls',
-                                        args=["waitlist", 
-                                              pending_offer.booking_id]),
-                    'reject': reverse(self.review_list_view_name,
-                                      urlconf='gbe.scheduling.urls',
-                                      args=["reject", 
-                                            pending_offer.booking_id]),
-                    'email': reverse('mail_to_individual',
-                                     urlconf='gbe.email.urls',
-                                     args=[pending_offer.person.public_id]),}
-            for action, link in action_links.items():
+                'email': reverse('mail_to_individual',
+                                 urlconf='gbe.email.urls',
+                                 args=[pending_offer.person.public_id])}
+            for action in ['approve', 'reject', 'waitlist']:
                 if action in volunter_action_map and (
                         volunter_action_map[action]['role'] == (
                             pending_offer.person.role)):
                     action_links[action] = None
-
+                else:
+                    action_links[action] = reverse(
+                        self.review_list_view_name,
+                        urlconf='gbe.scheduling.urls',
+                        args=[action, pending_offer.booking_id]),
             row = {
                 'volunteer': pending_offer.person.user.profile,
                 'occurrence': pending_offer.occurrence,
