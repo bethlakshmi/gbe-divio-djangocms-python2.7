@@ -21,6 +21,7 @@ from gbetext import (
     volunteer_action_map,
     set_volunteer_role_summary,
     set_volunteer_role_msg,
+    volunteer_allocate_email_fail_msg,
 )
 from gbe.email.functions import (
     send_bid_state_change_mail,
@@ -42,7 +43,7 @@ class ApproveVolunteerView(View):
 
     def get_list(self, request):
         pending = get_assignments(
-            roles=["Pending Volunteer", "Waitlisted", "Rejected"], 
+            roles=["Pending Volunteer", "Waitlisted", "Rejected"],
             labels=[self.conference.conference_slug])
         show_general_status(request, pending, self.__class__.__name__)
         rows = []
@@ -69,13 +70,14 @@ class ApproveVolunteerView(View):
                 'staff_areas': StaffArea.objects.filter(
                     conference=self.conference,
                     slug__in=pending_offer.occurrence.labels.values_list(
-                        'text', 
+                        'text',
                         flat=True)),
                 'state': pending_offer.person.role.split(' ', 1)[0],
                 'status': "",
                 'action_links': action_links}
             if hasattr(pending_offer.occurrence, 'container_event'):
-                row['parent_event'] = pending_offer.occurrence.container_event.parent_event
+                container = pending_offer.occurrence.container_event
+                row['parent_event'] = container.parent_event
             if pending_offer.booking_id == self.changed_id:
                 row['status'] = 'success'
             elif not row['volunteer'].is_active:

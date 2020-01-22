@@ -2,7 +2,11 @@ from django.test import TestCase
 from django.test import Client
 from django.core.urlresolvers import reverse
 from django.utils.formats import date_format
-from tests.factories.gbe_factories import ProfileFactory
+from tests.factories.gbe_factories import (
+    EmailTemplateFactory,
+    PersonaFactory,
+    ProfileFactory,
+)
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_email_recipient,
@@ -11,12 +15,16 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from tests.contexts import (
+    ClassContext,
+    StaffAreaContext,
     VolunteerContext,
-    StaffAreaContext
 )
 from gbe.models import Conference
 from settings import GBE_DATETIME_FORMAT
-from gbetext import set_volunteer_role_msg
+from gbetext import (
+    set_volunteer_role_msg,
+    volunteer_allocate_email_fail_msg,
+)
 from django.contrib.sites.models import Site
 
 
@@ -35,14 +43,14 @@ class TestApproveVolunteer(TestCase):
         self.url = reverse(self.view_name, urlconf='gbe.scheduling.urls')
 
     def assert_volunteer_state(self, response, booking, disabled_action=""):
-        self.assertContains(response, 
+        self.assertContains(response,
                             str(booking.resource.worker._item.profile))
         self.assertContains(response, str(booking.event))
         self.assertContains(
-            response, 
+            response,
             date_format(booking.event.start_time, "SHORT_DATETIME_FORMAT"))
         self.assertContains(
-            response, 
+            response,
             date_format(booking.event.end_time, "SHORT_DATETIME_FORMAT"))
         for action in ['approve', 'reject', 'waitlist']:
             if action == disabled_action:
@@ -236,3 +244,58 @@ class TestApproveVolunteer(TestCase):
             [self.privileged_user.email],
             outbox_size=2,
             message_index=1)
+
+    def test_approval_w_conflict(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        class_context = ClassContext(
+            conference=self.context.conference,
+            teacher=PersonaFactory(performer_profile=self.context.profile),
+            starttime=self.context.opp_event.starttime)
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        login_as(self.privileged_user, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve", self.context.allocation.pk])
+        response = self.client.get(approve_url)
+        self.assertNotContains(response, approve_url)
+        self.assertNotContains(response, '<tr class="bid-table success">')
+        alert_msg = set_volunteer_role_msg % "Volunteer"
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+                alert_msg,
+                str(self.context.profile),
+                str(self.context.opp_event),
+                self.context.opp_event.starttime.strftime(
+                    GBE_DATETIME_FORMAT))
+        conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
+            class_context.bid.e_title,
+            class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
+        self.assertContains(response, conflict_msg)
+
+        staff_msg = assert_email_template_used(
+            "Volunteer Schedule Change",
+            outbox_size=2,
+            message_index=1)
+        assert(conflict_msg in staff_msg.body)
+        assert(class_context.bid.e_title in staff_msg.body)
+        assert_email_recipient(
+            [self.privileged_user.email],
+            outbox_size=2,
+            message_index=1)
+
+    def test_email_fail(self):
+        template = EmailTemplateFactory(
+            name='volunteer changed schedule',
+            content="{% include 'gbe/email/bad.tmpl' %}"
+            )
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        login_as(self.privileged_user, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve", self.context.allocation.pk])
+        response = self.client.get(approve_url)
+        self.assertContains(response, volunteer_allocate_email_fail_msg)

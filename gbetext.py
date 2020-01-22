@@ -387,12 +387,12 @@ unique_email_templates = {
          'default_subject': "Volunteer Update Occurred", },
         {'name': 'volunteer changed schedule',
          'description': '''This email is sent to the Volunteer Coordinator \
-         and the Staff Lead(s) of the changed event, when a volunteer has added \
-         or removed an event they have/had volunteered for.  This includes \
-         pending requests for events requiring approval.  It also shows any
-         conflict warnings or other errors associated with the schedule \
-         change.  NOTE - at present, it does NOT mail to the leads of the \
-         previous commitment in a case of conflict.''',
+         and the Staff Lead(s) of the changed event, when a volunteer has \
+         added or removed an event they have/had volunteered for.  This \
+         includes pending requests for events requiring approval.  It also \
+         shows any conflict warnings or other errors associated with the \
+         schedule change.  NOTE - at present, it does NOT mail to the leads \
+         of the previous commitment in a case of conflict.''',
          'category': 'volunteer',
          'default_base': "volunteer_schedule_change",
          'default_subject': "Volunteer Schedule Change", },

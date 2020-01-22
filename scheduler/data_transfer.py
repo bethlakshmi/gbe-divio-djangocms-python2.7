@@ -28,8 +28,8 @@ class Assignment(object):
     def __init__(self,
                  booking=None):
         if booking:
-            self.booking_id=booking.pk
-            self.person = Person(booking_id=self.booking_id, 
+            self.booking_id = booking.pk
+            self.person = Person(booking_id=self.booking_id,
                                  worker=booking.resource.worker)
             self.occurrence = booking.event
             if hasattr(booking, 'label'):
