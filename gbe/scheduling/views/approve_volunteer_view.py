@@ -1,5 +1,8 @@
 from django.views.generic import View
-from django.shortcuts import render
+from django.shortcuts import (
+    get_object_or_404,
+    render,
+)
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
@@ -8,13 +11,14 @@ from django.core.urlresolvers import reverse
 from settings import GBE_DATETIME_FORMAT
 from gbe.models import (
     Conference,
+    Profile,
     StaffArea,
     UserMessage,
 )
 from gbe.functions import validate_perms
 from scheduler.idd import (
     get_assignments,
-    update_assignment,
+    set_person,
 )
 from gbe.scheduling.views.functions import show_general_status
 from gbetext import (
@@ -28,6 +32,7 @@ from gbe.email.functions import (
     send_schedule_update_mail,
     send_volunteer_update_to_staff,
 )
+from scheduler.data_transfer import Person
 
 
 class ApproveVolunteerView(View):
@@ -63,7 +68,9 @@ class ApproveVolunteerView(View):
                     action_links[action] = reverse(
                         self.review_list_view_name,
                         urlconf='gbe.scheduling.urls',
-                        args=[action, pending_offer.booking_id]),
+                        args=[action, 
+                              pending_offer.person.public_id,
+                              pending_offer.booking_id])
             row = {
                 'volunteer': pending_offer.person.user.profile,
                 'occurrence': pending_offer.occurrence,
@@ -74,6 +81,7 @@ class ApproveVolunteerView(View):
                         flat=True)),
                 'state': pending_offer.person.role.split(' ', 1)[0],
                 'status': "",
+                'label': pending_offer.person.label,
                 'action_links': action_links}
             if hasattr(pending_offer.occurrence, 'container_event'):
                 container = pending_offer.occurrence.container_event
@@ -104,23 +112,23 @@ class ApproveVolunteerView(View):
             self.conference = Conference.current_conf()
         self.conference_slugs = Conference.all_slugs()
 
-    def send_notifications(self, request, response, state):
+    def send_notifications(self, request, response, state, person):
         if state == 3:
             email_status = send_schedule_update_mail(
                 "Volunteer",
-                response.assignments[0].person.user.profile)
+                person.user.profile)
         else:
             email_status = send_bid_state_change_mail(
                 "volunteer",
-                response.assignments[0].person.user.profile.contact_email,
-                response.assignments[0].person.user.profile.get_badge_name(),
-                response.assignments[0].occurrence,
+                person.user.profile.contact_email,
+                person.user.profile.get_badge_name(),
+                response.occurrence,
                 state)
         staff_status = send_volunteer_update_to_staff(
             self.reviewer,
-            response.assignments[0].person.user.profile,
-            response.assignments[0].occurrence,
-            response.assignments[0].person.role,
+            person.user.profile,
+            response.occurrence,
+            person.role,
             response)
         if email_status or staff_status:
             user_message = UserMessage.objects.get_or_create(
@@ -135,34 +143,40 @@ class ApproveVolunteerView(View):
 
     def set_status(self, request, kwargs):
         check = False
-        role = volunteer_action_map[kwargs['action']]['role']
         state = volunteer_action_map[kwargs['action']]['state']
         if kwargs['action'] == "approve":
             check = True
-
-        response = update_assignment(kwargs['booking_id'], role, check)
+        profile = get_object_or_404(Profile, pk=kwargs['public_id'])
+        person = Person(
+            user=profile.user_object,
+            public_id=profile.pk,
+            role=volunteer_action_map[kwargs['action']]['role'],
+            booking_id=kwargs['booking_id'],
+            worker=None)
+        response = set_person(person=person)
         show_general_status(request, response, self.__class__.__name__)
-        if response.assignments:
-            self.changed_id = response.assignments[0].booking_id
+        if not response.errors:
+            self.changed_id = response.booking_id
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
-                code="SET_%s" % role,
+                code="SET_%s" % person.role,
                 defaults={
-                    'summary': set_volunteer_role_summary % role,
-                    'description': set_volunteer_role_msg % role})
+                    'summary': set_volunteer_role_summary % person.role,
+                    'description': set_volunteer_role_msg % person.role})
             full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
                 user_message[0].description,
-                str(response.assignments[0].person.user.profile),
-                str(response.assignments[0].occurrence),
-                response.assignments[0].occurrence.starttime.strftime(
+                str(profile),
+                str(response.occurrence),
+                response.occurrence.starttime.strftime(
                     GBE_DATETIME_FORMAT))
             messages.success(request, full_msg)
-            self.send_notifications(request, response, state)
+            self.send_notifications(request, response, state, person)
 
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request)
-        if 'action' in kwargs and 'booking_id' in kwargs:
+        if 'action' in kwargs and 'booking_id' in kwargs and (
+                'public_id' in kwargs):
             self.set_status(request, kwargs)
 
         return render(request,

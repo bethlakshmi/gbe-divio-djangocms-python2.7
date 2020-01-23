@@ -10,6 +10,7 @@ def remove_booking(occurrence_id,
                    booking_id):
     response = PersonResponse()
     test = test_booking(booking_id, occurrence_id)
+    occurrence = test.event
     if not test:
         response.errors = [Error(
             code="BOOKING_NOT_FOUND",
@@ -18,4 +19,5 @@ def remove_booking(occurrence_id,
         return response
     ResourceAllocation.objects.filter(pk=booking_id).delete()
     response.booking_id = booking_id
+    response.occurrence = occurrence
     return response

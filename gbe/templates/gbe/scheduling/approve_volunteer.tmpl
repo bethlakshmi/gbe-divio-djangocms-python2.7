@@ -92,7 +92,8 @@
                 {{area}}
               </a><br>
       {% endfor %}</td>
-            <td>{{row.state}}</td>
+            <td>{{row.state}}{% if row.label %}<br>
+              <b>Notes:</b> {{row.label}}{% endif %}</td>
             <td class="bid-table">
               <a href="{{row.action_links.approve}}" class="btn btn-default btn-xs" data-toggle="tooltip" title="Approve">
               <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>

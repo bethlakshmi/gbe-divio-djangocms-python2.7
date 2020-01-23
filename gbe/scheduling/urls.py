@@ -91,7 +91,7 @@ urlpatterns = [
     url(r'^volunteer/review_pending/?$',
         ApproveVolunteerView.as_view(), name='review_pending'),
     url(r'^volunteer/(?P<action>approve|waitlist|reject)/' +
-        '(?P<booking_id>\d+)/?$',
+        '(?P<public_id>\d+)/(?P<booking_id>\d+)/?$',
         ApproveVolunteerView.as_view(), name='approve_volunteer'),
     url(r'^calendar/(?P<calendar_type>[-\w]+)/?$',
         ShowCalendarView.as_view(), name='calendar'),

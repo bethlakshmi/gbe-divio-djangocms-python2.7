@@ -7,6 +7,7 @@ from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory,
 )
+from tests.factories.scheduler_factories import LabelFactory
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_email_recipient,
@@ -19,13 +20,18 @@ from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
 )
-from gbe.models import Conference
+from gbe.models import (
+    Conference,
+    Profile,
+)
+from scheduler.models import ResourceAllocation
 from settings import GBE_DATETIME_FORMAT
 from gbetext import (
     set_volunteer_role_msg,
     volunteer_allocate_email_fail_msg,
 )
 from django.contrib.sites.models import Site
+from django.db.models import Max
 
 
 class TestApproveVolunteer(TestCase):
@@ -62,7 +68,9 @@ class TestApproveVolunteer(TestCase):
                 self.assertContains(response, reverse(
                     self.approve_name,
                     urlconf='gbe.scheduling.urls',
-                    args=[action, booking.pk]))
+                    args=[action,
+                          booking.resource.worker._item.profile.pk,
+                          booking.pk]))
 
     def test_approve_volunteers_bad_user(self):
         ''' user does not have Volunteer Coordinator, permission is denied'''
@@ -107,12 +115,14 @@ class TestApproveVolunteer(TestCase):
 
     def test_get_pending(self):
         self.context.worker.role = "Pending Volunteer"
+        label = LabelFactory(allocation=self.context.allocation)
         self.context.worker.save()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assert_volunteer_state(response, self.context.allocation)
         self.assertContains(response, str(self.context.sched_event))
         self.assertContains(response, '<tr class="bid-table info">')
+        self.assertContains(response, label.text)
 
     def test_get_staff_area(self):
         staff_context = StaffAreaContext(conference=self.context.conference)
@@ -153,7 +163,9 @@ class TestApproveVolunteer(TestCase):
         response = self.client.get(reverse(
             self.approve_name,
             urlconf='gbe.scheduling.urls',
-            args=["waitlist", self.context.allocation.pk]))
+            args=["waitlist",
+                  self.context.profile.pk,
+                  self.context.allocation.pk]))
         self.assert_volunteer_state(
             response,
             self.context.allocation,
@@ -182,7 +194,9 @@ class TestApproveVolunteer(TestCase):
         response = self.client.get(reverse(
             self.approve_name,
             urlconf='gbe.scheduling.urls',
-            args=["reject", self.context.allocation.pk]))
+            args=["reject",
+                  self.context.profile.pk,
+                  self.context.allocation.pk]))
         self.assert_volunteer_state(
             response,
             self.context.allocation,
@@ -211,7 +225,9 @@ class TestApproveVolunteer(TestCase):
         approve_url = reverse(
             self.approve_name,
             urlconf='gbe.scheduling.urls',
-            args=["approve", self.context.allocation.pk])
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
         response = self.client.get(approve_url)
         self.assertNotContains(response, approve_url)
         self.assertNotContains(response, '<tr class="bid-table success">')
@@ -258,7 +274,9 @@ class TestApproveVolunteer(TestCase):
         approve_url = reverse(
             self.approve_name,
             urlconf='gbe.scheduling.urls',
-            args=["approve", self.context.allocation.pk])
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
         response = self.client.get(approve_url)
         self.assertNotContains(response, approve_url)
         self.assertNotContains(response, '<tr class="bid-table success">')
@@ -296,6 +314,29 @@ class TestApproveVolunteer(TestCase):
         approve_url = reverse(
             self.approve_name,
             urlconf='gbe.scheduling.urls',
-            args=["approve", self.context.allocation.pk])
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
         response = self.client.get(approve_url)
         self.assertContains(response, volunteer_allocate_email_fail_msg)
+
+    def test_set_bad_booking(self):
+        bad_id = ResourceAllocation.objects.aggregate(Max('pk'))['pk__max']+1
+        login_as(self.privileged_user, self)
+        response = self.client.get(reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["waitlist", self.context.profile.pk, bad_id]))
+        self.assertContains(response, "Booking id %s not found" % bad_id)
+
+    def test_approve_volunteers_bad_volunteer(self):
+        ''' user does not have Volunteer Coordinator, permission is denied'''
+        bad_id = Profile.objects.aggregate(Max('pk'))['pk__max']+1
+        login_as(self.privileged_user, self)
+        response = self.client.get(
+            reverse(
+                self.approve_name,
+                urlconf='gbe.scheduling.urls',
+                args=["waitlist", bad_id, self.context.allocation.pk]),
+            follow=True)
+        self.assertEqual(404, response.status_code)

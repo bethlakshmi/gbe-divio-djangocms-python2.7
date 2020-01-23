@@ -635,7 +635,9 @@ class Event(Schedulable):
                     self.extra_volunteers()))]
         if person.label:
             allocation.set_label(person.label)
-        return PersonResponse(warnings=warnings, booking_id=allocation.pk)
+        return PersonResponse(warnings=warnings, 
+                              booking_id=allocation.pk,
+                              occurrence=self)
 
     @property
     def volunteer_count(self):

@@ -117,9 +117,11 @@ class OccurrencesResponse(GeneralResponse):
 class PersonResponse(GeneralResponse):
     def __init__(self,
                  booking_id=None,
+                 occurrence=None,
                  warnings=[],
                  errors=[]):
         self.booking_id = booking_id
+        self.occurrence = occurrence
         super(PersonResponse, self).__init__(warnings, errors)
 
 
