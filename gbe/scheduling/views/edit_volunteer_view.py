@@ -77,7 +77,8 @@ class EditVolunteerView(ManageWorkerView):
                            request,
                            response=None,
                            errorcontext=None):
-        if response and hasattr(response, 'occurrence'):
+        if response and hasattr(response, 'occurrence') and not hasattr(
+                response, 'booking_id'):
             show_scheduling_occurrence_status(
                 request,
                 response,
