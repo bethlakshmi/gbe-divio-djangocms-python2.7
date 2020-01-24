@@ -590,9 +590,7 @@ class Event(Schedulable):
         people = []
         for booking in ResourceAllocation.objects.filter(event=self):
             if booking.resource.as_subtype.__class__.__name__ == "Worker":
-                person = Person(
-                    booking_id=booking.pk,
-                    worker=booking.resource.worker)
+                person = Person(booking=booking)
                 if hasattr(booking, 'label'):
                     person.label = booking.label.text
                 people += [person]

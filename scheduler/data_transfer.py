@@ -8,7 +8,16 @@ class Person(object):
                  public_class="Performer",
                  role=None,
                  label=None,
-                 worker=None):
+                 worker=None,
+                 booking=None):
+        self.booking_id = None
+        if booking:
+            self.booking_id = booking.pk
+            self.occurrence = booking.event
+            worker = booking.resource.worker
+        else:
+            self.occurrence = None
+
         if worker:
             self.role = worker.role
             self.user = worker._item.as_subtype.user_object
@@ -20,21 +29,9 @@ class Person(object):
             self.role = role
             self.public_class = public_class
 
-        self.booking_id = booking_id
+        if booking_id:
+            self.booking_id = booking_id
         self.label = label
-
-
-class Assignment(object):
-    def __init__(self,
-                 booking=None):
-        if booking:
-            self.booking_id = booking.pk
-            self.person = Person(booking_id=self.booking_id,
-                                 worker=booking.resource.worker)
-            self.occurrence = booking.event
-            if hasattr(booking, 'label'):
-                self.person.label = booking.label.text
-
 
 class Casting(object):
     def __init__(self,
@@ -132,15 +129,6 @@ class PeopleResponse(GeneralResponse):
                  errors=[]):
         self.people = people
         super(PeopleResponse, self).__init__(warnings, errors)
-
-
-class AssignmentsResponse(GeneralResponse):
-    def __init__(self,
-                 assignments=[],
-                 warnings=[],
-                 errors=[]):
-        self.assignments = assignments
-        super(AssignmentsResponse, self).__init__(warnings, errors)
 
 
 class CastingResponse(GeneralResponse):

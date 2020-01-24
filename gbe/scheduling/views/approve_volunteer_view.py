@@ -17,7 +17,8 @@ from gbe.models import (
 )
 from gbe.functions import validate_perms
 from scheduler.idd import (
-    get_assignments,
+    get_bookings,
+    get_people,
     set_person,
 )
 from gbe.scheduling.views.functions import show_general_status
@@ -47,53 +48,53 @@ class ApproveVolunteerView(View):
         return super(ApproveVolunteerView, self).dispatch(*args, **kwargs)
 
     def get_list(self, request):
-        pending = get_assignments(
+        pending = get_people(
             roles=["Pending Volunteer", "Waitlisted", "Rejected"],
             labels=[self.conference.conference_slug])
         show_general_status(request, pending, self.__class__.__name__)
         rows = []
         action = ""
 
-        for pending_offer in pending.assignments:
+        for pending_person in pending.people:
             action_links = {
                 'email': reverse('mail_to_individual',
                                  urlconf='gbe.email.urls',
-                                 args=[pending_offer.person.public_id])}
+                                 args=[pending_person.public_id])}
             for action in ['approve', 'reject', 'waitlist']:
                 if action in volunteer_action_map and (
                         volunteer_action_map[action]['role'] == (
-                            pending_offer.person.role)):
+                            pending_person.role)):
                     action_links[action] = None
                 else:
                     action_links[action] = reverse(
                         self.review_list_view_name,
                         urlconf='gbe.scheduling.urls',
                         args=[action, 
-                              pending_offer.person.public_id,
-                              pending_offer.booking_id])
+                              pending_person.public_id,
+                              pending_person.booking_id])
             row = {
-                'volunteer': pending_offer.person.user.profile,
-                'occurrence': pending_offer.occurrence,
+                'volunteer': pending_person.user.profile,
+                'occurrence': pending_person.occurrence,
                 'staff_areas': StaffArea.objects.filter(
                     conference=self.conference,
-                    slug__in=pending_offer.occurrence.labels.values_list(
+                    slug__in=pending_person.occurrence.labels.values_list(
                         'text',
                         flat=True)),
-                'state': pending_offer.person.role.split(' ', 1)[0],
+                'state': pending_person.role.split(' ', 1)[0],
                 'status': "",
-                'label': pending_offer.person.label,
+                'label': pending_person.label,
                 'action_links': action_links}
-            if hasattr(pending_offer.occurrence, 'container_event'):
-                container = pending_offer.occurrence.container_event
+            if hasattr(pending_person.occurrence, 'container_event'):
+                container = pending_person.occurrence.container_event
                 row['parent_event'] = container.parent_event
-            if pending_offer.booking_id == self.changed_id:
+            if pending_person.booking_id == self.changed_id:
                 row['status'] = 'success'
             elif not row['volunteer'].is_active:
                 row['status'] = "danger"
-            elif pending_offer.occurrence.volunteer_count >= (
-                    pending_offer.occurrence.max_volunteer):
+            elif pending_person.occurrence.volunteer_count >= (
+                    pending_person.occurrence.max_volunteer):
                 row['status'] = "warning"
-            elif pending_offer.person.role == "Pending Volunteer":
+            elif pending_person.role == "Pending Volunteer":
                 row['status'] = "info"
             rows.append(row)
         return rows

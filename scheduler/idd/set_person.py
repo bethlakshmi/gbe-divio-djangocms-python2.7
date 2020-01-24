@@ -14,7 +14,7 @@ def set_person(occurrence_id=None, person=None):
         if occ_response.errors:
             return occ_response
         occurrence = occ_response.occurrence
-    elif person.booking_id:
+    elif person and person.booking_id:
         try:
             alloc = ResourceAllocation.objects.get(pk=person.booking_id)
             occurrence = alloc.event
