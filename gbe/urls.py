@@ -3,7 +3,6 @@ from django.contrib.auth.views import *
 from gbe.views import (
     ActChangeStateView,
     AdminProfileView,
-    AssignVolunteerView,
     BiosTeachersView,
     ClassChangeStateView,
     CloneBidView,
@@ -155,8 +154,6 @@ urlpatterns = [
         ViewVolunteerView.as_view(), name='volunteer_view'),
     url(r'^volunteer/edit/(?P<bid_id>\d+)/?$',
         MakeVolunteerView.as_view(), name='volunteer_edit'),
-    url(r'^volunteer/assign/(\d+)/?$',
-        AssignVolunteerView, name='volunteer_assign'),
     url(r'^volunteer/review/(?P<object_id>\d+)/?$',
         ReviewVolunteerView.as_view(), name='volunteer_review'),
     url(r'^volunteer/review/?$',

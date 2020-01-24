@@ -110,7 +110,6 @@ class TestReviewVolunteerList(TestCase):
         nt.assert_true(self.prefs.in_hotel in response.content)
         nt.assert_true("Needs Review" in response.content)
         nt.assert_true("Review" in response.content)
-        nt.assert_true("Assign" in response.content)
 
     def test_review_volunteer_has_commitments(self):
         ''' when a volunteer is already booked somewhere, it should show up'''

@@ -62,7 +62,6 @@ from volunteer_changestate_view import VolunteerChangeStateView
 
 # special
 from submit_act_view import SubmitActView
-from assign_volunteer_view import AssignVolunteerView
 from logout_view import LogoutView
 from propose_class_view import ProposeClassView
 from publish_proposal_view import PublishProposalView
