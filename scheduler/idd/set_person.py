@@ -1,6 +1,6 @@
 from scheduler.idd import get_occurrence
 from scheduler.models import ResourceAllocation
-from  scheduler.data_transfer import (
+from scheduler.data_transfer import (
     Error,
     PeopleResponse
 )

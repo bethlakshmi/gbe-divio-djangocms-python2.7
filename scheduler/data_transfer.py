@@ -33,6 +33,7 @@ class Person(object):
             self.booking_id = booking_id
         self.label = label
 
+
 class Casting(object):
     def __init__(self,
                  booking):

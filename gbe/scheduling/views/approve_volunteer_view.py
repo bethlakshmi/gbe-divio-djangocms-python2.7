@@ -69,7 +69,7 @@ class ApproveVolunteerView(View):
                     action_links[action] = reverse(
                         self.review_list_view_name,
                         urlconf='gbe.scheduling.urls',
-                        args=[action, 
+                        args=[action,
                               pending_person.public_id,
                               pending_person.booking_id])
             row = {
