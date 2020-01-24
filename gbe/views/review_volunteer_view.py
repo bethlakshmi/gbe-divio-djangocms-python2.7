@@ -11,7 +11,7 @@ class ReviewVolunteerView(ReviewBidView):
     object_type = Volunteer
     review_list_view_name = 'volunteer_review_list'
     bid_view_name = 'volunteer_view'
-    changestate_view_name = 'volunteer_changestate'
+    changestate_view_name = 'volunteer_view'
 
     def get_object(self, request, object_id):
         if int(object_id) == 0:

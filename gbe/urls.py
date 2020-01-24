@@ -49,7 +49,6 @@ from gbe.views import (
     ViewTroupeView,
     ViewVendorView,
     ViewVolunteerView,
-    VolunteerChangeStateView,
 )
 
 # NOTE: in general, url patterns should end with '/?$'. This
@@ -162,9 +161,6 @@ urlpatterns = [
     url(r'^volunteer/reviewlist/?$',
         ReviewVolunteerListView.as_view(),
         name='volunteer_review_list'),
-    url(r'^volunteer/changestate/(?P<object_id>\d+)/?$',
-        VolunteerChangeStateView.as_view(),
-        name='volunteer_changestate'),
 
     #  vendors
     url(r'^vendor/create/?$',

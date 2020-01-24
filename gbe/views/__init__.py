@@ -58,7 +58,6 @@ from act_changestate_view import ActChangeStateView
 from class_changestate_view import ClassChangeStateView
 from costume_changestate_view import CostumeChangeStateView
 from vendor_changestate_view import VendorChangeStateView
-from volunteer_changestate_view import VolunteerChangeStateView
 
 # special
 from submit_act_view import SubmitActView
