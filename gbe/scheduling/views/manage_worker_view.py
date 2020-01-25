@@ -11,7 +11,6 @@ from django.views.generic import View
 from django.forms import HiddenInput
 from django.contrib import messages
 from scheduler.idd import (
-    get_conflicts,
     remove_booking,
     set_person,
     test_booking,
