@@ -542,16 +542,6 @@ class Event(Schedulable):
         return self.max_volunteer - acts_booked > 0
 
     @property
-    def detail_link(self):
-        '''
-        Return a detail link to self, with title as link text
-        '''
-        return '<a href="%s">%s</a>' % (reverse('detail_view',
-                                                urlconf='gbe.scheduling.urls',
-                                                args=[self.eventitem_id]),
-                                        self.eventitem.describe)
-
-    @property
     def confitem(self):
         '''
         Returns the conference item corresponding to this event
@@ -777,10 +767,6 @@ class ResourceAllocation(Schedulable):
     event = models.ForeignKey(Event, related_name="resources_allocated")
     resource = models.ForeignKey(Resource, related_name="allocations")
 
-    @property
-    def start_time(self):
-        return self.event.starttime
-
     def get_label(self):
         try:
             return self.label
@@ -793,20 +779,6 @@ class ResourceAllocation(Schedulable):
         l = self.get_label()
         l.text = text
         l.save()
-
-    def __str__(self):
-        return self.__unicode__()
-
-    def __unicode__(self):
-        try:
-            return "%s :: Event: %s == %s : %s" % (
-                unicode(self.start_time.astimezone(pytz.timezone('UTC'))),
-                unicode(self.event),
-                unicode(Resource.objects.get_subclass(
-                    id=self.resource.id).__class__.__name__),
-                unicode(Resource.objects.get_subclass(id=self.resource.id)))
-        except:
-            return "Missing an Item"
 
 
 class Ordering(models.Model):

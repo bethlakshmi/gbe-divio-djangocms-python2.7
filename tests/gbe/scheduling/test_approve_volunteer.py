@@ -32,6 +32,7 @@ from gbetext import (
 )
 from django.contrib.sites.models import Site
 from django.db.models import Max
+from datetime import timedelta
 
 
 class TestApproveVolunteer(TestCase):
@@ -302,6 +303,66 @@ class TestApproveVolunteer(TestCase):
             [self.privileged_user.email],
             outbox_size=2,
             message_index=1)
+
+    def test_approval_w_conflict_start_after(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        class_context = ClassContext(
+            conference=self.context.conference,
+            teacher=PersonaFactory(performer_profile=self.context.profile),
+            starttime=self.context.opp_event.starttime + timedelta(minutes=30))
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        login_as(self.privileged_user, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
+        response = self.client.get(approve_url)
+        self.assertNotContains(response, approve_url)
+        alert_msg = set_volunteer_role_msg % "Volunteer"
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+                alert_msg,
+                str(self.context.profile),
+                str(self.context.opp_event),
+                self.context.opp_event.starttime.strftime(
+                    GBE_DATETIME_FORMAT))
+        conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
+            class_context.bid.e_title,
+            class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
+        self.assertContains(response, conflict_msg)
+
+    def test_approval_w_conflict_start_before(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        class_context = ClassContext(
+            conference=self.context.conference,
+            teacher=PersonaFactory(performer_profile=self.context.profile),
+            starttime=self.context.opp_event.starttime - timedelta(minutes=30))
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        login_as(self.privileged_user, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
+        response = self.client.get(approve_url)
+        self.assertNotContains(response, approve_url)
+        alert_msg = set_volunteer_role_msg % "Volunteer"
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+                alert_msg,
+                str(self.context.profile),
+                str(self.context.opp_event),
+                self.context.opp_event.starttime.strftime(
+                    GBE_DATETIME_FORMAT))
+        conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
+            class_context.bid.e_title,
+            class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
+        self.assertContains(response, conflict_msg)
 
     def test_email_fail(self):
         template = EmailTemplateFactory(
