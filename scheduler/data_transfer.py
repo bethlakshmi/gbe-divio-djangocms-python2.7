@@ -8,7 +8,16 @@ class Person(object):
                  public_class="Performer",
                  role=None,
                  label=None,
-                 worker=None):
+                 worker=None,
+                 booking=None):
+        self.booking_id = None
+        if booking:
+            self.booking_id = booking.pk
+            self.occurrence = booking.event
+            worker = booking.resource.worker
+        else:
+            self.occurrence = None
+
         if worker:
             self.role = worker.role
             self.user = worker._item.as_subtype.user_object
@@ -20,7 +29,8 @@ class Person(object):
             self.role = role
             self.public_class = public_class
 
-        self.booking_id = booking_id
+        if booking_id:
+            self.booking_id = booking_id
         self.label = label
 
 
@@ -105,9 +115,11 @@ class OccurrencesResponse(GeneralResponse):
 class PersonResponse(GeneralResponse):
     def __init__(self,
                  booking_id=None,
+                 occurrence=None,
                  warnings=[],
                  errors=[]):
         self.booking_id = booking_id
+        self.occurrence = occurrence
         super(PersonResponse, self).__init__(warnings, errors)
 
 

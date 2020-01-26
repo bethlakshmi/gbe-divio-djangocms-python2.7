@@ -4,11 +4,14 @@ from scheduler.data_transfer import (
 )
 from scheduler.idd import get_occurrence
 from scheduler.models import ResourceAllocation
+from gbetext import not_scheduled_roles
 
 
 # assumes that start time is already before end time,
 def check_conflict(occurrence, potential_conflict):
     is_conflict = False
+    if occurrence == potential_conflict:
+        return False
     if potential_conflict.start_time >= occurrence.start_time:
         is_conflict = True
     elif potential_conflict.end_time > occurrence.start_time:
@@ -45,7 +48,8 @@ def get_conflicts(conflict_occurrence_id,
                         item.event not in sched_items):
                     sched_items += [item.event]
         basic_filter = basic_filter.filter(
-            resource__worker___item=user.profile)
+            resource__worker___item=user.profile).exclude(
+            resource__worker__role__in=not_scheduled_roles)
     for item in basic_filter:
         if check_conflict(response.occurrence, item.event) and (
                 item.event not in sched_items):

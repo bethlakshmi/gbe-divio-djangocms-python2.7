@@ -278,8 +278,15 @@ role_options = (
     ('Teacher', "Teacher"),
     ('Technical Director', "Technical Director"),
     ('Volunteer', "Volunteer"),
+    ('Rejected', "Rejected"),
+    ('Waitlisted', "Waitlisted"),
     ('Pending Volunteer', "Pending Volunteer"),)
-
+not_scheduled_roles = ["Pending Volunteer", "Waitlisted", "Rejected"]
+volunteer_action_map = {
+  'approve': {'role': "Volunteer", 'state': 3},
+  'waitlist': {'role': "Waitlisted", 'state': 2},
+  'reject': {'role': "Rejected", 'state': 1},
+}
 act_casting_label = "Section"
 
 vend_time_options = (
@@ -380,12 +387,12 @@ unique_email_templates = {
          'default_subject': "Volunteer Update Occurred", },
         {'name': 'volunteer changed schedule',
          'description': '''This email is sent to the Volunteer Coordinator \
-         and the Staff Lead(s) of the changed event, when a volunteer has added \
-         or removed an event they have/had volunteered for.  This includes \
-         pending requests for events requiring approval.  It also shows any
-         conflict warnings or other errors associated with the schedule \
-         change.  NOTE - at present, it does NOT mail to the leads of the \
-         previous commitment in a case of conflict.''',
+         and the Staff Lead(s) of the changed event, when a volunteer has \
+         added or removed an event they have/had volunteered for.  This \
+         includes pending requests for events requiring approval.  It also \
+         shows any conflict warnings or other errors associated with the \
+         schedule change.  NOTE - at present, it does NOT mail to the leads \
+         of the previous commitment in a case of conflict.''',
          'category': 'volunteer',
          'default_base': "volunteer_schedule_change",
          'default_subject': "Volunteer Schedule Change", },
@@ -552,6 +559,8 @@ create_ticket_event_success_msg = "Created and linked a new BPT Event: "
 no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
 Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
 tickets listed, users will be unable to purchase entrance to this event.'''
+set_volunteer_role_summary = "Volunteer Offer %s"
+set_volunteer_role_msg = "Volunteer offer has been set to %s: <br/>"
 set_favorite_msg = '''Your interest has been set and will appear on your \
                    personal schedule.'''
 unset_favorite_msg = '''Your interest has been removed and will no longer \

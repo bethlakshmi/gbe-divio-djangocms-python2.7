@@ -28,3 +28,4 @@ from list_events_view import ListEventsView
 from event_detail_view import EventDetailView
 from eval_event_view import EvalEventView
 from volunteer_signup_view import VolunteerSignupView
+from approve_volunteer_view import ApproveVolunteerView

@@ -141,7 +141,6 @@ def send_bid_state_change_mail(
         action = 'Your %s proposal has changed status to %s' % (
             bid_type,
             acceptance_states[status][1])
-
     template = get_or_create_template(
         name,
         "default_bid_status_change",
@@ -266,6 +265,7 @@ def send_warnings_to_staff(bidder,
 
 
 def send_volunteer_update_to_staff(
+        active_user,
         vol_profile,
         occurrence,
         state,
@@ -292,12 +292,16 @@ def send_volunteer_update_to_staff(
             staff_lead__isnull=False):
         if area.staff_lead.user_object.email not in to_list:
             to_list += [area.staff_lead.user_object.email]
-    state_change = "Withdrawn"
+    state_change = ""
     if state == "on":
         if occurrence.approval_needed:
             state_change = "Awaiting Approval"
         else:
             state_change = "Volunteered"
+    elif state == "off":
+        state_change = "Withdrawn"
+    else:
+        state_change = state
     warnings = []
     for warning in update_response.warnings:
         warnings += [make_warning_msg(warning, "", False)]
@@ -307,6 +311,7 @@ def send_volunteer_update_to_staff(
             template.sender.from_email,
             template=name,
             context={
+                'active_profile': active_user,
                 'profile': vol_profile,
                 'occurrence': occurrence,
                 'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
