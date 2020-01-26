@@ -129,7 +129,10 @@ class VolunteerSignupView(View):
             role = None
             for booking in personal_schedule:
                 if booking.event == occurrence:
-                    role = booking.role
+                    if booking.role == "Waitlisted":
+                        role = "Pending Volunteer"
+                    else:
+                        role = booking.role
             roles = ("Volunteer", "Pending Volunteer")
             # if this isn't something they can signup or un-signup for, skip
             if (occurrence.extra_volunteers() < 0 and (
