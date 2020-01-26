@@ -152,6 +152,23 @@ class TestVolunteerSignupView(TestCase):
             action="off")
         self.assertContains(response, self.staffcontext.area.description)
 
+    def test_signup_w_waitlisted_volunteer(self):
+        self.volunteeropp.approval_needed = True
+        self.volunteeropp.save()
+        self.staffcontext.book_volunteer(
+            volunteer_sched_event=self.volunteeropp,
+            volunteer=self.profile,
+            role="Waitlisted")
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.basic_event_check(
+            response,
+            self.staffcontext.conference,
+            self.volunteeropp,
+            "awaiting_approval.gif",
+            action="off")
+        self.assertContains(response, self.staffcontext.area.description)
+
     def test_other_days(self):
         earlier_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
@@ -215,11 +232,11 @@ class TestVolunteerSignupView(TestCase):
         response = self.client.get(self.url)
         self.assertNotContains(response, full_opp.eventitem.e_title)
 
-    def test_user_is_staff_lead(self):
+    def test_user_is_rejected(self):
         self.staffcontext.book_volunteer(
             volunteer_sched_event=self.volunteeropp,
             volunteer=self.profile,
-            role="Staff Lead")
+            role="Rejected")
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
