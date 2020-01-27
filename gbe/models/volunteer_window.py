@@ -35,23 +35,6 @@ class VolunteerWindow(Model):
         ''' same footprint as scheduler events'''
         return self.end_timestamp()
 
-    def check_conflict(self, start, end):
-        starttime = self.start_timestamp()
-        endtime = self.end_timestamp()
-        has_conflict = False
-
-        start = pytz.utc.localize(start)
-        end = pytz.utc.localize(end)
-        if start == starttime:
-            has_conflict = True
-        elif (start > starttime and
-              start < endtime):
-            has_conflict = True
-        elif (start < starttime and
-              end > starttime):
-            has_conflict = True
-        return has_conflict
-
     class Meta:
         ordering = ['day', 'start']
         verbose_name = "Volunteer Window"

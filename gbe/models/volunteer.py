@@ -111,23 +111,5 @@ class Volunteer(Biddable):
             submitted=True,
             accepted=0)
 
-    def check_available(self, start, end):
-        available = "Not Available"
-        start = start.replace(tzinfo=pytz.utc)
-        end = end.replace(tzinfo=pytz.utc)
-        for window in self.available_windows.all():
-            starttime = window.start_timestamp().replace(tzinfo=pytz.utc)
-            endtime = window.end_timestamp().replace(tzinfo=pytz.utc)
-
-            if start == starttime:
-                available = "Available"
-            elif (start > starttime and
-                  start < endtime):
-                available = "Available"
-            elif (start < starttime and
-                  end > starttime):
-                available = "Available"
-        return available
-
     class Meta:
         app_label = "gbe"

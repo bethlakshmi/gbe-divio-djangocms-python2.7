@@ -178,7 +178,8 @@ class VolunteerSignupView(View):
             return render(request, self.template, context)
         response = get_occurrences(
             labels=["Volunteer", self.conference.conference_slug],
-            day=self.this_day.day)
+            day=self.this_day.day,
+            max_volunteer=1)
         show_general_status(
             request, response, self.__class__.__name__)
         if len(response.occurrences) > 0:

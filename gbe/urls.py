@@ -3,7 +3,6 @@ from django.contrib.auth.views import *
 from gbe.views import (
     ActChangeStateView,
     AdminProfileView,
-    AssignVolunteerView,
     BiosTeachersView,
     ClassChangeStateView,
     CloneBidView,
@@ -50,7 +49,6 @@ from gbe.views import (
     ViewTroupeView,
     ViewVendorView,
     ViewVolunteerView,
-    VolunteerChangeStateView,
 )
 
 # NOTE: in general, url patterns should end with '/?$'. This
@@ -155,8 +153,6 @@ urlpatterns = [
         ViewVolunteerView.as_view(), name='volunteer_view'),
     url(r'^volunteer/edit/(?P<bid_id>\d+)/?$',
         MakeVolunteerView.as_view(), name='volunteer_edit'),
-    url(r'^volunteer/assign/(\d+)/?$',
-        AssignVolunteerView, name='volunteer_assign'),
     url(r'^volunteer/review/(?P<object_id>\d+)/?$',
         ReviewVolunteerView.as_view(), name='volunteer_review'),
     url(r'^volunteer/review/?$',
@@ -165,9 +161,6 @@ urlpatterns = [
     url(r'^volunteer/reviewlist/?$',
         ReviewVolunteerListView.as_view(),
         name='volunteer_review_list'),
-    url(r'^volunteer/changestate/(?P<object_id>\d+)/?$',
-        VolunteerChangeStateView.as_view(),
-        name='volunteer_changestate'),
 
     #  vendors
     url(r'^vendor/create/?$',

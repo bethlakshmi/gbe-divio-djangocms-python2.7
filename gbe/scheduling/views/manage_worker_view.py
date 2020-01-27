@@ -11,7 +11,6 @@ from django.views.generic import View
 from django.forms import HiddenInput
 from django.contrib import messages
 from scheduler.idd import (
-    get_conflicts,
     remove_booking,
     set_person,
     test_booking,
@@ -24,7 +23,6 @@ from gbe.email.functions import send_schedule_update_mail
 from gbetext import volunteer_allocate_email_fail_msg
 from gbe.scheduling.forms import WorkerAllocationForm
 from gbe.scheduling.views.functions import show_scheduling_booking_status
-from gbe.functions import eligible_volunteers
 from gbe_forms_text import rank_interest_options
 from scheduler.data_transfer import (
     Error,
@@ -109,45 +107,6 @@ class ManageWorkerView(View):
         return {'worker_alloc_forms': forms,
                 'worker_alloc_headers': ['Worker', 'Role', 'Notes'],
                 'manage_worker_url': self.manage_worker_url}
-
-    def get_volunteer_info(self):
-        volunteer_set = []
-        for volunteer in eligible_volunteers(
-                self.occurrence.start_time,
-                self.occurrence.end_time,
-                self.item.e_conference):
-            assign_form = WorkerAllocationForm(
-                initial={'role': 'Volunteer',
-                         'worker': volunteer.profile,
-                         'alloc_id': -1})
-            assign_form.fields['worker'].widget = HiddenInput()
-            assign_form.fields['label'].widget = HiddenInput()
-            if volunteer.volunteerinterest_set.filter(
-                        interest=self.occurrence.as_subtype.volunteer_type
-                        ).exists():
-                rank = volunteer.volunteerinterest_set.get(
-                    interest=self.occurrence.as_subtype.volunteer_type).rank
-            else:
-                rank = 0
-            conflict_response = get_conflicts(
-                self.occurrence.pk,
-                volunteer.profile.user_object,
-                labels=[self.conference.conference_slug])
-            conflicts = None
-            if hasattr(conflict_response, 'occurrences'):
-                conflicts = conflict_response.occurrences
-
-            volunteer_set += [{
-                'display_name': volunteer.profile.display_name,
-                'interest': rank_interest_options[rank],
-                'available': volunteer.check_available(
-                    self.occurrence.start_time,
-                    self.occurrence.end_time),
-                'conflicts': conflicts,
-                'id': volunteer.pk,
-                'assign_form': assign_form
-            }]
-        return {'eligible_volunteers': volunteer_set}
 
     def make_post_response(self,
                            request,

@@ -20,10 +20,7 @@ from gbe.scheduling.views.functions import (
     get_start_time,
     show_scheduling_occurrence_status,
 )
-from gbe.functions import (
-    eligible_volunteers,
-    get_conference_day,
-)
+from gbe.functions import get_conference_day
 from django.contrib import messages
 from gbe.models import UserMessage
 

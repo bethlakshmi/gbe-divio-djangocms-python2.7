@@ -124,7 +124,7 @@ class TestEditVolunteer(TestCase):
         self.assertContains(
             response,
             '<option value="Volunteer" selected>Volunteer</option>',
-            3)
+            2)
 
     def test_bad_occurrence_id(self):
         login_as(self.privileged_user, self)

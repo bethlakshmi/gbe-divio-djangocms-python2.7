@@ -149,17 +149,6 @@ def conference_slugs():
     return Conference.all_slugs()
 
 
-def eligible_volunteers(event_start_time, event_end_time, conference):
-    windows = []
-    for window in conference.windows():
-        if window.check_conflict(event_start_time, event_end_time):
-            windows.append(window)
-
-    return Volunteer.objects.filter(
-        b_conference=conference).exclude(
-        unavailable_windows__in=windows)
-
-
 def get_gbe_schedulable_items(confitem_type,
                               filter_type=None,
                               conference=None):
