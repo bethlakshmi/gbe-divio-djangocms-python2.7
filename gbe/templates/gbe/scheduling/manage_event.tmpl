@@ -60,7 +60,7 @@
       <input type="submit" class="btn btn-primary" name="filter" value="Filter"></form>
    {% if conference.status != "completed" %}
       <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-primary">Create</a>
-   </div>{% endif %}</div>
+   {% endif %}</div></div>
    Yellow = volunteers must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>
 {% if occurrences %}

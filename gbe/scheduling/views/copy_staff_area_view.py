@@ -79,7 +79,8 @@ class CopyStaffAreaView(CopyCollectionsView):
         new_area_room = room
         new_title = self.area.title
         new_slug = self.area.slug
-        if conference == self.area.conference:
+        if conference == self.area.conference or StaffArea.objects.filter(
+                conference=conference, title=self.area.title):
             now = datetime.now().strftime(GBE_DATETIME_FORMAT)
             new_title = "%s - New - %s" % (
                 self.area.title,

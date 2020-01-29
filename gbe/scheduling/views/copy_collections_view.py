@@ -178,17 +178,13 @@ class CopyCollectionsView(View):
                 target_day = context['pick_day'].cleaned_data[
                     'copy_to_day']
                 delta = target_day.day - self.start_day
-                response = self.copy_event(
-                    self.occurrence,
+                new_root = self.copy_root(
+                    request,
                     delta,
                     target_day.conference,
-                    context['pick_day'].cleaned_data['room'],
-                    set_room=True)
-                show_scheduling_occurrence_status(
-                    request,
-                    response,
-                    self.__class__.__name__)
-                if response.occurrence:
+                    context['pick_day'].cleaned_data['room'])
+
+                if new_root:
                     slug = target_day.conference.conference_slug
                     return HttpResponseRedirect(
                         "%s?%s-day=%d&filter=Filter&new=%s" % (
@@ -197,7 +193,7 @@ class CopyCollectionsView(View):
                                     args=[slug]),
                             slug,
                             target_day.pk,
-                            str([response.occurrence.pk]),))
+                            str([new_root.pk]),))
         if 'pick_event' in request.POST.keys():
             return self.copy_events_from_form(request)
         return render(
