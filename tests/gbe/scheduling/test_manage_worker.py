@@ -227,6 +227,42 @@ class TestManageWorker(TestCase):
             'Do these notes work?',
             "Producer")
 
+    def test_post_form_edit_to_waitlisted(self):
+        new_volunteer = ProfileFactory()
+        data = self.get_edit_data()
+        data['worker'] = new_volunteer.pk,
+        data['role'] = 'Waitlisted',
+
+        login_as(self.privileged_profile, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assert_good_post(
+            response,
+            self.volunteer_opp,
+            new_volunteer,
+            self.alloc,
+            'Do these notes work?',
+            "Waitlisted")
+        assert_email_template_used(
+            "Your volunteer proposal has changed status to Wait List")
+
+    def test_post_form_edit_to_waitlisted(self):
+        new_volunteer = ProfileFactory()
+        data = self.get_edit_data()
+        data['worker'] = new_volunteer.pk,
+        data['role'] = 'Rejected',
+
+        login_as(self.privileged_profile, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assert_good_post(
+            response,
+            self.volunteer_opp,
+            new_volunteer,
+            self.alloc,
+            'Do these notes work?',
+            "Rejected")
+        assert_email_template_used(
+            "Your volunteer proposal has changed status to Reject")
+
     def test_post_form_edit_bad_label(self):
         big_label = 'Do these notes work?Do these notes work?' + \
                     'Do these notes work?Do these notes work?' + \

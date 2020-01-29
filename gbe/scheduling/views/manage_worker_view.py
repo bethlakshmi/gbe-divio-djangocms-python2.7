@@ -19,8 +19,12 @@ from gbe.models import (
     Profile,
     UserMessage,
 )
-from gbe.email.functions import send_schedule_update_mail
+from gbe.email.functions import (
+    send_bid_state_change_mail,
+    send_schedule_update_mail,
+)
 from gbetext import (
+    not_scheduled_roles,
     role_commit_map,
     volunteer_allocate_email_fail_msg,
 )
@@ -192,8 +196,20 @@ class ManageWorkerView(View):
                     self.occurrence.pk,
                     person
                 )
-                email_status = send_schedule_update_mail("Volunteer",
-                                                         data['worker'])
+                if data['role'] in not_scheduled_roles and int(
+                        data['alloc_id']) > -1:
+                    state = 2
+                    if data['role'] == "Rejected":
+                        state = 1
+                    email_status = send_bid_state_change_mail(
+                        "volunteer",
+                        data['worker'].workeritem.as_subtype.user_object.email,
+                        data['worker'].workeritem.as_subtype.get_badge_name(),
+                        self.occurrence,
+                        state)
+                elif data['role'] not in not_scheduled_roles:
+                    email_status = send_schedule_update_mail("Volunteer",
+                                                             data['worker'])
             if email_status:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
