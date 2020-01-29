@@ -245,7 +245,7 @@ class TestManageWorker(TestCase):
         assert_email_template_used(
             "Your volunteer proposal has changed status to Wait List")
 
-    def test_post_form_edit_to_waitlisted(self):
+    def test_post_form_edit_to_rejected(self):
         new_volunteer = ProfileFactory()
         data = self.get_edit_data()
         data['worker'] = new_volunteer.pk,

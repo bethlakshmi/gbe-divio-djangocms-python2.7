@@ -100,7 +100,7 @@ class ManageWorkerView(View):
             else:
                 try:
                     forms.append((
-                        role_commit_map[person.role], 
+                        role_commit_map[person.role],
                         WorkerAllocationForm(
                             initial={
                                 'worker': Profile.objects.get(
@@ -111,10 +111,10 @@ class ManageWorkerView(View):
                 except Profile.DoesNotExist:
                     pass
         if errorcontext and 'new_worker_alloc_form' in errorcontext:
-            forms.append((role_commit_map['Error'], 
+            forms.append((role_commit_map['Error'],
                           errorcontext['new_worker_alloc_form']))
         else:
-            forms.append((role_commit_map['New'], 
+            forms.append((role_commit_map['New'],
                           WorkerAllocationForm(initial={'role': 'Volunteer',
                                                         'alloc_id': -1})))
         forms.sort(key=lambda tup: tup[0][0])
