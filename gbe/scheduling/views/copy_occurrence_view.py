@@ -102,7 +102,8 @@ class CopyOccurrenceView(CopyCollectionsView):
             self.occurrence,
             delta,
             conference,
-            room)
+            room,
+            set_room=True)
         show_scheduling_occurrence_status(
             request,
             response,
