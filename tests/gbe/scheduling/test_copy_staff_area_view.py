@@ -232,6 +232,73 @@ class TestCopyOccurrence(TestCase):
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, new_room)
 
+    def test_copy_only_area(self):
+        area_context = StaffAreaContext()
+        conf_day = ConferenceDayFactory(
+                conference=area_context.conference)
+        another_day = ConferenceDayFactory()
+        another_room = RoomFactory()
+        another_room.conferences.add(another_day.conference)
+        data = {
+            'pick_mode': "Next",
+            'copy_to_day': another_day.pk,
+            'room': another_room.room.pk,
+        }
+        self.url = reverse(
+            self.view_name,
+            args=[area_context.area.pk],
+            urlconf='gbe.scheduling.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[another_day.conference.conference_slug]),
+            another_day.conference.conference_slug,
+            another_day.pk,
+            str([area_context.area.pk+1]))
+        self.assertRedirects(response, redirect_url)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'A new Staff Area was created.<br>Staff Area: %s' % (
+                area_context.area.title))
+
+    def test_copy_area_duplicate_name(self):
+        dup_area_context = StaffAreaContext()
+        dup_area_context.area.title = self.context.area.title
+        dup_area_context.area.save()
+        conf_day = ConferenceDayFactory(
+                conference=dup_area_context.conference)
+        self.url = reverse(
+            self.view_name,
+            args=[dup_area_context.area.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_to_day': self.context.conf_day.pk,
+            'room': self.vol_opp.location.pk,
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[self.context.conference.conference_slug]),
+            self.context.conference.conference_slug,
+            self.context.conf_day.pk,
+            str([dup_area_context.area.pk+1]))
+        self.assertRedirects(response, redirect_url)
+        max_area = StaffArea.objects.latest('pk')
+
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'A new Staff Area was created.<br>Staff Area: %s' % (
+                max_area.title))
+
     def test_copy_child_parent_events(self):
         another_day = ConferenceDayFactory()
         another_room = RoomFactory()

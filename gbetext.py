@@ -281,6 +281,21 @@ role_options = (
     ('Rejected', "Rejected"),
     ('Waitlisted', "Waitlisted"),
     ('Pending Volunteer', "Pending Volunteer"),)
+role_commit_map = {
+    'New': (5, "fas fa-plus-square text-secondary"),
+    'Error': (0, "fas fa-exclamation-triangle text-warning"),
+    'Interested': (1, "fas fa-check-circle text-success"),
+    'Moderator': (1, "fas fa-check-circle text-success"),
+    'Panelist': (1, "fas fa-check-circle text-success"),
+    'Performer': (1, "fas fa-check-circle text-success"),
+    'Producer': (1, "fas fa-check-circle text-success"),
+    'Staff Lead': (1, "fas fa-check-circle text-success"),
+    'Teacher': (1, "fas fa-check-circle text-success"),
+    'Technical Director': (1, "fas fa-check-circle text-success"),
+    'Volunteer': (1, "fas fa-check-circle text-success"),
+    'Rejected': (4, "fas fa-window-close text-danger"),
+    'Waitlisted': (2, "fas fa-clock text-info"),
+    'Pending Volunteer': (3, "fas fa-hourglass-half text-info")}
 not_scheduled_roles = ["Pending Volunteer", "Waitlisted", "Rejected"]
 volunteer_action_map = {
   'approve': {'role': "Volunteer", 'state': 3},

@@ -22,7 +22,10 @@ from tests.functions.gbe_functions import (
 from django.shortcuts import get_object_or_404
 from gbe.models import Volunteer
 from django.contrib.sites.models import Site
-from gbetext import volunteer_allocate_email_fail_msg
+from gbetext import (
+    role_commit_map,
+    volunteer_allocate_email_fail_msg,
+)
 from django.core import mail
 
 
@@ -88,6 +91,7 @@ class TestManageWorker(TestCase):
                             role,
                             role,
                             True)
+
         self.assertContains(
             response,
             '<input type="hidden" name="alloc_id" value="' +
@@ -129,6 +133,7 @@ class TestManageWorker(TestCase):
                                   role,
                                   allocations,)
         self.assertNotContains(response, '<ul class="errorlist">')
+        self.assertContains(response, role_commit_map[role][1])
 
     def test_no_login_gives_error(self):
         response = self.client.get(self.url, follow=True)
@@ -222,6 +227,42 @@ class TestManageWorker(TestCase):
             'Do these notes work?',
             "Producer")
 
+    def test_post_form_edit_to_waitlisted(self):
+        new_volunteer = ProfileFactory()
+        data = self.get_edit_data()
+        data['worker'] = new_volunteer.pk,
+        data['role'] = 'Waitlisted',
+
+        login_as(self.privileged_profile, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assert_good_post(
+            response,
+            self.volunteer_opp,
+            new_volunteer,
+            self.alloc,
+            'Do these notes work?',
+            "Waitlisted")
+        assert_email_template_used(
+            "Your volunteer proposal has changed status to Wait List")
+
+    def test_post_form_edit_to_rejected(self):
+        new_volunteer = ProfileFactory()
+        data = self.get_edit_data()
+        data['worker'] = new_volunteer.pk,
+        data['role'] = 'Rejected',
+
+        login_as(self.privileged_profile, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assert_good_post(
+            response,
+            self.volunteer_opp,
+            new_volunteer,
+            self.alloc,
+            'Do these notes work?',
+            "Rejected")
+        assert_email_template_used(
+            "Your volunteer proposal has changed status to Reject")
+
     def test_post_form_edit_bad_label(self):
         big_label = 'Do these notes work?Do these notes work?' + \
                     'Do these notes work?Do these notes work?' + \
@@ -243,6 +284,7 @@ class TestManageWorker(TestCase):
             response,
             '<li>Ensure this value has at most 100 characters ' +
             '(it has ' + str(len(big_label)) + ').</li>')
+        self.assertContains(response, role_commit_map['Error'][1])
 
     def test_post_form_edit_bad_role(self):
         data = self.get_edit_data()
@@ -260,6 +302,7 @@ class TestManageWorker(TestCase):
         self.assertContains(
             response,
             '<li>This field is required.</li>')
+        self.assertContains(response, role_commit_map['Error'][1])
 
     def test_post_form_edit_bad_role_and_booking(self):
         data = self.get_edit_data()
@@ -303,6 +346,7 @@ class TestManageWorker(TestCase):
             response,
             '<a href="#" data-toggle="tooltip" title="Create New">',
             count=1)
+        self.assertContains(response, role_commit_map['Error'][1])
 
     def test_post_form_valid_delete_allocation(self):
         data = self.get_edit_data()
@@ -332,6 +376,7 @@ class TestManageWorker(TestCase):
                 urlconf='gbe.scheduling.urls',
                 args=[self.context.conference.conference_slug,
                       self.volunteer_opp.pk])))
+        self.assertContains(response, role_commit_map['New'][1])
 
     def test_post_form_valid_delete_allocation_sends_notification(self):
         data = self.get_edit_data()

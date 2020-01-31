@@ -19,11 +19,12 @@ included in event edit flow. Show WorkerAllocationForms
     {% endfor %}
       <th>Action</th>
     </tr>
-    {% for form in worker_alloc_forms %}
+    {% for role_commit, form in worker_alloc_forms %}
     <tr class="{% if changed_id == form.alloc_id.value %}changed{% else %}event_opp_row{% endif %}">
       <form method="POST" action="{{manage_worker_url}}" 
       	    enctype="multipart/form-data">
         {% csrf_token %}
+    <td>&nbsp;<i class="{{role_commit.1}}"></i></td>
 	{% for field in form.visible_fields %}
 	  <td>
             {{ field }}

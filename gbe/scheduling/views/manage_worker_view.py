@@ -19,8 +19,15 @@ from gbe.models import (
     Profile,
     UserMessage,
 )
-from gbe.email.functions import send_schedule_update_mail
-from gbetext import volunteer_allocate_email_fail_msg
+from gbe.email.functions import (
+    send_bid_state_change_mail,
+    send_schedule_update_mail,
+)
+from gbetext import (
+    not_scheduled_roles,
+    role_commit_map,
+    volunteer_allocate_email_fail_msg,
+)
 from gbe.scheduling.forms import WorkerAllocationForm
 from gbe.scheduling.views.functions import show_scheduling_booking_status
 from gbe_forms_text import rank_interest_options
@@ -88,24 +95,31 @@ class ManageWorkerView(View):
                     'worker_alloc_forms' in errorcontext and
                     errorcontext['worker_alloc_forms'].cleaned_data[
                         'alloc_id'] == person.booking_id):
-                forms.append(errorcontext['worker_alloc_forms'])
+                forms.append((role_commit_map['Error'],
+                              errorcontext['worker_alloc_forms']))
             else:
                 try:
-                    forms.append(WorkerAllocationForm(
-                        initial={
-                            'worker': Profile.objects.get(pk=person.public_id),
-                            'role': person.role,
-                            'label': person.label,
-                            'alloc_id': person.booking_id}))
+                    forms.append((
+                        role_commit_map[person.role],
+                        WorkerAllocationForm(
+                            initial={
+                                'worker': Profile.objects.get(
+                                    pk=person.public_id),
+                                'role': person.role,
+                                'label': person.label,
+                                'alloc_id': person.booking_id})))
                 except Profile.DoesNotExist:
                     pass
         if errorcontext and 'new_worker_alloc_form' in errorcontext:
-            forms.append(errorcontext['new_worker_alloc_form'])
+            forms.append((role_commit_map['Error'],
+                          errorcontext['new_worker_alloc_form']))
         else:
-            forms.append(WorkerAllocationForm(initial={'role': 'Volunteer',
-                                                       'alloc_id': -1}))
+            forms.append((role_commit_map['New'],
+                          WorkerAllocationForm(initial={'role': 'Volunteer',
+                                                        'alloc_id': -1})))
+        forms.sort(key=lambda tup: tup[0][0])
         return {'worker_alloc_forms': forms,
-                'worker_alloc_headers': ['Worker', 'Role', 'Notes'],
+                'worker_alloc_headers': ['State', 'Worker', 'Role', 'Notes'],
                 'manage_worker_url': self.manage_worker_url}
 
     def make_post_response(self,
@@ -182,8 +196,20 @@ class ManageWorkerView(View):
                     self.occurrence.pk,
                     person
                 )
-                email_status = send_schedule_update_mail("Volunteer",
-                                                         data['worker'])
+                if data['role'] in not_scheduled_roles and int(
+                        data['alloc_id']) > -1:
+                    state = 2
+                    if data['role'] == "Rejected":
+                        state = 1
+                    email_status = send_bid_state_change_mail(
+                        "volunteer",
+                        data['worker'].workeritem.as_subtype.user_object.email,
+                        data['worker'].workeritem.as_subtype.get_badge_name(),
+                        self.occurrence,
+                        state)
+                elif data['role'] not in not_scheduled_roles:
+                    email_status = send_schedule_update_mail("Volunteer",
+                                                             data['worker'])
             if email_status:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
