@@ -1,9 +1,6 @@
 from gbe.scheduling.views import EditEventView
 from django.http import HttpResponseRedirect
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from gbe.models import GenericEvent
 from gbe.scheduling.forms import RehearsalSlotForm
