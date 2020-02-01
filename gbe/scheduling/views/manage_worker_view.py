@@ -119,7 +119,7 @@ class ManageWorkerView(View):
                                                         'alloc_id': -1})))
         forms.sort(key=lambda tup: tup[0][0])
         return {'worker_alloc_forms': forms,
-                'worker_alloc_headers': ['State', 'Worker', 'Role', 'Notes'],
+                'worker_alloc_headers': [' ', 'Worker', 'Role', 'Notes'],
                 'manage_worker_url': self.manage_worker_url}
 
     def make_post_response(self,
