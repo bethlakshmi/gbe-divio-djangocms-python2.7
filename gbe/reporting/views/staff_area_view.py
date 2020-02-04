@@ -5,6 +5,7 @@ from scheduler.idd import get_occurrences
 from gbe.scheduling.views.functions import show_general_status
 from gbe.models import StaffArea
 from gbetext import role_commit_map
+from django.core.urlresolvers import reverse
 
 
 def staff_area_view(request, area_id):
@@ -28,12 +29,17 @@ def staff_area_view(request, area_id):
     area = None
     opps = None
     conference = None
+    edit_link = None
     try:
         area = StaffArea.objects.get(pk=area_id)
         opps_response = get_occurrences(labels=[
             area.conference.conference_slug,
             area.slug])
         conference = area.conference
+        if area.conference.status != 'completed':
+            edit_link = reverse("edit_staff", 
+                                urlconf='gbe.scheduling.urls',
+                                args=[area.pk])
     except StaffArea.DoesNotExist:
         parent_response = get_occurrences(foreign_event_ids=[area_id])
         if parent_response.occurrences:
@@ -41,7 +47,10 @@ def staff_area_view(request, area_id):
             opps_response = get_occurrences(
                 parent_event_id=parent_response.occurrences[0].pk)
             conference = area.confitem.e_conference
-
+            if conference.status != 'completed':
+                edit_link = reverse("edit_event", 
+                                urlconf='gbe.scheduling.urls',
+                                args=[conference.conference_slug, area.pk])
     if opps_response:
         show_general_status(request, opps_response, "staff_area")
         opps = opps_response.occurrences
@@ -54,4 +63,5 @@ def staff_area_view(request, area_id):
                    'role_commit_map': role_commit_map,
                    'visible_roles': roles,
                    'other_option': other,
+                   'edit_link': edit_link,
                    })

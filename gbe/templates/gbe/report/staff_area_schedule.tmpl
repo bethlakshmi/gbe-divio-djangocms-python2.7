@@ -8,7 +8,9 @@
 {% block content %}
 
 
-  <h2 class="review-title">Staff Schedules for {{area}}<a href="?filter={{other_option}}" role="button" class="btn btn-primary float-right">Display {{other_option}} Staff</a></h2>
+  <h2 class="review-title">Staff Schedules for {{area}}
+    <a href="?filter={{other_option}}" role="button" class="btn btn-primary float-right">Display {{other_option}} Staff</a>{% if edit_link %}
+    <a href="{{edit_link}}" style="margin-right: 4px; "role="button" class="btn btn-primary float-right">Edit</a>{% endif %}</h2>
 <p>
 <font color="red">Red text</font> shows a user that has deactivated their account.
 </p>
