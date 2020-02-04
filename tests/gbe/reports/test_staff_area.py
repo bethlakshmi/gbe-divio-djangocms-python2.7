@@ -66,8 +66,6 @@ class TestStaffArea(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_show_bad_event(self):
-        '''staff_area view should fail for non-authenticated users
-        '''
         show = ShowFactory()
         grant_privilege(self.profile, 'Act Reviewers')
         login_as(self.profile, self)
@@ -80,10 +78,9 @@ class TestStaffArea(TestCase):
                             "Staff Schedules for None")
 
     def test_staff_area_bad_area(self):
-        '''staff_area view should fail for non-authenticated users
+        '''staff_area view should fail for non-privileged users
         '''
         context = StaffAreaContext()
-        grant_privilege(self.profile, 'Act Reviewers')
         login_as(self.profile, self)
         response = self.client.get(
             "%s?area=Staff" %
