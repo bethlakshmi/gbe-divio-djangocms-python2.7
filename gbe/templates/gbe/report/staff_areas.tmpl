@@ -56,5 +56,24 @@
     {% endfor %}
   </table>
 </div>
+<div class="panel panel-primary">
+  <div class="panel-heading"><h2 class="review-title">Volunteer Type</h2></div>
+    <table class="table">
+    <tr>
+      <th>Type</th>
+      <th>Check Staffing</th>
+    </tr>
+    {% for type in volunteer_types %}
+      <tr>
+        <td>{{type.interest}}</td>
+        <td>
+          <a href="{%url 'reporting:volunteer_type' conference.conference_slug type.pk %}">
+	    Get Staff Schedule</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+
 {% endblock %}
 
