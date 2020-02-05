@@ -6,7 +6,6 @@ from gbe.reporting.views import (
     interest_view,
     review_staff_area_view,
     staff_area_view,
-    volunteer_type_view,
     WelcomeLetterView,
 )
 from gbe.reporting import (
@@ -33,10 +32,6 @@ urlpatterns = [
     url(r'^reports/staff_area/(\d+)/?$',
         staff_area_view,
         name='staff_area'),
-    url(r'^reports/volunteer_type/(?P<conference_choice>[-\w]+)/' +
-        '(?P<volunteer_type_id>\d+)/?$',
-        volunteer_type_view,
-        name='volunteer_type'),
     url(r'^reports/stuffing/(?P<conference_choice>[-\w]+)/?$',
         env_stuff,
         name='env_stuff'),

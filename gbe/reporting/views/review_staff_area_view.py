@@ -29,6 +29,5 @@ def review_staff_area_view(request):
         {'header': header,
          'areas': StaffArea.objects.filter(conference=conference),
          'shows': Show.objects.filter(e_conference=conference),
-         'volunteer_types': AvailableInterest.objects.filter(visible=True),
          'conference_slugs': conference_slugs(),
          'conference': conference})
