@@ -1,7 +1,9 @@
 
 
 <div class=side_box>
-  <h2>Volunteer Management</h2>
+  <h2>Volunteer Management
+    {% if report_url %}
+    <a href="{{report_url}}" role="button" class="btn btn-primary float-right">Display Staff</a>{% endif %}</h2>
   <p># = Number of Volunteers Needed<br>
      Approve = Approval Needed for Volunteering</p>
   <i class="fa fa-pencil" aria-hidden="true"></i> - Edit &nbsp;&nbsp;||&nbsp;&nbsp;
