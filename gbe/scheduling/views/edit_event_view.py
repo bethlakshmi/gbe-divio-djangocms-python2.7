@@ -126,7 +126,7 @@ class EditEventView(ManageVolWizardView):
                 self.manage_vol_url,
                 self.conference,
                 request,
-                self.item.eventitem_id,
+                ['event', self.item.eventitem_id],
                 errorcontext=errorcontext,
                 occurrence_id=self.occurrence.pk))
         else:
