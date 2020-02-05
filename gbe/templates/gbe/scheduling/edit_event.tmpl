@@ -21,8 +21,6 @@
   </div>
   <div id="collapse1" class="panel-collapse collapse {% if start_open %}in{% endif %}">
   <div class="panel-body">
-  {% if report_url %}
-    <a href="{{report_url}}" role="button" class="btn btn-primary float-right">Display Staff</a>{% endif %}
   <form action="{{edit_url}}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {% include "gbe/scheduling/event_booking.tmpl" with form=event_form %}

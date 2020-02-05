@@ -24,7 +24,7 @@
  	  {{area.staff_lead}}
         </td>
         <td>
-          <a href="{%url 'reporting:staff_area' area.pk %}">
+          <a href="{%url 'reporting:staff_area' area.pk %}?area=Staff">
 	    Get Staff Schedule</a>
         </td>
       </tr>
@@ -49,7 +49,7 @@
  	  {% endfor %}	
         </td>
         <td>
-          <a href="{%url 'reporting:staff_area' show.eventitem_id %}">
+          <a href="{%url 'reporting:staff_area' show.eventitem_id %}?area=Show">
 	    Get Show Schedule</a>
         </td>
       </tr>

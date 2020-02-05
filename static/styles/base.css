@@ -201,7 +201,7 @@ div.reviewer_col{
 
 div.side_box {
     border: 1px solid black;
-    padding: 0 10px 0 10px;
+    padding: 0 0 0 10px;
 }
 
 @media (min-width:768px){.email-select{width:640px}
