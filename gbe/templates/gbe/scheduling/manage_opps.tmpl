@@ -93,5 +93,13 @@
       </form>	      
     </tr>
   </table>
+  {% if staff_id %}
+  <table> 
+  <tr>
+  <td><a href="{%url 'reporting:staff_area' staff_id %}">See Schedule</a>
+  </td>
+  </tr>
+  </table>
+ {% endif %}
   <br><br>
 </div>

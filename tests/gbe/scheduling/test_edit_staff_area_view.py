@@ -133,7 +133,6 @@ class TestEditStaffAreaView(TestCase):
         self.assertContains(
             response,
             'name="max_volunteer" value="7"')
-        self.assertContains(response, "Display Staff", 2)
 
     def test_bad_staff_area(self):
         login_as(self.privileged_user, self)

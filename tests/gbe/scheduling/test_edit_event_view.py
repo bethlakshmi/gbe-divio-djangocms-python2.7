@@ -134,7 +134,7 @@ class TestEditEventView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Finish")
         self.assertContains(response, rehearsal.e_title)
-        self.assertNotContains(response, 'Display Staff')
+        self.assertNotContains(response, 'Staffing')
 
     def test_vol_opp_present(self):
         vol_context = VolunteerContext()
@@ -169,7 +169,6 @@ class TestEditEventView(TestCase):
         self.assertContains(
             response,
             'name="duration" value="1.0"')
-        self.assertContains(response, "Display Staff", 2)
 
     def test_bad_conference(self):
         login_as(self.privileged_user, self)

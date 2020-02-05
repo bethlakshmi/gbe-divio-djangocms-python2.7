@@ -8,13 +8,14 @@ from gbetext import role_commit_map
 from django.core.urlresolvers import reverse
 
 
-def staff_area_view(request, parent_type, target):
+def staff_area_view(request, area_id):
     '''
     Generates a staff area report: volunteer opportunities scheduled,
     volunteers scheduled, sorted by time/day
     See ticket #250
     '''
     viewer_profile = validate_perms(request, 'any', require=True)
+
     other = "Potential"
     roles = []
     if 'filter' in request.GET.keys() and (
@@ -29,8 +30,8 @@ def staff_area_view(request, parent_type, target):
     opps = None
     conference = None
     edit_link = None
-    if parent_type == "area":
-        area = get_object_or_404(StaffArea, pk=target)
+    try:
+        area = StaffArea.objects.get(pk=area_id)
         opps_response = get_occurrences(labels=[
             area.conference.conference_slug,
             area.slug])
@@ -39,8 +40,8 @@ def staff_area_view(request, parent_type, target):
             edit_link = reverse("edit_staff", 
                                 urlconf='gbe.scheduling.urls',
                                 args=[area.pk])
-    elif parent_type == "event":
-        parent_response = get_occurrences(foreign_event_ids=[target])
+    except StaffArea.DoesNotExist:
+        parent_response = get_occurrences(foreign_event_ids=[area_id])
         if parent_response.occurrences:
             area = parent_response.occurrences[0]
             opps_response = get_occurrences(
@@ -50,7 +51,6 @@ def staff_area_view(request, parent_type, target):
                 edit_link = reverse("edit_event", 
                                 urlconf='gbe.scheduling.urls',
                                 args=[conference.conference_slug, area.pk])
-
     if opps_response:
         show_general_status(request, opps_response, "staff_area")
         opps = opps_response.occurrences
