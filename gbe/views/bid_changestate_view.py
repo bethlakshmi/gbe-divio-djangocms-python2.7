@@ -21,10 +21,11 @@ from gbetext import bidder_email_fail_msg
 
 
 class BidChangeStateView(View):
+    bid_state_change_form = BidStateChangeForm
 
     @log_func
     def bid_state_change(self, request):
-        form = BidStateChangeForm(request.POST, instance=self.object)
+        form = self.bid_state_change_form(request.POST, instance=self.object)
         if form.is_valid():
             self.object = form.save()
         else:

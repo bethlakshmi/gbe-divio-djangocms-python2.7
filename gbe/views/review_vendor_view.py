@@ -1,6 +1,8 @@
 from gbe.models import Vendor
-from gbe.forms import VendorBidForm
-
+from gbe.forms import (
+    VendorBidForm,
+    VendorStateChangeForm,
+)
 from gbe.views import ReviewBidView
 
 
@@ -13,6 +15,7 @@ class ReviewVendorView(ReviewBidView):
     review_list_view_name = 'vendor_review_list'
     bid_view_name = 'vendor_view'
     changestate_view_name = 'vendor_changestate'
+    bid_state_change_form = VendorStateChangeForm
 
     def groundwork(self, request, args, kwargs):
         super(ReviewVendorView, self).groundwork(request, args, kwargs)
