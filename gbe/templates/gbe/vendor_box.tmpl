@@ -1,20 +1,27 @@
 {% load thumbnail %}
 {% for vendor in vendors %}
-{% cycle True True False False as img_right silent %}
+  {%if featured %}
+    {% cycle True True False False as img_right silent %}
     {% cycle '<div class="row">' '' '<div class="row">' '' %}
-          <div class="col-md-6 col-sm-12 col-12">
+    {% cycle 300 300 as text_cap silent %}
+          <div class="col-lg-6 col-sm-12 col-12">
+  {% else %}
+    {% cycle True True as img_right silent %}
+    {% cycle '<div class="row">' '' '' '' '' '' %}
+    {% cycle 70 70 as text_cap silent %}
+          <div class="col-lg-4 col-md-6 col-sm-12 col-12">
+  {% endif %}
             <div class="single-member wow fadeInRight" data-wow-delay="0.2s">
     {% if img_right %}
               <div class="team-desc">
                 <h3 class="vendor-header">{{vendor.b_title}}</h3>
-                <p>{{vendor.b_description | safe | truncatechars:175 }}
-		{% if vendor.b_description|length > 175 %}
-		<a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{vendor.pk}}" data-backdrop="true" >
-                    (more)</a>
+                <p>{{vendor.b_description | safe | truncatechars:text_cap }}
+		{% if vendor.b_description|length > text_cap %}
+		<a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{vendor.pk}}" data-backdrop="true" >(more)</a>
 		{% endif %}</p>
               </div>
     {% endif %}
-              <div class="team-img vendor-img {% if img_right %}vendor-right{%else%}vendor-left{% endif %}">
+              <div class="team-img {% if featured %}featured-{%endif%}vendor-img {% if img_right %}vendor-right{%else%}vendor-left{% endif %}">
       {% if vendor.img %}
                 <img src="{% thumbnail vendor.img 250x250 %}" alt="">
       {% else %}
@@ -47,8 +54,8 @@
     {% if not img_right %}
               <div class="team-desc">
                 <h3 class="vendor-header">{{vendor.b_title}}</h3>
-                <p>{{vendor.b_description | safe | truncatechars:175 }}
-	       {% if vendor.b_description|length > 175 %}
+                <p>{{vendor.b_description | safe | truncatechars:text_cap }}
+	       {% if vendor.b_description|length > text_cap %}
 		<a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{vendor.pk}}" data-backdrop="true" >
                     (more)</a>
 		{% endif %}</p>
@@ -58,6 +65,9 @@
                 {% include "people_modal.tmpl" with item=vendor scale=True %}
             </div>
           </div>
+  {%if featured %}
     {% cycle '' '</div>' '' '</div>' %}
-
+  {% else %}
+    {% cycle '' '' '' '' '</div>' %}
+  {% endif %}
 {% endfor %}

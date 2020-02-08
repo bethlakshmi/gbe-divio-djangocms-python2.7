@@ -21,7 +21,7 @@
             <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Featured Vendors</h2>
           </div></div>
 {% if featured_vendors %}
-    {% include "gbe/vendor_box.tmpl" with vendors=featured_vendors%}
+    {% include "gbe/vendor_box.tmpl" with vendors=featured_vendors featured=1%}
 {% endif %}
 </div>
 </section>
@@ -31,7 +31,7 @@
           <div class="col-md-12 perf-div">
             <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Vendors</h2>
           </div></div>
-{% include "gbe/vendor_box.tmpl" %}
+{% include "gbe/vendor_box.tmpl" with featured=0%}
       </div>
     </section>
 {% endblock %}
