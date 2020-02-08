@@ -13,17 +13,16 @@
    <div class="body font_regular">
       {{ user_message.description|safe}}
    </div>
-
+{% if featured_vendors %}
     <section id="team" class="section">
       <div class="container">
         <div class="row">
           <div class="col-md-12 perf-div">
             <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Featured Vendors</h2>
           </div></div>
-{% if featured_vendors %}
     {% include "gbe/vendor_box.tmpl" with vendors=featured_vendors featured=1%}
+      </div>
 {% endif %}
-</div>
 </section>
     <section id="team" class="section">
       <div class="container">
