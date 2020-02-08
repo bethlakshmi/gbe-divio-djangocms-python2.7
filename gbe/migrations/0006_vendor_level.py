@@ -15,6 +15,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='vendor',
             name='level',
-            field=models.CharField(blank=True, choices=[(b'Featured', b'Featured')], default=b'', max_length=128),
+            field=models.CharField(blank=True,
+                                   choices=[(b'Featured', b'Featured')],
+                                   default=b'',
+                                   max_length=128),
         ),
     ]

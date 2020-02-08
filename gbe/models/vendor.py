@@ -85,8 +85,8 @@ class Vendor(Biddable):
     def bid_review_summary(self):
         acceptance = acceptance_states[self.accepted][1]
         if self.level:
-            acceptance = "%s, %s" % (acceptance_states[self.accepted][1], 
-                              self.level)
+            acceptance = "%s, %s" % (acceptance_states[self.accepted][1],
+                                     self.level)
         return [self.profile.display_name,
                 self.b_title,
                 self.website,
