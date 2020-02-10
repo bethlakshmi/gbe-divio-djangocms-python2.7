@@ -44,23 +44,37 @@ class MailToBiddersView(MailToFilterView):
                 prefix="email-select")
         else:
             self.select_form = SelectBidderForm(
-                prefix="email-select",
-                initial={
-                    'conference': Conference.objects.all().values_list(
-                        'pk',
-                        flat=True),
-                    'bid_type': initial_bid_choices,
-                    'state': [0, 1, 2, 3, 4, 5, 6], })
+                prefix="email-select")
         self.select_form.fields['bid_type'].choices = self.bid_type_choices
+        self.select_form.fields['x_bid_type'].choices = self.bid_type_choices
 
     def get_to_list(self):
-        to_list = []
-        bid_types = self.select_form.cleaned_data['bid_type']
-        query = Q(b_conference__in=self.select_form.cleaned_data['conference'])
+        exclude_list = []
+        if len(self.select_form.cleaned_data['x_conference']) > 0 or len(
+                self.select_form.cleaned_data['x_bid_type']) > 0 or len(
+                self.select_form.cleaned_data['x_state']) > 0:
+            exclude_list = self.build_any_list(
+                self.select_form.cleaned_data['x_conference'],
+                self.select_form.cleaned_data['x_bid_type'],
+                self.select_form.cleaned_data['x_state'])
 
-        accept_states = self.select_form.cleaned_data['state']
+        to_list = self.build_any_list(
+            self.select_form.cleaned_data['conference'],
+            self.select_form.cleaned_data['bid_type'],
+            self.select_form.cleaned_data['state'],
+            exclude_list)
+        return sorted(to_list, key=lambda s: s[1].lower())
+
+    def build_any_list(self,
+                       conferences,
+                       bid_types,
+                       accept_states,
+                       exclude_list=[]):
+        any_list = []
+        query = Q(b_conference__in=conferences)
+
         draft = False
-        if "Draft" in self.select_form.cleaned_data['state']:
+        if "Draft" in accept_states:
             draft = True
             accept_states.remove('Draft')
             draft_query = query & Q(submitted=False)
@@ -75,17 +89,19 @@ class MailToBiddersView(MailToFilterView):
             for bid in eval(bid_type).objects.filter(query):
                 bidder = (bid.profile.user_object.email,
                           bid.profile.display_name)
-                if bid.profile.email_allowed(
-                        self.email_type) and bidder not in to_list:
-                    to_list += [bidder]
+                if bid.profile.email_allowed(self.email_type) and (
+                        bidder not in exclude_list) and (
+                        bidder not in any_list):
+                    any_list += [bidder]
             if draft:
                 for bid in eval(bid_type).objects.filter(draft_query):
                     bidder = (bid.profile.user_object.email,
                               bid.profile.display_name)
                     if bid.profile.email_allowed(self.email_type) and (
-                            bidder not in to_list):
-                        to_list += [bidder]
-        return sorted(to_list, key=lambda s: s[1].lower())
+                            bidder not in exclude_list) and (
+                            bidder not in any_list):
+                        any_list += [bidder]
+        return any_list
 
     def prep_email_form(self, request):
         to_list = self.get_to_list()
@@ -93,6 +109,8 @@ class MailToBiddersView(MailToFilterView):
                                               prefix="email-select")
         recipient_info.fields[
             'bid_type'].choices = self.bid_type_choices
+        recipient_info.fields[
+            'x_bid_type'].choices = self.bid_type_choices
         return to_list, [recipient_info]
 
     def filter_emails(self, request):
@@ -115,6 +133,7 @@ class MailToBiddersView(MailToFilterView):
         recipient_info = SecretBidderInfoForm(request.POST,
                                               prefix="email-select")
         recipient_info.fields['bid_type'].choices = self.bid_type_choices
+        recipient_info.fields['x_bid_type'].choices = self.bid_type_choices
         return render(
             request,
             self.template,
