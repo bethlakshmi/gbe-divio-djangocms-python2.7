@@ -1,6 +1,7 @@
 import pytz
 from django.db.models import (
     BooleanField,
+    CharField,
     FileField,
     ForeignKey,
     TextField,
@@ -15,7 +16,10 @@ from gbetext import (
     acceptance_states,
     boolean_options,
 )
-from gbe_forms_text import vendor_schedule_options
+from gbe_forms_text import (
+    vendor_schedule_options,
+    vendor_featured_options,
+)
 from filer.fields.image import FilerImageField
 from django.utils.formats import date_format
 
@@ -38,6 +42,10 @@ class Vendor(Biddable):
                              default=False)
     help_description = TextField(blank=True)
     help_times = TextField(blank=True)
+    level = CharField(max_length=128,
+                      choices=vendor_featured_options,
+                      blank=True,
+                      default='')
 
     def __unicode__(self):
         return self.b_title  # "title" here is company name
@@ -75,11 +83,15 @@ class Vendor(Biddable):
 
     @property
     def bid_review_summary(self):
+        acceptance = acceptance_states[self.accepted][1]
+        if self.level:
+            acceptance = "%s, %s" % (acceptance_states[self.accepted][1],
+                                     self.level)
         return [self.profile.display_name,
                 self.b_title,
                 self.website,
                 date_format(self.updated_at, 'DATETIME_FORMAT'),
-                acceptance_states[self.accepted][1]]
+                acceptance]
 
     @property
     def bids_to_review(self):
