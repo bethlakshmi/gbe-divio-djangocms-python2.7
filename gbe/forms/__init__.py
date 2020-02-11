@@ -21,6 +21,7 @@ from bid_evaluation_form import BidEvaluationForm
 from flexible_evaluation_form import FlexibleEvaluationForm
 from bid_state_change_form import BidStateChangeForm
 from act_bid_evaluation_form import ActBidEvaluationForm
+from vendor_state_change_form import VendorStateChangeForm
 
 # bid submit/edit forms
 from act_edit_form import (

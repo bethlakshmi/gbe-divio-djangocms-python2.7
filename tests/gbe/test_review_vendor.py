@@ -104,7 +104,7 @@ class TestReviewVendor(TestCase):
                       urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        assert "<h2>Bid Control for Coordinator</h2>" in response.content
+        assert '<option value="Featured">Featured</option>' in response.content
 
     def test_no_login_gives_error(self):
         url = reverse(self.view_name, args=[1], urlconf="gbe.urls")

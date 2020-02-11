@@ -26,8 +26,13 @@ def FashionFaireView(request):
             'description': fashion_fair_intro})
     vendors = list(Vendor.objects.filter(
         accepted=3,
-        b_conference=conference))
+        b_conference=conference).exclude(level="Featured").order_by('b_title'))
+    featured_vendors = list(Vendor.objects.filter(
+        accepted=3,
+        b_conference=conference,
+        level="Featured").order_by('b_title'))
     template = 'gbe/fashionfair.tmpl'
     context = {'vendors': vendors,
+               'featured_vendors': featured_vendors,
                'user_message': user_message[0]}
     return render(request, template, context)

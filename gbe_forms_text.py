@@ -508,7 +508,9 @@ acceptance_labels = {
 
 acceptance_help_texts = {
     'accepted': ('Accept - will show the item on public pages as part of GBE, \
-        Accept or Reject - will show up on the bidder\'s home page')
+        Accept or Reject - will show up on the bidder\'s home page'),
+    'level': ('Featured vendors show up with a larger Fashion Fair display, \
+        and are positioned at the top of the page')
 }
 
 
@@ -701,7 +703,7 @@ vendor_schedule_options = [('VSH0', 'Saturday, 9am to noon'),
                            ('VSH5', 'Sunday, 12pm to 4pm'),
                            ('VSH6', 'Sunday, 4pm to 8pm'),
                            ('VSH7', 'Sunday after 8pm')]
-
+vendor_featured_options = [('Featured', 'Featured')]
 
 help_time_choices = (('Saturday, 9am to noon', 'Saturday, 9am to noon'),
                      ('Saturday, 12pm to 4pm', 'Saturday, 12p to 4pm'),
