@@ -34,7 +34,6 @@ class TestVendorChangestate(TestCase):
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=self.data, follow=True)
-        print response
         self.assertRedirects(response, reverse(
             "vendor_review_list",
             urlconf='gbe.urls'))
