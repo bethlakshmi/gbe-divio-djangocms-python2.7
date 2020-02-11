@@ -41,12 +41,12 @@ class MailToBiddersView(MailToFilterView):
         if 'filter' in request.POST.keys() or 'send' in request.POST.keys():
             self.select_form = SelectBidderForm(
                 request.POST,
-                prefix="email-select")
+                prefix="email-select",
+                bid_types=self.bid_type_choices)
         else:
             self.select_form = SelectBidderForm(
-                prefix="email-select")
-        self.select_form.fields['bid_type'].choices = self.bid_type_choices
-        self.select_form.fields['x_bid_type'].choices = self.bid_type_choices
+                prefix="email-select",
+                bid_types=self.bid_type_choices)
 
     def get_to_list(self):
         exclude_list = []
@@ -105,8 +105,10 @@ class MailToBiddersView(MailToFilterView):
 
     def prep_email_form(self, request):
         to_list = self.get_to_list()
-        recipient_info = SecretBidderInfoForm(request.POST,
-                                              prefix="email-select")
+        recipient_info = SecretBidderInfoForm(
+            request.POST,
+            prefix="email-select",
+            bid_types=self.bid_type_choices)
         recipient_info.fields[
             'bid_type'].choices = self.bid_type_choices
         recipient_info.fields[
@@ -131,7 +133,8 @@ class MailToBiddersView(MailToFilterView):
                 {"selection_form": self.select_form})
         email_form = self.setup_email_form(request, to_list)
         recipient_info = SecretBidderInfoForm(request.POST,
-                                              prefix="email-select")
+                                              prefix="email-select",
+                                              bid_types=self.bid_type_choices)
         recipient_info.fields['bid_type'].choices = self.bid_type_choices
         recipient_info.fields['x_bid_type'].choices = self.bid_type_choices
         return render(

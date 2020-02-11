@@ -85,22 +85,40 @@ class TestMailToBidder(TestCase):
             "conference",
             0,
             self.context.conference.pk,
-            self.context.conference.conference_slug)
+            self.context.conference.conference_slug,
+            checked=False)
+        assert_checkbox(
+            response,
+            "x_conference",
+            0,
+            self.context.conference.pk,
+            self.context.conference.conference_slug,
+            checked=False)
         for priv in self.priv_list:
             assert_checkbox(
                 response,
                 "bid_type",
                 n,
                 priv,
-                priv)
+                priv,
+                checked=False)
+            assert_checkbox(
+                response,
+                "x_bid_type",
+                n,
+                priv,
+                priv,
+                checked=False)
             n = n + 1
         for state in acceptance_states:
             self.assertContains(
                 response,
-                'value="%s"' % state[0])
+                'value="%s"' % state[0],
+                2)
             self.assertContains(
                 response,
-                state[1])
+                state[1],
+                2)
         self.assertContains(response, "Email Everyone")
 
     def test_reduced_login_first_get(self):
@@ -111,13 +129,29 @@ class TestMailToBidder(TestCase):
             "conference",
             0,
             self.context.conference.pk,
-            self.context.conference.conference_slug)
+            self.context.conference.conference_slug,
+            checked=False)
         assert_checkbox(
             response,
             "bid_type",
             0,
             "Act",
-            "Act")
+            "Act",
+            checked=False)
+        assert_checkbox(
+            response,
+            "x_conference",
+            0,
+            self.context.conference.pk,
+            self.context.conference.conference_slug,
+            checked=False)
+        assert_checkbox(
+            response,
+            "x_bid_type",
+            0,
+            "Act",
+            "Act",
+            checked=False)
         self.assertNotContains(
             response,
             '"Class"')
@@ -132,13 +166,29 @@ class TestMailToBidder(TestCase):
             "conference",
             0,
             self.context.conference.pk,
-            self.context.conference.conference_slug)
+            self.context.conference.conference_slug,
+            checked=False)
         assert_checkbox(
             response,
             "conference",
             1,
             extra_conf.pk,
-            extra_conf.conference_slug)
+            extra_conf.conference_slug,
+            checked=False)
+        assert_checkbox(
+            response,
+            "x_conference",
+            0,
+            self.context.conference.pk,
+            self.context.conference.conference_slug,
+            checked=False)
+        assert_checkbox(
+            response,
+            "x_conference",
+            1,
+            extra_conf.pk,
+            extra_conf.conference_slug,
+            checked=False)
 
     def test_pick_everyone(self):
         login_as(self.privileged_profile, self)

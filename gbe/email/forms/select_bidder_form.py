@@ -44,6 +44,13 @@ class SelectBidderForm(Form):
         label="State",
         required=False)
 
+    def __init__(self, *args, **kwargs):
+        if 'bid_types' in kwargs:
+            bid_types = kwargs.pop('bid_types')
+        super(SelectBidderForm, self).__init__(*args, **kwargs)
+        self.fields['bid_type'].choices = bid_types
+        self.fields['x_bid_type'].choices = bid_types
+
 
 class SecretBidderInfoForm(SelectBidderForm):
     conference = ModelMultipleChoiceField(
