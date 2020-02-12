@@ -8,6 +8,7 @@ from django.forms import (
 from django.forms.widgets import CheckboxSelectMultiple
 from gbetext import acceptance_states
 from gbe.models import Conference
+from django.core.exceptions import ValidationError
 
 
 class MultiConferenceField(ModelMultipleChoiceField):
@@ -50,6 +51,21 @@ class SelectBidderForm(Form):
         super(SelectBidderForm, self).__init__(*args, **kwargs)
         self.fields['bid_type'].choices = bid_types
         self.fields['x_bid_type'].choices = bid_types
+
+    def clean(self):
+        # run the parent validation first
+        cleaned_data = super(SelectBidderForm, self).clean()
+
+        # if any exclusion is set, they all must be
+        if not (self.cleaned_data['x_conference'] and
+                self.cleaned_data['x_bid_type'] and
+                self.cleaned_data['x_bid_type']) and (
+                self.cleaned_data['x_conference'] or
+                self.cleaned_data['x_bid_type'] or
+                self.cleaned_data['x_bid_type']):
+            raise ValidationError(
+                'To use exclusions, please include all 3 choices')
+        return cleaned_data
 
 
 class SecretBidderInfoForm(SelectBidderForm):
