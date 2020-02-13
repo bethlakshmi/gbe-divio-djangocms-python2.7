@@ -55,7 +55,7 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" href="#to_list">Recipients ({{email_form.to|length}})...</a>
+              <a data-toggle="collapse" href="#to_list">Recipients ({{email_form.to|length}}{% if excluded_count is not None %}, Excluded:  {{excluded_count}}{% endif %})...</a>
             </h4>
           </div>
           <div id="to_list" class="panel-collapse collapse">

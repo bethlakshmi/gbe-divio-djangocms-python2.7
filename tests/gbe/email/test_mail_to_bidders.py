@@ -694,3 +694,60 @@ class TestMailToBidder(TestCase):
                 send_email_success_msg,
                 self.privileged_profile.user_object.email,
                 second_super.email))
+
+    def test_exclude_act_bidder(self):
+        dual_context = ClassContext(conference=self.context.conference)
+        act = ActFactory(b_conference=self.context.conference,
+                         performer=dual_context.teacher,
+                         submitted=True,
+                         accepted=3)
+        second_conference = ClassContext()
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk,
+                                        second_conference.conference.pk],
+            'email-select-bid_type': ["Class"],
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'email-select-x_conference': [self.context.conference.pk],
+            'email-select-x_bid_type': ["Act"],
+            'email-select-x_state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(
+            response,
+            self.context.teacher.contact.user_object.email)
+        self.assertContains(
+            response,
+            second_conference.teacher.contact.user_object.email)
+        self.assertNotContains(
+            response,
+            dual_context.teacher.contact.user_object.email)
+
+    def test_incomplete_exclude(self):
+        dual_context = ClassContext(conference=self.context.conference)
+        act = ActFactory(b_conference=self.context.conference,
+                         performer=dual_context.teacher,
+                         submitted=True,
+                         accepted=3)
+        second_conference = ClassContext()
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk,
+                                        second_conference.conference.pk],
+            'email-select-bid_type': ["Class"],
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'email-select-x_bid_type': ["Act"],
+            'email-select-x_state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(
+            response,
+            self.context.teacher.contact.user_object.email)
+        self.assertContains(
+            response,
+            second_conference.teacher.contact.user_object.email)
+        self.assertContains(
+            response,
+            dual_context.teacher.contact.user_object.email)
