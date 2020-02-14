@@ -555,6 +555,7 @@ class TestMailToBidder(TestCase):
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(response, "This field is required.", 2)
+        self.assertContains(response, "Excluded:  0")
 
     def test_send_email_failure_preserve_to_list(self):
         login_as(self.privileged_profile, self)
