@@ -723,6 +723,7 @@ class TestMailToBidder(TestCase):
         self.assertNotContains(
             response,
             dual_context.teacher.contact.user_object.email)
+        self.assertContains(response, "Excluded:  1")
 
     def test_incomplete_exclude(self):
         dual_context = ClassContext(conference=self.context.conference)
@@ -751,3 +752,51 @@ class TestMailToBidder(TestCase):
         self.assertContains(
             response,
             dual_context.teacher.contact.user_object.email)
+        self.assertContains(response, "Excluded:  0")
+
+    def test_exclude_a_draft(self):
+        dual_context = ClassContext(conference=self.context.conference)
+        act = ActFactory(b_conference=self.context.conference,
+                         performer=dual_context.teacher)
+        second_conference = ClassContext()
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk,
+                                        second_conference.conference.pk],
+            'email-select-bid_type': ["Act", "Class"],
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'email-select-x_conference': [self.context.conference.pk],
+            'email-select-x_bid_type': ["Class"],
+            'email-select-x_state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(
+            response,
+            second_conference.teacher.contact.user_object.email)
+        self.assertNotContains(
+            response,
+            dual_context.teacher.contact.user_object.email)
+        self.assertContains(response, "Excluded:  2")
+
+    def test_exclude_it_all(self):
+        dual_context = ClassContext(conference=self.context.conference)
+        act = ActFactory(b_conference=self.context.conference,
+                         performer=dual_context.teacher,
+                         submitted=True,
+                         accepted=3)
+        second_conference = ClassContext()
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk,
+                                        second_conference.conference.pk],
+            'email-select-bid_type': ["Class", "Act"],
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'email-select-x_conference': [self.context.conference.pk,
+                                          second_conference.conference.pk],
+            'email-select-x_bid_type': ["Class", "Act"],
+            'email-select-x_state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(response, "3 recipients were excluded.")
