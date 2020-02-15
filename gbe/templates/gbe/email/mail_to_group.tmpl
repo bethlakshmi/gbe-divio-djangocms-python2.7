@@ -30,7 +30,7 @@
   <div class="panel-body">
   <font color="red">
   {% if selection_form.errors %}
-    <p style= "color:red"> There is an error on the form.</p>
+    <p style= "color:red"> There is an error on the selection form.</p>
   {% endif %}
   {{ selection_form.non_field_errors }}</font>
   {% block select_recipent_form %}{% endblock %}
@@ -55,7 +55,7 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" href="#to_list">Recipients ({{email_form.to|length}})...</a>
+              <a data-toggle="collapse" href="#to_list">Recipients ({{email_form.to|length}}{% if excluded_count is not None %}, Excluded:  {{excluded_count}}{% endif %})...</a>
             </h4>
           </div>
           <div id="to_list" class="panel-collapse collapse">

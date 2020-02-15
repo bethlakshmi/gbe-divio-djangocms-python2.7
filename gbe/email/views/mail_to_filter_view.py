@@ -27,6 +27,8 @@ class MailToFilterView(MailView):
               error
             - filter_preferences(query) - filter for users who have opted out
               of being contacted by this filter.  Should take a User filter.
+            - get_select_forms - to provide forms and other details around
+              making a selection.
     '''
     def get_everyone(self, request):
         to_list = []
@@ -68,9 +70,6 @@ class MailToFilterView(MailView):
              "email_form": email_form,
              "everyone": True,
              "group_filter_note": self.filter_note()})
-
-    def get_select_forms(self):
-        return {"selection_form": self.select_form}
 
     def filter_note(self):
         user_message = UserMessage.objects.get_or_create(

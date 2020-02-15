@@ -31,6 +31,7 @@ class MailToBiddersView(MailToFilterView):
     email_type = 'bid_notifications'
 
     def groundwork(self, request, args, kwargs):
+        self.excluded_count = 0
         self.bid_type_choices = []
         initial_bid_choices = []
         self.url = reverse('mail_to_bidders', urlconf='gbe.email.urls')
@@ -41,26 +42,41 @@ class MailToBiddersView(MailToFilterView):
         if 'filter' in request.POST.keys() or 'send' in request.POST.keys():
             self.select_form = SelectBidderForm(
                 request.POST,
-                prefix="email-select")
+                prefix="email-select",
+                bid_types=self.bid_type_choices)
         else:
             self.select_form = SelectBidderForm(
                 prefix="email-select",
-                initial={
-                    'conference': Conference.objects.all().values_list(
-                        'pk',
-                        flat=True),
-                    'bid_type': initial_bid_choices,
-                    'state': [0, 1, 2, 3, 4, 5, 6], })
-        self.select_form.fields['bid_type'].choices = self.bid_type_choices
+                bid_types=self.bid_type_choices)
 
     def get_to_list(self):
-        to_list = []
-        bid_types = self.select_form.cleaned_data['bid_type']
-        query = Q(b_conference__in=self.select_form.cleaned_data['conference'])
+        exclude_list = []
+        if len(self.select_form.cleaned_data['x_conference']) > 0 and len(
+                self.select_form.cleaned_data['x_bid_type']) > 0 and len(
+                self.select_form.cleaned_data['x_state']) > 0:
+            exclude_list = self.build_any_list(
+                self.select_form.cleaned_data['x_conference'],
+                self.select_form.cleaned_data['x_bid_type'],
+                self.select_form.cleaned_data['x_state'])
 
-        accept_states = self.select_form.cleaned_data['state']
+        to_list = self.build_any_list(
+            self.select_form.cleaned_data['conference'],
+            self.select_form.cleaned_data['bid_type'],
+            self.select_form.cleaned_data['state'],
+            exclude_list)
+        return sorted(to_list, key=lambda s: s[1].lower())
+
+    def build_any_list(self,
+                       conferences,
+                       bid_types,
+                       accept_states,
+                       exclude_list=[]):
+        any_list = []
+        already_excluded = []
+        query = Q(b_conference__in=conferences)
+
         draft = False
-        if "Draft" in self.select_form.cleaned_data['state']:
+        if "Draft" in accept_states:
             draft = True
             accept_states.remove('Draft')
             draft_query = query & Q(submitted=False)
@@ -75,25 +91,36 @@ class MailToBiddersView(MailToFilterView):
             for bid in eval(bid_type).objects.filter(query):
                 bidder = (bid.profile.user_object.email,
                           bid.profile.display_name)
-                if bid.profile.email_allowed(
-                        self.email_type) and bidder not in to_list:
-                    to_list += [bidder]
+                if bid.profile.email_allowed(self.email_type) and (
+                        bidder not in any_list):
+                    if bidder not in exclude_list:
+                        any_list += [bidder]
+                    elif bidder not in already_excluded:
+                        already_excluded += [bidder]
             if draft:
                 for bid in eval(bid_type).objects.filter(draft_query):
                     bidder = (bid.profile.user_object.email,
                               bid.profile.display_name)
                     if bid.profile.email_allowed(self.email_type) and (
-                            bidder not in to_list):
-                        to_list += [bidder]
-        return sorted(to_list, key=lambda s: s[1].lower())
+                            bidder not in any_list):
+                        if bidder not in exclude_list:
+                            any_list += [bidder]
+                        elif bidder not in already_excluded:
+                            already_excluded += [bidder]
+        self.excluded_count = len(already_excluded)
+        return any_list
 
     def prep_email_form(self, request):
         to_list = self.get_to_list()
-        recipient_info = SecretBidderInfoForm(request.POST,
-                                              prefix="email-select")
-        recipient_info.fields[
-            'bid_type'].choices = self.bid_type_choices
+        recipient_info = SecretBidderInfoForm(
+            request.POST,
+            prefix="email-select",
+            bid_types=self.bid_type_choices)
         return to_list, [recipient_info]
+
+    def get_select_forms(self):
+        return {"selection_form": self.select_form,
+                "excluded_count": self.excluded_count}
 
     def filter_emails(self, request):
         to_list = self.get_to_list()
@@ -104,24 +131,28 @@ class MailToBiddersView(MailToFilterView):
                 defaults={
                     'summary': "Email Sent to Bidders",
                     'description': to_list_empty_msg})
-            messages.error(
-                request,
-                user_message[0].description)
+            message = user_message[0].description
+            if self.excluded_count > 0:
+                message = "%s - %d recipients were excluded." % (
+                    message,
+                    self.excluded_count)
+            messages.error(request, message)
             return render(
                 request,
                 self.template,
                 {"selection_form": self.select_form})
         email_form = self.setup_email_form(request, to_list)
         recipient_info = SecretBidderInfoForm(request.POST,
-                                              prefix="email-select")
-        recipient_info.fields['bid_type'].choices = self.bid_type_choices
+                                              prefix="email-select",
+                                              bid_types=self.bid_type_choices)
         return render(
             request,
             self.template,
             {"selection_form": self.select_form,
              "email_form": email_form,
              "recipient_info": [recipient_info],
-             "group_filter_note": self.filter_note()},)
+             "group_filter_note": self.filter_note(),
+             "excluded_count": self.excluded_count},)
 
     def filter_preferences(self, basic_filter):
         return basic_filter.filter(
