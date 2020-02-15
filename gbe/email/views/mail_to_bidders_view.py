@@ -116,10 +116,6 @@ class MailToBiddersView(MailToFilterView):
             request.POST,
             prefix="email-select",
             bid_types=self.bid_type_choices)
-        recipient_info.fields[
-            'bid_type'].choices = self.bid_type_choices
-        recipient_info.fields[
-            'x_bid_type'].choices = self.bid_type_choices
         return to_list, [recipient_info]
 
     def get_select_forms(self):
