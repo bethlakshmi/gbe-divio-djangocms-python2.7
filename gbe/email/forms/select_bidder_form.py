@@ -29,6 +29,27 @@ class SelectBidderForm(Form):
         choices=((('Draft', 'Draft'),) + acceptance_states),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=True)
+    x_conference = MultiConferenceField(
+        queryset=Conference.objects.all().order_by('conference_slug'),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        label="Conference",
+        required=False)
+    x_bid_type = MultipleChoiceField(
+        label="Bid type",
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        required=False)
+    x_state = MultipleChoiceField(
+        choices=((('Draft', 'Draft'),) + acceptance_states),
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        label="State",
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        if 'bid_types' in kwargs:
+            bid_types = kwargs.pop('bid_types')
+        super(SelectBidderForm, self).__init__(*args, **kwargs)
+        self.fields['bid_type'].choices = bid_types
+        self.fields['x_bid_type'].choices = bid_types
 
 
 class SecretBidderInfoForm(SelectBidderForm):
@@ -43,3 +64,14 @@ class SecretBidderInfoForm(SelectBidderForm):
         choices=((('Draft', 'Draft'),) + acceptance_states),
         widget=MultipleHiddenInput(),
         required=True)
+    x_conference = ModelMultipleChoiceField(
+        queryset=Conference.objects.all().order_by('conference_name'),
+        widget=MultipleHiddenInput(),
+        required=False)
+    x_bid_type = MultipleChoiceField(
+        widget=MultipleHiddenInput(),
+        required=False)
+    x_state = MultipleChoiceField(
+        choices=((('Draft', 'Draft'),) + acceptance_states),
+        widget=MultipleHiddenInput(),
+        required=False)
