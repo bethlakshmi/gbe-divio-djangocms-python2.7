@@ -2,7 +2,6 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
-
 from gbe_logging import log_func
 from gbe.models import Profile
 from gbe.functions import validate_perms
@@ -57,9 +56,10 @@ def ReviewProfilesView(request):
         ]
         if 'Registrar' in request.user.profile.privilege_groups:
             bid_row['actions'] += [
-                {'url': reverse('admin_profile',
-                                urlconf='gbe.urls',
-                                args=[aprofile.resourceitem_id]),
+                {'url': "%s?next=%s" % (reverse(
+                    'admin_profile',
+                    urlconf='gbe.urls',
+                    args=[aprofile.resourceitem_id]), request.path),
                  'text': "Update"}]
             bid_row['actions'] += [
                 {'url': reverse('delete_profile',

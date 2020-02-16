@@ -51,7 +51,6 @@ class EditProfileView(View):
                 'description': email_pref_note})
         return email_pref_message
 
-
     def get_user_success_message(self):
         user_message = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
