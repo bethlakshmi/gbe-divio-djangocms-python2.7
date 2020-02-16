@@ -23,7 +23,7 @@ from gbetext import (
 )
 
 
-class TestUpdateProfile(TestCase):
+class TestEditProfile(TestCase):
     '''Tests for update_profile  view'''
     view_name = 'profile_update'
 
@@ -197,7 +197,7 @@ class TestUpdateProfile(TestCase):
 
     def test_update_profile_has_message(self):
         msg = UserMessageFactory(
-            view='UpdateProfileView',
+            view='EditProfileView',
             code='UPDATE_PROFILE')
         response = self.post_profile()
         assert_alert_exists(

@@ -17,10 +17,10 @@ from register_persona_view import RegisterPersonaView
 from edit_persona_view import EditPersonaView
 
 # profiles
+from edit_profile_view import EditProfileView
 from register_view import RegisterView
 from admin_profile_view import AdminProfileView
 from delete_profile_view import DeleteProfileView
-from update_profile_view import UpdateProfileView
 from review_profiles_view import ReviewProfilesView
 
 # make
