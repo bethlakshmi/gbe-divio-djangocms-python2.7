@@ -551,6 +551,10 @@ is, if you're performing, our selection committee and stage managers will be \
 able to see your profile information. If you're teaching, the conference \
 committee members and staff will be able to see your profile information, \
 etc.).'''
+admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\
+ Paper Tickets purchase was made under a different email.  Please handle email\
+ information with care and do not distribute or use for any purpose outside of\
+ Expo communication.'''
 save_email_template_success_msg = '''The email template has been saved.  \
 Your updates will be applied to all future automated messages using this \
 template.  The Email Template name is '''

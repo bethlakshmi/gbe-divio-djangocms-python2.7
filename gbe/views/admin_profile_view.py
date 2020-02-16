@@ -8,11 +8,17 @@ from django.shortcuts import (
 from django.core.urlresolvers import reverse
 from gbe_logging import log_func
 from gbe.forms import (
+    EmailPreferencesForm,
     ProfileAdminForm,
     ProfilePreferencesForm,
 )
 from gbe.functions import validate_perms
-from gbe.models import Profile
+from gbe.models import (
+    Profile,
+    UserMessage,
+)
+from gbetext import admin_note
+from django.contrib import messages
 
 
 @login_required
@@ -21,6 +27,12 @@ from gbe.models import Profile
 def AdminProfileView(request, profile_id):
     admin_profile = validate_perms(request, ('Registrar',))
     user_profile = get_object_or_404(Profile, resourceitem_id=profile_id)
+    email_pref_message = UserMessage.objects.get_or_create(
+        view="AdminProfileView",
+        code="EDIT_PROFILE_NOTE",
+        defaults={
+            'summary': "Edit Profile Note",
+            'description': admin_note})
 
     if request.method == 'POST':
         form = ProfileAdminForm(
@@ -31,20 +43,33 @@ def AdminProfileView(request, profile_id):
         prefs_form = ProfilePreferencesForm(request.POST,
                                             instance=user_profile.preferences,
                                             prefix='prefs')
-
-        if form.is_valid():
+        email_form = EmailPreferencesForm(request.POST,
+                                          instance=user_profile.preferences,
+                                          prefix='email_pref')
+        if form.is_valid() and prefs_form.is_valid() and email_form.is_valid():
             form.save(commit=True)
-            if prefs_form.is_valid():
-                prefs_form.save(commit=True)
-                user_profile.preferences = prefs_form.save()
+            user_profile.preferences = prefs_form.save(commit=True)
+            email_form.save(commit=True)
             user_profile.save()
 
             form.save()
+            user_message = UserMessage.objects.get_or_create(
+                view="AdminProfileView",
+                code="UPDATE_PROFILE",
+                defaults={
+                    'summary': "Update Profile Success",
+                    'description': "Updated Profile"})
+            message = "%s: %s" % (user_message[0].description, 
+                                  unicode(user_profile))
+            messages.success(request, message)
             return HttpResponseRedirect(reverse('manage_users',
                                                 urlconf='gbe.urls'))
         else:
             return render(request, 'gbe/update_profile.tmpl',
-                          {'left_forms': [form], 'right_forms': [prefs_form]})
+                          {'left_forms': [form], 
+                           'right_forms': [prefs_form],
+                           'email_form': email_form,
+                           'email_note': email_pref_message[0].description})
 
     else:
         if user_profile.display_name.strip() == '':
@@ -73,8 +98,12 @@ def AdminProfileView(request, profile_id):
                                             instance=user_profile.preferences,
                                             initial={'inform_about':
                                                      inform_initial})
+        email_form = EmailPreferencesForm(prefix='email_pref',
+                                          instance=user_profile.preferences)
         return render(request,
                       'gbe/update_profile.tmpl',
                       {'left_forms': [form],
                        'right_forms': [prefs_form],
+                       'email_form': email_form,
+                       'email_note': email_pref_message[0].description,
                        'display_name': user_profile.display_name})
