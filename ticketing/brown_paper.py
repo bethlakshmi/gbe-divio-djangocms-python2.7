@@ -156,7 +156,7 @@ def get_bpt_price_list(bpt_events=None):
     ti_list = []
 
     if not bpt_events:
-         bpt_events = BrownPaperEvents.objects.exclude(
+        bpt_events = BrownPaperEvents.objects.exclude(
             conference__status="completed")
     for event in bpt_events:
         set_bpt_event_detail(event)
@@ -348,14 +348,15 @@ def attempt_match_purchaser_to_user(purchaser, tracker_id='None'):
     # Next try to match to a purchase email address from the Profile
     # (Manual Override Mechanism)
 
-    for profile in Profile.objects.filter(purchase_email=purchaser.email):
+    for profile in Profile.objects.filter(
+            purchase_email__iexact=purchaser.email):
         return profile.user_object.id
 
     # Finally, try to match to the user's email.  If an overriding
     # purchase_email from the Profile exists for a given user, ignore
     # the user email field for that user.
 
-    for user in User.objects.filter(email=purchaser.email):
+    for user in User.objects.filter(email__iexact=purchaser.email):
         purchase_email = get_purchase_email_from_user(user.id)
         if purchase_email is None or len(purchase_email) == 0:
             return user.id
