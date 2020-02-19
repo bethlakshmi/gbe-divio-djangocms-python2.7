@@ -97,20 +97,9 @@ USER_CONTACT_RECIPIENT_ADDRESSES = ['betty@burlesque-expo.com',
 
 RECAPTCHA_PRIVATE_KEY = "6Lf1dx0UAAAAANMxh-BqrW_9IU-0n4OZyWin6sGB"
 RECAPTCHA_PUBLIC_KEY = "6Lf1dx0UAAAAAMcHUhPsGFc7LUQWHQOfiUWKx1m1"
-
+TINYMCE_JS_URL = STATIC_URL + 'tinymce/tinymce.min.js'
 TINYMCE_DEFAULT_CONFIG = {
-    'plugins': "table,paste,searchreplace, insertdatetime",
-    'theme': "advanced",
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 10,
-    'theme_advanced_buttons1': "bold,italic,underline,|,justifyleft," +
-    "justifycenter,justifyright,fontselect,fontsizeselect,formatselect," +
-    "forecolor,backcolor",
-    'theme_advanced_buttons2': "cut,copy,paste,|,bullist,numlist,|," +
-    "outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview," +
-    "|,search, replace",
-    'theme_advanced_buttons3': "insertdate,inserttime,|,advhr,,removeformat," +
-    "|,sub,sup,|,charmap,emotions, tablecontrols",
+    'selector': 'id_html_content',
 }
 
 AUTHENTICATION_BACKENDS = [
