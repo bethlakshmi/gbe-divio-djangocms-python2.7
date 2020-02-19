@@ -82,7 +82,8 @@ class TestMailToRoles(TestCase):
             "conference",
             0,
             self.context.conference.pk,
-            self.context.conference.conference_slug)
+            self.context.conference.conference_slug,
+            checked=False)
         n = 0
         for role in role_options:
             assert_checkbox(
@@ -90,7 +91,8 @@ class TestMailToRoles(TestCase):
                 "roles",
                 n,
                 role[0],
-                role[1])
+                role[1],
+                checked=False)
             n = n + 1
         self.assertContains(response, "Email Everyone")
 
@@ -107,7 +109,8 @@ class TestMailToRoles(TestCase):
                 "conference",
                 0,
                 self.context.conference.pk,
-                self.context.conference.conference_slug)
+                self.context.conference.conference_slug,
+                checked=False)
             n = 0
             for role in sorted(roles):
                 assert_checkbox(
@@ -115,7 +118,8 @@ class TestMailToRoles(TestCase):
                     "roles",
                     n,
                     role,
-                    role)
+                    role,
+                    checked=False)
                 n = n + 1
         self.assertNotContains(response, "Email Everyone")
 
@@ -128,13 +132,15 @@ class TestMailToRoles(TestCase):
             "conference",
             0,
             self.context.conference.pk,
-            self.context.conference.conference_slug)
+            self.context.conference.conference_slug,
+            checked=False)
         assert_checkbox(
             response,
             "conference",
             1,
             extra_conf.pk,
-            extra_conf.conference_slug)
+            extra_conf.conference_slug,
+            checked=False)
 
     def test_pick_everyone(self):
         second_context = ClassContext()

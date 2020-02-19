@@ -10,7 +10,6 @@ from tests.factories.ticketing_factories import (
     BrownPaperSettingsFactory,
     TicketItemFactory
 )
-import nose.tools as nt
 from django.test import TestCase
 from ticketing.brown_paper import process_bpt_order_list
 from tests.factories.gbe_factories import (
@@ -33,7 +32,7 @@ class TestProcessBPTOrderList(TestCase):
         '''
         BrownPaperEvents.objects.all().delete()
 
-        nt.assert_equal(process_bpt_order_list(), 0)
+        self.assertEqual(process_bpt_order_list(), 0)
 
     @patch('urllib2.urlopen', autospec=True)
     def test_get_transaction_limbo(self, m_urlopen):
@@ -54,20 +53,19 @@ class TestProcessBPTOrderList(TestCase):
         a.read.side_effect = [File(order_filename).read()]
         m_urlopen.return_value = a
 
-        nt.assert_equal(process_bpt_order_list(), 1)
+        self.assertEqual(process_bpt_order_list(), 1)
         transaction = get_object_or_404(
             Transaction,
             reference='A12345678')
-        nt.assert_equal(str(transaction.order_date),
-                        "2014-08-15 19:26:56")
-        nt.assert_equal(transaction.shipping_method, 'Will Call')
-        nt.assert_equal(transaction.order_notes, 'None')
-        nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
-        nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
-        nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user, limbo)
-        nt.assert_equal(transaction.purchaser.first_name, 'John')
-        nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user, limbo)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
 
     @patch('urllib2.urlopen', autospec=True)
     def test_get_transaction_purchase_email(self, m_urlopen):
@@ -88,21 +86,55 @@ class TestProcessBPTOrderList(TestCase):
         a.read.side_effect = [File(order_filename).read()]
         m_urlopen.return_value = a
 
-        nt.assert_equal(process_bpt_order_list(), 1)
+        self.assertEqual(process_bpt_order_list(), 1)
         transaction = get_object_or_404(
             Transaction,
             reference='A12345678')
-        nt.assert_equal(str(transaction.order_date),
-                        "2014-08-15 19:26:56")
-        nt.assert_equal(transaction.shipping_method, 'Will Call')
-        nt.assert_equal(transaction.order_notes, 'None')
-        nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
-        nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
-        nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user,
-                        profile.user_object)
-        nt.assert_equal(transaction.purchaser.first_name, 'John')
-        nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user,
+                         profile.user_object)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
+        profile.user_object.delete()
+
+    @patch('urllib2.urlopen', autospec=True)
+    def test_get_transaction_purchase_email_case_mismatch(self, m_urlopen):
+        '''
+           get a transaction for a real user via the purchase_email
+        '''
+        BrownPaperEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        event = BrownPaperEventsFactory()
+        ticket = TicketItemFactory(
+            bpt_event=event,
+            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+        BrownPaperSettingsFactory()
+        profile = ProfileFactory(purchase_email='Test@Tickets.com')
+
+        a = Mock()
+        order_filename = open("tests/ticketing/orderlist.xml", 'r')
+        a.read.side_effect = [File(order_filename).read()]
+        m_urlopen.return_value = a
+
+        self.assertEqual(process_bpt_order_list(), 1)
+        transaction = get_object_or_404(
+            Transaction,
+            reference='A12345678')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user,
+                         profile.user_object)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
         profile.user_object.delete()
 
     @patch('urllib2.urlopen', autospec=True)
@@ -128,21 +160,20 @@ class TestProcessBPTOrderList(TestCase):
                 'ID-'+str(profile.user_object.pk))]
         m_urlopen.return_value = a
 
-        nt.assert_equal(process_bpt_order_list(), 1)
+        self.assertEqual(process_bpt_order_list(), 1)
         transaction = get_object_or_404(
             Transaction,
             reference='A12345678')
-        nt.assert_equal(str(transaction.order_date),
-                        "2014-08-15 19:26:56")
-        nt.assert_equal(transaction.shipping_method, 'Will Call')
-        nt.assert_equal(transaction.order_notes, 'None')
-        nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
-        nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
-        nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user,
-                        profile.user_object)
-        nt.assert_equal(transaction.purchaser.first_name, 'John')
-        nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user,
+                         profile.user_object)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
         profile.user_object.delete()
 
     @patch('urllib2.urlopen', autospec=True)
@@ -166,21 +197,19 @@ class TestProcessBPTOrderList(TestCase):
         a.read.side_effect = [File(order_filename).read()]
         m_urlopen.return_value = a
 
-        nt.assert_equal(process_bpt_order_list(), 1)
+        self.assertEqual(process_bpt_order_list(), 1)
         transaction = get_object_or_404(
             Transaction,
             reference='A12345678')
-        nt.assert_equal(str(transaction.order_date),
-                        "2014-08-15 19:26:56")
-        nt.assert_equal(transaction.shipping_method, 'Will Call')
-        nt.assert_equal(transaction.order_notes, 'None')
-        nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
-        nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
-        nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user,
-                        limbo)
-        nt.assert_equal(transaction.purchaser.first_name, 'John')
-        nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user, limbo)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
         user.delete()
 
     @patch('urllib2.urlopen', autospec=True)
@@ -203,21 +232,19 @@ class TestProcessBPTOrderList(TestCase):
         a.read.side_effect = [File(order_filename).read()]
         m_urlopen.return_value = a
 
-        nt.assert_equal(process_bpt_order_list(), 1)
+        self.assertEqual(process_bpt_order_list(), 1)
         transaction = get_object_or_404(
             Transaction,
             reference='A12345678')
-        nt.assert_equal(str(transaction.order_date),
-                        "2014-08-15 19:26:56")
-        nt.assert_equal(transaction.shipping_method, 'Will Call')
-        nt.assert_equal(transaction.order_notes, 'None')
-        nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
-        nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
-        nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user,
-                        user)
-        nt.assert_equal(transaction.purchaser.first_name, 'John')
-        nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user, user)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
         user.delete()
 
     @patch('urllib2.urlopen', autospec=True)
@@ -238,19 +265,50 @@ class TestProcessBPTOrderList(TestCase):
         a.read.side_effect = [File(order_filename).read()]
         m_urlopen.return_value = a
 
-        nt.assert_equal(process_bpt_order_list(), 1)
+        self.assertEqual(process_bpt_order_list(), 1)
         transaction = get_object_or_404(
             Transaction,
             reference='A12345678')
-        nt.assert_equal(str(transaction.order_date),
-                        "2014-08-15 19:26:56")
-        nt.assert_equal(transaction.shipping_method, 'Will Call')
-        nt.assert_equal(transaction.order_notes, 'None')
-        nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
-        nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
-        nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user,
-                        user)
-        nt.assert_equal(transaction.purchaser.first_name, 'John')
-        nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user, user)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
+        user.delete()
+
+    @patch('urllib2.urlopen', autospec=True)
+    def test_get_transaction_user_case_mismatch(self, m_urlopen):
+        '''
+           match to a user with no purchase_email, but matching email
+        '''
+        BrownPaperEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        event = BrownPaperEventsFactory()
+        ticket = TicketItemFactory(
+            bpt_event=event,
+            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+        BrownPaperSettingsFactory()
+        user = UserFactory(email='Test@Tickets.com')
+        a = Mock()
+        order_filename = open("tests/ticketing/orderlist.xml", 'r')
+        a.read.side_effect = [File(order_filename).read()]
+        m_urlopen.return_value = a
+
+        self.assertEqual(process_bpt_order_list(), 1)
+        transaction = get_object_or_404(
+            Transaction,
+            reference='A12345678')
+        self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user, user)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
         user.delete()

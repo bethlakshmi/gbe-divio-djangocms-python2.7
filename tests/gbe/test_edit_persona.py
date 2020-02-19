@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -105,6 +107,33 @@ class TestEditPersona(TestCase):
         picture = File(pic_filename)
 
         response, new_name = self.submit_persona(picture)
+        persona_reloaded = Persona.objects.get(pk=self.persona.pk)
+        self.assertEqual(str(persona_reloaded.img), "gbe_pagebanner.png")
+
+    def test_change_image_foreign_char(self):
+        ProfileFactory(user_object__username="admin_img")
+        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'r')
+        picture = File(pic_filename)
+
+        login_as(self.persona.performer_profile, self)
+        new_name = "Bitsy Brûlée"
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls",
+                      args=[self.persona.resourceitem_id])
+        data = {'performer_profile': self.persona.performer_profile.pk,
+                'contact': self.persona.performer_profile.pk,
+                'name': new_name,
+                'homepage': self.persona.homepage,
+                'bio': "bio",
+                'experience': 1,
+                'awards': "many",
+                'upload_img': picture}
+
+        response = self.client.post(
+            url,
+            data,
+            follow=True
+        )
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(str(persona_reloaded.img), "gbe_pagebanner.png")
 

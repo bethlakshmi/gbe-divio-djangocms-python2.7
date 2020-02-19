@@ -171,12 +171,7 @@ class MailToRolesView(MailToFilterView):
                         choices=self.event_collect_choices)
         else:
             self.select_form = SelectRoleForm(
-                prefix="email-select",
-                initial={
-                    'conference': Conference.objects.all().values_list(
-                        'pk',
-                        flat=True),
-                    'roles': [r[0] for r in role_options]})
+                prefix="email-select")
             self.setup_roles()
 
     def get_select_forms(self):
