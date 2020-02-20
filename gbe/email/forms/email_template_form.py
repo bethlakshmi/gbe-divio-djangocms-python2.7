@@ -13,7 +13,7 @@ class EmailTemplateForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
     html_content = CharField(
-        widget=Textarea(attrs={'id': 'email-tiny-mce'}),
+        widget=Textarea(attrs={'id': 'admin-tiny-mce'}),
         label="Message")
     sender = CharField(max_length=100,
                        required=True,

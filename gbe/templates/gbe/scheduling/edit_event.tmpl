@@ -8,7 +8,8 @@
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
     <!-- Fonts -->
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
-    {{ event_form.media }}
+    <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
+    <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 {% block content %}
 <div class="panel panel-primary">

@@ -3,12 +3,12 @@ from django.forms import (
     ModelForm,
     HiddenInput,
     ModelChoiceField,
+    Textarea,
 )
 from gbe.models import (
     Room,
     StaffArea,
 )
-from tinymce.widgets import TinyMCE
 from gbe.forms.common_queries import visible_profiles
 
 
@@ -17,7 +17,7 @@ class StaffAreaForm(ModelForm):
     error_css_class = 'error'
 
     description = CharField(
-        widget=TinyMCE(attrs={'cols': 80, 'rows': 20}))
+        widget=Textarea(attrs={'id': 'admin-tiny-mce'}))
     staff_lead = ModelChoiceField(
         queryset=visible_profiles,
         required=False)

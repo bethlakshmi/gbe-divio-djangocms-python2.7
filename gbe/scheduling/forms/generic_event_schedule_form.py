@@ -2,6 +2,7 @@ from django.forms import (
     CharField,
     ChoiceField,
     ModelForm,
+    Textarea,
 )
 from gbe.models import GenericEvent
 from gbe_forms_text import (
@@ -9,7 +10,6 @@ from gbe_forms_text import (
     event_labels,
 )
 from gbetext import new_event_options
-from tinymce.widgets import TinyMCE
 
 
 class GenericEventScheduleForm(ModelForm):
@@ -19,7 +19,7 @@ class GenericEventScheduleForm(ModelForm):
         choices=new_event_options,
         help_text=event_help_texts['type'])
     e_description = CharField(
-        widget=TinyMCE(attrs={'cols': 80, 'rows': 20}),
+        widget=Textarea(attrs={'id': 'admin-tiny-mce'}),
         label=event_labels['e_description'])
 
     class Meta:

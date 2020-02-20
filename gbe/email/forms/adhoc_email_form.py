@@ -20,5 +20,5 @@ class AdHocEmailForm(Form):
                         label="From")
     subject = CharField(widget=TextInput(attrs={'size': '79'}))
     html_message = CharField(
-        widget=Textarea(attrs={'id': 'email-tiny-mce'}),
+        widget=Textarea(attrs={'id': 'admin-tiny-mce'}),
         label="Message")
