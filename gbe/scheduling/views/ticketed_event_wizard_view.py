@@ -107,10 +107,12 @@ class TicketedEventWizardView(EventWizardView):
         context = self.groundwork(request, args, kwargs)
         if self.event_type == "show":
             context['second_form'] = ShowBookingForm(
-                initial={'e_conference':  self.conference})
+                initial={'e_conference':  self.conference,
+                         'e_description': " "})
         else:
             context['second_form'] = GenericBookingForm(
                 initial={'e_conference':  self.conference,
+                         'e_description': " ",
                          'type': self.event_type.title()})
         context['scheduling_form'] = ScheduleOccurrenceForm(
             conference=self.conference,

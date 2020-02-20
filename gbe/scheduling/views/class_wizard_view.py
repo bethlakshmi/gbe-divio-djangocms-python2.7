@@ -100,7 +100,8 @@ class ClassWizardView(EventWizardView):
                     ) / timedelta(hours=1).total_seconds()
                 context['scheduling_info'] = get_scheduling_info(working_class)
             else:
-                context['third_form'] = ClassBookingForm()
+                context['third_form'] = ClassBookingForm(
+                    initial={'e_description': " "})
                 duration = 1
             context['scheduling_form'] = ScheduleOccurrenceForm(
                 conference=self.conference,
