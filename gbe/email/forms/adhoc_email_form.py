@@ -7,7 +7,6 @@ from django.forms import (
     TextInput,
 )
 from django.forms.widgets import CheckboxSelectMultiple
-from tinymce.widgets import TinyMCE
 from django.utils.html import strip_tags
 
 
@@ -21,5 +20,5 @@ class AdHocEmailForm(Form):
                         label="From")
     subject = CharField(widget=TextInput(attrs={'size': '79'}))
     html_message = CharField(
-        widget=TinyMCE(attrs={'cols': 80, 'rows': 30}),
+        widget=Textarea(attrs={'id': 'email-tiny-mce'}),
         label="Message")
