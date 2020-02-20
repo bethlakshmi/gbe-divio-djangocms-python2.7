@@ -48,6 +48,7 @@ def RegisterPersonaView(request, **kwargs):
     else:
         form = PersonaForm(initial={'performer_profile': profile,
                                     'contact': profile,
+                                    'bio': " ",
                                     })
         return render(request, 'gbe/bid.tmpl',
                       {'forms': [form],

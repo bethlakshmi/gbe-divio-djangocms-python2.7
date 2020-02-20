@@ -1,0 +1,13 @@
+tinymce.init({
+  selector: 'textarea#user-tiny-mce',
+  plugins: 'paste searchreplace autolink directionality visualblocks visualchars fullscreen link charmap hr insertdatetime advlist lists wordcount textpattern noneditable help charmap quickbars emoticons',
+  toolbar: 'undo redo | bold italic underline | outdent indent |  numlist bullist | charmap emoticons | link ',
+  menubar: '',
+  toolbar_sticky: true,
+  branding: false,
+  height: 400,
+  quickbars_selection_toolbar: 'bold italic | quicklink h2 h3',
+  quickbars_insert_toolbar: '',
+  noneditable_noneditable_class: "mceNonEditable",
+  contextmenu: "link",
+ });

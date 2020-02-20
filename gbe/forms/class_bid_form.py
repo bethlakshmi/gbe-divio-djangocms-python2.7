@@ -13,7 +13,6 @@ from gbe_forms_text import (
     classbid_labels,
     class_schedule_options,
 )
-from tinymce.widgets import TinyMCE
 from gbe.functions import jsonify
 
 
@@ -33,14 +32,7 @@ class ClassBidDraftForm(ModelForm):
         required=False)
     b_description = CharField(
         required=True,
-        widget=TinyMCE(
-            attrs={'cols': 80, 'rows': 20},
-            mce_attrs={
-                'theme_advanced_buttons1': "bold,italic,underline,|," +
-                "justifyleft,justifycenter,justifyright,|,bullist,numlist,|," +
-                "cut,copy,paste",
-                'theme_advanced_buttons2': "",
-                'theme_advanced_buttons3': "", }),
+        widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=classbid_labels['b_description'])
 
     class Meta:
@@ -78,14 +70,7 @@ class ClassBidForm(ClassBidDraftForm):
         label=classbid_labels['schedule_constraints'])
     b_description = CharField(
         required=True,
-        widget=TinyMCE(
-            attrs={'cols': 80, 'rows': 20},
-            mce_attrs={
-                'theme_advanced_buttons1': "bold,italic,underline,|," +
-                "justifyleft,justifycenter,justifyright,|,bullist,numlist,|," +
-                "cut,copy,paste",
-                'theme_advanced_buttons2': "",
-                'theme_advanced_buttons3': "", }),
+        widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=classbid_labels['b_description'])
 
     def clean(self):

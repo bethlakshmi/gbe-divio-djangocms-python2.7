@@ -17,7 +17,6 @@ from gbe.expoformfields import FriendlyURLInput
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
 from django.contrib.auth.models import User
-from tinymce.widgets import TinyMCE
 
 
 class VendorBidForm(ModelForm):
@@ -25,14 +24,7 @@ class VendorBidForm(ModelForm):
     error_css_class = 'error'
     b_description = CharField(
         required=True,
-        widget=TinyMCE(
-            attrs={'cols': 80, 'rows': 20},
-            mce_attrs={
-                'theme_advanced_buttons1': "bold,italic,underline,|," +
-                "justifyleft,justifycenter,justifyright,|,bullist,numlist,|," +
-                "cut,copy,paste",
-                'theme_advanced_buttons2': "",
-                'theme_advanced_buttons3': "", }),
+        widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         help_text=vendor_help_texts['description'],
         label=vendor_labels['description'])
     help_times = MultipleChoiceField(
