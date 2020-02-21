@@ -23,8 +23,7 @@ class MailView(View):
     def setup_email_form(self, request, to_list):
         email_form = AdHocEmailForm(initial={
             'sender': self.user.user_object.email,
-            'to': [c[0] for c in to_list],
-            'html_message': " "})
+            'to': [c[0] for c in to_list]})
         email_form.fields['to'].choices = to_list
         if not request.user.is_superuser:
             email_form.fields['sender'].widget = HiddenInput()

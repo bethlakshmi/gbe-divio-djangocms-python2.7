@@ -17,6 +17,7 @@ from gbe.functions import jsonify
 
 
 class ClassBidDraftForm(ModelForm):
+    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
     schedule_constraints = MultipleChoiceField(

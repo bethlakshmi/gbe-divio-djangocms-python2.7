@@ -15,6 +15,7 @@ from gbe.forms.common_queries import visible_profiles
 class StaffAreaForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
+    use_required_attribute = False
 
     description = CharField(
         widget=Textarea(attrs={'id': 'admin-tiny-mce'}))

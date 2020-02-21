@@ -10,6 +10,7 @@ from django.utils.html import strip_tags
 
 
 class EmailTemplateForm(ModelForm):
+    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
     html_content = CharField(
