@@ -55,7 +55,7 @@ class ClassBidDraftForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ClassBidDraftForm, self).__init__(*args, **kwargs)
         if self.instance:
-            obj_data = self.instance.__dict__ 
+            obj_data = self.instance.__dict__
             if obj_data['schedule_constraints']:
                 self.initial['schedule_constraints'] = jsonify(
                     obj_data['schedule_constraints'])

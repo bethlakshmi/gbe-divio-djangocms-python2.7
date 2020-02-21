@@ -22,7 +22,6 @@ django-model-utils==3.2.0
 django-import-export==1.2.0
 django-recaptcha2==1.4.1
 pytz==2019.2
-django-tinymce==2.8.0
 reportlab==3.5.23
 pep8
 django-nose==1.4.6

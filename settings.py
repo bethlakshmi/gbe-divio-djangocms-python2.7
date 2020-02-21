@@ -30,7 +30,6 @@ aldryn_addons.settings.load(locals())
 
 INSTALLED_APPS.extend([
     # add your project specific apps here
-    "tinymce",
     "scheduler",
     "ticketing",
     "gbe",
@@ -97,10 +96,6 @@ USER_CONTACT_RECIPIENT_ADDRESSES = ['betty@burlesque-expo.com',
 
 RECAPTCHA_PRIVATE_KEY = "6Lf1dx0UAAAAANMxh-BqrW_9IU-0n4OZyWin6sGB"
 RECAPTCHA_PUBLIC_KEY = "6Lf1dx0UAAAAAMcHUhPsGFc7LUQWHQOfiUWKx1m1"
-TINYMCE_JS_URL = STATIC_URL + 'tinymce/tinymce.min.js'
-TINYMCE_DEFAULT_CONFIG = {
-    'selector': 'id_html_content',
-}
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

@@ -96,7 +96,7 @@ class TestMailToPerson(TestCase):
         self.assertContains(
             response,
             '<input type="email" name="sender" ' +
-            'value="%s" required id="id_sender" />' % (
+            'value="%s" id="id_sender" />' % (
                 self.privileged_profile.user_object.email))
 
     def test_pick_no_admin_fixed_email(self):
