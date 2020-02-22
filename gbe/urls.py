@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.contrib.auth.views import *
 from gbe.views import (
     ActChangeStateView,
+    ActTechWizardView,
     AdminProfileView,
     BiosTeachersView,
     ClassChangeStateView,
@@ -97,6 +98,9 @@ urlpatterns = [
     url(r'^acttechinfo/edit/(\d+)/?$',
         EditActTechInfoView,
         name='act_techinfo_edit'),
+    url(r'^acttechinfo/wizard/(?P<act_id>\d+)/?$',
+        ActTechWizardView.as_view(),
+        name='act_tech_wizard'),
 
     #  classes
     url(r'^class/create/?$',

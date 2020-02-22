@@ -506,6 +506,8 @@ default_update_profile_msg = "Your profile has been updated."
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+default_basic_acttech_instruct = '''Reserve your rehearsal slot early and \
+give us the basics about your act.  The rest can be completed later.'''
 default_update_act_tech = "Your Act Technical Details have been updated."
 default_act_title_conflict = '''You've aready created a draft or made a \
 submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''

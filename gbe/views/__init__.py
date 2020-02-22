@@ -66,6 +66,7 @@ from propose_class_view import ProposeClassView
 from publish_proposal_view import PublishProposalView
 from review_proposal_list_view import ReviewProposalListView
 from conference_volunteer_view import ConferenceVolunteerView
+from act_tech_wizard_view import ActTechWizardView
 from edit_act_techinfo_view import EditActTechInfoView
 from handle_user_contact_email_view import HandleUserContactEmailView
 
