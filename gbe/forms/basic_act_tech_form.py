@@ -19,16 +19,16 @@ class BasicActTechForm(Form):
     error_css_class = 'error'
 
     length_of_act = DurationField(help_text=act_help_texts['act_duration'])
-    introduction_text = CharField(
-        required=False,
-        help_text=act_help_texts['intro_text'],
-        widget=Textarea())
     feel_of_act = CharField(
         label=tech_labels['feel_of_act'],
         help_text=tech_help_texts['feel_of_act'],
         widget=Textarea())
     costume_colors = CharField(
         label=tech_labels['costume'],
+        widget=Textarea())
+    introduction_text = CharField(
+        required=False,
+        help_text=act_help_texts['intro_text'],
         widget=Textarea())
     preset = CharField(
         required=False,
