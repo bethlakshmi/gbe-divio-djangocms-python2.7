@@ -1,7 +1,8 @@
 {% extends 'gbe/scheduling/event_wizard.tmpl' %}
 
 {% block head %}
-  {{ third_form.media }}
+    <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
+    <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 
 {% block second_form %}

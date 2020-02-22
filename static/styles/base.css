@@ -243,11 +243,11 @@ h3.readonlyform
     padding: 0px;
 }
 
-@media (min-width:768px){.email_list{width:680px}
+@media (min-width:768px){.email_list{width:660px}
 }
 @media (min-width:992px){.email_list{width:900px}
 }
-@media (min-width:1200px){.email_list{width:1100px}
+@media (min-width:1200px){.email_list{width:1000px}
 }
 .email-list-even
 {

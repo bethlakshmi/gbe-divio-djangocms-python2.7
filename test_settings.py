@@ -87,7 +87,6 @@ INSTALLED_APPS = [
     u'easy_thumbnails',
     u'mptt',
     u'polymorphic',
-    'tinymce',
     'scheduler',
     'ticketing',
     'gbe',

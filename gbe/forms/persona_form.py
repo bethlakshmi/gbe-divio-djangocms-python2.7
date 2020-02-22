@@ -3,6 +3,7 @@ from django.forms import (
     HiddenInput,
     ImageField,
     ModelForm,
+    Textarea,
 )
 from gbe.models import Persona
 from gbe_forms_text import (
@@ -13,10 +14,10 @@ from gbe.expoformfields import FriendlyURLInput
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
 from django.contrib.auth.models import User
-from tinymce.widgets import TinyMCE
 
 
 class PersonaForm (ModelForm):
+    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
     upload_img = ImageField(
@@ -25,14 +26,7 @@ class PersonaForm (ModelForm):
         required=False,
     )
     bio = CharField(
-        widget=TinyMCE(
-            attrs={'cols': 80, 'rows': 20},
-            mce_attrs={
-                'theme_advanced_buttons1': "bold,italic,underline,|," +
-                "justifyleft,justifycenter,justifyright,|,bullist,numlist,|," +
-                "cut,copy,paste",
-                'theme_advanced_buttons2': "",
-                'theme_advanced_buttons3': "", }),
+        widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=persona_labels['bio'],
         help_text=persona_help_texts['bio'])
 

@@ -1,9 +1,8 @@
 {% extends 'base.tmpl' %}
 
 {% block head %}
- {% if email_form %}
-  {{ email_form.media }}
- {% endif %}
+    <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
+    <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 
 {% block content %}

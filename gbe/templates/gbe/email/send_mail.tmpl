@@ -5,7 +5,8 @@
 {% endblock %}
 
 {% block head %}
-  {{ email_form.media }}
+    <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
+    <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 
 {% block content %}

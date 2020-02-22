@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^', include('gbe.email.urls', namespace='email')),
     url(r'^', include('gbe.reporting.urls', namespace='reporting')),
     url(r'^', include('gbe.scheduling.urls', namespace='scheduling')),
-    url(r'^tinymce/', include('tinymce.urls')),
 ] + aldryn_addons.urls.patterns() + i18n_patterns(
     # add your own i18n patterns here
     *aldryn_addons.urls.i18n_patterns()  # MUST be the last entry!
