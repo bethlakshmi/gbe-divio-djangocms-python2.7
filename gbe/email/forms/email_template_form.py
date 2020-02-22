@@ -6,15 +6,15 @@ from django.forms import (
     TextInput,
 )
 from post_office.models import EmailTemplate
-from tinymce.widgets import TinyMCE
 from django.utils.html import strip_tags
 
 
 class EmailTemplateForm(ModelForm):
+    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
     html_content = CharField(
-        widget=TinyMCE(attrs={'cols': 80, 'rows': 30}),
+        widget=Textarea(attrs={'id': 'admin-tiny-mce'}),
         label="Message")
     sender = CharField(max_length=100,
                        required=True,

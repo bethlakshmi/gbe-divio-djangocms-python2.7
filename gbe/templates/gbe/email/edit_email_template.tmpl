@@ -4,9 +4,8 @@
    {{page_title}}
 {% endblock %}
 {% block head %}
-  {% for form in forms %}
-    {{ form.media }}
-  {% endfor %}
+    <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
+    <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 {% block content %}
 <h2 class="subtitle">{{view_title}}</h2>
