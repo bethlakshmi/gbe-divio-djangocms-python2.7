@@ -1,5 +1,11 @@
 {% extends 'gbe/gbe_wizard.tmpl' %}
-
+{% block intro %}
+<h2>Technical Info for {{act.b_title}}</h2>
+{% for show in shows %}
+<b>Booked for: {{show}}</b>
+{% endfor %}
+<p><b>Submitted Description: </b>{{act.b_description}}</p>
+{% endblock %}
 {% block first_form %}
 <p>{{ basic_instructions }}</p>
 <form action="" method="post" enctype="multipart/form-data">
