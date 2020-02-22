@@ -379,6 +379,7 @@ tech_labels = {
     'feel_of_act': ('Describe the feel of your number '),
     'preset': ('Setup for Act'),
     'remove': ('Act cleanup'),
+    'during': ('Crew assistance during performance'),
 }
 tech_help_texts = {
     'feel_of_act': (
@@ -386,6 +387,9 @@ tech_help_texts = {
         'etc.?  Please keep it simple, just a short description.'),
     'preset': (
         'Items that our stage crew should preset and their location on stage'),
+    'during': (
+        'If our crew needs to hand you something or help you, please explain'
+        ' and give a specific indication of when they should do it.'),
     'remove': (
         'Items to be removed after the act is complete, please include an '
         'inventory of costume items.')}

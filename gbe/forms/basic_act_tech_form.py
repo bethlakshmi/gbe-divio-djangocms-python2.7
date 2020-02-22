@@ -35,6 +35,11 @@ class BasicActTechForm(Form):
         label=tech_labels['preset'],
         help_text=tech_help_texts['preset'],
         widget=Textarea())
+    props_during = CharField(
+        required=False,
+        label=tech_labels['during'],
+        help_text=tech_help_texts['during'],
+        widget=Textarea())
     remove = CharField(
         required=False,
         label=tech_labels['remove'],
