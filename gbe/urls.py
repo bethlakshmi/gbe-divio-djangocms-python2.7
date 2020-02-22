@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.contrib.auth.views import *
 from gbe.views import (
     ActChangeStateView,
+    ActTechWizardView,
     AdminProfileView,
     BiosTeachersView,
     ClassChangeStateView,
@@ -12,6 +13,7 @@ from gbe.views import (
     DeleteProfileView,
     EditActTechInfoView,
     EditPersonaView,
+    EditProfileView,
     EditTroupeView,
     FashionFaireView,
     HandleUserContactEmailView,
@@ -40,7 +42,6 @@ from gbe.views import (
     ReviewVolunteerView,
     ReviewVolunteerListView,
     SubmitActView,
-    UpdateProfileView,
     VendorChangeStateView,
     ViewActView,
     ViewClassView,
@@ -97,6 +98,9 @@ urlpatterns = [
     url(r'^acttechinfo/edit/(\d+)/?$',
         EditActTechInfoView,
         name='act_techinfo_edit'),
+    url(r'^acttechinfo/wizard/(?P<act_id>\d+)/?$',
+        ActTechWizardView.as_view(),
+        name='act_tech_wizard'),
 
     #  classes
     url(r'^class/create/?$',
@@ -217,7 +221,7 @@ urlpatterns = [
     url(r'^accounts/register/?$',
         RegisterView, name='register'),
     url(r'update_profile/?$',
-        UpdateProfileView, name='profile_update'),
+        EditProfileView.as_view(), name='profile_update'),
 
     #  password reset
     url(r'^accounts/password/reset/?$',
@@ -243,8 +247,8 @@ urlpatterns = [
     url(r'^profile/manage/?$',
         ReviewProfilesView,
         name='manage_users'),
-    url(r'^profile/admin/(\d+)/?$',
-        AdminProfileView,
+    url(r'^profile/admin/(?P<profile_id>\d+)/?$',
+        AdminProfileView.as_view(),
         name='admin_profile'),
     url(r'^profile/delete/(\d+)/?$',
         DeleteProfileView,

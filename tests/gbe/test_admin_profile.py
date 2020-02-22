@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from django.core.urlresolvers import reverse
@@ -12,6 +11,7 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from gbe.models import Profile
+from gbetext import admin_note
 
 
 class TestAdminProfile(TestCase):
@@ -53,7 +53,7 @@ class TestAdminProfile(TestCase):
                       urlconf="gbe.urls")
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)
-        nt.assert_equal(404, response.status_code)
+        self.assertEqual(404, response.status_code)
 
     def test_get(self):
         profile = self.performer.contact
@@ -64,21 +64,31 @@ class TestAdminProfile(TestCase):
                       urlconf="gbe.urls")
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        nt.assert_equal(200, response.status_code)
+        self.assertContains(
+            response,
+            '<input type="submit" value="Update User Account">')
+        self.assertContains(
+            response,
+            admin_note)
+        self.assertContains(
+            response,
+            "<title>Update User Profile</title")
 
     def test_post_valid_form(self):
         profile = self.performer.contact
         ProfilePreferencesFactory(profile=profile)
 
-        url = reverse(self.view_name,
-                      args=[profile.pk],
-                      urlconf="gbe.urls")
+        url = "%s?next=%s" % (
+            reverse(self.view_name, args=[profile.pk], urlconf="gbe.urls"),
+            reverse('manage_users', urlconf='gbe.urls'))
         data = self.get_form()
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=data, follow=True)
         self.assertRedirects(response,
                              reverse('manage_users', urlconf='gbe.urls'))
-        nt.assert_equal(200, response.status_code)
+        self.assertContains(
+            response,
+            "Updated Profile: %s" % data['display_name'])
 
     def test_post_invalid_form(self):
         profile = self.performer.contact
@@ -90,5 +100,4 @@ class TestAdminProfile(TestCase):
         data = self.get_form(invalid=True)
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=data)
-        nt.assert_true('Your Profile' in response.content)
-        nt.assert_equal(200, response.status_code)
+        self.assertContains(response, 'There is an error on the form.')

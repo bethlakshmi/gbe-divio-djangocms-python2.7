@@ -374,7 +374,21 @@ lighting_help_texts = {
     'notes': ('Is your number happy and bouncy, humorous, dark, mysterious, '
               'etc.?  Please keep it simple, just a short description.')
 }
-
+tech_labels = {
+    'costume': ('Color(s) of your costume '),
+    'feel_of_act': ('Describe the feel of your number '),
+    'preset': ('Setup for Act'),
+    'remove': ('Act cleanup'),
+}
+tech_help_texts = {
+    'feel_of_act': (
+        'Is your number happy and bouncy, humorous, dark, mysterious, '
+        'etc.?  Please keep it simple, just a short description.'),
+    'preset': (
+        'Items that our stage crew should preset and their location on stage'),
+    'remove': (
+        'Items to be removed after the act is complete, please include an '
+        'inventory of costume items.')}
 main_cue_header = {'cue_sequence': 'Cue #',
                    'cue_off_of': 'Cue Off of...',
                    'follow_spot': 'Follow spot',

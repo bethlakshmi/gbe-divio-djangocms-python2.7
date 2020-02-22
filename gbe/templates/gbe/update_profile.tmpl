@@ -1,13 +1,11 @@
 {% extends 'base.tmpl' %}
 {% load staticfiles %}
 
-{% block title %}
-  Update Your Profile
-{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <p class="vanilla">
-<span class='header'><h3>{%if display_name%}{{display_name}}'s{%else%}Your{%endif%} Profile</h3></span><br>
+<span class='header'><h3>{{ header }}</h3></span><br>
 
 {{ email_note }}
 </p>
@@ -48,7 +46,7 @@
 </div>
 </div>
 </div>
-  <input type="submit" value="Update my account"> 
+  <input type="submit" value="{{button}}"> 
 
 </form>
 

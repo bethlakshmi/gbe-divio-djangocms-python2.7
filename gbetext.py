@@ -506,6 +506,8 @@ default_update_profile_msg = "Your profile has been updated."
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+default_basic_acttech_instruct = '''Reserve your rehearsal slot early and \
+give us the basics about your act.  The rest can be completed later.'''
 default_update_act_tech = "Your Act Technical Details have been updated."
 default_act_title_conflict = '''You've aready created a draft or made a \
 submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''
@@ -551,6 +553,10 @@ is, if you're performing, our selection committee and stage managers will be \
 able to see your profile information. If you're teaching, the conference \
 committee members and staff will be able to see your profile information, \
 etc.).'''
+admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\
+ Paper Tickets purchase was made under a different email.  Please handle email\
+ information with care and do not distribute or use for any purpose outside of\
+ Expo communication.'''
 save_email_template_success_msg = '''The email template has been saved.  \
 Your updates will be applied to all future automated messages using this \
 template.  The Email Template name is '''

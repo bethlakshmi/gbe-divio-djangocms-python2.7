@@ -17,10 +17,10 @@ from register_persona_view import RegisterPersonaView
 from edit_persona_view import EditPersonaView
 
 # profiles
+from edit_profile_view import EditProfileView
 from register_view import RegisterView
 from admin_profile_view import AdminProfileView
 from delete_profile_view import DeleteProfileView
-from update_profile_view import UpdateProfileView
 from review_profiles_view import ReviewProfilesView
 
 # make
@@ -66,6 +66,7 @@ from propose_class_view import ProposeClassView
 from publish_proposal_view import PublishProposalView
 from review_proposal_list_view import ReviewProposalListView
 from conference_volunteer_view import ConferenceVolunteerView
+from act_tech_wizard_view import ActTechWizardView
 from edit_act_techinfo_view import EditActTechInfoView
 from handle_user_contact_email_view import HandleUserContactEmailView
 
