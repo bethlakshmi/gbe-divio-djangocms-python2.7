@@ -21,7 +21,10 @@ class BasicActTechForm(ModelForm):
         choices=starting_position_choices)
     prop_setup = MultipleChoiceField(
         choices=prop_choices,
-        widget=CheckboxSelectMultiple())
+        widget=CheckboxSelectMultiple(),
+        error_messages={'required': 'Please select at least one option'},
+        label=tech_labels['prop_setup']
+        )
     follow_spot = TypedChoiceField(
         choices=((False, 'No'), (True, 'Yes')))
 
