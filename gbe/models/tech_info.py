@@ -198,6 +198,20 @@ class TechInfo(Model):
     lighting = OneToOneField(LightingInfo, blank=True)
     stage = OneToOneField(StageInfo, blank=True)
 
+    track_title = CharField(max_length=128, blank=True)
+    track_artist = CharField(max_length=123, blank=True)
+    duration = DurationField(null=True)
+    feel_of_act = TextField(blank=True)
+    introduction_text = TextField(max_length=1000, blank=True)
+    read_exact = BooleanField(default=False)
+    prop_setup = TextField(blank=True)
+    crew_instruct = TextField(blank=True)
+    pronouns = CharField(max_length=128, default="she/her or he/hims")
+    primary_color = CharField(max_length=128, blank=True)
+    secondary_color = CharField(max_length=128, blank=True)
+    follow_spot = BooleanField(default=False)
+    starting_position = CharField(max_length=128, blank=True)
+
     def clone(self):
         ti = TechInfo()
         ti.audio = self.audio.clone()

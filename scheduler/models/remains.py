@@ -536,9 +536,8 @@ class Event(Schedulable):
         max_volunteer
         '''
         allocs = ResourceAllocation.objects.filter(event=self)
-        from gbe.models import Act  # late import, circularity
         acts_booked = len([a for a in allocs
-                           if isinstance(a.resource.item.as_subtype, Act)])
+                           if isinstance(a.resource.as_subtype, ActResource)])
         return self.max_volunteer - acts_booked > 0
 
     @property

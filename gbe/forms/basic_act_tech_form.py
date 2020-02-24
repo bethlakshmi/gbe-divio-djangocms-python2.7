@@ -1,47 +1,44 @@
 from django.forms import (
-    CharField,
-    DurationField,
-    IntegerField,
-    Form,
-    Textarea,
+    ChoiceField,
+    ModelForm,
+    MultipleChoiceField,
+    TypedChoiceField,
 )
 from gbe_forms_text import (
-    act_help_texts,
+    prop_choices,
+    starting_position_choices,
     tech_labels,
     tech_help_texts,
 )
+from gbe.models import TechInfo
+from django.forms.widgets import CheckboxSelectMultiple
 
-class BasicActTechForm(Form):
-    '''
-    Form for selecting the type of event to create
-    '''
+class BasicActTechForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    length_of_act = DurationField(help_text=act_help_texts['act_duration'])
-    feel_of_act = CharField(
-        label=tech_labels['feel_of_act'],
-        help_text=tech_help_texts['feel_of_act'],
-        widget=Textarea())
-    costume_colors = CharField(
-        label=tech_labels['costume'],
-        widget=Textarea())
-    introduction_text = CharField(
-        required=False,
-        help_text=act_help_texts['intro_text'],
-        widget=Textarea())
-    preset = CharField(
-        required=False,
-        label=tech_labels['preset'],
-        help_text=tech_help_texts['preset'],
-        widget=Textarea())
-    props_during = CharField(
-        required=False,
-        label=tech_labels['during'],
-        help_text=tech_help_texts['during'],
-        widget=Textarea())
-    remove = CharField(
-        required=False,
-        label=tech_labels['remove'],
-        help_text=tech_help_texts['remove'],
-        widget=Textarea())
+    starting_position = ChoiceField(
+        choices=starting_position_choices)
+    prop_setup = MultipleChoiceField(
+        choices=prop_choices,
+        widget=CheckboxSelectMultiple())
+    follow_spot = TypedChoiceField(
+        choices=((False, 'No'), (True, 'Yes')))
+
+    class Meta:
+        model = TechInfo
+        labels = tech_labels
+        help_texts = tech_help_texts
+        fields = ['track_title',
+                  'track_artist',
+                  'duration',
+                  'prop_setup',
+                  'crew_instruct',
+                  'introduction_text',
+                  'read_exact',
+                  'pronouns',
+                  'feel_of_act',
+                  'primary_color',
+                  'secondary_color',
+                  'follow_spot',
+                  'starting_position']

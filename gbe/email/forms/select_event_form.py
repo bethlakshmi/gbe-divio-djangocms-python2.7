@@ -9,7 +9,6 @@ from gbe.models import (
     StaffArea,
 )
 from gbe_forms_text import event_collect_choices
-from django.forms.widgets import CheckboxSelectMultiple
 
 
 class SelectEventForm(Form):
