@@ -144,12 +144,9 @@ class ActTechWizardView(View):
             prop_initial = eval(self.act.tech.prop_setup)
         else:
             prop_initial = []
-        basic = BasicActTechForm(
-            instance=self.act.tech,
-            initial={'prop_setup': prop_initial})
-        context = self.make_context(basic)
         return render(request, self.template, self.make_context(
-            BasicActTechForm(instance=self.act.tech)))
+            BasicActTechForm(instance=self.act.tech, initial={
+                'prop_setup': prop_initial})))
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
