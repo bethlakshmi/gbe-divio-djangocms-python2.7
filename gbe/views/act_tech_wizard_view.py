@@ -25,11 +25,15 @@ from gbe.models import (
 )
 from gbetext import (
     default_basic_acttech_instruct,
+    default_rehearsal_error,
 )
 from scheduler.idd import (
     get_occurrences,
     get_schedule,
+    remove_booking,
 )
+from django.contrib import messages
+
 
 
 class ActTechWizardView(View):
@@ -39,45 +43,69 @@ class ActTechWizardView(View):
     page_title = 'Edit Act Technical Information'
     first_title = 'Rehearsal and Basic Information'
 
-    def set_rehearsal_forms(self):
+    def set_rehearsal_forms(self, request=None):
         rehearsal_forms = []
         possible_rehearsals = GenericEvent.objects.filter(
             type='Rehearsal Slot',
             e_conference=self.act.b_conference).values_list('eventitem_id')
         for show in self.shows:
-            initial = {
-                'show_private': show.pk,
-                'rehearsal_label': "Rehearsal for %s" % str(show.eventitem),
-                'rehearsal_choices': []}
-
             response = get_occurrences(
                 labels=[self.act.b_conference.conference_slug],
                 foreign_event_ids=possible_rehearsals,
                 parent_event_id=show.pk)
+            choices = []
+            initial = None
             for event in response.occurrences:
                 if (show.pk in self.rehearsals) and (
                         event == self.rehearsals[show.pk]):
-                    initial['rehearsal_choices'] += [(
-                        event.pk, 
-                        date_format(event.starttime, "TIME_FORMAT"))]
-                    initial['rehearsal'] = event.pk
+                    choices += [(event.pk, 
+                                 date_format(event.starttime, "TIME_FORMAT"))]
+                    initial = {'rehearsal': event.event.pk,
+                               'booking_id': event.booking_id}
                 elif event.has_act_opening():
-                    initial['rehearsal_choices'] += [(
-                        event.pk, 
-                        date_format(event.starttime, "TIME_FORMAT"))]
-            rehearsal_forms += [BasicRehearsalForm(
-                prefix=str(show.pk),
-                initial=initial)]
+                    choices += [(event.pk, 
+                                 date_format(event.starttime, "TIME_FORMAT"))]
+            if request:
+                rehearsal_form = BasicRehearsalForm(
+                    request.POST,
+                    prefix=str(show.pk))
+            else:
+                rehearsal_form = BasicRehearsalForm(
+                    prefix=str(show.pk),
+                    initial=initial)
+
+            rehearsal_form.fields['rehearsal'].choices = choices
+            rehearsal_form.fields['rehearsal'].label = \
+                "Rehearsal for %s" % str(show.eventitem)
+            rehearsal_forms += [rehearsal_form]
+
         return rehearsal_forms
 
-    def make_context(self, basic_form):
+    def book_rehearsals(self, request):
+        error = ""
+        bookings = []
+        for show in self.shows:
+            rehearsal_form = BasicRehearsalForm(request.POST, 
+                                                prefix=str(show.pk))
+            if rehearsal_form.is_valid():
+                if rehearsal_form.cleaned_data['booking_id']:
+                    pass
+                else:
+                    response = set_act()
+            else:
+                error = "Can't book rehearsal for %s" % str(show.eventitem)
+
+        return error, bookings
+
+    def make_context(self, basic_form, request=None):
         basic_instructions = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="BASIC_INSTRUCTIONS",
                 defaults={
                     'summary': "Basic Instructions",
                     'description': default_basic_acttech_instruct})
-        basics = self.set_rehearsal_forms()
+        basics = self.set_rehearsal_forms(request)
+
         basics += [basic_form]
         context = {'act': self.act,
                    'shows': self.shows,
@@ -110,7 +138,7 @@ class ActTechWizardView(View):
                     eventitem_id=item.event.eventitem.eventitem_id,
                     type='Rehearsal Slot').exists():
                 show_key = item.event.container_event.parent_event.pk
-                self.rehearsals[show_key] = item.event
+                self.rehearsals[show_key] = item
 
     @never_cache
     @method_decorator(login_required)
@@ -118,21 +146,28 @@ class ActTechWizardView(View):
         error = self.groundwork(request, args, kwargs)
         if error:
             return error
-        if 'rehearsal' in request.POST:
-            rehearsal = get_object_or_404(sEvent,
-                                          id=request.POST['rehearsal'])
-            show = get_object_or_404(
-                Show,
-                eventitem_id=request.POST['show_private']
-                ).scheduler_events.first()
-            act.set_rehearsal(show, rehearsal)
         basic_form = BasicActTechForm(request.POST,
                                       instance=self.act.tech)
         if basic_form.is_valid():
-            basic_form.save()
-            return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
+            error, bookings = self.book_rehearsals(request)
+            if len(error) == 0:
+                basic_form.save()
+                return HttpResponseRedirect(
+                    reverse('home', urlconf='gbe.urls'))
+            else:
+                rehearsal_fail = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="REHEARSAL_NOT_BOOKED",
+                    defaults={
+                        'summary': "Rehearsal Booking Error",
+                        'description': default_rehearsal_error})
+                messages.error(request, "%s: %s" % (
+                               rehearsal_fail[0].description,
+                               error))
 
-        return render(request, self.template, self.make_context(basic_form))
+        return render(request,
+                      self.template,
+                      self.make_context(basic_form, request))
 
     @never_cache
     @method_decorator(login_required)
@@ -144,9 +179,9 @@ class ActTechWizardView(View):
             prop_initial = eval(self.act.tech.prop_setup)
         else:
             prop_initial = []
-        return render(request, self.template, self.make_context(
-            BasicActTechForm(instance=self.act.tech, initial={
-                'prop_setup': prop_initial})))
+        basic_form = BasicActTechForm(instance=self.act.tech, initial={
+            'prop_setup': prop_initial})
+        return render(request, self.template, self.make_context(basic_form))
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

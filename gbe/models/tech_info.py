@@ -206,7 +206,7 @@ class TechInfo(Model):
     read_exact = BooleanField(default=False)
     prop_setup = TextField(blank=True)
     crew_instruct = TextField(blank=True)
-    pronouns = CharField(max_length=128, default="she/her or he/hims")
+    pronouns = CharField(max_length=128, blank=True)
     primary_color = CharField(max_length=128, blank=True)
     secondary_color = CharField(max_length=128, blank=True)
     follow_spot = BooleanField(default=False)
