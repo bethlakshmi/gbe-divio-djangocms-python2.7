@@ -84,9 +84,8 @@ class ActTechWizardView(View):
     def book_rehearsals(self, request):
         error = ""
         bookings = []
-        for show in self.shows:
-            rehearsal_form = BasicRehearsalForm(request.POST, 
-                                                prefix=str(show.pk))
+        forms = self.set_rehearsal_forms(request)
+        for rehearsal_form in forms:
             if rehearsal_form.is_valid():
                 if rehearsal_form.cleaned_data['booking_id']:
                     pass
@@ -95,17 +94,19 @@ class ActTechWizardView(View):
             else:
                 error = "Can't book rehearsal for %s" % str(show.eventitem)
 
-        return error, bookings
+        return error, bookings, forms
 
-    def make_context(self, basic_form, request=None):
+    def make_context(self, basic_form, rehearsal_forms=None):
         basic_instructions = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="BASIC_INSTRUCTIONS",
                 defaults={
                     'summary': "Basic Instructions",
                     'description': default_basic_acttech_instruct})
-        basics = self.set_rehearsal_forms(request)
-
+        if not rehearsal_forms:
+            basics = self.set_rehearsal_forms()
+        else:
+            basics = rehearsal_forms
         basics += [basic_form]
         context = {'act': self.act,
                    'shows': self.shows,
@@ -149,7 +150,7 @@ class ActTechWizardView(View):
         basic_form = BasicActTechForm(request.POST,
                                       instance=self.act.tech)
         if basic_form.is_valid():
-            error, bookings = self.book_rehearsals(request)
+            error, bookings, rehearsal_forms = self.book_rehearsals(request)
             if len(error) == 0:
                 basic_form.save()
                 return HttpResponseRedirect(
@@ -167,7 +168,7 @@ class ActTechWizardView(View):
 
         return render(request,
                       self.template,
-                      self.make_context(basic_form, request))
+                      self.make_context(basic_form, rehearsal_forms))
 
     @never_cache
     @method_decorator(login_required)
