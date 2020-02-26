@@ -2,7 +2,7 @@ from scheduler.idd import get_occurrence
 from scheduler.models import ResourceAllocation
 from scheduler.data_transfer import (
     Error,
-    PeopleResponse
+    BookingResponse
 )
 
 
@@ -19,11 +19,11 @@ def set_person(occurrence_id=None, person=None):
             alloc = ResourceAllocation.objects.get(pk=person.booking_id)
             occurrence = alloc.event
         except ResourceAllocation.DoesNotExist:
-            return PeopleResponse(errors=[Error(
+            return BookingResponse(errors=[Error(
                 code="BOOKING_NOT_FOUND",
                 details="Booking id %s not found" % person.booking_id), ])
     else:
-        return PeopleResponse(errors=[Error(
+        return BookingResponse(errors=[Error(
             code="OCCURRENCE_NOT_FOUND",
             details="Neither booking id nor occurrence id provided")])
     return occurrence.allocate_person(person)

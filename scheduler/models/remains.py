@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.core.validators import RegexValidator
 from scheduler.data_transfer import (
     Person,
-    PersonResponse,
+    BookingResponse,
     Warning,
 )
 from datetime import datetime, timedelta
@@ -622,9 +622,45 @@ class Event(Schedulable):
                     self.extra_volunteers()))]
         if person.label:
             allocation.set_label(person.label)
-        return PersonResponse(warnings=warnings,
-                              booking_id=allocation.pk,
-                              occurrence=self)
+        return BookingResponse(warnings=warnings,
+                               booking_id=allocation.pk,
+                               occurrence=self)
+
+    # New - from refactoring
+    def allocate_act(self, act):
+        '''
+        allocated worker for the new model - right now, focused on create
+        uses the Person from the data_transfer objects.
+        '''
+        warnings = []
+        time_format = GBE_DATETIME_FORMAT
+
+        worker = None
+        item = ActItem.objects.get(pk=act.act_id)
+        resource = ActResource(_item=item)
+        resource.save()
+
+        if act.booking_id:
+            allocation = ResourceAllocation.objects.get(
+                id=act.booking_id)
+            allocation.resource = resource
+        else:
+            allocation = ResourceAllocation(event=self,
+                                            resource=resource)
+        allocation.save()
+
+        num_acts = ActResource.objects.filter(
+                allocations__event=self).count()
+        if num_acts > self.max_volunteer:
+            warnings += [Warning(
+                code="OCCURRENCE_OVERBOOKED",
+                details="Over booked by %s acts" % (
+                    self.volunteer_count() - self.max_volunteer))]
+        if act.label:
+            allocation.set_label(act.label)
+        return BookingResponse(warnings=warnings,
+                               booking_id=allocation.pk,
+                               occurrence=self)
 
     @property
     def volunteer_count(self):

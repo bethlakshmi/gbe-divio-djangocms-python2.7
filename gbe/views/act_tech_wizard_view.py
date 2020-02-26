@@ -31,7 +31,9 @@ from scheduler.idd import (
     get_occurrences,
     get_schedule,
     remove_booking,
+    set_act,
 )
+from scheduler.data_transfer import BookableAct
 from django.contrib import messages
 
 
@@ -85,12 +87,17 @@ class ActTechWizardView(View):
         error = ""
         bookings = []
         forms = self.set_rehearsal_forms(request)
+        # using the form guarantees that we've checked that the user is
+        # only booking rehearsals that are open, for shows they are in.
         for rehearsal_form in forms:
             if rehearsal_form.is_valid():
+                bookable = BookableAct(act=self.act)
                 if rehearsal_form.cleaned_data['booking_id']:
-                    pass
-                else:
-                    response = set_act()
+                    bookable.booking_id = \
+                        rehearsal_form.cleaned_data['booking_id']
+                response = set_act(
+                    occurrence_id=rehearsal_form.cleaned_data['rehearsal'],
+                    act=bookable)
             else:
                 error = "Can't book rehearsal for %s" % str(show.eventitem)
 

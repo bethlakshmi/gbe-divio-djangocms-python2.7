@@ -2,13 +2,13 @@ from scheduler.idd import test_booking
 from scheduler.models import ResourceAllocation
 from scheduler.data_transfer import (
     Error,
-    PersonResponse,
+    BookingResponse,
 )
 
 
 def remove_booking(occurrence_id,
                    booking_id):
-    response = PersonResponse()
+    response = BookingResponse()
     test = test_booking(booking_id, occurrence_id)
     if not test:
         response.errors = [Error(
