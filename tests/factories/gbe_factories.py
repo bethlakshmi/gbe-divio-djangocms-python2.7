@@ -141,26 +141,12 @@ class LightingInfoFactory(DjangoModelFactory):
     costume = "Costume field for test LightingInfo object."
 
 
-class StageInfoFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.StageInfo
-
-    act_duration = Duration(minutes=5)
-    intro_text = "intro text field for test StageInfo object"
-    confirm = True
-    set_props = False
-    cue_props = False
-    clear_props = False
-    notes = "Notes field for test StageInfo object"
-
-
 class TechInfoFactory(DjangoModelFactory):
     class Meta:
         model = conf.TechInfo
 
     audio = SubFactory(AudioInfoFactory)
     lighting = SubFactory(LightingInfoFactory)
-    stage = SubFactory(StageInfoFactory)
 
 
 class CueInfoFactory(DjangoModelFactory):

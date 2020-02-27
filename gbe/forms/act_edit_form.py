@@ -31,11 +31,6 @@ class ActEditDraftForm(ModelForm):
         required=False,
         help_text=act_help_texts['act_duration']
     )
-    track_duration = DurationFormField(
-        required=False,
-        help_text=act_help_texts['track_duration'],
-        label=act_bid_labels['track_duration']
-    )
     track_artist = CharField(required=False)
     track_title = CharField(required=False)
     shows_preferences = MultipleChoiceField(
@@ -69,7 +64,6 @@ class ActEditDraftForm(ModelForm):
             'b_title',
             'track_title',
             'track_artist',
-            'track_duration',
             'act_duration',
             'video_link',
             'video_choice',
@@ -77,7 +71,6 @@ class ActEditDraftForm(ModelForm):
             'why_you',
             'b_conference',
             'act_duration',
-            'track_duration',
             'track_artist',
             'track_title']
         labels = act_bid_labels

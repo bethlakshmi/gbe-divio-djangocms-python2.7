@@ -28,7 +28,6 @@ from gbe.forms import (
     RehearsalSelectionForm,
     ActTechInfoForm,
     AudioInfoSubmitForm,
-    StageInfoSubmitForm,
     LightingInfoForm,
     CueInfoForm,
     VendorCueInfoForm,
@@ -104,8 +103,6 @@ def EditActTechInfoView(request, act_id):
         validate_perms(request, ('Tech Crew', ))
 
     audio_info = act.tech.audio
-    stage_info = act.tech.stage
-    audio_info = act.tech.audio
     lighting_info = act.tech.lighting
     cue_objects = [CueInfo.objects.get_or_create(techinfo=act.tech,
                                                  cue_sequence=i)[0]
@@ -141,9 +138,6 @@ def EditActTechInfoView(request, act_id):
                                         request.FILES,
                                         prefix='audio_info',
                                         instance=audio_info)
-        stageform = StageInfoSubmitForm(request.POST,
-                                        prefix='stage_info',
-                                        instance=stage_info)
         lightingform = LightingInfoForm(request.POST,
                                         prefix='lighting_info',
                                         instance=lighting_info)
@@ -160,7 +154,7 @@ def EditActTechInfoView(request, act_id):
                 if f.is_valid():
                     f.save()
 
-        techforms = [lightingform,  audioform, stageform, ]
+        techforms = [lightingform,  audioform]
 
         forms_valid = True
         for f in techforms:
@@ -200,11 +194,9 @@ def EditActTechInfoView(request, act_id):
     else:
         audioform = AudioInfoSubmitForm(prefix='audio_info',
                                         instance=audio_info)
-        stageform = StageInfoSubmitForm(prefix='stage_info',
-                                        instance=stage_info)
         lightingform = LightingInfoForm(prefix='lighting_info',
                                         instance=lighting_info)
-        techforms = [lightingform, audioform, stageform, ]
+        techforms = [lightingform, audioform ]
 
         form_data = {'readonlyform': [form],
                      'rehearsal_forms': rehearsal_forms,

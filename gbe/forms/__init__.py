@@ -59,8 +59,4 @@ from lighting_info_form import LightingInfoForm
 from rehearsal_selection_form import RehearsalSelectionForm
 from basic_act_tech_form import BasicActTechForm
 from basic_rehearsal_form import BasicRehearsalForm
-from stage_info_form import (
-    StageInfoForm,
-    StageInfoSubmitForm
-)
 from vendor_cue_info_form import VendorCueInfoForm

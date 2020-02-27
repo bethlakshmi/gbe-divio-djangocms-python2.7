@@ -9,17 +9,14 @@ from gbe.ticketing_idd_interface import (
 )
 from gbe.models import (
     Act,
-    AudioInfo,
     LightingInfo,
     Performer,
-    StageInfo,
     TechInfo,
 )
 from gbe.forms import (
     ActEditDraftForm,
     ActEditForm,
-    AudioInfoForm,
-    StageInfoForm,
+    BasicActTechForm,
 )
 from gbetext import (
     default_act_submit_msg,
@@ -84,13 +81,10 @@ class MakeActView(MakeBidView):
     def get_initial(self):
         initial = {}
         if self.bid_object:
-            audio_info = self.bid_object.tech.audio
-            stage_info = self.bid_object.tech.stage
             initial = {
-                'track_title': audio_info.track_title,
-                'track_artist': audio_info.track_artist,
-                'track_duration': audio_info.track_duration,
-                'act_duration': stage_info.act_duration}
+                'track_title': self.bid_object.tech.track_title,
+                'track_artist': self.bid_object.tech.track_artist,
+                'act_duration': self.bid_object.tech.duration}
         else:
             initial = {
                 'owner': self.owner,
@@ -111,14 +105,11 @@ class MakeActView(MakeBidView):
         return context
 
     def check_validity(self, request):
-        self.audioform = AudioInfoForm(request.POST, prefix='theact')
-        self.stageform = StageInfoForm(request.POST, prefix='theact')
+        self.techform = BasicActTechForm(request.POST, prefix='theact')
         if hasattr(self.bid_object, 'tech'):
-            self.audioform.instance = self.bid_object.tech.audio
-            self.stageform.instance = self.bid_object.tech.stage
+            self.techform.instance = self.bid_object.tech
         return all([self.form.is_valid(),
-                    self.audioform.is_valid(),
-                    self.stageform.is_valid()])
+                    self.techform.is_valid()])
 
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):
@@ -129,9 +120,7 @@ class MakeActView(MakeBidView):
         else:
             techinfo = self.bid_object.tech
 
-        techinfo.audio = self.audioform.save()
-        techinfo.stage = self.stageform.save()
-        techinfo.save()
+        techinfo = self.techform.save()
         self.bid_object.tech = techinfo
         self.bid_object.submitted = False
         self.bid_object.accepted = False
