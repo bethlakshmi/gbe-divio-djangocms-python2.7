@@ -1,7 +1,7 @@
 from django.forms import (
+    CharField,
     ChoiceField,
     HiddenInput,
-    IntegerField,
     Form,
 )
 
@@ -10,7 +10,7 @@ class BasicRehearsalForm(Form):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    booking_id = IntegerField(widget=HiddenInput, required=False)
+    booking_id = CharField(widget=HiddenInput, required=False)
     rehearsal = ChoiceField()
 
     def __init__(self, *args, **kwargs):

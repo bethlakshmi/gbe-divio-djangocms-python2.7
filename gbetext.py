@@ -508,9 +508,9 @@ default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
 default_basic_acttech_instruct = '''Reserve your rehearsal slot early and \
 give us the basics about your act.  The rest can be completed later.'''
-default_rehearsal_error = '''There has been an issue booking your rehearsal. \
-Please try again, and if the issue continues, please contact our support team.
-'''
+default_rehearsal_booked = '''Rehearsal is booked.'''
+default_act_tech_basic_submit = "Your basic act tech details have been \
+submitted.  Stay tuned, later on you\'ll be asked for further information."
 default_update_act_tech = "Your Act Technical Details have been updated."
 default_act_title_conflict = '''You've aready created a draft or made a \
 submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''

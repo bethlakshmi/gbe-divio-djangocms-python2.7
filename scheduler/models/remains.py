@@ -644,6 +644,7 @@ class Event(Schedulable):
             allocation = ResourceAllocation.objects.get(
                 id=act.booking_id)
             allocation.resource = resource
+            allocation.event = self
         else:
             allocation = ResourceAllocation(event=self,
                                             resource=resource)

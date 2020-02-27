@@ -24,8 +24,9 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    default_act_tech_basic_submit,
     default_basic_acttech_instruct,
-    default_rehearsal_error,
+    default_rehearsal_booked,
 )
 from scheduler.idd import (
     get_occurrences,
@@ -33,9 +34,10 @@ from scheduler.idd import (
     remove_booking,
     set_act,
 )
+from gbe.scheduling.views.functions import show_general_status
 from scheduler.data_transfer import BookableAct
 from django.contrib import messages
-
+from settings import GBE_DATETIME_FORMAT
 
 
 class ActTechWizardView(View):
@@ -57,13 +59,15 @@ class ActTechWizardView(View):
                 parent_event_id=show.pk)
             choices = []
             initial = None
+
             for event in response.occurrences:
                 if (show.pk in self.rehearsals) and (
-                        event == self.rehearsals[show.pk]):
+                        event == self.rehearsals[show.pk].event):
                     choices += [(event.pk, 
                                  date_format(event.starttime, "TIME_FORMAT"))]
-                    initial = {'rehearsal': event.event.pk,
-                               'booking_id': event.booking_id}
+                    initial = {
+                        'rehearsal': event.pk,
+                        'booking_id': self.rehearsals[show.pk].booking_id}
                 elif event.has_act_opening():
                     choices += [(event.pk, 
                                  date_format(event.starttime, "TIME_FORMAT"))]
@@ -84,24 +88,31 @@ class ActTechWizardView(View):
         return rehearsal_forms
 
     def book_rehearsals(self, request):
-        error = ""
+        error = False
         bookings = []
         forms = self.set_rehearsal_forms(request)
         # using the form guarantees that we've checked that the user is
         # only booking rehearsals that are open, for shows they are in.
         for rehearsal_form in forms:
-            if rehearsal_form.is_valid():
-                bookable = BookableAct(act=self.act)
-                if rehearsal_form.cleaned_data['booking_id']:
-                    bookable.booking_id = \
-                        rehearsal_form.cleaned_data['booking_id']
-                response = set_act(
-                    occurrence_id=rehearsal_form.cleaned_data['rehearsal'],
-                    act=bookable)
-            else:
-                error = "Can't book rehearsal for %s" % str(show.eventitem)
+            if not rehearsal_form.is_valid():
+                error = True
+        if error:
+            return error, bookings, forms, request
 
-        return error, bookings, forms
+        for rehearsal_form in forms:
+            bookable = BookableAct(act=self.act)
+            if rehearsal_form.cleaned_data['booking_id']:
+                bookable.booking_id = \
+                    rehearsal_form.cleaned_data['booking_id']
+            response = set_act(
+                occurrence_id=rehearsal_form.cleaned_data['rehearsal'],
+                act=bookable)
+            show_general_status(request, response, self.__class__.__name__)
+            if response.errors:
+                error = True
+            if response.occurrence:
+                bookings += [response.occurrence]
+        return error, bookings, forms, request
 
     def make_context(self, basic_form, rehearsal_forms=None):
         basic_instructions = UserMessage.objects.get_or_create(
@@ -157,21 +168,33 @@ class ActTechWizardView(View):
         basic_form = BasicActTechForm(request.POST,
                                       instance=self.act.tech)
         if basic_form.is_valid():
-            error, bookings, rehearsal_forms = self.book_rehearsals(request)
-            if len(error) == 0:
+            error, bookings, rehearsal_forms, request = self.book_rehearsals(
+                request)
+            if not error:
                 basic_form.save()
+                for occurrence in bookings:
+                    rehearsal_success = UserMessage.objects.get_or_create(
+                        view=self.__class__.__name__,
+                        code="REHEARSAL_BOOKED",
+                        defaults={
+                            'summary': "Rehearsal Booked",
+                            'description': default_rehearsal_booked})
+                    messages.success(
+                        request,
+                        "%s  Rehearsal Name:  %s, Start Time: %s" %(
+                            rehearsal_success[0].description,
+                            str(occurrence),
+                            occurrence.starttime.strftime(GBE_DATETIME_FORMAT)
+                            ))
+                success = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="ACT_TECH_BASIC_SUMBITTED",
+                    defaults={
+                        'summary': "Act Tech Basic Submitted",
+                        'description': default_act_tech_basic_submit})
+                messages.success(request, success[0].description)
                 return HttpResponseRedirect(
                     reverse('home', urlconf='gbe.urls'))
-            else:
-                rehearsal_fail = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="REHEARSAL_NOT_BOOKED",
-                    defaults={
-                        'summary': "Rehearsal Booking Error",
-                        'description': default_rehearsal_error})
-                messages.error(request, "%s: %s" % (
-                               rehearsal_fail[0].description,
-                               error))
 
         return render(request,
                       self.template,
