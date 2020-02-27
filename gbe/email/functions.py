@@ -133,7 +133,7 @@ def send_bid_state_change_mail(
             args=[show.pk],
             urlconf='gbe.scheduling.urls')
         context['act_tech_link'] = site.domain + reverse(
-            'act_techinfo_edit',
+            'act_tech_wizard',
             args=[bid.pk],
             urlconf='gbe.urls')
     else:

@@ -192,7 +192,7 @@ class TestActChangestate(TestCase):
         self.data['accepted'] = '3'
         response = self.client.post(url, data=self.data)
         assert_email_contents(reverse(
-            'act_techinfo_edit',
+            'act_tech_wizard',
             args=[self.context.act.pk],
             urlconf='gbe.urls'))
 

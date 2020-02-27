@@ -165,7 +165,7 @@ class Profile(WorkerItem):
                 p_alerts.append(
                     profile_alerts['schedule_rehearsal'] %
                     (act.b_title,
-                     reverse('act_techinfo_edit',
+                     reverse('act_tech_wizard',
                              urlconf='gbe.urls',
                              args=[act.id])))
         return p_alerts

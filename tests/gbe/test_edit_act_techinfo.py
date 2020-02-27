@@ -27,7 +27,7 @@ from django.utils.formats import date_format
 
 class TestEditActTechInfo(TestCase):
     '''Tests for edit_act_techinfo view'''
-    view_name = 'act_techinfo_edit'
+    view_name = 'act_tech_wizard'
 
     def setUp(self):
         self.client = Client()
@@ -129,7 +129,7 @@ class TestEditActTechInfo(TestCase):
     def post_act_tech_info_success(self, num_cues=3):
         context = ActTechInfoContext(schedule_rehearsal=True)
         another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -145,7 +145,7 @@ class TestEditActTechInfo(TestCase):
 
     def test_edit_act_techinfo_unauthorized_user(self):
         context = ActTechInfoContext()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -155,7 +155,7 @@ class TestEditActTechInfo(TestCase):
 
     def test_edit_act_techinfo_wrong_profile(self):
         context = ActTechInfoContext()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(ProfileFactory(), self)
@@ -164,7 +164,7 @@ class TestEditActTechInfo(TestCase):
 
     def test_edit_act_techinfo_no_profile(self):
         context = ActTechInfoContext()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(UserFactory(), self)
@@ -175,7 +175,7 @@ class TestEditActTechInfo(TestCase):
 
     def test_edit_act_techinfo_authorized_user_with_rehearsal(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -208,7 +208,7 @@ class TestEditActTechInfo(TestCase):
         context.act.video_choice = '2'
         context.act.save()
         random_performer = PersonaFactory()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -220,7 +220,7 @@ class TestEditActTechInfo(TestCase):
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.show.cue_sheet = "Alternate"
         context.show.save()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -239,7 +239,7 @@ class TestEditActTechInfo(TestCase):
 
     def test_edit_act_techinfo_authorized_user_post_empty_form(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -254,7 +254,7 @@ class TestEditActTechInfo(TestCase):
         context.act.video_choice = '2'
         context.act.save()
         random_performer = PersonaFactory()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -294,7 +294,7 @@ class TestEditActTechInfo(TestCase):
         another_rehearsal = context._schedule_rehearsal(context.sched_event)
         ShowFactory(e_title=context.show.e_title)
 
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -314,7 +314,7 @@ class TestEditActTechInfo(TestCase):
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.show.cue_sheet = "None"
         context.show.save()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -330,7 +330,7 @@ class TestEditActTechInfo(TestCase):
         context = ActTechInfoContext(schedule_rehearsal=False)
         context.show.cue_sheet = "None"
         context.show.save()
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -346,7 +346,7 @@ class TestEditActTechInfo(TestCase):
     def test_edit_act_techinfo_authorized_user_rehearsal_not_set(self):
         context = ActTechInfoContext(schedule_rehearsal=False)
         another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -369,7 +369,7 @@ class TestEditActTechInfo(TestCase):
     def test_edit_act_techinfo_authorized_user_cues_not_set(self):
         context = ActTechInfoContext(schedule_rehearsal=False)
         another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -401,7 +401,7 @@ class TestEditActTechInfo(TestCase):
     def test_edit_act_techinfo_form_invalid(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
@@ -426,7 +426,7 @@ class TestEditActTechInfo(TestCase):
         context.rehearsal.save()
 
         another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse('act_techinfo_edit',
+        url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)

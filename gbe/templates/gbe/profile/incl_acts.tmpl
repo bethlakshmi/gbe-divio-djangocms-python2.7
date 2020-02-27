@@ -1,3 +1,4 @@
+
 <div class='act_section'>
 {% if acts %}
     <span class='heading acts'>
@@ -12,7 +13,7 @@
               <a href = '{% url 'gbe:act_view' act.id %}'>View</a> act
             </li>
             {% if act.get_accepted_display == 'Accepted' and not historical %} 
-	    <li> <a href = '{% url 'gbe:act_techinfo_edit' act.id %}'>View/edit</a> 
+	    <li> <a href = '{% url 'gbe:act_tech_wizard' act.id %}'>View/edit</a> 
 		      Act Tech Info and rehearsal schedule
             </li>
             {% endif %}
