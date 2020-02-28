@@ -27,6 +27,7 @@ from gbetext import (
     default_act_tech_basic_submit,
     default_basic_acttech_instruct,
     default_rehearsal_booked,
+    default_rehearsal_acttech_instruct,
 )
 from scheduler.idd import (
     get_occurrences,
@@ -45,7 +46,8 @@ class ActTechWizardView(View):
     permissions = ('Tech Crew', )
     default_event_type = None
     page_title = 'Edit Act Technical Information'
-    first_title = 'Rehearsal and Basic Information'
+    first_title = 'Set Rehearsal Time'
+    second_title = 'Provide Technical Information'
 
     def set_rehearsal_forms(self, request=None):
         rehearsal_forms = []
@@ -121,17 +123,24 @@ class ActTechWizardView(View):
                 defaults={
                     'summary': "Basic Instructions",
                     'description': default_basic_acttech_instruct})
+        rehearsal_instruct = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="REHEARSAL_INSTRUCTIONS",
+                defaults={
+                    'summary': "Rehearsal Instructions",
+                    'description': default_rehearsal_acttech_instruct})
         if not rehearsal_forms:
-            basics = self.set_rehearsal_forms()
-        else:
-            basics = rehearsal_forms
-        basics += [basic_form]
+            rehearsal_forms = self.set_rehearsal_forms()
+
         context = {'act': self.act,
                    'shows': self.shows,
-                   'basic_forms': basics,
+                   'rehearsal_forms': rehearsal_forms,
+                   'second_form': [basic_form],
                    'page_title': self.page_title,
                    'first_title': self.first_title,
-                   'basic_instructions': basic_instructions[0].description}
+                   'second_title': self.second_title,
+                   'basic_instructions': basic_instructions[0].description,
+                   'rehearsal_instructions': rehearsal_instruct[0].description}
         return context
 
     def groundwork(self, request, args, kwargs):

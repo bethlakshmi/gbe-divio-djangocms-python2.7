@@ -506,8 +506,10 @@ default_update_profile_msg = "Your profile has been updated."
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
-default_basic_acttech_instruct = '''Reserve your rehearsal slot early and \
-give us the basics about your act.  The rest can be completed later.'''
+default_basic_acttech_instruct = '''These are the basic details our crew \
+needs for lighting, playing audio, and making sure the stage is set.'''
+default_rehearsal_acttech_instruct = '''Reserve your rehearsal slot early.  \
+technical details about your act can be added later.'''
 default_rehearsal_booked = '''Rehearsal is booked.'''
 default_act_tech_basic_submit = "Your basic act tech details have been \
 submitted.  Stay tuned, later on you\'ll be asked for further information."

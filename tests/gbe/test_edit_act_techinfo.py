@@ -40,7 +40,6 @@ class TestEditActTechInfo(TestCase):
             'lighting_info-specific_needs': 'lighting specific needs',
             'audio_info-track_title': 'track title',
             'audio_info-track_artist': 'artist',
-            'audio_info-track_duration': '00:03:30',
             'audio_info-need_mic': 'checked',
             'audio_info-own_mic': 'checked',
             'audio_info-notes': 'audio notes',
@@ -434,7 +433,7 @@ class TestEditActTechInfo(TestCase):
             another_rehearsal,
             context.show).copy()
         data.update(self.get_cues(context.act.tech, 3, False))
-        data['audio_info-track_duration'] = 3.3
+        data['audio_info-act_duration'] = 3.3
         response = self.client.post(
             url,
             data=data)

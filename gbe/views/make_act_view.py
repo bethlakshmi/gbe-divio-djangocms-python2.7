@@ -9,8 +9,10 @@ from gbe.ticketing_idd_interface import (
 )
 from gbe.models import (
     Act,
+    AudioInfo,
     LightingInfo,
     Performer,
+    StageInfo,
     TechInfo,
 )
 from gbe.forms import (
@@ -22,6 +24,7 @@ from gbetext import (
     default_act_draft_msg,
 )
 from gbe.views.act_display_functions import display_invalid_act
+import datetime
 
 
 class MakeActView(MakeBidView):
@@ -108,7 +111,15 @@ class MakeActView(MakeBidView):
             techinfo = TechInfo()
             lightinginfo = LightingInfo()
             lightinginfo.save()
+            audioinfo = AudioInfo.objects.create(
+                track_duration=datetime.timedelta(seconds=1))
+            audioinfo.save()
+            stageinfo = StageInfo(
+                act_duration=datetime.timedelta(seconds=1))
+            stageinfo.save()
             techinfo.lighting = lightinginfo
+            techinfo.audio = audioinfo
+            techinfo.stage = stageinfo
         else:
             techinfo = self.bid_object.tech
 

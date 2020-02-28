@@ -45,6 +45,7 @@ class SummerActDraftForm(ActEditDraftForm):
         help_text=summer_help_texts['act_duration']
     )
 
+
 class SummerActForm(SummerActDraftForm):
     shows_preferences = MultipleChoiceField(
         widget=CheckboxSelectMultiple,

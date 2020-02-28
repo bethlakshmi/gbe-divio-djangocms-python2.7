@@ -90,14 +90,13 @@ class TestCreateAct(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_bid_act_get_with_persona(self):
-        '''act_bid, when profile has no personae,
-        should redirect to persona_create'''
+        '''act_bid, when profile has a personae'''
         profile = PersonaFactory().performer_profile
         url = reverse(self.view_name, urlconf='gbe.urls')
         login_as(profile, self)
         response = self.client.get(url)
         expected_string = "Propose an Act"
-        self.assertContains(response.content, expected_string)
+        self.assertContains(response, expected_string)
 
     def test_act_bid_post_no_performer(self):
         '''act_bid, user has no performer, should redirect to persona_create'''

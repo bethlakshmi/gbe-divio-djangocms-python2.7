@@ -7,11 +7,20 @@
 <p><b>Submitted Description: </b>{{act.b_description}}</p>
 {% endblock %}
 {% block first_form %}
+<p>{{ rehearsal_instructions }}</p>
+<form action="" method="post" enctype="multipart/form-data">
+{% include "form_table_wrapper.tmpl" with forms=rehearsal_forms %}
+  <div class="form-row pull-right">
+  <input type="submit" name="book" value="Book Rehearsal">
+  </div>
+</form>
+{% endblock %}
+{% block second_form %}
 <p>{{ basic_instructions }}</p>
 <form action="" method="post" enctype="multipart/form-data">
-{% include "form_table_wrapper.tmpl" with forms=basic_forms %}
+{% include "form_table_wrapper.tmpl" with forms=second_form %}
   <div class="form-row pull-right">
-  <input type="submit" name="submit" value="Book Rehearsal & Save Basics">
+  <input type="submit" name="submit" value="Submit">
   </div>
 </form>
 {% endblock %}
