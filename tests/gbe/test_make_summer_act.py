@@ -20,7 +20,7 @@ from gbe.models import (
 )
 
 
-class TestCreateAct(TestCase):
+class TestSummerAct(TestCase):
     '''Tests for create_act view'''
     create_name = 'summer_act_create'
     edit_name = 'summer_act_edit'

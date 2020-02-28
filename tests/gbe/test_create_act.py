@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import RequestFactory
@@ -98,8 +97,7 @@ class TestCreateAct(TestCase):
         login_as(profile, self)
         response = self.client.get(url)
         expected_string = "Propose an Act"
-        nt.assert_true(expected_string in response.content)
-        nt.assert_equal(response.status_code, 200)
+        self.assertContains(response.content, expected_string)
 
     def test_act_bid_post_no_performer(self):
         '''act_bid, user has no performer, should redirect to persona_create'''

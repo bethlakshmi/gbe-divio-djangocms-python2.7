@@ -224,15 +224,14 @@ class TechInfo(Model):
 
     @property
     def is_complete(self):
-        try:
-            CueInfo.objects.get(techinfo=self, cue_sequence=0)
-            cueinfopresent = True
-        except CueInfo.DoesNotExist:
-            cueinfopresent = False
-        return bool(self.audio.is_complete and
-                    self.lighting.is_complete and
-                    self.stage.is_complete and
-                    cueinfopresent)
+        return bool(self.duration and
+                    self.prop_setup and
+                    self.follow_spot and
+                    self.starting_position and
+                    self.primary_color and
+                    self.feel_of_act and
+                    self.pronouns and
+                    self.introduction_text)
 
     def get_incomplete_warnings(self):
         warnings = {}

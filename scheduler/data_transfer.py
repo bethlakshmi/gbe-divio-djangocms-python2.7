@@ -59,6 +59,7 @@ class BookableAct(object):
         if label:
             self.label = label
 
+
 class ScheduleItem(object):
     def __init__(self,
                  user=None,

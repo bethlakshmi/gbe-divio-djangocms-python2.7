@@ -16,7 +16,6 @@ from gbe.models import (
 from gbe.forms import (
     ActEditDraftForm,
     ActEditForm,
-    BasicActTechForm,
 )
 from gbetext import (
     default_act_submit_msg,
@@ -104,13 +103,6 @@ class MakeActView(MakeBidView):
         context['fee_link'] = self.fee_link
         return context
 
-    def check_validity(self, request):
-        self.techform = BasicActTechForm(request.POST, prefix='theact')
-        if hasattr(self.bid_object, 'tech'):
-            self.techform.instance = self.bid_object.tech
-        return all([self.form.is_valid(),
-                    self.techform.is_valid()])
-
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):
             techinfo = TechInfo()
@@ -120,7 +112,10 @@ class MakeActView(MakeBidView):
         else:
             techinfo = self.bid_object.tech
 
-        techinfo = self.techform.save()
+        techinfo.duration = self.form.cleaned_data['act_duration']
+        techinfo.track_title = self.form.cleaned_data['track_title']
+        techinfo.track_artist = self.form.cleaned_data['track_artist']
+        techinfo.save()
         self.bid_object.tech = techinfo
         self.bid_object.submitted = False
         self.bid_object.accepted = False

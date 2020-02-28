@@ -44,12 +44,6 @@ class SummerActDraftForm(ActEditDraftForm):
         required=False,
         help_text=summer_help_texts['act_duration']
     )
-    track_duration = DurationFormField(
-        required=False,
-        help_text=summer_help_texts['track_duration'],
-        label=act_bid_labels['track_duration']
-    )
-
 
 class SummerActForm(SummerActDraftForm):
     shows_preferences = MultipleChoiceField(

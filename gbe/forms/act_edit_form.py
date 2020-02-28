@@ -80,7 +80,7 @@ class ActEditDraftForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ActEditDraftForm, self).__init__(*args, **kwargs)
         if self.instance:
-            obj_data = self.instance.__dict__ 
+            obj_data = self.instance.__dict__
             if obj_data['shows_preferences']:
                 self.initial['shows_preferences'] = jsonify(
                     obj_data['shows_preferences'])

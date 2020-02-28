@@ -1,7 +1,9 @@
 from django.forms import (
+    CharField,
     ChoiceField,
     ModelForm,
     MultipleChoiceField,
+    Textarea,
     TypedChoiceField,
 )
 from gbe_forms_text import (
@@ -12,6 +14,7 @@ from gbe_forms_text import (
 )
 from gbe.models import TechInfo
 from django.forms.widgets import CheckboxSelectMultiple
+
 
 class BasicActTechForm(ModelForm):
     required_css_class = 'required'
@@ -27,6 +30,19 @@ class BasicActTechForm(ModelForm):
         )
     follow_spot = TypedChoiceField(
         choices=((False, 'No'), (True, 'Yes')))
+    primary_color = CharField(label=tech_labels['primary_color'],
+                              required=True)
+    feel_of_act = CharField(label=tech_labels['feel_of_act'],
+                            help_text=tech_help_texts['feel_of_act'],
+                            required=True,
+                            widget=Textarea)
+    pronouns = CharField(label=tech_labels['pronouns'],
+                         required=True)
+    introduction_text = CharField(
+      label=tech_labels['introduction_text'],
+      help_text=tech_help_texts['introduction_text'],
+      required=True,
+      widget=Textarea)
 
     class Meta:
         model = TechInfo

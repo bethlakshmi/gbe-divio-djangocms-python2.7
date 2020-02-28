@@ -63,13 +63,13 @@ class ActTechWizardView(View):
             for event in response.occurrences:
                 if (show.pk in self.rehearsals) and (
                         event == self.rehearsals[show.pk].event):
-                    choices += [(event.pk, 
+                    choices += [(event.pk,
                                  date_format(event.starttime, "TIME_FORMAT"))]
                     initial = {
                         'rehearsal': event.pk,
                         'booking_id': self.rehearsals[show.pk].booking_id}
                 elif event.has_act_opening():
-                    choices += [(event.pk, 
+                    choices += [(event.pk,
                                  date_format(event.starttime, "TIME_FORMAT"))]
             if request:
                 rehearsal_form = BasicRehearsalForm(
@@ -181,7 +181,7 @@ class ActTechWizardView(View):
                             'description': default_rehearsal_booked})
                     messages.success(
                         request,
-                        "%s  Rehearsal Name:  %s, Start Time: %s" %(
+                        "%s  Rehearsal Name:  %s, Start Time: %s" % (
                             rehearsal_success[0].description,
                             str(occurrence),
                             occurrence.starttime.strftime(GBE_DATETIME_FORMAT)

@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 def centralize_techinfo(apps, schema_editor):
     # We can't import the Person model directly as it may be a newer
     # version than this migration expects. We use the historical version.
@@ -16,6 +17,7 @@ def centralize_techinfo(apps, schema_editor):
         techinfo.introduction_text = techinfo.stage.intro_text
         techinfo.crew_instruct = techinfo.stage.notes
         techinfo.save()
+
 
 def decentralize_techinfo(apps, schema_editor):
     # We can't import the Person model directly as it may be a newer
@@ -31,6 +33,7 @@ def decentralize_techinfo(apps, schema_editor):
         techinfo.audio.save()
         techinfo.stage.save()
         techinfo.lighting.save()
+
 
 class Migration(migrations.Migration):
 

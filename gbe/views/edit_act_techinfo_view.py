@@ -163,7 +163,7 @@ def EditActTechInfoView(request, act_id):
             for f in techforms:
                 f.save()
             call_command('sync_audio_downloads',
-                 unsync_all=True)
+                         unsync_all=True)
         tech = act.tech
         if forms_valid and tech.is_complete and not cue_fail:
             user_message = UserMessage.objects.get_or_create(
@@ -196,7 +196,7 @@ def EditActTechInfoView(request, act_id):
                                         instance=audio_info)
         lightingform = LightingInfoForm(prefix='lighting_info',
                                         instance=lighting_info)
-        techforms = [lightingform, audioform ]
+        techforms = [lightingform, audioform]
 
         form_data = {'readonlyform': [form],
                      'rehearsal_forms': rehearsal_forms,
