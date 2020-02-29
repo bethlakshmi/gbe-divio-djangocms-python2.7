@@ -19,7 +19,6 @@ from gbe.models import (
 )
 from gbetext import (
     acceptance_states,
-    act_alerts,
     act_not_unique,
     video_options,
 )

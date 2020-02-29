@@ -131,11 +131,13 @@ class ActTechWizardView(View):
                     'description': default_rehearsal_acttech_instruct})
         if not rehearsal_forms:
             rehearsal_forms = self.set_rehearsal_forms()
-
+        if basic_form:
+            self.first_title = "Change Rehearsal"
         context = {'act': self.act,
                    'shows': self.shows,
+                   'rehearsals': self.rehearsals,
                    'rehearsal_forms': rehearsal_forms,
-                   'second_form': [basic_form],
+                   'second_form': basic_form,
                    'page_title': self.page_title,
                    'first_title': self.first_title,
                    'second_title': self.second_title,
@@ -168,19 +170,34 @@ class ActTechWizardView(View):
                 show_key = item.event.container_event.parent_event.pk
                 self.rehearsals[show_key] = item
 
+    def rehearsal_booked(self):
+        all_booked = True
+        for show in self.shows:
+            if show.pk not in self.rehearsals:
+                all_booked = False
+        return all_booked
+
+    def get_prop_initial(self):
+        if len(self.act.tech.prop_setup.strip()) > 0:
+            prop_initial = eval(self.act.tech.prop_setup)
+        else:
+            prop_initial = []
+        return prop_initial
+
     @never_cache
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
+        basic_form = None
+        rehearsal_forms = None
         error = self.groundwork(request, args, kwargs)
         if error:
             return error
-        basic_form = BasicActTechForm(request.POST,
-                                      instance=self.act.tech)
-        if basic_form.is_valid():
+
+        if ('book' in request.POST.keys()) or (
+                'book_continue' in request.POST.keys()):
             error, bookings, rehearsal_forms, request = self.book_rehearsals(
                 request)
             if not error:
-                basic_form.save()
                 for occurrence in bookings:
                     rehearsal_success = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
@@ -195,6 +212,18 @@ class ActTechWizardView(View):
                             str(occurrence),
                             occurrence.starttime.strftime(GBE_DATETIME_FORMAT)
                             ))
+                if 'book_continue' in request.POST.keys():
+                    basic_form = BasicActTechForm(
+                        instance=self.act.tech, initial={
+                            'prop_setup': self.get_prop_initial()})
+                else:
+                    return HttpResponseRedirect(
+                        reverse('home', urlconf='gbe.urls'))
+        else:
+            basic_form = BasicActTechForm(request.POST,
+                                          instance=self.act.tech)
+            if basic_form.is_valid():
+                basic_form.save()
                 success = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="ACT_TECH_BASIC_SUMBITTED",
@@ -215,12 +244,11 @@ class ActTechWizardView(View):
         error = self.groundwork(request, args, kwargs)
         if error:
             return error
-        if len(self.act.tech.prop_setup.strip()) > 0:
-            prop_initial = eval(self.act.tech.prop_setup)
-        else:
-            prop_initial = []
-        basic_form = BasicActTechForm(instance=self.act.tech, initial={
-            'prop_setup': prop_initial})
+
+        basic_form = None
+        if self.rehearsal_booked():
+            basic_form = BasicActTechForm(instance=self.act.tech, initial={
+                'prop_setup': self.get_prop_initial()})
         return render(request, self.template, self.make_context(basic_form))
 
     @method_decorator(login_required)

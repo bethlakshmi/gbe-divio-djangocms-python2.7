@@ -226,7 +226,6 @@ class TechInfo(Model):
     def is_complete(self):
         return bool(self.duration and
                     self.prop_setup and
-                    self.follow_spot and
                     self.starting_position and
                     self.primary_color and
                     self.feel_of_act and
