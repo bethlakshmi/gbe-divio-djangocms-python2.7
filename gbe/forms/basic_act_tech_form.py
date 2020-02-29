@@ -30,6 +30,9 @@ class BasicActTechForm(ModelForm):
         )
     follow_spot = TypedChoiceField(
         choices=((False, 'No'), (True, 'Yes')))
+    confirm_no_music = TypedChoiceField(
+        choices=((False, 'Yes, I will upload an audio track'),
+                 (True, 'No, I will not need an audio track')))
     primary_color = CharField(label=tech_labels['primary_color'],
                               required=True)
     feel_of_act = CharField(label=tech_labels['feel_of_act'],
@@ -50,6 +53,8 @@ class BasicActTechForm(ModelForm):
         help_texts = tech_help_texts
         fields = ['track_title',
                   'track_artist',
+                  'track',
+                  'confirm_no_music',
                   'duration',
                   'prop_setup',
                   'crew_instruct',

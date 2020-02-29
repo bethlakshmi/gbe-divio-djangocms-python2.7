@@ -221,6 +221,7 @@ class ActTechWizardView(View):
                         reverse('home', urlconf='gbe.urls'))
         else:
             basic_form = BasicActTechForm(request.POST,
+                                          request.FILES,
                                           instance=self.act.tech)
             if basic_form.is_valid():
                 basic_form.save()

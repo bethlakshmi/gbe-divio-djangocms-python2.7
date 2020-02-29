@@ -211,6 +211,8 @@ class TechInfo(Model):
     secondary_color = CharField(max_length=128, blank=True)
     follow_spot = BooleanField(default=False)
     starting_position = CharField(max_length=128, blank=True)
+    track = FileField(upload_to='uploads/audio', blank=True)
+    confirm_no_music = BooleanField(default=False)
 
     def clone(self):
         ti = TechInfo()
