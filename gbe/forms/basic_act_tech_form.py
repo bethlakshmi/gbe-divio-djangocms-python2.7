@@ -14,6 +14,7 @@ from gbe_forms_text import (
 )
 from gbe.models import TechInfo
 from django.forms.widgets import CheckboxSelectMultiple
+from django.core.exceptions import ValidationError
 
 
 class BasicActTechForm(ModelForm):
@@ -31,8 +32,9 @@ class BasicActTechForm(ModelForm):
     follow_spot = TypedChoiceField(
         choices=((False, 'No'), (True, 'Yes')))
     confirm_no_music = TypedChoiceField(
-        choices=((False, 'Yes, I will upload an audio track'),
-                 (True, 'No, I will not need an audio track')))
+        choices=((0, 'Yes, I will upload an audio track'),
+                 (1, 'No, I will not need an audio track')),
+        coerce=int)
     primary_color = CharField(label=tech_labels['primary_color'],
                               required=True)
     feel_of_act = CharField(label=tech_labels['feel_of_act'],
@@ -66,3 +68,23 @@ class BasicActTechForm(ModelForm):
                   'secondary_color',
                   'follow_spot',
                   'starting_position']
+
+    def clean(self):
+        # run the parent validation first
+        cleaned_data = super(BasicActTechForm, self).clean()
+
+        # doing is_complete doesn't work, that executes the pre-existing
+        # instance, not the current data
+
+        if not (cleaned_data.get("confirm_no_music") or (
+                cleaned_data.get("track_title") and 
+                cleaned_data.get("track_title") and 
+                cleaned_data.get("track"))):
+            error = ValidationError((
+                'Incomplete Audio Info - please either provide Track ' \
+                'Title, Artist and the audio file, or confirm that ' \
+                'there is no music.'),
+                code='invalid')
+            self.add_error('confirm_no_music', error)
+
+        return cleaned_data

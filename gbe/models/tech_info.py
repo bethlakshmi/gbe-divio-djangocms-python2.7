@@ -226,12 +226,17 @@ class TechInfo(Model):
 
     @property
     def is_complete(self):
+        audio_complete = (self.confirm_no_music or
+                          (self.track_title and
+                           self.track_artist and
+                           self.track))
         return bool(self.duration and
                     self.prop_setup and
                     self.starting_position and
                     self.primary_color and
                     self.feel_of_act and
                     self.pronouns and
+                    audio_complete and 
                     self.introduction_text)
 
     def get_incomplete_warnings(self):
