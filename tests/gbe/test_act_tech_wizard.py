@@ -26,7 +26,7 @@ from scheduler.models import (
 from gbe.models import UserMessage
 from gbetext import default_update_act_tech
 from django.utils.formats import date_format
-
+from settings import GBE_DATETIME_FORMAT
 
 class TestActTechWizard(TestCase):
     '''Tests for edit_act_techinfo view'''
@@ -156,26 +156,16 @@ class TestActTechWizard(TestCase):
         self.assertEqual(403, response.status_code)
 
     def test_edit_act_techinfo_authorized_user(self):
-        context = ShowContext()
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.acts[0].pk])
-        login_as(context.acts[0].performer.contact, self)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response, 
-            "Technical Info for %s" % context.acts[0].b_title)
-
-'''
-    def test_edit_act_techinfo_wrong_profile(self):
         context = ActTechInfoContext()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
-        login_as(ProfileFactory(), self)
+        login_as(context.performer.contact, self)
         response = self.client.get(url)
-        self.assertTrue(400 <= response.status_code < 500)
+        self.assertContains(
+            response, 
+            "Technical Info for %s" % context.act.b_title)
+        self.assertContains(response, "Booked for: %s" % context.show.e_title)
 
     def test_edit_act_techinfo_no_profile(self):
         context = ActTechInfoContext()
@@ -188,6 +178,22 @@ class TestActTechWizard(TestCase):
                              reverse("profile_update",
                                      urlconf="gbe.urls"))
 
+    def test_edit_act_techinfo_rehearsal_ready(self):
+        context = ActTechInfoContext()
+        rehearsal = context._schedule_rehearsal(context.sched_event)
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        response = self.client.get(url)
+        print response.content
+        self.assertContains(response, "Set Rehearsal Time")
+        assert_option_state(
+            response,
+            str(rehearsal.id),
+            date_format(rehearsal.starttime, "TIME_FORMAT"))
+        self.assertNotContains(response, "Provide Technical Information")
+
     def test_edit_act_techinfo_authorized_user_with_rehearsal(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         url = reverse(self.view_name,
@@ -195,27 +201,22 @@ class TestActTechWizard(TestCase):
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue("Cue Sheet Instructions" in response.content)
-        self.assertContains(
-            response,
-            '<tr class="bid-table">\n' +
-            '    <th class="bid-table">Cue #</th>\n' +
-            '    <th class="bid-table">Cue Off of...</th>\n' +
-            '    <th class="bid-table">Follow spot</th>\n' +
-            '    <th class="bid-table">Backlight</th>\n' +
-            '    <th class="bid-table">Center Spot</th>\n' +
-            '    <th class="bid-table">Cyc Light</th>\n' +
-            '    <th class="bid-table">Wash</th>\n' +
-            '    <th class="bid-table">Sound</th>\n' +
-            '  </tr>')
+        self.assertContains(response, "Change Rehearsal")
         assert_option_state(
             response,
             str(context.rehearsal.id),
-            "%s: %s" % (context.rehearsal.as_subtype.e_title,
-                        date_format(context.rehearsal.starttime,
-                                    "TIME_FORMAT")), True)
+            date_format(context.rehearsal.starttime, "TIME_FORMAT"),
+            True)
+        self.assertContains(response, "Provide Technical Information")
+        self.assertContains(response, context.act.tech.track_artist)
+        self.assertContains(response, context.act.tech.track_title)
+        self.assertContains(
+            response, 
+            "Current Rehearsal Reservation: %s, at %s" % (
+                str(context.rehearsal),
+                context.rehearsal.starttime.strftime(GBE_DATETIME_FORMAT)))
 
+'''
     def test_edit_act_techinfo_good_readonly_on_get(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.act.b_description = "Describe the act here"
