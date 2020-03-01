@@ -161,6 +161,9 @@ class TechInfoFactory(DjangoModelFactory):
     audio = SubFactory(AudioInfoFactory)
     lighting = SubFactory(LightingInfoFactory)
     stage = SubFactory(StageInfoFactory)
+    track_title = Sequence(lambda n: 'Test Track Title %d' % n)
+    track_artist = Sequence(lambda n: 'Test Track Artist %d' % n)
+    duration = Duration(minutes=5)
 
 
 class CueInfoFactory(DjangoModelFactory):
