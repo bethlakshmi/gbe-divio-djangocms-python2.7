@@ -177,6 +177,24 @@ class TestActTechWizard(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', success_msg)
 
+    def test_book_bad_rehearsal(self):
+        context = ActTechInfoContext()
+        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
+            hours=1)
+        extra_rehearsal.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = {'book': "Book Rehearsal"}
+        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk + 5
+        response = self.client.post(url, data, follow=True)
+        self.assertNotContains(response, default_rehearsal_booked)
+        self.assertContains(response, "Select a valid choice.")
+        self.assertContains(response, "Set Rehearsal Time")
+        self.assertNotContains(response, "Provide Technical Information")
+
     def test_book_rehearsal_and_continue(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.act.tech.prop_setup = "[u'I have props I will need set " + \
