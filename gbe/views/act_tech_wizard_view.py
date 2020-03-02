@@ -36,7 +36,10 @@ from scheduler.idd import (
     set_act,
 )
 from gbe.scheduling.views.functions import show_general_status
-from scheduler.data_transfer import BookableAct
+from scheduler.data_transfer import (
+    BookableAct,
+    ScheduleItem,
+)
 from django.contrib import messages
 from settings import GBE_DATETIME_FORMAT
 
@@ -114,6 +117,9 @@ class ActTechWizardView(View):
                 error = True
             if response.occurrence:
                 bookings += [response.occurrence]
+                self.rehearsals[int(rehearsal_form.prefix)] = ScheduleItem(
+                    event=response.occurrence,
+                    booking_id=response.booking_id)
         return error, bookings, forms, request
 
     def make_context(self, basic_form, rehearsal_forms=None):

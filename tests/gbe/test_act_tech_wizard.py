@@ -1,32 +1,25 @@
 from django.core.urlresolvers import reverse
+from django.core.files import File
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
-    ActFactory,
     PersonaFactory,
-    ProfileFactory,
-    ShowFactory,
     UserFactory,
-    UserMessageFactory
 )
-from tests.contexts import (
-    ActTechInfoContext,
-    ShowContext,
-)
+from tests.contexts import ActTechInfoContext
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_option_state,
     login_as,
-    is_login_page,
-    location
 )
-from scheduler.models import (
-    Event as sEvent,
+from gbetext import (
+    default_act_tech_basic_submit,
+    default_rehearsal_booked,
 )
-from gbe.models import UserMessage
-from gbetext import default_update_act_tech
 from django.utils.formats import date_format
 from settings import GBE_DATETIME_FORMAT
+from datetime import timedelta
+
 
 class TestActTechWizard(TestCase):
     '''Tests for edit_act_techinfo view'''
@@ -35,115 +28,43 @@ class TestActTechWizard(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def get_full_post(self, rehearsal, show):
+    def get_full_post(self, file=None):
         data = {
-            'show': show.e_title,
-            'lighting_info-notes': 'lighting notes',
-            'lighting_info-costume': 'costume description',
-            'lighting_info-specific_needs': 'lighting specific needs',
-            'audio_info-track_title': 'track title',
-            'audio_info-track_artist': 'artist',
-            'audio_info-need_mic': 'checked',
-            'audio_info-own_mic': 'checked',
-            'audio_info-notes': 'audio notes',
-            'audio_info-confirm_no_music': 'checked',
-            'stage_info-act_duration': '00:04:10',
-            'stage_info-intro_text': 'intro act',
-            'stage_info-set_props': 'checked',
-            'stage_info-clear_props': 'checked',
-            'stage_info-notes': 'notes',
-            'stage_info-set_props': 'checked',
-            'stage_info-set_props': 'checked',
-            'stage_info-set_props': 'checked'}
-        if rehearsal:
-            data['rehearsal'] = str(rehearsal.pk)
-            data['show_private'] = str(show.eventitem_id)
+            'track_title': 'track title',
+            'track_artist': 'artist',
+            'confirm_no_music': 0,
+            'duration': '00:04:10',
+            'prop_setup': "I will leave props or set pieces on-stage that " + \
+            "will need to be cleared",
+            'crew_instruct': 'Crew Instructions',
+            'introduction_text': 'intro act',
+            'read_exact': True,
+            'pronouns': 'she/her',
+            'feel_of_act': "*I'll* feel your act. Heh.",
+            'primary_color': "Blush",
+            'secondary_color': "Bashful",
+            'follow_spot': True,
+            'starting_position': "Onstage",
+            }
+        if file:
+            data['track'] = file
         return data
 
-    def get_cues(self, techinfo, num_cues, full_set=True):
-        data = {}
-        for x in range(0, num_cues):
-            data['cue' + str(x) + '-cue_sequence'] = str(x),
-            data['cue' + str(x) + '-cue_off_of'] = "Start of music",
-            data['cue' + str(x) + '-follow_spot'] = "Blue",
-            data['cue' + str(x) + '-cyc_color'] = "White",
-            data['cue' + str(x) + '-wash'] = "Blue",
-            data['cue' + str(x) + '-sound_note'] = "sound note",
-            data['cue' + str(x) + '-techinfo'] = str(techinfo.pk),
-            if full_set:
-                data['cue' + str(x) + '-center_spot'] = 'ON',
-                data['cue' + str(x) + '-backlight'] = 'ON',
-        return data
-
-    def check_good_info(self, response, context, random_performer):
-        labels = [
-            ('Name of Act', 'b_title'),
-            ('Description of Act', 'b_description'),
-            ('Performer', 'performer'),
-            ('URL of Video', 'video_link'),
-            ('Video Notes', 'video_choice')
-            ]
-        html_label_format = 'for="id_act_tech_info-%s">' + \
-            '%s:</label>'
-        read_only_data = '         <td class="readonlyform \n' + \
-            '	            form_field \n' + \
-            '		    ">\n' + \
-            '          \n' + \
-            '            \n' + \
-            '              %s\n' + \
-            '            \n' + \
-            '           \n' + \
-            '	 \n' + \
-            '         </td>\n'
-
-        choice_html = '<li>%s</li>'
-        performer_choice = '</ul>%s<ul>'
-        for label, field_name in labels:
-            self.assertContains(
-                response,
-                html_label_format % (field_name, label)
-                )
+    def check_second_stage(self, response, artist, title, selected_rehearsal):
+        self.assertContains(response, "Change Rehearsal")
+        assert_option_state(
+            response,
+            str(selected_rehearsal.id),
+            date_format(selected_rehearsal.starttime, "TIME_FORMAT"),
+            True)
+        self.assertContains(response, "Provide Technical Information")
+        self.assertContains(response, artist)
+        self.assertContains(response, title)
         self.assertContains(
-            response,
-            read_only_data % context.act.b_title
-        )
-        self.assertContains(
-            response,
-            read_only_data % context.act.b_description
-        )
-        self.assertContains(
-            response,
-            read_only_data % context.act.video_link
-        )
-        self.assertContains(
-            response,
-            choice_html % 'This is video of the act I would like to perform'
-        )
-        self.assertContains(
-            response,
-            performer_choice % str(context.act.performer)
-        )
-        self.assertNotContains(
-            response,
-            str(random_performer)
-        )
-
-    def post_act_tech_info_success(self, num_cues=3):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        data = self.get_full_post(
-            another_rehearsal,
-            context.show).copy()
-        data.update(self.get_cues(context.act.tech, num_cues))
-        response = self.client.post(
-            url,
-            data=data,
-            follow=True)
-        return response, context, another_rehearsal
+            response, 
+            "Current Rehearsal Reservation: %s, at %s" % (
+                str(selected_rehearsal),
+                selected_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT)))
 
     def test_edit_act_techinfo_unauthorized_user(self):
         context = ActTechInfoContext()
@@ -186,7 +107,6 @@ class TestActTechWizard(TestCase):
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
         response = self.client.get(url)
-        print response.content
         self.assertContains(response, "Set Rehearsal Time")
         assert_option_state(
             response,
@@ -201,259 +121,137 @@ class TestActTechWizard(TestCase):
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
         response = self.client.get(url)
-        self.assertContains(response, "Change Rehearsal")
         assert_option_state(
             response,
             str(context.rehearsal.id),
             date_format(context.rehearsal.starttime, "TIME_FORMAT"),
             True)
-        self.assertContains(response, "Provide Technical Information")
-        self.assertContains(response, context.act.tech.track_artist)
-        self.assertContains(response, context.act.tech.track_title)
+        self.check_second_stage(response,
+                                context.act.tech.track_artist,
+                                context.act.tech.track_title,
+                                context.rehearsal)
+
+    def test_edit_act_techinfo_w_prop_settings(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.prop_setup = "[u'I have props I will need set " + \
+        "before my number']"
+        context.act.tech.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        response = self.client.get(url)
+        assert_option_state(
+            response,
+            str(context.rehearsal.id),
+            date_format(context.rehearsal.starttime, "TIME_FORMAT"),
+            True)
+        self.check_second_stage(response,
+                                context.act.tech.track_artist,
+                                context.act.tech.track_title,
+                                context.rehearsal)
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="prop_setup" value="I have props '
+            'I will need set before my number" checked '
+            'id="id_prop_setup_1" />')
+
+    def test_book_rehearsal_and_exit(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
+            hours=1)
+        extra_rehearsal.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = {'book': "Book Rehearsal"}
+        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        response = self.client.post(url, data, follow=True)
+        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
+        success_msg = "%s  Rehearsal Name:  %s, Start Time: %s" % (
+            default_rehearsal_booked,
+            str(extra_rehearsal),
+            extra_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT))
+        assert_alert_exists(
+            response, 'success', 'Success', success_msg)
+
+    def test_book_rehearsal_and_continue(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.prop_setup = "[u'I have props I will need set " + \
+        "before my number']"
+        context.act.tech.save()
+        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
+            hours=1)
+        extra_rehearsal.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = {'book_continue': "Book & Continue"}
+        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        response = self.client.post(url, data)
+        success_msg = "%s  Rehearsal Name:  %s, Start Time: %s" % (
+            default_rehearsal_booked,
+            str(extra_rehearsal),
+            extra_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT))
+        assert_alert_exists(
+            response, 'success', 'Success', success_msg)
+        self.check_second_stage(response, 
+                                context.act.tech.track_artist,
+                                context.act.tech.track_title,
+                                extra_rehearsal)
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="prop_setup" value="I have props '
+            'I will need set before my number" checked '
+            'id="id_prop_setup_1" />')
+
+    def test_edit_act_w_bad_tech_info(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = self.get_full_post()
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.check_second_stage(response, 
+                                data['track_artist'],
+                                data['track_title'],
+                                context.rehearsal)
         self.assertContains(
             response, 
-            "Current Rehearsal Reservation: %s, at %s" % (
-                str(context.rehearsal),
-                context.rehearsal.starttime.strftime(GBE_DATETIME_FORMAT)))
+            'Incomplete Audio Info - please either provide Track ' \
+            'Title, Artist and the audio file, or confirm that ' \
+            'there is no music.')
 
-'''
-    def test_edit_act_techinfo_good_readonly_on_get(self):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        context.act.b_description = "Describe the act here"
-        context.act.video_link = "http://video/link/video.mov"
-        context.act.video_choice = '2'
-        context.act.save()
-        random_performer = PersonaFactory()
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.check_good_info(response, context, random_performer)
-
-    def test_edit_act_techinfo_authorized_user_alt_theater(self):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        context.show.cue_sheet = "Alternate"
-        context.show.save()
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue("Cue Sheet Instructions" in response.content)
-        self.assertContains(
-            response,
-            '  <tr class="bid-table">\n' +
-            '    <th class="bid-table">Cue #</th>\n' +
-            '    <th class="bid-table">Cue Off of...</th>\n' +
-            '    <th class="bid-table">Follow spot</th>\n' +
-            '    <th class="bid-table">Wash</th>\n' +
-            '    <th class="bid-table" >Sound</th>\n' +
-            '  </tr>')
-
-    def test_edit_act_techinfo_authorized_user_post_empty_form(self):
+    def test_edit_act_w_audio_file(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
-        response = self.client.post(url, {})
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue("Cue Sheet Instructions" in response.content)
-
-    def test_edit_act_w_bad_post_makes_good_readonly(self):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        context.act.b_description = "Describe the act here"
-        context.act.video_link = "http://video/link/video.mov"
-        context.act.video_choice = '2'
-        context.act.save()
-        random_performer = PersonaFactory()
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        response = self.client.post(url, {})
-        self.assertEqual(response.status_code, 200)
-        self.check_good_info(response, context, random_performer)
-
-    def test_edit_act_techinfo_authorized_user_post_complete_form(self):
-        response, context, another = self.post_act_tech_info_success()
+        filename = open("tests/gbe/gbe_pagebanner.png", 'r')
+        file = File(filename)
+        data = self.get_full_post(file)
+        response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-        self.assertEqual(len(context.act.get_scheduled_rehearsals()), 1)
-        self.assertEqual(context.act.get_scheduled_rehearsals()[0],
-                         another)
-        self.assertEqual(
-            context.act.tech.cueinfo_set.get(
-                cue_sequence=2).cyc_color,
-            'White')
-
-    def test_edit_act_techinfo_authorized_user_post_one_cue(self):
-        response, context, another = self.post_act_tech_info_success(1)
-        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-        self.assertEqual(len(context.act.get_scheduled_rehearsals()), 1)
-        self.assertEqual(context.act.get_scheduled_rehearsals()[0],
-                         another)
-        self.assertEqual(
-            context.act.tech.cueinfo_set.get(
-                cue_sequence=0).cyc_color,
-            'White')
-
-    def test_edit_act_techinfo_post_two_shows_same_title(self):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        context.show.cue_sheet = "Alternate"
-        context.show.save()
-        context.rehearsal.max_volunteer = 1
-        context.rehearsal.save()
-
-        another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        ShowFactory(e_title=context.show.e_title)
-
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        data = self.get_full_post(
-            another_rehearsal,
-            context.show).copy()
-        data.update(self.get_cues(context.act.tech, 3, False))
-        response = self.client.post(
-            url,
-            data=data)
-        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-        self.assertEqual(len(context.act.get_scheduled_rehearsals()), 1)
-        self.assertEqual(context.act.get_scheduled_rehearsals()[0],
-                         another_rehearsal)
-
-    def test_edit_act_techinfo_authorized_user_get_none_theater(self):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        context.show.cue_sheet = "None"
-        context.show.save()
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse("Cue Sheet Instructions" in response.content)
-        self.assertNotContains(
-            response,
-            '  <tr class="bid-table">\n' +
-            '    <th class="bid-table">Cue #</th>\n')
-
-    def test_edit_act_techinfo_post_complete_no_cues_no_rehearsal(self):
-        context = ActTechInfoContext(schedule_rehearsal=False)
-        context.show.cue_sheet = "None"
-        context.show.save()
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        data = self.get_full_post(
-            None,
-            context.show).copy()
-        data.update(self.get_cues(context.act.tech, 3))
-        response = self.client.post(
-            url,
-            data=data)
-        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-
-    def test_edit_act_techinfo_authorized_user_rehearsal_not_set(self):
-        context = ActTechInfoContext(schedule_rehearsal=False)
-        another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        data = self.get_full_post(
-            another_rehearsal,
-            context.show).copy()
-        data.update(self.get_cues(context.act.tech, 3))
-        response = self.client.post(
-            url,
-            data=data)
-        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-        self.assertEqual(len(context.act.get_scheduled_rehearsals()), 1)
-        self.assertEqual(context.act.get_scheduled_rehearsals()[0],
-                         another_rehearsal)
-        self.assertEqual(
-            context.act.tech.cueinfo_set.get(
-                cue_sequence=2).cyc_color,
-            'White')
-
-    def test_edit_act_techinfo_authorized_user_cues_not_set(self):
-        context = ActTechInfoContext(schedule_rehearsal=False)
-        another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        response = self.client.post(
-            url,
-            data=self.get_full_post(
-                another_rehearsal,
-                context.show))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            'Add text if you wish to save information for this cue.')
-
-    def test_edit_act_techinfo_make_message(self):
-        response, context, another = self.post_act_tech_info_success()
-        self.assertEqual(200, response.status_code)
         assert_alert_exists(
-            response, 'success', 'Success', default_update_act_tech)
+            response, 'success', 'Success', default_act_tech_basic_submit)
 
-    def test_edit_act_techinfo_has_message(self):
-        msg = UserMessageFactory(
-            view='EditActTechInfoView',
-            code='UPDATE_ACT_TECH')
-        response, context, another = self.post_act_tech_info_success()
-        self.assertEqual(response.status_code, 200)
+    def test_edit_act_wout_music(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = self.get_full_post()
+        data['confirm_no_music'] = 1
+        response = self.client.post(url, data, follow=True)
+        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
-            response, 'success', 'Success', msg.description)
+            response, 'success', 'Success', default_act_tech_basic_submit)
 
-    def test_edit_act_techinfo_form_invalid(self):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        data = self.get_full_post(
-            another_rehearsal,
-            context.show).copy()
-        data.update(self.get_cues(context.act.tech, 1))
-        data['stage_info-act_duration'] = 'bad no duration'
-        response = self.client.post(
-            url,
-            data=data,
-            follow=True)
-        self.assertContains(
-            response,
-            'Please enter your duration as mm:ss')
-
-    def test_edit_act_techinfo_post_complete_alt_cues_full_rehearsal(self):
-        context = ActTechInfoContext(schedule_rehearsal=True)
-        context.show.cue_sheet = "Alternate"
-        context.show.save()
-        context.rehearsal.max_volunteer = 1
-        context.rehearsal.save()
-
-        another_rehearsal = context._schedule_rehearsal(context.sched_event)
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
-        data = self.get_full_post(
-            another_rehearsal,
-            context.show).copy()
-        data.update(self.get_cues(context.act.tech, 3, False))
-        data['audio_info-act_duration'] = 3.3
-        response = self.client.post(
-            url,
-            data=data)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Please enter your duration as mm:ss")
-'''
