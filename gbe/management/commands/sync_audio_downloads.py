@@ -32,7 +32,6 @@ def add_acts_for_show(show_name, conf_slug, tar):
     workdir = make_safe_filename("%s_%s" % (conf_slug, show_name))
     os.mkdir(workdir)
 
-
     for act in acts:
         if act and act.tech.track:
             fname = os.path.basename(act.tech.track.path)
@@ -42,19 +41,18 @@ def add_acts_for_show(show_name, conf_slug, tar):
     tar.close()
     shutil.rmtree(workdir)
 
+
 class Command(BaseCommand):
     help = 'Synchronize the per-show audio download'
-    audio_directory = os.path.join(settings.MEDIA_ROOT,
-                                       'uploads',
-                                       'audio',)
+    audio_directory = os.path.join(settings.MEDIA_ROOT, 'uploads', 'audio')
 
     downloads_directory = os.path.join(audio_directory,
                                        'downloads')
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--unsync", 
-            action="store_true", 
+            "--unsync",
+            action="store_true",
             dest="unsync",
             default=False,
             help='move a given set of songs to the stale_downloads directory')
@@ -64,14 +62,8 @@ class Command(BaseCommand):
             dest="unsync_all",
             default=False,
             help='move a all sets songs to the stale_downloads directory')
-        parser.add_argument(
-            "--show", 
-            type=str,
-            dest="show_name")
-        parser.add_argument(
-            "--conference", 
-            type=str,
-            dest="conf_slug"),
+        parser.add_argument("--show", type=str, dest="show_name")
+        parser.add_argument("--conference", type=str, dest="conf_slug"),
 
     def create_downloads_directory(self):
         path_parts = ['uploads', 'audio', 'downloads', 'stale_downloads']
@@ -80,7 +72,6 @@ class Command(BaseCommand):
             path = os.path.join(path, part)
             if not os.path.exists(path):
                 os.mkdir(path)
-
 
     def is_synced(self, show_name, conf_slug):
         '''
@@ -92,7 +83,6 @@ class Command(BaseCommand):
         filepath = os.path.join(self.downloads_directory, filename)
         return os.path.exists(filepath)
 
-
     def tarfile_for(self, show_name, conf_slug):
         '''
         return a handle to a suitable tarfile object for this show
@@ -100,7 +90,6 @@ class Command(BaseCommand):
         filename = tarfile_name(show_name, conf_slug)
         path = os.path.join(self.downloads_directory, filename)
         return tarfile.open(path, "w:gz")
-
 
     def sync(self, show_name, conf_slug):
         curr_dir = os.path.realpath(".")
@@ -122,7 +111,6 @@ class Command(BaseCommand):
                                filename)
         os.rename(oldpath, newpath)
 
-
     def unsync_all(self):
         workdir = self.downloads_directory
         destdir = os.path.join(workdir, "stale_downloads")
@@ -131,8 +119,6 @@ class Command(BaseCommand):
                 os.rename(os.path.join(workdir, file),
                           os.path.join(destdir, file))
 
-
-
     def handle(self, *args, **options):
         self.create_downloads_directory()
         show_name = options['show_name']
@@ -140,6 +126,6 @@ class Command(BaseCommand):
         if options['unsync_all']:
             self.unsync_all()
         elif options['unsync']:
-            self.unsync (show_name, conf_slug)
+            self.unsync(show_name, conf_slug)
         else:
-            self.sync (show_name, conf_slug)
+            self.sync(show_name, conf_slug)

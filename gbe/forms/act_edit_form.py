@@ -1,6 +1,7 @@
 from django.forms import (
     CharField,
     CheckboxSelectMultiple,
+    DurationField,
     HiddenInput,
     ModelForm,
     MultipleChoiceField,
@@ -18,16 +19,13 @@ from gbetext import (
     act_other_perf_options,
     act_shows_options,
 )
-from gbe.expoformfields import (
-    DurationFormField,
-)
 from gbe.functions import jsonify
 
 
 class ActEditDraftForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
-    act_duration = DurationFormField(
+    act_duration = DurationField(
         required=False,
         help_text=act_help_texts['act_duration']
     )
@@ -90,7 +88,7 @@ class ActEditDraftForm(ModelForm):
 
 
 class ActEditForm(ActEditDraftForm):
-    act_duration = DurationFormField(
+    act_duration = DurationField(
         required=True,
         help_text=act_help_texts['act_duration']
     )

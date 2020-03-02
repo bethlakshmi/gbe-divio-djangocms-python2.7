@@ -61,6 +61,7 @@ class ResourceItem(models.Model):
     def __unicode__(self):
         return unicode(self.describe)
 
+
 class Resource(models.Model):
     '''
     A person, place, or thing that can be allocated for an event.
@@ -90,6 +91,7 @@ class Resource(models.Model):
             return unicode(allocated_resource)
         else:
             return "Error in resource allocation, no resource"
+
 
 class ActItem(ResourceItem):
     '''
@@ -125,15 +127,6 @@ class ActItem(ResourceItem):
             if resource.show:
                 result += [(resource.show, resource.role)]
         return result
-
-    def get_scheduled_shows(self):
-        '''
-        Returns a list of all shows this act is scheduled to appear in.
-        '''
-        resources = ActResource.objects.filter(_item=self)
-
-        return filter(lambda i: i is not None,
-                      [res.show for res in resources])
 
     def get_scheduled_rehearsals(self):
         '''
@@ -459,16 +452,6 @@ class Event(Schedulable):
     max_volunteer = models.PositiveIntegerField(default=0)
     approval_needed = models.BooleanField(default=False)
 
-    def get_open_rehearsals(self):
-        rehearsals = [
-            ec.child_event
-            for ec in EventContainer.objects.filter(parent_event=self)
-            if (ec.child_event.confitem.type == 'Rehearsal Slot' and
-                ec.child_event.has_act_opening())
-        ]
-        return sorted(rehearsals,
-                      key=lambda sched_event: sched_event.starttime)
-
     def has_act_opening(self):
         '''
         returns True if the count of acts allocated to this event is less than
@@ -667,12 +650,6 @@ class Event(Schedulable):
         return ActResource.objects.filter(
             allocations__event=self,
             _item__act__accepted=3).order_by('_item__act__performer__name')
-
-    def __str__(self):
-        try:
-            return self.eventitem.describe
-        except:
-            return "No Event Item"
 
     def __unicode__(self):
         try:

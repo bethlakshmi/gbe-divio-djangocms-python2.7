@@ -67,14 +67,6 @@ class AudioInfo(Model):
         ai.save()
         return ai
 
-    @property
-    def is_complete(self):
-        return bool(self.confirm_no_music or
-                    (self.track_title and
-                     self.track_artist and
-                     self.track_duration
-                     ))
-
     def __unicode__(self):
         try:
             return "AudioInfo: " + self.techinfo.act.b_title
@@ -105,17 +97,6 @@ class LightingInfo (Model):
     def dump_data(self):
         return [self.notes.encode('utf-8').strip(),
                 self.costume.encode('utf-8').strip()]
-
-    @property
-    def is_complete(self):
-        return True
-
-    @property
-    def incomplete_warnings(self):
-        if self.is_complete:
-            return {}
-        else:
-            return {"lighting": lightinginfo_incomplete_warning}
 
     def __unicode__(self):
         try:
@@ -163,19 +144,6 @@ class StageInfo(Model):
                 self.clear_props,
                 self.notes.encode('utf-8').strip(),
                 ]
-
-    @property
-    def is_complete(self):
-        return bool(self.set_props or
-                    self.clear_props or
-                    self.cue_props or self.confirm)
-
-    @property
-    def incomplete_warnings(self):
-        if self.is_complete:
-            return {}
-        else:
-            return {'stage': stageinfo_incomplete_warning}
 
     def __unicode__(self):
         try:
@@ -238,13 +206,6 @@ class TechInfo(Model):
                     self.pronouns and
                     audio_complete and
                     self.introduction_text)
-
-    def get_incomplete_warnings(self):
-        warnings = {}
-        warnings.update(self.lighting.incomplete_warnings)
-        warnings.update(self.audio.incomplete_warnings)
-        warnings.update(self.stage.incomplete_warnings)
-        return warnings
 
     def __unicode__(self):
         try:

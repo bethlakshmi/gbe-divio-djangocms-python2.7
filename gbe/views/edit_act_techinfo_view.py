@@ -60,8 +60,7 @@ def EditActTechInfoView(request, act_id):
     cue_objects = [CueInfo.objects.get_or_create(techinfo=act.tech,
                                                  cue_sequence=i)[0]
                    for i in range(3)]
-
-    shows = act.get_scheduled_shows()
+    shows = []
     show_detail = get_object_or_404(Show, eventitem_id=shows[0].eventitem.pk)
 
     if show_detail.cue_sheet == 'Theater':
@@ -75,7 +74,6 @@ def EditActTechInfoView(request, act_id):
                            prefix='act_tech_info')
     q = Performer.objects.filter(contact=profile)
     form.fields['performer'] = ModelChoiceField(queryset=q)
-
 
     if request.method == 'POST':
         lightingform = LightingInfoForm(request.POST,
