@@ -236,7 +236,7 @@ class TechInfo(Model):
                     self.primary_color and
                     self.feel_of_act and
                     self.pronouns and
-                    audio_complete and 
+                    audio_complete and
                     self.introduction_text)
 
     def get_incomplete_warnings(self):

@@ -19,6 +19,10 @@ from gbetext import (
 from django.utils.formats import date_format
 from settings import GBE_DATETIME_FORMAT
 from datetime import timedelta
+from scheduler.models import (
+    ActResource,
+    ResourceAllocation,
+)
 
 
 class TestActTechWizard(TestCase):
@@ -34,7 +38,7 @@ class TestActTechWizard(TestCase):
             'track_artist': 'artist',
             'confirm_no_music': 0,
             'duration': '00:04:10',
-            'prop_setup': "I will leave props or set pieces on-stage that " + \
+            'prop_setup': "I will leave props or set pieces on-stage that " +
             "will need to be cleared",
             'crew_instruct': 'Crew Instructions',
             'introduction_text': 'intro act',
@@ -61,7 +65,7 @@ class TestActTechWizard(TestCase):
         self.assertContains(response, artist)
         self.assertContains(response, title)
         self.assertContains(
-            response, 
+            response,
             "Current Rehearsal Reservation: %s, at %s" % (
                 str(selected_rehearsal),
                 selected_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT)))
@@ -84,11 +88,11 @@ class TestActTechWizard(TestCase):
         login_as(context.performer.contact, self)
         response = self.client.get(url)
         self.assertContains(
-            response, 
+            response,
             "Technical Info for %s" % context.act.b_title)
         self.assertContains(response, "Booked for: %s" % context.show.e_title)
 
-    def test_edit_act_techinfo_no_profile(self):
+    def test_get_act_techinfo_no_profile(self):
         context = ActTechInfoContext()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
@@ -96,8 +100,23 @@ class TestActTechWizard(TestCase):
         login_as(UserFactory(), self)
         response = self.client.get(url, follow=True)
         self.assertRedirects(response,
-                             reverse("profile_update",
-                                     urlconf="gbe.urls"))
+                             reverse("profile_update", urlconf="gbe.urls"))
+
+    def test_post_rehearsal_no_profile(self):
+        context = ActTechInfoContext()
+        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
+            hours=1)
+        extra_rehearsal.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        data = {'book': "Book Rehearsal"}
+        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        login_as(UserFactory(), self)
+        response = self.client.post(url, data, follow=True)
+        self.assertRedirects(response,
+                             reverse("profile_update", urlconf="gbe.urls"))
 
     def test_edit_act_techinfo_rehearsal_ready(self):
         context = ActTechInfoContext()
@@ -114,7 +133,7 @@ class TestActTechWizard(TestCase):
             date_format(rehearsal.starttime, "TIME_FORMAT"))
         self.assertNotContains(response, "Provide Technical Information")
 
-    def test_edit_act_techinfo_authorized_user_with_rehearsal(self):
+    def test_edit_act_techinfo_with_rehearsal(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
@@ -130,11 +149,13 @@ class TestActTechWizard(TestCase):
                                 context.act.tech.track_artist,
                                 context.act.tech.track_title,
                                 context.rehearsal)
+        self.assertContains(response,
+                            'name="%d-booking_id"' % context.sched_event.pk)
 
     def test_edit_act_techinfo_w_prop_settings(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.act.tech.prop_setup = "[u'I have props I will need set " + \
-        "before my number']"
+            "before my number']"
         context.act.tech.save()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
@@ -198,7 +219,7 @@ class TestActTechWizard(TestCase):
     def test_book_rehearsal_and_continue(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.act.tech.prop_setup = "[u'I have props I will need set " + \
-        "before my number']"
+            "before my number']"
         context.act.tech.save()
         extra_rehearsal = context._schedule_rehearsal(context.sched_event)
         extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
@@ -210,6 +231,11 @@ class TestActTechWizard(TestCase):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
+        alloc = ResourceAllocation.objects.get(
+            event=context.rehearsal,
+            resource__in=resources)
+        data['%d-booking_id' % context.sched_event.pk] = alloc.pk
         response = self.client.post(url, data)
         success_msg = "%s  Rehearsal Name:  %s, Start Time: %s" % (
             default_rehearsal_booked,
@@ -217,7 +243,9 @@ class TestActTechWizard(TestCase):
             extra_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT))
         assert_alert_exists(
             response, 'success', 'Success', success_msg)
-        self.check_second_stage(response, 
+        self.assertContains(response,
+                            'name="%d-booking_id"' % context.sched_event.pk)
+        self.check_second_stage(response,
                                 context.act.tech.track_artist,
                                 context.act.tech.track_title,
                                 extra_rehearsal)
@@ -226,6 +254,10 @@ class TestActTechWizard(TestCase):
             '<input type="checkbox" name="prop_setup" value="I have props '
             'I will need set before my number" checked '
             'id="id_prop_setup_1" />')
+        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
+        alloc = ResourceAllocation.objects.filter(
+            resource__in=resources)
+        self.assertEqual(alloc.count(), 2)
 
     def test_edit_act_w_bad_tech_info(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -236,14 +268,14 @@ class TestActTechWizard(TestCase):
         data = self.get_full_post()
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
-        self.check_second_stage(response, 
+        self.check_second_stage(response,
                                 data['track_artist'],
                                 data['track_title'],
                                 context.rehearsal)
         self.assertContains(
-            response, 
-            'Incomplete Audio Info - please either provide Track ' \
-            'Title, Artist and the audio file, or confirm that ' \
+            response,
+            'Incomplete Audio Info - please either provide Track '
+            'Title, Artist and the audio file, or confirm that '
             'there is no music.')
 
     def test_edit_act_w_audio_file(self):
@@ -272,4 +304,3 @@ class TestActTechWizard(TestCase):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_act_tech_basic_submit)
-

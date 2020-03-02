@@ -21,7 +21,7 @@ def set_act(occurrence_id=None, act=None):
         except ResourceAllocation.DoesNotExist:
             return BookingResponse(errors=[Error(
                 code="BOOKING_NOT_FOUND",
-                details="Booking id %s not found" % person.booking_id), ])
+                details="Booking id %s not found" % act.booking_id), ])
     else:
         return BookingResponse(errors=[Error(
             code="OCCURRENCE_NOT_FOUND",

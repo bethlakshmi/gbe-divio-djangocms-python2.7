@@ -88,16 +88,12 @@ class Resource(models.Model):
         child = Resource.objects.get_subclass(id=self.id)
         return child
 
-    def __str__(self):
+    def __unicode__(self):
         allocated_resource = Resource.objects.get_subclass(id=self.id)
         if allocated_resource:
-            return str(allocated_resource)
+            return unicode(allocated_resource)
         else:
             return "Error in resource allocation, no resource"
-
-    def __unicode__(self):
-        return self.__str__()
-
 
 class ActItem(ResourceItem):
     '''
