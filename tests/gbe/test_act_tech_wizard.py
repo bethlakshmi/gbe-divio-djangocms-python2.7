@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.core.files import File
 from django.test import TestCase
 from django.test import Client
+from django.db.models import Max
 from tests.factories.gbe_factories import (
     PersonaFactory,
     UserFactory,
@@ -15,6 +16,7 @@ from tests.functions.gbe_functions import (
 from gbetext import (
     default_act_tech_basic_submit,
     default_rehearsal_booked,
+    rehearsal_book_error,
 )
 from django.utils.formats import date_format
 from settings import GBE_DATETIME_FORMAT
@@ -258,6 +260,26 @@ class TestActTechWizard(TestCase):
         alloc = ResourceAllocation.objects.filter(
             resource__in=resources)
         self.assertEqual(alloc.count(), 2)
+
+    def test_bad_booking_id(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.prop_setup = "[u'I have props I will need set " + \
+            "before my number']"
+        context.act.tech.save()
+        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
+            hours=1)
+        extra_rehearsal.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = {'book_continue': "Book & Continue"}
+        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        alloc = ResourceAllocation.objects.aggregate(Max('pk'))['pk__max']+1
+        data['%d-booking_id' % context.sched_event.pk] = alloc
+        response = self.client.post(url, data)
+        self.assertContains(response, rehearsal_book_error)
 
     def test_edit_act_w_bad_tech_info(self):
         context = ActTechInfoContext(schedule_rehearsal=True)

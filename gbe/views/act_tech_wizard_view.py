@@ -4,6 +4,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.utils.formats import date_format
+from django.core.management import call_command
+from django.core.urlresolvers import reverse
 from django.shortcuts import (
     get_object_or_404,
     render,
@@ -12,7 +14,6 @@ from gbe.functions import (
     validate_perms,
     validate_profile,
 )
-from django.core.urlresolvers import reverse
 from gbe.forms import (
     BasicActTechForm,
     BasicRehearsalForm,
@@ -28,6 +29,7 @@ from gbetext import (
     default_basic_acttech_instruct,
     default_rehearsal_booked,
     default_rehearsal_acttech_instruct,
+    rehearsal_book_error,
 )
 from scheduler.idd import (
     get_occurrences,
@@ -112,9 +114,12 @@ class ActTechWizardView(View):
             response = set_act(
                 occurrence_id=rehearsal_form.cleaned_data['rehearsal'],
                 act=bookable)
-            show_general_status(request, response, self.__class__.__name__)
+            # errors are internal, and not OK to show regular user
             if response.errors:
                 error = True
+            else:
+                show_general_status(request, response, self.__class__.__name__)
+
             if response.occurrence:
                 bookings += [response.occurrence]
                 self.rehearsals[int(rehearsal_form.prefix)] = ScheduleItem(
@@ -225,12 +230,21 @@ class ActTechWizardView(View):
                 else:
                     return HttpResponseRedirect(
                         reverse('home', urlconf='gbe.urls'))
+            else:
+                rehearsal_error = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="REHEARSAL_BOOKING_ERROR",
+                    defaults={
+                        'summary': "Rehearsal Booking Error",
+                        'description': rehearsal_book_error})
+                messages.error(request, rehearsal_error[0].description)
         else:
             basic_form = BasicActTechForm(request.POST,
                                           request.FILES,
                                           instance=self.act.tech)
             if basic_form.is_valid():
                 basic_form.save()
+                call_command('sync_audio_downloads', unsync_all=True)
                 success = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="ACT_TECH_BASIC_SUMBITTED",

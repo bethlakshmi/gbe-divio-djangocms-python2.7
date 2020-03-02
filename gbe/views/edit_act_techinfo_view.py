@@ -27,7 +27,6 @@ from gbe.models import (
 from gbe.forms import (
     RehearsalSelectionForm,
     ActTechInfoForm,
-    AudioInfoSubmitForm,
     LightingInfoForm,
     CueInfoForm,
     VendorCueInfoForm,
@@ -102,7 +101,6 @@ def EditActTechInfoView(request, act_id):
     if act.performer.contact != profile:
         validate_perms(request, ('Tech Crew', ))
 
-    audio_info = act.tech.audio
     lighting_info = act.tech.lighting
     cue_objects = [CueInfo.objects.get_or_create(techinfo=act.tech,
                                                  cue_sequence=i)[0]
@@ -134,10 +132,6 @@ def EditActTechInfoView(request, act_id):
                 eventitem_id=request.POST['show_private']
                 ).scheduler_events.first()
             act.set_rehearsal(show, rehearsal)
-        audioform = AudioInfoSubmitForm(request.POST,
-                                        request.FILES,
-                                        prefix='audio_info',
-                                        instance=audio_info)
         lightingform = LightingInfoForm(request.POST,
                                         prefix='lighting_info',
                                         instance=lighting_info)
@@ -154,7 +148,7 @@ def EditActTechInfoView(request, act_id):
                 if f.is_valid():
                     f.save()
 
-        techforms = [lightingform,  audioform]
+        techforms = [lightingform]
 
         forms_valid = True
         for f in techforms:
@@ -192,11 +186,9 @@ def EditActTechInfoView(request, act_id):
                           'gbe/act_techinfo.tmpl',
                           form_data)
     else:
-        audioform = AudioInfoSubmitForm(prefix='audio_info',
-                                        instance=audio_info)
         lightingform = LightingInfoForm(prefix='lighting_info',
                                         instance=lighting_info)
-        techforms = [lightingform, audioform]
+        techforms = [lightingform]
 
         form_data = {'readonlyform': [form],
                      'rehearsal_forms': rehearsal_forms,

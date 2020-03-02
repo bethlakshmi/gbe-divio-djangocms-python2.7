@@ -6,6 +6,7 @@ from scheduler.data_transfer import (
     Person,
     BookingResponse,
     Warning,
+    Error,
 )
 from datetime import datetime, timedelta
 from model_utils.managers import InheritanceManager
@@ -626,7 +627,7 @@ class Event(Schedulable):
     def allocate_act(self, act):
         '''
         allocated worker for the new model - right now, focused on create
-        uses the Person from the data_transfer objects.
+        uses the BookableAct from the data_transfer objects.
         '''
         warnings = []
         time_format = GBE_DATETIME_FORMAT
@@ -637,10 +638,17 @@ class Event(Schedulable):
         resource.save()
 
         if act.booking_id:
-            allocation = ResourceAllocation.objects.get(
-                id=act.booking_id)
-            allocation.resource = resource
-            allocation.event = self
+            try:
+                allocation = ResourceAllocation.objects.get(
+                    id=act.booking_id)
+                allocation.resource = resource
+                allocation.event = self
+            except ResourceAllocation.DoesNotExist:
+                return BookingResponse(
+                    errors=[Error(
+                        code="BOOKING_NOT_FOUND",
+                        details="Booking id %s not found" % act.booking_id), ],
+                    booking_id=act.booking_id)
         else:
             allocation = ResourceAllocation(event=self,
                                             resource=resource)
