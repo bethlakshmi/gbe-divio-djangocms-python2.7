@@ -34,8 +34,8 @@ def add_acts_for_show(show_name, conf_slug, tar):
 
 
     for act in acts:
-        if act and act.track:
-            fname = os.path.basename(act.track.path)
+        if act and act.tech.track:
+            fname = os.path.basename(act.tech.track.path)
             workname = os.path.join(workdir, fname)
             shutil.copyfile(fname, workname)
             tar.add(workname)

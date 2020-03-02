@@ -80,20 +80,8 @@ class Act (Biddable, ActItem):
         return audio
 
     @property
-    def contact_email(self):
-        return self.performer.contact_email
-
-    @property
     def bio(self):
         return self.performer
-
-    @property
-    def schedule_ready(self):
-        return self.accepted == 3
-
-    @property
-    def visible(self, current=True):
-        return self.accepted == 3
 
     @property
     def bids_to_review(self):
@@ -147,9 +135,6 @@ class Act (Biddable, ActItem):
     @property
     def profile(self):
         return self.performer.contact
-
-    def __str__(self):
-        return "%s: %s" % (str(self.performer), self.b_title)
 
     class Meta:
         app_label = "gbe"

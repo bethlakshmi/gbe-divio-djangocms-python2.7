@@ -42,6 +42,7 @@ class ClassAdmin(BidAdmin):
 
 class ActAdmin(admin.ModelAdmin):
     list_display = ('performer',
+                    'b_title',
                     'submitted',
                     'accepted',
                     'created_at',

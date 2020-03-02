@@ -58,13 +58,8 @@ class ResourceItem(models.Model):
             resourceitem_id=self.resourceitem_id)
         return child.__class__.__name__ + ":  " + child.describe
 
-    def __str__(self):
-        return str(self.describe)
-
     def __unicode__(self):
         return unicode(self.describe)
-    pass
-
 
 class Resource(models.Model):
     '''
@@ -101,26 +96,6 @@ class ActItem(ResourceItem):
     Payload object for an Act
     '''
     objects = InheritanceManager()
-
-    def set_rehearsal(self, show, rehearsal):
-        '''
-        Assign this act to a rehearsal slot for this show
-        '''
-        resources = ActResource.objects.filter(_item=self)
-        allocs = sum([list(res.allocations.all()) for res in resources], [])
-
-        for a in allocs:
-            is_rehearsal_for_this_show = (
-                a.event.as_subtype.type == 'Rehearsal Slot' and
-                a.event.container_event.parent_event == show)
-
-            if is_rehearsal_for_this_show:
-                a.delete()
-                a.resource.delete()
-        resource = ActResource(_item=self)
-        resource.save()
-        ra = ResourceAllocation(event=rehearsal, resource=resource)
-        ra.save()
 
     @property
     def as_subtype(self):
@@ -170,31 +145,16 @@ class ActItem(ResourceItem):
                       [res.rehearsal for res in resources])
 
     @property
-    def contact_email(self):
-        return ActItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).contact_email
-
-    @property
     def bio(self):
         return ActItem.objects.get_subclass(
             resourceitem_id=self.resourceitem_id
         ).bio
 
     @property
-    def visible(self):
-        return ActItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).visible
-
-    @property
     def describe(self):
         return ActItem.objects.get_subclass(
             resourceitem_id=self.resourceitem_id
         ).b_title
-
-    def __str__(self):
-        return str(self.describe)
 
     def __unicode__(self):
         return unicode(self.describe)
@@ -239,12 +199,6 @@ class ActResource(Resource):
     @property
     def type(self):
         return "act"
-
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Act Item"
 
     def __unicode__(self):
         try:
@@ -316,12 +270,6 @@ class Location(Resource):
     @property
     def type(self):
         return "location"
-
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Location Item"
 
     def __unicode__(self):
         try:
@@ -441,12 +389,6 @@ class Worker(Resource):
     @property
     def type(self):
         return self.role
-
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Worker Item"
 
     def __unicode__(self):
         try:
