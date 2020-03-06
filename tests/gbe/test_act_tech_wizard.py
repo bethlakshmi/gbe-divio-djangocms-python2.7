@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.test import Client
 from django.db.models import Max
 from tests.factories.gbe_factories import (
+    ActFactory,
     PersonaFactory,
     UserFactory,
 )
@@ -21,6 +22,7 @@ from gbetext import (
 from django.utils.formats import date_format
 from settings import GBE_DATETIME_FORMAT
 from datetime import timedelta
+from gbe.models import Act
 from scheduler.models import (
     ActResource,
     ResourceAllocation,
@@ -93,6 +95,25 @@ class TestActTechWizard(TestCase):
             response,
             "Technical Info for %s" % context.act.b_title)
         self.assertContains(response, "Booked for: %s" % context.show.e_title)
+
+    def test_edit_act_techinfo_get_bad_act(self):
+        context = ActTechInfoContext()
+        bad_act_id = Act.objects.aggregate(Max('pk'))['pk__max']+1
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[bad_act_id])
+        login_as(context.performer.contact, self)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(404, response.status_code)
+
+    def test_edit_act_techinfo_get_unaccepted_act(self):
+        act = ActFactory()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[act.pk])
+        login_as(act.performer.contact, self)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(404, response.status_code)
 
     def test_get_act_techinfo_no_profile(self):
         context = ActTechInfoContext()

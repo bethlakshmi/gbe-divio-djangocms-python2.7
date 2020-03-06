@@ -2,10 +2,7 @@ from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
+from django.shortcuts import render
 from django.http import (
     Http404,
     HttpResponseRedirect,

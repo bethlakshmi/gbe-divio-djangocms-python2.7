@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.utils.formats import date_format
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.shortcuts import (
     get_object_or_404,
     render,
@@ -180,6 +181,8 @@ class ActTechWizardView(View):
                     type='Rehearsal Slot').exists():
                 show_key = item.event.container_event.parent_event.pk
                 self.rehearsals[show_key] = item
+        if len(self.shows) == 0:
+            raise Http404
 
     def rehearsal_booked(self):
         all_booked = True
