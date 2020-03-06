@@ -94,7 +94,7 @@ urlpatterns = [
     url(r'^summer_act/view/(?P<bid_id>\d+)/?$',
         ViewSummerActView.as_view(), name='summer_act_view'),
 
-    #  act tech info
+    #  act tech info - delete act_techinfo_edit after GBE 2020
     url(r'^acttechinfo/edit/(\d+)/?$',
         EditActTechInfoView,
         name='act_techinfo_edit'),
