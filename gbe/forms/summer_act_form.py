@@ -1,5 +1,6 @@
 from django.forms import (
     CheckboxSelectMultiple,
+    DurationField,
     HiddenInput,
     MultipleChoiceField,
 )
@@ -19,9 +20,6 @@ from gbetext import (
     summer_other_perf_options,
 )
 from gbe.functions import get_current_conference
-from gbe.expoformfields import (
-    DurationFormField,
-)
 from gbe.models import Act
 
 
@@ -40,14 +38,9 @@ class SummerActDraftForm(ActEditDraftForm):
         help_text=act_help_texts['other_performance'],
         required=False
     )
-    act_duration = DurationFormField(
+    act_duration = DurationField(
         required=False,
         help_text=summer_help_texts['act_duration']
-    )
-    track_duration = DurationFormField(
-        required=False,
-        help_text=summer_help_texts['track_duration'],
-        label=act_bid_labels['track_duration']
     )
 
 
@@ -59,7 +52,7 @@ class SummerActForm(SummerActDraftForm):
         help_text=act_help_texts['shows_preferences']
     )
 
-    act_duration = DurationFormField(
+    act_duration = DurationField(
         required=True,
         help_text=summer_help_texts['act_duration']
     )

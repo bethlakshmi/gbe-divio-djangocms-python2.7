@@ -42,6 +42,24 @@ class Casting(object):
         self.act = booking.resource.actresource._item
 
 
+class BookableAct(object):
+    def __init__(self,
+                 booking_id=None,
+                 act=None,
+                 role=None,
+                 label=None):
+        self.booking_id = None
+        self.label = None
+        if role:
+            self.role = role
+        if booking_id:
+            self.booking_id = booking_id
+        if act:
+            self.act_id = act.actitem_ptr_id
+        if label:
+            self.label = label
+
+
 class ScheduleItem(object):
     def __init__(self,
                  user=None,
@@ -112,7 +130,7 @@ class OccurrencesResponse(GeneralResponse):
         super(OccurrencesResponse, self).__init__(warnings, errors)
 
 
-class PersonResponse(GeneralResponse):
+class BookingResponse(GeneralResponse):
     def __init__(self,
                  booking_id=None,
                  occurrence=None,
@@ -120,7 +138,7 @@ class PersonResponse(GeneralResponse):
                  errors=[]):
         self.booking_id = booking_id
         self.occurrence = occurrence
-        super(PersonResponse, self).__init__(warnings, errors)
+        super(BookingResponse, self).__init__(warnings, errors)
 
 
 class PeopleResponse(GeneralResponse):

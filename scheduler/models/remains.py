@@ -4,8 +4,9 @@ from django.db.models import Q
 from django.core.validators import RegexValidator
 from scheduler.data_transfer import (
     Person,
-    PersonResponse,
+    BookingResponse,
     Warning,
+    Error,
 )
 from datetime import datetime, timedelta
 from model_utils.managers import InheritanceManager
@@ -57,12 +58,8 @@ class ResourceItem(models.Model):
             resourceitem_id=self.resourceitem_id)
         return child.__class__.__name__ + ":  " + child.describe
 
-    def __str__(self):
-        return str(self.describe)
-
     def __unicode__(self):
         return unicode(self.describe)
-    pass
 
 
 class Resource(models.Model):
@@ -88,15 +85,12 @@ class Resource(models.Model):
         child = Resource.objects.get_subclass(id=self.id)
         return child
 
-    def __str__(self):
+    def __unicode__(self):
         allocated_resource = Resource.objects.get_subclass(id=self.id)
         if allocated_resource:
-            return str(allocated_resource)
+            return unicode(allocated_resource)
         else:
             return "Error in resource allocation, no resource"
-
-    def __unicode__(self):
-        return self.__str__()
 
 
 class ActItem(ResourceItem):
@@ -104,26 +98,6 @@ class ActItem(ResourceItem):
     Payload object for an Act
     '''
     objects = InheritanceManager()
-
-    def set_rehearsal(self, show, rehearsal):
-        '''
-        Assign this act to a rehearsal slot for this show
-        '''
-        resources = ActResource.objects.filter(_item=self)
-        allocs = sum([list(res.allocations.all()) for res in resources], [])
-
-        for a in allocs:
-            is_rehearsal_for_this_show = (
-                a.event.as_subtype.type == 'Rehearsal Slot' and
-                a.event.container_event.parent_event == show)
-
-            if is_rehearsal_for_this_show:
-                a.delete()
-                a.resource.delete()
-        resource = ActResource(_item=self)
-        resource.save()
-        ra = ResourceAllocation(event=rehearsal, resource=resource)
-        ra.save()
 
     @property
     def as_subtype(self):
@@ -154,15 +128,6 @@ class ActItem(ResourceItem):
                 result += [(resource.show, resource.role)]
         return result
 
-    def get_scheduled_shows(self):
-        '''
-        Returns a list of all shows this act is scheduled to appear in.
-        '''
-        resources = ActResource.objects.filter(_item=self)
-
-        return filter(lambda i: i is not None,
-                      [res.show for res in resources])
-
     def get_scheduled_rehearsals(self):
         '''
         Returns a list of all shows this act is scheduled to appear in.
@@ -173,31 +138,16 @@ class ActItem(ResourceItem):
                       [res.rehearsal for res in resources])
 
     @property
-    def contact_email(self):
-        return ActItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).contact_email
-
-    @property
     def bio(self):
         return ActItem.objects.get_subclass(
             resourceitem_id=self.resourceitem_id
         ).bio
 
     @property
-    def visible(self):
-        return ActItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).visible
-
-    @property
     def describe(self):
         return ActItem.objects.get_subclass(
             resourceitem_id=self.resourceitem_id
         ).b_title
-
-    def __str__(self):
-        return str(self.describe)
 
     def __unicode__(self):
         return unicode(self.describe)
@@ -242,12 +192,6 @@ class ActResource(Resource):
     @property
     def type(self):
         return "act"
-
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Act Item"
 
     def __unicode__(self):
         try:
@@ -319,12 +263,6 @@ class Location(Resource):
     @property
     def type(self):
         return "location"
-
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Location Item"
 
     def __unicode__(self):
         try:
@@ -445,12 +383,6 @@ class Worker(Resource):
     def type(self):
         return self.role
 
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Worker Item"
-
     def __unicode__(self):
         try:
             return self.item.describe
@@ -520,25 +452,14 @@ class Event(Schedulable):
     max_volunteer = models.PositiveIntegerField(default=0)
     approval_needed = models.BooleanField(default=False)
 
-    def get_open_rehearsals(self):
-        rehearsals = [
-            ec.child_event
-            for ec in EventContainer.objects.filter(parent_event=self)
-            if (ec.child_event.confitem.type == 'Rehearsal Slot' and
-                ec.child_event.has_act_opening())
-        ]
-        return sorted(rehearsals,
-                      key=lambda sched_event: sched_event.starttime)
-
     def has_act_opening(self):
         '''
         returns True if the count of acts allocated to this event is less than
         max_volunteer
         '''
         allocs = ResourceAllocation.objects.filter(event=self)
-        from gbe.models import Act  # late import, circularity
         acts_booked = len([a for a in allocs
-                           if isinstance(a.resource.item.as_subtype, Act)])
+                           if isinstance(a.resource.as_subtype, ActResource)])
         return self.max_volunteer - acts_booked > 0
 
     @property
@@ -623,9 +544,53 @@ class Event(Schedulable):
                     self.extra_volunteers()))]
         if person.label:
             allocation.set_label(person.label)
-        return PersonResponse(warnings=warnings,
-                              booking_id=allocation.pk,
-                              occurrence=self)
+        return BookingResponse(warnings=warnings,
+                               booking_id=allocation.pk,
+                               occurrence=self)
+
+    # New - from refactoring
+    def allocate_act(self, act):
+        '''
+        allocated worker for the new model - right now, focused on create
+        uses the BookableAct from the data_transfer objects.
+        '''
+        warnings = []
+        time_format = GBE_DATETIME_FORMAT
+
+        worker = None
+        item = ActItem.objects.get(pk=act.act_id)
+        resource = ActResource(_item=item)
+        resource.save()
+
+        if act.booking_id:
+            try:
+                allocation = ResourceAllocation.objects.get(
+                    id=act.booking_id)
+                allocation.resource = resource
+                allocation.event = self
+            except ResourceAllocation.DoesNotExist:
+                return BookingResponse(
+                    errors=[Error(
+                        code="BOOKING_NOT_FOUND",
+                        details="Booking id %s not found" % act.booking_id), ],
+                    booking_id=act.booking_id)
+        else:
+            allocation = ResourceAllocation(event=self,
+                                            resource=resource)
+        allocation.save()
+
+        num_acts = ActResource.objects.filter(
+                allocations__event=self).count()
+        if num_acts > self.max_volunteer:
+            warnings += [Warning(
+                code="OCCURRENCE_OVERBOOKED",
+                details="Over booked by %s acts" % (
+                    self.volunteer_count() - self.max_volunteer))]
+        if act.label:
+            allocation.set_label(act.label)
+        return BookingResponse(warnings=warnings,
+                               booking_id=allocation.pk,
+                               occurrence=self)
 
     @property
     def volunteer_count(self):
@@ -685,12 +650,6 @@ class Event(Schedulable):
         return ActResource.objects.filter(
             allocations__event=self,
             _item__act__accepted=3).order_by('_item__act__performer__name')
-
-    def __str__(self):
-        try:
-            return self.eventitem.describe
-        except:
-            return "No Event Item"
 
     def __unicode__(self):
         try:

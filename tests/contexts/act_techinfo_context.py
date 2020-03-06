@@ -43,8 +43,13 @@ class ActTechInfoContext():
             CueInfoFactory.create(techinfo=self.tech,
                                   cue_sequence=i)
         # schedule the show
-        self.sched_event = sched_event or SchedEventFactory(
-            eventitem=self.show.eventitem_ptr)
+        if sched_event:
+            self.sched_event = sched_event
+        else:
+            self.sched_event = SchedEventFactory(
+                eventitem=self.show.eventitem_ptr)
+            EventLabelFactory(event=self.sched_event,
+                              text=self.conference.conference_slug)
         room_name = room_name or "Dining Room"
         self.room = RoomFactory(name=room_name)
         self.room.conferences.add(self.conference)

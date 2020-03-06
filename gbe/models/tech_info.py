@@ -67,14 +67,6 @@ class AudioInfo(Model):
         ai.save()
         return ai
 
-    @property
-    def is_complete(self):
-        return bool(self.confirm_no_music or
-                    (self.track_title and
-                     self.track_artist and
-                     self.track_duration
-                     ))
-
     def __unicode__(self):
         try:
             return "AudioInfo: " + self.techinfo.act.b_title
@@ -105,17 +97,6 @@ class LightingInfo (Model):
     def dump_data(self):
         return [self.notes.encode('utf-8').strip(),
                 self.costume.encode('utf-8').strip()]
-
-    @property
-    def is_complete(self):
-        return True
-
-    @property
-    def incomplete_warnings(self):
-        if self.is_complete:
-            return {}
-        else:
-            return {"lighting": lightinginfo_incomplete_warning}
 
     def __unicode__(self):
         try:
@@ -164,19 +145,6 @@ class StageInfo(Model):
                 self.notes.encode('utf-8').strip(),
                 ]
 
-    @property
-    def is_complete(self):
-        return bool(self.set_props or
-                    self.clear_props or
-                    self.cue_props or self.confirm)
-
-    @property
-    def incomplete_warnings(self):
-        if self.is_complete:
-            return {}
-        else:
-            return {'stage': stageinfo_incomplete_warning}
-
     def __unicode__(self):
         try:
             return "StageInfo: " + self.techinfo.act.b_title
@@ -198,6 +166,22 @@ class TechInfo(Model):
     lighting = OneToOneField(LightingInfo, blank=True)
     stage = OneToOneField(StageInfo, blank=True)
 
+    track_title = CharField(max_length=128, blank=True)
+    track_artist = CharField(max_length=123, blank=True)
+    duration = DurationField(null=True)
+    feel_of_act = TextField(blank=True)
+    introduction_text = TextField(max_length=1000, blank=True)
+    read_exact = BooleanField(default=False)
+    prop_setup = TextField(blank=True)
+    crew_instruct = TextField(blank=True)
+    pronouns = CharField(max_length=128, blank=True)
+    primary_color = CharField(max_length=128, blank=True)
+    secondary_color = CharField(max_length=128, blank=True)
+    follow_spot = BooleanField(default=False)
+    starting_position = CharField(max_length=128, blank=True)
+    track = FileField(upload_to='uploads/audio', blank=True)
+    confirm_no_music = BooleanField(default=False)
+
     def clone(self):
         ti = TechInfo()
         ti.audio = self.audio.clone()
@@ -210,22 +194,18 @@ class TechInfo(Model):
 
     @property
     def is_complete(self):
-        try:
-            CueInfo.objects.get(techinfo=self, cue_sequence=0)
-            cueinfopresent = True
-        except CueInfo.DoesNotExist:
-            cueinfopresent = False
-        return bool(self.audio.is_complete and
-                    self.lighting.is_complete and
-                    self.stage.is_complete and
-                    cueinfopresent)
-
-    def get_incomplete_warnings(self):
-        warnings = {}
-        warnings.update(self.lighting.incomplete_warnings)
-        warnings.update(self.audio.incomplete_warnings)
-        warnings.update(self.stage.incomplete_warnings)
-        return warnings
+        audio_complete = (self.confirm_no_music or
+                          (self.track_title and
+                           self.track_artist and
+                           self.track))
+        return bool(self.duration and
+                    self.prop_setup and
+                    self.starting_position and
+                    self.primary_color and
+                    self.feel_of_act and
+                    self.pronouns and
+                    audio_complete and
+                    self.introduction_text)
 
     def __unicode__(self):
         try:

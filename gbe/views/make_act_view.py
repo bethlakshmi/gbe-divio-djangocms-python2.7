@@ -18,14 +18,13 @@ from gbe.models import (
 from gbe.forms import (
     ActEditDraftForm,
     ActEditForm,
-    AudioInfoForm,
-    StageInfoForm,
 )
 from gbetext import (
     default_act_submit_msg,
     default_act_draft_msg,
 )
 from gbe.views.act_display_functions import display_invalid_act
+import datetime
 
 
 class MakeActView(MakeBidView):
@@ -84,13 +83,10 @@ class MakeActView(MakeBidView):
     def get_initial(self):
         initial = {}
         if self.bid_object:
-            audio_info = self.bid_object.tech.audio
-            stage_info = self.bid_object.tech.stage
             initial = {
-                'track_title': audio_info.track_title,
-                'track_artist': audio_info.track_artist,
-                'track_duration': audio_info.track_duration,
-                'act_duration': stage_info.act_duration}
+                'track_title': self.bid_object.tech.track_title,
+                'track_artist': self.bid_object.tech.track_artist,
+                'act_duration': self.bid_object.tech.duration}
         else:
             initial = {
                 'owner': self.owner,
@@ -110,27 +106,26 @@ class MakeActView(MakeBidView):
         context['fee_link'] = self.fee_link
         return context
 
-    def check_validity(self, request):
-        self.audioform = AudioInfoForm(request.POST, prefix='theact')
-        self.stageform = StageInfoForm(request.POST, prefix='theact')
-        if hasattr(self.bid_object, 'tech'):
-            self.audioform.instance = self.bid_object.tech.audio
-            self.stageform.instance = self.bid_object.tech.stage
-        return all([self.form.is_valid(),
-                    self.audioform.is_valid(),
-                    self.stageform.is_valid()])
-
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):
             techinfo = TechInfo()
             lightinginfo = LightingInfo()
             lightinginfo.save()
+            audioinfo = AudioInfo.objects.create(
+                track_duration=datetime.timedelta(seconds=1))
+            audioinfo.save()
+            stageinfo = StageInfo(
+                act_duration=datetime.timedelta(seconds=1))
+            stageinfo.save()
             techinfo.lighting = lightinginfo
+            techinfo.audio = audioinfo
+            techinfo.stage = stageinfo
         else:
             techinfo = self.bid_object.tech
 
-        techinfo.audio = self.audioform.save()
-        techinfo.stage = self.stageform.save()
+        techinfo.duration = self.form.cleaned_data['act_duration']
+        techinfo.track_title = self.form.cleaned_data['track_title']
+        techinfo.track_artist = self.form.cleaned_data['track_artist']
         techinfo.save()
         self.bid_object.tech = techinfo
         self.bid_object.submitted = False

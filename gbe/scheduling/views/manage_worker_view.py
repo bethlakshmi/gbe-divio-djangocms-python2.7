@@ -33,7 +33,7 @@ from gbe.scheduling.views.functions import show_scheduling_booking_status
 from gbe_forms_text import rank_interest_options
 from scheduler.data_transfer import (
     Error,
-    PersonResponse,
+    BookingResponse,
     Person,
 )
 
@@ -155,7 +155,7 @@ class ManageWorkerView(View):
                 is_present = test_booking(
                     int(request.POST['alloc_id']), self.occurrence.pk)
                 if not is_present:
-                    response = PersonResponse(errors=[Error(
+                    response = BookingResponse(errors=[Error(
                         code="BOOKING_NOT_FOUND",
                         details="Booking id %s for occurrence %d not found" % (
                             request.POST['alloc_id'], self.occurrence.pk)), ])
@@ -170,7 +170,7 @@ class ManageWorkerView(View):
                         request.POST['alloc_id']) == 0):
                     return self.make_post_response(
                         request,
-                        PersonResponse(errors=[Error(
+                        BookingResponse(errors=[Error(
                             code="NO_BOOKING",
                             details="No booking id for occurrence id %d." % (
                                 self.occurrence.pk))]))

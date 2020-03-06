@@ -323,6 +323,10 @@ class TestMailToRoles(TestCase):
         anothershowcontext = ShowContext(
             conference=showcontext.conference,
         )
+        showcontext.show.e_title = "AAAAAAAA"
+        showcontext.show.save()
+        anothershowcontext.show.e_title = "ZZZZZZ"
+        anothershowcontext.show.save()
         producer = showcontext.set_producer()
         login_as(producer, self)
         data = {

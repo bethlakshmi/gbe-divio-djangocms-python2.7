@@ -356,15 +356,6 @@ phone_error3 = ['...or choose a contact method that does not require a phone.']
 audioinfo_labels = {
     'title': ('Track Title'),
     'artist': ('Track Artist')}
-
-prop_labels = {
-    'confirm': ('I have no props or set pieces'),
-    'set_props': ('I have props I will need set before my number'),
-    'cue_props': ('I have props I will need a stage kitten to hand me during \
-                  my number'),
-    'clear_props': ('I will leave props on-stage that will need to be cleared')
-}
-
 lighting_labels = {
     'costume': ('Color(s) of your costume '),
     'specific_needs': ('Please describe your specific lighting needs'),
@@ -374,7 +365,64 @@ lighting_help_texts = {
     'notes': ('Is your number happy and bouncy, humorous, dark, mysterious, '
               'etc.?  Please keep it simple, just a short description.')
 }
+tech_labels = {
+    'track_title': 'Name of Song',
+    'track_artist': 'Name of Song Artist',
+    'duration': 'Length of Act',
+    'primary_color': ('Primary color of your costume'),
+    'secondary_color': ('Secondary color of your costume'),
+    'feel_of_act': ('Describe the mood of your act'),
+    'clear_props': ('I will leave props or set pieces on-stage that will '
+                    'need to be cleared'),
+    'crew_instruct': ('Notes for Stage Crew:'),
+    'introduction_text': ('Introductory Text for MC'),
+    'read_exact': ('Please read my intro exactly as written.'),
+    'pronouns': ('Preferred Pronouns'),
+    'prop_setup': 'Staging Info',
+}
+prop_choices = [
+    ('I have no props or set pieces', 'I have no props or set pieces'),
+    ('I have props I will need set before my number',
+     'I have props I will need set before my number'),
+    ('I have props I will need a stage kitten to hand me or take from me '
+     'during my number',
+     'I have props I will need a stage kitten to hand me or take from me '
+     'during my number'),
+    ('I will need to interact with the Stage Kitten during my number '
+     '(i.e., I need another body on stage',
+     'I will need to interact with the Stage Kitten during my number '
+     '(i.e., I need another body on stage'),
+    ('I will leave props or set pieces on-stage that will need to be cleared',
+     'I will leave props or set pieces on-stage that will need to be cleared'),
+]
+tech_help_texts = {
+    'duration': 'Length of act expressed as mm:ss',
+    'feel_of_act': (
+        'This is for our lighting crew. Describe the tone of your act in a ',
+        'few short phrases. Is your act happy? Silly? Like an old movie? ',
+        'Set outdoors? Please don\'t just say "sexy"; there are a lot of '
+        'kinds of sexy - raunchy, dirty, flirty, coy, seductive, etc.'),
+    'introduction_text': (
+        'Please tell us anything you would like included '
+        'in your introduction. You can do anything from provide us with '
+        'basic information that the host will incorporate into your '
+        'introduction to write an introduction you would like read exactly '
+        'as is.'),
+    'crew_instruct': (
+        'Please use this space to clarify anything from the five checkboxes '
+        'above'),
+    'props_during': (
+        'If our crew needs to hand you something or help you, please explain'
+        ' and give a specific indication of when they should do it.'),
+    'remove': (
+        'Items to be removed after the act is complete, please include an '
+        'inventory of costume items.')}
 
+starting_position_choices = [
+    ('Onstage', 'Onstage'),
+    ('In the wings', 'In the wings'),
+    ('In the house', 'In the house')
+]
 main_cue_header = {'cue_sequence': 'Cue #',
                    'cue_off_of': 'Cue Off of...',
                    'follow_spot': 'Follow spot',

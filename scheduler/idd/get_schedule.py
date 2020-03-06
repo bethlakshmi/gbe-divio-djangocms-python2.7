@@ -13,7 +13,8 @@ def get_schedule(user=None,
                  labels=[],
                  start_time=None,
                  end_time=None,
-                 roles=[]):
+                 roles=[],
+                 act=None):
     basic_filter = ResourceAllocation.objects.all()
     sched_items = []
 
@@ -26,6 +27,10 @@ def get_schedule(user=None,
     if end_time:
         basic_filter = basic_filter.filter(
             event__starttime__lt=end_time.replace(tzinfo=None))
+    if act:
+        basic_filter = basic_filter.filter(
+            resource__actresource___item=act)
+
     if len(roles) > 0:
         basic_filter = basic_filter.filter(
             resource__worker__role__in=roles,
@@ -59,6 +64,7 @@ def get_schedule(user=None,
                     label=booking_label)]
         basic_filter = basic_filter.filter(
             resource__worker___item=user.profile)
+
     for item in basic_filter:
         resource = item.resource.as_subtype
         booking_label = None

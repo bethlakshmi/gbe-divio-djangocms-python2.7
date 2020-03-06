@@ -1,4 +1,3 @@
-from django.http import Http404
 from django.core.exceptions import PermissionDenied
 import nose.tools as nt
 from django.test import TestCase

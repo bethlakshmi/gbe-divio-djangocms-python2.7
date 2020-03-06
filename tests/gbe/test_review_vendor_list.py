@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 import gbe.models as conf
 import nose.tools as nt
 from django.test import TestCase

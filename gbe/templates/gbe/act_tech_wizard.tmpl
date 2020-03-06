@@ -1,0 +1,33 @@
+{% extends 'gbe/gbe_wizard.tmpl' %}
+{% block intro %}
+<h2>Technical Info for {{act.b_title}}</h2>
+{% for show in shows %}
+<b>Booked for: {{show}}</b>
+{% for show_id, rehearsal in rehearsals.items %}
+  {% if show.pk == show_id %}
+  <ul><li>Current Rehearsal Reservation: {{ rehearsal.event }}, at {{ rehearsal.event.starttime|date:"D, M j g:i A" }}</li></ul>
+  {% endif %}
+ {% endfor %}
+{% endfor %}
+<p><b>Submitted Description: </b>{{act.b_description}}</p>
+{% endblock %}
+{% block first_form %}
+<p>{{ rehearsal_instructions }}</p>
+<form action="" method="post" enctype="multipart/form-data">
+{% include "form_table_wrapper.tmpl" with forms=rehearsal_forms %}
+  <div class="form-row pull-right">
+  <input type="submit" name="book" value="Book Rehearsal">
+  <input type="submit" name="book_continue" value="Book & Continue">
+  </div>
+</form>
+{% endblock %}
+{% block second_form %}
+<p>{{ basic_instructions }}</p>
+<font color=red>*</font> indicates a required field
+<form action="" method="post" enctype="multipart/form-data">
+{% include "form_table.tmpl" with form=second_form %}
+  <div class="form-row pull-right">
+  <input type="submit" name="submit" value="Submit">
+  </div>
+</form>
+{% endblock %}

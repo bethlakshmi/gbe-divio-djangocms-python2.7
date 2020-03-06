@@ -1,6 +1,7 @@
 from django.forms import (
     CharField,
     CheckboxSelectMultiple,
+    DurationField,
     HiddenInput,
     ModelForm,
     MultipleChoiceField,
@@ -18,23 +19,15 @@ from gbetext import (
     act_other_perf_options,
     act_shows_options,
 )
-from gbe.expoformfields import (
-    DurationFormField,
-)
 from gbe.functions import jsonify
 
 
 class ActEditDraftForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
-    act_duration = DurationFormField(
+    act_duration = DurationField(
         required=False,
         help_text=act_help_texts['act_duration']
-    )
-    track_duration = DurationFormField(
-        required=False,
-        help_text=act_help_texts['track_duration'],
-        label=act_bid_labels['track_duration']
     )
     track_artist = CharField(required=False)
     track_title = CharField(required=False)
@@ -69,7 +62,6 @@ class ActEditDraftForm(ModelForm):
             'b_title',
             'track_title',
             'track_artist',
-            'track_duration',
             'act_duration',
             'video_link',
             'video_choice',
@@ -77,7 +69,6 @@ class ActEditDraftForm(ModelForm):
             'why_you',
             'b_conference',
             'act_duration',
-            'track_duration',
             'track_artist',
             'track_title']
         labels = act_bid_labels
@@ -87,7 +78,7 @@ class ActEditDraftForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ActEditDraftForm, self).__init__(*args, **kwargs)
         if self.instance:
-            obj_data = self.instance.__dict__ 
+            obj_data = self.instance.__dict__
             if obj_data['shows_preferences']:
                 self.initial['shows_preferences'] = jsonify(
                     obj_data['shows_preferences'])
@@ -97,7 +88,7 @@ class ActEditDraftForm(ModelForm):
 
 
 class ActEditForm(ActEditDraftForm):
-    act_duration = DurationFormField(
+    act_duration = DurationField(
         required=True,
         help_text=act_help_texts['act_duration']
     )
