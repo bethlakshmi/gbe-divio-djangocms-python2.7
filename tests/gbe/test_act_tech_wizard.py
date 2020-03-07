@@ -156,6 +156,21 @@ class TestActTechWizard(TestCase):
             date_format(rehearsal.starttime, "TIME_FORMAT"))
         self.assertNotContains(response, "Provide Technical Information")
 
+    def test_edit_no_music_rehearsal_ready(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.tech.confirm_no_music = True
+        context.tech.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        response = self.client.get(url)
+        assert_option_state(
+            response,
+            "1",
+            "No, I will not need an audio track",
+            True)
+
     def test_edit_act_techinfo_with_rehearsal(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         url = reverse(self.view_name,
@@ -174,6 +189,11 @@ class TestActTechWizard(TestCase):
                                 context.rehearsal)
         self.assertContains(response,
                             'name="%d-booking_id"' % context.sched_event.pk)
+        assert_option_state(
+            response,
+            "0",
+            "Yes, I will upload an audio track",
+            True)
 
     def test_edit_act_techinfo_w_prop_settings(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -281,6 +301,39 @@ class TestActTechWizard(TestCase):
         alloc = ResourceAllocation.objects.filter(
             resource__in=resources)
         self.assertEqual(alloc.count(), 2)
+        assert_option_state(
+            response,
+            "0",
+            "Yes, I will upload an audio track",
+            True)
+
+    def test_book_rehearsal_and_continue_no_music(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.prop_setup = "[u'I have props I will need set " + \
+            "before my number']"
+        context.act.tech.confirm_no_music = True
+        context.act.tech.save()
+        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
+            hours=1)
+        extra_rehearsal.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = {'book_continue': "Book & Continue"}
+        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
+        alloc = ResourceAllocation.objects.get(
+            event=context.rehearsal,
+            resource__in=resources)
+        data['%d-booking_id' % context.sched_event.pk] = alloc.pk
+        response = self.client.post(url, data)
+        assert_option_state(
+            response,
+            "1",
+            "No, I will not need an audio track",
+            True)
 
     def test_bad_booking_id(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
