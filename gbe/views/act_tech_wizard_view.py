@@ -229,7 +229,9 @@ class ActTechWizardView(View):
                 if 'book_continue' in request.POST.keys():
                     basic_form = BasicActTechForm(
                         instance=self.act.tech, initial={
-                            'prop_setup': self.get_prop_initial()})
+                            'prop_setup': self.get_prop_initial(),
+                            'confirm_no_music': int(
+                                self.act.tech.confirm_no_music)})
                 else:
                     return HttpResponseRedirect(
                         reverse('home', urlconf='gbe.urls'))
@@ -273,7 +275,8 @@ class ActTechWizardView(View):
         basic_form = None
         if self.rehearsal_booked():
             basic_form = BasicActTechForm(instance=self.act.tech, initial={
-                'prop_setup': self.get_prop_initial()})
+                'prop_setup': self.get_prop_initial(),
+                'confirm_no_music': int(self.act.tech.confirm_no_music)})
         return render(request, self.template, self.make_context(basic_form))
 
     @method_decorator(login_required)
