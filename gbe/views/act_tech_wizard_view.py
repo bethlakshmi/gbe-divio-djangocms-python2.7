@@ -247,7 +247,8 @@ class ActTechWizardView(View):
                                           instance=self.act.tech)
             if basic_form.is_valid():
                 basic_form.save()
-                call_command('sync_audio_downloads', unsync_all=True)
+                # fix or remove
+                # call_command('sync_audio_downloads', unsync_all=True)
                 success = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="ACT_TECH_BASIC_SUMBITTED",
