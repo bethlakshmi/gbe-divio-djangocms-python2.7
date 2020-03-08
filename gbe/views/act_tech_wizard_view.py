@@ -27,6 +27,7 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    default_act_tech_advanced_submit,
     default_act_tech_basic_submit,
     default_advanced_acttech_instruct,
     default_basic_acttech_instruct,
@@ -131,12 +132,10 @@ class ActTechWizardView(View):
                     booking_id=response.booking_id)
         return error, bookings, forms, request
 
-    def make_context(self, 
-                     basic_form,
-                     rehearsal_forms=None,
+    def make_context(self,
+                     rehearsal_forms=None, 
+                     basic_form=None,
                      advanced_form=None):
-        basic_instructions = None
-        advanced_instructions = None
         rehearsal_instruct = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="REHEARSAL_INSTRUCTIONS",
@@ -145,38 +144,37 @@ class ActTechWizardView(View):
                     'description': default_rehearsal_acttech_instruct})
         if not rehearsal_forms:
             rehearsal_forms = self.set_rehearsal_forms()
+ 
+        context = {'act': self.act,
+                   'shows': self.shows,
+                   'rehearsals': self.rehearsals,
+                   'rehearsal_forms': rehearsal_forms,
+                   'page_title': self.page_title,
+                   'first_title': self.first_title,
+                   'rehearsal_instructions': rehearsal_instruct[0].description}
+
         if basic_form:
-            self.first_title = "Change Rehearsal"
+            context['first_title'] = "Change Rehearsal"
             tmp = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="BASIC_INSTRUCTIONS",
                 defaults={
                     'summary': "Basic Instructions",
                     'description': default_basic_acttech_instruct})
-            basic_instructions = tmp[0].description
+            context['second_form'] = basic_form
+            context['basic_instructions'] = tmp[0].description
+            context['second_title'] = self.second_title
         if advanced_form:
-            self.second_title = "Basic Technical Information"
+            context['second_title'] = "Basic Technical Information"
             tmp = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="ADVANCED_INSTRUCTIONS",
                 defaults={
                     'summary': "Advanced Instructions",
                     'description': default_advanced_acttech_instruct})
-            advanced_instructions = tmp[0].description
-
-        context = {'act': self.act,
-                   'shows': self.shows,
-                   'rehearsals': self.rehearsals,
-                   'rehearsal_forms': rehearsal_forms,
-                   'second_form': basic_form,
-                   'third_form': advanced_form,
-                   'page_title': self.page_title,
-                   'first_title': self.first_title,
-                   'second_title': self.second_title,
-                   'third_title': self.third_title,
-                   'basic_instructions': basic_instructions,
-                   'advanced_instructions': advanced_instructions,
-                   'rehearsal_instructions': rehearsal_instruct[0].description}
+            context['third_form'] = advanced_form
+            context['advanced_instructions'] = tmp[0].description
+            context['third_title'] = self.third_title
         return context
 
     def groundwork(self, request, args, kwargs):
@@ -213,18 +211,18 @@ class ActTechWizardView(View):
                 all_booked = False
         return all_booked
 
-    def get_prop_initial(self):
+    def get_initial_basic_form(self):
         if len(self.act.tech.prop_setup.strip()) > 0:
             prop_initial = eval(self.act.tech.prop_setup)
         else:
             prop_initial = []
-        return prop_initial
+        return BasicActTechForm(instance=self.act.tech, initial={
+            'prop_setup': prop_initial,
+            'confirm_no_music': int(self.act.tech.confirm_no_music)})
 
     @never_cache
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        basic_form = None
-        rehearsal_forms = None
         error = self.groundwork(request, args, kwargs)
         if error:
             return error
@@ -249,14 +247,11 @@ class ActTechWizardView(View):
                             occurrence.starttime.strftime(GBE_DATETIME_FORMAT)
                             ))
                 if 'book_continue' in request.POST.keys():
-                    basic_form = BasicActTechForm(
-                        instance=self.act.tech, initial={
-                            'prop_setup': self.get_prop_initial(),
-                            'confirm_no_music': int(
-                                self.act.tech.confirm_no_music)})
-                else:
-                    return HttpResponseRedirect(
-                        reverse('home', urlconf='gbe.urls'))
+                    basic_form = self.get_initial_basic_form()
+                    return render(request,
+                                  self.template,
+                                  self.make_context(rehearsal_forms,
+                                                    basic_form))
             else:
                 rehearsal_error = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
@@ -265,7 +260,11 @@ class ActTechWizardView(View):
                         'summary': "Rehearsal Booking Error",
                         'description': rehearsal_book_error})
                 messages.error(request, rehearsal_error[0].description)
-        else:
+                return render(request,
+                              self.template,
+                              self.make_context(rehearsal_forms))
+        elif ('finish_basics' in request.POST.keys()) or (
+              'finish_to_advanced' in request.POST.keys()):
             basic_form = BasicActTechForm(request.POST,
                                           request.FILES,
                                           instance=self.act.tech)
@@ -280,12 +279,35 @@ class ActTechWizardView(View):
                         'summary': "Act Tech Basic Submitted",
                         'description': default_act_tech_basic_submit})
                 messages.success(request, success[0].description)
-                return HttpResponseRedirect(
-                    reverse('home', urlconf='gbe.urls'))
-
-        return render(request,
-                      self.template,
-                      self.make_context(basic_form, rehearsal_forms))
+                if 'finish_to_advanced' in request.POST.keys():
+                    advanced_form = AdvancedActTechForm(instance=self.act.tech)
+                    return render(request, self.template, self.make_context(
+                        basic_form=basic_form,
+                        advanced_form=advanced_form))
+            else:
+                return render(request,
+                              self.template,
+                              self.make_context(basic_form=basic_form))
+        else:
+            advanced_form = AdvancedActTechForm(request.POST,
+                                                instance=self.act.tech)
+            if advanced_form.is_valid():
+                advanced_form.save()
+                # fix or remove
+                # call_command('sync_audio_downloads', unsync_all=True)
+                success = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="ACT_TECH_ADVANCED_SUMBITTED",
+                    defaults={
+                        'summary': "Act Tech Advanced Submitted",
+                        'description': default_act_tech_advanced_submit})
+                messages.success(request, success[0].description)
+            else:
+                return render(request, self.template, self.make_context(
+                    basic_form=self.get_initial_basic_form(),
+                    advanced_form=advanced_form))
+        return HttpResponseRedirect(
+                        reverse('home', urlconf='gbe.urls'))
 
     @never_cache
     @method_decorator(login_required)
@@ -297,14 +319,12 @@ class ActTechWizardView(View):
         basic_form = None
         advanced_form = None
         if self.rehearsal_booked():
-            basic_form = BasicActTechForm(instance=self.act.tech, initial={
-                'prop_setup': self.get_prop_initial(),
-                'confirm_no_music': int(self.act.tech.confirm_no_music)})
+            basic_form = self.get_initial_basic_form()
         if self.act.tech.is_complete:
             advanced_form = AdvancedActTechForm(instance=self.act.tech)
 
         return render(request, self.template, self.make_context(
-            basic_form,
+            basic_form=basic_form,
             advanced_form=advanced_form))
 
     @method_decorator(login_required)

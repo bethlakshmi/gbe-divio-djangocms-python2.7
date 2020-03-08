@@ -27,7 +27,8 @@
 <form action="" method="post" enctype="multipart/form-data">
 {% include "form_table.tmpl" with form=second_form %}
   <div class="form-row pull-right">
-  <input type="submit" name="submit" value="Submit">
+  <input type="submit" name="finish_basics" value="Complete Form">
+  <input type="submit" name="finish_to_advanced" value="Proceed to Advanced">
   </div>
 </form>
 {% endblock %}
@@ -37,7 +38,7 @@
 <form action="" method="post" enctype="multipart/form-data">
 {% include "form_table.tmpl" with form=third_form %}
   <div class="form-row pull-right">
-  <input type="submit" name="submit" value="Submit">
+  <input type="submit" name="submit" value="Finish">
   </div>
 </form>
 {% endblock %}

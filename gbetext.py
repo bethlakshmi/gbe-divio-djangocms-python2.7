@@ -518,6 +518,8 @@ technical details about your act can be added later.'''
 default_rehearsal_booked = '''Rehearsal is booked.'''
 rehearsal_book_error = '''The rehearsal could not be booked.  If this issue \
 persists, please contact GBE support.'''
+default_act_tech_advanced_submit = "All of your act tech details have been \
+submitted."
 default_act_tech_basic_submit = "Your basic act tech details have been \
 submitted.  Stay tuned, later on you\'ll be asked for further information."
 default_update_act_tech = "Your Act Technical Details have been updated."
