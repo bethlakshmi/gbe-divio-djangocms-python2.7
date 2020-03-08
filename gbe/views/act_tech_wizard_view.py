@@ -16,6 +16,7 @@ from gbe.functions import (
     validate_profile,
 )
 from gbe.forms import (
+    AdvancedActTechForm,
     BasicActTechForm,
     BasicRehearsalForm,
 )
@@ -27,6 +28,7 @@ from gbe.models import (
 )
 from gbetext import (
     default_act_tech_basic_submit,
+    default_advanced_acttech_instruct,
     default_basic_acttech_instruct,
     default_rehearsal_booked,
     default_rehearsal_acttech_instruct,
@@ -54,6 +56,7 @@ class ActTechWizardView(View):
     page_title = 'Edit Act Technical Information'
     first_title = 'Set Rehearsal Time'
     second_title = 'Provide Technical Information'
+    third_title = 'Advanced Technical Information (Optional)'
 
     def set_rehearsal_forms(self, request=None):
         rehearsal_forms = []
@@ -128,13 +131,12 @@ class ActTechWizardView(View):
                     booking_id=response.booking_id)
         return error, bookings, forms, request
 
-    def make_context(self, basic_form, rehearsal_forms=None):
-        basic_instructions = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="BASIC_INSTRUCTIONS",
-                defaults={
-                    'summary': "Basic Instructions",
-                    'description': default_basic_acttech_instruct})
+    def make_context(self, 
+                     basic_form,
+                     rehearsal_forms=None,
+                     advanced_form=None):
+        basic_instructions = None
+        advanced_instructions = None
         rehearsal_instruct = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="REHEARSAL_INSTRUCTIONS",
@@ -145,15 +147,35 @@ class ActTechWizardView(View):
             rehearsal_forms = self.set_rehearsal_forms()
         if basic_form:
             self.first_title = "Change Rehearsal"
+            tmp = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="BASIC_INSTRUCTIONS",
+                defaults={
+                    'summary': "Basic Instructions",
+                    'description': default_basic_acttech_instruct})
+            basic_instructions = tmp[0].description
+        if advanced_form:
+            self.second_title = "Basic Technical Information"
+            tmp = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="ADVANCED_INSTRUCTIONS",
+                defaults={
+                    'summary': "Advanced Instructions",
+                    'description': default_advanced_acttech_instruct})
+            advanced_instructions = tmp[0].description
+
         context = {'act': self.act,
                    'shows': self.shows,
                    'rehearsals': self.rehearsals,
                    'rehearsal_forms': rehearsal_forms,
                    'second_form': basic_form,
+                   'third_form': advanced_form,
                    'page_title': self.page_title,
                    'first_title': self.first_title,
                    'second_title': self.second_title,
-                   'basic_instructions': basic_instructions[0].description,
+                   'third_title': self.third_title,
+                   'basic_instructions': basic_instructions,
+                   'advanced_instructions': advanced_instructions,
                    'rehearsal_instructions': rehearsal_instruct[0].description}
         return context
 
@@ -273,11 +295,17 @@ class ActTechWizardView(View):
             return error
 
         basic_form = None
+        advanced_form = None
         if self.rehearsal_booked():
             basic_form = BasicActTechForm(instance=self.act.tech, initial={
                 'prop_setup': self.get_prop_initial(),
                 'confirm_no_music': int(self.act.tech.confirm_no_music)})
-        return render(request, self.template, self.make_context(basic_form))
+        if self.act.tech.is_complete:
+            advanced_form = AdvancedActTechForm(instance=self.act.tech)
+
+        return render(request, self.template, self.make_context(
+            basic_form,
+            advanced_form=advanced_form))
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

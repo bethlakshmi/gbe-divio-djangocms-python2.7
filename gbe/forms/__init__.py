@@ -52,6 +52,7 @@ from volunteer_interest_form import VolunteerInterestForm
 from act_tech_info_form import ActTechInfoForm
 from cue_info_form import CueInfoForm
 from lighting_info_form import LightingInfoForm
+from advanced_act_tech_form import AdvancedActTechForm
 from basic_act_tech_form import BasicActTechForm
 from basic_rehearsal_form import BasicRehearsalForm
 from vendor_cue_info_form import VendorCueInfoForm

@@ -379,6 +379,9 @@ tech_labels = {
     'read_exact': ('Please read my intro exactly as written.'),
     'pronouns': ('Preferred Pronouns'),
     'prop_setup': 'Staging Info',
+    'mic_choice': 'Microphone Choice',
+    'start_blackout': 'Start with the stage blacked out',
+    'end_blackout': 'End with the stage blacked out',
 }
 prop_choices = [
     ('I have no props or set pieces', 'I have no props or set pieces'),
@@ -416,7 +419,12 @@ tech_help_texts = {
         ' and give a specific indication of when they should do it.'),
     'remove': (
         'Items to be removed after the act is complete, please include an '
-        'inventory of costume items.')}
+        'inventory of costume items.'),
+    'start_blackout': ('All lighting will black out to give you time to get '
+        'into a position, lighting will come up at the same time as the '
+        'audio.'),
+    'end_blackout': ('All lighting will black out as soon as the music stops, '
+        'allowing you to exit in darkness.'),}
 
 starting_position_choices = [
     ('Onstage', 'Onstage'),

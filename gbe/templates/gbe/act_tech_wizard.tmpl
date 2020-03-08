@@ -31,3 +31,13 @@
   </div>
 </form>
 {% endblock %}
+{% block third_form %}
+<p>{{ advanced_instructions }}</p>
+<font color=red>*</font> indicates a required field
+<form action="" method="post" enctype="multipart/form-data">
+{% include "form_table.tmpl" with form=third_form %}
+  <div class="form-row pull-right">
+  <input type="submit" name="submit" value="Submit">
+  </div>
+</form>
+{% endblock %}

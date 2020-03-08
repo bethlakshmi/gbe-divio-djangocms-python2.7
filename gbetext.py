@@ -152,7 +152,9 @@ stage_lighting_options = (('White', 'White'),
                           ('Purple', 'Purple'),
                           ('Red', 'Red'),
                           ('Yellow', 'Yellow'))
-
+mic_options = (("I don't need a mic", "I don't need a mic"),
+               ("I need a mic", "I need a mic"),
+               ("I own a mic", "I own a mic"))
 follow_spot_options = (('White', 'White'), ('Blue', 'Blue'), ('OFF', 'OFF'),
                        ('Pink', 'Pink'), ('Purple', 'Purple'), ('Red', 'Red'))
 
@@ -506,6 +508,9 @@ default_update_profile_msg = "Your profile has been updated."
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+default_advanced_acttech_instruct = '''The following information is optional.\
+  If your act does not need this information, there is no need to complete \
+this form.'''
 default_basic_acttech_instruct = '''These are the basic details our crew \
 needs for lighting, playing audio, and making sure the stage is set.'''
 default_rehearsal_acttech_instruct = '''Reserve your rehearsal slot early.  \

@@ -12,6 +12,7 @@ from django.db.models import (
 )
 
 from gbetext import (
+    mic_options,
     cyc_color_options,
     offon_options,
     follow_spot_options,
@@ -166,6 +167,7 @@ class TechInfo(Model):
     lighting = OneToOneField(LightingInfo, blank=True)
     stage = OneToOneField(StageInfo, blank=True)
 
+    # Basic Info
     track_title = CharField(max_length=128, blank=True)
     track_artist = CharField(max_length=123, blank=True)
     duration = DurationField(null=True)
@@ -181,6 +183,17 @@ class TechInfo(Model):
     starting_position = CharField(max_length=128, blank=True)
     track = FileField(upload_to='uploads/audio', blank=True)
     confirm_no_music = BooleanField(default=False)
+
+    # Advanced Info
+    mic_choice = CharField(max_length=200,
+                           choices=mic_options,
+                           default=mic_options[0])
+    background_color = CharField(max_length=128, blank=True)
+    wash_color = CharField(max_length=128, blank=True)
+    follow_spot_color = CharField(max_length=128, blank=True)
+    special_lighting_cue = TextField(blank=True)
+    start_blackout = BooleanField(default=False)
+    end_blackout = BooleanField(default=False)
 
     def clone(self):
         ti = TechInfo()
