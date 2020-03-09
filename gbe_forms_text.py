@@ -420,11 +420,12 @@ tech_help_texts = {
     'remove': (
         'Items to be removed after the act is complete, please include an '
         'inventory of costume items.'),
-    'start_blackout': ('All lighting will black out to give you time to get '
+    'start_blackout': (
+        'All lighting will black out to give you time to get '
         'into a position, lighting will come up at the same time as the '
         'audio.'),
     'end_blackout': ('All lighting will black out as soon as the music stops, '
-        'allowing you to exit in darkness.'),}
+                     'allowing you to exit in darkness.')}
 
 starting_position_choices = [
     ('Onstage', 'Onstage'),

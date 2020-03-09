@@ -15,8 +15,10 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from gbetext import (
+    default_act_tech_advanced_submit,
     default_act_tech_basic_submit,
     default_rehearsal_booked,
+    mic_options,
     rehearsal_book_error,
 )
 from django.utils.formats import date_format
@@ -27,6 +29,7 @@ from scheduler.models import (
     ActResource,
     ResourceAllocation,
 )
+from gbe.duration import Duration
 
 
 class TestActTechWizard(TestCase):
@@ -53,6 +56,7 @@ class TestActTechWizard(TestCase):
             'secondary_color': "Bashful",
             'follow_spot': True,
             'starting_position': "Onstage",
+            'finish_basics': "Complete Form"
             }
         if file:
             data['track'] = file
@@ -155,6 +159,8 @@ class TestActTechWizard(TestCase):
             str(rehearsal.id),
             date_format(rehearsal.starttime, "TIME_FORMAT"))
         self.assertNotContains(response, "Provide Technical Information")
+        self.assertNotContains(response,
+                               'Advanced Technical Information (Optional)')
 
     def test_edit_no_music_rehearsal_ready(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -194,6 +200,8 @@ class TestActTechWizard(TestCase):
             "0",
             "Yes, I will upload an audio track",
             True)
+        self.assertNotContains(response,
+                               'Advanced Technical Information (Optional)')
 
     def test_edit_act_techinfo_w_prop_settings(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -306,6 +314,8 @@ class TestActTechWizard(TestCase):
             "0",
             "Yes, I will upload an audio track",
             True)
+        self.assertNotContains(response,
+                               'Advanced Technical Information (Optional)')
 
     def test_book_rehearsal_and_continue_no_music(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -373,6 +383,8 @@ class TestActTechWizard(TestCase):
             'Incomplete Audio Info - please either provide Track '
             'Title, Artist and the audio file, or confirm that '
             'there is no music.')
+        self.assertNotContains(response,
+                               "Advanced Technical Information (Optional)")
 
     def test_edit_act_w_audio_file(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -388,15 +400,125 @@ class TestActTechWizard(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_act_tech_basic_submit)
 
-    def test_edit_act_wout_music(self):
+    def test_edit_act_wout_music_and_continue(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
         login_as(context.performer.contact, self)
         data = self.get_full_post()
+        data['finish_to_advanced'] = "Proceed to Advanced"
+        del data['finish_basics']
         data['confirm_no_music'] = 1
+        response = self.client.post(url, data, follow=True)
+        assert_alert_exists(
+            response, 'success', 'Success', default_act_tech_basic_submit)
+        self.assertContains(response,
+                            "Advanced Technical Information (Optional)")
+        self.assertContains(response,
+                            "Start with the stage blacked out")
+
+    def test_get_advanced(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.confirm_no_music = True
+        context.act.tech.mic_choice = mic_options[2][0]
+        context.act.tech.prop_setup = "[u'I have props I will need set " + \
+            "before my number']"
+        context.act.tech.feel_of_act = "feel"
+        context.act.tech.starting_position = "Onstage"
+        context.act.tech.primary_color = "Red"
+        context.act.tech.pronouns = "Me/Myself"
+        context.act.tech.duration = Duration(minutes=2)
+        context.act.tech.introduction_text = "Yo this is an intro"
+        context.act.tech.start_blackout = True
+        context.act.tech.end_blackout = True
+        context.act.tech.special_lighting_cue = "so special!"
+        context.act.tech.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        response = self.client.get(url)
+        self.assertContains(response,
+                            'Advanced Technical Information (Optional)')
+        assert_option_state(
+            response,
+            str(context.rehearsal.id),
+            date_format(context.rehearsal.starttime, "TIME_FORMAT"),
+            True)
+        self.assertContains(response,
+                            'name="%d-booking_id"' % context.sched_event.pk)
+        self.assertContains(
+            response,
+            'name="start_blackout" checked id="id_start_blackout" />')
+        self.assertContains(
+            response,
+            'name="end_blackout" checked id="id_end_blackout" />')
+        self.assertContains(response, "so special!")
+        assert_option_state(response,
+                            mic_options[2][0],
+                            mic_options[2][1],
+                            True)
+
+    def test_post_good_advanced(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.confirm_no_music = True
+        context.act.tech.mic_choice = mic_options[2]
+        context.act.tech.prop_setup = "[u'I have props I will need set " + \
+            "before my number']"
+        context.act.tech.feel_of_act = "feel"
+        context.act.tech.starting_position = "Onstage"
+        context.act.tech.primary_color = "Red"
+        context.act.tech.pronouns = "Me/Myself"
+        context.act.tech.duration = Duration(minutes=2)
+        context.act.tech.introduction_text = "Yo this is an intro"
+        data = {
+            'mic_choice': mic_options[2],
+            'follow_spot_color': 'red',
+            'background_color': 'blue',
+            'wash_color': 'purple',
+            'special_lighting_cue': 'when I drop my pants, make it pink',
+            'start_blackout': True,
+            'end_blackout': True,
+        }
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
-            response, 'success', 'Success', default_act_tech_basic_submit)
+            response, 'success', 'Success', default_act_tech_advanced_submit)
+
+    def test_post_bad_advanced(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.confirm_no_music = True
+        context.act.tech.mic_choice = mic_options[2]
+        context.act.tech.prop_setup = "[u'I have props I will need set " + \
+            "before my number']"
+        context.act.tech.feel_of_act = "feel"
+        context.act.tech.starting_position = "Onstage"
+        context.act.tech.primary_color = "Red"
+        context.act.tech.pronouns = "Me/Myself"
+        context.act.tech.duration = Duration(minutes=2)
+        context.act.tech.introduction_text = "Yo this is an intro"
+        data = {
+            'mic_choice': "These are bad",
+            'follow_spot_color': 'red',
+            'background_color': 'blue',
+            'wash_color': 'purple',
+            'special_lighting_cue': 'when I drop my pants, make it pink',
+            'start_blackout': True,
+            'end_blackout': True,
+        }
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            'Select a valid choice.')
+        self.assertContains(response,
+                            "Advanced Technical Information (Optional)")

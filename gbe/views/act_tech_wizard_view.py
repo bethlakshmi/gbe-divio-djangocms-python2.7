@@ -133,7 +133,7 @@ class ActTechWizardView(View):
         return error, bookings, forms, request
 
     def make_context(self,
-                     rehearsal_forms=None, 
+                     rehearsal_forms=None,
                      basic_form=None,
                      advanced_form=None):
         rehearsal_instruct = UserMessage.objects.get_or_create(
@@ -144,7 +144,6 @@ class ActTechWizardView(View):
                     'description': default_rehearsal_acttech_instruct})
         if not rehearsal_forms:
             rehearsal_forms = self.set_rehearsal_forms()
- 
         context = {'act': self.act,
                    'shows': self.shows,
                    'rehearsals': self.rehearsals,

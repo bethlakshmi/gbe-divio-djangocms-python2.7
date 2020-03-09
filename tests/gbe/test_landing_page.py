@@ -331,8 +331,6 @@ class TestIndex(TestCase):
         login_as(member.performer_profile, self)
         url = reverse("home", urlconf="gbe.urls")
         response = self.client.get(url)
-        print "Act::: " + act.b_title
-        print response.content
         assert act.b_title in response.content
 
     def test_two_acts_one_show(self):
