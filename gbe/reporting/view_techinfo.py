@@ -2,12 +2,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
-
-from gbe.models import (
-    Show,
-    CueInfo,
-)
-
+from gbe.models import Show
 from gbe.functions import (
     conference_slugs,
     validate_perms,
@@ -91,9 +86,6 @@ def build_techinfo(show_id, area='all'):
              act.performer.contact.user_object.email,
              act.performer),
         ]
-        stage_info = act.tech.stage.dump_data
-        audio_info = act.tech.audio.dump_data
-        tech_row += [stage_info[0], ]
 
         if area in ('all', 'stage_mgmt'):
             rehearsals = ""
@@ -101,59 +93,8 @@ def build_techinfo(show_id, area='all'):
                 rehearsals += date_format(
                     rehearsal.start_time, "DATETIME_FORMAT") + ", "
             tech_row += [
-                stage_info[1],
                 rehearsals,
-                stage_info[3],
-                stage_info[4],
-                stage_info[5],
-                stage_info[6],
-                audio_info[4],
-                audio_info[5],
              ]
-
-        if area in ('all', 'audio'):
-            tech_row += [
-                ("File", audio_info[2], audio_info[0]),
-                audio_info[1],
-                audio_info[3],
-                audio_info[6],
-                audio_info[7],
-            ]
-        if area in ('audio'):
-            tech_row += [
-                audio_info[4],
-                audio_info[5],
-             ]
-
-        if area in ('all', 'lighting'):
-            tech_row += act.tech.lighting.dump_data
-            cue_sequence = ['List', ]
-            cue_off_of = ['List', ]
-            follow_spot = ['List', ]
-            wash = ['List', ]
-            sound_note = ['List', ]
-            if location.describe == 'Theater':
-                center_spot = ['List', ]
-                backlight = ['List', ]
-                cyc_color = ['List', ]
-
-            for cue in cues.filter(techinfo__act=act).order_by('cue_sequence'):
-                cue_sequence += [cue.cue_sequence]
-                cue_off_of += [cue.cue_off_of]
-                follow_spot += [cue.follow_spot]
-                if location.describe == 'Theater':
-                    center_spot += [cue.center_spot]
-                    backlight += [cue.backlight]
-                    cyc_color += [cue.cyc_color]
-                wash += [cue.wash]
-                sound_note += [cue.sound_note]
-
-            tech_row += [cue_sequence, cue_off_of, follow_spot]
-            if location.describe == 'Theater':
-                tech_row += [center_spot, backlight, cyc_color]
-            tech_row += [wash, sound_note]
-
-        techinfo.append(tech_row)
 
     return (
         header,

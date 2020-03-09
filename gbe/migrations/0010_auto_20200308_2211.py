@@ -11,10 +11,10 @@ def centralize_adv_techinfo(apps, schema_editor):
     # version than this migration expects. We use the historical version.
     TechInfo = apps.get_model('gbe', 'TechInfo')
     for techinfo in TechInfo.objects.all():
-    	if techinfo.audio.own_mic:
-    		techinfo.mic_choice = mic_options[2][0]
-    	elif techinfo.audio.need_mic:
-    		techinfo.mic_choice = mic_options[1][0]
+        if techinfo.audio.own_mic:
+            techinfo.mic_choice = mic_options[2][0]
+        elif techinfo.audio.need_mic:
+            techinfo.mic_choice = mic_options[1][0]
         techinfo.save()
 
 
@@ -23,10 +23,10 @@ def decentralize_adv_techinfo(apps, schema_editor):
     # version than this migration expects. We use the historical version.
     TechInfo = apps.get_model('gbe', 'TechInfo')
     for techinfo in TechInfo.objects.all():
-    	if techinfo.mic_choice == mic_options[2][0]:
-    		techinfo.audio.own_mic = True
-    	elif techinfo.mic_choice == mic_options[1][0]:
-    	    techinfo.audio.need_mic = True
+        if techinfo.mic_choice == mic_options[2][0]:
+            techinfo.audio.own_mic = True
+        elif techinfo.mic_choice == mic_options[1][0]:
+            techinfo.audio.need_mic = True
         techinfo.audio.save()
 
 
@@ -38,5 +38,5 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(centralize_adv_techinfo,
-        	                 decentralize_adv_techinfo),
+                             decentralize_adv_techinfo),
     ]

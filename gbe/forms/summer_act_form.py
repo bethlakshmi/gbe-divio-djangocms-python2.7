@@ -11,7 +11,6 @@ from gbe.forms import (
 from gbe_forms_text import (
     act_help_texts,
     act_bid_labels,
-    also_consider_act_for,
     summer_bid_label,
     summer_help_texts,
 )
