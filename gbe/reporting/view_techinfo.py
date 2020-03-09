@@ -17,48 +17,6 @@ from django.utils.formats import date_format
 from gbe.reporting.functions import prep_act_tech_info
 
 
-@never_cache
-def view_techinfo(request):
-    '''
-    Show the list of act tech info for all acts in a given show for a given
-    tech area.
-    export specifies the type of export, csv or view.  area is the tech area
-    of the information being exported, audio, lighting, stage_mgmt, or all.
-    '''
-
-    validate_perms(request, ('Tech Crew',))
-    area = request.GET.get('area', 'all')
-    show_id = request.GET.get('show_id', None)
-    area = request.GET.get('area', 'all')
-    show, acts, conference, scheduling_link = prep_act_tech_info(
-        request, show_id)
-
-    if show_id:
-        logger.info(area+', '+show_id)
-        header, techinfo = build_techinfo(show_id, area=area)
-        logger.info(techinfo)
-        logger.info(header)
-    else:
-        logger.info(area)
-        header = None
-        techinfo = None
-
-    return render(request,
-                  'gbe/report/view_techinfo.tmpl',
-                  {'this_show': show,
-                   'area': area,
-                   'area_options': ['all', 'audio', 'stage_mgmt', 'lighting'],
-                   'all_shows': Show.objects.filter(
-                       e_conference=conference),
-                   'techinfo': techinfo,
-                   'header': header,
-                   'conference_slugs': conference_slugs(),
-                   'conference': conference,
-                   'scheduling_link': scheduling_link,
-                   'return_link': reverse('view_techinfo',
-                                          urlconf='gbe.reporting.urls',)})
-
-
 def build_techinfo(show_id, area='all'):
     '''
     Export a list of act tech info details

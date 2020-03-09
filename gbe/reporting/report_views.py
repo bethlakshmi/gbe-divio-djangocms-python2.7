@@ -12,7 +12,6 @@ import ticketing.models as tix
 import os as os
 import csv
 from reportlab.pdfgen import canvas
-# from gbe.reporting.view_techinfo import *
 
 from gbe.functions import (
     conference_slugs,

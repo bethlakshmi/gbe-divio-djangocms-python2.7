@@ -30,7 +30,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='techinfo',
             name='mic_choice',
-            field=models.CharField(choices=[(b"I don't need a mic", b"I don't need a mic"), (b'I need a mic', b'I need a mic'), (b'I own a mic', b'I own a mic')], default=(b"I don't need a mic", b"I don't need a mic"), max_length=200),
+            field=models.CharField(
+                choices=[
+                    (b"I don't need a mic", b"I don't need a mic"),
+                    (b'I need a mic', b'I need a mic'),
+                    (b'I own a mic', b'I own a mic')],
+                default=(b"I don't need a mic", b"I don't need a mic"),
+                max_length=200),
         ),
         migrations.AddField(
             model_name='techinfo',

@@ -17,7 +17,6 @@ from gbe.reporting import (
     review_act_techinfo,
     room_schedule,
     room_setup,
-    view_techinfo,
 )
 from django.contrib import admin
 admin.autodiscover()
@@ -74,7 +73,4 @@ urlpatterns = [
         export_badge_report, name='badge_report'),
     url(r'^reports/badges/print_run/?$',
         export_badge_report, name='badge_report'),
-
-    url(r'^reports/view_techinfo/?$',
-        view_techinfo, name='view_techinfo'),
 ]
