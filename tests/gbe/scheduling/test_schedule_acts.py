@@ -51,12 +51,8 @@ class TestScheduleActs(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('<ul class="errorlist">', response.content)
         for act in self.context.acts:
-            if act.accepted == 3:
-                self.assertContains(response, act.b_title)
-                self.assertContains(response, str(act.performer))
-            else:
-                self.assertNotContains(response, act.b_title)
-                self.assertNotContains(response, str(act.performer))
+            self.assertContains(response, act.b_title)
+            self.assertContains(response, str(act.performer))
         self.assertContains(
             response,
             '<option value="%d" selected>%s</option>' % (
