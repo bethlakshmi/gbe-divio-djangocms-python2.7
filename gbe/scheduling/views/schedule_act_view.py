@@ -22,13 +22,7 @@ from scheduler.idd import (
     get_occurrences,
     set_act,
 )
-from gbe.scheduling.views.functions import (
-    process_post_response,
-    setup_event_management_form,
-    show_general_status,
-    shared_groundwork,
-    update_event,
-)
+from gbe.scheduling.views.functions import show_general_status
 
 
 class ScheduleAct(View):
