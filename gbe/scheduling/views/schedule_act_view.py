@@ -67,7 +67,7 @@ class ScheduleAct(View):
     @never_cache
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        finish =  self.groundwork(request, args, kwargs)
+        finish = self.groundwork(request, args, kwargs)
         if finish:
             return finish
         forms = []
@@ -96,7 +96,7 @@ class ScheduleAct(View):
     @never_cache
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        finish =  self.groundwork(request, args, kwargs)
+        finish = self.groundwork(request, args, kwargs)
         if finish:
             return finish
         forms = []
@@ -110,16 +110,18 @@ class ScheduleAct(View):
             if form.is_valid():
                 forms += [(form, act)]
             else:
-                error_forms += [(form, 
-                                 act.performer.contact.user_object.is_active)]
+                error_forms += [(
+                    form,
+                    act.performer.contact.user_object.is_active)]
 
         if len(error_forms) > 0:
             for form, act in forms:
                 error_forms += [(form,
                                  act.performer.contact.user_object.is_active)]
-            return render(request,
-                   self.template,
-                   {'forms': error_forms,
+            return render(
+                request,
+                self.template, {
+                    'forms': error_forms,
                     'title': "Schedule Acts for %s" % str(self.show_event)})
         else:
             for form, act in forms:
@@ -133,7 +135,7 @@ class ScheduleAct(View):
                 response.warnings = []
                 show_general_status(request, response, "ActScheduleView")
                 if response.occurrence:
-                    success_msg =  self.entry % (
+                    success_msg = self.entry % (
                         success_msg,
                         str(act.performer),
                         act.b_title,

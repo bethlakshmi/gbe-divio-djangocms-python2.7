@@ -741,6 +741,7 @@ class ResourceAllocation(Schedulable):
         l.text = text
         l.save()
 
+
 class Ordering(models.Model):
     '''
     A decorator for Allocations to allow representation of orderings
