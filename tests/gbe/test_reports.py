@@ -320,24 +320,3 @@ class TestReports(TestCase):
         self.assertNotIn(
             inactive.display_name,
             response.content)
-
-    def test_export_act_techinfo(self):
-        context = ActTechInfoContext()
-        grant_privilege(self.profile, "Tech Crew")
-        login_as(self.profile, self)
-        response = self.client.get(reverse('act_techinfo_download',
-                                           urlconf='gbe.reporting.urls',
-                                           args=[context.show.eventitem_id]))
-        self.assertTrue(context.audio.notes in response.content)
-        self.assertFalse('Center Spot' in response.content)
-
-    def test_export_act_techinfo_theater(self):
-        context = ActTechInfoContext(room_name="Theater")
-        context.show.scheduler_events.first()
-        grant_privilege(self.profile, "Tech Crew")
-        login_as(self.profile, self)
-        response = self.client.get(reverse('act_techinfo_download',
-                                           urlconf='gbe.reporting.urls',
-                                           args=[context.show.eventitem_id]))
-        self.assertTrue(context.audio.notes in response.content)
-        self.assertTrue('Center Spot' in response.content)

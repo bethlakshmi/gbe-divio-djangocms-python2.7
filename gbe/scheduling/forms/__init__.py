@@ -27,3 +27,4 @@ from select_event_form import (
     SelectEventForm,
 )
 from event_evaluation_form import EventEvaluationForm
+from act_schedule_form import ActScheduleForm

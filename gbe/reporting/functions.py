@@ -21,7 +21,7 @@ def prep_act_tech_info(request, show_id=None):
                     request, ('Scheduling Mavens',), require=False):
                 scheduling_link = reverse(
                     'schedule_acts',
-                    urlconf='scheduler.urls',
+                    urlconf='gbe.scheduling.urls',
                     args=[show.pk])
 
         except:

@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.core.urlresolvers import reverse
 from gbe.functions import validate_perms
+from scheduler.idd import get_occurrences
+from gbe.scheduling.views.functions import show_general_status
 
 
 @login_required
@@ -47,6 +49,10 @@ def schedule_acts(request, show_id=None):
                 continue  # error, should log
             alloc = get_object_or_404(ResourceAllocation,
                                       id=prefix.split('_')[1])
+            if alloc.event.pk != data['show']:
+                raise Exception("alloc: %d, selected: %s" % (alloc.event.pk, data['show']))
+            else:
+                raise Exception("same")
             alloc.event = data['show']
             alloc.save()
             try:
@@ -66,6 +72,14 @@ def schedule_acts(request, show_id=None):
     allocations = [a for a in allocations if type(a.resource.item) == ActItem]
 
     forms = []
+    show_ids = conf.Show.objects.filter(
+        e_conference=show.e_conference).values('eventitem_id')
+    response = get_occurrences(foreign_event_ids=show_ids)
+    show_general_status(request, response, "ActScheduleView")
+    show_choices = []
+    for occurrence in response.occurrences:
+        show_choices += [(occurrence.pk, str(occurrence))]
+
     for alloc in allocations:
         actitem = alloc.resource.item
         act = actitem.act
@@ -88,6 +102,7 @@ def schedule_acts(request, show_id=None):
     for details, alloc in forms:
         new_forms.append((
             ActScheduleForm(initial=details,
+                            show_choices=show_choices,
                             prefix='allocation_%d' % alloc.id),
             details['performer'].contact.user_object.is_active))
 

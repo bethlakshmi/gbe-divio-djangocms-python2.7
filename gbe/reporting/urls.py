@@ -11,7 +11,6 @@ from gbe.reporting.views import (
 from gbe.reporting import (
     download_tracks_for_show,
     env_stuff,
-    export_act_techinfo,
     export_badge_report,
     list_reports,
     review_act_techinfo,
@@ -65,10 +64,6 @@ urlpatterns = [
     url(r'^reports/acttechinfo/view_summary/?$',
         review_act_techinfo,
         name='act_techinfo_review'),
-    url(r'^reports/acttechinfo/view_details/(\d+)/?$',
-        export_act_techinfo,
-        name='act_techinfo_download'),
-
     url(r'^reports/badges/print_run/(?P<conference_choice>[-\w]+)/?$',
         export_badge_report, name='badge_report'),
     url(r'^reports/badges/print_run/?$',

@@ -44,12 +44,7 @@ class TechInfo(Model):
 
     def clone(self):
         ti = TechInfo()
-        ti.audio = self.audio.clone()
-        ti.lighting = self.lighting.clone()
-        ti.stage = self.stage.clone()
         ti.save()
-        for ci in CueInfo.objects.filter(techinfo=self):
-            ci.clone(self)
         return ti
 
     @property

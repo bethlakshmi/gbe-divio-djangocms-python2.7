@@ -1,0 +1,23 @@
+{% extends "base.tmpl" %}
+{% block title %}
+   Select Event Type
+{% endblock %}
+
+{% block content %}
+
+<h3>Select a current or upcoming show to schedule</h3>
+   <form action="" method="get" enctype="multipart/form-data">
+<select name="show_id" id="show_id">
+{% for show in show_options   %}
+    <option value="{{ show.pk }}">{{ show }}</option>
+{% endfor %}
+</select>
+<br>
+   <input type="submit" name="submit" value="Submit">
+</form>
+<hr>
+<table>
+  </tr>
+  {% include "scheduler/export_calendar.tmpl" %}
+</table>
+{% endblock %}

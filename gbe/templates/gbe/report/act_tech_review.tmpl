@@ -122,9 +122,6 @@ deactivated users.<br>
     {% endfor %}
     </tbody>
   </table>
-  <br><br>
-  Download <a href='{% url 'reporting:act_techinfo_download' this_show.eventitem_id %}'>All Details</a>
-  as a .csv file.
   <br>
   Download <a href="{% url 'reporting:download_tracks_for_show' this_show.pk %}">all audio tracks</a> for this show as a zipped tar archive</br>
   {% else %}

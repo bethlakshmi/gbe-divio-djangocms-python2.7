@@ -1,20 +1,9 @@
-from django.forms import (
-    CharField,
-    ChoiceField,
-    ModelForm,
-    MultipleChoiceField,
-    Textarea,
-    TypedChoiceField,
-)
+from django.forms import ModelForm
 from gbe_forms_text import (
-    prop_choices,
-    starting_position_choices,
     tech_labels,
     tech_help_texts,
 )
 from gbe.models import TechInfo
-from django.forms.widgets import CheckboxSelectMultiple
-from django.core.exceptions import ValidationError
 
 
 class AdvancedActTechForm(ModelForm):
