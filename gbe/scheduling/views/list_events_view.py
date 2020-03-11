@@ -16,6 +16,7 @@ from gbe.functions import (
     get_conference_by_slug,
     conference_slugs,
 )
+from gbe.scheduling.views.functions import build_icon_links
 from scheduler.idd import (
     get_bookings,
     get_eval_info,
@@ -30,12 +31,6 @@ from gbetext import (
     event_options,
     class_options,
 )
-from datetime import (
-    datetime,
-    timedelta,
-)
-import pytz
-from django.conf import settings
 
 
 class ListEventsView(View):
@@ -122,64 +117,25 @@ class ListEventsView(View):
             presenters = []
             response = get_occurrences(
                 foreign_event_ids=[item.eventitem_id])
+            item_type = "Other"
+            if item.calendar_type == "Volunteer":
+                item_type = "Volunteer"
+            elif self.event_type == "Class":
+                item_type = "Class"
             for occurrence in response.occurrences:
-                evaluate = None
-                people_response = get_bookings([occurrence.pk])
-                highlight = None
-                role = None
-                favorite_link = reverse(
-                    'set_favorite',
-                    args=[occurrence.pk, 'on'],
-                    urlconf='gbe.scheduling.urls')
-                volunteer_link = reverse(
-                    'set_volunteer',
-                    args=[occurrence.pk, 'on'],
-                    urlconf='gbe.scheduling.urls')
-                for person in people_response.people:
-                    if request.user == person.user:
-                        role = person.role
-                        highlight = person.role.lower()
-                        if person.role == "Interested":
-                            favorite_link = reverse(
-                                'set_favorite',
-                                args=[occurrence.pk, 'off'],
-                                urlconf='gbe.scheduling.urls')
-                        else:
-                            favorite_link = "disabled"
-                        if person.role in ("Volunteer", "Pending Volunteer"):
-                            volunteer_link = reverse(
-                                'set_volunteer',
-                                args=[occurrence.pk, 'off'],
-                                urlconf='gbe.scheduling.urls')
-                        else:
-                            volunteer_link = "disabled"
-                    if person.role in (
-                            "Teacher",
-                            "Moderator",
-                            "Panelist") and person.public_class != "Profile":
-                        presenter = Performer.objects.get(pk=person.public_id)
-                        if presenter not in presenters:
-                            presenters += [presenter]
-                if self.conference.status == "completed" or (
-                        item.calendar_type == 'Volunteer'):
-                    favorite_link = None
-                if self.conference.status == "completed" or (
-                        item.calendar_type != 'Volunteer'):
-                    volunteer_link = None
-                if (self.event_type == 'Class') and (
-                        occurrence.start_time < (datetime.now() - timedelta(
-                            hours=settings.EVALUATION_WINDOW))
-                        ) and (
-                        role not in ("Teacher", "Performer", "Moderator")
-                        ) and (
-                        eval_occurrences is not None):
-                    if occurrence in eval_occurrences:
-                        evaluate = "disabled"
-                    else:
-                        evaluate = reverse(
-                            'eval_event',
-                            args=[occurrence.pk, ],
-                            urlconf='gbe.scheduling.urls')
+                (favorite_link,
+                 volunteer_link,
+                 evaluate,
+                 highlight,
+                 new_presenters) = build_icon_links(
+                    occurrence,
+                    eval_occurrences,
+                    item_type,
+                    (self.conference.status == "completed"),
+                    request.user)
+                for presenter in new_presenters:
+                    if presenter not in presenters:
+                        presenters += [presenter]
                 scheduled_events += [{
                     'occurrence': occurrence,
                     'favorite_link': favorite_link,

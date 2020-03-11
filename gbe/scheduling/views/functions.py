@@ -1,5 +1,9 @@
 import pytz
-from datetime import datetime, time
+from datetime import (
+    datetime,
+    time,
+    timedelta,
+)
 from gbe.functions import (
     get_conference_day,
     make_warning_msg,
@@ -29,11 +33,13 @@ from gbe.models import (
     Profile,
     UserMessage,
 )
-from settings import GBE_DATETIME_FORMAT
+from settings import (
+    EVALUATION_WINDOW,
+    GBE_DATETIME_FORMAT,
+)
 from django.http import Http404
 from gbetext import event_labels
 from gbe_forms_text import event_settings
-from datetime import timedelta
 
 
 def get_start_time(data):
@@ -306,3 +312,58 @@ def process_post_response(request,
     else:
         context['start_open'] = True
     return context, success_url, response
+
+def build_icon_links(occurrence, eval_occurrences, item_type, conf_completed, user=None):
+    presenters = []
+    evaluate = None
+    highlight = None
+    role = None
+    favorite_link = reverse('set_favorite', 
+                            args=[occurrence.pk, 'on'],
+                            urlconf='gbe.scheduling.urls')
+    volunteer_link = reverse('set_volunteer',
+                             args=[occurrence.pk, 'on'],
+                             urlconf='gbe.scheduling.urls')
+    if (item_type == 'Class') and (
+            occurrence.start_time < (datetime.now() - timedelta(
+                hours=EVALUATION_WINDOW))) and (eval_occurrences is not None):
+        if occurrence in eval_occurrences:
+            evaluate = "disabled"
+        else:
+            evaluate = reverse('eval_event', 
+                               args=[occurrence.pk, ],
+                               urlconf='gbe.scheduling.urls')
+    # don't bother if there is no logged in user or conference is over and 
+    # we don't need to build the eval link
+    if user and (not conf_completed or (
+            conf_completed and item_type == 'Class')):
+        people_response = get_bookings([occurrence.pk])
+        for person in people_response.people:
+            if user == person.user:
+                highlight = person.role.lower()
+                if person.role == "Interested":
+                    favorite_link = reverse('set_favorite',
+                                            args=[occurrence.pk, 'off'],
+                                            urlconf='gbe.scheduling.urls')
+                else:
+                    favorite_link = "disabled"
+                if person.role in ("Volunteer", "Pending Volunteer"):
+                    volunteer_link = reverse(
+                    'set_volunteer',
+                    args=[occurrence.pk, 'off'],
+                    urlconf='gbe.scheduling.urls')
+                else:
+                    volunteer_link = "disabled"
+                if person.role in ("Teacher", "Moderator", "Panelist") and (
+                        person.public_class != "Profile"):
+                    presenters += [Performer.objects.get(pk=person.public_id)]
+
+                if evaluate and (person.role in ("Teacher",
+                                                 "Performer",
+                                                 "Moderator")):
+                    evaluate = None
+    if conf_completed or item_type == 'Volunteer':
+        favorite_link = None
+    if conf_completed or item_type != 'Volunteer':
+        volunteer_link = None
+    return (favorite_link, volunteer_link, evaluate, highlight, presenters)

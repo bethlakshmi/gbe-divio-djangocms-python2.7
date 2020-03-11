@@ -43,7 +43,7 @@
  	  <div class="col-xs-12 col-sm-10">
 	  {% for sched_event in event.scheduled_events %}
       {% include "gbe/scheduling/favorite_star.tmpl"%}
-      {% include "gbe/scheduling/volunteer_link_display.tmpl"%}
+      {% include "gbe/scheduling/volunteer_link_display.tmpl" with icon_class="volunteer-icon" %}
       {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=sched_event.evaluate %}
       {{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT") }} -
 	    {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT") }}
