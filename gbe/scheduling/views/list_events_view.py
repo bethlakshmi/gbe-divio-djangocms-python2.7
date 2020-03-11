@@ -131,6 +131,10 @@ class ListEventsView(View):
                     'set_favorite',
                     args=[occurrence.pk, 'on'],
                     urlconf='gbe.scheduling.urls')
+                volunteer_link = reverse(
+                    'set_volunteer',
+                    args=[occurrence.pk, 'on'],
+                    urlconf='gbe.scheduling.urls')
                 for person in people_response.people:
                     if request.user == person.user:
                         role = person.role
@@ -142,6 +146,13 @@ class ListEventsView(View):
                                 urlconf='gbe.scheduling.urls')
                         else:
                             favorite_link = "disabled"
+                        if person.role in ("Volunteer", "Pending Volunteer"):
+                            volunteer_link = reverse(
+                                'set_volunteer',
+                                args=[occurrence.pk, 'off'],
+                                urlconf='gbe.scheduling.urls')
+                        else:
+                            volunteer_link = "disabled"
                     if person.role in (
                             "Teacher",
                             "Moderator",
@@ -152,6 +163,9 @@ class ListEventsView(View):
                 if self.conference.status == "completed" or (
                         item.calendar_type == 'Volunteer'):
                     favorite_link = None
+                if self.conference.status == "completed" or (
+                        item.calendar_type != 'Volunteer'):
+                    volunteer_link = None
                 if (self.event_type == 'Class') and (
                         occurrence.start_time < (datetime.now() - timedelta(
                             hours=settings.EVALUATION_WINDOW))
@@ -169,8 +183,10 @@ class ListEventsView(View):
                 scheduled_events += [{
                     'occurrence': occurrence,
                     'favorite_link': favorite_link,
+                    'volunteer_link': volunteer_link,
                     'highlight': highlight,
                     'evaluate': evaluate,
+                    'approval_needed': occurrence.approval_needed,
                 }]
             if len(presenters) == 0 and item.calendar_type == "Conference":
                 presenters += [item.teacher]

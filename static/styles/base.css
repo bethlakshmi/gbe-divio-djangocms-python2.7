@@ -317,7 +317,13 @@ h3.readonlyform
 {
     width: 125;
  }
- 
+.volunteer-icon {
+    height: 16px;
+}
+.volunteer-icon-large {
+  float: right;
+  width: 32px;
+}
 hr.bid-table
 {
     border: 0; height: 1px;

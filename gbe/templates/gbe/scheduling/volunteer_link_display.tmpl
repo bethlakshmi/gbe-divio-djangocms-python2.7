@@ -1,0 +1,11 @@
+     {% if sched_event.volunteer_link and sched_event.volunteer_link != "disabled" %}
+      <a href="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}"
+         class="detail_link cal-favorite" data-toggle="tooltip"
+         title="{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}">
+       {% include "gbe/scheduling/volunteer_icon.tmpl" with occurrence=sched_event icon_class="volunteer-icon" %}</a>
+      </a>
+     {% elif sched_event.volunteer_link %}
+      <a href="#" class="detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"
+         title="You are a {{ sched_event.highlight }} - contact the coordinator to change your schedule">
+       {% include "gbe/scheduling/volunteer_icon.tmpl" with occurrence=sched_event icon_class="volunteer-icon" %}</a>
+     {% endif %}
