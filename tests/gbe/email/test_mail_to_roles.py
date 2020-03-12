@@ -280,10 +280,14 @@ class TestMailToRoles(TestCase):
 
     def test_pick_performer_reduced_priv(self):
         showcontext = ShowContext()
+        showcontext.show.e_title = "0 Pick Perf"
+        showcontext.show.save()
         producer = showcontext.set_producer()
         anothershowcontext = ShowContext(
             conference=showcontext.conference,
         )
+        anothershowcontext.show.e_title = "1 Pick Perf"
+        anothershowcontext.show.save()
         login_as(producer, self)
         data = {
             'email-select-conference': [showcontext.conference.pk,
