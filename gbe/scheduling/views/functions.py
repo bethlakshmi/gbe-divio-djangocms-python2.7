@@ -328,6 +328,8 @@ def build_icon_links(occurrence,
     volunteer_link = reverse('set_volunteer',
                              args=[occurrence.pk, 'on'],
                              urlconf='gbe.scheduling.urls')
+    if occurrence.extra_volunteers() >= 0:
+        volunteer_link = "disabled"
     if (calendar_type == 'Conference') and (
             occurrence.start_time < (datetime.now() - timedelta(
                 hours=EVALUATION_WINDOW))) and (eval_occurrences is not None):
