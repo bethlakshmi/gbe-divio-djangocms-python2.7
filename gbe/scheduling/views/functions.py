@@ -313,7 +313,11 @@ def process_post_response(request,
         context['start_open'] = True
     return context, success_url, response
 
-def build_icon_links(occurrence, eval_occurrences, item_type, conf_completed, user=None):
+def build_icon_links(occurrence,
+                     eval_occurrences,
+                     calendar_type,
+                     conf_completed,
+                     user=None):
     presenters = []
     evaluate = None
     highlight = None
@@ -324,7 +328,7 @@ def build_icon_links(occurrence, eval_occurrences, item_type, conf_completed, us
     volunteer_link = reverse('set_volunteer',
                              args=[occurrence.pk, 'on'],
                              urlconf='gbe.scheduling.urls')
-    if (item_type == 'Class') and (
+    if (calendar_type == 'Conference') and (
             occurrence.start_time < (datetime.now() - timedelta(
                 hours=EVALUATION_WINDOW))) and (eval_occurrences is not None):
         if occurrence in eval_occurrences:
@@ -335,8 +339,8 @@ def build_icon_links(occurrence, eval_occurrences, item_type, conf_completed, us
                                urlconf='gbe.scheduling.urls')
     # don't bother if there is no logged in user or conference is over and 
     # we don't need to build the eval link
-    if user and (not conf_completed or (
-            conf_completed and item_type == 'Class')):
+    if user and user.is_authenticated() and (not conf_completed or (
+            conf_completed and calendar_type == 'Conference')):
         people_response = get_bookings([occurrence.pk])
         for person in people_response.people:
             if user == person.user:
@@ -362,8 +366,8 @@ def build_icon_links(occurrence, eval_occurrences, item_type, conf_completed, us
                                                  "Performer",
                                                  "Moderator")):
                     evaluate = None
-    if conf_completed or item_type == 'Volunteer':
+    if conf_completed or calendar_type == 'Volunteer':
         favorite_link = None
-    if conf_completed or item_type != 'Volunteer':
+    if conf_completed or calendar_type != 'Volunteer':
         volunteer_link = None
     return (favorite_link, volunteer_link, evaluate, highlight, presenters)

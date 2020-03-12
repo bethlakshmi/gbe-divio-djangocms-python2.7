@@ -117,11 +117,6 @@ class ListEventsView(View):
             presenters = []
             response = get_occurrences(
                 foreign_event_ids=[item.eventitem_id])
-            item_type = "Other"
-            if item.calendar_type == "Volunteer":
-                item_type = "Volunteer"
-            elif self.event_type == "Class":
-                item_type = "Class"
             for occurrence in response.occurrences:
                 (favorite_link,
                  volunteer_link,
@@ -130,7 +125,7 @@ class ListEventsView(View):
                  new_presenters) = build_icon_links(
                     occurrence,
                     eval_occurrences,
-                    item_type,
+                    item.calendar_type,
                     (self.conference.status == "completed"),
                     request.user)
                 for presenter in new_presenters:
