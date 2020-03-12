@@ -12,6 +12,7 @@ from scheduler.idd import (
 )
 from scheduler.data_transfer import Person
 from django.core.urlresolvers import reverse
+from gbetext import role_options
 
 
 class EventDetailView(View):
@@ -25,16 +26,29 @@ class EventDetailView(View):
         personal_schedule_items = []
         eventitem_view = get_event_display_info(eventitem_id)
         person = None
-        eval_occurrences = None
-        if request.user.is_authenticated() and request.user.profile and (
-                eventitem_view['event'].calendar_type):
+        eval_occurrences = []
+        if request.user.is_authenticated() and hasattr(request.user,
+                                                       'profile'):
             person = Person(
                 user=request.user,
                 public_id=request.user.profile.pk,
                 public_class="Profile")
-            eval_response = get_eval_info(person=person)
-            if len(eval_response.questions) > 0:
-                eval_occurrences = eval_response.occurrences
+            all_roles = []
+            for n, m in role_options:
+                all_roles += [m]
+            personal_schedule_items = get_schedule(
+                request.user,
+                labels=[
+                    eventitem_view['event'].calendar_type,
+                    eventitem_view['event'].e_conference.conference_slug],
+                roles=all_roles,
+                ).schedule_items
+            if eventitem_view['event'].calendar_type == "Conference":
+                eval_response = get_eval_info(person=person)
+                if len(eval_response.questions) > 0:
+                    eval_occurrences = eval_response.occurrences
+                else:
+                    eval_occurrences = None
 
         for occurrence in eventitem_view['scheduled_events']:
             (favorite_link,
@@ -46,7 +60,8 @@ class EventDetailView(View):
                 eval_occurrences,
                 eventitem_view['event'].calendar_type,
                 (eventitem_view['event'].e_conference.status == "completed"),
-                request.user)
+                personal_schedule_items)
+
             schedule_items += [{
                 'occurrence': occurrence,
                 'favorite_link': favorite_link,

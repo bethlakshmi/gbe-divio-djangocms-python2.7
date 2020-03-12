@@ -18,7 +18,7 @@ from gbe.functions import (
 )
 from gbe.scheduling.views.functions import build_icon_links
 from scheduler.idd import (
-    get_bookings,
+    get_schedule,
     get_eval_info,
     get_occurrences,
 )
@@ -30,6 +30,7 @@ from gbe_forms_text import (
 from gbetext import (
     event_options,
     class_options,
+    role_options,
 )
 
 
@@ -101,12 +102,22 @@ class ListEventsView(View):
         items = self.get_events_list_by_type()
         events = []
         eval_occurrences = []
+        all_roles = []
+        personal_schedule_items = []
         if request.user.is_authenticated() and hasattr(request.user,
                                                        'profile'):
             person = Person(
                 user=request.user,
                 public_id=request.user.profile.pk,
                 public_class="Profile")
+            for n, m in role_options:
+                all_roles += [m]
+            personal_schedule_items = get_schedule(
+                request.user,
+                labels=[self.conference.conference_slug],
+                roles=all_roles,
+                ).schedule_items
+
             eval_response = get_eval_info(person=person)
             if len(eval_response.questions) > 0:
                 eval_occurrences = eval_response.occurrences
@@ -127,7 +138,7 @@ class ListEventsView(View):
                     eval_occurrences,
                     item.calendar_type,
                     (self.conference.status == "completed"),
-                    request.user)
+                    personal_schedule_items)
                 for presenter in new_presenters:
                     if presenter not in presenters:
                         presenters += [presenter]

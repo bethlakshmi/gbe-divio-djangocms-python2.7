@@ -317,7 +317,7 @@ def build_icon_links(occurrence,
                      eval_occurrences,
                      calendar_type,
                      conf_completed,
-                     user=None):
+                     personal_schedule_items):
     presenters = []
     evaluate = None
     highlight = None
@@ -339,33 +339,26 @@ def build_icon_links(occurrence,
                                urlconf='gbe.scheduling.urls')
     # don't bother if there is no logged in user or conference is over and 
     # we don't need to build the eval link
-    if user and user.is_authenticated() and (not conf_completed or (
-            conf_completed and calendar_type == 'Conference')):
-        people_response = get_bookings([occurrence.pk])
-        for person in people_response.people:
-            if user == person.user:
-                highlight = person.role.lower()
-                if person.role == "Interested":
-                    favorite_link = reverse('set_favorite',
-                                            args=[occurrence.pk, 'off'],
-                                            urlconf='gbe.scheduling.urls')
+    if not conf_completed or (
+            conf_completed and calendar_type == 'Conference'):
+        for booking in personal_schedule_items:
+            if booking.event == occurrence:
+                highlight = booking.role.lower()
+                if booking.role == "Interested":
+                    favorite_link = reverse(
+                        'set_favorite',
+                        args=[occurrence.pk, 'off'],
+                        urlconf='gbe.scheduling.urls')
                 else:
                     favorite_link = "disabled"
-                if person.role in ("Volunteer", "Pending Volunteer"):
+                    evaluate = None
+                if booking.role in ("Volunteer", "Pending Volunteer"):
                     volunteer_link = reverse(
-                    'set_volunteer',
-                    args=[occurrence.pk, 'off'],
-                    urlconf='gbe.scheduling.urls')
+                        'set_volunteer',
+                        args=[occurrence.pk, 'off'],
+                        urlconf='gbe.scheduling.urls')
                 else:
                     volunteer_link = "disabled"
-                if person.role in ("Teacher", "Moderator", "Panelist") and (
-                        person.public_class != "Profile"):
-                    presenters += [Performer.objects.get(pk=person.public_id)]
-
-                if evaluate and (person.role in ("Teacher",
-                                                 "Performer",
-                                                 "Moderator")):
-                    evaluate = None
     if conf_completed or calendar_type == 'Volunteer':
         favorite_link = None
     if conf_completed or calendar_type != 'Volunteer':

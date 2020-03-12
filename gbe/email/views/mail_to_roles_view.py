@@ -16,10 +16,7 @@ from gbe.email.forms import (
 )
 from scheduler.idd import get_people
 from gbe.email.views import MailToFilterView
-from gbetext import (
-    role_options,
-    to_list_empty_msg
-)
+from gbetext import to_list_empty_msg
 from gbe_forms_text import (
     all_roles,
     role_option_privs,
