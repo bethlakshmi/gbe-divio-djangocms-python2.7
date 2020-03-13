@@ -281,7 +281,7 @@ class TestViewList(TestCase):
         self.assertContains(response, opportunity.eventitem.e_title)
         self.assertContains(response, "You were not accepted for this shift.")
 
-    def test_view_volunteers_rejected(self):
+    def test_view_volunteers_already_committed(self):
         context = StaffAreaContext(conference=self.conf)
         volunteer, booking = context.book_volunteer(role="Teacher")
         opportunity = booking.event
