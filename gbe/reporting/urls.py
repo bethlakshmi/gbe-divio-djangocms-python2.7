@@ -22,6 +22,8 @@ from gbe.reporting import (
 from django.contrib import admin
 admin.autodiscover()
 
+app_name = "reporting"
+
 urlpatterns = [
     url(r'^reports/?$',
         list_reports,

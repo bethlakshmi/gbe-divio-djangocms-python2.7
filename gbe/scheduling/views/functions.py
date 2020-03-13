@@ -313,16 +313,17 @@ def process_post_response(request,
         context['start_open'] = True
     return context, success_url, response
 
+
 def build_icon_links(occurrence,
                      eval_occurrences,
                      calendar_type,
                      conf_completed,
                      personal_schedule_items):
-    presenters = []
     evaluate = None
     highlight = None
     role = None
-    favorite_link = reverse('set_favorite', 
+    vol_disable_msg = None
+    favorite_link = reverse('set_favorite',
                             args=[occurrence.pk, 'on'],
                             urlconf='gbe.scheduling.urls')
     volunteer_link = reverse('set_volunteer',
@@ -330,16 +331,17 @@ def build_icon_links(occurrence,
                              urlconf='gbe.scheduling.urls')
     if occurrence.extra_volunteers() >= 0:
         volunteer_link = "disabled"
+        vol_disable_msg = "This event has all the volunteers it needs."
     if (calendar_type == 'Conference') and (
             occurrence.start_time < (datetime.now() - timedelta(
                 hours=EVALUATION_WINDOW))) and (eval_occurrences is not None):
         if occurrence in eval_occurrences:
             evaluate = "disabled"
         else:
-            evaluate = reverse('eval_event', 
+            evaluate = reverse('eval_event',
                                args=[occurrence.pk, ],
                                urlconf='gbe.scheduling.urls')
-    # don't bother if there is no logged in user or conference is over and 
+    # don't bother if there is no logged in user or conference is over and
     # we don't need to build the eval link
     if not conf_completed or (
             conf_completed and calendar_type == 'Conference'):
@@ -359,10 +361,23 @@ def build_icon_links(occurrence,
                         'set_volunteer',
                         args=[occurrence.pk, 'off'],
                         urlconf='gbe.scheduling.urls')
+                elif booking.role in ("Rejected"):
+                    volunteer_link = "disabled"
+                    vol_disable_msg = "Thank you for volunteering. " + \
+                        "You were not accepted for this shift."
+                elif booking.role in ("Waitlisted"):
+                    volunteer_link = "disabled"
+                    vol_disable_msg = "Thank you for volunteering. " + \
+                        "You were waitlisted for this shift."
                 else:
                     volunteer_link = "disabled"
     if conf_completed or calendar_type == 'Volunteer':
         favorite_link = None
-    if conf_completed or calendar_type != 'Volunteer':
+    if calendar_type == 'Volunteer' and occurrence.end_time < datetime.now():
         volunteer_link = None
-    return (favorite_link, volunteer_link, evaluate, highlight, presenters)
+
+    return (favorite_link,
+            volunteer_link,
+            evaluate,
+            highlight,
+            vol_disable_msg)

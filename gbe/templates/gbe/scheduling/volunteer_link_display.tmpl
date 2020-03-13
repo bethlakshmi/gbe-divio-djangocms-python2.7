@@ -6,6 +6,6 @@
       </a>
      {% elif sched_event.volunteer_link %}
       <a href="#" class="detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"
-         title="You are a {{ sched_event.highlight }} - contact the coordinator to change your schedule">
+         title="{% if sched_event.vol_disable_msg %}{{sched_event.vol_disable_msg}}{% else %}You are a {{ sched_event.highlight }} - contact the coordinator to change your schedule{% endif %}">
        {% include "gbe/scheduling/volunteer_icon.tmpl" with occurrence=sched_event %}</a>
      {% endif %}

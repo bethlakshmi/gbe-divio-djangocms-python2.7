@@ -33,7 +33,7 @@ def validate_profile(request, require=False):
     '''
     Return the user profile if any
     '''
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         try:
             return request.user.profile
         except Profile.DoesNotExist:
@@ -81,7 +81,7 @@ def check_user_and_redirect(request, this_url, source):
         'error_url': None,
         'owner': None,
     }
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         user_message = UserMessage.objects.get_or_create(
             view=source,
             code="USER_NOT_LOGGED_IN",

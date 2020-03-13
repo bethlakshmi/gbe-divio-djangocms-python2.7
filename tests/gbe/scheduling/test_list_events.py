@@ -10,6 +10,7 @@ from tests.functions.gbe_functions import (
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ClassFactory,
+    PersonaFactory,
     ProfileFactory,
     ShowFactory,
     GenericEventFactory,
@@ -17,6 +18,7 @@ from tests.factories.gbe_factories import (
 from tests.contexts import (
     ClassContext,
     ShowContext,
+    StaffAreaContext,
 )
 from datetime import (
     datetime,
@@ -136,25 +138,10 @@ class TestViewList(TestCase):
             set_fav_link,
             url))
 
-    def test_not_really_interested_in_event(self):
-        context = ShowContext(conference=self.conf)
-        interested_profile = ProfileFactory()
-        url = reverse("event_list",
-                      urlconf="gbe.scheduling.urls",
-                      args=['Show'])
-        login_as(interested_profile, self)
-        response = self.client.get(url)
-        set_fav_link = reverse(
-            "set_favorite",
-            args=[context.sched_event.pk, "on"],
-            urlconf="gbe.scheduling.urls")
-        self.assertContains(response, "%s?next=%s" % (
-            set_fav_link,
-            url))
-
     def test_disabled_interest(self):
         context = ClassContext(conference=self.conf,
                                starttime=datetime.now()-timedelta(days=1))
+        context.bid.teacher = PersonaFactory()
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=['Class'])
@@ -164,20 +151,16 @@ class TestViewList(TestCase):
                             '<a href="#" class="detail_link-disabled')
         self.assertNotContains(response, "fa-tachometer")
 
-    def test_interest_not_shown(self):
-        old_conf = ConferenceFactory(status="completed")
-        context = ShowContext(
-            conference=old_conf)
+    def test_booked_teacher_over_bid_teacher(self):
+        context = ClassContext(conference=self.conf,
+                               starttime=datetime.now()-timedelta(days=1))
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
-                      args=["Show"])
-        response = self.client.get(
-            url,
-            data={"conference": old_conf.conference_slug})
-        login_as(context.performer.performer_profile, self)
+                      args=['Class'])
+        login_as(context.teacher.performer_profile, self)
         response = self.client.get(url)
-        self.assertNotContains(response, 'fa-star')
-        self.assertNotContains(response, 'fa-star-o')
+        self.assertContains(response, str(context.teacher.performer))
+        self.assertContains(response, str(context.bid.teacher.performer))
 
     def test_view_panels(self):
         this_class = ClassFactory.create(accepted=3,
@@ -202,8 +185,10 @@ class TestViewList(TestCase):
         this_class = ClassFactory.create(accepted=3,
                                          e_conference=self.conf,
                                          b_conference=self.conf)
-        generic_event = GenericEventFactory(e_conference=self.conf,
-                                            type="Volunteer")
+        staff_context = StaffAreaContext(conference=self.conf)
+        opportunity = staff_context.add_volunteer_opp()
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.save()
         login_as(ProfileFactory(), self)
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
@@ -211,10 +196,85 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        self.assertContains(response, generic_event.e_title)
+        vol_link = reverse('set_volunteer',
+                           args=[opportunity.pk, 'on'],
+                           urlconf='gbe.scheduling.urls')
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, vol_link)
+        self.assertContains(response,
+                            'volunteered.gif" class="volunteer-icon"')
         self.assertNotContains(response, this_class.e_title)
         self.assertNotContains(response, 'fa-star')
         self.assertNotContains(response, 'fa-star-o')
+
+    def test_view_volunteers_past_event(self):
+        staff_context = StaffAreaContext(conference=self.conf)
+        opportunity = staff_context.add_volunteer_opp()
+        url = reverse("event_list",
+                      urlconf="gbe.scheduling.urls",
+                      args=["Volunteer"])
+        response = self.client.get(
+            url,
+            data={"conference": self.conf.conference_slug})
+        vol_link = reverse('set_volunteer',
+                           args=[opportunity.pk, 'on'],
+                           urlconf='gbe.scheduling.urls')
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertNotContains(response, vol_link)
+        self.assertNotContains(response, 'class="volunteer-icon"')
+
+    def test_view_volunteers_approval_pending(self):
+        context = StaffAreaContext(conference=self.conf)
+        volunteer, booking = context.book_volunteer(role="Pending Volunteer")
+        opportunity = booking.event
+        opportunity.approval_needed = True
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.save()
+        login_as(volunteer, self)
+        url = reverse("event_list",
+                      urlconf="gbe.scheduling.urls",
+                      args=["Volunteer"])
+        response = self.client.get(
+            url,
+            data={"conference": self.conf.conference_slug})
+        vol_link = reverse('set_volunteer',
+                           args=[opportunity.pk, 'off'],
+                           urlconf='gbe.scheduling.urls')
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, vol_link)
+        self.assertContains(response, 'awaiting_approval.gif')
+
+    def test_view_volunteers_rejected(self):
+        context = StaffAreaContext(conference=self.conf)
+        volunteer, booking = context.book_volunteer(role="Rejected")
+        opportunity = booking.event
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.save()
+        login_as(volunteer, self)
+        url = reverse("event_list",
+                      urlconf="gbe.scheduling.urls",
+                      args=["Volunteer"])
+        response = self.client.get(
+            url,
+            data={"conference": self.conf.conference_slug})
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, "You were not accepted for this shift.")
+
+    def test_view_volunteers_waitlisted(self):
+        context = StaffAreaContext(conference=self.conf)
+        volunteer, booking = context.book_volunteer(role="Waitlisted")
+        opportunity = booking.event
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.save()
+        login_as(volunteer, self)
+        url = reverse("event_list",
+                      urlconf="gbe.scheduling.urls",
+                      args=["Volunteer"])
+        response = self.client.get(
+            url,
+            data={"conference": self.conf.conference_slug})
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, "You were waitlisted for this shift.")
 
     def test_disabled_eval(self):
         context = ClassContext(conference=self.conf,

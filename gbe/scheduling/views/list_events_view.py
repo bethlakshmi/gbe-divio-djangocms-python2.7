@@ -18,6 +18,7 @@ from gbe.functions import (
 )
 from gbe.scheduling.views.functions import build_icon_links
 from scheduler.idd import (
+    get_bookings,
     get_schedule,
     get_eval_info,
     get_occurrences,
@@ -104,8 +105,7 @@ class ListEventsView(View):
         eval_occurrences = []
         all_roles = []
         personal_schedule_items = []
-        if request.user.is_authenticated() and hasattr(request.user,
-                                                       'profile'):
+        if request.user.is_authenticated and hasattr(request.user, 'profile'):
             person = Person(
                 user=request.user,
                 public_id=request.user.profile.pk,
@@ -133,23 +133,30 @@ class ListEventsView(View):
                  volunteer_link,
                  evaluate,
                  highlight,
-                 new_presenters) = build_icon_links(
+                 vol_disable_msg) = build_icon_links(
                     occurrence,
                     eval_occurrences,
                     item.calendar_type,
                     (self.conference.status == "completed"),
                     personal_schedule_items)
-                for presenter in new_presenters:
-                    if presenter not in presenters:
-                        presenters += [presenter]
                 scheduled_events += [{
                     'occurrence': occurrence,
                     'favorite_link': favorite_link,
                     'volunteer_link': volunteer_link,
                     'highlight': highlight,
                     'evaluate': evaluate,
+                    'vol_disable_msg': vol_disable_msg,
                     'approval_needed': occurrence.approval_needed,
                 }]
+                people_response = get_bookings([occurrence.pk], roles=[
+                    "Teacher",
+                    "Moderator",
+                    "Panelist"])
+                for person in people_response.people:
+                    if person.public_class != "Profile":
+                        presenter = Performer.objects.get(pk=person.public_id)
+                        if presenter not in presenters:
+                            presenters += [presenter]
             if len(presenters) == 0 and item.calendar_type == "Conference":
                 presenters += [item.teacher]
 

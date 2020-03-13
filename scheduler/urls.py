@@ -2,6 +2,8 @@ from django.conf.urls import url
 from django.contrib.auth.views import *
 from scheduler import views
 
+app_name = "scheduler"
+
 urlpatterns = [
     url(r'^scheduler/acts/?$',
         views.schedule_acts, name='schedule_acts'),

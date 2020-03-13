@@ -27,8 +27,7 @@ class EventDetailView(View):
         eventitem_view = get_event_display_info(eventitem_id)
         person = None
         eval_occurrences = []
-        if request.user.is_authenticated() and hasattr(request.user,
-                                                       'profile'):
+        if request.user.is_authenticated and hasattr(request.user, 'profile'):
             person = Person(
                 user=request.user,
                 public_id=request.user.profile.pk,
@@ -55,7 +54,7 @@ class EventDetailView(View):
              volunteer_link,
              evaluate,
              highlight,
-             new_presenters) = build_icon_links(
+             vol_disable_msg) = build_icon_links(
                 occurrence,
                 eval_occurrences,
                 eventitem_view['event'].calendar_type,
@@ -69,6 +68,7 @@ class EventDetailView(View):
                 'highlight': highlight,
                 'evaluate': evaluate,
                 'approval_needed': occurrence.approval_needed,
+                'vol_disable_msg': vol_disable_msg,
             }]
         template = 'gbe/scheduling/event_detail.tmpl'
         return render(request,
