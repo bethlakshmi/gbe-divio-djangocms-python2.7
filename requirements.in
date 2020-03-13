@@ -13,7 +13,7 @@ https://control.divio.com/api/v1/apps/serve/djangocms-picture/2.4.0/2cde774a-268
 https://control.divio.com/api/v1/apps/serve/djangocms-snippet/2.2.0/7acefb85-0c19-4b6d-9b02-45ba5f9d3bfd/djangocms-snippet-2.2.0.tar.gz#egg=djangocms-snippet==2.2.0
 https://control.divio.com/api/v1/apps/serve/djangocms-style/2.2.0/a8b508f7-543c-49ab-804b-77bed033c7af/djangocms-style-2.2.0.tar.gz#egg=djangocms-style==2.2.0
 https://control.divio.com/api/v1/apps/serve/djangocms-text-ckeditor/3.8.0/b89646ad-5f01-4762-aa29-52600645e6de/djangocms-text-ckeditor-3.8.0.tar.gz#egg=djangocms-text-ckeditor==3.8.0
-https://control.divio.com/api/v1/apps/serve/djangocms-video/2.2.0/facb7d0e-0636-4b44-80e7-351b1faf58fc/djangocms-video-2.2.0.tar.gz#egg=djangocms-video==2.2.0
+https://control.divio.com/api/v1/apps/serve/djangocms-video/2.3.0/7a79d118-8440-4132-838d-96dc641358b9/djangocms-video-2.3.0.tar.gz#egg=djangocms-video==2.3.0
 https://control.divio.com/api/v1/apps/serve/django-filer/1.7.0/633d9275-51a0-42bc-8355-143db1b20ca4/django-filer-1.7.0.tar.gz#egg=django-filer==1.7.0
 # </INSTALLED_ADDONS>
 django-formtools==2.1
