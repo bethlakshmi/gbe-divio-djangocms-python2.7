@@ -28,34 +28,31 @@ class TestScheduleActs(TestCase):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
         self.context = ShowContext()
         self.url = reverse(self.view_name,
-                           urlconf="scheduler.urls",
+                           urlconf="gbe.scheduling.urls",
                            args=[self.context.show.pk])
 
     def get_basic_post(self):
         allocation = self.context.sched_event.resources_allocated.filter(
-                resource__actresource___item=self.context.acts[0]).first()
+            resource__actresource___item=self.context.acts[0]).first()
         data = {
-            'allocation_%d-event_type' %
-            allocation.pk: self.context.show.e_title,
-            'allocation_%d-performer' %
-            allocation.pk: 'changed performer',
-            'allocation_%d-title' %
-            allocation.pk: 'changed title',
-            'allocation_%d-show' %
-            allocation.pk: str(self.context.sched_event.pk),
-            'allocation_%d-order' % allocation.pk: 1}
+            '%d-performer' %
+            self.context.acts[0].resourceitem_id: 'changed performer',
+            '%d-title' %
+            self.context.acts[0].resourceitem_id: 'changed title',
+            '%d-booking_id' %
+            self.context.acts[0].resourceitem_id: allocation.pk,
+            '%d-show' %
+            self.context.acts[0].resourceitem_id: str(
+                self.context.sched_event.pk),
+            '%d-order' % self.context.acts[0].resourceitem_id: 1}
         return data
 
     def assert_good_form_display(self, response):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('<ul class="errorlist">', response.content)
         for act in self.context.acts:
-            if act.accepted == 3:
-                self.assertContains(response, act.b_title)
-                self.assertContains(response, str(act.performer))
-            else:
-                self.assertNotContains(response, act.b_title)
-                self.assertNotContains(response, str(act.performer))
+            self.assertContains(response, act.b_title)
+            self.assertContains(response, str(act.performer))
         self.assertContains(
             response,
             '<option value="%d" selected>%s</option>' % (
@@ -80,7 +77,7 @@ class TestScheduleActs(TestCase):
         login_as(self.privileged_profile, self)
         bad_url = reverse(
             self.view_name,
-            urlconf="scheduler.urls",
+            urlconf="gbe.scheduling.urls",
             args=[self.context.show.pk+1])
         response = self.client.get(bad_url, follow=True)
         self.assertEqual(response.status_code, 404)
@@ -89,7 +86,7 @@ class TestScheduleActs(TestCase):
         login_as(self.privileged_profile, self)
         bad_url = reverse(
             self.view_name,
-            urlconf="scheduler.urls")
+            urlconf="gbe.scheduling.urls")
         response = self.client.get(bad_url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
@@ -141,11 +138,11 @@ class TestScheduleActs(TestCase):
         response = self.client.get(self.url)
         self.assert_good_form_display(response)
 
-    def test_good_user_post_just_show(self):
+    def test_good_user_get_show(self):
         login_as(self.privileged_profile, self)
-        response = self.client.post(
-            self.url,
-            data={'show_id': self.context.show.pk})
+        response = self.client.get("%s?show_id=%d" % (
+            reverse(self.view_name, urlconf="gbe.scheduling.urls"),
+            self.context.show.pk))
         self.assert_good_form_display(response)
 
     def test_good_user_post_success(self):
@@ -182,36 +179,32 @@ class TestScheduleActs(TestCase):
         self.assert_good_form_display(response)
         allocation = self.context.sched_event.resources_allocated.filter(
             resource__actresource___item=self.context.acts[0]).first()
-        input_text = '<input type="number" name="allocation_%d-order" ' + \
-                     'value="2" required id="id_allocation_%d-order" />'
+        input_text = '<input type="number" name="%d-order" ' + \
+                     'value="2" required id="id_%d-order" />'
         self.assertContains(
             response,
-            input_text % (allocation.pk, allocation.pk)
-            )
+            input_text % (self.context.acts[0].resourceitem_id,
+                          self.context.acts[0].resourceitem_id))
 
     def test_good_user_post_invalid(self):
         login_as(self.privileged_profile, self)
-        allocation = self.context.sched_event.resources_allocated.filter(
-            resource__actresource___item=self.context.acts[0]).first()
         data = self.get_basic_post()
-        data['allocation_%d-show' % allocation.pk] = 'bad'
-        data['allocation_%d-order' % allocation.pk] = 'very bad'
-        data['allocation_%d-actresource' % allocation.pk] = \
+        data['%d-show' % self.context.acts[0].resourceitem_id] = 'bad'
+        data['%d-order' % self.context.acts[0].resourceitem_id] = 'very bad'
+        data['%d-booking_id' % self.context.acts[0].resourceitem_id] = \
             'adfasdfasdfkljasdfklajsdflkjasdlkfjalksjdflkasjdflkjasdl'
         response = self.client.post(
             self.url,
             data=data)
-        self.assertRedirects(
-            response,
-            reverse('home', urlconf='gbe.urls'))
+        self.assertContains(response, '<ul class="errorlist">', 2)
+        self.assertContains(response, 'Select a valid choice.')
+        self.assertContains(response, 'Enter a whole number.')
 
     def test_good_user_change_show(self):
         new_show = ShowContext(conference=self.context.conference)
         login_as(self.privileged_profile, self)
-        allocation = self.context.sched_event.resources_allocated.filter(
-            resource__actresource___item=self.context.acts[0]).first()
         data = self.get_basic_post()
-        data['allocation_%d-show' % allocation.pk] = str(
+        data['%d-show' % self.context.acts[0].resourceitem_id] = str(
             new_show.sched_event.pk)
 
         response = self.client.post(

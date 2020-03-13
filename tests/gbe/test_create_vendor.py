@@ -88,7 +88,6 @@ class TestCreateVendor(TestCase):
         self.assertContains(response, "(Click to edit)")
         self.assertContains(response, draft_string)
         ticket_link = "%d/%s" % (self.profile.user_object.id, bpt_event_id)
-        print response.content
         self.assertContains(response, ticket_link)
 
     def test_create_vendor_post_form_valid_submit(self):

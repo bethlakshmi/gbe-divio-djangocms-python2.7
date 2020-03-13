@@ -585,9 +585,11 @@ class Event(Schedulable):
             warnings += [Warning(
                 code="OCCURRENCE_OVERBOOKED",
                 details="Over booked by %s acts" % (
-                    self.volunteer_count() - self.max_volunteer))]
-        if act.label:
-            allocation.set_label(act.label)
+                    num_acts - self.max_volunteer))]
+        if act.order:
+            ordering = Ordering.objects.get_or_create(allocation=allocation)
+            ordering[0].order = act.order
+            ordering[0].save()
         return BookingResponse(warnings=warnings,
                                booking_id=allocation.pk,
                                occurrence=self)

@@ -106,9 +106,9 @@ deactivated users.<br>
           </td>
 
 	  <td class="bid-table">
-            {% if act.tech.audio.track %}
-            <a href="{{act.tech.audio.track.url}}">{{act.tech.audio.track.name | display_track_title:20 }}</a>
-            {% elif act.tech.audio.confirm_no_music %}
+            {% if act.tech.track %}
+            <a href="{{act.tech.track.url}}">{{act.tech.track.name | display_track_title:20 }}</a>
+            {% elif act.tech.confirm_no_music %}
             No audio track needed
             {% else %}
             <span class="error_row">No track provided</span>
@@ -122,9 +122,6 @@ deactivated users.<br>
     {% endfor %}
     </tbody>
   </table>
-  <br><br>
-  Download <a href='{% url 'reporting:act_techinfo_download' this_show.eventitem_id %}'>All Details</a>
-  as a .csv file.
   <br>
   Download <a href="{% url 'reporting:download_tracks_for_show' this_show.pk %}">all audio tracks</a> for this show as a zipped tar archive</br>
   {% else %}

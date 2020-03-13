@@ -237,7 +237,7 @@ special_menu_tree = [
      'groups': ['Scheduling Mavens']},
 
     {'title': 'Acts',
-     'url': reverse('schedule_acts', urlconf='scheduler.urls'),
+     'url': reverse('schedule_acts', urlconf='gbe.scheduling.urls'),
      'parent_id': 40,
      'id': 41,
      'groups': ['Act Coordinator',

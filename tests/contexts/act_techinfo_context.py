@@ -1,7 +1,6 @@
 from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceFactory,
-    CueInfoFactory,
     GenericEventFactory,
     PersonaFactory,
     RoomFactory,
@@ -25,7 +24,6 @@ class ActTechInfoContext():
                  sched_event=None,
                  conference=None,
                  room_name=None,
-                 cue_count=1,
                  schedule_rehearsal=False,
                  act_role=""):
         self.show = show or ShowFactory()
@@ -36,12 +34,7 @@ class ActTechInfoContext():
                                      accepted=3,
                                      submitted=True)
         self.tech = self.act.tech
-        self.audio = self.tech.audio
-        self.lighting = self.tech.lighting
-        self.stage = self.tech.stage
-        for i in range(cue_count):
-            CueInfoFactory.create(techinfo=self.tech,
-                                  cue_sequence=i)
+
         # schedule the show
         if sched_event:
             self.sched_event = sched_event

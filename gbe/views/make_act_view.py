@@ -9,10 +9,7 @@ from gbe.ticketing_idd_interface import (
 )
 from gbe.models import (
     Act,
-    AudioInfo,
-    LightingInfo,
     Performer,
-    StageInfo,
     TechInfo,
 )
 from gbe.forms import (
@@ -109,17 +106,6 @@ class MakeActView(MakeBidView):
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):
             techinfo = TechInfo()
-            lightinginfo = LightingInfo()
-            lightinginfo.save()
-            audioinfo = AudioInfo.objects.create(
-                track_duration=datetime.timedelta(seconds=1))
-            audioinfo.save()
-            stageinfo = StageInfo(
-                act_duration=datetime.timedelta(seconds=1))
-            stageinfo.save()
-            techinfo.lighting = lightinginfo
-            techinfo.audio = audioinfo
-            techinfo.stage = stageinfo
         else:
             techinfo = self.bid_object.tech
 

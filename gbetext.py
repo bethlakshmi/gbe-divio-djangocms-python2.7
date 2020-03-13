@@ -142,30 +142,9 @@ states_options = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'),
                   ('WI', 'Wisconsin'),
                   ('WY', 'Wyoming'), ('OTHER', 'Other/Non-US')]
 
-offon_options = (("Off", "OFF"), ("ON", "ON"))
-
-stage_lighting_options = (('White', 'White'),
-                          ('Blue', 'Blue'),
-                          ('Green', 'Green'),
-                          ('OFF', 'OFF'),
-                          ('Pink', 'Pink'),
-                          ('Purple', 'Purple'),
-                          ('Red', 'Red'),
-                          ('Yellow', 'Yellow'))
-
-follow_spot_options = (('White', 'White'), ('Blue', 'Blue'), ('OFF', 'OFF'),
-                       ('Pink', 'Pink'), ('Purple', 'Purple'), ('Red', 'Red'))
-
-cyc_color_options = (('Blue', 'Blue'), ('Green', 'Green'), ('OFF', 'OFF'),
-                     ('Pink', 'Pink'), ('Purple', 'Purple'), ('Red', 'Red'),
-                     ('White', 'White'), ('Yellow', 'Yellow'))
-
-
-vendor_lighting_options = (('White', 'White'),
-                           ('Blue', 'Blue'),
-                           ('Red', 'Red'),
-                           ('No lights (not recommended)', 'No lights'))
-
+mic_options = (("I don't need a mic", "I don't need a mic"),
+               ("I need a mic", "I need a mic"),
+               ("I own a mic", "I own a mic"))
 
 acceptance_states = ((0, 'No Decision'),
                      (1, 'Reject'),
@@ -506,6 +485,9 @@ default_update_profile_msg = "Your profile has been updated."
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+default_advanced_acttech_instruct = '''The following information is optional.\
+  If your act does not need this information, there is no need to complete \
+this form.'''
 default_basic_acttech_instruct = '''These are the basic details our crew \
 needs for lighting, playing audio, and making sure the stage is set.'''
 default_rehearsal_acttech_instruct = '''Reserve your rehearsal slot early.  \
@@ -513,6 +495,8 @@ technical details about your act can be added later.'''
 default_rehearsal_booked = '''Rehearsal is booked.'''
 rehearsal_book_error = '''The rehearsal could not be booked.  If this issue \
 persists, please contact GBE support.'''
+default_act_tech_advanced_submit = "All of your act tech details have been \
+submitted."
 default_act_tech_basic_submit = "Your basic act tech details have been \
 submitted.  Stay tuned, later on you\'ll be asked for further information."
 default_update_act_tech = "Your Act Technical Details have been updated."

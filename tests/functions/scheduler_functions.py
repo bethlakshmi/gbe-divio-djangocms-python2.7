@@ -56,8 +56,3 @@ def book_act_item_for_show(actitem, eventitem):
 def noon(day):
     return datetime.combine(day.day,
                             time(12, 0, 0))
-
-
-def assert_link(response, link):
-    selection = '<a href="%s">' % link
-    assert selection in response.content

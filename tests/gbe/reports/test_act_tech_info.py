@@ -17,7 +17,6 @@ from tests.factories.scheduler_factories import (
     ResourceAllocationFactory,
     SchedEventFactory,
 )
-from tests.functions.scheduler_functions import assert_link
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -127,11 +126,11 @@ class TestReports(TestCase):
                     urlconf='gbe.reporting.urls',
                     args=[curr_show.eventitem_id]),
             data={'conf_slug': curr_conf.conference_slug})
-        assert_link(response, reverse(
-            'schedule_acts',
-            urlconf='scheduler.urls',
-            args=[curr_show.pk]))
         self.assertContains(response, 'Schedule Acts for this Show')
+        self.assertContains(response, reverse(
+            'schedule_acts',
+            urlconf='gbe.scheduling.urls',
+            args=[curr_show.eventitem_id]))
 
     def test_review_act_techinfo_with_conference_slug(self):
         '''review_act_techinfo view show correct events for slug

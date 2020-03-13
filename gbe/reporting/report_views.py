@@ -12,7 +12,6 @@ import ticketing.models as tix
 import os as os
 import csv
 from reportlab.pdfgen import canvas
-# from gbe.reporting.view_techinfo import *
 
 from gbe.functions import (
     conference_slugs,
@@ -144,7 +143,6 @@ def review_act_techinfo(request, show_id=None):
     # using try not get_or_404 to cover the case where the show is there
     # but does not have any scheduled events.
     # I can still show a list of shows this way.
-
     show, acts, conference, scheduling_link = prep_act_tech_info(
         request, show_id)
     return render(request,
@@ -173,119 +171,6 @@ def download_tracks_for_show(request, show_id):
     fname = os.path.basename(path)
     response = HttpResponse(f, content_type='application/octet-stream')
     response['Content-Disposition'] = 'attachment; filename="%s"' % fname
-    return response
-
-
-def export_act_techinfo(request, show_id):
-    '''
-    Export a csv of all act tech info details
-    - includes only accepted acts
-    - includes incomplete details
-    - music sold separately
-    '''
-
-    reviewer = validate_perms(request, ('Tech Crew',))
-
-    show = get_object_or_404(conf.Show, eventitem_id=show_id)
-    show_booking = show.scheduler_events.first()
-    location = show_booking.location
-    acts = show_booking.get_acts(3)
-
-    # build header, segmented in same structure as subclasses
-    header = ['Sort Order',
-              'Order',
-              'Act',
-              'Performer',
-              'Contact Email',
-              'Complete?',
-              'Rehearsal Time']
-    header += ['Act Length',
-               'Intro Text',
-               'No Props',
-               'Preset Props',
-               'Cued Props',
-               'Clear Props',
-               'Stage Notes']
-    header += ['Track Title',
-               'Track Artist',
-               'Track',
-               'Track Length',
-               'No Music',
-               'Need Mic',
-               'Use Own Mic',
-               'Audio Notes']
-    header += ['Act Description',
-               'Costume Description']
-
-    if location.describe == 'Theater':
-        header += ['Cue #',
-                   'Cue off of',
-                   'Follow spot',
-                   'Center Spot',
-                   'Backlight',
-                   'Cyc Light',
-                   'Wash',
-                   'Sound']
-    else:
-        header += ['Cue #', 'Cue off of', 'Follow spot', 'Wash', 'Sound']
-
-    # now build content
-    cues = conf.CueInfo.objects.filter(techinfo__act__in=acts)
-    techinfo = []
-    for act in acts:
-        rehearsals = ""
-        for rehearsal in act.get_scheduled_rehearsals():
-            rehearsals += date_format(
-                rehearsal.start_time, "GBE_DATETIME_FORMAT") + ", "
-
-        start = [act.order,
-                 act.b_title.encode('utf-8').strip(),
-                 str(act.performer).encode('utf-8').strip(),
-                 act.performer.contact.user_object.email,
-                 act.tech.is_complete,
-                 rehearsals]
-        start += act.tech.stage.dump_data
-        start += act.tech.audio.dump_data
-        start += act.tech.lighting.dump_data
-
-        # one row per cue... for sortability
-        start.insert(0, '')
-        for cue in cues.filter(techinfo__act=act).order_by('cue_sequence'):
-
-            if location.describe == 'Theater':
-                cue_items = [cue.cue_sequence,
-                             cue.cue_off_of.encode('utf-8').strip(),
-                             cue.follow_spot,
-                             cue.center_spot,
-                             cue.backlight,
-                             cue.cyc_color,
-                             cue.wash,
-                             cue.sound_note.encode('utf-8').strip()]
-            else:
-                cue_items = [cue.cue_sequence,
-                             cue.cue_off_of.encode('utf-8').strip(),
-                             cue.follow_spot,
-                             cue.wash,
-                             cue.sound_note.encode('utf-8').strip()]
-            start[0] = float("%d.%d" % (act.order, cue.cue_sequence))
-            techinfo.append(start+cue_items)
-
-        # in case performers haven't done paperwork
-        if len(cues.filter(techinfo__act=act)) == 0:
-            start[0] = act.order
-            techinfo.append(start)
-
-    # end for loop through acts
-    cuesequenceindex = 24  # magic number, obtained by counting headers
-
-    techinfo = sorted(techinfo, key=lambda row: row[0])
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s_acttech.csv' \
-        % show.e_title.replace(' ', '_')
-    writer = csv.writer(response)
-    writer.writerow(header)
-    for row in techinfo:
-        writer.writerow(row)
     return response
 
 

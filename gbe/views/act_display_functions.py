@@ -52,12 +52,10 @@ def display_invalid_act(request, data, form, conference, profile, view):
 
 
 def get_act_form(act, form, header):
-    audio_info = act.tech.audio
-    stage_info = act.tech.stage
     initial = {
-        'track_title': audio_info.track_title,
-        'track_artist': audio_info.track_artist,
-        'act_duration': stage_info.act_duration
+        'track_title': act.tech.track_title,
+        'track_artist': act.tech.track_artist,
+        'act_duration': act.tech.duration
     }
     act_form = form(
         instance=act,

@@ -9,13 +9,7 @@ from performer import Performer
 from persona import Persona
 from troupe import Troupe
 from combo import Combo
-from tech_info import (
-    AudioInfo,
-    LightingInfo,
-    StageInfo,
-    TechInfo,
-    CueInfo,
-)
+from tech_info import TechInfo
 from biddable import Biddable
 from biddable import visible_bid_query
 from act import Act

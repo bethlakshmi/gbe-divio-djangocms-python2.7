@@ -67,23 +67,6 @@ class ProfileAdmin(admin.ModelAdmin):
                      'user_object__email']
 
 
-class AudioInfoAdmin(admin.ModelAdmin):
-    list_display = ('techinfo',
-                    'track_title',
-                    'track_artist',
-                    'track_duration',
-                    'need_mic',
-                    'confirm_no_music')
-
-
-class LightingInfoAdmin(admin.ModelAdmin):
-    list_display = ('techinfo', 'notes', 'costume')
-
-
-class CueInfoAdmin(admin.ModelAdmin):
-    list_display = ('techinfo', 'cue_sequence')
-
-
 class BidEvalAdmin(admin.ModelAdmin):
     list_display = ('bid', 'evaluator', 'vote', 'notes')
 
@@ -245,10 +228,6 @@ admin.site.register(ClassProposal, ClassProposalAdmin)
 admin.site.register(ActBidEvaluation)
 admin.site.register(BidEvaluation, BidEvalAdmin)
 admin.site.register(TechInfo)
-admin.site.register(AudioInfo, AudioInfoAdmin)
-admin.site.register(LightingInfo, LightingInfoAdmin)
-admin.site.register(CueInfo, CueInfoAdmin)
-admin.site.register(StageInfo)
 admin.site.register(PerformerFestivals)
 admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
 admin.site.register(Persona, PerformerAdmin)
