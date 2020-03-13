@@ -94,8 +94,6 @@ class ListEventsView(View):
                 visible=True,
                 e_conference=self.conference).exclude(
                     type='Panel').order_by('e_title')
-        else:
-            items = []
         return items
 
     def get(self, request, *args, **kwargs):
