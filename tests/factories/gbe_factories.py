@@ -120,65 +120,13 @@ class ComboFactory(DjangoModelFactory):
     experience = 5
 
 
-class AudioInfoFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.AudioInfo
-
-    track_title = Sequence(lambda n: 'Test Track Title %d' % n)
-    track_artist = Sequence(lambda n: 'Test Track Artist %d' % n)
-#  no track for now  - do we mock this, or what?
-    track_duration = Duration(minutes=5)
-    need_mic = True
-    own_mic = False
-    notes = "Notes about test AudioInfo object."
-    confirm_no_music = False
-
-
-class LightingInfoFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.LightingInfo
-    notes = "Notes field for test LightingInfo object."
-    costume = "Costume field for test LightingInfo object."
-
-
-class StageInfoFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.StageInfo
-
-    act_duration = Duration(minutes=5)
-    intro_text = "intro text field for test StageInfo object"
-    confirm = True
-    set_props = False
-    cue_props = False
-    clear_props = False
-    notes = "Notes field for test StageInfo object"
-
-
 class TechInfoFactory(DjangoModelFactory):
     class Meta:
         model = conf.TechInfo
 
-    audio = SubFactory(AudioInfoFactory)
-    lighting = SubFactory(LightingInfoFactory)
-    stage = SubFactory(StageInfoFactory)
     track_title = Sequence(lambda n: 'Test Track Title %d' % n)
     track_artist = Sequence(lambda n: 'Test Track Artist %d' % n)
     duration = Duration(minutes=5)
-
-
-class CueInfoFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.CueInfo
-
-    techinfo = SubFactory(TechInfoFactory)
-    cue_sequence = Sequence(lambda n: n)
-    cue_off_of = "cue_off_of field for test CueInfo object"
-    follow_spot = "follow_spot"
-    center_spot = "center_spot"
-    backlight = "backlight"
-    cyc_color = "WHITE"
-    wash = "WHITE"
-    sound_note = "sound_note field for test CueInfo object"
 
 
 class ActCastingOptionFactory(DjangoModelFactory):

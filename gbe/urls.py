@@ -11,7 +11,6 @@ from gbe.views import (
     CostumeChangeStateView,
     CreateComboView,
     DeleteProfileView,
-    EditActTechInfoView,
     EditPersonaView,
     EditProfileView,
     EditTroupeView,
@@ -96,7 +95,7 @@ urlpatterns = [
 
     #  act tech info - delete act_techinfo_edit after GBE 2020
     url(r'^acttechinfo/edit/(\d+)/?$',
-        EditActTechInfoView,
+        ActTechWizardView.as_view(),
         name='act_techinfo_edit'),
     url(r'^acttechinfo/wizard/(?P<act_id>\d+)/?$',
         ActTechWizardView.as_view(),

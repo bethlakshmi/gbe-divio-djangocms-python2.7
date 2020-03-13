@@ -39,7 +39,11 @@ class Casting(object):
                  booking):
         self.booking_id = booking.pk
         self.role = booking.resource.actresource.role
-        self.act = booking.resource.actresource._item
+        self.act = booking.resource.actresource._item.resourceitem_id
+        try:
+            self.order = booking.ordering.order
+        except:
+            self.order = None
 
 
 class BookableAct(object):
@@ -47,17 +51,17 @@ class BookableAct(object):
                  booking_id=None,
                  act=None,
                  role=None,
-                 label=None):
+                 order=None):
         self.booking_id = None
-        self.label = None
+        self.order = None
         if role:
             self.role = role
         if booking_id:
             self.booking_id = booking_id
         if act:
             self.act_id = act.actitem_ptr_id
-        if label:
-            self.label = label
+        if order:
+            self.order = order
 
 
 class ScheduleItem(object):
