@@ -20,6 +20,7 @@ from tests.contexts import (
     ActTechInfoContext,
     ClassContext,
     ShowContext,
+    StaffAreaContext,
 )
 from gbe.models import Conference
 from scheduler.models import EventItem
@@ -294,3 +295,39 @@ class TestEventDetailView(TestCase):
             args=[context.bid.eventitem_id])
         response = self.client.get(url)
         self.assertNotContains(response, "fa-tachometer")
+
+    def test_volunteer_approval_pending(self):
+        context = StaffAreaContext()
+        volunteer, booking = context.book_volunteer(role="Pending Volunteer")
+        opportunity = booking.event
+        opportunity.approval_needed = True
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.save()
+        login_as(volunteer, self)
+        url = reverse(self.view_name,
+                      urlconf="gbe.scheduling.urls",
+                      args=[opportunity.eventitem_id])
+        response = self.client.get(url)
+        vol_link = reverse('set_volunteer',
+                           args=[opportunity.pk, 'off'],
+                           urlconf='gbe.scheduling.urls')
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, vol_link)
+        self.assertContains(response, 'awaiting_approval.gif')
+
+    def test_view_volunteers(self):
+        staff_context = StaffAreaContext()
+        opportunity = staff_context.add_volunteer_opp()
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.save()
+        url = reverse(self.view_name,
+                      urlconf="gbe.scheduling.urls",
+                      args=[opportunity.eventitem_id])
+        response = self.client.get(url)
+        vol_link = reverse('set_volunteer',
+                           args=[opportunity.pk, 'on'],
+                           urlconf='gbe.scheduling.urls')
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, vol_link)
+        self.assertContains(response,
+                            'volunteered.gif" class="volunteer-icon-large"')

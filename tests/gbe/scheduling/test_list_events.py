@@ -220,7 +220,6 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        print response.content
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
