@@ -19,10 +19,8 @@ from gbe.functions import (
     get_conference_by_slug,
     validate_perms,
 )
-from gbe_logging import logger
 from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
-from gbe.reporting.functions import prep_act_tech_info
 
 
 def list_reports(request):
@@ -132,30 +130,6 @@ def env_stuff(request, conference_choice=None):
     for row in person_details:
         writer.writerow(row)
     return response
-
-
-@never_cache
-def review_act_techinfo(request, show_id=None):
-    '''
-    Show the list of act tech info for all acts in a given show
-    '''
-    validate_perms(request, ('Tech Crew',))
-    # using try not get_or_404 to cover the case where the show is there
-    # but does not have any scheduled events.
-    # I can still show a list of shows this way.
-    show, acts, conference, scheduling_link = prep_act_tech_info(
-        request, show_id)
-    return render(request,
-                  'gbe/report/act_tech_review.tmpl',
-                  {'this_show': show,
-                   'acts': acts,
-                   'all_shows': conf.Show.objects.filter(
-                       e_conference=conference),
-                   'conference_slugs': conference_slugs(),
-                   'conference': conference,
-                   'scheduling_link': scheduling_link,
-                   'return_link': reverse('act_techinfo_review',
-                                          urlconf='gbe.reporting.urls',)})
 
 
 def download_tracks_for_show(request, show_id):

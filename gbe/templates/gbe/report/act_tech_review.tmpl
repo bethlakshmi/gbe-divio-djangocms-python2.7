@@ -8,6 +8,7 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
 {% endblock %}
 {% block content %}
 
@@ -115,7 +116,12 @@ deactivated users.<br>
             {% endif %}
           </td>
           <td class="bid-table">
-	    <a href="{% url 'gbe:act_tech_wizard' act.id%}">Edit</a>
+    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.id%}">
+        <button type="button" class="btn btn-default btn-sm"><i class="fa fa-eye"></i></button></a>{% endif %}
+	    <a href="{% url 'gbe:act_tech_wizard' act.id%}">
+        <button type="button" class="btn btn-default btn-sm"><i class="icon-pencil"></i></button></a>
+    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.id%}">
+        <button type="button" class="btn btn-default btn-sm"><i class="icon-trash"></i></button></a>{% endif %}
 	  </td>
       </tr>
 
