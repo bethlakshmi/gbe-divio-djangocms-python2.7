@@ -1,6 +1,6 @@
 {
     "content_css": [
-        "/static/styles/base.css"
+        "['/static/styles/base.css']"
     ],
     "style_set": "/static/styles/styles.js"
 }
