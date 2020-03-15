@@ -88,39 +88,39 @@ deactivated users.<br>
     </tfoot>
     <tbody>
     {% for act in acts %}
-      <tr  {% if not act.tech.is_complete  %}class="error_row"{%else%} class="bid-table"{% endif %} >
-          <td class="bid-table">{{ act.order }}
-	  <td class="bid-table">{{ act.b_title }}</td>
+      <tr  {% if not act.act.tech.is_complete  %}class="error_row"{%else%} class="bid-table"{% endif %} >
+          <td class="bid-table">{{ act.act.order }}
+	  <td class="bid-table">{{ act.act.b_title }}</td>
 	  <td class="bid-table">
-	    {% if not act.performer.contact.user_object.is_active  %}
+	    {% if not act.act.performer.contact.user_object.is_active  %}
 	      <span class="error_row" class="bid-table"><b>
 	    {% endif %}
-	      {{ act.performer }}
-	    {% if not act.performer.contact.user_object.is_active  %}
+	      {{ act.act.performer }}
+	    {% if not act.act.performer.contact.user_object.is_active  %}
 	      - INACTIVE</b></span>
 	    {% endif %}</td>
-	  <td class="bid-table"><a href='mailto:{{act.performer.contact.user_object.email}}'>
-            {{act.performer.contact.user_object.email}}</a></td>
-	  <td class="bid-table">{% for rehearsal in act.get_scheduled_rehearsals %}
+	  <td class="bid-table"><a href='mailto:{{act.act.performer.contact.user_object.email}}'>
+            {{act.act.performer.contact.user_object.email}}</a></td>
+	  <td class="bid-table">{% for rehearsal in act.rehearsals %}
             {{rehearsal.start_time}}<br>
             {%endfor%}
           </td>
 
 	  <td class="bid-table">
-            {% if act.tech.track %}
-            <a href="{{act.tech.track.url}}">{{act.tech.track.name | display_track_title:20 }}</a>
-            {% elif act.tech.confirm_no_music %}
+            {% if act.act.tech.track %}
+            <a href="{{act.act.tech.track.url}}">{{act.act.tech.track.name | display_track_title:20 }}</a>
+            {% elif act.act.tech.confirm_no_music %}
             No audio track needed
             {% else %}
             <span class="error_row">No track provided</span>
             {% endif %}
           </td>
           <td class="bid-table">
-    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.id%}">
+    {% if change_acts %}<a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}">
         <button type="button" class="btn btn-default btn-sm"><i class="fa fa-eye"></i></button></a>{% endif %}
-	    <a href="{% url 'gbe:act_tech_wizard' act.id%}">
+	    <a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
         <button type="button" class="btn btn-default btn-sm"><i class="icon-pencil"></i></button></a>
-    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.id%}">
+    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
         <button type="button" class="btn btn-default btn-sm"><i class="icon-trash"></i></button></a>{% endif %}
 	  </td>
       </tr>
