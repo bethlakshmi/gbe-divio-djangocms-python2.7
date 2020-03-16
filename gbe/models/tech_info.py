@@ -34,7 +34,7 @@ class TechInfo(Model):
     # Advanced Info
     mic_choice = CharField(max_length=200,
                            choices=mic_options,
-                           default=mic_options[0])
+                           default=mic_options[0][0])
     background_color = CharField(max_length=128, blank=True)
     wash_color = CharField(max_length=128, blank=True)
     follow_spot_color = CharField(max_length=128, blank=True)

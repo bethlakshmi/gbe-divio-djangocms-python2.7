@@ -4,8 +4,6 @@ from django.shortcuts import (
     render,
     get_object_or_404,
 )
-from gbe.reporting.functions import prep_act_tech_info
-from gbe_logging import logger
 from gbe.functions import (
     conference_slugs,
     get_conference_by_slug,
@@ -50,9 +48,10 @@ def review_act_techinfo(request, show_id=None):
                 act=act)
             show_general_status(request, sched_response, "ReviewActTechinfo")
             for item in sched_response.schedule_items:
-                if GenericEvent.objects.filter(
-                        eventitem_id=item.event.eventitem.eventitem_id,
-                        type='Rehearsal Slot').exists():
+                if item.event not in rehearsals and (
+                        GenericEvent.objects.filter(
+                            eventitem_id=item.event.eventitem.eventitem_id,
+                            type='Rehearsal Slot').exists()):
                     rehearsals += [item.event]
             acts += [{'act': act, 'rehearsals': rehearsals}]
         if validate_perms(request, ('Scheduling Mavens',), require=False):

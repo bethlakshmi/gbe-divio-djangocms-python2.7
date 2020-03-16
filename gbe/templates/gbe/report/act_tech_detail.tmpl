@@ -1,0 +1,79 @@
+{% extends "base.tmpl" %}
+{% load thumbnail %}
+
+{% block title %}
+  Act Details for {{act}}
+{% endblock %}
+
+{% block head %}
+      {% include "gray_grids_css.tmpl" %}
+{% endblock head %}
+
+{% block content %}
+<div class="container">
+{% if act.accepted != 3 %}
+<div class="row justify-content-center">
+<span style="font-size: 1.8em; color: red;">
+Act state is {{ state }}</span>
+</div>{% endif %}
+<div class="row">
+ <div class="col-xs-12 col-md-6 col-lg-4">
+  <H2>Performer: {{act.performer}}</H2>
+  <h3>Act Name: {{act.b_title}}</h3>
+ </div>
+ <div class="col-xs-12 col-md-6 col-lg-4">{% if act.performer.img %}
+  <img src="{% thumbnail act.performer.img 300x300 crop upscale subject_location=act.performer.img.subject_location %}" class="sched_bio_image">
+  <br><br>
+ {% else %}&nbsp;{% endif %}</div>
+ <div class="col-xs-12 col-md-6 col-lg-4">
+<h4>Show:  {% for show in shows %}{{show}}, {% empty %}<font color="red">No Show</font>{% endfor %}</h4>
+<h4>Rehearsal: {% for rehearsal in rehearsals %}{{ rehearsal.start_time }}
+{% empty %}<font color="red">No Rehearsal</font>{% endfor %}</h4>
+ </div></div>
+<div class="row">
+<div class="col-12 sched_times">
+  <div class="col-xs-12 col-md-8">
+    <b>Primary Color:</b> {{act.tech.primary_color}}<br>
+    <b>Secondary Color:</b> {{act.tech.secondary_color}}<br>
+  </div>
+  <div class="col-xs-12 col-md-4">
+    <b>Duration</b>(hh:mm:ss): {{act.tech.duration}}<br>
+    <b>Preferred Pronouns:</b> {{act.tech.pronouns}}<br>
+    <br>
+  </div>
+  <div class="col-12">
+    <b>Description:</b> {{act.b_description}}<br><br>
+    <b>Feel of Act:</b> {{act.tech.feel_of_act}}<br><br>
+  </div></div>
+</div>
+<div class="row justify-content-center">
+<span style="font-size: 1.2em;">
+  <br>
+<b>Starting Position:</b> {{act.tech.starting_position}}</span>
+</div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-md-5 act_tech_box">
+  <h3>Stage Crew Info:</h3>
+
+</div>
+  <div class="col-xs-12 col-md-5 act_tech_box">
+  <h3>MC Info:</h3>
+  {% if act.tech.read_exact %}<b>Read this exacty</b><br>{% endif %}
+  {{ act.tech.introduction_text}}<br><br>
+</div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-md-5 act_tech_box">
+  <h3>Lighting Info:</h3>
+</div>
+  <div class="col-xs-12 col-md-5 act_tech_box">
+  <h3>Audio Info:</h3>
+      <b>Track Title:</b> {{act.tech.track_title}}<br>
+      <b>Track Artist:</b> {{act.tech.track_artist}}<br>
+      <b>Filename:</b> {{act.tech.track}}<br>
+      <b>Mic Options:</b> {{act.tech.mic_choice}}<br><br>
+</div>
+</div>
+{% endblock %}

@@ -539,6 +539,12 @@ td.describe
   padding: 8px;
   margin-bottom: 8px;
 }
+.act_tech_box {
+  border-style: solid;
+  border-radius: 8px;
+  border-width: 1px;
+  margin: 3px;
+}
 .detail_link, .detail_link:visited {color: black;}
 .sched-sub-box > .detail_link,  .sched-sub-box > .detail_link-detail_disable {
     text-align: center;

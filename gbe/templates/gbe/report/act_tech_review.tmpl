@@ -116,11 +116,11 @@ deactivated users.<br>
             {% endif %}
           </td>
           <td class="bid-table">
-    {% if change_acts %}<a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}">
-        <button type="button" class="btn btn-default btn-sm"><i class="fa fa-eye"></i></button></a>{% endif %}
-	    <a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
+    <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}">
+        <button type="button" class="btn btn-default btn-sm"><i class="fa fa-eye"></i></button></a>
+	  {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
         <button type="button" class="btn btn-default btn-sm"><i class="icon-pencil"></i></button></a>
-    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
+    <a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
         <button type="button" class="btn btn-default btn-sm"><i class="icon-trash"></i></button></a>{% endif %}
 	  </td>
       </tr>
