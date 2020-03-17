@@ -21,7 +21,7 @@ def act_techinfo_detail(request, act_id):
     '''
     validate_perms(
         request,
-        ('Scheduling Mavens','Tech Crew', 'Technical Director', 'Producer'))
+        ('Scheduling Mavens', 'Tech Crew', 'Technical Director', 'Producer'))
     # using try not get_or_404 to cover the case where the show is there
     # but does not have any scheduled events.
     # I can still show a list of shows this way.
