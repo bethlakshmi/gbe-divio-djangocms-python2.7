@@ -84,6 +84,8 @@ Act state is {{ state }}</span>
       <b>Wash Color:</b> {{act.tech.wash_color}}<br>{% endif %}
     {% if act.tech.background_color %}
       <b>Background Color:</b> {{act.tech.background_color}}<br>{% endif %}
+    {% if act.tech.special_lighting_cue %}
+      <b>Special Lighting Cue:</b> {{act.tech.special_lighting_cue}}<br>{% endif %}
       <br><b>Lighting at End:</b> {% if act.tech.end_blackout %}Blackout{% else %}
       Lights On{% endif %}<br></div>
   <div class="col-xs-12 col-md-5 act_tech_box">
