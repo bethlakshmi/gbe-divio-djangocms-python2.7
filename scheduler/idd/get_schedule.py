@@ -51,7 +51,7 @@ def get_schedule(user=None,
                     event=item.event,
                     role="Performer",
                     label=booking_label,
-                    order=resource.order)]
+                    order=item.resource.as_subtype.order)]
         if len(bookable_items['performers']) > 0:
             for item in basic_filter.filter(
                     resource__worker___item__in=bookable_items['performers']):
