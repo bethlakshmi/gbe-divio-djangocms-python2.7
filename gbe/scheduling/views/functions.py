@@ -341,8 +341,7 @@ def build_icon_links(occurrence,
             evaluate = reverse('eval_event',
                                args=[occurrence.pk, ],
                                urlconf='gbe.scheduling.urls')
-    # don't bother if there is no logged in user or conference is over and
-    # we don't need to build the eval link
+    # when the conference is over, we only need the eval link for conf classes
     if not conf_completed or (
             conf_completed and calendar_type == 'Conference'):
         for booking in personal_schedule_items:
@@ -356,6 +355,7 @@ def build_icon_links(occurrence,
                 else:
                     favorite_link = "disabled"
                     evaluate = None
+
                 if booking.role in ("Volunteer", "Pending Volunteer"):
                     volunteer_link = reverse(
                         'set_volunteer',
