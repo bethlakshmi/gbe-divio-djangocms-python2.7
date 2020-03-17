@@ -73,13 +73,6 @@ class Act (Biddable, ActItem):
         return self.__class__
 
     @property
-    def audio(self):
-        audio = None
-        if self.tech and self.tech.audio:
-            audio = self.tech.audio
-        return audio
-
-    @property
     def bio(self):
         return self.performer
 

@@ -62,6 +62,13 @@ class TechInfo(Model):
                     audio_complete and
                     self.introduction_text)
 
+    @property
+    def prop_setup_list(self):
+        prop_setup_list = None
+        if self.prop_setup and len(self.prop_setup.strip()) > 0:
+            prop_setup_list = eval(self.prop_setup)
+        return prop_setup_list
+
     def __unicode__(self):
         try:
             return "Techinfo: " + self.act.b_title
