@@ -28,6 +28,7 @@ def act_techinfo_detail(request, act_id):
     shows = []
     rehearsals = []
     act = None
+    order = -1
 
     act = get_object_or_404(Act, pk=act_id)
     if act.accepted == 3:
@@ -38,6 +39,7 @@ def act_techinfo_detail(request, act_id):
             if item.event not in shows and Show.objects.filter(
                     eventitem_id=item.event.eventitem.eventitem_id).exists():
                 shows += [item.event]
+                order = item.order
             elif item.event not in rehearsals and GenericEvent.objects.filter(
                     eventitem_id=item.event.eventitem.eventitem_id,
                     type='Rehearsal Slot').exists():
@@ -48,4 +50,5 @@ def act_techinfo_detail(request, act_id):
                   {'act': act,
                    'state': acceptance_states[act.accepted][1],
                    'shows': shows,
+                   'order': order,
                    'rehearsals': rehearsals})

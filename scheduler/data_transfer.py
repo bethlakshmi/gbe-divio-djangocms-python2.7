@@ -71,13 +71,15 @@ class ScheduleItem(object):
                  event=None,
                  role=None,
                  label=None,
-                 booking_id=None):
+                 booking_id=None,
+                 order=None):
         self.user = user
         self.group_id = group_id
         self.role = role
         self.label = label
         self.event = event
         self.booking_id = booking_id
+        self.order = order
 
 
 class Answer(object):

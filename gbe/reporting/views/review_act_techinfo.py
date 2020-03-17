@@ -42,6 +42,7 @@ def review_act_techinfo(request, show_id=None):
         show_general_status(request, response, "ReviewActTechinfo")
         for casting in response.castings:
             rehearsals = []
+            order = -1
             act = get_object_or_404(Act, resourceitem_id=casting.act)
             sched_response = get_schedule(
                 labels=[act.b_conference.conference_slug],
@@ -53,7 +54,11 @@ def review_act_techinfo(request, show_id=None):
                             eventitem_id=item.event.eventitem.eventitem_id,
                             type='Rehearsal Slot').exists()):
                     rehearsals += [item.event]
-            acts += [{'act': act, 'rehearsals': rehearsals}]
+                elif Show.objects.filter(
+                        eventitem_id=item.event.eventitem.eventitem_id
+                        ).exists():
+                    order = item.order
+            acts += [{'act': act, 'rehearsals': rehearsals, 'order': order}]
         if validate_perms(request, ('Scheduling Mavens',), require=False):
             scheduling_link = reverse(
                 'schedule_acts',

@@ -174,12 +174,10 @@ class ActResource(Resource):
     def order(self):
         try:
             ra = ResourceAllocation.objects.filter(resource=self).first()
+            if ra and ra.ordering:
+                return ra.ordering.order
         except:
             return None
-        if ra and ra.ordering:
-            return ra.ordering.order
-        else:
-            return -1
 
     @property
     def rehearsal(self):
@@ -740,6 +738,9 @@ class ResourceAllocation(Schedulable):
         l = self.get_label()
         l.text = text
         l.save()
+
+    def __unicode__(self):
+        return ("%s - %s" % (unicode(self.event), unicode(self.resource)))
 
 
 class Ordering(models.Model):

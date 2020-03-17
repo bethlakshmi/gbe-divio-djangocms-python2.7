@@ -18,8 +18,8 @@ Act state is {{ state }}</span>
   <h3>Act Name: {{act.b_title}}</h3>
   {% if not act.tech.is_complete %}<font color="red">Act Tech is NOT complete</font>{% endif %}
   <b>Email:</b>  <a href='mailto:{{act.act.performer.contact.user_object.email}}'>
-    {{act.act.performer.contact.user_object.email}}</a><br>
-  <b>Phone:</b>  {{act.act.performer.contact.phone}}<br>
+    {{act.performer.contact.user_object.email}}</a><br>
+  <b>Phone:</b>  {{act.performer.contact.phone}}<br>
  </div>
  <div class="col-xs-12 col-md-6 col-lg-4">{% if act.performer.img %}
   <img src="{% thumbnail act.performer.img 300x300 crop upscale subject_location=act.performer.img.subject_location %}" class="sched_bio_image">
@@ -29,6 +29,9 @@ Act state is {{ state }}</span>
 <h4>Show:  {% for show in shows %}{{show}}, {% empty %}<font color="red">No Show</font>{% endfor %}</h4>
 <h4>Rehearsal: {% for rehearsal in rehearsals %}{{ rehearsal.start_time }}
 {% empty %}<font color="red">No Rehearsal</font>{% endfor %}</h4>
+{% if order >= 0 %}
+<div class="act_tech_box" style="text-align:center;"><br><span style="font-size: 3em;">
+  {{ order }}<br></span><br>Show Order</div>{% endif %}
  </div></div>
 <div class="row">
 <div class="col-12 sched_times">
