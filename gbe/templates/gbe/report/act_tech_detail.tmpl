@@ -34,12 +34,10 @@ Act state is {{ state }}</span>
   {{ order }}<br></span><br>Show Order</div>{% endif %}
  </div></div>
 <div class="row">
-<div class="col-12 sched_times">
-  <div class="col-12">
+<div class="col-11 sched_times">
     <b>Duration</b>(hh:mm:ss): {{act.tech.duration}}<br>
     <b>Description:</b> {{act.b_description | linebreaks}}<br>
     <b>Feel of Act:</b> {{act.tech.feel_of_act | linebreaks}}<br>
-  </div></div>
 </div>
 </div>
 
@@ -95,6 +93,7 @@ Act state is {{ state }}</span>
         <font color="red">Music not yet provided</font>{% endif %}<br>
     {% endif %}<br>
       <b>Mic Options:</b> {{act.tech.mic_choice}}<br><br>
+</div>
 </div>
 </div>
 {% endblock %}
