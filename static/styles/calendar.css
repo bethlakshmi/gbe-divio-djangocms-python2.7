@@ -75,13 +75,6 @@ div.pending-volunteer {
 .vol_shift_div {
     padding: 0px;
 }
-.volunteer-icon {
-    height: 16px;
-}
-.volunteer-icon-large {
-  float: right;
-  width: 32px;
-}
 .vol_shift_table {
     border:  0px;
     background-color: #e4e0e0;

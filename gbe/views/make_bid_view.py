@@ -177,7 +177,7 @@ class MakeBidView(View):
     @never_cache
     @log_func
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             follow_on = '?next=%s' % reverse(
                 '%s_create' % self.bid_type.lower(),
                 urlconf='gbe.urls')

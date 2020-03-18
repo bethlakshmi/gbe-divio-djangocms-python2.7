@@ -33,8 +33,9 @@
 	{% for sched_event in schedule_items %}
 	<div class="col-12 sched-sub-box">
 	  <div class="col-1 col-xs-2 col-md-1 col-lg-1 sched-sub-box">
-  	    {% include "gbe/scheduling/favorite_star.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable"%}
-  	    {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
+      {% include "gbe/scheduling/favorite_star.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable"%}
+      {% include "gbe/scheduling/volunteer_link_display.tmpl" with size="fa-2x" icon_class="volunteer-icon-large" disable_style="detail_link-detail_disable" %}
+      {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
 	  <div class="col-11 col-xs-10 col-md-5 col-lg-6">
       <div class="row">

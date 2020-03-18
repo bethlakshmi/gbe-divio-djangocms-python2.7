@@ -1,5 +1,9 @@
 import pytz
-from datetime import datetime, time
+from datetime import (
+    datetime,
+    time,
+    timedelta,
+)
 from gbe.functions import (
     get_conference_day,
     make_warning_msg,
@@ -29,11 +33,13 @@ from gbe.models import (
     Profile,
     UserMessage,
 )
-from settings import GBE_DATETIME_FORMAT
+from settings import (
+    EVALUATION_WINDOW,
+    GBE_DATETIME_FORMAT,
+)
 from django.http import Http404
 from gbetext import event_labels
 from gbe_forms_text import event_settings
-from datetime import timedelta
 
 
 def get_start_time(data):
@@ -306,3 +312,72 @@ def process_post_response(request,
     else:
         context['start_open'] = True
     return context, success_url, response
+
+
+def build_icon_links(occurrence,
+                     eval_occurrences,
+                     calendar_type,
+                     conf_completed,
+                     personal_schedule_items):
+    evaluate = None
+    highlight = None
+    role = None
+    vol_disable_msg = None
+    favorite_link = reverse('set_favorite',
+                            args=[occurrence.pk, 'on'],
+                            urlconf='gbe.scheduling.urls')
+    volunteer_link = reverse('set_volunteer',
+                             args=[occurrence.pk, 'on'],
+                             urlconf='gbe.scheduling.urls')
+    if occurrence.extra_volunteers() >= 0:
+        volunteer_link = "disabled"
+        vol_disable_msg = "This event has all the volunteers it needs."
+    if (calendar_type == 'Conference') and (
+            occurrence.start_time < (datetime.now() - timedelta(
+                hours=EVALUATION_WINDOW))) and (eval_occurrences is not None):
+        if occurrence in eval_occurrences:
+            evaluate = "disabled"
+        else:
+            evaluate = reverse('eval_event',
+                               args=[occurrence.pk, ],
+                               urlconf='gbe.scheduling.urls')
+    # when the conference is over, we only need the eval link for conf classes
+    if not conf_completed or (
+            conf_completed and calendar_type == 'Conference'):
+        for booking in personal_schedule_items:
+            if booking.event == occurrence:
+                highlight = booking.role.lower()
+                if booking.role == "Interested":
+                    favorite_link = reverse(
+                        'set_favorite',
+                        args=[occurrence.pk, 'off'],
+                        urlconf='gbe.scheduling.urls')
+                else:
+                    favorite_link = "disabled"
+                    evaluate = None
+
+                if booking.role in ("Volunteer", "Pending Volunteer"):
+                    volunteer_link = reverse(
+                        'set_volunteer',
+                        args=[occurrence.pk, 'off'],
+                        urlconf='gbe.scheduling.urls')
+                elif booking.role in ("Rejected"):
+                    volunteer_link = "disabled"
+                    vol_disable_msg = "Thank you for volunteering. " + \
+                        "You were not accepted for this shift."
+                elif booking.role in ("Waitlisted"):
+                    volunteer_link = "disabled"
+                    vol_disable_msg = "Thank you for volunteering. " + \
+                        "You were waitlisted for this shift."
+                else:
+                    volunteer_link = "disabled"
+    if conf_completed or calendar_type == 'Volunteer':
+        favorite_link = None
+    if calendar_type == 'Volunteer' and occurrence.end_time < datetime.now():
+        volunteer_link = None
+
+    return (favorite_link,
+            volunteer_link,
+            evaluate,
+            highlight,
+            vol_disable_msg)
