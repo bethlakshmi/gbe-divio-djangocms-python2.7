@@ -3,6 +3,7 @@ from django.shortcuts import (
     render,
 )
 from gbe.scheduling.views.functions import (
+    build_icon_links,
     get_event_display_info,
 )
 from scheduler.idd import (
@@ -11,6 +12,7 @@ from scheduler.idd import (
 )
 from scheduler.data_transfer import Person
 from django.core.urlresolvers import reverse
+from gbetext import role_options
 
 
 class EventDetailView(View):
@@ -24,56 +26,50 @@ class EventDetailView(View):
         personal_schedule_items = []
         eventitem_view = get_event_display_info(eventitem_id)
         person = None
-        if request.user.is_authenticated() and request.user.profile:
+        eval_occurrences = []
+        if request.user.is_authenticated and hasattr(request.user, 'profile'):
             person = Person(
                 user=request.user,
                 public_id=request.user.profile.pk,
                 public_class="Profile")
+            all_roles = []
+            for n, m in role_options:
+                all_roles += [m]
             personal_schedule_items = get_schedule(
                 request.user,
                 labels=[
                     eventitem_view['event'].calendar_type,
-                    eventitem_view['event'].e_conference.conference_slug]
+                    eventitem_view['event'].e_conference.conference_slug],
+                roles=all_roles,
                 ).schedule_items
-        for occurrence in eventitem_view['scheduled_events']:
-            schedule_item = {
-                'occurrence': occurrence,
-                'favorite_link': reverse(
-                    'set_favorite',
-                    args=[occurrence.pk, 'on'],
-                    urlconf='gbe.scheduling.urls'),
-                'highlight': None,
-                'evaluate': None
-            }
-            if eventitem_view['event'].calendar_type == "Volunteer" or (
-                    eventitem_view['event'].e_conference.status == "completed"
-                    ):
-                schedule_item['favorite_link'] = None
             if eventitem_view['event'].calendar_type == "Conference":
-                eval_response = get_eval_info(occurrence_id=occurrence.pk,
-                                              person=person)
+                eval_response = get_eval_info(person=person)
                 if len(eval_response.questions) > 0:
-                    if person and len(eval_response.answers) > 0:
-                        schedule_item['evaluate'] = "disabled"
-                    else:
-                        schedule_item['evaluate'] = reverse(
-                            'eval_event',
-                            args=[occurrence.pk, ],
-                            urlconf='gbe.scheduling.urls')
+                    eval_occurrences = eval_response.occurrences
+                else:
+                    eval_occurrences = None
 
-            for booking in personal_schedule_items:
-                if booking.event == occurrence:
-                    schedule_item['highlight'] = booking.role.lower()
-                    if booking.role == "Interested":
-                        schedule_item['favorite_link'] = reverse(
-                            'set_favorite',
-                            args=[occurrence.pk, 'off'],
-                            urlconf='gbe.scheduling.urls')
-                    else:
-                        schedule_item['favorite_link'] = "disabled"
-                        schedule_item['evaluate'] = None
+        for occurrence in eventitem_view['scheduled_events']:
+            (favorite_link,
+             volunteer_link,
+             evaluate,
+             highlight,
+             vol_disable_msg) = build_icon_links(
+                occurrence,
+                eval_occurrences,
+                eventitem_view['event'].calendar_type,
+                (eventitem_view['event'].e_conference.status == "completed"),
+                personal_schedule_items)
 
-            schedule_items += [schedule_item]
+            schedule_items += [{
+                'occurrence': occurrence,
+                'favorite_link': favorite_link,
+                'volunteer_link': volunteer_link,
+                'highlight': highlight,
+                'evaluate': evaluate,
+                'approval_needed': occurrence.approval_needed,
+                'vol_disable_msg': vol_disable_msg,
+            }]
         template = 'gbe/scheduling/event_detail.tmpl'
         return render(request,
                       template,

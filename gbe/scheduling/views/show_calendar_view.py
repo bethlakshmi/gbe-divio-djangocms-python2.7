@@ -177,7 +177,7 @@ class ShowCalendarView(View):
         show_general_status(
             request, response, self.__class__.__name__)
         if len(response.occurrences) > 0:
-            if request.user.is_authenticated() and hasattr(
+            if request.user.is_authenticated and hasattr(
                     request.user,
                     'profile'):
                 sched_response = get_schedule(

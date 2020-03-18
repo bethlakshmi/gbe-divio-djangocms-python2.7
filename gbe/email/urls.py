@@ -14,6 +14,8 @@ from gbe.email.views import (
 # "foo" or "foo/", but not on "foo/bar" or "foo!".
 # Which is what we usually want.
 
+app_name = "email"
+
 urlpatterns = [
     url(r'^email/edit_template/(?P<template_name>[\w|\W]+)/?$',
         EditTemplateView.as_view(), name='edit_template'),

@@ -31,6 +31,7 @@ from gbe.scheduling.views import (
 # and no other characters following. So '^foo/?$' matches on
 # "foo" or "foo/", but not on "foo/bar" or "foo!".
 # Which is what we usually want.
+app_name = "scheduling"
 
 urlpatterns = [
     url(r'^scheduling/manage/?$',

@@ -16,8 +16,10 @@ from gbe.functions import (
     get_conference_by_slug,
     conference_slugs,
 )
+from gbe.scheduling.views.functions import build_icon_links
 from scheduler.idd import (
     get_bookings,
+    get_schedule,
     get_eval_info,
     get_occurrences,
 )
@@ -29,13 +31,8 @@ from gbe_forms_text import (
 from gbetext import (
     event_options,
     class_options,
+    role_options,
 )
-from datetime import (
-    datetime,
-    timedelta,
-)
-import pytz
-from django.conf import settings
 
 
 class ListEventsView(View):
@@ -97,8 +94,6 @@ class ListEventsView(View):
                 visible=True,
                 e_conference=self.conference).exclude(
                     type='Panel').order_by('e_title')
-        else:
-            items = []
         return items
 
     def get(self, request, *args, **kwargs):
@@ -106,12 +101,21 @@ class ListEventsView(View):
         items = self.get_events_list_by_type()
         events = []
         eval_occurrences = []
-        if request.user.is_authenticated() and hasattr(request.user,
-                                                       'profile'):
+        all_roles = []
+        personal_schedule_items = []
+        if request.user.is_authenticated and hasattr(request.user, 'profile'):
             person = Person(
                 user=request.user,
                 public_id=request.user.profile.pk,
                 public_class="Profile")
+            for n, m in role_options:
+                all_roles += [m]
+            personal_schedule_items = get_schedule(
+                request.user,
+                labels=[self.conference.conference_slug],
+                roles=all_roles,
+                ).schedule_items
+
             eval_response = get_eval_info(person=person)
             if len(eval_response.questions) > 0:
                 eval_occurrences = eval_response.occurrences
@@ -123,55 +127,34 @@ class ListEventsView(View):
             response = get_occurrences(
                 foreign_event_ids=[item.eventitem_id])
             for occurrence in response.occurrences:
-                evaluate = None
-                people_response = get_bookings([occurrence.pk])
-                highlight = None
-                role = None
-                favorite_link = reverse(
-                    'set_favorite',
-                    args=[occurrence.pk, 'on'],
-                    urlconf='gbe.scheduling.urls')
-                for person in people_response.people:
-                    if request.user == person.user:
-                        role = person.role
-                        highlight = person.role.lower()
-                        if person.role == "Interested":
-                            favorite_link = reverse(
-                                'set_favorite',
-                                args=[occurrence.pk, 'off'],
-                                urlconf='gbe.scheduling.urls')
-                        else:
-                            favorite_link = "disabled"
-                    if person.role in (
-                            "Teacher",
-                            "Moderator",
-                            "Panelist") and person.public_class != "Profile":
-                        presenter = Performer.objects.get(pk=person.public_id)
-                        if presenter not in presenters:
-                            presenters += [presenter]
-                if self.conference.status == "completed" or (
-                        item.calendar_type == 'Volunteer'):
-                    favorite_link = None
-                if (self.event_type == 'Class') and (
-                        occurrence.start_time < (datetime.now() - timedelta(
-                            hours=settings.EVALUATION_WINDOW))
-                        ) and (
-                        role not in ("Teacher", "Performer", "Moderator")
-                        ) and (
-                        eval_occurrences is not None):
-                    if occurrence in eval_occurrences:
-                        evaluate = "disabled"
-                    else:
-                        evaluate = reverse(
-                            'eval_event',
-                            args=[occurrence.pk, ],
-                            urlconf='gbe.scheduling.urls')
+                (favorite_link,
+                 volunteer_link,
+                 evaluate,
+                 highlight,
+                 vol_disable_msg) = build_icon_links(
+                    occurrence,
+                    eval_occurrences,
+                    item.calendar_type,
+                    (self.conference.status == "completed"),
+                    personal_schedule_items)
                 scheduled_events += [{
                     'occurrence': occurrence,
                     'favorite_link': favorite_link,
+                    'volunteer_link': volunteer_link,
                     'highlight': highlight,
                     'evaluate': evaluate,
+                    'vol_disable_msg': vol_disable_msg,
+                    'approval_needed': occurrence.approval_needed,
                 }]
+                people_response = get_bookings([occurrence.pk], roles=[
+                    "Teacher",
+                    "Moderator",
+                    "Panelist"])
+                for person in people_response.people:
+                    if person.public_class != "Profile":
+                        presenter = Performer.objects.get(pk=person.public_id)
+                        if presenter not in presenters:
+                            presenters += [presenter]
             if len(presenters) == 0 and item.calendar_type == "Conference":
                 presenters += [item.teacher]
 

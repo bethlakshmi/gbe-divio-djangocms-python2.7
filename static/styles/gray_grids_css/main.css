@@ -187,11 +187,11 @@ fieldset[disabled] .btn {
   vertical-align: bottom;
 }
 
-@media (min-width:768px){#gallery .container{width:680px}
+@media (min-width:768px){#gallery .container{width:640px}
 }
 @media (min-width:992px){#gallery .container{width:900px}
 }
-@media (min-width:1200px){#gallery .container{width:1100px}
+@media (min-width:1200px){#gallery .container{width:1050px}
 }
 
 .gallery_modal_icon {

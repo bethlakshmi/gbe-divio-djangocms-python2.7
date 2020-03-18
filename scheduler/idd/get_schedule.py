@@ -32,11 +32,11 @@ def get_schedule(user=None,
             resource__actresource___item=act)
 
     if len(roles) > 0:
-        basic_filter = basic_filter.filter(
+        worker_filter = basic_filter.filter(
             resource__worker__role__in=roles,
         )
     else:
-        basic_filter = basic_filter.exclude(
+        worker_filter = basic_filter.exclude(
             resource__worker__role__in=not_scheduled_roles)
     if user:
         bookable_items = user.profile.get_bookable_items()
@@ -53,7 +53,7 @@ def get_schedule(user=None,
                     label=booking_label,
                     order=item.resource.as_subtype.order)]
         if len(bookable_items['performers']) > 0:
-            for item in basic_filter.filter(
+            for item in worker_filter.filter(
                     resource__worker___item__in=bookable_items['performers']):
                 booking_label = None
                 if hasattr(item, 'label'):
@@ -63,10 +63,10 @@ def get_schedule(user=None,
                     event=item.event,
                     role=item.resource.as_subtype.role,
                     label=booking_label)]
-        basic_filter = basic_filter.filter(
+        worker_filter = worker_filter.filter(
             resource__worker___item=user.profile)
 
-    for item in basic_filter:
+    for item in worker_filter:
         resource = item.resource.as_subtype
         booking_label = None
         if hasattr(item, 'label'):
