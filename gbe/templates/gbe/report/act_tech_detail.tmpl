@@ -35,24 +35,11 @@ Act state is {{ state }}</span>
  </div></div>
 <div class="row">
 <div class="col-12 sched_times">
-  <div class="col-xs-12 col-md-8">
-    <b>Primary Color:</b> {{act.tech.primary_color}}<br>
-    <b>Secondary Color:</b> {{act.tech.secondary_color}}<br>
-  </div>
-  <div class="col-xs-12 col-md-4">
-    <b>Duration</b>(hh:mm:ss): {{act.tech.duration}}<br>
-    <b>Preferred Pronouns:</b> {{act.tech.pronouns}}<br>
-    <br>
-  </div>
   <div class="col-12">
+    <b>Duration</b>(hh:mm:ss): {{act.tech.duration}}<br>
     <b>Description:</b> {{act.b_description | linebreaks}}<br>
     <b>Feel of Act:</b> {{act.tech.feel_of_act | linebreaks}}<br>
   </div></div>
-</div>
-<div class="row justify-content-center">
-<span style="font-size: 1.8em;">
-  <br>
-<b>Starting Position:</b> {{act.tech.starting_position}}</span>
 </div>
 </div>
 
@@ -67,6 +54,7 @@ Act state is {{ state }}</span>
 </div>
   <div class="col-xs-12 col-md-5 act_tech_box">
   <h3>MC Info:</h3>
+  <b>Preferred Pronouns:</b> {{act.tech.pronouns}}<br>
   {% if act.tech.read_exact %}<b>Read this exacty</b><br>{% endif %}
   {{ act.tech.introduction_text | linebreaks}}<br><br>
 </div>
@@ -74,6 +62,11 @@ Act state is {{ state }}</span>
 <div class="row">
   <div class="col-xs-12 col-md-6 act_tech_box">
   <h3>Lighting Info:</h3>
+    <span style="font-variant: small-caps;">Costume Colors</span><br>
+      &nbsp;&nbsp;<b>Primary:</b> {{act.tech.primary_color}}<br>
+      &nbsp;&nbsp;<b>Secondary :</b> {{act.tech.secondary_color}}<br>
+<br>
+      <b>Starting Position:</b> {{act.tech.starting_position}}<br>
       <b>Starting Lights:</b> {% if act.tech.start_blackout %}Blackout{% else %}
       Lights On{% endif %}<br><br>
     {% if act.tech.follow_spot_color %}
@@ -90,6 +83,7 @@ Act state is {{ state }}</span>
       Lights On{% endif %}<br></div>
   <div class="col-xs-12 col-md-5 act_tech_box">
   <h3>Audio Info:</h3>
+    <b>Starting Position:</b> {{act.tech.starting_position}}<br>
     {% if act.tech.track_title %}
       <b>Track Title:</b> {{act.tech.track_title}}<br>{% endif %}
     {% if act.tech.track_artist %}
@@ -97,7 +91,7 @@ Act state is {{ state }}</span>
     {% if act.tech.confirm_no_music %}
       <b>No Music Needed</b>
     {% else %}
-      <b>Filename:</b> {{act.tech.track}}{% if not act.tech.track %}
+      <b>Filename:</b> <a href="{{act.tech.track.url}}">{{act.tech.track}}</a>{% if not act.tech.track %}
         <font color="red">Music not yet provided</font>{% endif %}<br>
     {% endif %}<br>
       <b>Mic Options:</b> {{act.tech.mic_choice}}<br><br>
