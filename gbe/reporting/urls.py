@@ -11,7 +11,6 @@ from gbe.reporting.views import (
     WelcomeLetterView,
 )
 from gbe.reporting import (
-    download_tracks_for_show,
     env_stuff,
     export_badge_report,
     list_reports,
@@ -57,9 +56,6 @@ urlpatterns = [
         eval_view, name='evaluation'),
     url(r'^reports/evaluation/(?P<occurrence_id>\d+)/?$',
         eval_view, name='evaluation_detail'),
-    url(r'^reports/download_tracks_for_show/(\d+)/?$',
-        download_tracks_for_show,
-        name='download_tracks_for_show'),
 
     url(r'^reports/acttechinfo/view_summary/(\d+)/?$',
         review_act_techinfo,

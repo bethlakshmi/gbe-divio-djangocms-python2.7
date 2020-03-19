@@ -131,23 +131,6 @@ def env_stuff(request, conference_choice=None):
         writer.writerow(row)
     return response
 
-
-def download_tracks_for_show(request, show_id):
-    '''
-    Refresh the zipped tar of the tracks for this show.
-    '''
-    show = conf.Show.objects.get(pk=show_id)
-    call_command('sync_audio_downloads',
-                 show_name=show.e_title,
-                 conf_slug=show.e_conference.conference_slug)
-    path = show.download_path()
-    f = open(path)
-    fname = os.path.basename(path)
-    response = HttpResponse(f, content_type='application/octet-stream')
-    response['Content-Disposition'] = 'attachment; filename="%s"' % fname
-    return response
-
-
 @never_cache
 def room_schedule(request, room_id=None):
     viewer_profile = validate_perms(request,

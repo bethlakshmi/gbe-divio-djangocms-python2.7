@@ -69,7 +69,6 @@ deactivated users.<br>
         <th class="bid-table" >#</th>
         <th class="bid-table" >Act</th>
         <th class="bid-table" >Performer</th>
-        <th class="bid-table" >Contact Email</th>
         <th class="bid-table" >Rehearsal</th>
         <th class="bid-table" >Music</th>
         <th class="bid-table" >Action</th>
@@ -80,7 +79,6 @@ deactivated users.<br>
         <th class="bid-table" >#</th>
         <th class="bid-table" >Act</th>
         <th class="bid-table" >Performer</th>
-        <th class="bid-table" >Contact Email</th>
         <th class="bid-table" >Rehearsal</th>
         <th class="bid-table" >Music</th>
         <th class="bid-table" >Action</th>
@@ -98,8 +96,8 @@ deactivated users.<br>
 	      {{ act.act.performer }}
 	    {% if not act.act.performer.contact.user_object.is_active  %}
 	      - INACTIVE</b></span>
-	    {% endif %}</td>
-	  <td class="bid-table"><a href='mailto:{{act.act.performer.contact.user_object.email}}'>
+	    {% endif %}<br>
+      <a href='mailto:{{act.act.performer.contact.user_object.email}}'>
             {{act.act.performer.contact.user_object.email}}</a></td>
 	  <td class="bid-table">{% for rehearsal in act.rehearsals %}
             {{rehearsal.start_time}}<br>
@@ -116,20 +114,20 @@ deactivated users.<br>
             {% endif %}
           </td>
           <td class="bid-table">
-    <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}">
-        <button type="button" class="btn btn-default btn-sm"><i class="fa fa-eye"></i></button></a>
-	  {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
-        <button type="button" class="btn btn-default btn-sm"><i class="icon-pencil"></i></button></a>
-    <a href="{% url 'gbe:act_tech_wizard' act.act.id%}">
-        <button type="button" class="btn btn-default btn-sm"><i class="icon-trash"></i></button></a>{% endif %}
+  <div class="btn-group">
+    <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" class="btn btn-default btn-sm">
+        <i class="fa fa-eye"></i></a>
+  {% if act.act.video_link and act.act.video_choice != "1" %}
+    <a href="{{ act.act.video_link }}" class="btn btn-default btn-sm"><i class="fas fa-video"></i></a>{% endif %}
+	  {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}" class="btn btn-default btn-sm"><i class="icon-pencil"></i></a>
+    <a href="{% url 'gbe:act_tech_wizard' act.act.id%}" class="btn btn-default btn-sm">
+        <i class="icon-trash"></i></a>{% endif %}</div>
 	  </td>
       </tr>
 
     {% endfor %}
     </tbody>
   </table>
-  <br>
-  Download <a href="{% url 'reporting:download_tracks_for_show' this_show.pk %}">all audio tracks</a> for this show as a zipped tar archive</br>
   {% else %}
     <br>
     There are no available acts.  That may mean that:
