@@ -69,7 +69,8 @@ Act state is {{ state }}</span>
       Lights On{% endif %}<br><br>
     {% if act.tech.follow_spot_color %}
       <b>Follow Spot:</b> {{act.tech.follow_spot_color}}<br>
-      {% elif act.tech.follow_spot %}<b>Follow Spot:</b> ON<br>
+      {% elif act.tech.follow_spot %}<b>Follow Spot:</b> ON<br>{% else %}
+      <b>Follow Spot:</b> OFF<br>
       {% endif %}
     {% if act.tech.wash_color %}
       <b>Wash Color:</b> {{act.tech.wash_color}}<br>{% endif %}
@@ -88,7 +89,7 @@ Act state is {{ state }}</span>
       <b>Track Artist:</b> {{act.tech.track_artist}}<br>{% endif %}
     {% if act.tech.confirm_no_music %}
       <b>No Music Needed</b>
-    {% else %}
+    {% elif act.tech.track %}
       <b>Filename:</b> <a href="{{act.tech.track.url}}">{{act.tech.track}}</a>{% if not act.tech.track %}
         <font color="red">Music not yet provided</font>{% endif %}<br>
     {% endif %}<br>

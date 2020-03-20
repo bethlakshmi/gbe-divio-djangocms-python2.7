@@ -11,6 +11,7 @@ from tests.factories.scheduler_factories import (
     EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
+    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
 )
@@ -78,3 +79,12 @@ class ActTechInfoContext():
                 resource=ActResourceFactory(_item=act.actitem_ptr),
                 event=rehearsal_event)
         return rehearsal_event
+
+    def order_act(self, act, order):
+        alloc = self.sched_event.resources_allocated.filter(
+            resource__actresource___item=act).first()
+        try:
+            alloc.ordering = order
+            alloc.ordering.save()
+        except:
+            OrderingFactory(allocation=alloc, order=order)
