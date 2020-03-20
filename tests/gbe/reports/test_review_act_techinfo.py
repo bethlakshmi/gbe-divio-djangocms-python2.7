@@ -42,7 +42,7 @@ def _create_scheduled_show_with_acts(conference=None, qty=6):
     return show, sEvent, acts
 
 
-class TestReports(TestCase):
+class TestReviewActTechInfo(TestCase):
     '''Tests for index view'''
     view_name = 'act_techinfo_review'
 
@@ -62,15 +62,19 @@ class TestReports(TestCase):
                     urlconf='gbe.reporting.urls'))
         self.assertEqual(response.status_code, 403)
 
-    def test_review_act_techinfo_succeed(self):
+    def test_review_act_techinfo_no_show_picked(self):
         '''review_act_techinfo view should load for Tech Crew
            and fail for others
         '''
+        curr_conf = ConferenceFactory()
+        curr_show, _, curr_acts = _create_scheduled_show_with_acts(curr_conf)
         login_as(self.profile, self)
         response = self.client.get(
             reverse(self.view_name,
                     urlconf='gbe.reporting.urls'))
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, curr_conf.conference_slug)
+        self.assertContains(response, str(curr_show))
         self.assertNotContains(response, 'Schedule Acts for this Show')
 
     def test_review_act_techinfo_has_datatable(self):
@@ -94,6 +98,10 @@ class TestReports(TestCase):
         self.assertNotContains(response, 'Schedule Acts for this Show')
         for act in curr_acts:
             self.assertTrue(act.b_title in response.content)
+            self.assertNotContains(response, reverse(
+                "act_tech_wizard",
+                urlconf='gbe.urls',
+                args=[act.id]))
 
     def test_review_act_techinfo_show_inactive(self):
         '''review_act_techinfo view should show data when show is
@@ -147,3 +155,41 @@ class TestReports(TestCase):
             data={'conf_slug': curr_conf.conference_slug})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(curr_show.e_title in response.content)
+        self.assertNotContains(response, old_show.e_title)
+
+    def test_review_act_techinfo_has_video(self):
+        '''review_act_techinfo view should show data when show is
+            selected
+        '''
+        curr_conf = ConferenceFactory()
+        curr_show, _, curr_acts = _create_scheduled_show_with_acts(curr_conf)
+        video_act = curr_acts[0]
+        video_act.video_link = "http://www.test.com"
+        video_act.video_choice = 2
+        video_act.save()
+        login_as(self.profile, self)
+        response = self.client.get(
+            reverse(self.view_name,
+                    urlconf='gbe.reporting.urls',
+                    args=[curr_show.eventitem_id]))
+        self.assertContains(response, video_act.video_link)
+
+    def test_review_act_techinfo_has_link_for_editing(self):
+        '''review_act_techinfo view should show schedule acts if user
+            has the right privilege
+        '''
+        curr_conf = ConferenceFactory()
+        curr_show, _, curr_acts = _create_scheduled_show_with_acts(curr_conf)
+        grant_privilege(self.profile, 'Technical Director')
+        login_as(self.profile, self)
+        response = self.client.get(
+            reverse(self.view_name,
+                    urlconf='gbe.reporting.urls',
+                    args=[curr_show.eventitem_id]),
+            data={'conf_slug': curr_conf.conference_slug})
+        for act in curr_acts:
+            self.assertTrue(act.b_title in response.content)
+            self.assertContains(response, reverse(
+                "act_tech_wizard",
+                urlconf='gbe.urls',
+                args=[act.id]))

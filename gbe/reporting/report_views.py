@@ -131,6 +131,7 @@ def env_stuff(request, conference_choice=None):
         writer.writerow(row)
     return response
 
+
 @never_cache
 def room_schedule(request, room_id=None):
     viewer_profile = validate_perms(request,
