@@ -87,7 +87,7 @@ deactivated users.<br>
     <tbody>
     {% for act in acts %}
       <tr  {% if not act.act.tech.is_complete  %}class="error_row"{%else%} class="bid-table"{% endif %} >
-          <td class="bid-table">{% if act.order %}{{ act.order }}{% endif %}
+          <td class="bid-table">{% if act.order %}{{ act.order }}{% endif %}</td>
 	  <td class="bid-table">{{ act.act.b_title }}</td>
 	  <td class="bid-table">
 	    {% if not act.act.performer.contact.user_object.is_active  %}
