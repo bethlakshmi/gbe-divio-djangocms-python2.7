@@ -1,9 +1,7 @@
-from itertools import chain
 from django.db.models import (
     ManyToManyField,
     CharField,
 )
-from django.conf import settings
 from gbe.models import (
     Act,
     Event,
@@ -11,7 +9,6 @@ from gbe.models import (
 )
 from gbetext import cue_options
 from ticketing.functions import get_tickets
-import os as os
 
 
 class Show (Event):
@@ -43,17 +40,6 @@ class Show (Event):
 
     def get_acts(self):
         return self.scheduler_events.first().get_acts()
-
-    def download_path(self):
-        path = os.path.join(
-            settings.MEDIA_ROOT,
-            "uploads",
-            "audio",
-            "downloads",
-            ("%s_%s.tar.gz" %
-             (self.e_conference.conference_slug,
-              self.e_title.replace(" ", "_").replace("/", "_"))))
-        return path
 
     class Meta:
         app_label = "gbe"

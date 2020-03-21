@@ -103,20 +103,6 @@ class ActItem(ResourceItem):
     def as_subtype(self):
         return self.act
 
-    @property
-    def order(self):
-        '''
-        This is a little bit broken: assumes that an act is only
-        scheduled for one show.
-        This assumption pervades the current code, and will
-        need to be removed for post 2015 use
-        '''
-        try:
-            resource = ActResource.objects.filter(_item=self).first()
-            return resource.order
-        except:
-            return -1
-
     def get_castings(self):
         '''
         Returns a list of all shows and cast roles this act is scheduled for.
