@@ -319,8 +319,8 @@ class ActTechWizardView(View):
         advanced_form = None
         if self.rehearsal_booked():
             basic_form = self.get_initial_basic_form()
-        if self.act.tech.is_complete:
-            advanced_form = AdvancedActTechForm(instance=self.act.tech)
+            if self.act.tech.is_complete:
+                advanced_form = AdvancedActTechForm(instance=self.act.tech)
 
         return render(request, self.template, self.make_context(
             basic_form=basic_form,
