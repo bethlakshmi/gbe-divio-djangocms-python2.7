@@ -544,6 +544,8 @@ class Event(Schedulable):
         worker = None
         item = ActItem.objects.get(pk=act.act_id)
         resource = ActResource(_item=item)
+        if act.role:
+            resource.role = act.role
         resource.save()
 
         if act.booking_id:

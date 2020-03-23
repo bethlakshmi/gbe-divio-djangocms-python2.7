@@ -77,7 +77,8 @@ class FlexibleReviewBidView(ReviewBidView):
             queryset=q,
             empty_label=None,
             label='Pick a Show',
-            initial=start)
+            initial=start,
+            to_field_name='eventitem_id')
         self.actionform.fields['casting'] = ChoiceField(
             choices=get_act_casting(),
             required=False,
