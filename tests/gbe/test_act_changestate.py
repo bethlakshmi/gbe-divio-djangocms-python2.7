@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import (
     Client,
     TestCase,
@@ -50,7 +49,7 @@ class TestActChangestate(TestCase):
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Act Coordinator')
         grant_privilege(self.privileged_user, 'Act Reviewers')
-        self.data = {'show': self.show.pk,
+        self.data = {'show': self.show.eventitem_id,
                      'casting': '',
                      'accepted': '2'}
 
@@ -62,7 +61,7 @@ class TestActChangestate(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=self.data)
-        nt.assert_equal(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_act_changestate_post_accepted_act(self):
         prev_count2 = ResourceAllocation.objects.filter(
@@ -73,7 +72,7 @@ class TestActChangestate(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(url,
                                     data=self.data)
-        nt.assert_equal(1,
+        self.assertEqual(1,
                         ResourceAllocation.objects.filter(
                             event=self.sched_event).count() - prev_count2)
 
@@ -86,7 +85,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(url,
                                     data=self.data)
 
-        nt.assert_equal(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_act_changestate_book_act_with_conflict(self):
         grant_privilege(self.privileged_user, 'Act Reviewers')
@@ -216,6 +215,7 @@ class TestActChangestate(TestCase):
         login_as(self.privileged_user, self)
         data = self.data
         data['casting'] = "Hosted by..."
+        data['accepted'] = 3
         response = self.client.post(url,
                                     data=self.data,
                                     follow=True)
@@ -239,8 +239,6 @@ class TestActChangestate(TestCase):
         response = self.client.post(url,
                                     data=self.data,
                                     follow=True)
-        with self.assertRaises(ActResource.DoesNotExist):
-            ActResource.objects.get(_item=self.context.act)
         assert_alert_exists(
             response, 'danger', 'Error', no_casting_msg)
 
@@ -258,7 +256,5 @@ class TestActChangestate(TestCase):
         response = self.client.post(url,
                                     data=self.data,
                                     follow=True)
-        with self.assertRaises(ActResource.DoesNotExist):
-            ActResource.objects.get(_item=self.context.act)
         assert_alert_exists(
             response, 'danger', 'Error', no_casting_msg)

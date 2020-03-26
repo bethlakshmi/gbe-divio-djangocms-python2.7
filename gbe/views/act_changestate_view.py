@@ -66,7 +66,6 @@ class ActChangeStateView(BidChangeStateView):
                                       show.booking_id)
             show_general_status(request, response, self.__class__.__name__)
 
-
     @log_func
     def bid_state_change(self, request):
         show = None
@@ -106,7 +105,7 @@ class ActChangeStateView(BidChangeStateView):
             same_show = False
             same_role = False
             if show and show.event.eventitem == self.new_show.eventitem:
-                same_show=True
+                same_show = True
                 if casting == show.role:
                     same_role = True
 
@@ -116,8 +115,8 @@ class ActChangeStateView(BidChangeStateView):
                     act=self.object,
                     booking_id=show.booking_id,
                     role=casting))
-                show_general_status(set_response,
-                                    response,
+                show_general_status(request,
+                                    set_response,
                                     self.__class__.__name__)
                 if self.object.accepted == 2:
                     self.clear_bookings(request, rehearsals)
@@ -127,8 +126,8 @@ class ActChangeStateView(BidChangeStateView):
                     occurrence_id=self.new_show.pk,
                     act=BookableAct(act=self.object,
                                     role=casting))
-                show_general_status(set_response,
-                                    response,
+                show_general_status(request,
+                                    set_response,
                                     self.__class__.__name__)
 
             for worker in self.object.get_performer_profiles():
@@ -176,4 +175,3 @@ class ActChangeStateView(BidChangeStateView):
                 self.new_show = response.occurrences.first()
             else:
                 raise Http404
- 

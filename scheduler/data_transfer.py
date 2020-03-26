@@ -54,6 +54,7 @@ class BookableAct(object):
                  order=None):
         self.booking_id = None
         self.order = None
+        self.role = None
         if role:
             self.role = role
         if booking_id:
