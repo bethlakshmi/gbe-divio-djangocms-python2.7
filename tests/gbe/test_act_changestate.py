@@ -53,8 +53,58 @@ class TestActChangestate(TestCase):
                      'casting': '',
                      'accepted': '2'}
         self.url = reverse(self.view_name,
-                      args=[self.context.act.pk],
-                      urlconf='gbe.urls')
+                           args=[self.context.act.pk],
+                           urlconf='gbe.urls')
+
+    def test_act_keep_everything(self):
+        # accepted -> accepted
+        # same show, change role, keep rehearsal
+        rehearsal_event = self.context._schedule_rehearsal(
+            self.context.sched_event,
+            act=self.context.act)
+        login_as(self.privileged_user, self)
+        data = {
+            'casting': "",
+            'accepted': 3,
+            'show': self.context.show.eventitem_id,
+        }
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertRedirects(response, reverse(
+            'act_review_list',
+            urlconf='gbe.urls'))
+        self.assertEqual(ResourceAllocation.objects.filter(
+                event=rehearsal_event).count(), 1)
+        self.assertEqual(ResourceAllocation.objects.filter(
+                event=self.context.sched_event).count(), 2)
+
+    def test_act_change_role_keep_rehearsal(self):
+        # accepted -> accepted
+        # same show, change role, keep rehearsal
+        rehearsal_event = self.context._schedule_rehearsal(
+            self.context.sched_event,
+            act=self.context.act)
+        ActCastingOptionFactory()
+        login_as(self.privileged_user, self)
+        data = {
+            'casting': "Hosted by...",
+            'accepted': 3,
+            'show': self.context.show.eventitem_id,
+        }
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        casting = ActResource.objects.get(_item=self.context.act,
+                                          role="Hosted by...")
+        assert(casting.role == data['casting'])
+        self.assertRedirects(response, reverse(
+            'act_review_list',
+            urlconf='gbe.urls'))
+        self.assertEqual(ResourceAllocation.objects.filter(
+                event=rehearsal_event).count(), 1)
+        self.assertEqual(ResourceAllocation.objects.filter(
+                event=self.context.sched_event).count(), 2)
 
     def test_act_withdrawl(self):
         # accepted -> withdrawn
@@ -132,7 +182,6 @@ class TestActChangestate(TestCase):
         casting = ActResource.objects.get(_item=act)
         assert(casting.role == "Waitlisted")
 
-
     def test_act_changestate_post_waitlisted_act(self):
         # accepted -> waitlist
         # change show, change role
@@ -145,7 +194,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=self.data)
         self.assertEqual(1,
-                        ResourceAllocation.objects.filter(
+                         ResourceAllocation.objects.filter(
                             event=self.sched_event).count() - prev_count2)
         assert_email_template_create(
             'act wait list',
@@ -195,8 +244,8 @@ class TestActChangestate(TestCase):
         # change show, same role
         self.context = ActTechInfoContext(set_waitlist=True)
         self.url = reverse(self.view_name,
-                      args=[self.context.act.pk],
-                      urlconf='gbe.urls')
+                           args=[self.context.act.pk],
+                           urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         self.data['accepted'] = '3'
         response = self.client.post(self.url, data=self.data)
@@ -272,34 +321,6 @@ class TestActChangestate(TestCase):
             "Your act has been cast in %s" % self.show.e_title
         )
 
-    def test_act_change_role_keep_rehearsal(self):
-        # accepted -> accepted
-        # same show, change role, keep rehearsal
-        rehearsal_event = self.context._schedule_rehearsal(
-            self.context.sched_event,
-            act=self.context.act)
-        ActCastingOptionFactory()
-        act = ActFactory(b_conference=self.context.conference)
-        url = reverse(self.view_name,
-                      args=[act.pk],
-                      urlconf='gbe.urls')
-        login_as(self.privileged_user, self)
-        data = {
-            'casting': "Hosted by...",
-            'accepted': 3,
-            'show': self.context.show.eventitem_id,
-        }
-        response = self.client.post(url,
-                                    data=data,
-                                    follow=True)
-        casting = ActResource.objects.get(_item=act)
-        assert(casting.role == data['casting'])
-        self.assertRedirects(response, reverse(
-            'act_review_list',
-            urlconf='gbe.urls'))
-        self.assertEqual(ResourceAllocation.objects.filter(
-                event=rehearsal_event).count(), 1)
-
     def test_act_bad_role(self):
         UserMessage.objects.all().delete()
         ActCastingOptionFactory()
@@ -335,8 +356,8 @@ class TestActChangestate(TestCase):
         # change show
         self.context = ActTechInfoContext(set_waitlist=True)
         self.url = reverse(self.view_name,
-                      args=[self.context.act.pk],
-                      urlconf='gbe.urls')
+                           args=[self.context.act.pk],
+                           urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data)

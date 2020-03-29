@@ -83,8 +83,10 @@ class TestReviewActTechInfo(TestCase):
         self.assertContains(
             response,
             'I have props I will need set before my number')
-        self.assertContains(response, 'I will leave props or set pieces ' + \
-            'on-stage that will need to be cleared')
+        self.assertContains(
+            response,
+            'I will leave props or set pieces on-stage that will need to ' +
+            'be cleared')
         self.assertContains(response, self.context.act.tech.crew_instruct)
         self.assertContains(response, self.context.act.tech.pronouns)
         self.assertContains(response, self.context.act.tech.primary_color)

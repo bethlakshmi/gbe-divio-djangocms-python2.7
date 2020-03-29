@@ -77,6 +77,9 @@ class ActChangeStateView(BidChangeStateView):
             show_general_status(request, response, self.__class__.__name__)
             show, rehearsals = self.parse_act_schedule(response.schedule_items)
 
+        if show and show.role and show.role == "Performing":
+            show.role = ""
+
         # if the act has been accepted, set the show.
         if self.act_accepted(request):
             # Cast the act into the show by adding it to the schedule
@@ -105,7 +108,6 @@ class ActChangeStateView(BidChangeStateView):
             same_show = False
             same_role = False
             if show and show.event.eventitem == self.new_show.eventitem:
-                raise Exception('here')
                 same_show = True
                 if casting == show.role:
                     same_role = True
