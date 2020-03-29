@@ -27,12 +27,6 @@ class SchedulerChangeListTests(TestCase):
             username=self.privileged_user.username,
             password=password)
 
-    def test_get_resource_email(self):
-        context = VolunteerContext()
-        response = self.client.get('/admin/scheduler/resourceallocation/',
-                                   follow=True)
-        assert str(context.worker._item.contact_email) in response.content
-
     def test_get_allocation_resource_type(self):
         context = VolunteerContext()
         response = self.client.get('/admin/scheduler/resourceallocation/',

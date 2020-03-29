@@ -40,7 +40,7 @@ class ActChangeStateView(BidChangeStateView):
         self.bidder = self.object.performer.contact
 
     def act_accepted(self, request):
-        return (request.POST['show'] and
+        return ('show' in request.POST) and (
                 int(request.POST['accepted']) in self.show_booked_states)
 
     def parse_act_schedule(self, schedule_items):
@@ -105,6 +105,7 @@ class ActChangeStateView(BidChangeStateView):
             same_show = False
             same_role = False
             if show and show.event.eventitem == self.new_show.eventitem:
+                raise Exception('here')
                 same_show = True
                 if casting == show.role:
                     same_role = True
@@ -118,7 +119,7 @@ class ActChangeStateView(BidChangeStateView):
                 show_general_status(request,
                                     set_response,
                                     self.__class__.__name__)
-                if self.object.accepted == 2:
+                if request.POST['accepted'] != '3':
                     self.clear_bookings(request, rehearsals)
             elif not same_show:
                 self.clear_bookings(request, rehearsals, show)
@@ -129,7 +130,6 @@ class ActChangeStateView(BidChangeStateView):
                 show_general_status(request,
                                     set_response,
                                     self.__class__.__name__)
-
             for worker in self.object.get_performer_profiles():
                 conflicts = worker.get_conflicts(self.new_show)
                 for problem in conflicts:
