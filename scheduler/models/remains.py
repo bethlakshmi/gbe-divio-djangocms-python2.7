@@ -567,7 +567,7 @@ class Event(Schedulable):
 
         num_acts = ActResource.objects.filter(
                 allocations__event=self).count()
-        if num_acts > self.max_volunteer:
+        if num_acts > self.max_volunteer and self.max_volunteer > 0:
             warnings += [Warning(
                 code="OCCURRENCE_OVERBOOKED",
                 details="Over booked by %s acts" % (

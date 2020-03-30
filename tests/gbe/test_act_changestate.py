@@ -56,6 +56,28 @@ class TestActChangestate(TestCase):
                            args=[self.context.act.pk],
                            urlconf='gbe.urls')
 
+    def test_act_accept_to_wait_same_show(self):
+        # accepted -> waitlisted
+        # same show, change role, remove rehearsal
+        rehearsal_event = self.context._schedule_rehearsal(
+            self.context.sched_event,
+            act=self.context.act)
+        login_as(self.privileged_user, self)
+        data = {
+            'casting': "",
+            'accepted': 2,
+            'show': self.context.show.eventitem_id,
+        }
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertRedirects(response, reverse(
+            'act_review_list',
+            urlconf='gbe.urls'))
+        with self.assertRaises(ResourceAllocation.DoesNotExist):
+            self.assertEqual(ResourceAllocation.objects.get(
+                event=rehearsal_event))
+
     def test_act_keep_everything(self):
         # accepted -> accepted
         # same show, change role, keep rehearsal
@@ -75,9 +97,9 @@ class TestActChangestate(TestCase):
             'act_review_list',
             urlconf='gbe.urls'))
         self.assertEqual(ResourceAllocation.objects.filter(
-                event=rehearsal_event).count(), 1)
+            event=rehearsal_event).count(), 1)
         self.assertEqual(ResourceAllocation.objects.filter(
-                event=self.context.sched_event).count(), 2)
+            event=self.context.sched_event).count(), 2)
 
     def test_act_change_role_keep_rehearsal(self):
         # accepted -> accepted
