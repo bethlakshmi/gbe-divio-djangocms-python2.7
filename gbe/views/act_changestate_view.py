@@ -17,7 +17,11 @@ from gbe.models import (
     UserMessage,
 )
 from gbe.email.functions import send_bid_state_change_mail
-from gbetext import no_casting_msg
+from gbetext import (
+    acceptance_states,
+    act_status_change_msg,
+    no_casting_msg,
+)
 from scheduler.idd import (
     get_occurrences,
     get_schedule,
@@ -31,7 +35,9 @@ from django.http import Http404
 
 class ActChangeStateView(BidChangeStateView):
     object_type = Act
-    coordinator_permissions = ('Act Coordinator',)
+    coordinator_permissions = ('Act Coordinator',
+                               'Technical Director',
+                               'Producer')
     redirectURL = 'act_review_list'
     new_show = None
     show_booked_states = (3, 2)
@@ -118,9 +124,7 @@ class ActChangeStateView(BidChangeStateView):
                     act=self.object,
                     booking_id=show.booking_id,
                     role=casting))
-                show_general_status(request,
-                                    set_response,
-                                    self.__class__.__name__)
+                self.show_set_act_status(request, set_response)
                 if request.POST['accepted'] != '3':
                     self.clear_bookings(request, rehearsals)
             elif not same_show:
@@ -129,9 +133,7 @@ class ActChangeStateView(BidChangeStateView):
                     occurrence_id=self.new_show.pk,
                     act=BookableAct(act=self.object,
                                     role=casting))
-                show_general_status(request,
-                                    set_response,
-                                    self.__class__.__name__)
+                self.show_set_act_status(request, set_response)
             for worker in self.object.get_performer_profiles():
                 conflicts = worker.get_conflicts(self.new_show)
                 for problem in conflicts:
@@ -145,11 +147,48 @@ class ActChangeStateView(BidChangeStateView):
                                 "DATETIME_FORMAT")
                         )
                     )
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="ACT_ACCEPTED",
+                defaults={
+                    'summary': "Act State Changed (Accept/Waitlist)",
+                    'description': act_status_change_msg})
+            messages.success(
+                request,
+                "%s<br>Performer/Act: %s - %s<br>State: %s<br>Show: %s" % (
+                    user_message[0].description,
+                    self.object.performer.name,
+                    self.object.b_title,
+                    acceptance_states[int(request.POST['accepted'])][1],
+                    self.new_show.eventitem.child().e_title))
         else:
             self.clear_bookings(request, rehearsals, show)
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="ACT_NOT_ACCEPTED",
+                defaults={
+                    'summary': "Act State Changed (Not Accepted)",
+                    'description': act_status_change_msg})
+            messages.success(
+                request,
+                "%s<br>Performer/Act: %s - %s<br>State: %s" % (
+                    user_message[0].description,
+                    self.object.performer.name,
+                    self.object.b_title,
+                    acceptance_states[int(request.POST['accepted'])][1]))
 
         return super(ActChangeStateView, self).bid_state_change(
             request)
+
+    def show_set_act_status(self, request, set_response):
+        more_than_overbooked = False
+        for warning in set_response.warnings:
+            if warning.code != "OCCURRENCE_OVERBOOKED":
+                more_than_overbooked = True
+        if more_than_overbooked or len(set_response.errors) > 0:
+            show_general_status(request,
+                                set_response,
+                                self.__class__.__name__)
 
     def notify_bidder(self, request):
         email_show = None
@@ -169,6 +208,8 @@ class ActChangeStateView(BidChangeStateView):
 
     def prep_bid(self, request, args, kwargs):
         super(ActChangeStateView, self).prep_bid(request, args, kwargs)
+        if 'next' in request.POST:
+            self.next_page = request.POST['next']
         if self.act_accepted(request):
             response = get_occurrences(
                 foreign_event_ids=[request.POST['show']])

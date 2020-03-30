@@ -32,6 +32,7 @@ from scheduler.models import (
 )
 from gbe.models import UserMessage
 from gbetext import (
+    act_status_change_msg,
     bidder_email_fail_msg,
     no_casting_msg,
 )
@@ -77,6 +78,16 @@ class TestActChangestate(TestCase):
         with self.assertRaises(ResourceAllocation.DoesNotExist):
             self.assertEqual(ResourceAllocation.objects.get(
                 event=rehearsal_event))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            "%s<br>Performer/Act: %s - %s<br>State: %s<br>Show: %s" % (
+                act_status_change_msg,
+                self.context.act.performer.name,
+                self.context.act.b_title,
+                "Wait List",
+                self.context.show.e_title))
 
     def test_act_keep_everything(self):
         # accepted -> accepted
@@ -131,11 +142,6 @@ class TestActChangestate(TestCase):
     def test_act_withdrawl(self):
         # accepted -> withdrawn
         # remove all act bookings
-        print ("start...")
-        print (self.context.show.eventitem_id)
-        print (self.context.show)
-        print (self.context.sched_event.pk)
-        print (self.context.sched_event)
         rehearsal_event = self.context._schedule_rehearsal(
             self.context.sched_event,
             act=self.context.act)
@@ -160,6 +166,43 @@ class TestActChangestate(TestCase):
                 event=self.context.sched_event)
         self.assertEqual(booking.resource.item.as_subtype,
                          self.context.room)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            "%s<br>Performer/Act: %s - %s<br>State: %s" % (
+                act_status_change_msg,
+                self.context.act.performer.name,
+                self.context.act.b_title,
+                "Withdrawn"))
+
+    def test_act_withdraw_redirect(self):
+        # accepted -> withdrawn
+        # show alert, but redirect to the identified page
+        grant_privilege(self.privileged_user, 'Technical Director')
+        login_as(self.privileged_user, self)
+        next_url = reverse(
+            'act_techinfo_review',
+            urlconf='gbe.reporting.urls',
+            args=[self.show.eventitem_id])
+        data = {
+            'accepted': 4,
+            'next': next_url,
+        }
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertRedirects(response, next_url)
+
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            "%s<br>Performer/Act: %s - %s<br>State: %s" % (
+                act_status_change_msg,
+                self.context.act.performer.name,
+                self.context.act.b_title,
+                "Withdrawn"))
 
     def test_act_accept_act_link_correct(self):
         # accepted -> accepted
@@ -177,7 +220,7 @@ class TestActChangestate(TestCase):
         login_as(self.privileged_user, self)
         self.data['accepted'] = '3'
 
-        response = self.client.post(self.url, data=self.data)
+        response = self.client.post(self.url, data=self.data, follow=True)
         assert_email_contents(reverse(
             'act_tech_wizard',
             args=[self.context.act.pk],
@@ -185,6 +228,16 @@ class TestActChangestate(TestCase):
         with self.assertRaises(ResourceAllocation.DoesNotExist):
             rehearsal_booking = ResourceAllocation.objects.get(
                 event=rehearsal_event)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            "%s<br>Performer/Act: %s - %s<br>State: %s<br>Show: %s" % (
+                act_status_change_msg,
+                self.context.act.performer.name,
+                self.context.act.b_title,
+                "Accepted",
+                self.show.e_title))
 
     def test_act_changestate_authorized_user(self):
         # No decision -> waitlist

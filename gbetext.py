@@ -506,6 +506,7 @@ act_not_unique = '''Please name this act with a different title, \
 or edit the existing act.'''
 no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
+act_status_change_msg = "Act status has been changed."
 no_profile_msg = '''Your profile is not complete, you must provide a first \
 and last name, a name we can use on your badge, and a phone number we can \
 use to notify you of changes to the schedule at run time.'''
