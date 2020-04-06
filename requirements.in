@@ -43,3 +43,4 @@ aldryn-snake==1.0.0
 django-storages==1.8
 jsonfield==2.1.1
 dj_email_url==0.2.0
+configparser==4.0.2
