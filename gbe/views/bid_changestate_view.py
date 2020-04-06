@@ -22,6 +22,7 @@ from gbetext import bidder_email_fail_msg
 
 class BidChangeStateView(View):
     bid_state_change_form = BidStateChangeForm
+    next_page = None
 
     @log_func
     def bid_state_change(self, request):
@@ -34,8 +35,7 @@ class BidChangeStateView(View):
                 'gbe/bid_review.tmpl',
                 {'actionform': False,
                  'actionURL': False})
-        return HttpResponseRedirect(
-            reverse(self.redirectURL, urlconf='gbe.urls'))
+        return HttpResponseRedirect(self.next_page)
 
     def get_object(self, request, object_id):
         self.object = get_object_or_404(self.object_type,
@@ -70,6 +70,7 @@ class BidChangeStateView(View):
                 user_message[0].description)
 
     def groundwork(self, request, args, kwargs):
+        self.next_page = reverse(self.redirectURL, urlconf='gbe.urls')
         self.prep_bid(request, args, kwargs)
         self.notify_bidder(request)
 

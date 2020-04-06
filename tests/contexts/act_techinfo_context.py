@@ -11,6 +11,7 @@ from tests.factories.scheduler_factories import (
     EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
+    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
 )
@@ -25,7 +26,8 @@ class ActTechInfoContext():
                  conference=None,
                  room_name=None,
                  schedule_rehearsal=False,
-                 act_role=""):
+                 act_role="",
+                 set_waitlist=False):
         self.show = show or ShowFactory()
         self.conference = conference or self.show.e_conference
         self.performer = performer or PersonaFactory()
@@ -33,6 +35,10 @@ class ActTechInfoContext():
                                      b_conference=self.conference,
                                      accepted=3,
                                      submitted=True)
+        if set_waitlist:
+            self.act.accepted = 2
+            self.act.save()
+            act_role = "Waitlisted"
         self.tech = self.act.tech
 
         # schedule the show
@@ -78,3 +84,12 @@ class ActTechInfoContext():
                 resource=ActResourceFactory(_item=act.actitem_ptr),
                 event=rehearsal_event)
         return rehearsal_event
+
+    def order_act(self, act, order):
+        alloc = self.sched_event.resources_allocated.filter(
+            resource__actresource___item=act).first()
+        try:
+            alloc.ordering = order
+            alloc.ordering.save()
+        except:
+            OrderingFactory(allocation=alloc, order=order)

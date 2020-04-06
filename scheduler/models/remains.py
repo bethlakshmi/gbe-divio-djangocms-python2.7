@@ -103,20 +103,6 @@ class ActItem(ResourceItem):
     def as_subtype(self):
         return self.act
 
-    @property
-    def order(self):
-        '''
-        This is a little bit broken: assumes that an act is only
-        scheduled for one show.
-        This assumption pervades the current code, and will
-        need to be removed for post 2015 use
-        '''
-        try:
-            resource = ActResource.objects.filter(_item=self).first()
-            return resource.order
-        except:
-            return -1
-
     def get_castings(self):
         '''
         Returns a list of all shows and cast roles this act is scheduled for.
@@ -174,12 +160,10 @@ class ActResource(Resource):
     def order(self):
         try:
             ra = ResourceAllocation.objects.filter(resource=self).first()
+            if ra and ra.ordering:
+                return ra.ordering.order
         except:
             return None
-        if ra and ra.ordering:
-            return ra.ordering.order
-        else:
-            return -1
 
     @property
     def rehearsal(self):
@@ -560,6 +544,8 @@ class Event(Schedulable):
         worker = None
         item = ActItem.objects.get(pk=act.act_id)
         resource = ActResource(_item=item)
+        if act.role:
+            resource.role = act.role
         resource.save()
 
         if act.booking_id:
@@ -740,6 +726,9 @@ class ResourceAllocation(Schedulable):
         l = self.get_label()
         l.text = text
         l.save()
+
+    def __unicode__(self):
+        return ("%s - %s" % (unicode(self.event), unicode(self.resource)))
 
 
 class Ordering(models.Model):

@@ -34,7 +34,7 @@ class TechInfo(Model):
     # Advanced Info
     mic_choice = CharField(max_length=200,
                            choices=mic_options,
-                           default=mic_options[0])
+                           default=mic_options[0][0])
     background_color = CharField(max_length=128, blank=True)
     wash_color = CharField(max_length=128, blank=True)
     follow_spot_color = CharField(max_length=128, blank=True)
@@ -61,6 +61,13 @@ class TechInfo(Model):
                     self.pronouns and
                     audio_complete and
                     self.introduction_text)
+
+    @property
+    def prop_setup_list(self):
+        prop_setup_list = None
+        if self.prop_setup and len(self.prop_setup.strip()) > 0:
+            prop_setup_list = eval(self.prop_setup)
+        return prop_setup_list
 
     def __unicode__(self):
         try:

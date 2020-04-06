@@ -11,7 +11,6 @@ from factory import (
 import gbe.models as conf
 from django.contrib.auth.models import User
 import scheduler.models as sched
-from gbe.duration import Duration
 from django.utils.text import slugify
 from django.core.files.uploadedfile import SimpleUploadedFile
 from datetime import (
@@ -91,7 +90,7 @@ class ShowFactory(DjangoModelFactory):
         model = conf.Show
     e_title = Sequence(lambda n: 'Test Show%d' % n)
     e_description = 'Test Description'
-    duration = Duration(hours=1)
+    duration = timedelta(hours=1)
     e_conference = SubFactory(ConferenceFactory)
 
 
@@ -126,7 +125,7 @@ class TechInfoFactory(DjangoModelFactory):
 
     track_title = Sequence(lambda n: 'Test Track Title %d' % n)
     track_artist = Sequence(lambda n: 'Test Track Artist %d' % n)
-    duration = Duration(minutes=5)
+    duration = timedelta(minutes=5)
 
 
 class ActCastingOptionFactory(DjangoModelFactory):
@@ -169,7 +168,7 @@ class EventFactory(DjangoModelFactory):
         lambda a: "Description for %s" % a.e_title)
     blurb = LazyAttribute(
         lambda a: "Blurb for %s" % a.e_title)
-    duration = Duration(hours=2)
+    duration = timedelta(hours=2)
     e_conference = SubFactory(ConferenceFactory)
 
 
@@ -180,7 +179,7 @@ class GenericEventFactory(DjangoModelFactory):
     e_title = Sequence(lambda n: 'Test Generic Event %d' % n)
     e_description = LazyAttribute(
         lambda a: "Description for %s" % a.e_title)
-    duration = Duration(hours=1)
+    duration = timedelta(hours=1)
     type = 'Special'
     volunteer_type = SubFactory(AvailableInterestFactory)
     e_conference = SubFactory(ConferenceFactory)
@@ -196,7 +195,7 @@ class ClassFactory(DjangoModelFactory):
     b_description = LazyAttribute(
         lambda a: "Description for %s" % a.e_title)
 
-    duration = Duration(hours=1)
+    duration = timedelta(hours=1)
     teacher = SubFactory(PersonaFactory)
     minimum_enrollment = 1
     maximum_enrollment = 20

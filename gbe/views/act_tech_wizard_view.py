@@ -52,7 +52,7 @@ from settings import GBE_DATETIME_FORMAT
 
 class ActTechWizardView(View):
     template = 'gbe/act_tech_wizard.tmpl'
-    permissions = ('Tech Crew', )
+    permissions = ('Technical Director', 'Producer')
     default_event_type = None
     page_title = 'Edit Act Technical Information'
     first_title = 'Set Rehearsal Time'
@@ -319,8 +319,8 @@ class ActTechWizardView(View):
         advanced_form = None
         if self.rehearsal_booked():
             basic_form = self.get_initial_basic_form()
-        if self.act.tech.is_complete:
-            advanced_form = AdvancedActTechForm(instance=self.act.tech)
+            if self.act.tech.is_complete:
+                advanced_form = AdvancedActTechForm(instance=self.act.tech)
 
         return render(request, self.template, self.make_context(
             basic_form=basic_form,

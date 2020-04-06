@@ -61,10 +61,6 @@ class Performer (WorkerItem):
         return self.contact.user_object.email
 
     @property
-    def complete(self):
-        return True
-
-    @property
     def describe(self):
         return self.name
 

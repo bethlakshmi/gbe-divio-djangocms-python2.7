@@ -2,18 +2,18 @@ from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from gbe.reporting.views import (
+    act_techinfo_detail,
     eval_view,
     interest_view,
+    review_act_techinfo,
     review_staff_area_view,
     staff_area_view,
     WelcomeLetterView,
 )
 from gbe.reporting import (
-    download_tracks_for_show,
     env_stuff,
     export_badge_report,
     list_reports,
-    review_act_techinfo,
     room_schedule,
     room_setup,
 )
@@ -56,9 +56,6 @@ urlpatterns = [
         eval_view, name='evaluation'),
     url(r'^reports/evaluation/(?P<occurrence_id>\d+)/?$',
         eval_view, name='evaluation_detail'),
-    url(r'^reports/download_tracks_for_show/(\d+)/?$',
-        download_tracks_for_show,
-        name='download_tracks_for_show'),
 
     url(r'^reports/acttechinfo/view_summary/(\d+)/?$',
         review_act_techinfo,
@@ -66,6 +63,9 @@ urlpatterns = [
     url(r'^reports/acttechinfo/view_summary/?$',
         review_act_techinfo,
         name='act_techinfo_review'),
+    url(r'^reports/acttechinfo/detail/(\d+)/?$',
+        act_techinfo_detail,
+        name='act_techinfo_detail'),
     url(r'^reports/badges/print_run/(?P<conference_choice>[-\w]+)/?$',
         export_badge_report, name='badge_report'),
     url(r'^reports/badges/print_run/?$',

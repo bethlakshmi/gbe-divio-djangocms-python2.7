@@ -50,7 +50,8 @@ def get_schedule(user=None,
                     user=user,
                     event=item.event,
                     role="Performer",
-                    label=booking_label)]
+                    label=booking_label,
+                    order=item.resource.as_subtype.order)]
         if len(bookable_items['performers']) > 0:
             for item in worker_filter.filter(
                     resource__worker___item__in=bookable_items['performers']):
@@ -84,7 +85,8 @@ def get_schedule(user=None,
                     event=item.event,
                     role=resource.role or "Performing",
                     label=booking_label,
-                    booking_id=item.pk)]
+                    booking_id=item.pk,
+                    order=resource.order)]
     response = ScheduleResponse(
         schedule_items=sorted(
             set(sched_items),

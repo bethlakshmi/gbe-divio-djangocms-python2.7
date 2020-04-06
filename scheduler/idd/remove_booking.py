@@ -16,6 +16,13 @@ def remove_booking(occurrence_id,
             details="Could not find booking id %d for occurrence id %d." % (
                 booking_id, occurrence_id))]
         return response
-    ResourceAllocation.objects.filter(pk=booking_id).delete()
+    deleteable_resources = []
+    bookings = ResourceAllocation.objects.filter(pk=booking_id)
+    for booking in bookings:
+        if booking.resource.allocations.count() == 1:
+            deleteable_resources += [booking.resource]
+    bookings.delete()
+    for resource in deleteable_resources:
+        resource.delete()
     response.booking_id = booking_id
     return response

@@ -14,15 +14,11 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
                     'event',
                     'event_type',
                     'resource',
-                    'resource_email',
                     'resource_type')
     list_filter = ['event__eventitem__event__e_conference',
                    'resource__worker__role',
+                   'resource__actresource__role',
                    'resource__location']
-
-    def resource_email(self, obj):
-        resource = Resource.objects.filter(allocations=obj)[0]
-        return resource.item.contact_email
 
     def resource_type(self, obj):
         resource = Resource.objects.filter(allocations=obj)[0]
