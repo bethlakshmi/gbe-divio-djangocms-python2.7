@@ -38,7 +38,6 @@
 </div>
 {% if email_form %}
 <form action="" method="post" enctype="multipart/form-data"> 
-
 <div class="panel panel-primary">
   <div class="panel-heading">
     <h3 class="panel-title">Send Email</h3>
@@ -48,6 +47,7 @@
     {{ group_filter_note | safe }}<br/><br/>{% endif %}
       {% include "form_table_wrapper.tmpl" with forms=recipient_info %}
       {% if everyone %}
+        {% csrf_token %}
         <input id="id_everyone" name="everyone" type="hidden" value="Everyone" />
       {% endif %}
       <div class="panel-group">
