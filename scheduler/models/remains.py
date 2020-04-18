@@ -58,7 +58,7 @@ class ResourceItem(models.Model):
             resourceitem_id=self.resourceitem_id)
         return child.__class__.__name__ + ":  " + child.describe
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.describe)
 
 
@@ -85,7 +85,7 @@ class Resource(models.Model):
         child = Resource.objects.get_subclass(id=self.id)
         return child
 
-    def __unicode__(self):
+    def __str__(self):
         allocated_resource = Resource.objects.get_subclass(id=self.id)
         if allocated_resource:
             return str(allocated_resource)
@@ -135,7 +135,7 @@ class ActItem(ResourceItem):
             resourceitem_id=self.resourceitem_id
         ).b_title
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.describe)
 
 
@@ -177,7 +177,7 @@ class ActResource(Resource):
     def type(self):
         return "act"
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.item.describe
         except:
@@ -233,9 +233,6 @@ class LocationItem(ResourceItem):
     def __str__(self):
         return str(self.describe)
 
-    def __unicode__(self):
-        return str(self.describe)
-
 
 class Location(Resource):
     '''
@@ -248,7 +245,7 @@ class Location(Resource):
     def type(self):
         return "location"
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.item.describe
         except:
@@ -299,10 +296,8 @@ class WorkerItem(ResourceItem):
         return child.__class__.__name__ + ":  " + child.describe
 
     def __str__(self):
-        return str(self.describe.encode('utf-8').strip())
-
-    def __unicode__(self):
         return str(self.describe)
+
 
     def get_bookings(self, role='All', conference=None):
         '''
@@ -367,7 +362,7 @@ class Worker(Resource):
     def type(self):
         return self.role
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.item.describe
         except:
@@ -420,9 +415,6 @@ class EventItem (models.Model):
             return "no child"
 
     def __str__(self):
-        return str(self.describe)
-
-    def __unicode__(self):
         return str(self.describe)
 
 
@@ -639,7 +631,7 @@ class Event(Schedulable):
             allocations__event=self,
             _item__act__accepted=3).order_by('_item__act__performer__name')
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.eventitem.describe
         except:
@@ -727,7 +719,7 @@ class ResourceAllocation(Schedulable):
         l.text = text
         l.save()
 
-    def __unicode__(self):
+    def __str__(self):
         return ("%s - %s" % (str(self.event), str(self.resource)))
 
 

@@ -226,8 +226,8 @@ class ActTechWizardView(View):
         if error:
             return error
 
-        if ('book' in list(request.POST.keys())) or (
-                'book_continue' in list(request.POST.keys())):
+        if ('book' in request.POST.keys()) or (
+                'book_continue' in request.POST.keys()):
             error, bookings, rehearsal_forms, request = self.book_rehearsals(
                 request)
             if not error:
@@ -245,7 +245,7 @@ class ActTechWizardView(View):
                             str(occurrence),
                             occurrence.starttime.strftime(GBE_DATETIME_FORMAT)
                             ))
-                if 'book_continue' in list(request.POST.keys()):
+                if 'book_continue' in request.POST.keys():
                     basic_form = self.get_initial_basic_form()
                     return render(request,
                                   self.template,
@@ -262,8 +262,8 @@ class ActTechWizardView(View):
                 return render(request,
                               self.template,
                               self.make_context(rehearsal_forms))
-        elif ('finish_basics' in list(request.POST.keys())) or (
-              'finish_to_advanced' in list(request.POST.keys())):
+        elif ('finish_basics' in request.POST.keys()) or (
+              'finish_to_advanced' in request.POST.keys()):
             basic_form = BasicActTechForm(request.POST,
                                           request.FILES,
                                           instance=self.act.tech)
@@ -278,7 +278,7 @@ class ActTechWizardView(View):
                         'summary': "Act Tech Basic Submitted",
                         'description': default_act_tech_basic_submit})
                 messages.success(request, success[0].description)
-                if 'finish_to_advanced' in list(request.POST.keys()):
+                if 'finish_to_advanced' in request.POST.keys():
                     advanced_form = AdvancedActTechForm(instance=self.act.tech)
                     return render(request, self.template, self.make_context(
                         basic_form=basic_form,

@@ -56,7 +56,7 @@ def ConferenceVolunteerView(request):
 
     if request.method == 'POST':
         for aclass in classes:
-            if str(aclass.id)+'-volunteering' in list(request.POST.keys()):
+            if str(aclass.id)+'-volunteering' in request.POST.keys():
                 form = ConferenceVolunteerForm(request.POST,
                                                prefix=str(aclass.id))
                 if not form.is_valid():

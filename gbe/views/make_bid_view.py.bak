@@ -71,7 +71,7 @@ class MakeBidView(View):
 
     def set_up_post(self, request):
         the_form = None
-        if 'submit' in list(request.POST.keys()) or not self.has_draft:
+        if 'submit' in request.POST.keys() or not self.has_draft:
             the_form = self.submit_form
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
@@ -220,7 +220,7 @@ class MakeBidView(View):
 
         self.set_valid_form(request)
 
-        if 'submit' in list(request.POST.keys()):
+        if 'submit' in request.POST.keys():
             if not self.fee_paid():
                 dynamic_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
@@ -237,7 +237,7 @@ class MakeBidView(View):
                      'page_title': page_title})
             else:
                 redirect = self.submit_bid(request)
-        elif 'payfee' in list(request.POST.keys()):
+        elif 'payfee' in request.POST.keys():
             redirect = self.fee_link
         messages.success(request, user_message[0].description)
         return HttpResponseRedirect(

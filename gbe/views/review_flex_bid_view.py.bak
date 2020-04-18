@@ -109,7 +109,7 @@ class FlexibleReviewBidView(ReviewBidView):
                         Avg('ranking'))['ranking__avg'], 2)]
             except:
                 self.review_results[category] += [""]
-        self.review_results = sorted(self.review_results.items())
+        self.review_results = sorted(self.review_results.iteritems())
         self.notes = ActBidEvaluation.objects.filter(
             bid=act).order_by('evaluator',)
 

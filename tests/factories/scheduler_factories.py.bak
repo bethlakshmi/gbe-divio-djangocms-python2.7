@@ -73,7 +73,7 @@ class EventItemFactory(DjangoModelFactory):
 
 class SchedEventFactory(DjangoModelFactory):
     eventitem = SubFactory(GenericEventFactory)
-    starttime = datetime(2015, 0o2, 4)
+    starttime = datetime(2015, 02, 4)
     max_volunteer = 0
 
     class Meta:

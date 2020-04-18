@@ -17,7 +17,7 @@ from gbe_forms_text import act_bid_labels
 
 
 def display_invalid_act(request, data, form, conference, profile, view):
-    if [act_not_unique] in list(form.errors.values()):
+    if [act_not_unique] in form.errors.values():
         conflict_msg = UserMessage.objects.get_or_create(
             view=view,
             code="ACT_TITLE_CONFLICT",

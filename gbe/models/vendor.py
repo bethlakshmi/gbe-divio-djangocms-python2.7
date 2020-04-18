@@ -47,7 +47,7 @@ class Vendor(Biddable):
                       blank=True,
                       default='')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.b_title  # "title" here is company name
 
     def clone(self):

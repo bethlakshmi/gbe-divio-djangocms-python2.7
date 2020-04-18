@@ -23,7 +23,7 @@ from tests.factories.gbe_factories import (
     ProfileFactory
 )
 from mock import patch, Mock
-import urllib.request, urllib.error, urllib.parse
+import urllib2
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from tests.functions.gbe_functions import login_as
@@ -79,7 +79,7 @@ class TestTransactions(TestCase):
         response = self.client.get(self.url)
         nt.assert_equal(response.status_code, 200)
 
-    @patch('urllib.request.urlopen', autospec=True)
+    @patch('urllib2.urlopen', autospec=True)
     def test_transactions_sync(self, m_urlopen):
         '''
            privileged user syncs orders

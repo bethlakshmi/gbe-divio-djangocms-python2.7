@@ -30,7 +30,7 @@ class BidAdmin(ImportExportActionModelAdmin):
 
 
 class ClassAdmin(BidAdmin):
-    list_display = ('__unicode__',
+    list_display = ('__str__',
                     'teacher',
                     'submitted',
                     'accepted',

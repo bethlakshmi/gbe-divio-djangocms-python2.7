@@ -8,11 +8,11 @@ from factory import (
     LazyAttribute,
     SelfAttribute
 )
-from factory.django import ImageField
 import gbe.models as conf
 from django.contrib.auth.models import User
 import scheduler.models as sched
 from django.utils.text import slugify
+from django.core.files.uploadedfile import SimpleUploadedFile
 from datetime import (
     date,
     time,
@@ -33,7 +33,7 @@ class ConferenceFactory(DjangoModelFactory):
         model = conf.Conference
 
     conference_name = Sequence(lambda n: "Test Conference %d" % n)
-    conference_slug = Sequence(lambda n: "test_conf_%d" % n)
+    conference_slug = Sequence(lambda n: u"test_conf_%d" % n)
     accepting_bids = False
     status = 'upcoming'
 
@@ -336,7 +336,9 @@ class CostumeFactory(DjangoModelFactory):
     pieces = 10
     pasties = False
     dress_size = 10
-    picture = ImageField(filename="file.jpg")
+    picture = SimpleUploadedFile("file.jpg",
+                                 "file_content",
+                                 content_type="image/jpg")
 
 
 class ConferenceDayFactory(DjangoModelFactory):

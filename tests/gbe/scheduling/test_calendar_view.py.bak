@@ -31,10 +31,10 @@ class TestCalendarView(TestCase):
         self.client = Client()
         clear_conferences()
         conference = ConferenceFactory()
-        save_the_date = datetime(2016, 0o2, 0o6, 12, 00, 00)
+        save_the_date = datetime(2016, 02, 06, 12, 00, 00)
         day = ConferenceDayFactory(
             conference=conference,
-            day=date(2016, 0o2, 0o6))
+            day=date(2016, 02, 06))
         self.staffcontext = StaffAreaContext(
             conference=conference,
             starttime=save_the_date)
@@ -44,7 +44,7 @@ class TestCalendarView(TestCase):
             status='completed')
         self.other_conf_day = ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o6))
+            day=date(2015, 02, 06))
         self.other_show = ShowContext(conference=self.other_conference)
         self.classcontext = ClassContext(
             conference=conference,
@@ -102,11 +102,11 @@ class TestCalendarView(TestCase):
     def test_calendar_conference_w_default_conf_public_days(self):
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o5),
+            day=date(2016, 02, 05),
             open_to_public=False)
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o7),
+            day=date(2016, 02, 07),
             open_to_public=False)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
@@ -118,11 +118,11 @@ class TestCalendarView(TestCase):
     def test_calendar_volunteer_w_default_conf_public_days(self):
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o5),
+            day=date(2016, 02, 05),
             open_to_public=False)
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o7),
+            day=date(2016, 02, 07),
             open_to_public=False)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
@@ -159,7 +159,7 @@ class TestCalendarView(TestCase):
         conference = ConferenceFactory(status='upcoming')
         conference_day = ConferenceDayFactory(
             conference=conference,
-            day=date(2016, 0o2, 0o6))
+            day=date(2016, 02, 06))
         url = reverse('calendar',
                       urlconf='gbe.scheduling.urls',
                       args=['Conference'])
@@ -193,7 +193,7 @@ class TestCalendarView(TestCase):
         conference = ConferenceFactory(status='upcoming')
         conference_day = ConferenceDayFactory(
             conference=conference,
-            day=date(2016, 0o2, 0o6))
+            day=date(2016, 02, 06))
         url = reverse('calendar',
                       urlconf='gbe.scheduling.urls',
                       args=['Conference'])
@@ -210,7 +210,7 @@ class TestCalendarView(TestCase):
                       args=['General'])
         ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o7))
+            day=date(2015, 02, 07))
         data = {'day': "02-06-2015"}
         response = self.client.get(url, data=data)
         self.assertContains(
@@ -227,7 +227,7 @@ class TestCalendarView(TestCase):
                       args=['General'])
         ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o7))
+            day=date(2015, 02, 07))
         data = {'day': "02-07-2015"}
         response = self.client.get(url, data=data)
         self.assertContains(
@@ -244,7 +244,7 @@ class TestCalendarView(TestCase):
                       args=['General'])
         ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o7))
+            day=date(2015, 02, 07))
         data = {'day': "02-07-2015"}
         response = self.client.get(url, data=data)
         self.assertContains(

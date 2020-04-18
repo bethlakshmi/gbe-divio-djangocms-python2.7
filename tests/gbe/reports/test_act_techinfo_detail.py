@@ -70,7 +70,6 @@ class TestReviewActTechInfo(TestCase):
         self.set_the_basics()
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        print response
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.context.act.b_title)
         self.assertContains(response, str(self.context.act.performer))

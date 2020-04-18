@@ -38,5 +38,5 @@ class AdminProfileView(EditProfileView):
                 'summary': "Update Profile Success",
                 'description': "Updated Profile"})
         message = "%s: %s" % (user_message[0].description,
-                              str(self.profile))
+                              unicode(self.profile))
         return message
