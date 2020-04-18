@@ -1,1 +1,1 @@
-from email_username_auth import EmailUsernameAuth
+from .email_username_auth import EmailUsernameAuth
