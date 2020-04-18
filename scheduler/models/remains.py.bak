@@ -59,7 +59,7 @@ class ResourceItem(models.Model):
         return child.__class__.__name__ + ":  " + child.describe
 
     def __unicode__(self):
-        return str(self.describe)
+        return unicode(self.describe)
 
 
 class Resource(models.Model):
@@ -88,7 +88,7 @@ class Resource(models.Model):
     def __unicode__(self):
         allocated_resource = Resource.objects.get_subclass(id=self.id)
         if allocated_resource:
-            return str(allocated_resource)
+            return unicode(allocated_resource)
         else:
             return "Error in resource allocation, no resource"
 
@@ -120,8 +120,8 @@ class ActItem(ResourceItem):
         '''
         resources = ActResource.objects.filter(_item=self)
 
-        return [i for i in [
-            res.rehearsal for res in resources] if i is not None]
+        return filter(lambda i: i is not None,
+                      [res.rehearsal for res in resources])
 
     @property
     def bio(self):
@@ -136,7 +136,7 @@ class ActItem(ResourceItem):
         ).b_title
 
     def __unicode__(self):
-        return str(self.describe)
+        return unicode(self.describe)
 
 
 class ActResource(Resource):
@@ -234,7 +234,7 @@ class LocationItem(ResourceItem):
         return str(self.describe)
 
     def __unicode__(self):
-        return str(self.describe)
+        return unicode(self.describe)
 
 
 class Location(Resource):
@@ -302,7 +302,7 @@ class WorkerItem(ResourceItem):
         return str(self.describe.encode('utf-8').strip())
 
     def __unicode__(self):
-        return str(self.describe)
+        return unicode(self.describe)
 
     def get_bookings(self, role='All', conference=None):
         '''
@@ -423,7 +423,7 @@ class EventItem (models.Model):
         return str(self.describe)
 
     def __unicode__(self):
-        return str(self.describe)
+        return unicode(self.describe)
 
 
 class Event(Schedulable):
@@ -728,7 +728,7 @@ class ResourceAllocation(Schedulable):
         l.save()
 
     def __unicode__(self):
-        return ("%s - %s" % (str(self.event), str(self.resource)))
+        return ("%s - %s" % (unicode(self.event), unicode(self.resource)))
 
 
 class Ordering(models.Model):

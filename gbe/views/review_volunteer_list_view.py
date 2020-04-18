@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from gbe.models import Volunteer
 from gbe.functions import validate_perms
-from review_bid_list_view import ReviewBidListView
+from gbe.views import ReviewBidListView
 
 
 class ReviewVolunteerListView(ReviewBidListView):

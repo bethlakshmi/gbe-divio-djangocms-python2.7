@@ -5,7 +5,7 @@
 #
 
 from gbe_logging import logger
-import urllib.request, urllib.error, urllib.parse
+import urllib2
 from django.utils import timezone
 import xml.etree.ElementTree as et
 from django.contrib.auth.models import User
@@ -16,7 +16,7 @@ from ticketing.models import (
     TicketItem,
     Transaction,
 )
-import html.parser
+import HTMLParser
 from django.utils import timezone
 from gbe.models import Profile
 import sys
@@ -33,12 +33,12 @@ def perform_bpt_api_call(api_call):
     '''
 
     try:
-        req = urllib.request.Request(api_call)
+        req = urllib2.Request(api_call)
         req.add_header('Accept', 'application/json')
         req.add_header("Content-type", "application/x-www-form-urlencoded")
-        res = urllib.request.urlopen(req)
+        res = urllib2.urlopen(req)
         xml_tree = et.fromstring(res.read())
-    except urllib.error.URLError as io_error:
+    except urllib2.URLError as io_error:
         logger.error('Could not perform BPT call:  %s' % io_error.reason)
         return None
     except:
@@ -118,7 +118,7 @@ def set_bpt_event_detail(event):
     if event_xml is None:
         return None
 
-    h = html.parser.HTMLParser()
+    h = HTMLParser.HTMLParser()
     event.title = h.unescape(event_xml.find('.//title').text)
     event.description = h.unescape(event_xml.find('.//e_description').text)
     event.save()
@@ -281,20 +281,20 @@ def bpt_save_order_to_database(event_id, bpt_order):
     # Build a purchaser object.
 
     purchaser = Purchaser()
-    purchaser.first_name = str(bpt_order.find('fname').text)
-    purchaser.last_name = str(bpt_order.find('lname').text)
-    purchaser.address = str(bpt_order.find('address').text)
-    purchaser.city = str(bpt_order.find('city').text)
-    purchaser.state = str(bpt_order.find('state').text)
-    purchaser.zip = str(bpt_order.find('zip').text)
-    purchaser.country = str(bpt_order.find('country').text)
-    purchaser.email = str(bpt_order.find('email').text)
-    purchaser.phone = str(bpt_order.find('phone').text)
+    purchaser.first_name = unicode(bpt_order.find('fname').text)
+    purchaser.last_name = unicode(bpt_order.find('lname').text)
+    purchaser.address = unicode(bpt_order.find('address').text)
+    purchaser.city = unicode(bpt_order.find('city').text)
+    purchaser.state = unicode(bpt_order.find('state').text)
+    purchaser.zip = unicode(bpt_order.find('zip').text)
+    purchaser.country = unicode(bpt_order.find('country').text)
+    purchaser.email = unicode(bpt_order.find('email').text)
+    purchaser.phone = unicode(bpt_order.find('phone').text)
 
     # This is a little bit of a hack.. if we don't know who the user is that
     # purchased the ticket, we assign it to the limbo user.
 
-    tracker_id = str(bpt_order.find('tracker_id').text)
+    tracker_id = unicode(bpt_order.find('tracker_id').text)
     matched_user = attempt_match_purchaser_to_user(purchaser, tracker_id)
 
     if (matched_user == -1):
@@ -318,9 +318,9 @@ def bpt_save_order_to_database(event_id, bpt_order):
         datetime.strptime(
             bpt_order.find('order_time').text,
             "%Y-%m-%d %H:%M:%S"))
-    trans.shipping_method = str(bpt_order.find('shipping_method').text)
-    trans.order_notes = str(bpt_order.find('order_notes').text)
-    trans.reference = str(bpt_order.find('ticket_number').text)
+    trans.shipping_method = unicode(bpt_order.find('shipping_method').text)
+    trans.order_notes = unicode(bpt_order.find('order_notes').text)
+    trans.reference = unicode(bpt_order.find('ticket_number').text)
     trans.payment_source = 'Brown Paper Tickets'
 
     trans.save()

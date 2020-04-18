@@ -29,9 +29,9 @@ utc = pytz.timezone('UTC')
 
 def event_info(confitem_type='Show',
                filter_type=None,
-               cal_times=(datetime(2016, 02, 5, 18, 00,
+               cal_times=(datetime(2016, 2, 5, 18, 0,
                                    tzinfo=pytz.timezone('UTC')),
-                          datetime(2016, 02, 7, 00, 00,
+                          datetime(2016, 2, 7, 0, 0,
                                    tzinfo=pytz.timezone('UTC'))),
                conference=None):
     '''

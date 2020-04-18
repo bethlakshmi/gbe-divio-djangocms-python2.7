@@ -6,6 +6,7 @@ from .make_bid_view import MakeBidView
 from .review_bid_view import ReviewBidView
 from .view_bid_view import ViewBidView
 from .bid_changestate_view import BidChangeStateView
+from .review_bid_list_view import ReviewBidListView
 
 # general bid classes
 from .clone_bid_view import CloneBidView

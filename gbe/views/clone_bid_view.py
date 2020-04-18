@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
 
-from landing_page_view import LandingPageView
+from gbe.views import LandingPageView
 from gbe.models import (
     Act,
     Class,

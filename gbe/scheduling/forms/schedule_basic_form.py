@@ -17,8 +17,8 @@ from settings import GBE_TIME_FORMAT
 
 time_start = 8 * 60
 time_stop = 24 * 60
-conference_times = [(time(mins/60, mins % 60),
-                     time(mins/60, mins % 60).strftime(GBE_TIME_FORMAT))
+conference_times = [(time(int(mins/60), mins % 60),
+                     time(int(mins/60), mins % 60).strftime(GBE_TIME_FORMAT))
                     for mins in range(time_start, time_stop, 30)]
 
 
