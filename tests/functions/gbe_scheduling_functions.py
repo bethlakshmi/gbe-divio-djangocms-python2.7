@@ -28,7 +28,7 @@ def assert_label(response, label, details):
         label,
         details
     )
-    assert selection in response.content
+    assert bytes(selection, 'utf-8') in response.content
 
 
 def assert_event_was_picked_in_wizard(response, event_type):
@@ -40,15 +40,15 @@ def assert_event_was_picked_in_wizard(response, event_type):
             if event_type == subitem[0]:
                 checked_button = (
                     '<input type="radio" name="event_type" value="%s"' +
-                    ' required checked id="id_event_type_%d_%d" />') % (
+                    ' required id="id_event_type_%d_%d" checked />') % (
                     event_type, x, y)
             y += 1
         x += 1
-    assert '<a data-toggle="collapse" href="#collapse1">' in response.content
-    assert checked_button in response.content
+    assert b'<a data-toggle="collapse" href="#collapse1">' in response.content
+    assert bytes(checked_button, 'utf-8') in response.content
 
 
 def assert_role_choice(response, role_type):
-    assert '<option value="%s" selected>%s</option>' % (
+    assert bytes('<option value="%s" selected>%s</option>' % (
         role_type,
-        role_type) in response.content
+        role_type), 'utf-8') in response.content

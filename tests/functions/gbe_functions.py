@@ -122,8 +122,8 @@ def assert_radio_state(response, name, button_id, value, checked=False):
     if checked:
         checked_state = "checked "
     checked_button = (
-        '<input type="radio" name="%s" value="%s" %sid="%s" />' % (
-                    name, value, checked_state, button_id))
+        '<input type="radio" name="%s" value="%s" id="%s" %s/>' % (
+                    name, value, button_id, checked_state))
     assert bytes(checked_button, 'utf-8') in response.content
 
 
