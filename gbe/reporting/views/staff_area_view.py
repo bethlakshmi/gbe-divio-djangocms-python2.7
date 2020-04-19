@@ -36,7 +36,7 @@ def staff_area_view(request, parent_type, target):
             area.slug])
         conference = area.conference
         if area.conference.status != 'completed':
-            edit_link = reverse("edit_staff", 
+            edit_link = reverse("edit_staff",
                                 urlconf='gbe.scheduling.urls',
                                 args=[area.pk])
     elif parent_type == "event":
@@ -47,9 +47,10 @@ def staff_area_view(request, parent_type, target):
                 parent_event_id=parent_response.occurrences[0].pk)
             conference = area.confitem.e_conference
             if conference.status != 'completed':
-                edit_link = reverse("edit_event", 
-                                urlconf='gbe.scheduling.urls',
-                                args=[conference.conference_slug, area.pk])
+                edit_link = reverse(
+                    "edit_event",
+                    urlconf='gbe.scheduling.urls',
+                    args=[conference.conference_slug, area.pk])
 
     if opps_response:
         show_general_status(request, opps_response, "staff_area")

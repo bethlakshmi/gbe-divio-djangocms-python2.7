@@ -15,6 +15,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='class',
             name='space_needs',
-            field=models.CharField(blank=True, choices=[(b'Movement Class Floor', ((b'0', b"Don't Care about Floor"), (b'1', b'Carpet'), (b'2', b'Dance Floor'), (b'3', b'Both'))), (b'Lecture Class Setup', ((b'4', b"Don't Care about Seating"), (b'5', b'Lecture Style - tables and chairs face podium'), (b'6', b'Conversational - seating in a ring')))], default=b'', max_length=128),
+            field=models.CharField(blank=True, choices=[
+                (b'Movement Class Floor', ((b'0', b"Don't Care about Floor"),
+                                           (b'1', b'Carpet'),
+                                           (b'2', b'Dance Floor'),
+                                           (b'3', b'Both'))),
+                (b'Lecture Class Setup', (
+                    (b'4', b"Don't Care about Seating"),
+                    (b'5', b'Lecture Style - tables and chairs face podium'),
+                    (b'6', b'Conversational - seating in a ring')))],
+            default=b'',
+            max_length=128),
         ),
     ]

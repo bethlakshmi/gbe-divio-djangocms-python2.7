@@ -18,7 +18,8 @@ def log_func(funct):
     def __call__(*args, **kwargs):
         if LOG_LEVEL in ('debug', 'error', 'critical'):
 
-            out_text = funct.__name__+' - args :\n'+str(args)+'\n---------\nkwargs:\n'+str(kwargs)+'\n---------\n'
+            out_text = funct.__name__ + ' - args :\n'+str(args) + \
+                '\n---------\nkwargs:\n' + str(kwargs)+'\n---------\n'
         else:
             out_text = funct.__name__
         logger.info(out_text)
