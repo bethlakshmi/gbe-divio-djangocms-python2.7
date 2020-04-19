@@ -18,7 +18,9 @@ from tests.factories.gbe_factories import (
 )
 from tests.functions.gbe_functions import location
 from mock import patch, Mock
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 

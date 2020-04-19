@@ -298,7 +298,6 @@ class WorkerItem(ResourceItem):
     def __str__(self):
         return str(self.describe)
 
-
     def get_bookings(self, role='All', conference=None):
         '''
         Returns the events for which this Worker is booked as "role".

@@ -394,7 +394,6 @@ class TestActTechWizard(TestCase):
         login_as(context.performer.contact, self)
         filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
         data = self.get_full_post(filename)
-        print (data)
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(

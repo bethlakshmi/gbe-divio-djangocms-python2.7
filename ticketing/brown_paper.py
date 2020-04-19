@@ -5,11 +5,9 @@
 #
 
 from gbe_logging import logger
-from urllib import (
-    request,
-    error,
-    parse
-)
+import urllib.request
+import urllib.error
+import urllib.parse
 from django.utils import timezone
 import xml.etree.ElementTree as et
 from django.contrib.auth.models import User

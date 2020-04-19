@@ -139,7 +139,8 @@ def assert_option_state(response, value, text, selected=False):
 
 def assert_has_help_text(response, help_text):
     assert b'<span class="dropt" title="Help">' in response.content
-    assert b'<img src= "/static/img/question.png" alt="?"/>' in response.content
+    assert (
+        b'<img src= "/static/img/question.png" alt="?"/>' in response.content)
     assert (b'<span style="width:200px;float:right;text-align:left;">'
             in response.content)
     assert bytes(help_text, 'utf-8') in response.content
