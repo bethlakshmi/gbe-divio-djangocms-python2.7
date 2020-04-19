@@ -122,8 +122,8 @@ class MailToRolesView(MailToFilterView):
         self.specify_event_form = None
         self.priv_list = self.user.privilege_groups
         self.priv_list += self.user.get_roles()
-        if 'filter' in list(request.POST.keys()) or 'send' in list(request.POST.keys(
-                )) or 'refine' in list(request.POST.keys()):
+        if 'filter' in list(request.POST.keys()) or 'send' in list(
+                request.POST.keys()) or 'refine' in list(request.POST.keys()):
             self.select_form = SelectRoleForm(
                 request.POST,
                 prefix="email-select")

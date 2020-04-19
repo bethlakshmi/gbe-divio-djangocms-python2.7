@@ -123,8 +123,8 @@ class MailToFilterView(MailView):
                         context)
         elif 'everyone' in list(request.POST.keys()):
             return self.filter_everyone(request)
-        elif ('filter' in list(request.POST.keys()) or 'refine' in list(request.POST.keys(
-                ))) and self.select_form_is_valid():
+        elif ('filter' in list(request.POST.keys()) or 'refine' in list(
+                request.POST.keys())) and self.select_form_is_valid():
             return self.filter_emails(request)
 
         user_message = UserMessage.objects.get_or_create(

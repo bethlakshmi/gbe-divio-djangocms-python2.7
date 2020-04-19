@@ -259,11 +259,11 @@ class TestCopyOccurrence(TestCase):
         self.assertContains(
             response,
             '<input type="radio" name="copy_mode" value="include_parent" ' +
-            'required checked id="id_copy_mode_1" />')
+            'id="id_copy_mode_1" required checked />')
         self.assertContains(
             response,
             '<input type="radio" name="copy_mode" value="include_parent" ' +
-            'required checked id="id_copy_mode_1" />')
+            'id="id_copy_mode_1" required checked />')
         self.assertContains(
             response,
             '<option value="%d" selected>' % another_day.pk)
@@ -347,8 +347,8 @@ class TestCopyOccurrence(TestCase):
         self.assertContains(
             response,
             '<input type="radio" name="copy_mode" ' +
-            'value="copy_children_only" required checked ' +
-            'id="id_copy_mode_0" />')
+            'value="copy_children_only" ' +
+            'id="id_copy_mode_0" required checked />')
         self.assertContains(
             response,
             '<option value="%d" selected>' % (
@@ -461,7 +461,7 @@ class TestCopyOccurrence(TestCase):
                     args=[another_day.conference.conference_slug]),
             another_day.conference.conference_slug,
             another_day.pk,
-            new_occurrences.replace(" ", "%20"))
+            str(new_occurrences).replace(" ", "%20"))
         self.assertRedirects(response, redirect_url)
         assert_alert_exists(
             response,
@@ -515,7 +515,7 @@ class TestCopyOccurrence(TestCase):
                     args=[another_day.conference.conference_slug]),
             another_day.conference.conference_slug,
             another_day.pk,
-            new_occurrences.replace(" ", "%20"))
+            str(new_occurrences).replace(" ", "%20"))
         self.assertRedirects(response, redirect_url)
         assert_alert_exists(
             response,

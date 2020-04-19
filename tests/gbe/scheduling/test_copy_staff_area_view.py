@@ -45,8 +45,7 @@ class TestCopyOccurrence(TestCase):
     view_name = 'copy_staff_schedule'
     copy_date_format = "%a, %b %-d, %Y %-I:%M %p"
     copy_children_only_checked = '<input type="radio" name="copy_mode" ' + \
-        'value="copy_children_only" required checked id="id_copy_mode_0" />'
-
+        'value="copy_children_only" id="id_copy_mode_0" required checked />'
     def setUp(self):
         self.context = StaffAreaContext()
         self.vol_opp = self.context.add_volunteer_opp()
@@ -193,6 +192,7 @@ class TestCopyOccurrence(TestCase):
         }
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data=data, follow=True)
+        print(response.content)
         self.assertContains(
             response,
             self.copy_children_only_checked)
@@ -323,7 +323,7 @@ class TestCopyOccurrence(TestCase):
                     args=[another_day.conference.conference_slug]),
             another_day.conference.conference_slug,
             another_day.pk,
-            new_occurrences.replace(" ", "%20"),
+            str(new_occurrences).replace(" ", "%20"),
             self.context.area.pk+1)
         self.assertRedirects(response, redirect_url)
         assert_alert_exists(
@@ -365,7 +365,7 @@ class TestCopyOccurrence(TestCase):
                     args=[self.context.conference.conference_slug]),
             self.context.conference.conference_slug,
             self.context.conf_day.pk,
-            new_occurrences.replace(" ", "%20"),
+            str(new_occurrences).replace(" ", "%20"),
             max_area.pk)
         self.assertRedirects(response, redirect_url)
         assert_alert_exists(

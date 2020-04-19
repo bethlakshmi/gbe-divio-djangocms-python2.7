@@ -121,9 +121,9 @@ class TestEvalEventView(TestCase):
         n = 0
 
         grade_input = '<input type="radio" name="question%d" value="%s" ' + \
-                      'required %sid="id_question%d_%d" />'
-        answer_textarea = '<textarea name="question%d" rows="10" ' + \
-            'cols="40" id="id_question%d">'
+                      'required id="id_question%d_%d" %s/>'
+        answer_textarea = '<textarea name="question%d" cols="40" ' + \
+            'rows="10" id="id_question%d">'
 
         boolean_checkbox = '<input type="checkbox" name="question%d" ' + \
             'id="id_question%d" />'
@@ -135,7 +135,7 @@ class TestEvalEventView(TestCase):
                 checked = "checked "
             self.assertContains(
                 response,
-                grade_input % (q1.pk, g, checked, q1.pk, n, ))
+                grade_input % (q1.pk, g, q1.pk, n, checked))
             n = n + 1
         self.assertContains(
             response,

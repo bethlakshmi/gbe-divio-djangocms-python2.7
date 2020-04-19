@@ -17,15 +17,18 @@ class Migration(migrations.Migration):
             name='address',
             field=models.TextField(
                 blank=True,
-                help_text=b'This can include HTML, and it will be for formatting.',
+                help_text=b'This can include HTML, and it will be for ' +
+                b'formatting.',
                 max_length=500),
         ),
         migrations.AlterField(
             model_name='room',
             name='map_embed',
             field=models.TextField(
-                blank=True, 
-                help_text=b'Use the embedded map instructions and this will display on event pages.  With Google, small size is recommended.',
+                blank=True,
+                help_text=b'Use the embedded map instructions and this ' +
+                b'will display on event pages.  With Google, small size is ' +
+                b'recommended.',
                 max_length=1000),
         ),
         migrations.AlterField(

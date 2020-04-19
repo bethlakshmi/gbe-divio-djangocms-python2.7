@@ -112,7 +112,7 @@ class TestClassWizard(TestCase):
         self.assertContains(
             response,
             ('<input type="radio" name="accepted_class" value="%d" ' +
-             'checked id="id_accepted_class_1" />') %
+             'id="id_accepted_class_1" checked />') %
             self.test_class.pk)
 
     def test_invalid_form(self):
@@ -136,8 +136,8 @@ class TestClassWizard(TestCase):
             follow=True)
         self.assertContains(
             response,
-            '<input type="radio" name="accepted_class" value="" checked ' +
-            'id="id_accepted_class_0" />')
+            '<input type="radio" name="accepted_class" value="" ' +
+            'id="id_accepted_class_0" checked />')
         self.assertContains(
             response,
             'Make New Class')
