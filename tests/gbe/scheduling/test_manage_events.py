@@ -64,15 +64,15 @@ class TestManageEventList(TestCase):
         else:
             checked = ''
         template_input = '<input type="checkbox" name="%s-%s" value="%d" ' + \
-                         '%sclass="form-check-input" id="id_%s-%s_%d" />'
+                         'class="form-check-input" id="id_%s-%s_%d" %s/>'
         assert_string = template_input % (
             conf_slug,
             input_field,
             value,
-            checked,
             conf_slug,
             input_field,
-            input_index)
+            input_index,
+            checked)
         self.assertContains(response, assert_string)
 
     def assert_hidden_input_selected(

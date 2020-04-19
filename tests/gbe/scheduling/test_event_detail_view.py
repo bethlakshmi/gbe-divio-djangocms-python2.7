@@ -68,7 +68,7 @@ class TestEventDetailView(TestCase):
             urlconf="gbe.scheduling.urls",
             args=[bid_class.eventitem_id]))
         self.assertEqual(200, response.status_code)
-        self.assertEqual(1, response.content.count(bid_class.teacher.name))
+        self.assertContains(response, bid_class.teacher.name, 1)
 
     def test_repeated_lead_shows_once(self):
         show = ShowFactory()
@@ -86,7 +86,7 @@ class TestEventDetailView(TestCase):
             urlconf="gbe.scheduling.urls",
             args=[show.eventitem_id]))
         self.assertEqual(200, response.status_code)
-        self.assertEqual(1, response.content.count(staff_lead.display_name))
+        self.assertContains(response, staff_lead.display_name, 1)
 
     def test_location_full_room_display(self):
         self.context.room.address = "The place where I live"

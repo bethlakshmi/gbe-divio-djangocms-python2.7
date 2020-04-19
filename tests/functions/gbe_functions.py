@@ -302,7 +302,7 @@ def set_image(item):
     current_img = Image.objects.create(
         owner=superuser,
         original_filename="gbe_pagebanner.png",
-        file=File(open(path, 'r')))
+        file=File(open(path, 'rb')))
     current_img.save()
     item.img_id = current_img.pk
     item.save()
