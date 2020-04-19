@@ -75,7 +75,7 @@ def event_info(confitem_type='Show',
                'type': "%s.%s" % (
                    event.event_type_name,
                    event.confitem.type)}
-              for (event, confitem) in events_dict.items()]
+              for (event, confitem) in list(events_dict.items())]
     return events
 
 
@@ -152,20 +152,20 @@ def calendar_export(conference=None,
         day = None
     cal_times = cal_times_for_conf(conference, day)
 
-    if event_types == 'All' or event_types == u'All':
+    if event_types == 'All' or event_types == 'All':
         event_types = ['Show',
                        'Class',
                        'Special Event',
                        'Master',
                        'Drop-In',
                        ]
-    if event_types == 'Show' or event_types == u'Show':
+    if event_types == 'Show' or event_types == 'Show':
         event_types == ['Show',
                         'Special Event',
                         'Master',
                         'Drop-In',
                         ]
-    if type(event_types) in (type(''), type(u'')):
+    if type(event_types) in (type(''), type('')):
         event_types = [event_types]
     events = []
     for event_type in event_types:
@@ -196,7 +196,7 @@ def calendar_export(conference=None,
                  .replace('\r', '') \
                  .replace('"', '') \
                  .replace("'", '`')
-            title = filter(lambda x: x in string.printable, title)
+            title = [x for x in title if x in string.printable]
             csv_line = '"%s",' % (title)
             csv_line = csv_line + '"%s",' % \
                 (date_format(event['start_time'], 'DATE_FORMAT')
@@ -221,7 +221,7 @@ def calendar_export(conference=None,
                                               .replace('\r', '') \
                                               .replace('"', '') \
                                               .replace("'", '`')
-            description = filter(lambda x: x in string.printable, description)
+            description = [x for x in description if x in string.printable]
             csv_line = csv_line + '"%s",' % description
             csv_line = csv_line + '"%s%s",' % (url+site, event['link'])
             csv_line = csv_line + '"%s",' % (title)

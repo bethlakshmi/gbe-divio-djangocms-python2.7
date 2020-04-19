@@ -56,7 +56,7 @@ class ShowCalendarView(View):
         self.this_day = None
         if "calendar_type" in kwargs:
             self.calendar_type = kwargs['calendar_type']
-            if self.calendar_type not in calendar_type_options.values():
+            if self.calendar_type not in list(calendar_type_options.values()):
                 raise Http404
 
         if "day" in self.request.GET:

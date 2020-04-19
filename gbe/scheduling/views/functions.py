@@ -44,7 +44,7 @@ from gbe_forms_text import event_settings
 
 def get_start_time(data):
     day = data['day'].day
-    time_parts = map(int, data['time'].split(":"))
+    time_parts = list(map(int, data['time'].split(":")))
     starttime = time(*time_parts)
     return datetime.combine(day, starttime)
 

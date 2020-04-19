@@ -59,7 +59,7 @@ class Duration(timedelta):
         terms of seconds. This can lead to unexpected results, for example
         Duration (70) % 60 => 0 (not 10!).
         '''
-        if isinstance(other, int) or isinstance(other, long):
+        if isinstance(other, int) or isinstance(other, int):
             return Duration(seconds=int(self.total_seconds()/other))
         elif isinstance(other, timedelta):
             return self.total_seconds()/other.total_seconds()
@@ -76,8 +76,8 @@ class Duration(timedelta):
         of seconds. This can lead to unexpected results, for example Duration
         (70) % 60 => 0 (not 10!).
         '''
-        if isinstance(other, int) or isinstance(other, long):
-            return Duration(seconds=long(self.total_seconds()//other))
+        if isinstance(other, int) or isinstance(other, int):
+            return Duration(seconds=int(self.total_seconds()//other))
         elif isinstance(other, timedelta):
             return int(self.total_seconds()//other.total_seconds())
         else:
@@ -95,10 +95,10 @@ class Duration(timedelta):
         of seconds. This can lead to unexpected results, for example Duration
         (70) % 60 => 0 (not 10!).
         '''
-        if isinstance(other, int) or isinstance(other, long):
-            return Duration(seconds=(long(self.total_seconds() % other)))
+        if isinstance(other, int) or isinstance(other, int):
+            return Duration(seconds=(int(self.total_seconds() % other)))
         elif isinstance(other, timedelta):
-            return Duration(seconds=long(self.total_seconds() %
+            return Duration(seconds=int(self.total_seconds() %
                             other.total_seconds()))
         else:
             raise TypeError("Unsupported operation: can only take mod of " +
@@ -138,7 +138,7 @@ class DateTimeRange:
     timedelta under the hood)
     '''
     def __init__(self, starttime=None, endtime=None, duration=None):
-        if len(filter(lambda i: i, [starttime, endtime, duration])) < 2:
+        if len([i for i in [starttime, endtime, duration] if i]) < 2:
             raise Exception('Not enough arguments to create DateTimeRange')
         self.starttime = starttime
         self.endtime = endtime

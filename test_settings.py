@@ -57,36 +57,36 @@ INSTALLED_APPS = [
     'robots',
     'captcha',
     'django_select2',
-    u'filer.contrib.django_cms',
-    u'aldryn_common',
-    u'djangocms_icon',
-    u'djangocms_link',
-    u'djangocms_picture',
-    u'djangocms_bootstrap4',
-    u'djangocms_bootstrap4.contrib.bootstrap4_alerts',
-    u'djangocms_bootstrap4.contrib.bootstrap4_badge',
-    u'djangocms_bootstrap4.contrib.bootstrap4_card',
-    u'djangocms_bootstrap4.contrib.bootstrap4_carousel',
-    u'djangocms_bootstrap4.contrib.bootstrap4_collapse',
-    u'djangocms_bootstrap4.contrib.bootstrap4_content',
-    u'djangocms_bootstrap4.contrib.bootstrap4_grid',
-    u'djangocms_bootstrap4.contrib.bootstrap4_jumbotron',
-    u'djangocms_bootstrap4.contrib.bootstrap4_link',
-    u'djangocms_bootstrap4.contrib.bootstrap4_listgroup',
-    u'djangocms_bootstrap4.contrib.bootstrap4_media',
-    u'djangocms_bootstrap4.contrib.bootstrap4_picture',
-    u'djangocms_bootstrap4.contrib.bootstrap4_tabs',
-    u'djangocms_bootstrap4.contrib.bootstrap4_utilities',
-    u'djangocms_file',
-    u'djangocms_history',
-    u'djangocms_snippet',
-    u'djangocms_style',
-    u'djangocms_text_ckeditor',
-    u'djangocms_video',
-    u'filer',
-    u'easy_thumbnails',
-    u'mptt',
-    u'polymorphic',
+    'filer.contrib.django_cms',
+    'aldryn_common',
+    'djangocms_icon',
+    'djangocms_link',
+    'djangocms_picture',
+    'djangocms_bootstrap4',
+    'djangocms_bootstrap4.contrib.bootstrap4_alerts',
+    'djangocms_bootstrap4.contrib.bootstrap4_badge',
+    'djangocms_bootstrap4.contrib.bootstrap4_card',
+    'djangocms_bootstrap4.contrib.bootstrap4_carousel',
+    'djangocms_bootstrap4.contrib.bootstrap4_collapse',
+    'djangocms_bootstrap4.contrib.bootstrap4_content',
+    'djangocms_bootstrap4.contrib.bootstrap4_grid',
+    'djangocms_bootstrap4.contrib.bootstrap4_jumbotron',
+    'djangocms_bootstrap4.contrib.bootstrap4_link',
+    'djangocms_bootstrap4.contrib.bootstrap4_listgroup',
+    'djangocms_bootstrap4.contrib.bootstrap4_media',
+    'djangocms_bootstrap4.contrib.bootstrap4_picture',
+    'djangocms_bootstrap4.contrib.bootstrap4_tabs',
+    'djangocms_bootstrap4.contrib.bootstrap4_utilities',
+    'djangocms_file',
+    'djangocms_history',
+    'djangocms_snippet',
+    'djangocms_style',
+    'djangocms_text_ckeditor',
+    'djangocms_video',
+    'filer',
+    'easy_thumbnails',
+    'mptt',
+    'polymorphic',
     'scheduler',
     'ticketing',
     'gbe',
@@ -161,8 +161,8 @@ except:
     ADDON_URLS_I18N = ['aldryn_django.i18n_urls',
                        'aldryn_django_cms.urls_i18n']
     ADDON_URLS_I18N_LAST = 'cms.urls'
-    ALDRYN_BOILERPLATE_NAME = u'bootstrap4'
-    ALDRYN_COMMON_PAGINATOR_PAGINATE_BY = u''
+    ALDRYN_BOILERPLATE_NAME = 'bootstrap4'
+    ALDRYN_COMMON_PAGINATOR_PAGINATE_BY = ''
     ALDRYN_DJANGO_ENABLE_GIS = False
     ALDRYN_SITES_DOMAINS = {}
     ALDRYN_SITES_REDIRECT_PERMANENT = False
@@ -173,8 +173,8 @@ except:
 try:
     LANGUAGES
 except:
-    LANGUAGE_CODE = u'en'
-    LANGUAGES = [(u'en', u'English')]
+    LANGUAGE_CODE = 'en'
+    LANGUAGES = [('en', 'English')]
 
 try:
     MEDIA_ROOT

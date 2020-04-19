@@ -17,10 +17,10 @@ def staff_area_view(request, parent_type, target):
     viewer_profile = validate_perms(request, 'any', require=True)
     other = "Potential"
     roles = []
-    if 'filter' in request.GET.keys() and (
+    if 'filter' in list(request.GET.keys()) and (
             request.GET['filter'] == "Potential"):
         other = "Committed"
-    for role, commit in role_commit_map.items():
+    for role, commit in list(role_commit_map.items()):
         if commit[0] == 1 or (
                 commit[0] > 0 and commit[0] < 4 and other == "Committed"):
             roles += [role]

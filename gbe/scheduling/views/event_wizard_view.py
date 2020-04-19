@@ -29,7 +29,7 @@ class EventWizardView(View):
     default_event_type = None
 
     def get_pick_event_form(self, request):
-        if 'pick_event' in request.GET.keys():
+        if 'pick_event' in list(request.GET.keys()):
             return PickEventForm(request.GET)
         elif self.default_event_type:
             return PickEventForm(initial={
@@ -53,7 +53,7 @@ class EventWizardView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
-        if 'pick_event' in request.GET.keys() and context[
+        if 'pick_event' in list(request.GET.keys()) and context[
                 'selection_form'].is_valid():
             if context['selection_form'].cleaned_data[
                     'event_type'] == 'conference':

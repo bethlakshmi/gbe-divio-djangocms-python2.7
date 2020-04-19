@@ -53,7 +53,7 @@ class CopyCollectionsView(View):
 
     def validate_and_proceed(self, request, context):
         make_copy = False
-        if 'copy_mode' in context.keys() and context['copy_mode'].is_valid():
+        if 'copy_mode' in list(context.keys()) and context['copy_mode'].is_valid():
             proceed_to_second = True
             if context['copy_mode'].cleaned_data[
                     'copy_mode'] == "copy_children_only":
@@ -81,7 +81,7 @@ class CopyCollectionsView(View):
                 context['second_form'] = self.make_event_picker(
                     request,
                     delta)
-        elif 'pick_day' in context.keys() and context['pick_day'].is_valid():
+        elif 'pick_day' in list(context.keys()) and context['pick_day'].is_valid():
             make_copy = True
         return make_copy, context
 
@@ -171,7 +171,7 @@ class CopyCollectionsView(View):
         if error:
             return error
         context = {}
-        if 'pick_mode' in request.POST.keys():
+        if 'pick_mode' in list(request.POST.keys()):
             context = self.make_context(request, post=request.POST)
             make_copy, context = self.validate_and_proceed(request, context)
             if make_copy:
@@ -194,7 +194,7 @@ class CopyCollectionsView(View):
                             slug,
                             target_day.pk,
                             str([new_root.pk]),))
-        if 'pick_event' in request.POST.keys():
+        if 'pick_event' in list(request.POST.keys()):
             return self.copy_events_from_form(request)
         return render(
             request,

@@ -190,7 +190,7 @@ def send_daily_schedule_mail(schedules, day, slug, email_type):
         "schedule_letter",
         "Your Schedule for Tomorrow at GBE")
 
-    for user, bookings in schedules.items():
+    for user, bookings in list(schedules.items()):
         mail_send_gbe(
             user.profile.contact_email,
             template.sender.from_email,

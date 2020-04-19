@@ -39,7 +39,7 @@ class ScheduleAct(View):
         self.show_event = None
         self.castings = []
         validate_perms(request, self.permissions)
-        if 'show_id' in request.GET.keys():
+        if 'show_id' in list(request.GET.keys()):
             show_id = int(request.GET['show_id'])
         elif 'show_id' in kwargs:
             show_id = kwargs['show_id']

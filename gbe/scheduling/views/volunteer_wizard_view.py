@@ -43,7 +43,7 @@ class VolunteerWizardView(EventWizardView):
             request.POST,
             initial={'conference':  self.conference})
         context['third_title'] = "Make New Volunteer Opportunity"
-        if 'pick_topic' in request.POST.keys() and context[
+        if 'pick_topic' in list(request.POST.keys()) and context[
                 'second_form'].is_valid():
             if context['second_form'].cleaned_data[
                     'volunteer_topic'] and 'staff_' in context[
@@ -77,7 +77,7 @@ class VolunteerWizardView(EventWizardView):
                 context['scheduling_form'].fields[
                     'approval'].widget = CheckboxInput()
                 context['worker_formset'] = self.make_formset(self.roles)
-        elif 'set_opp' in request.POST.keys():
+        elif 'set_opp' in list(request.POST.keys()):
             context['third_title'] = "Make New Volunteer Opportunity"
             context['third_form'] = GenericBookingForm(request.POST)
             context['second_form'] = PickVolunteerTopicForm(

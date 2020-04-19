@@ -12,7 +12,7 @@ def clean_resources(apps, schema_editor):
         if resource.allocations and resource.allocations.count() == 0:
             counter = counter + 1
             resource.delete()
-    print("Deleted %d resources" % counter)
+    print(("Deleted %d resources" % counter))
 
 
 class Migration(migrations.Migration):
