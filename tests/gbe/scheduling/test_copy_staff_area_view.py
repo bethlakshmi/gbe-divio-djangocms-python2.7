@@ -46,6 +46,7 @@ class TestCopyOccurrence(TestCase):
     copy_date_format = "%a, %b %-d, %Y %-I:%M %p"
     copy_children_only_checked = '<input type="radio" name="copy_mode" ' + \
         'value="copy_children_only" id="id_copy_mode_0" required checked />'
+
     def setUp(self):
         self.context = StaffAreaContext()
         self.vol_opp = self.context.add_volunteer_opp()

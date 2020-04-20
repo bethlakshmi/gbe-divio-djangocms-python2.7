@@ -1,5 +1,4 @@
 from django.core.urlresolvers import reverse
-from django.core.files import File
 from django.test import TestCase
 from django.test import Client
 from django.db.models import Max

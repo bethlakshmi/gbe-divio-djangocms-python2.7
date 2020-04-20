@@ -75,20 +75,20 @@ class TestEditBPTEvent(TestCase):
                       args=[self.bpt_event.pk])
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Edit Ticketing' in response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Edit Ticketing')
 
     def test_event_edit_post_form_all_good(self):
         '''
             Good form, good user, return the main edit page
         '''
         url = reverse('bptevent_edit',
-                    urlconf='ticketing.urls',
-                    args=[self.bpt_event.pk])
+                      urlconf='ticketing.urls',
+                      args=[self.bpt_event.pk])
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=self.get_bptevent_form())
-        nt.assert_equal(response.status_code, 302)
-        nt.assert_equal(location(response), '/ticketing/ticket_items')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(location(response), '/ticketing/ticket_items')
 
     def test_event_edit_post_form_bad_event(self):
         '''
@@ -97,10 +97,10 @@ class TestEditBPTEvent(TestCase):
         error_form = self.get_bptevent_form()
         error_form['linked_events'] = -1
         url = reverse('bptevent_edit',
-                    urlconf='ticketing.urls',
-                    args=[self.bpt_event.pk])
+                      urlconf='ticketing.urls',
+                      args=[self.bpt_event.pk])
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=error_form)
-        nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Edit Ticketing' in response.content)
-        nt.assert_true(error_form.get('ticket_style') in response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Edit Ticketing')
+        self.assertContains(response, error_form.get('ticket_style'))

@@ -120,9 +120,8 @@ def set_bpt_event_detail(event):
     if event_xml is None:
         return None
 
-    h = html.parser.HTMLParser()
-    event.title = h.unescape(event_xml.find('.//title').text)
-    event.description = h.unescape(event_xml.find('.//e_description').text)
+    event.title = html.unescape(event_xml.find('.//title').text)
+    event.description = html.unescape(event_xml.find('.//e_description').text)
     event.save()
 
 

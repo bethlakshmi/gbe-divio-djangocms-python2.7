@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from gbe.scheduling.forms import PickShowForm
 from gbe.scheduling.views import EventWizardView
-from gbe.duration import Duration
 
 
 class RehearsalWizardView(EventWizardView):

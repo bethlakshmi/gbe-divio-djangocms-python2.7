@@ -26,7 +26,6 @@ from gbe.models import (
     UserMessage,
     Vendor,
 )
-from django.core.files import File
 from gbe.ticketing_idd_interface import vendor_submittal_link
 
 
@@ -109,12 +108,12 @@ class TestEditVendor(TestCase):
         data = self.get_vendor_form(invalid=True)
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Vendor Application' in response.content)
+        self.assertContains(response, 'Vendor Application')
 
     def test_vendor_edit_post_form_valid(self):
         response = self.post_edit_paid_vendor_draft()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("Profile View" in response.content)
+        self.assertContains(response, "Profile View")
         assert_alert_exists(
             response, 'success', 'Success', default_vendor_draft_msg)
 
@@ -126,7 +125,7 @@ class TestEditVendor(TestCase):
         data['thebiz-profile'] = vendor.profile.pk
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("Vendor Payment" in response.content)
+        self.assertContains(response, "Vendor Payment")
         self.assertContains(response, payment_needed_msg % (
             vendor_submittal_link(vendor.profile.user_object.id)))
 
@@ -159,7 +158,7 @@ class TestEditVendor(TestCase):
         data['thebiz-profile'] = vendor.profile.pk
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("Vendor Payment" in response.content)
+        self.assertContains(response, "Vendor Payment")
 
     def test_edit_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''
@@ -173,9 +172,9 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            '<h2 class="subtitle">Vendor Application</h2>'
-            in response.content)
+        self.assertContains(
+            response,
+            '<h2 class="subtitle">Vendor Application</h2>')
         self.assertContains(response, "Test Fee Instructions Message")
         self.assertContains(response, 'value="Pay Fee"')
 
@@ -188,9 +187,9 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            '<h2 class="subtitle">Vendor Application</h2>'
-            in response.content)
+        self.assertContains(
+            response,
+            '<h2 class="subtitle">Vendor Application</h2>')
         self.assertContains(response, 'value="Submit For Approval"')
 
     def test_edit_bid_get_no_help(self):
@@ -202,9 +201,9 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            '<h2 class="subtitle">Vendor Application</h2>'
-            in response.content)
+        self.assertContains(
+            response,
+            '<h2 class="subtitle">Vendor Application</h2>')
 
     def test_vendor_submit_make_message(self):
         response = self.post_edit_paid_vendor_submission()
@@ -241,14 +240,13 @@ class TestEditVendor(TestCase):
 
     def test_edit_change_image(self):
         ProfileFactory(user_object__username="admin_img")
-        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'r')
-        picture = File(pic_filename)
+        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
         vendor = VendorFactory()
         login_as(vendor.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         data = self.get_vendor_form(submit=True)
         data['thebiz-profile'] = vendor.profile.pk
-        data['thebiz-upload_img'] = picture
+        data['thebiz-upload_img'] = pic_filename
         make_vendor_app_purchase(vendor.b_conference,
                                  vendor.profile.user_object)
         response = self.client.post(url, data, follow=True)

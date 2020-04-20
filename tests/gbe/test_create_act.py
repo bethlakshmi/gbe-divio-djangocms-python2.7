@@ -112,7 +112,7 @@ class TestCreateAct(TestCase):
         response = self.client.post(url,
                                     data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Propose an Act' in response.content)
+        self.assertContains(response, 'Propose an Act')
 
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
@@ -132,7 +132,7 @@ class TestCreateAct(TestCase):
         expected_string = (
             '<b>%s</b></span> - Not submitted'
             ) % data['theact-b_title']
-        assert expected_string in response.content
+        self.assertContains(response, expected_string)
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
         self.assertContains(response, 'Fee has been paid, submit NOW!')
@@ -175,7 +175,7 @@ class TestCreateAct(TestCase):
         login_as(self.performer.performer_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Propose an Act' in response.content)
+        self.assertContains(response, 'Propose an Act')
         self.assertNotContains(response, fee_instructions)
         self.assertContains(response, "Test Bid Instructions Message")
         self.assertContains(response, 'value="Submit For Approval"')

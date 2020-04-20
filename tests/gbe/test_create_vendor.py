@@ -81,7 +81,7 @@ class TestCreateVendor(TestCase):
         response, data = self.post_unpaid_vendor_draft()
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Profile View' in response.content)
+        self.assertContains(response, 'Profile View')
         draft_string = (
             '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
             ) % data['thebiz-b_title']
@@ -99,7 +99,7 @@ class TestCreateVendor(TestCase):
                                     data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Vendor Payment' in response.content)
+        self.assertContains(response, 'Vendor Payment')
 
     def test_create_vendor_post_form_invalid(self):
         url = reverse(self.view_name,
@@ -123,12 +123,12 @@ class TestCreateVendor(TestCase):
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Vendor Application', response.content)
+        self.assertContains(response, 'Vendor Application')
 
     def test_create_vendor_post_with_vendor_app_paid(self):
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Profile View", response.content)
+        self.assertContains(response, "Profile View")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 
@@ -136,7 +136,7 @@ class TestCreateVendor(TestCase):
         VendorFactory(b_conference=self.conference, submitted=True)
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Profile View", response.content)
+        self.assertContains(response, "Profile View")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 
@@ -148,7 +148,7 @@ class TestCreateVendor(TestCase):
         )
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Profile View", response.content)
+        self.assertContains(response, "Profile View")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 
@@ -161,7 +161,7 @@ class TestCreateVendor(TestCase):
         make_vendor_app_purchase(self.conference, self.profile.user_object)
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Profile View", response.content)
+        self.assertContains(response, "Profile View")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 

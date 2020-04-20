@@ -1,6 +1,7 @@
 from gbe.duration import Duration
 import nose.tools as nt
 from django.test import TestCase
+from datetime import timedelta
 
 
 # unit tests for Duration
@@ -22,7 +23,7 @@ def test_hours():
 def test_div_by_int():
     duration = Duration(seconds=7200)
     quotient = duration/2
-    nt.assert_equal(1, quotient.hours())
+    nt.assert_equal(timedelta(hours=1), quotient)
 
 
 def test_div_by_duration():

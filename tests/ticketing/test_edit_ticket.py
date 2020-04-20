@@ -1,5 +1,4 @@
 from django.core.urlresolvers import reverse
-import nose.tools as nt
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.test.client import RequestFactory
@@ -45,8 +44,7 @@ class TestEditTicketItem(TestCase):
         user = gbe_factories.ProfileFactory.create().user_object
         login_as(user, self)
         response = self.client.get(self.url)
-        nt.assert_equal(response.status_code, 403)
-
+        self.assertEqual(response.status_code, 403)
 
     def test_edit_ticket_bad_ticketitem(self):
         '''
@@ -58,7 +56,7 @@ class TestEditTicketItem(TestCase):
             self.view_name,
             args=[200],
             urlconf='ticketing.urls'), follow=True)
-        nt.assert_equal(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_get_new_ticketitem(self):
         '''
@@ -68,7 +66,7 @@ class TestEditTicketItem(TestCase):
         response = self.client.get(reverse(
             self.view_name,
             urlconf='ticketing.urls'))
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_edit_ticketitem(self):
         '''
@@ -77,7 +75,7 @@ class TestEditTicketItem(TestCase):
         self.ticketitem.save()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_ticket_edit_post_form_all_good(self):
         '''
@@ -89,7 +87,7 @@ class TestEditTicketItem(TestCase):
             data=self.get_ticketitem_form())
         conf_slug = self.ticketitem.bpt_event.conference.conference_slug
 
-        nt.assert_equal(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         assert '/ticketing/ticket_items?conference=%s' % conf_slug in location(
             response)
 
@@ -104,9 +102,9 @@ class TestEditTicketItem(TestCase):
         response = ticket_item_edit(request)
         conf_slug = self.ticketitem.bpt_event.conference.conference_slug
 
-        nt.assert_equal(response.status_code, 302)
-        nt.assert_equal(location(response),
-                        '/ticketing/ticket_items?conference=%s' % conf_slug)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(location(response),
+                         '/ticketing/ticket_items?conference=%s' % conf_slug)
 
     def test_ticket_edit_post_form_bad_bptevent(self):
         '''
@@ -118,9 +116,9 @@ class TestEditTicketItem(TestCase):
         response = self.client.post(
             self.url,
             data=error_form)
-        nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Edit Ticketing' in response.content)
-        nt.assert_true(error_form.get('title') in response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Edit Ticketing')
+        self.assertContains(response, error_form.get('title'))
 
     def test_ticket_form_delete(self):
         '''
@@ -140,7 +138,7 @@ class TestEditTicketItem(TestCase):
         response = self.client.post(
             delete_url,
             data=delete_ticket)
-        nt.assert_equal(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         assert '/ticketing/ticket_items?conference=%s' % conf_slug in location(
             response)
 
@@ -159,7 +157,7 @@ class TestEditTicketItem(TestCase):
             self.url,
             data=delete_ticket,
             follow=True)
-        nt.assert_equal(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_ticket_with_transactions(self):
         '''
@@ -174,6 +172,6 @@ class TestEditTicketItem(TestCase):
         response = self.client.post(
             self.url,
             data=delete_ticket)
-        nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Edit Ticketing' in response.content)
-        nt.assert_true('Cannot remove Ticket' in response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Edit Ticketing')
+        self.assertContains(response, 'Cannot remove Ticket')

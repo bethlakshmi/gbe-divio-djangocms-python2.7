@@ -51,8 +51,9 @@ def EditTroupeView(request, troupe_id=None):
         troupe = get_object_or_404(Troupe, resourceitem_id=troupe_id)
     else:
         troupe = Troupe()
+        troupe_id = 0
 
-    if (troupe_id > 0 and
+    if (int(troupe_id) > 0 and
             request.user and
             troupe.contact != request.user.profile):
         return HttpResponseRedirect(reverse('troupe_view',

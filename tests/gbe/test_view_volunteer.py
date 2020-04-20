@@ -37,7 +37,7 @@ class TestViewVolunteer(TestCase):
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true(test_string in response.content)
+        self.assertContains(response, test_string)
 
     def test_view_bid_wrong_profile(self):
         volunteer = VolunteerFactory()

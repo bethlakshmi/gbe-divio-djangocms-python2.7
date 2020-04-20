@@ -8,7 +8,6 @@ from django.db.models import (
     Q,
     TextField,
 )
-from gbe.duration import Duration
 from gbe.models import (
     Biddable,
     Conference,

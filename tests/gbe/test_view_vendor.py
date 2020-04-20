@@ -30,7 +30,7 @@ class TestViewVendor(TestCase):
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true(test_string in response.content)
+        self.assertContains(response, test_string)
 
     def test_view_vendor_privileged_user(self):
         vendor = VendorFactory(submitted=True)
@@ -45,7 +45,7 @@ class TestViewVendor(TestCase):
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true(test_string in response.content)
+        self.assertContains(response, test_string)
 
     def test_view_vendor_wrong_user(self):
         vendor = VendorFactory()
