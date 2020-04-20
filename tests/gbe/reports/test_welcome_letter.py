@@ -1,5 +1,4 @@
 from django.core.urlresolvers import reverse
-import nose.tools as nt
 from django.test import TestCase
 from django.test.client import RequestFactory
 from tests.factories.gbe_factories import (
@@ -59,12 +58,14 @@ class TestWelcomeLetter(TestCase):
         login_as(self.priv_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        nt.assert_true(
-            str(role_condition.checklistitem) in response.content,
-            msg="Role condition for teacher was not found")
-        nt.assert_true(
-            str(context.teacher.performer_profile) in response.content,
-            msg="Teacher is not in the list")
+        self.assertContains(
+            response,
+            str(role_condition.checklistitem),
+            msg_prefix="Role condition for teacher was not found")
+        self.assertContains(
+            response,
+            str(context.teacher.performer_profile),
+            msg_prefix="Teacher is not in the list")
 
     def test_personal_schedule_teacher_booking(self):
         '''a teacher booked into a class, with an active role condition
@@ -136,11 +137,13 @@ class TestWelcomeLetter(TestCase):
             self.url,
             data={"conf_slug": conference.conference_slug})
         self.assertEqual(response.status_code, 200)
-        nt.assert_true(
-            str(purchaser) in response.content,
-            msg="Buyer is not in the list")
-        nt.assert_true(
-            str(ticket_condition.checklistitem) in response.content)
+        self.assertContains(
+            response,
+            str(purchaser),
+            msg_prefix="Buyer is not in the list")
+        self.assertContains(
+            response,
+            str(ticket_condition.checklistitem))
 
     def test_personal_schedule_only_active(self):
         '''a teacher booked into a class, with an active role condition
@@ -183,8 +186,10 @@ class TestWelcomeLetter(TestCase):
                     args=[purchaser.pk]),
             data={"conf_slug": conference.conference_slug})
         self.assertEqual(response.status_code, 200)
-        nt.assert_true(
-            str(purchaser) in response.content,
-            msg="Buyer is not in the list")
-        nt.assert_true(
-            str(ticket_condition.checklistitem) in response.content)
+        self.assertContains(
+            response,
+            str(purchaser),
+            msg_prefix="Buyer is not in the list")
+        self.assertContains(
+            response,
+            str(ticket_condition.checklistitem))

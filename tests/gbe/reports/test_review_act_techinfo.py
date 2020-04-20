@@ -68,15 +68,16 @@ class TestReviewActTechInfo(TestCase):
             reverse(self.view_name,
                     urlconf='gbe.reporting.urls',
                     args=[self.context.show.eventitem_id]))
-        self.assertTrue(
-            "var table = $('#bid_review').DataTable({" in response.content,
-            msg="Can't find script for table")
-        self.assertTrue(
-            '<table id="bid_review" class="order-column"'
-            in response.content,
-            msg="Can't find table header")
+        self.assertContains(
+            response,
+            "var table = $('#bid_review').DataTable({",
+            msg_prefix="Can't find script for table")
+        self.assertContains(
+            response,
+            '<table id="bid_review" class="order-column"',
+            msg_prefix="Can't find table header")
         self.assertNotContains(response, 'Schedule Acts for this Show')
-        self.assertTrue(self.context.act.b_title in response.content)
+        self.assertContains(response, self.context.act.b_title)
         self.assertNotContains(response, reverse(
             "act_tech_wizard",
             urlconf='gbe.urls',
@@ -97,9 +98,10 @@ class TestReviewActTechInfo(TestCase):
             reverse(self.view_name,
                     urlconf='gbe.reporting.urls',
                     args=[self.context.show.eventitem_id]))
-        self.assertTrue(
-            "- INACTIVE" in response.content,
-            msg="Can't find inactive user")
+        self.assertContains(
+            response,
+            "- INACTIVE",
+            msg_prefix="Can't find inactive user")
 
     def test_review_act_techinfo_has_link_for_scheduler(self):
         '''review_act_techinfo view should show schedule acts if user
@@ -130,7 +132,7 @@ class TestReviewActTechInfo(TestCase):
                     urlconf='gbe.reporting.urls'),
             data={'conf_slug': self.context.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(self.context.show.e_title in response.content)
+        self.assertContains(response, self.context.show.e_title)
         self.assertNotContains(response, old_context.show.e_title)
 
     def test_review_act_techinfo_has_video(self):
@@ -159,7 +161,7 @@ class TestReviewActTechInfo(TestCase):
                     urlconf='gbe.reporting.urls',
                     args=[self.context.show.eventitem_id]),
             data={'conf_slug': self.context.conference.conference_slug})
-        self.assertTrue(self.context.act.b_title in response.content)
+        self.assertContains(response, self.context.act.b_title)
         self.assertContains(response, reverse(
             "act_tech_wizard",
             urlconf='gbe.urls',

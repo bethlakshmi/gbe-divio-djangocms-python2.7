@@ -12,6 +12,7 @@ from tests.functions.gbe_functions import (
 )
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.formats import date_format
+from factory.django import FileField
 
 
 class TestReviewActTechInfo(TestCase):
@@ -29,9 +30,7 @@ class TestReviewActTechInfo(TestCase):
         self.context.act.tech.pronouns = "these are my pronouns"
         self.context.act.tech.primary_color = "reds"
         self.context.act.tech.secondary_color = "black"
-        self.context.act.tech.track = SimpleUploadedFile(
-            "file.mp3",
-            "file_content")
+        self.context.act.tech.track = FileField(filename="file.mp3")
         self.context.act.tech.save()
 
     def setUp(self):

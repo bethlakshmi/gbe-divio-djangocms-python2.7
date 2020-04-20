@@ -49,8 +49,9 @@ class TestStaffArea(TestCase):
                     urlconf="gbe.reporting.urls",
                     args=['event', show.eventitem_id]))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            '<tr style="color:red;">' in response.content)
+        self.assertContains(
+            response,
+            '<tr style="color:red;">')
 
     def test_staff_area_path_fail(self):
         '''staff_area view should fail for non-authenticated users
@@ -100,8 +101,9 @@ class TestStaffArea(TestCase):
                     urlconf="gbe.reporting.urls",
                     args=['area', context.area.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            '<tr style="color:red;">' in response.content)
+        self.assertContains(
+            response,
+            '<tr style="color:red;">')
 
     def test_staff_area_default_display(self):
         '''staff_area view should load only the actually assigned volunteer

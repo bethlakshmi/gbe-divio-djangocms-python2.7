@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from django.core.urlresolvers import reverse
@@ -38,7 +37,7 @@ class TestConferenceVolunteer(TestCase):
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_conference_volunteer_no_profile(self):
         ClassProposal.objects.all().delete()
@@ -46,7 +45,7 @@ class TestConferenceVolunteer(TestCase):
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(UserFactory(), self)
         response = self.client.get(url)
-        nt.assert_equal(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_conference_volunteer_post_offer_form_invalid(self):
         proposal = ClassProposalFactory(display=True)
@@ -58,8 +57,8 @@ class TestConferenceVolunteer(TestCase):
         response = self.client.post(url,
                                     data=data)
 
-        nt.assert_equal(response.status_code, 200)
-        nt.assert_true(conf_volunteer_save_error in response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, conf_volunteer_save_error)
 
     def test_conference_volunteer_post_offer_form_valid(self):
         proposal = ClassProposalFactory(display=True)
@@ -76,8 +75,8 @@ class TestConferenceVolunteer(TestCase):
                                     follow=True)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         expected_string = 'Your profile needs an update'
-        nt.assert_true(expected_string in response.content)
-        nt.assert_equal(response.status_code, 200)
+        self.assertContains(response, expected_string)
+        self.assertEqual(response.status_code, 200)
 
     def test_conference_volunteer_post_offer_existing_volunteer(self):
         proposal = ClassProposalFactory(display=True)
@@ -95,9 +94,8 @@ class TestConferenceVolunteer(TestCase):
                                     follow=True)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         expected_string = 'Your profile needs an update'
-        nt.assert_true(expected_string in response.content)
-
-        nt.assert_equal(response.status_code, 200)
+        self.assertContains(response, expected_string)
+        self.assertEqual(response.status_code, 200)
 
     def test_conference_volunteer_get(self):
         proposal = ClassProposalFactory(display=True)
@@ -111,8 +109,8 @@ class TestConferenceVolunteer(TestCase):
         login_as(persona.performer_profile, self)
         response = self.client.get(url)
         expected_text = "Apply to Present"
-        nt.assert_true(expected_text in response.content)
-        nt.assert_equal(response.status_code, 200)
+        self.assertContains(response, expected_text)
+        self.assertEqual(response.status_code, 200)
 
     def test_conference_volunteer_no_persona(self):
         proposal = ClassProposalFactory(display=True)
@@ -123,4 +121,4 @@ class TestConferenceVolunteer(TestCase):
             response,
             reverse("persona_create",
                     urlconf='gbe.urls') + "?next=/conference/volunteer")
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
