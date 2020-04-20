@@ -64,7 +64,7 @@ def EditTroupeView(request, troupe_id=None):
         form = TroupeForm(request.POST, request.FILES, instance=troupe)
         if form.is_valid():
             new_troupe = form.save()
-            #raise Exception(form.data['membership'])
+            # raise Exception(form.data['membership'])
             user_message = UserMessage.objects.get_or_create(
                 view='EditTroupeView',
                 code="UPDATE_TROUPE",

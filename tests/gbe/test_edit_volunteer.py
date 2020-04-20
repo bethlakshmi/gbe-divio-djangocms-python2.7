@@ -176,7 +176,7 @@ class TestEditVolunteer(TestCase):
         login_as(context.profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('I am Available....' in response.content)
+        self.assertContains(response, 'I am Available....')
 
     def test_volunteer_edit_post_form_not_valid(self):
         # volunteer_edit, if form not valid, should return
@@ -192,7 +192,7 @@ class TestEditVolunteer(TestCase):
                           invalid=True))
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Volunteer at the Expo' in response.content)
+        self.assertContains(response, 'Volunteer at the Expo')
 
     def test_volunteer_edit_post_form_valid(self):
         # volunteer_edit, if form not valid, should return
@@ -201,7 +201,7 @@ class TestEditVolunteer(TestCase):
         expected_string = ("Bid Information for %s" %
                            context.conference.conference_name)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(expected_string in response.content)
+        self.assertContains(response, expected_string)
 
     def test_volunteer_edit_get(self):
         context = VolunteerContext()
@@ -214,7 +214,7 @@ class TestEditVolunteer(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Volunteer at the Expo' in response.content)
+        self.assertContains(response, 'Volunteer at the Expo')
         assert_hidden_value(
             response,
             "id_b_title",
@@ -245,7 +245,7 @@ class TestEditVolunteer(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('I am Available....' in response.content)
+        self.assertContains(response, 'I am Available....')
 
     def test_volunteer_submit_make_message(self):
         response, context = self.edit_volunteer()
@@ -288,12 +288,12 @@ class TestEditVolunteer(TestCase):
 
     def test_remove_available_window_conflict(self):
         response, context = self.post_conflict(staff=False)
-        assert 'Warning', "<li>%s working for %s - as %s" % (
-            context.window.start_time.strftime(GBE_DATETIME_FORMAT),
-            str(context.opportunity),
-            context.opportunity.child(
-                ).volunteer_category_description
-            ) in response.content
+        self.assertContains(
+            response,
+            'Warning', "<li>%s working for %s - as %s" % (
+                context.window.start_time.strftime(GBE_DATETIME_FORMAT),
+                str(context.opportunity),
+                context.opportunity.child().volunteer_category_description))
 
     def test_set_uavailable_window_conflict(self):
         context = VolunteerContext()
@@ -309,21 +309,21 @@ class TestEditVolunteer(TestCase):
             url,
             form,
             follow=True)
-        assert 'Warning', "<li>%s working for %s - as %s" % (
-            context.window.start_time.strftime(GBE_DATETIME_FORMAT),
-            str(context.opportunity),
-            context.opportunity.child(
-                ).volunteer_category_description
-            ) in response.content
+        self.assertContains(
+            response,
+            'Warning', "<li>%s working for %s - as %s" % (
+                context.window.start_time.strftime(GBE_DATETIME_FORMAT),
+                str(context.opportunity),
+                context.opportunity.child().volunteer_category_description))
 
     def test_conflict_w_staff_lead(self):
         response, context = self.post_conflict(staff=True)
-        assert 'Warning', "<li>%s working for %s - as %s" % (
-            context.window.start_time.strftime(GBE_DATETIME_FORMAT),
-            str(context.opportunity),
-            context.opportunity.child(
-                ).volunteer_category_description
-            ) in response.content
+        self.assertContains(
+            response,
+            'Warning', "<li>%s working for %s - as %s" % (
+                context.window.start_time.strftime(GBE_DATETIME_FORMAT),
+                str(context.opportunity),
+                context.opportunity.child().volunteer_category_description))
 
     def test_volunteer_conflict_sends_update_to_user(self):
         response, context = self.post_conflict(staff=True)

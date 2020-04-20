@@ -78,7 +78,7 @@ class TestSummerAct(TestCase):
         login_as(self.performer.performer_profile, self)
         response = self.client.get(url)
         expected_string = 'Please also consider this act for GBE12'
-        self.assertTrue(expected_string in response.content)
+        self.assertContains(response, expected_string)
         self.assertEqual(response.status_code, 200)
 
     def test_act_bid_post_form_not_valid(self):
@@ -88,9 +88,9 @@ class TestSummerAct(TestCase):
         response = self.client.post(url,
                                     data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            'Select a valid choice. 2 is not one of the available choices.'
-            in response.content)
+        self.assertContains(
+            response,
+            'Select a valid choice. 2 is not one of the available choices.')
 
     def test_act_bid_get_with_redirect(self):
         url = reverse("act_create", urlconf='gbe.urls')
@@ -126,9 +126,9 @@ class TestSummerAct(TestCase):
         login_as(act.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            'Thanks for submitting an act for consideration at the Summer'
-            in response.content)
+        self.assertContains(
+            response,
+            'Thanks for submitting an act for consideration at the Summer')
 
     def test_edit_bid_w_redirect(self):
         '''edit_bid, not post, should take us to edit process'''

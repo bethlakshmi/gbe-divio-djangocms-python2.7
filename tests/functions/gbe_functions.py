@@ -200,7 +200,7 @@ def assert_right_mail_right_addresses(
         expected_subject,
         to_email_array,
         from_email=settings.DEFAULT_FROM_EMAIL):
-    header = {'Reply-to': str(from_email, 'utf-8')}
+    header = {'Reply-to': from_email}
     assert num_email == len(mail.outbox)
     msg = mail.outbox[queue_order]
     assert msg.subject == expected_subject

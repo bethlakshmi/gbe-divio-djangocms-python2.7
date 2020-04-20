@@ -47,7 +47,7 @@ class TestReviewActList(TestCase):
             self.url,
             data={'conf_slug': self.conference.conference_slug})
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_act_list_inactive_user(self):
         inactive = ActFactory(
@@ -58,7 +58,7 @@ class TestReviewActList(TestCase):
         response = self.client.get(
             self.url,
             data={'conf_slug': self.conference.conference_slug})
-        self.assertIn('bid-table danger', response.content)
+        self.assertContains(response, 'bid-table danger')
 
     def test_review_act_bad_user(self):
         login_as(ProfileFactory(), self)
@@ -76,8 +76,8 @@ class TestReviewActList(TestCase):
         response = self.client.get(
             self.url,
             data={'conf_slug': context.conference.conference_slug})
-        assert context.acts[0].b_title in response.content
-        assert context.show.e_title in response.content
+        self.assertContains(response, context.acts[0].b_title)
+        self.assertContains(response, context.show.e_title)
 
     def test_review_act_assigned_show_role(self):
         context = ShowContext(act_role="Hosted By...")
@@ -85,8 +85,8 @@ class TestReviewActList(TestCase):
         response = self.client.get(
             self.url,
             data={'conf_slug': context.conference.conference_slug})
-        assert context.show.e_title in response.content
-        assert "Hosted By..." in response.content
+        self.assertContains(response, context.show.e_title)
+        self.assertContains(response, "Hosted By...")
 
     def test_review_act_assigned_two_shows(self):
         context = ShowContext()
@@ -97,9 +97,10 @@ class TestReviewActList(TestCase):
         response = self.client.get(
             self.url,
             data={'conf_slug': context.conference.conference_slug})
-        assert context.acts[0].b_title in response.content
-        assert "%s, %s" % (context.show.e_title,
-                           context2.show.e_title) in response.content
+        self.assertContains(response, context.acts[0].b_title)
+        self.assertContains(response, "%s, %s" % (
+            context.show.e_title,
+            context2.show.e_title))
 
     def test_review_act_has_reviews(self):
         flex_eval = FlexibleEvaluationFactory(
