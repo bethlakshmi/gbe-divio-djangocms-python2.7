@@ -31,35 +31,35 @@ class SchedulerChangeListTests(TestCase):
         context = VolunteerContext()
         response = self.client.get('/admin/scheduler/resourceallocation/',
                                    follow=True)
-        assert str("Profile") in response.content
+        self.assertContains(response, str("Profile"))
 
     def test_get_allocation_genericevent_type(self):
         context = VolunteerContext()
         response = self.client.get('/admin/scheduler/resourceallocation/',
                                    follow=True)
-        assert "Volunteer" in response.content
+        self.assertContains(response, "Volunteer")
 
     def test_get_allocation_class_type(self):
         context = ClassContext()
         response = self.client.get('/admin/scheduler/resourceallocation/',
                                    follow=True)
-        assert "Class" in response.content
+        self.assertContains(response, "Class")
 
     def test_get_eventitem_genericevent(self):
         context = VolunteerContext()
         response = self.client.get('/admin/scheduler/eventitem/',
                                    follow=True)
-        assert "Volunteer" in response.content
-        assert str(context.conference) in response.content
+        self.assertContains(response, "Volunteer")
+        self.assertContains(response, str(context.conference))
 
     def test_get_eventitem_class_type(self):
         context = ClassContext()
         response = self.client.get('/admin/scheduler/eventitem/',
                                    follow=True)
-        assert "Class" in response.content
+        self.assertContains(response, "Class")
 
     def test_get_eventcontainer_conference(self):
         context = VolunteerContext()
         response = self.client.get('/admin/scheduler/eventcontainer/',
                                    follow=True)
-        assert str(context.conference) in response.content
+        self.assertContains(response, str(context.conference))

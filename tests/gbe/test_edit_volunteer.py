@@ -290,28 +290,7 @@ class TestEditVolunteer(TestCase):
         response, context = self.post_conflict(staff=False)
         self.assertContains(
             response,
-            'Warning', "<li>%s working for %s - as %s" % (
-                context.window.start_time.strftime(GBE_DATETIME_FORMAT),
-                str(context.opportunity),
-                context.opportunity.child().volunteer_category_description))
-
-    def test_set_uavailable_window_conflict(self):
-        context = VolunteerContext()
-        change_window = context.add_window()
-        context.bid.available_windows.add(change_window.pk)
-        form = self.get_form(context)
-        form['unavailable_windows'] = [context.window.pk]
-        url = reverse('volunteer_edit',
-                      urlconf='gbe.urls',
-                      args=[context.bid.pk])
-        login_as(context.profile, self)
-        response = self.client.post(
-            url,
-            form,
-            follow=True)
-        self.assertContains(
-            response,
-            'Warning', "<li>%s working for %s - as %s" % (
+            "<li>%s working for %s - as %s" % (
                 context.window.start_time.strftime(GBE_DATETIME_FORMAT),
                 str(context.opportunity),
                 context.opportunity.child().volunteer_category_description))
@@ -320,7 +299,7 @@ class TestEditVolunteer(TestCase):
         response, context = self.post_conflict(staff=True)
         self.assertContains(
             response,
-            'Warning', "<li>%s working for %s - as %s" % (
+            "<li>%s working for %s - as %s" % (
                 context.window.start_time.strftime(GBE_DATETIME_FORMAT),
                 str(context.opportunity),
                 context.opportunity.child().volunteer_category_description))

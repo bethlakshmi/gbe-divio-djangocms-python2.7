@@ -79,30 +79,30 @@ class TestExportCalendar(TestCase):
         SchedEventFactory.create(eventitem=show.eventitem_ptr)
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url)
-        self.assertTrue(response.content.count('\n') == 1)
-        self.assertTrue('Session Title' in response.content)
+        self.assertContains(response, '\n', 1)
+        self.assertContains(response, 'Session Title')
 
     def test_schedule(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url)
-        self.assertTrue(response.content.count('\n') > 1)
+        self.assertContains(response, '\n', 3)
         self.assertTrue(len(
-            (response.content.split('\r\n')[1].split('","'))) >= 8)
-        self.assertIn(self.showcontext.show.e_title, response.content)
+            (str(response.content, 'utf-8').split('\r\n')[1].split(
+                '","'))) >= 8)
+        self.assertContains(response, self.showcontext.show.e_title)
 
     def test_guidebook(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url)
-        self.assertIn(self.showcontext.show.e_title, response.content)
-        self.assertIn(self.classcontext.bid.b_title, response.content)
+        self.assertContains(response, self.showcontext.show.e_title)
+        self.assertContains(response, self.classcontext.bid.b_title)
 
     def test_ical(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url + '?cal_format=ical')
-        self.assertTrue('BEGIN:VCALENDAR' in
-                        response.content.split('\r\n')[0])
+        self.assertContains(response, 'BEGIN:VCALENDAR')
         vevent_count = 0
-        for line in response.content.split('\r\n'):
+        for line in str(response.content, 'utf-8').split('\r\n'):
             if 'BEGIN:VEVENT' in line:
                 vevent_count = vevent_count + 1
         self.assertTrue(vevent_count > 0)
@@ -110,21 +110,21 @@ class TestExportCalendar(TestCase):
     def test_type_class(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url + '?event_types=Class')
-        self.assertNotIn(self.showcontext.show.e_title, response.content)
-        self.assertIn(self.classcontext.bid.b_title, response.content)
+        self.assertNotContains(response, self.showcontext.show.e_title)
+        self.assertContains(response, self.classcontext.bid.b_title)
 
     def test_type_show(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url + '?event_types=Show')
-        self.assertIn(self.showcontext.show.e_title, response.content)
-        self.assertNotIn(self.classcontext.bid.b_title, response.content)
+        self.assertContains(response, self.showcontext.show.e_title)
+        self.assertNotContains(response, self.classcontext.bid.b_title)
 
     def test_day_all(self):
         login_as(ProfileFactory(), self)
         event_set = self.make_three_day_spread()
         response = self.client.get(self.url + '?day=All')
         fri_count, sat_count, sun_count = 0, 0, 0
-        for line in response.content.split('\r\n'):
+        for line in str(response.content, 'utf-8').split('\r\n'):
             if 'Feb. 5' in line:
                 fri_count = fri_count + 1
             elif 'Feb. 6' in line:
@@ -138,7 +138,7 @@ class TestExportCalendar(TestCase):
         event_set = self.make_three_day_spread()
         response = self.client.get(self.url + '?day=Saturday')
         fri_count, sat_count, sun_count = 0, 0, 0
-        for line in response.content.split('\r\n'):
+        for line in str(response.content, 'utf-8').split('\r\n'):
             if 'Feb. 5' in line:
                 fri_count = fri_count + 1
             elif 'Feb. 6' in line:

@@ -196,7 +196,6 @@ def calendar_export(conference=None,
                  .replace('\r', '') \
                  .replace('"', '') \
                  .replace("'", '`')
-            title = [x for x in title if x in string.printable]
             csv_line = '"%s",' % (title)
             csv_line = csv_line + '"%s",' % \
                 (date_format(event['start_time'], 'DATE_FORMAT')
@@ -221,7 +220,6 @@ def calendar_export(conference=None,
                                               .replace('\r', '') \
                                               .replace('"', '') \
                                               .replace("'", '`')
-            description = [x for x in description if x in string.printable]
             csv_line = csv_line + '"%s",' % description
             csv_line = csv_line + '"%s%s",' % (url+site, event['link'])
             csv_line = csv_line + '"%s",' % (title)
