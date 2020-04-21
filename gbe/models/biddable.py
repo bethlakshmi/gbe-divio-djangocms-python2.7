@@ -45,9 +45,6 @@ class Biddable(Model):
     def __str__(self):
         return self.b_title
 
-    def typeof(self):
-        return self.__class__
-
     @property
     def ready_for_review(self):
         return (self.submitted and

@@ -5,11 +5,7 @@ from datetime import (
     datetime
 )
 from calendar import timegm
-from gbe.duration import (
-    Duration,
-    DateTimeRange,
-    timedelta_to_duration,
-)
+from gbe.duration import Duration
 from random import choice
 from gbe.functions import (
     get_conference_by_slug,

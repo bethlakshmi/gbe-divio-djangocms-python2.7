@@ -17,9 +17,7 @@ from tests.factories.gbe_factories import (
     ProfileFactory
 )
 from mock import patch, Mock
-import urllib.request
-import urllib.error
-import urllib.parse
+import urllib
 from django.shortcuts import get_object_or_404
 from decimal import Decimal
 from django.core.urlresolvers import reverse

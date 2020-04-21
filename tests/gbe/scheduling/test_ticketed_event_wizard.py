@@ -39,9 +39,7 @@ from gbetext import (
     no_tickets_found_msg,
 )
 from mock import patch, Mock
-import urllib.request
-import urllib.error
-import urllib.parse
+import urllib
 from django.core.files import File
 
 
