@@ -159,27 +159,6 @@ class Purchaser(models.Model):
         except:
             return "USER ERROR: "+self.email+' - id: '+str(self.id)
 
-    def __eq__(self, other):
-        if not isinstance(other, Purchaser):
-            return False
-
-        if ((self.first_name != other.first_name) or
-                (self.last_name != other.last_name) or
-                (self.address != other.address) or
-                (self.city != other.city) or
-                (self.state != other.state) or
-                (self.zip != other.zip) or
-                (self.country != other.country) or
-                (self.email != other.email) or
-                (self.phone != other.phone)):
-            return False
-        return True
-
-    def __ne__(self, other):
-        if not isinstance(other, Purchaser):
-            return True
-        return not self.__eq__(other)
-
     def get_badge_name(self):
         return str(
             self.first_name.capitalize() + " " + self.last_name.capitalize())
