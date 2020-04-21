@@ -5,7 +5,7 @@
 # </WARNING>
 
 # <DOCKER_FROM>
-FROM divio/base:4.7-py2.7-slim-stretch
+FROM divio/base:4.16-py3.6-slim-stretch
 # </DOCKER_FROM>
 
 # <NPM>

@@ -16,7 +16,7 @@ from ticketing.models import (
     TicketItem,
     Transaction,
 )
-import html.parser
+import html
 from django.utils import timezone
 from gbe.models import Profile
 import sys
