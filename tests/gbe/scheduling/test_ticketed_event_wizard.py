@@ -39,7 +39,7 @@ from gbetext import (
     no_tickets_found_msg,
 )
 from mock import patch, Mock
-import urllib2
+import urllib
 from django.core.files import File
 
 
@@ -441,7 +441,7 @@ class TestTicketedEventWizard(TestCase):
                 bpt_event.title)
             )
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_make_new_ticket(self, m_urlopen):
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
         BrownPaperEvents.objects.all().delete()
@@ -491,7 +491,7 @@ class TestTicketedEventWizard(TestCase):
             no_tickets_found_msg
             )
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_make_and_sync_new_ticket(self, m_urlopen):
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
         BrownPaperEvents.objects.all().delete()

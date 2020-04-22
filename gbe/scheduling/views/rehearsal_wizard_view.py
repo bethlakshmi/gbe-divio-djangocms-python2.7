@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from gbe.scheduling.forms import PickShowForm
 from gbe.scheduling.views import EventWizardView
-from gbe.duration import Duration
 
 
 class RehearsalWizardView(EventWizardView):
@@ -38,7 +37,7 @@ class RehearsalWizardView(EventWizardView):
             request.POST,
             initial={'conference':  self.conference})
         context['third_title'] = "Make New Rehearsal Slot"
-        if 'pick_show' in request.POST.keys() and context[
+        if 'pick_show' in list(request.POST.keys()) and context[
                 'second_form'].is_valid():
             if context['second_form'].cleaned_data['show']:
                 show_id = context['second_form'].cleaned_data['show']

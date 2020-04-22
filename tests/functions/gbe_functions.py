@@ -65,11 +65,11 @@ def grant_privilege(user_or_profile, privilege):
 
 
 def is_login_page(response):
-    return 'I forgot my username or password!' in response.content
+    return b'I forgot my username or password!' in response.content
 
 
 def location(response):
-    response_dict = dict(response.items())
+    response_dict = dict(list(response.items()))
     return response_dict['Location']
 
 
@@ -93,28 +93,28 @@ def assert_alert_exists(response, tag, label, text):
         'aria-label="close">&times;</a>\n' + \
         '          <strong>%s:</strong> %s\n' \
         '	</div>'
-    assert alert_html % (tag, label, text) in response.content
+    assert bytes(alert_html % (tag, label, text), 'utf-8') in response.content
 
 
 def assert_rank_choice_exists(response, interest, selection=None):
-    assert '<label for="id_%d-rank">%s:</label>' % (
+    assert bytes('<label for="id_%d-rank">%s:</label>' % (
         interest.pk,
-        interest.interest) in response.content
-    assert '<select name="%d-rank" id="id_%d-rank">' % (
+        interest.interest), 'utf-8') in response.content
+    assert bytes('<select name="%d-rank" id="id_%d-rank">' % (
         interest.pk,
-        interest.pk) in response.content
+        interest.pk), 'utf-8') in response.content
     for value, text in rank_interest_options:
         if selection and selection == value:
-            assert '<option value="%d" selected>%s</option>' % (
-                value, text) in response.content
+            assert bytes('<option value="%d" selected>%s</option>' % (
+                value, text), 'utf-8') in response.content
         else:
-            assert '<option value="%d">%s</option>' % (
-                value, text) in response.content
+            assert bytes('<option value="%d">%s</option>' % (
+                value, text), 'utf-8') in response.content
 
 
 def assert_hidden_value(response, field_id, name, value):
-    assert '<input type="hidden" name="%s" value="%s" id="%s" />' % (
-        name, value, field_id) in response.content
+    assert bytes('<input type="hidden" name="%s" value="%s" id="%s" />' % (
+        name, value, field_id), 'utf-8') in response.content
 
 
 def assert_radio_state(response, name, button_id, value, checked=False):
@@ -122,9 +122,9 @@ def assert_radio_state(response, name, button_id, value, checked=False):
     if checked:
         checked_state = "checked "
     checked_button = (
-        '<input type="radio" name="%s" value="%s" %sid="%s" />' % (
-                    name, value, checked_state, button_id))
-    assert checked_button in response.content
+        '<input type="radio" name="%s" value="%s" id="%s" %s/>' % (
+                    name, value, button_id, checked_state))
+    assert bytes(checked_button, 'utf-8') in response.content
 
 
 def assert_option_state(response, value, text, selected=False):
@@ -134,24 +134,25 @@ def assert_option_state(response, value, text, selected=False):
     option_state = (
         '<option value="%s"%s>%s</option>' % (
                     value, selected_state, text))
-    assert option_state in response.content
+    assert bytes(option_state, 'utf-8') in response.content
 
 
 def assert_has_help_text(response, help_text):
-    assert '<span class="dropt" title="Help">' in response.content
-    assert '<img src= "/static/img/question.png" alt="?"/>' in response.content
-    assert ('<span style="width:200px;float:right;text-align:left;">'
+    assert b'<span class="dropt" title="Help">' in response.content
+    assert (
+        b'<img src= "/static/img/question.png" alt="?"/>' in response.content)
+    assert (b'<span style="width:200px;float:right;text-align:left;">'
             in response.content)
-    assert help_text in response.content
-    assert '</span>' in response.content
+    assert bytes(help_text, 'utf-8') in response.content
+    assert b'</span>' in response.content
 
 
 def assert_interest_view(response, interest):
-    assert ('<label class="required" ' +
-            'for="id_Volunteer Info-interest_id-%d">%s:</label>' %
-            (interest.pk, interest.interest.interest)
+    assert (bytes('<label class="required" ' +
+                  'for="id_Volunteer Info-interest_id-%d">%s:</label>' %
+                  (interest.pk, interest.interest.interest), 'utf-8')
             in response.content)
-    assert interest.rank_description in response.content
+    assert bytes(interest.rank_description, 'utf-8') in response.content
     if interest.interest.help_text:
         assert_has_help_text(response, interest.interest.help_text)
 
@@ -175,7 +176,7 @@ def assert_email_template_used(
     assert outbox_size == len(mail.outbox)
     msg = mail.outbox[message_index]
     assert msg.subject == expected_subject
-    header = {'Reply-to': unicode(email, 'utf-8')}
+    header = {'Reply-to': email}
     assert msg.extra_headers == header
     return msg
 
@@ -199,7 +200,7 @@ def assert_right_mail_right_addresses(
         expected_subject,
         to_email_array,
         from_email=settings.DEFAULT_FROM_EMAIL):
-    header = {'Reply-to': unicode(from_email, 'utf-8')}
+    header = {'Reply-to': from_email}
     assert num_email == len(mail.outbox)
     msg = mail.outbox[queue_order]
     assert msg.subject == expected_subject
@@ -301,7 +302,7 @@ def set_image(item):
     current_img = Image.objects.create(
         owner=superuser,
         original_filename="gbe_pagebanner.png",
-        file=File(open(path, 'r')))
+        file=File(open(path, 'rb')))
     current_img.save()
     item.img_id = current_img.pk
     item.save()

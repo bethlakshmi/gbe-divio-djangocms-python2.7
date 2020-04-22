@@ -109,7 +109,7 @@ class MailToRolesView(MailToFilterView):
         if not (self.user.user_object.is_superuser or len(
                 [i for i in all_roles if i in self.priv_list]) > 0):
             avail_roles = []
-            for key, value in role_option_privs.iteritems():
+            for key, value in role_option_privs.items():
                 if key in self.priv_list:
                     for role in value:
                         if role not in avail_roles:
@@ -122,8 +122,8 @@ class MailToRolesView(MailToFilterView):
         self.specify_event_form = None
         self.priv_list = self.user.privilege_groups
         self.priv_list += self.user.get_roles()
-        if 'filter' in request.POST.keys() or 'send' in request.POST.keys(
-                ) or 'refine' in request.POST.keys():
+        if 'filter' in list(request.POST.keys()) or 'send' in list(
+                request.POST.keys()) or 'refine' in list(request.POST.keys()):
             self.select_form = SelectRoleForm(
                 request.POST,
                 prefix="email-select")

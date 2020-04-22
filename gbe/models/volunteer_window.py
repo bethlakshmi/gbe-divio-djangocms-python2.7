@@ -14,7 +14,7 @@ class VolunteerWindow(Model):
     end = TimeField(blank=True)
     day = ForeignKey(ConferenceDay)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s, %s to %s" % (str(self.day),
                                  date_format(self.start, "TIME_FORMAT"),
                                  date_format(self.end, "TIME_FORMAT"))

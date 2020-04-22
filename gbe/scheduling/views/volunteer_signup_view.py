@@ -57,8 +57,8 @@ class VolunteerSignupView(View):
 
     def make_time_range(self, start_min, end_min, step, wrap=False):
         return [(mins % 60 == 0,
-                 time(mins/60, mins % 60).strftime("%-I%p"),
-                 time(mins/60, mins % 60),
+                 time(int(mins/60), mins % 60).strftime("%-I%p"),
+                 time(int(mins/60), mins % 60),
                  wrap
                  ) for mins in range(
                  start_min,
@@ -206,17 +206,17 @@ class VolunteerSignupView(View):
             context['grid_list'] = self.make_time_range(
                 self.start_grid_hour*60,
                 self.end_grid_hour*60,
-                60/self.col_per_hour)
+                int(60/self.col_per_hour))
             if self.next_day_end:
                 # hack to roll around the clock
                 context['grid_list'] += self.make_time_range(
                     self.end_grid_hour*60,
                     (self.end_grid_hour+1)*60,
-                    60/self.col_per_hour)
+                    int(60/self.col_per_hour))
                 context['grid_list'] += self.make_time_range(
                     0,
                     self.next_day_end*60,
-                    60/self.col_per_hour,
+                    int(60/self.col_per_hour),
                     True)
             context['col_fraction'] = 100.0/len(context['grid_list'])
 

@@ -95,7 +95,7 @@ class TestEditClass(TestCase):
         data = self.get_form(invalid=True)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Submit a Class' in response.content)
+        self.assertContains(response, 'Submit a Class')
 
     def test_edit_bid_post_no_submit(self):
         '''act_bid, not submitting and no other problems,
@@ -113,7 +113,7 @@ class TestEditClass(TestCase):
         login_as(klass.teacher.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Submit a Class' in response.content)
+        self.assertContains(response, 'Submit a Class')
 
     def test_edit_bid_verify_info_popup_text(self):
         klass = ClassFactory()
@@ -123,8 +123,7 @@ class TestEditClass(TestCase):
         login_as(klass.teacher.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            'We will do our best to accommodate' in response.content)
+        self.assertContains(response, 'We will do our best to accommodate')
 
     def test_edit_bid_verify_constraints(self):
         klass = ClassFactory(schedule_constraints="[u'0']",
@@ -136,22 +135,22 @@ class TestEditClass(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         constraint_selected = '<input type="checkbox" name="theclass-%s" ' + \
-            'value="%d" checked id="id_theclass-%s_%d" />'
-        self.assertTrue(constraint_selected % (
+            'value="%d" id="id_theclass-%s_%d" checked />'
+        self.assertContains(response, constraint_selected % (
             "schedule_constraints",
             0,
             "schedule_constraints",
-            0) in response.content)
-        self.assertTrue(constraint_selected % (
+            0))
+        self.assertContains(response, constraint_selected % (
             "avoided_constraints",
             1,
             "avoided_constraints",
-            1) in response.content)
-        self.assertTrue(constraint_selected % (
+            1))
+        self.assertContains(response, constraint_selected % (
             "avoided_constraints",
             2,
             "avoided_constraints",
-            2) in response.content)
+            2))
 
     def test_edit_class_post_with_submit(self):
         response, data = self.post_class_edit_submit()

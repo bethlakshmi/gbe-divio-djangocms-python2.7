@@ -48,7 +48,7 @@ class TestClassChangestate(TestCase):
                             urlconf='gbe.scheduling.urls',
                             args=[self.klass.b_conference.conference_slug])
         response = self.client.post(sched_url)
-        assert self.klass.b_title in response.content
+        self.assertContains(response, self.klass.b_title)
 
     def test_class_changestate_unauthorized_user(self):
         '''A regular user is changing the state, it fails'''
@@ -77,4 +77,4 @@ class TestClassChangestate(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(url, data={'accepted': '-1'})
         assert response.status_code == 200
-        assert 'Bid Information' in response.content
+        self.assertContains(response, 'Bid Information')

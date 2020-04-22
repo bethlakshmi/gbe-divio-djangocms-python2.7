@@ -236,10 +236,10 @@ class ManageVolWizardView(View):
         response = None
         context = None
 
-        if ('create' in request.POST.keys()) or (
-                'duplicate' in request.POST.keys()):
+        if ('create' in list(request.POST.keys())) or (
+                'duplicate' in list(request.POST.keys())):
             self.create = True
-            if 'create' in request.POST.keys():
+            if 'create' in list(request.POST.keys()):
                 self.event_form = VolunteerOpportunityForm(
                     request.POST,
                     prefix='new_opp',
@@ -268,7 +268,7 @@ class ManageVolWizardView(View):
                                                  response=response,
                                                  errorcontext=context)
 
-        elif 'edit' in request.POST.keys():
+        elif 'edit' in list(request.POST.keys()):
             self.event = get_object_or_404(
                 GenericEvent,
                 event_id=request.POST['opp_event_id'])
@@ -292,7 +292,7 @@ class ManageVolWizardView(View):
                                                  response=response,
                                                  errorcontext=context)
 
-        elif 'delete' in request.POST.keys():
+        elif 'delete' in list(request.POST.keys()):
             opp = get_object_or_404(
                 GenericEvent,
                 event_id=request.POST['opp_event_id'])
@@ -311,7 +311,7 @@ class ManageVolWizardView(View):
                     title))
             return HttpResponseRedirect(self.success_url)
 
-        elif 'allocate' in request.POST.keys():
+        elif 'allocate' in list(request.POST.keys()):
             response = get_occurrence(request.POST['opp_sched_id'])
             return HttpResponseRedirect(
                 reverse('edit_volunteer',

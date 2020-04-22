@@ -23,8 +23,8 @@ class ActBidEvaluation(Model):
     notes = TextField(blank=True)
     bid = ForeignKey(Act)
 
-    def __unicode__(self):
-        return "%s: %s" % (self.bid.title, self.evaluator.display_name)
+    def __str__(self):
+        return "%s: %s" % (self.bid.b_title, self.evaluator.display_name)
 
     class Meta:
         app_label = "gbe"

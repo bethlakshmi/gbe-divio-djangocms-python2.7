@@ -58,8 +58,8 @@ class ResourceItem(models.Model):
             resourceitem_id=self.resourceitem_id)
         return child.__class__.__name__ + ":  " + child.describe
 
-    def __unicode__(self):
-        return unicode(self.describe)
+    def __str__(self):
+        return str(self.describe)
 
 
 class Resource(models.Model):
@@ -85,10 +85,10 @@ class Resource(models.Model):
         child = Resource.objects.get_subclass(id=self.id)
         return child
 
-    def __unicode__(self):
+    def __str__(self):
         allocated_resource = Resource.objects.get_subclass(id=self.id)
         if allocated_resource:
-            return unicode(allocated_resource)
+            return str(allocated_resource)
         else:
             return "Error in resource allocation, no resource"
 
@@ -120,8 +120,8 @@ class ActItem(ResourceItem):
         '''
         resources = ActResource.objects.filter(_item=self)
 
-        return filter(lambda i: i is not None,
-                      [res.rehearsal for res in resources])
+        return [i for i in [
+            res.rehearsal for res in resources] if i is not None]
 
     @property
     def bio(self):
@@ -135,8 +135,8 @@ class ActItem(ResourceItem):
             resourceitem_id=self.resourceitem_id
         ).b_title
 
-    def __unicode__(self):
-        return unicode(self.describe)
+    def __str__(self):
+        return str(self.describe)
 
 
 class ActResource(Resource):
@@ -177,7 +177,7 @@ class ActResource(Resource):
     def type(self):
         return "act"
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.item.describe
         except:
@@ -233,9 +233,6 @@ class LocationItem(ResourceItem):
     def __str__(self):
         return str(self.describe)
 
-    def __unicode__(self):
-        return unicode(self.describe)
-
 
 class Location(Resource):
     '''
@@ -248,7 +245,7 @@ class Location(Resource):
     def type(self):
         return "location"
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.item.describe
         except:
@@ -299,10 +296,7 @@ class WorkerItem(ResourceItem):
         return child.__class__.__name__ + ":  " + child.describe
 
     def __str__(self):
-        return str(self.describe.encode('utf-8').strip())
-
-    def __unicode__(self):
-        return unicode(self.describe)
+        return str(self.describe)
 
     def get_bookings(self, role='All', conference=None):
         '''
@@ -367,7 +361,7 @@ class Worker(Resource):
     def type(self):
         return self.role
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.item.describe
         except:
@@ -421,9 +415,6 @@ class EventItem (models.Model):
 
     def __str__(self):
         return str(self.describe)
-
-    def __unicode__(self):
-        return unicode(self.describe)
 
 
 class Event(Schedulable):
@@ -639,7 +630,7 @@ class Event(Schedulable):
             allocations__event=self,
             _item__act__accepted=3).order_by('_item__act__performer__name')
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.eventitem.describe
         except:
@@ -727,8 +718,8 @@ class ResourceAllocation(Schedulable):
         l.text = text
         l.save()
 
-    def __unicode__(self):
-        return ("%s - %s" % (unicode(self.event), unicode(self.resource)))
+    def __str__(self):
+        return ("%s - %s" % (str(self.event), str(self.resource)))
 
 
 class Ordering(models.Model):

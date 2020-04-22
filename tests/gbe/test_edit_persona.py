@@ -19,7 +19,6 @@ from tests.functions.gbe_functions import (
 )
 from gbetext import default_edit_persona_msg
 from gbe.models import UserMessage
-from django.core.files import File
 
 
 class TestEditPersona(TestCase):
@@ -72,7 +71,7 @@ class TestEditPersona(TestCase):
         login_as(self.persona.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(self.expected_string in response.content)
+        self.assertContains(response, self.expected_string)
 
     def test_edit_persona_load_img(self):
         '''edit_troupe view, create flow
@@ -85,7 +84,7 @@ class TestEditPersona(TestCase):
         login_as(self.persona.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(self.persona.img.url in response.content)
+        self.assertContains(response, self.persona.img.url)
 
     def test_wrong_profile(self):
         viewer = ProfileFactory()
@@ -103,17 +102,15 @@ class TestEditPersona(TestCase):
 
     def test_edit_persona_change_image(self):
         ProfileFactory(user_object__username="admin_img")
-        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'r')
-        picture = File(pic_filename)
+        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
 
-        response, new_name = self.submit_persona(picture)
+        response, new_name = self.submit_persona(pic_filename)
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(str(persona_reloaded.img), "gbe_pagebanner.png")
 
     def test_change_image_foreign_char(self):
         ProfileFactory(user_object__username="admin_img")
-        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'r')
-        picture = File(pic_filename)
+        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
 
         login_as(self.persona.performer_profile, self)
         new_name = "Bitsy Brûlée"
@@ -127,7 +124,7 @@ class TestEditPersona(TestCase):
                 'bio': "bio",
                 'experience': 1,
                 'awards': "many",
-                'upload_img': picture}
+                'upload_img': pic_filename}
 
         response = self.client.post(
             url,
@@ -161,7 +158,7 @@ class TestEditPersona(TestCase):
                   'experience': 1,
                   'awards': "many"}
         )
-        self.assertTrue(self.expected_string in response.content)
+        self.assertContains(response, self.expected_string)
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(persona_reloaded.name, old_name)
 

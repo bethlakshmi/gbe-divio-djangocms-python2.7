@@ -57,13 +57,13 @@ class TestProposeClass(TestCase):
     def test_propose_valid_class(self):
         response = self.post_class_proposal()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("Profile View" in response.content)
+        self.assertContains(response, "Profile View")
 
     def test_propose_class_get(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("I've Got An Idea!" in response.content)
+        self.assertContains(response, "I've Got An Idea!")
 
     def test_propose_submit_make_message(self):
         response = self.post_class_proposal()

@@ -41,7 +41,7 @@ class PickVolunteerTopicForm(Form):
             for item in response.occurrences:
                 event = Event.objects.get_subclass(
                     eventitem_id=item.foreign_event_id)
-                if event.event_type in event_choices.keys():
+                if event.event_type in list(event_choices.keys()):
                     event_choices[event.event_type] += [
                         (item.pk, "%s - %s" % (
                             event.e_title,

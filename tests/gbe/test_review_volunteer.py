@@ -54,8 +54,8 @@ class TestReviewVolunteer(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
-        self.assertFalse('Change Bid State:' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertNotContains(response, 'Change Bid State:')
 
     def test_review_volunteer_get_conference(self):
         volunteer = VolunteerFactory()
@@ -68,8 +68,8 @@ class TestReviewVolunteer(TestCase):
             url,
             data={'conf_slug': volunteer.b_conference.id})
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
-        self.assertTrue('Review Information' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Review Information')
         self.assertContains(response, '<h3> %s </h3>' %
                             volunteer.b_conference.conference_name)
 
@@ -82,9 +82,9 @@ class TestReviewVolunteer(TestCase):
         login_as(self.coordinator, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Change Bid State:' in response.content)
-        self.assertTrue('Bid Information' in response.content)
-        self.assertTrue('Review Information' in response.content)
+        self.assertContains(response, 'Change Bid State:')
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Review Information')
 
     def test_review_volunteer_post_invalid(self):
         volunteer = VolunteerFactory()
@@ -96,8 +96,8 @@ class TestReviewVolunteer(TestCase):
         data = self.get_form(volunteer, self.coordinator, invalid=True)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Change Bid State:' in response.content)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Change Bid State:')
+        self.assertContains(response, 'Bid Information')
 
     def test_review_volunteer_post_valid(self):
         volunteer = VolunteerFactory()
@@ -113,7 +113,7 @@ class TestReviewVolunteer(TestCase):
         title_string = ("Bid Information for %s" %
                         volunteer.b_conference.conference_name)
         html_title = html_tag % title_string
-        assert html_title in response.content
+        self.assertContains(response, html_title)
 
     def test_review_volunteer_past_conference(self):
         conference = ConferenceFactory(status='completed')
@@ -126,8 +126,8 @@ class TestReviewVolunteer(TestCase):
             reverse('volunteer_view',
                     urlconf='gbe.urls',
                     args=[volunteer.pk]))
-        self.assertTrue('Bid Information' in response.content)
-        self.assertFalse('Review Information' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertNotContains(response, 'Review Information')
 
     def test_no_login_gives_error(self):
         url = reverse(self.view_name, args=[1], urlconf="gbe.urls")
@@ -151,8 +151,8 @@ class TestReviewVolunteer(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(url, data={'volunteer': volunteer.pk})
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
-        self.assertFalse('Change Bid State:' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertNotContains(response, 'Change Bid State:')
 
     def test_review_volunteer_with_interest(self):
         volunteer = VolunteerFactory()
@@ -180,8 +180,8 @@ class TestReviewVolunteer(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        self.assertTrue(str(context.window) in response.content)
-        self.assertTrue(str(not_there) not in response.content)
+        self.assertContains(response, str(context.window))
+        self.assertNotContains(response, str(not_there))
 
     def test_review_volunteer_clean_unavailable_windows(self):
         context = VolunteerContext()
@@ -194,8 +194,8 @@ class TestReviewVolunteer(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        self.assertTrue(str(context.window) in response.content)
-        self.assertTrue(str(not_there) not in response.content)
+        self.assertContains(response, str(context.window))
+        self.assertNotContains(response, str(not_there))
 
     def test_review_volunteer_clean_state(self):
         volunteer = VolunteerFactory()
@@ -206,9 +206,8 @@ class TestReviewVolunteer(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         state_dict = dict(states_options)
-        self.assertTrue(
-            state_dict[volunteer.profile.state] in response.content)
-        self.assertTrue(state_dict["CA"] not in response.content)
+        self.assertContains(response, state_dict[volunteer.profile.state])
+        self.assertNotContains(response, state_dict["CA"])
 
     def test_review_volunteer_clean_how_heard(self):
         profile = ProfileFactory(how_heard=['Word of mouth'])
@@ -219,5 +218,5 @@ class TestReviewVolunteer(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        self.assertTrue(profile.how_heard[0] in response.content)
-        self.assertTrue("Attended Previously" not in response.content)
+        self.assertContains(response, profile.how_heard[0])
+        self.assertNotContains(response, "Attended Previously")

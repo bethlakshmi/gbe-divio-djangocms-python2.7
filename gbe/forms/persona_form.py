@@ -53,7 +53,7 @@ class PersonaForm (ModelForm):
                     original_filename=self['upload_img'].value().name,
                     file=self['upload_img'].value(),
                     folder=folder,
-                    author="%s" % unicode(performer.name,),
+                    author="%s" % str(performer.name,),
                 )
                 img.save()
                 performer.img_id = img.pk

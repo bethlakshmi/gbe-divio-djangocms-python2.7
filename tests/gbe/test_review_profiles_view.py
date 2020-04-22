@@ -63,20 +63,20 @@ class TestReviewProfiles(TestCase):
     def test_contact_info(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        assert self.profile.purchase_email in response.content
-        assert self.profile.user_object.email in response.content
-        assert self.profile.phone in response.content
+        self.assertContains(response, self.profile.purchase_email)
+        self.assertContains(response, self.profile.user_object.email)
+        self.assertContains(response, self.profile.phone)
 
     def test_special_registrar(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        self.assertIn("/profile/admin/", response.content)
-        self.assertIn("/profile/delete/", response.content)
+        self.assertContains(response, "/profile/admin/")
+        self.assertContains(response, "/profile/delete/")
 
     def test_special_not_registrar(self):
         coordinator = ProfileFactory().user_object
         grant_privilege(coordinator, 'Volunteer Coordinator')
         login_as(coordinator, self)
         response = self.client.get(self.url)
-        self.assertNotIn("/profile/admin/", response.content)
-        self.assertNotIn("/profile/delete/", response.content)
+        self.assertNotContains(response, "/profile/admin/")
+        self.assertNotContains(response, "/profile/delete/")

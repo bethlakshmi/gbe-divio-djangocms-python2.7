@@ -24,7 +24,7 @@ class TestViewAct(TestCase):
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true(test_string in response.content)
+        self.assertContains(response, test_string)
 
     def test_edit_bid_w_redirect(self):
         '''edit_bid, not post, should take us to edit process'''

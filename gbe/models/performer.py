@@ -64,7 +64,7 @@ class Performer (WorkerItem):
     def describe(self):
         return self.name
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:

@@ -42,7 +42,7 @@ class TestReviewCostumeList(TestCase):
             data={'conf_slug': self.conference.conference_slug})
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_costume_bad_user(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -66,8 +66,8 @@ class TestReviewCostumeList(TestCase):
         response = self.client.get(url)
 
         nt.assert_equal(200, response.status_code)
-        assert all([acostume.b_title in response.content
-                    for acostume in self.costumes])
+        for acostume in self.costumes:
+            self.assertContains(response, acostume.b_title)
 
     def test_review_costume_inactive_user(self):
         self.costumes = CostumeFactory(
@@ -79,4 +79,4 @@ class TestReviewCostumeList(TestCase):
         response = self.client.get(
             url,
             data={'conf_slug': self.conference.conference_slug})
-        self.assertIn('bid-table danger', response.content)
+        self.assertContains(response, 'bid-table danger')

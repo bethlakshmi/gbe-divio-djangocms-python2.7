@@ -51,8 +51,9 @@ def EditTroupeView(request, troupe_id=None):
         troupe = get_object_or_404(Troupe, resourceitem_id=troupe_id)
     else:
         troupe = Troupe()
+        troupe_id = 0
 
-    if (troupe_id > 0 and
+    if (int(troupe_id) > 0 and
             request.user and
             troupe.contact != request.user.profile):
         return HttpResponseRedirect(reverse('troupe_view',
@@ -63,7 +64,7 @@ def EditTroupeView(request, troupe_id=None):
         form = TroupeForm(request.POST, request.FILES, instance=troupe)
         if form.is_valid():
             new_troupe = form.save()
-            #raise Exception(form.data['membership'])
+            # raise Exception(form.data['membership'])
             user_message = UserMessage.objects.get_or_create(
                 view='EditTroupeView',
                 code="UPDATE_TROUPE",

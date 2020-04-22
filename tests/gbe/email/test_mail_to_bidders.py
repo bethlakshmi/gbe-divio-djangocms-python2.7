@@ -614,8 +614,8 @@ class TestMailToBidder(TestCase):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
-        to_string = '<input type="checkbox" name="to" value="%s" checked ' + \
-            'class="form-check-input" id="id_to_0" />%s'
+        to_string = '<input type="checkbox" name="to" value="%s" ' + \
+            'class="form-check-input" id="id_to_0" checked />%s'
         self.assertContains(
             response,
             to_string % (self.context.teacher.contact.user_object.email,
@@ -671,7 +671,7 @@ class TestMailToBidder(TestCase):
         self.assertContains(
             response,
             '<input type="checkbox" name="email-select-state" value="3" ' +
-            'checked class="form-check-input" id="id_email-select-state_4" ' +
+            'class="form-check-input" id="id_email-select-state_4" checked ' +
             '/>')
 
     def test_pick_no_post_action(self):

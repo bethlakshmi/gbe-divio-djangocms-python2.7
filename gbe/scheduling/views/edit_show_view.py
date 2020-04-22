@@ -143,10 +143,10 @@ class EditShowView(EditEventView):
     def do_additional_actions(self, request):
         response = None
         context = None
-        if ('create_slot' in request.POST.keys()) or (
-                'duplicate_slot' in request.POST.keys()):
+        if ('create_slot' in list(request.POST.keys())) or (
+                'duplicate_slot' in list(request.POST.keys())):
             self.create = True
-            if 'create_slot' in request.POST.keys():
+            if 'create_slot' in list(request.POST.keys()):
                 self.event_form = RehearsalSlotForm(
                     request.POST,
                     prefix='new_slot',
@@ -169,7 +169,7 @@ class EditShowView(EditEventView):
             else:
                 context = {'createslotform': self.event_form,
                            'rehearsal_open': True}
-        elif 'edit_slot' in request.POST.keys():
+        elif 'edit_slot' in list(request.POST.keys()):
             self.event = get_object_or_404(
                 GenericEvent,
                 event_id=request.POST['opp_event_id'])
@@ -192,7 +192,7 @@ class EditShowView(EditEventView):
                     'error_slot_occurrence_id': int(
                         request.POST['opp_sched_id']),
                     'rehearsal_open': True}
-        elif 'delete_slot' in request.POST.keys():
+        elif 'delete_slot' in list(request.POST.keys()):
             opp = get_object_or_404(
                 GenericEvent,
                 event_id=request.POST['opp_event_id'])

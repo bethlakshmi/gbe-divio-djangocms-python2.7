@@ -10,7 +10,6 @@ from gbe.scheduling.forms import (
     StaffAreaForm,
 )
 from gbe.scheduling.views import EventWizardView
-from gbe.duration import Duration
 from gbe.functions import validate_perms
 from gbe_forms_text import event_settings
 

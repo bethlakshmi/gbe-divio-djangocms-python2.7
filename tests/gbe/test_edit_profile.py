@@ -114,7 +114,7 @@ class TestEditProfile(TestCase):
         self.assertContains(
             response,
             '<input type="checkbox" name="how_heard" value="Word of mouth" ' +
-            'checked id="id_how_heard_6" />')
+            'id="id_how_heard_6" checked />')
 
     def test_update_profile_email_settings(self):
         pref = ProfilePreferencesFactory(
@@ -126,7 +126,7 @@ class TestEditProfile(TestCase):
         self.assertContains(
             response,
             '<input type="checkbox" name="email_pref-send_daily_schedule" ' +
-            'checked id="id_email_pref-send_daily_schedule" />')
+            'id="id_email_pref-send_daily_schedule" checked />')
         self.assertContains(
             response,
             '<input type="checkbox" name="email_pref-send_bid_notifications"' +

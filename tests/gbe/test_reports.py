@@ -85,16 +85,16 @@ class TestReports(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=env_stuff.csv")
-        self.assertIn(
+        self.assertContains(
+            response,
             "Badge Name,First,Last,Tickets,Ticket format,Personae," +
-            "Staff Lead,Volunteering,Presenter,Show",
-            response.content)
-        self.assertIn(
-            transaction.purchaser.matched_to_user.first_name,
-            response.content)
-        self.assertIn(
-            transaction.ticket_item.title,
-            response.content)
+            "Staff Lead,Volunteering,Presenter,Show")
+        self.assertContains(
+            response,
+            transaction.purchaser.matched_to_user.first_name)
+        self.assertContains(
+            response,
+            transaction.ticket_item.title)
 
     def test_env_stuff_w_inactive_purchaser(self):
         '''env_stuff view should load with no conf choice
@@ -115,13 +115,13 @@ class TestReports(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=env_stuff.csv")
-        self.assertIn(
+        self.assertContains(
+            response,
             "Badge Name,First,Last,Tickets,Ticket format,Personae," +
-            "Staff Lead,Volunteering,Presenter,Show",
-            response.content)
-        self.assertNotIn(
-            inactive.display_name,
-            response.content)
+            "Staff Lead,Volunteering,Presenter,Show")
+        self.assertNotContains(
+            response,
+            inactive.display_name)
 
     def test_env_stuff_succeed_w_conf(self):
         '''env_stuff view should load for a selected conference slug
@@ -139,16 +139,16 @@ class TestReports(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=env_stuff.csv")
-        self.assertIn(
+        self.assertContains(
+            response,
             "Badge Name,First,Last,Tickets,Ticket format,Personae," +
-            "Staff Lead,Volunteering,Presenter,Show",
-            response.content)
-        self.assertIn(
-            transaction.purchaser.matched_to_user.first_name,
-            response.content)
-        self.assertIn(
-            transaction.ticket_item.title,
-            response.content)
+            "Staff Lead,Volunteering,Presenter,Show")
+        self.assertContains(
+            response,
+            transaction.purchaser.matched_to_user.first_name)
+        self.assertContains(
+            response,
+            transaction.ticket_item.title)
 
     def test_room_schedule_fail(self):
         '''room_schedule view should load for privileged users,
@@ -265,15 +265,12 @@ class TestReports(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=print_badges.csv")
-        self.assertIn(
-            "First,Last,username,Badge Name,Badge Type,Date,State",
-            response.content)
-        self.assertIn(
-            transaction.purchaser.matched_to_user.username,
-            response.content)
-        self.assertIn(
-            transaction.ticket_item.title,
-            response.content)
+        self.assertContains(
+            response,
+            "First,Last,username,Badge Name,Badge Type,Date,State")
+        self.assertContains(response,
+                            transaction.purchaser.matched_to_user.username)
+        self.assertContains(response, transaction.ticket_item.title)
 
     def test_export_badge_report_succeed(self):
         '''loads with the default conference selection.
@@ -289,15 +286,15 @@ class TestReports(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=print_badges.csv")
-        self.assertIn(
-            "First,Last,username,Badge Name,Badge Type,Date,State",
-            response.content)
-        self.assertIn(
-            transaction.purchaser.matched_to_user.username,
-            response.content)
-        self.assertIn(
-            transaction.ticket_item.title,
-            response.content)
+        self.assertContains(
+            response,
+            "First,Last,username,Badge Name,Badge Type,Date,State")
+        self.assertContains(
+            response,
+            transaction.purchaser.matched_to_user.username)
+        self.assertContains(
+            response,
+            transaction.ticket_item.title)
 
     def test_export_badge_report_inactive_user(self):
         '''loads with the default conference selection.
@@ -314,9 +311,9 @@ class TestReports(TestCase):
         response = self.client.get(reverse('badge_report',
                                            urlconf='gbe.reporting.urls'))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(
-            transaction.purchaser.first_name,
-            response.content)
-        self.assertNotIn(
-            inactive.display_name,
-            response.content)
+        self.assertContains(
+            response,
+            transaction.purchaser.first_name)
+        self.assertNotContains(
+            response,
+            inactive.display_name)

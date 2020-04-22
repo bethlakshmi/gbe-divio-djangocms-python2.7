@@ -13,7 +13,7 @@ class ConferenceDay(Model):
     conference = ForeignKey(Conference)
     open_to_public = BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return date_format(self.day, "DATE_FORMAT")
 
     class Meta:

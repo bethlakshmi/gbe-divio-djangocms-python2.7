@@ -14,7 +14,6 @@ from tests.functions.gbe_functions import (
 )
 from gbetext import default_create_persona_msg
 from gbe.models import UserMessage
-from django.core.files import File
 
 
 class TestRegisterPersona(TestCase):
@@ -63,9 +62,8 @@ class TestRegisterPersona(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_register_persona_w_image(self):
-        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'r')
-        picture = File(pic_filename)
-        response, persona_count = self.submit_persona(picture)
+        pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
+        response, persona_count = self.submit_persona(pic_filename)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "gbe_pagebanner.png")
 
@@ -91,7 +89,7 @@ class TestRegisterPersona(TestCase):
                   'awards': 'Generic string here'
                   })
         self.assertEqual(response.status_code, 200)
-        assert "This field is required." in response.content
+        self.assertContains(response, "This field is required.")
 
     def test_redirect(self):
         login_as(self.profile, self)
@@ -110,8 +108,8 @@ class TestRegisterPersona(TestCase):
         assert response.status_code == 200
         self.assertRedirects(response,
                              reverse('troupe_create', urlconf='gbe.urls'))
-        assert "Tell Us About Your Troupe" in response.content
-        self.assertNotIn('<div class="alert alert-success">', response.content)
+        self.assertContains(response, "Tell Us About Your Troupe")
+        self.assertNotContains(response, '<div class="alert alert-success">')
 
     def test_get(self):
         login_as(self.profile, self)
@@ -121,7 +119,7 @@ class TestRegisterPersona(TestCase):
             reverse('persona_create', urlconf='gbe.urls'),
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("Tell Us About Your Stage Persona" in response.content)
+        self.assertContains(response, "Tell Us About Your Stage Persona")
 
     def test_create_persona_make_message(self):
         response, persona_count = self.submit_persona()

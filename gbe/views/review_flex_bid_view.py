@@ -39,6 +39,7 @@ from gbetext import (
 )
 from gbe.views import ReviewBidView
 from scheduler.models import ActResource
+from collections import OrderedDict
 
 
 class FlexibleReviewBidView(ReviewBidView):
@@ -90,7 +91,7 @@ class FlexibleReviewBidView(ReviewBidView):
         self.reviewers = Profile.objects.filter(
             flexibleevaluation__bid=act).order_by('display_name').distinct()
         evaluations = FlexibleEvaluation.objects.filter(bid=act)
-        self.review_results = {}
+        self.review_results = OrderedDict()
         for category in self.categories:
             self.review_results[category] = []
             for reviewer in self.reviewers:
@@ -109,7 +110,6 @@ class FlexibleReviewBidView(ReviewBidView):
                         Avg('ranking'))['ranking__avg'], 2)]
             except:
                 self.review_results[category] += [""]
-        self.review_results = sorted(self.review_results.iteritems())
         self.notes = ActBidEvaluation.objects.filter(
             bid=act).order_by('evaluator',)
 
@@ -181,7 +181,7 @@ class FlexibleReviewBidView(ReviewBidView):
 
     def groundwork(self, request, args, kwargs):
         self.categories = EvaluationCategory.objects.filter(
-                    visible=True)
+                    visible=True).order_by('category')
         super(FlexibleReviewBidView, self).groundwork(request, args, kwargs)
         if self.object.b_conference.act_style == "summer":
             self.object_form = get_act_form(

@@ -45,8 +45,8 @@ class TestBiosTeachers(TestCase):
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
         assert response.status_code == 200
-        assert current_context.teacher.name in response.content
-        assert current_context.bid.b_title in response.content
+        self.assertContains(response, current_context.teacher.name)
+        self.assertContains(response, current_context.bid.b_title)
 
         # the following assertions should work, but currently
         # do not. This is possibly an issue with multiple
@@ -66,8 +66,8 @@ class TestBiosTeachers(TestCase):
             url,
             data={'conference': first_context.conference.conference_slug})
         assert response.status_code == 200
-        assert first_context.bid.teacher.name in response.content
-        assert first_context.bid.b_title in response.content
+        self.assertContains(response, first_context.bid.teacher.name)
+        self.assertContains(response, first_context.bid.b_title)
 
         # the following assertions should work, but currently
         # do not. This is possibly an issue with multiple
@@ -89,5 +89,5 @@ class TestBiosTeachers(TestCase):
             data={'conference': accepted_class.b_conference.conference_slug})
 
         assert response.status_code == 200
-        assert accepted_class.teacher.name in response.content
-        assert accepted_class.b_title in response.content
+        self.assertContains(response, accepted_class.teacher.name)
+        self.assertContains(response, accepted_class.b_title)

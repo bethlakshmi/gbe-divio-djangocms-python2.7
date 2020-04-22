@@ -69,9 +69,6 @@ class Act (Biddable, ActItem):
         '''
         return self.performer.get_profiles()
 
-    def typeof(self):
-        return self.__class__
-
     @property
     def bio(self):
         return self.performer

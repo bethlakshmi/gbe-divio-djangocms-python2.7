@@ -31,7 +31,7 @@ class TestReviewActTechInfo(TestCase):
         self.context.act.tech.secondary_color = "black"
         self.context.act.tech.track = SimpleUploadedFile(
             "file.mp3",
-            "file_content")
+            b"file_content")
         self.context.act.tech.save()
 
     def setUp(self):
@@ -70,7 +70,6 @@ class TestReviewActTechInfo(TestCase):
         self.set_the_basics()
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        print response
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.context.act.b_title)
         self.assertContains(response, str(self.context.act.performer))

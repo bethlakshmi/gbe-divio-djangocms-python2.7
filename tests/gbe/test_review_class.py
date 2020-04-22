@@ -47,7 +47,7 @@ class TestReviewClass(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_class_post_form_invalid(self):
         klass = ClassFactory()
@@ -59,7 +59,7 @@ class TestReviewClass(TestCase):
         response = self.client.post(url,
                                     data={'accepted': 1})
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_class_post_form_valid_creates_evaluation(self):
         klass = ClassFactory()
@@ -76,7 +76,7 @@ class TestReviewClass(TestCase):
                                     data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
         post_execute_count = BidEvaluation.objects.filter(
             evaluator=profile,
             bid=klass).count()
@@ -94,7 +94,7 @@ class TestReviewClass(TestCase):
                                     data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
         evaluation = BidEvaluation.objects.filter(
             evaluator=profile,
             bid=klass).last()
@@ -112,8 +112,8 @@ class TestReviewClass(TestCase):
             reverse('class_view',
                     urlconf='gbe.urls',
                     args=[klass.pk]))
-        self.assertTrue('Bid Information' in response.content)
-        self.assertFalse('Review Information' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertNotContains(response, 'Review Information')
 
     def test_no_login_gives_error(self):
         url = reverse(self.view_name, args=[1], urlconf="gbe.urls")
@@ -129,7 +129,7 @@ class TestReviewClass(TestCase):
         login_as(reviewer, self)
         url = reverse(self.view_name, args=[klass.pk], urlconf="gbe.urls")
         response = self.client.get(url)
-        assert "Review Bids" in response.content
+        self.assertContains(response, "Review Bids")
         assert response.status_code == 200
 
     def test_review_class_no_how_heard(self):
@@ -142,8 +142,8 @@ class TestReviewClass(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        assert '[]' not in response.content
-        assert "The Presenter" in response.content
+        self.assertNotContains(response, '[]')
+        self.assertContains(response, "The Presenter")
 
     def test_review_class_how_heard_is_present(self):
         klass = ClassFactory()
@@ -155,4 +155,4 @@ class TestReviewClass(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        assert 'Facebook' in response.content
+        self.assertContains(response, 'Facebook')

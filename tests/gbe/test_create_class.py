@@ -101,7 +101,7 @@ class TestCreateClass(TestCase):
             reverse("persona_create",
                     urlconf='gbe.urls') + "?next=/class/create")
         title = '<h2 class="subtitle">Tell Us About Your Stage Persona</h2>'
-        assert title in response.content
+        self.assertContains(response, title)
         assert response.status_code == 200
 
     def test_class_bid_post_with_submit(self):
@@ -109,7 +109,7 @@ class TestCreateClass(TestCase):
         should redirect to home'''
         response, data = self.post_bid(submit=True)
         self.assertEqual(response.status_code, 200)
-        assert data['theclass-b_title'] in response.content
+        self.assertContains(response, data['theclass-b_title'])
         # stricter test required here
 
     def test_class_bid_post_with_submit_incomplete(self):
@@ -125,7 +125,7 @@ class TestCreateClass(TestCase):
                                     follow=True)
         self.assertEqual(response.status_code, 200)
         expected_string = "This field is required"
-        self.assertTrue(expected_string in response.content)
+        self.assertContains(response, expected_string)
 
     def test_class_bid_post_no_submit(self):
         '''class_bid, not submitting and no other problems,
@@ -145,13 +145,13 @@ class TestCreateClass(TestCase):
         data['theclass-teacher'] = other_performer.pk
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(200, response.status_code)
-        self.assertTrue('Submit a Class' in response.content)
-        self.assertFalse(other_performer.name in response.content)
+        self.assertContains(response, 'Submit a Class')
+        self.assertNotContains(response, other_performer.name)
         current_user_selection = '<option value="%d">%s</option>'
         persona_id = self.performer.pk
         selection_string = current_user_selection % (persona_id,
                                                      self.performer.name)
-        self.assertTrue(selection_string in response.content)
+        self.assertContains(response, selection_string)
 
     def test_class_bid_verify_info_popup_text(self):
         url = reverse(self.view_name,
@@ -159,8 +159,7 @@ class TestCreateClass(TestCase):
         login_as(self.performer.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            'We will do our best to accommodate' in response.content)
+        self.assertContains(response, 'We will do our best to accommodate')
 
     def test_class_bid_verify_avoided_constraints(self):
         url = reverse(self.view_name,
@@ -168,7 +167,7 @@ class TestCreateClass(TestCase):
         login_as(self.performer.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('I Would Prefer to Avoid' in response.content)
+        self.assertContains(response, 'I Would Prefer to Avoid')
 
     def test_class_submit_make_message(self):
         '''class_bid, not submitting and no other problems,

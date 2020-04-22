@@ -48,8 +48,8 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        self.assertTrue(this_class.e_title in response.content)
-        self.assertFalse(that_class.e_title in response.content)
+        self.assertContains(response, this_class.e_title)
+        self.assertNotContains(response, that_class.e_title)
 
     def test_view_list_default_view_current_conf_exists(self):
         '''
@@ -72,11 +72,11 @@ class TestViewList(TestCase):
                       urlconf="gbe.scheduling.urls")
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
-        self.assertTrue(generic_event.e_title in response.content)
-        self.assertTrue(show.e_title in response.content)
-        self.assertTrue(accepted_class.e_title in response.content)
-        self.assertFalse(rejected_class.e_title in response.content)
-        self.assertFalse(previous_class.e_title in response.content)
+        self.assertContains(response, generic_event.e_title)
+        self.assertContains(response, show.e_title)
+        self.assertContains(response, accepted_class.e_title)
+        self.assertNotContains(response, rejected_class.e_title)
+        self.assertNotContains(response, previous_class.e_title)
 
     def test_no_avail_conf(self):
         clear_conferences()
@@ -110,17 +110,17 @@ class TestViewList(TestCase):
                       args=['Class'])
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
-        self.assertFalse(show.e_title in response.content)
-        self.assertFalse(generic_event.e_title in response.content)
-        self.assertTrue(accepted_class.e_title in response.content)
+        self.assertNotContains(response, show.e_title)
+        self.assertNotContains(response, generic_event.e_title)
+        self.assertContains(response, accepted_class.e_title)
 
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=['class'])
         response = self.client.get(url)
-        self.assertFalse(show.e_title in response.content)
-        self.assertFalse(generic_event.e_title in response.content)
-        self.assertTrue(accepted_class.e_title in response.content)
+        self.assertNotContains(response, show.e_title)
+        self.assertNotContains(response, generic_event.e_title)
+        self.assertContains(response, accepted_class.e_title)
 
     def test_interested_in_event(self):
         context = ShowContext(conference=self.conf)

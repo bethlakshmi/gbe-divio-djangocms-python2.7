@@ -37,7 +37,7 @@ class TestRegister(TestCase):
                       urlconf='gbe.urls')
 
         response = self.client.get(url, follow=True)
-        assert("Create an Account" in response.content)
+        self.assertContains(response, "Create an Account")
 
     def test_register_post(self):
         url = reverse(self.view_name,
@@ -63,7 +63,7 @@ class TestRegister(TestCase):
                       urlconf='gbe.urls')
 
         response = self.client.post(url, {'data': 'bad'}, follow=True)
-        self.assertIn("This field is required.", response.content)
+        self.assertContains(response, "This field is required.")
 
     def test_register_unique_email(self):
         url = reverse(self.view_name,
@@ -71,7 +71,7 @@ class TestRegister(TestCase):
         post_data = self.get_post_data()
         profile = ProfileFactory(user_object__email=post_data['email'])
         response = self.client.post(url, post_data, follow=True)
-        self.assertIn("That email address is already in use", response.content)
+        self.assertContains(response, "That email address is already in use")
 
     def tearDown(self):
         del os.environ['RECAPTCHA_DISABLE']
