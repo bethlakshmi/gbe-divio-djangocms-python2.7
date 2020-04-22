@@ -36,6 +36,7 @@ class TestManageEventList(TestCase):
     view_name = 'manage_event_list'
     conf_tab = '<li role="presentation" %s><a href="%s?" ' + \
         'class="gbe-tab" >%s</a></li>'
+
     def setUp(self):
         self.client = Client()
         self.user = ProfileFactory.create().user_object
@@ -64,15 +65,15 @@ class TestManageEventList(TestCase):
         else:
             checked = ''
         template_input = '<input type="checkbox" name="%s-%s" value="%d" ' + \
-                         '%sclass="form-check-input" id="id_%s-%s_%d" />'
+                         'class="form-check-input" id="id_%s-%s_%d" %s/>'
         assert_string = template_input % (
             conf_slug,
             input_field,
             value,
-            checked,
             conf_slug,
             input_field,
-            input_index)
+            input_index,
+            checked)
         self.assertContains(response, assert_string)
 
     def assert_hidden_input_selected(
@@ -117,7 +118,7 @@ class TestManageEventList(TestCase):
         self.assertContains(
             response,
             self.conf_tab % (
-                'class="active"', 
+                'class="active"',
                 reverse(self.view_name,
                         urlconf="gbe.scheduling.urls",
                         args=[self.day.conference.conference_slug]),
@@ -127,7 +128,7 @@ class TestManageEventList(TestCase):
         self.assertContains(
             response,
             self.conf_tab % (
-                '', 
+                '',
                 reverse(self.view_name,
                         urlconf="gbe.scheduling.urls",
                         args=[old_conf_day.conference.conference_slug]),
@@ -245,7 +246,7 @@ class TestManageEventList(TestCase):
         # conference class bids do not yet have copy feature.
         self.assertNotContains(
             response,
-            'href="%s" data-toggle="tooltip" title="Copy"' %(
+            'href="%s" data-toggle="tooltip" title="Copy"' % (
                 reverse("copy_event_schedule",
                         urlconf="gbe.scheduling.urls",
                         args=[self.class_context.sched_event.pk])))

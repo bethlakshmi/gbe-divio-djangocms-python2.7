@@ -10,7 +10,7 @@ from gbe.reporting.views import (
     staff_area_view,
     WelcomeLetterView,
 )
-from gbe.reporting import (
+from gbe.reporting.report_views import (
     env_stuff,
     export_badge_report,
     list_reports,

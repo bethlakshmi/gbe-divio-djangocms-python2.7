@@ -45,7 +45,7 @@ class TestReviewClassList(TestCase):
             data={'conf_slug': self.conference.conference_slug})
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_class_bad_user(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -74,4 +74,4 @@ class TestReviewClassList(TestCase):
         response = self.client.get(
             url,
             data={'conf_slug': self.conference.conference_slug})
-        self.assertIn('bid-table danger', response.content)
+        self.assertContains(response, 'bid-table danger')

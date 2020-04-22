@@ -68,7 +68,7 @@ class TechInfo(Model):
             prop_setup_list = eval(self.prop_setup)
         return prop_setup_list
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return "Techinfo: " + self.act.b_title
         except:

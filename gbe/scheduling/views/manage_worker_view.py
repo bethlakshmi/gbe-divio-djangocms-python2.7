@@ -165,7 +165,7 @@ class ManageWorkerView(View):
                                            errorcontext=context)
         else:
             data = form.cleaned_data
-            if 'delete' in request.POST.keys():
+            if 'delete' in list(request.POST.keys()):
                 if ('alloc_id' not in request.POST) or (len(
                         request.POST['alloc_id']) == 0):
                     return self.make_post_response(

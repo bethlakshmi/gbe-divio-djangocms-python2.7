@@ -56,7 +56,7 @@ class TestReviewVolunteerList(TestCase):
         response = self.client.get(self.url)
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_volunteer_w_conf(self):
         ''' when a specific conf has specific bids, check bid details'''
@@ -78,16 +78,15 @@ class TestReviewVolunteerList(TestCase):
             {'conf_slug': self.volunteer.b_conference.conference_slug})
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
-        nt.assert_true(str(self.volunteer.number_shifts) in response.content)
-        nt.assert_true(self.volunteer.background in response.content)
-        nt.assert_true(self.volunteer.profile.display_name in response.content)
-        nt.assert_true(interest.interest.interest in response.content)
-        nt.assert_true(
-            self.volunteer.profile.user_object.email in response.content)
-        nt.assert_true(self.prefs.in_hotel in response.content)
-        nt.assert_true("Needs Review" in response.content)
-        nt.assert_true("Review" in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, str(self.volunteer.number_shifts))
+        self.assertContains(response, self.volunteer.background)
+        self.assertContains(response, self.volunteer.profile.display_name)
+        self.assertContains(response, interest.interest.interest)
+        self.assertContains(response, self.volunteer.profile.user_object.email)
+        self.assertContains(response, self.prefs.in_hotel)
+        self.assertContains(response, "Needs Review")
+        self.assertContains(response, "Review")
 
     def test_review_volunteer_as_coordinator(self):
         ''' volunteer coordinators get special privileges'''
@@ -101,15 +100,14 @@ class TestReviewVolunteerList(TestCase):
             {'conf_slug': self.volunteer.b_conference.conference_slug})
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
-        nt.assert_true(str(self.volunteer.number_shifts) in response.content)
-        nt.assert_true(self.volunteer.background in response.content)
-        nt.assert_true(self.volunteer.profile.display_name in response.content)
-        nt.assert_true(
-            self.volunteer.profile.user_object.email in response.content)
-        nt.assert_true(self.prefs.in_hotel in response.content)
-        nt.assert_true("Needs Review" in response.content)
-        nt.assert_true("Review" in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, str(self.volunteer.number_shifts))
+        self.assertContains(response, self.volunteer.background)
+        self.assertContains(response, self.volunteer.profile.display_name)
+        self.assertContains(response, self.volunteer.profile.user_object.email)
+        self.assertContains(response, self.prefs.in_hotel)
+        self.assertContains(response, "Needs Review")
+        self.assertContains(response, "Review")
 
     def test_review_volunteer_has_commitments(self):
         ''' when a volunteer is already booked somewhere, it should show up'''
@@ -136,21 +134,22 @@ class TestReviewVolunteerList(TestCase):
             {'conf_slug': self.volunteer.b_conference.conference_slug})
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
-        nt.assert_equal(
-            response.content.count(str(current_opportunity)),
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(
+            response,
+            str(current_opportunity),
             1,
-            msg="The commitment %s is not showing up" % (
+            msg_prefix="The commitment %s is not showing up" % (
                 str(current_opportunity)))
-        nt.assert_in(
+        self.assertContains(
+            response,
             date_format(booked_sched.start_time, "DATETIME_FORMAT"),
-            response.content,
-            msg="start time for commitment (%s) didn't show up" % (
+            msg_prefix="start time for commitment (%s) didn't show up" % (
                 date_format(booked_sched.start_time, "DATETIME_FORMAT")))
-        nt.assert_in(
+        self.assertContains(
+            response,
             date_format(booked_sched.end_time, "TIME_FORMAT"),
-            response.content,
-            msg="end time for commitment (%s) didn't show up" % (
+            msg_prefix="end time for commitment (%s) didn't show up" % (
                 date_format(booked_sched.end_time, "TIME_FORMAT")))
 
     def test_review_volunteer_has_old_commitments(self):
@@ -179,10 +178,12 @@ class TestReviewVolunteerList(TestCase):
             {'conf_slug': self.volunteer.b_conference.conference_slug})
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
-        nt.assert_false(str(past_opportunity) in response.content,
-                        msg="The commitment %s is showing up" % (
-                            str(past_opportunity)))
+        self.assertContains(response, 'Bid Information')
+        self.assertNotContains(
+            response,
+            str(past_opportunity),
+            msg_prefix="The commitment %s is showing up" % (
+                str(past_opportunity)))
 
     def test_review_volunteer_bad_user(self):
         ''' user does not have the right privilege and permission is denied'''
@@ -218,4 +219,4 @@ class TestReviewVolunteerList(TestCase):
         response = self.client.get(
             self.url,
             {'conf_slug': inactive.b_conference.conference_slug})
-        self.assertIn('bid-table danger', response.content)
+        self.assertContains(response, 'bid-table danger')

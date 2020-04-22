@@ -1,4 +1,4 @@
-from remains import (
+from .remains import (
     Schedulable,
     ResourceItem,
     Resource,
@@ -19,8 +19,8 @@ from remains import (
 
 
 # regular user reviews, after the event occurs
-from event_eval_question import EventEvalQuestion
-from event_eval_answer import EventEvalAnswer
-from event_eval_comment import EventEvalComment
-from event_eval_grade import EventEvalGrade
-from event_eval_boolean import EventEvalBoolean
+from .event_eval_question import EventEvalQuestion
+from .event_eval_answer import EventEvalAnswer
+from .event_eval_comment import EventEvalComment
+from .event_eval_grade import EventEvalGrade
+from .event_eval_boolean import EventEvalBoolean

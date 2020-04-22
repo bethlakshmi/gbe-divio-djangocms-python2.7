@@ -59,7 +59,7 @@ class TestViewTroupe(TestCase):
 
         login_as(troupe.contact.profile.user_object, self)
         response = self.client.get(url)
-        assert 'No State Chosen' in response.content
+        self.assertContains(response, 'No State Chosen')
 
     def test_view_troupe_as_privileged_user(self):
         '''view_troupe view, success

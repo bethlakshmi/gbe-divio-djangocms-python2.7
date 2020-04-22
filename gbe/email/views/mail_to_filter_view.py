@@ -98,11 +98,11 @@ class MailToFilterView(MailView):
     def post(self, request, *args, **kwargs):
         self.user = validate_perms(request, self.reviewer_permissions)
         self.groundwork(request, args, kwargs)
-        if 'send' in request.POST.keys():
+        if 'send' in list(request.POST.keys()):
             everyone = False
             recipient_info = None
             to_list = []
-            if 'everyone' in request.POST.keys():
+            if 'everyone' in list(request.POST.keys()):
                 to_list = self.get_everyone(request)
                 everyone = True
             elif self.select_form_is_valid():
@@ -121,10 +121,10 @@ class MailToFilterView(MailView):
                         request,
                         self.template,
                         context)
-        elif 'everyone' in request.POST.keys():
+        elif 'everyone' in list(request.POST.keys()):
             return self.filter_everyone(request)
-        elif ('filter' in request.POST.keys() or 'refine' in request.POST.keys(
-                )) and self.select_form_is_valid():
+        elif ('filter' in list(request.POST.keys()) or 'refine' in list(
+                request.POST.keys())) and self.select_form_is_valid():
             return self.filter_emails(request)
 
         user_message = UserMessage.objects.get_or_create(

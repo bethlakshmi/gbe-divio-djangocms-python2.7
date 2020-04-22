@@ -23,7 +23,7 @@ from django.utils.formats import date_format
 class TestEditShowWizard(TestCase):
     view_name = 'manage_show_opp'
     title_field = '<input type="text" name="e_title" value="%s" ' + \
-        'required id="id_e_title" maxlength="128" />'
+        'maxlength="128" required id="id_e_title" />'
 
     def setUp(self):
         self.client = Client()

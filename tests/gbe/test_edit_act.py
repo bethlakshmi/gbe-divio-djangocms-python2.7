@@ -140,7 +140,7 @@ class TestEditAct(TestCase):
             url,
             self.get_act_form(act, invalid=True))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Propose an Act' in response.content)
+        self.assertContains(response, 'Propose an Act')
 
     def test_act_edit_post_form_submit_unpaid(self):
         act = ActFactory()
@@ -152,7 +152,7 @@ class TestEditAct(TestCase):
             url,
             data=self.get_act_form(act, submit=True))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Act Payment' in response.content)
+        self.assertContains(response, 'Act Payment')
         self.assertContains(response, payment_needed_msg % (
             performer_act_submittal_link(
                 act.performer.performer_profile.user_object.id)))
@@ -171,7 +171,7 @@ class TestEditAct(TestCase):
             url,
             data=self.get_act_form(act, submit=True))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Act Payment' in response.content)
+        self.assertContains(response, 'Act Payment')
 
     def test_edit_bid_post_no_submit(self):
         response = self.post_edit_paid_act_draft()
@@ -189,24 +189,24 @@ class TestEditAct(TestCase):
         login_as(act.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Propose an Act' in response.content)
+        self.assertContains(response, 'Propose an Act')
         constraint_selected = '<input type="checkbox" name="theact-%s" ' + \
-            'value="%d" checked id="id_theact-%s_%d" />'
-        self.assertTrue(constraint_selected % (
+            'value="%d" id="id_theact-%s_%d" checked />'
+        self.assertContains(response, constraint_selected % (
             "shows_preferences",
             0,
             "shows_preferences",
-            0) in response.content)
-        self.assertTrue(constraint_selected % (
+            0))
+        self.assertContains(response, constraint_selected % (
             "other_performance",
             1,
             "other_performance",
-            1) in response.content)
-        self.assertTrue(constraint_selected % (
+            1))
+        self.assertContains(response, constraint_selected % (
             "other_performance",
             3,
             "other_performance",
-            3) in response.content)
+            3))
 
     def test_edit_act_submit_make_message(self):
         response = self.post_edit_paid_act_submission()

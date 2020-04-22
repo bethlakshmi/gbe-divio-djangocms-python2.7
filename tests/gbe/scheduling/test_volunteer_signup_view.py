@@ -38,10 +38,10 @@ class TestVolunteerSignupView(TestCase):
         self.profile = ProfileFactory()
         clear_conferences()
         conference = ConferenceFactory()
-        save_the_date = datetime(2016, 02, 06, 12, 00, 00)
+        save_the_date = datetime(2016, 2, 6, 12, 0, 0)
         day = ConferenceDayFactory(
             conference=conference,
-            day=date(2016, 02, 06))
+            day=date(2016, 0o2, 0o6))
         self.staffcontext = StaffAreaContext(
             conference=conference,
             starttime=save_the_date)
@@ -172,10 +172,10 @@ class TestVolunteerSignupView(TestCase):
     def test_other_days(self):
         earlier_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 02, 05))
+            day=date(2016, 0o2, 0o5))
         later_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 02, 07))
+            day=date(2016, 0o2, 0o7))
         login_as(self.profile, self)
         response = self.client.get("%s?day=02-06-2016" % self.url)
         self.assertContains(response, "?day=02-05-2016")
@@ -198,7 +198,7 @@ class TestVolunteerSignupView(TestCase):
     def test_no_events(self):
         earlier_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 02, 05))
+            day=date(2016, 0o2, 0o5))
         login_as(self.profile, self)
         response = self.client.get("%s?day=02-05-2016" % self.url)
         self.assertContains(
@@ -207,10 +207,10 @@ class TestVolunteerSignupView(TestCase):
 
     def test_two_upcoming_conf(self):
         second_conference = ConferenceFactory()
-        save_the_date = datetime(2017, 02, 06, 12, 00, 00)
+        save_the_date = datetime(2017, 2, 6, 12, 0, 0)
         second_day = ConferenceDayFactory(
             conference=second_conference,
-            day=date(2017, 02, 06))
+            day=date(2017, 0o2, 0o6))
         staffcontext = StaffAreaContext(
             conference=second_conference,
             starttime=save_the_date)

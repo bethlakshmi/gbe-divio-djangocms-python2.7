@@ -1,1 +1,1 @@
-from scheduler.views.export_calendar import export_calendar
+from .export_calendar import export_calendar

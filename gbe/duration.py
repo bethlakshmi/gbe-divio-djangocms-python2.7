@@ -6,10 +6,6 @@ from datetime import (
 )
 
 
-def timedelta_to_duration(td):
-    return Duration(seconds=td.total_seconds())
-
-
 class Duration(timedelta):
     '''Wraps a timedelta to produce a more useful representation of an
     extent of time.  Will probably get rid of the timedelta presently
@@ -59,7 +55,7 @@ class Duration(timedelta):
         terms of seconds. This can lead to unexpected results, for example
         Duration (70) % 60 => 0 (not 10!).
         '''
-        if isinstance(other, int) or isinstance(other, long):
+        if isinstance(other, int) or isinstance(other, int):
             return Duration(seconds=int(self.total_seconds()/other))
         elif isinstance(other, timedelta):
             return self.total_seconds()/other.total_seconds()
@@ -76,8 +72,8 @@ class Duration(timedelta):
         of seconds. This can lead to unexpected results, for example Duration
         (70) % 60 => 0 (not 10!).
         '''
-        if isinstance(other, int) or isinstance(other, long):
-            return Duration(seconds=long(self.total_seconds()//other))
+        if isinstance(other, int) or isinstance(other, int):
+            return Duration(seconds=int(self.total_seconds()//other))
         elif isinstance(other, timedelta):
             return int(self.total_seconds()//other.total_seconds())
         else:
@@ -95,10 +91,10 @@ class Duration(timedelta):
         of seconds. This can lead to unexpected results, for example Duration
         (70) % 60 => 0 (not 10!).
         '''
-        if isinstance(other, int) or isinstance(other, long):
-            return Duration(seconds=(long(self.total_seconds() % other)))
+        if isinstance(other, int) or isinstance(other, int):
+            return Duration(seconds=(int(self.total_seconds() % other)))
         elif isinstance(other, timedelta):
-            return Duration(seconds=long(self.total_seconds() %
+            return Duration(seconds=int(self.total_seconds() %
                             other.total_seconds()))
         else:
             raise TypeError("Unsupported operation: can only take mod of " +
@@ -127,40 +123,3 @@ class Duration(timedelta):
                                       self.minutes(),
                                       self.seconds % 60,
                                       self.total_seconds())
-
-
-class DateTimeRange:
-    '''
-    Represents a range of absolute time specified by any two of three
-    possible parameters. Parameters are tried in order: if both
-    starttime and endtime are specified, duration is ignored. Duration
-    is represented by a timedelta, or by a gbe Duration (which is a
-    timedelta under the hood)
-    '''
-    def __init__(self, starttime=None, endtime=None, duration=None):
-        if len(filter(lambda i: i, [starttime, endtime, duration])) < 2:
-            raise Exception('Not enough arguments to create DateTimeRange')
-        self.starttime = starttime
-        self.endtime = endtime
-        self.duration = duration
-        if starttime and endtime:
-            self.duration = endtime-starttime
-        elif starttime and duration:
-            self.endtime = starttime+duration
-        else:
-            self.starttime = endtime - duration
-
-    def __contains__(self, t):
-        '''
-        Returns true if time t falls within the range represented here
-        t can be a datetime, a date, or a DateTimeRange. t must be completely
-        within this range to get a True.
-        '''
-
-        if isinstance(t, datetime):
-            return self.starttime < t < self.endtime
-        elif isinstance(t, date):
-            return (self.starttime < datetime.combine(t, time.min) and
-                    datetime.combine(t, time.max) < self.endtime)
-        elif isinstance(t, DateTimeRange):
-            return self.starttime < t.starttime and t.endtime < self.endtime

@@ -35,7 +35,7 @@ class TestEditCostume(TestCase):
 
     def get_costume_form(self, submit=False, invalid=False):
         picture = SimpleUploadedFile("file.jpg",
-                                     "file_content",
+                                     b"file_content",
                                      content_type="image/jpg")
         data = {'b_title': 'A costume',
                 'creator': 'A creator',
@@ -148,7 +148,7 @@ class TestEditCostume(TestCase):
         login_as(costume.profile, self)
         response = self.client.post(url, data=data)
         expected_string = "Costume Information"
-        self.assertTrue(expected_string in response.content)
+        self.assertContains(response, expected_string)
         self.assertEqual(response.status_code, 200)
 
     def test_submit_bid_post_invalid(self):
@@ -180,7 +180,7 @@ class TestEditCostume(TestCase):
         login_as(costume.profile, self)
         response = self.client.get(url)
         expected_text = "Displaying a Costume"
-        self.assertTrue(expected_text in response.content)
+        self.assertContains(response, expected_text)
         self.assertContains(response, costume.b_description)
 
     def test_costume_submit_make_message(self):

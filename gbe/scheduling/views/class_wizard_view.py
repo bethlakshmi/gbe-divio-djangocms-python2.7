@@ -86,7 +86,7 @@ class ClassWizardView(EventWizardView):
             request.POST,
             initial={'conference':  self.conference})
         context['third_title'] = "Make New Class"
-        if 'pick_class' in request.POST.keys() and context[
+        if 'pick_class' in list(request.POST.keys()) and context[
                 'second_form'].is_valid():
             if context['second_form'].cleaned_data[
                     'accepted_class']:
@@ -110,8 +110,8 @@ class ClassWizardView(EventWizardView):
                 'max_volunteer'].widget = HiddenInput()
             context['worker_formset'] = self.make_formset(working_class)
 
-        elif 'set_class' in request.POST.keys(
-                ) and 'eventitem_id' in request.POST.keys():
+        elif 'set_class' in list(request.POST.keys(
+                )) and 'eventitem_id' in list(request.POST.keys()):
             if request.POST['eventitem_id']:
                 working_class = get_object_or_404(
                     Class,

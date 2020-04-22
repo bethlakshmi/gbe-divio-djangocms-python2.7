@@ -56,13 +56,13 @@ class TestTicketingIndex(TestCase):
                                    bpt_event=not_shown.bpt_event,
                                    cost=123.00)
         response = self.client.get(self.url)
-        assert 'This is the Event Title' in response.content
-        assert str(not_shown.cost) not in response.content
-        assert str(ticket.cost) in response.content
+        self.assertContains(response, 'This is the Event Title')
+        self.assertNotContains(response, str(not_shown.cost))
+        self.assertContains(response, str(ticket.cost))
 
     def test_not_superuser(self):
         response = self.client.get(self.url)
-        assert '<i class="icon-pencil"></i>' not in response.content
+        self.assertNotContains(response, '<i class="icon-pencil"></i>')
 
     def test_edit_for_superuser(self):
         superuser = User.objects.create_superuser('ticketing_editor',
@@ -70,7 +70,7 @@ class TestTicketingIndex(TestCase):
                                                   'secret')
         login_as(superuser, self)
         response = self.client.get(self.url)
-        assert '<i class="icon-pencil"></i>' in response.content
+        self.assertContains(response, '<i class="icon-pencil"></i>')
 
     def test_two_prices_one_event(self):
         second_ticket = TicketItemFactory(bpt_event=self.ticket.bpt_event,

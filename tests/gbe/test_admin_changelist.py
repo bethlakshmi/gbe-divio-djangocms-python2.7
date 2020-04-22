@@ -17,7 +17,7 @@ from tests.factories.gbe_factories import(
 from django.contrib.admin.sites import AdminSite
 
 
-class GBEChangeListTests(TestCase):
+class GBEAdminChangeListTests(TestCase):
     def setUp(self):
         self.client = Client()
         password = 'mypassword'
@@ -31,20 +31,20 @@ class GBEChangeListTests(TestCase):
         obj = VolunteerInterestFactory()
         response = self.client.get('/admin/gbe/volunteerinterest/',
                                    follow=True)
-        assert str(obj.volunteer.b_conference) in response.content
+        self.assertContains(response, obj.volunteer.b_conference)
 
     def test_get_volunteer_window_conference(self):
         obj = VolunteerWindowFactory()
         response = self.client.get('/admin/gbe/volunteerwindow/', follow=True)
-        assert str(obj.day.conference) in response.content
+        self.assertContains(response, obj.day.conference)
 
     def test_get_event_subclass(self):
         obj = GenericEventFactory()
         response = self.client.get('/admin/gbe/event/', follow=True)
-        assert "GenericEvent" in response.content
+        self.assertContains(response, "GenericEvent")
 
     def test_get_event_no_subclass(self):
         obj = EventFactory()
         response = self.client.get('/admin/gbe/event/', follow=True)
-        assert "Event" in response.content
-        assert str(obj) in response.content
+        self.assertContains(response, "Event")
+        self.assertContains(response, str(obj))

@@ -138,11 +138,11 @@ class TestManageVolunteerWizard(TestCase):
         self.assertContains(
             response,
             '<input type="text" name="e_title" value="New Volunteer ' +
-            'Opportunity" required id="id_e_title" maxlength="128" />')
+            'Opportunity" maxlength="128" required id="id_e_title" />')
         self.assertContains(
             response,
             '<input type="checkbox" name="approval" ' +
-            'checked id="id_approval" />')
+            'id="id_approval" checked />')
 
     def test_create_opportunity_for_staff_area(self):
         staff_context = StaffAreaContext(conference=self.context.conference)
@@ -180,11 +180,11 @@ class TestManageVolunteerWizard(TestCase):
         self.assertContains(
             response,
             '<input type="text" name="e_title" value="New Volunteer ' +
-            'Opportunity" required id="id_e_title" maxlength="128" />')
+            'Opportunity" maxlength="128" required id="id_e_title" />')
         self.assertContains(
             response,
             '<input type="checkbox" name="approval" ' +
-            'checked id="id_approval" />')
+            'id="id_approval" checked />')
 
     def test_create_opportunity_bad_parent(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -254,11 +254,11 @@ class TestManageVolunteerWizard(TestCase):
             self.assertContains(
                 response,
                 '<input type="checkbox" name="approval" ' +
-                '%sid="id_approval" />' % checked)
+                'id="id_approval" %s/>' % checked)
             self.assertContains(
                 response,
                 ('<input type="text" name="e_title" value="%s" ' +
-                 'required id="id_e_title" maxlength="128" />') % (
+                 'maxlength="128" required id="id_e_title" />') % (
                  opp.child_event.eventitem.child().e_title))
             if opp.child_event != self.context.opp_event:
                 self.assertRedirects(
@@ -293,7 +293,7 @@ class TestManageVolunteerWizard(TestCase):
         self.assertContains(
             response,
             '<input type="text" name="e_title" value="Modify Volunteer ' +
-            'Opportunity" required id="id_e_title" maxlength="128" />')
+            'Opportunity" maxlength="128" required id="id_e_title" />')
 
     def test_edit_opportunity_change_room(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -330,7 +330,7 @@ class TestManageVolunteerWizard(TestCase):
         self.assertContains(
             response,
             '<input type="text" name="e_title" value="Modify Volunteer ' +
-            'Opportunity" required id="id_e_title" maxlength="128" />')
+            'Opportunity" maxlength="128" required id="id_e_title" />')
         self.assertContains(
             response,
             '<ul class="errorlist"><li>This field is required.</li></ul>')

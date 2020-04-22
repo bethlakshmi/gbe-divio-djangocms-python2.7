@@ -99,7 +99,7 @@ class TestManageWorker(TestCase):
         self.assertContains(
             response,
             '<input type="text" name="label" value="' + notes +
-            '" id="id_label" maxlength="100" />')
+            '" maxlength="100" id="id_label" />')
         self.assertContains(
             response,
             '<form method="POST" action="%s' % (reverse(

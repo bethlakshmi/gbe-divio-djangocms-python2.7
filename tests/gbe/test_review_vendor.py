@@ -40,7 +40,7 @@ class TestReviewVendor(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_vendor_past_conference(self):
         conference = ConferenceFactory(status='completed')
@@ -53,8 +53,8 @@ class TestReviewVendor(TestCase):
         self.assertRedirects(
             response,
             reverse('vendor_view', urlconf='gbe.urls', args=[vendor.pk]))
-        self.assertTrue('Bid Information' in response.content)
-        self.assertFalse('Review Information' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertNotContains(response, 'Review Information')
 
     def test_review_vendor_post_valid_form(self):
         vendor = VendorFactory(accepted=1)
@@ -69,7 +69,7 @@ class TestReviewVendor(TestCase):
 
         response = self.client.post(url, data, follow=True)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("Bid Information" in response.content)
+        self.assertContains(response, "Bid Information")
 
     def test_review_vendor_post_invalid_form(self):
         vendor = VendorFactory(accepted=1)
@@ -84,7 +84,7 @@ class TestReviewVendor(TestCase):
                 'evaluator': self.privileged_profile.pk}
         response = self.client.post(url, data, follow=True)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("Bid Information" in response.content)
+        self.assertContains(response, "Bid Information")
 
     def test_review_vendor_all_well_vendor_coordinator(self):
         vendor = VendorFactory()
@@ -94,7 +94,7 @@ class TestReviewVendor(TestCase):
                       urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_coordinator_sees_control(self):
         vendor = VendorFactory()
@@ -104,7 +104,8 @@ class TestReviewVendor(TestCase):
                       urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        assert '<option value="Featured">Featured</option>' in response.content
+        self.assertContains(response,
+                            '<option value="Featured">Featured</option>')
 
     def test_no_login_gives_error(self):
         url = reverse(self.view_name, args=[1], urlconf="gbe.urls")

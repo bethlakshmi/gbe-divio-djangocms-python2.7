@@ -44,7 +44,7 @@ class TestReviewVendorList(TestCase):
         response = self.client.get(url)
 
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
 
     def test_review_vendor_bad_user(self):
         url = reverse('vendor_review',
@@ -69,8 +69,8 @@ class TestReviewVendorList(TestCase):
             data={'conf_slug': self.conference.conference_slug})
 
         nt.assert_equal(200, response.status_code)
-        assert all([vendor.b_title in response.content
-                    for vendor in self.vendors])
+        for vendor in self.vendors:
+            self.assertContains(response, vendor.b_title)
 
     def test_review_vendor_inactive_user(self):
         self.vendors = VendorFactory(
@@ -81,4 +81,4 @@ class TestReviewVendorList(TestCase):
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        self.assertIn('bid-table danger', response.content)
+        self.assertContains(response, 'bid-table danger')

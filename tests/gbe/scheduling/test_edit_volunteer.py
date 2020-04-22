@@ -204,12 +204,12 @@ class TestEditVolunteer(TestCase):
             'name="max_volunteer" value="3" required id="id_max_volunteer" />')
         self.assertContains(
             response,
-            'name="duration" value="2.5" max="12" step="any" ' +
-            'required id="id_duration" min="0.5" />')
+            'name="duration" value="2.5" min="0.5" max="12" step="any" ' +
+            'required id="id_duration" />')
         self.assertContains(
             response,
-            '<input type="checkbox" name="approval" checked ' +
-            'id="id_approval" />')
+            '<input type="checkbox" name="approval" ' +
+            'id="id_approval" checked />')
 
     def test_auth_user_bad_schedule_assign(self):
         login_as(self.privileged_user, self)
@@ -257,8 +257,8 @@ class TestEditVolunteer(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<input type="checkbox" name="approval" checked ' +
-            'id="id_approval" />')
+            '<input type="checkbox" name="approval" ' +
+            'id="id_approval" checked />')
         self.assertContains
 
     def test_inactive_user_not_listed(self):
@@ -272,5 +272,5 @@ class TestEditVolunteer(TestCase):
                       args=[staff_context.conference.conference_slug,
                             volunteer_sched_event.pk])
         response = self.client.get(url)
-        self.assertNotIn(str(inactive_persona), response.content)
-        self.assertNotIn(str(inactive_persona.contact), response.content)
+        self.assertNotContains(response, str(inactive_persona))
+        self.assertNotContains(response, str(inactive_persona.contact))

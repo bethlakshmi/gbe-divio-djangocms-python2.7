@@ -21,7 +21,7 @@ class Conference(Model):
                           max_length=50,
                           default='normal')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.conference_name
 
     @classmethod

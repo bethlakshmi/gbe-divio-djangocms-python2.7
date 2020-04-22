@@ -254,7 +254,7 @@ class Profile(WorkerItem):
             f = lambda a: not a.is_current
         else:
             f = lambda a: a.is_current
-        return filter(f, acts)
+        return list(filter(f, acts))
 
     def get_shows(self):
         from gbe.models import Show  # late import, circularity
@@ -277,8 +277,7 @@ class Profile(WorkerItem):
         '''
         events = self.schedule
         if conference:
-            conf_events = filter(
-                lambda x: x.eventitem.get_conference() == conference, events)
+            conf_events = [x for x in events if x.eventitem.get_conference() == conference]
         else:
             conf_events = events
         return conf_events
@@ -370,7 +369,7 @@ class Profile(WorkerItem):
             f = lambda v: not v.is_current
         else:
             f = lambda v: v.is_current
-        return filter(f, vendors)
+        return list(filter(f, vendors))
 
     def proposed_classes(self, historical=False):
         classes = sum([list(teacher.is_teaching.all())
@@ -379,7 +378,7 @@ class Profile(WorkerItem):
             f = lambda c: not c.is_current
         else:
             f = lambda c: c.is_current
-        classes = filter(f, classes)
+        classes = list(filter(f, classes))
         return classes
 
     def has_role_in_event(self, role, event):
@@ -426,7 +425,7 @@ class Profile(WorkerItem):
     def describe(self):
         return self.display_name
 
-    def __unicode__(self):
+    def __str__(self):
         return self.display_name
 
     class Meta:

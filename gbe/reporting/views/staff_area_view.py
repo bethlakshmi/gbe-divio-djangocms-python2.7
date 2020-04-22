@@ -17,10 +17,10 @@ def staff_area_view(request, parent_type, target):
     viewer_profile = validate_perms(request, 'any', require=True)
     other = "Potential"
     roles = []
-    if 'filter' in request.GET.keys() and (
+    if 'filter' in list(request.GET.keys()) and (
             request.GET['filter'] == "Potential"):
         other = "Committed"
-    for role, commit in role_commit_map.items():
+    for role, commit in list(role_commit_map.items()):
         if commit[0] == 1 or (
                 commit[0] > 0 and commit[0] < 4 and other == "Committed"):
             roles += [role]
@@ -36,7 +36,7 @@ def staff_area_view(request, parent_type, target):
             area.slug])
         conference = area.conference
         if area.conference.status != 'completed':
-            edit_link = reverse("edit_staff", 
+            edit_link = reverse("edit_staff",
                                 urlconf='gbe.scheduling.urls',
                                 args=[area.pk])
     elif parent_type == "event":
@@ -47,9 +47,10 @@ def staff_area_view(request, parent_type, target):
                 parent_event_id=parent_response.occurrences[0].pk)
             conference = area.confitem.e_conference
             if conference.status != 'completed':
-                edit_link = reverse("edit_event", 
-                                urlconf='gbe.scheduling.urls',
-                                args=[conference.conference_slug, area.pk])
+                edit_link = reverse(
+                    "edit_event",
+                    urlconf='gbe.scheduling.urls',
+                    args=[conference.conference_slug, area.pk])
 
     if opps_response:
         show_general_status(request, opps_response, "staff_area")

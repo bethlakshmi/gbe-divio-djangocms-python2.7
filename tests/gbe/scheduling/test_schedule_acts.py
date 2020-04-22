@@ -49,7 +49,7 @@ class TestScheduleActs(TestCase):
 
     def assert_good_form_display(self, response):
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('<ul class="errorlist">', response.content)
+        self.assertNotIn(b'<ul class="errorlist">', response.content)
         for act in self.context.acts:
             self.assertContains(response, act.b_title)
             self.assertContains(response, str(act.performer))
@@ -114,7 +114,7 @@ class TestScheduleActs(TestCase):
         self.context.book_act(act=inactive_act)
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
-        self.assertIn('bgcolor="red"', response.content)
+        self.assertIn(b'bgcolor="red"', response.content)
 
     def test_good_user_get_two_shows_same_title(self):
         ShowFactory(e_title=self.context.show.e_title)
@@ -127,8 +127,8 @@ class TestScheduleActs(TestCase):
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('<ul class="errorlist">', response.content)
-        self.assertIn('Performer', response.content)
+        self.assertNotIn(b'<ul class="errorlist">', response.content)
+        self.assertIn(b'Performer', response.content)
 
     def test_good_user_get_w_waitlist(self):
         wait_act = ActFactory(accepted=2,
@@ -220,4 +220,4 @@ class TestScheduleActs(TestCase):
         not_this_conf_show = ShowFactory()
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
-        assert not_this_conf_show.e_title not in response.content
+        self.assertNotContains(response, not_this_conf_show.e_title)

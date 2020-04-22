@@ -42,11 +42,8 @@ class Biddable(Model):
         verbose_name_plural = "biddable items"
         app_label = "gbe"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.b_title
-
-    def typeof(self):
-        return self.__class__
 
     @property
     def ready_for_review(self):

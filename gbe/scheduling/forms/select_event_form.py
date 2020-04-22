@@ -17,7 +17,7 @@ class SelectEventForm(Form):
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
     calendar_type = MultipleChoiceField(
-        choices=calendar_type_options.items(),
+        choices=list(calendar_type_options.items()),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
     staff_area = ModelMultipleChoiceField(
@@ -33,7 +33,7 @@ class HiddenSelectEventForm(Form):
         widget=MultipleHiddenInput(),
         required=False)
     calendar_type = MultipleChoiceField(
-        choices=calendar_type_options.items(),
+        choices=list(calendar_type_options.items()),
         widget=MultipleHiddenInput(),
         required=False)
     staff_area = ModelMultipleChoiceField(

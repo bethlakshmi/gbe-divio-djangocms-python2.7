@@ -178,14 +178,14 @@ class TestIndex(TestCase):
         url = reverse('home', urlconf="gbe.urls")
         login_as(UserFactory(), self)
         response = self.client.get(url)
-        nt.assert_true("Your Expo" in response.content)
+        self.assertContains(response, "Your Expo")
 
     def test_landing_page_path(self):
         '''Basic test of landing_page view
         '''
         response = self.get_landing_page()
         self.assertEqual(response.status_code, 200)
-        content = response.content
+        content = str(response.content, 'utf-8')
         does_not_show_previous = (
             self.previous_act.b_title not in content and
             self.previous_class.b_title not in content and
@@ -213,7 +213,7 @@ class TestIndex(TestCase):
         response = self.client.get(
             url,
             data={'historical': 1})
-        content = response.content
+        content = str(response.content, 'utf-8')
         self.assertEqual(response.status_code, 200)
         shows_all_previous = (
             self.previous_act.b_title in content and
@@ -244,7 +244,7 @@ class TestIndex(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        nt.assert_true("You are viewing a" in response.content)
+        self.assertContains(response, "You are viewing a")
 
     def test_acts_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
@@ -254,7 +254,7 @@ class TestIndex(TestCase):
                          b_conference=self.current_conf)
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
-        nt.assert_true(act.b_title in response.content)
+        self.assertContains(response, act.b_title)
 
     def test_act_was_reviewed(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
@@ -277,7 +277,7 @@ class TestIndex(TestCase):
                              e_conference=self.current_conf)
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
-        nt.assert_true(klass.b_title in response.content)
+        self.assertContains(response, klass.b_title)
 
     def test_volunteers_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
@@ -288,7 +288,7 @@ class TestIndex(TestCase):
 
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
-        nt.assert_true(volunteer.b_title in response.content)
+        self.assertContains(response, volunteer.b_title)
 
     def test_vendors_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
@@ -299,7 +299,7 @@ class TestIndex(TestCase):
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
 
-        nt.assert_true(vendor.b_title in response.content)
+        self.assertContains(response, vendor.b_title)
 
     def test_costumes_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
@@ -310,7 +310,7 @@ class TestIndex(TestCase):
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
 
-        assert costume.b_title in response.content
+        self.assertContains(response, costume.b_title)
 
     def test_profile_image(self):
         set_image(self.performer)
@@ -325,7 +325,7 @@ class TestIndex(TestCase):
         url = reverse("home", urlconf="gbe.urls")
         login_as(member.performer_profile, self)
         response = self.client.get(url)
-        assert response.content.count("(Click to edit)") == 1
+        self.assertContains(response, "(Click to edit)", 1)
 
     def test_review_act_w_troupe(self):
         # causes a check on act complete state that is different from soloist
@@ -338,7 +338,7 @@ class TestIndex(TestCase):
         login_as(member.performer_profile, self)
         url = reverse("home", urlconf="gbe.urls")
         response = self.client.get(url)
-        assert act.b_title in response.content
+        self.assertContains(response, act.b_title)
 
     def test_two_acts_one_show(self):
         '''Basic test of landing_page view
@@ -408,7 +408,6 @@ class TestIndex(TestCase):
         response = self.client.get(
             url,
             data={'historical': 1})
-        content = response.content
         for person in interested:
             self.assertNotContains(
                 response,

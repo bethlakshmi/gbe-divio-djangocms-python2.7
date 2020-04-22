@@ -44,7 +44,7 @@ from scheduler.data_transfer import Person
 @log_func
 @never_cache
 def LandingPageView(request, profile_id=None, historical=False):
-    historical = "historical" in request.GET.keys()
+    historical = "historical" in list(request.GET.keys())
     standard_context = {}
     standard_context['events_list'] = Event.objects.all()[:5]
     if (profile_id):

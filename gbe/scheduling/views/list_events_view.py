@@ -74,12 +74,12 @@ class ListEventsView(View):
         event_types = dict(event_options)
         class_types = dict(class_options)
 
-        if event_type in map(lambda x: x.lower(), event_types.keys()):
+        if event_type in [x.lower() for x in list(event_types.keys())]:
             items = GenericEvent.objects.filter(
                 type__iexact=event_type,
                 visible=True,
                 e_conference=self.conference).order_by('e_title')
-        elif event_type.title() in class_types.keys():
+        elif event_type.title() in list(class_types.keys()):
             items = Class.objects.filter(
                 accepted='3',
                 visible=True,

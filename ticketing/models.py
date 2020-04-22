@@ -17,7 +17,7 @@ class BrownPaperSettings(models.Model):
     client_username = models.CharField(max_length=30)
     last_poll_time = models.DateTimeField()
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Settings:  %s (%s) - %s' % (self.developer_token,
                                             self.client_username,
                                             self.last_poll_time)
@@ -59,7 +59,7 @@ class BrownPaperEvents(models.Model):
     title = models.CharField(max_length=50, blank=True, null=True)
     display_icon = models.CharField(max_length=50, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.bpt_event_id
 
     @property
@@ -119,7 +119,7 @@ class TicketItem(models.Model):
     live = models.BooleanField(default=False)
     has_coupon = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s %s' % (self.ticket_id, self.title)
 
     @property
@@ -153,7 +153,7 @@ class Purchaser(models.Model):
 
     matched_to_user = models.ForeignKey(User, default=None)
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return str(self.matched_to_user)
         except:
@@ -181,7 +181,7 @@ class Purchaser(models.Model):
         return not self.__eq__(other)
 
     def get_badge_name(self):
-        return unicode(
+        return str(
             self.first_name.capitalize() + " " + self.last_name.capitalize())
 
 
@@ -202,7 +202,7 @@ class Transaction(models.Model):
     payment_source = models.CharField(max_length=30)
     import_date = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.reference, self.purchaser)
 
 
@@ -215,8 +215,8 @@ class CheckListItem(models.Model):
     '''
     description = models.CharField(max_length=50, unique=True)
 
-    def __unicode__(self):
-        return unicode(self.description)
+    def __str__(self):
+        return str(self.description)
 
 
 class EligibilityCondition(models.Model):
@@ -262,9 +262,8 @@ class TicketingEligibilityCondition(EligibilityCondition):
     tickets = models.ManyToManyField(TicketItem,
                                      blank=False)
 
-    def __unicode__(self):
-        unicode_string = ""
-        return ", ".join(unicode(tic) for tic in self.tickets.all())
+    def __str__(self):
+        return ", ".join(str(tic) for tic in self.tickets.all())
 
 
 class RoleEligibilityCondition(EligibilityCondition):
@@ -278,8 +277,8 @@ class RoleEligibilityCondition(EligibilityCondition):
     role = models.CharField(max_length=25,
                             choices=role_options)
 
-    def __unicode__(self):
-        return unicode(self.role)
+    def __str__(self):
+        return str(self.role)
 
 
 class Exclusion(models.Model):
@@ -308,9 +307,8 @@ class TicketingExclusion(Exclusion):
     tickets = models.ManyToManyField(TicketItem,
                                      blank=False)
 
-    def __unicode__(self):
-        unicode_string = ""
-        return ", ".join(unicode(tic) for tic in self.tickets.all())
+    def __str__(self):
+        return ", ".join(str(tic) for tic in self.tickets.all())
 
     def is_excluded(self, held_tickets):
         '''
@@ -340,11 +338,11 @@ class RoleExclusion(Exclusion):
                             choices=role_options)
     event = models.ForeignKey('gbe.Event', blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         describe = self.role
         if self.event:
             describe += ", " + str(self.event)
-        return unicode(describe)
+        return str(describe)
 
     def is_excluded(self, profile, conference):
         '''

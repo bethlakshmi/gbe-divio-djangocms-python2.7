@@ -38,7 +38,7 @@ class TestCreateCostume(TestCase):
 
     def get_costume_form(self, submit=False, invalid=False):
         picture = SimpleUploadedFile("file.jpg",
-                                     "file_content",
+                                     b"file_content",
                                      content_type="image/jpg")
         form = {'b_title': 'A costume',
                 'creator': 'A creator',
@@ -79,7 +79,7 @@ class TestCreateCostume(TestCase):
         data = self.get_costume_form(invalid=True)
         response = self.client.post(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Displaying a Costume' in response.content)
+        self.assertContains(response, 'Displaying a Costume')
 
     def test_costume_bid_post_with_submit(self):
         '''costume_bid, submitting and no other problems,
@@ -87,7 +87,7 @@ class TestCreateCostume(TestCase):
         response, data = self.post_costume_submission()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        self.assertTrue("Your Account" in response.content)
+        self.assertContains(response, "Your Account")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['b_title'])
 
@@ -97,7 +97,7 @@ class TestCreateCostume(TestCase):
         response, data = self.post_costume_draft()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        self.assertTrue("Your Account" in response.content)
+        self.assertContains(response, "Your Account")
         self.assertContains(response, "(Click to edit)")
         self.assertContains(response, data['b_title'])
 
@@ -108,7 +108,7 @@ class TestCreateCostume(TestCase):
         login_as(self.performer.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue('Displaying a Costume' in response.content)
+        self.assertContains(response, 'Displaying a Costume')
 
     def test_costume_bid_no_persona(self):
         url = reverse(self.view_name,
@@ -126,13 +126,13 @@ class TestCreateCostume(TestCase):
         data = self.get_costume_form(submit=False, invalid=True)
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(200, response.status_code)
-        self.assertTrue('Displaying a Costume' in response.content)
-        self.assertFalse(other_performer.name in response.content)
+        self.assertContains(response, 'Displaying a Costume')
+        self.assertNotContains(response, other_performer.name)
         current_user_selection = '<option value="%d">%s</option>'
         persona_id = self.performer.pk
         selection_string = current_user_selection % (persona_id,
                                                      self.performer.name)
-        self.assertTrue(selection_string in response.content)
+        self.assertContains(response, selection_string)
 
     def test_costume_submit_make_message(self):
         response, data = self.post_costume_submission()

@@ -46,7 +46,7 @@ class TestCreateTroupe(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(self.troupe_string in response.content)
+        self.assertContains(response, self.troupe_string)
 
     def test_create_troupe_no_inactive_users(self):
         contact = PersonaFactory()
@@ -55,8 +55,8 @@ class TestCreateTroupe(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(str(contact), response.content)
-        self.assertNotIn(str(inactive), response.content)
+        self.assertContains(response, str(contact))
+        self.assertNotContains(response, str(inactive))
 
 
 class TestEditTroupe(TestCase):
@@ -181,7 +181,7 @@ class TestEditTroupe(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Tell Us About Your Troupe')
         expected_string = "Enter a whole number."
-        self.assertTrue(expected_string in response.content)
+        self.assertContains(response, expected_string)
 
     def test_update_profile_make_message(self):
         response, data = self.submit_troupe()

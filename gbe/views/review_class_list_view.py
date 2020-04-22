@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from gbe.models import Class
-from review_bid_list_view import ReviewBidListView
+from gbe.views import ReviewBidListView
 
 
 class ReviewClassListView(ReviewBidListView):

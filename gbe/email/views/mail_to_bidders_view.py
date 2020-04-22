@@ -39,7 +39,8 @@ class MailToBiddersView(MailToFilterView):
         for priv in priv_list:
             self.bid_type_choices += [(priv.title(), priv.title())]
             initial_bid_choices += [priv.title()]
-        if 'filter' in request.POST.keys() or 'send' in request.POST.keys():
+        if 'filter' in list(request.POST.keys()) or 'send' in list(
+                request.POST.keys()):
             self.select_form = SelectBidderForm(
                 request.POST,
                 prefix="email-select",

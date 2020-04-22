@@ -9,7 +9,7 @@ from tests.factories.gbe_factories import (
 from tests.functions.gbe_functions import login_as
 
 
-class TestViewAct(TestCase):
+class TestViewSummerAct(TestCase):
     '''Tests for view_act view'''
     view_name = 'summer_act_view'
 
@@ -26,7 +26,7 @@ class TestViewAct(TestCase):
         response = self.client.get(url)
         test_string = 'The Summer Act'
         nt.assert_equal(response.status_code, 200)
-        nt.assert_true(test_string in response.content)
+        self.assertContains(response, test_string)
 
     def test_edit_bid_w_redirect(self):
         '''edit_bid, not post, should take us to edit process'''

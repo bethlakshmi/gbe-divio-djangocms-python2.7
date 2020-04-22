@@ -81,8 +81,8 @@ class TestReviewAct(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
-        self.assertTrue('Review Information' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Review Information')
 
     def test_hidden_fields_are_populated(self):
         login_as(self.privileged_user, self)
@@ -113,7 +113,7 @@ class TestReviewAct(TestCase):
         self.assertRedirects(
             response,
             reverse('act_view', urlconf='gbe.urls', args=[act.pk]))
-        self.assertTrue('Review Bids' in response.content)
+        self.assertContains(response, 'Review Bids')
 
     def test_review_act_non_privileged_user(self):
         login_as(ProfileFactory(), self)
@@ -167,7 +167,7 @@ class TestReviewAct(TestCase):
         self.assertEqual(response.status_code, 200)
         error_string = default_act_review_error_msg % (
             act.b_title)
-        self.assertTrue(error_string in response.content)
+        self.assertContains(response, error_string)
 
     def test_review_act_load_existing_review(self):
         evaluation = FlexibleEvaluationFactory(
@@ -181,7 +181,7 @@ class TestReviewAct(TestCase):
 
         response = self.client.get(url)
         chosen_item = ('<input type="radio" name="%d-ranking" value="%d" ' +
-                       'checked id="id_%d-ranking_%d" />')
+                       'id="id_%d-ranking_%d" checked />')
         test_result = chosen_item % (evaluation.category.pk,
                                      evaluation.ranking,
                                      evaluation.category.pk,
@@ -389,8 +389,8 @@ class TestReviewAct(TestCase):
     def test_video_choice_display(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        assert 'Video Notes:' in response.content
-        assert video_options[1][1] not in response.content
+        self.assertContains(response, 'Video Notes:')
+        self.assertNotContains(response, video_options[1][1])
 
     def test_review_summer_act(self):
         act = ActFactory(b_conference__act_style="summer")
@@ -400,7 +400,7 @@ class TestReviewAct(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('The Summer Act' in response.content)
+        self.assertContains(response, 'The Summer Act')
 
     def test_review_default_role_present(self):
         response = self.get_act_w_roles(self.act)

@@ -97,7 +97,7 @@ class TestMailToRoles(TestCase):
         self.assertContains(response, "Email Everyone")
 
     def test_reduced_login_first_get(self):
-        for priv, roles in role_option_privs.iteritems():
+        for priv, roles in role_option_privs.items():
             limited_profile = ProfileFactory()
             grant_privilege(limited_profile.user_object,
                             priv)

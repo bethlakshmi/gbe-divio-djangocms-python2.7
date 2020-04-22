@@ -48,7 +48,7 @@ class TestMakeBid(TestCase):
         login_as(self.performer.performer_profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(self.conference.conference_name in response.content)
+        self.assertContains(response, self.conference.conference_name)
 
     def test_class_posting_sends_mail_to_reviewers(self):
         privileged_profile = ProfileFactory()

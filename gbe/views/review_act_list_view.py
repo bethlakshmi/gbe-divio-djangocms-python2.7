@@ -5,7 +5,7 @@ from gbe.models import (
     EvaluationCategory,
     FlexibleEvaluation,
 )
-from review_bid_list_view import ReviewBidListView
+from gbe.views import ReviewBidListView
 from django.db.models import Avg
 
 

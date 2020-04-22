@@ -40,7 +40,7 @@ class Volunteer(Biddable):
         related_name="unavailablewindow_set",
         blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.profile.display_name
 
     @property
@@ -75,9 +75,9 @@ class Volunteer(Biddable):
         availability_string = ''
         unavailability_string = ''
         for window in self.available_windows.all():
-            availability_string += unicode(window) + ', \n'
+            availability_string += str(window) + ', \n'
         for window in self.unavailable_windows.all():
-            unavailability_string += unicode(window) + ', \n'
+            unavailability_string += str(window) + ', \n'
 
         commitments = ''
 

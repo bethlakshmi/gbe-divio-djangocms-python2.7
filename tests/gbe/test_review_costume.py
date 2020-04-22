@@ -44,7 +44,7 @@ class TestReviewCostume(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')
         self.assertContains(response, self.performer.name)
         self.assertNotContains(response, other_performer.name)
 
@@ -60,8 +60,8 @@ class TestReviewCostume(TestCase):
             reverse('costume_view',
                     urlconf='gbe.urls',
                     args=[costume.pk]))
-        self.assertTrue('Bid Information' in response.content)
-        self.assertFalse('Review Information' in response.content)
+        self.assertContains(response, 'Bid Information')
+        self.assertNotContains(response, 'Review Information')
 
     def test_no_login_redirects_to_login(self):
         url = reverse(self.view_name, args=[1], urlconf="gbe.urls")
@@ -90,7 +90,7 @@ class TestReviewCostume(TestCase):
         title_string = ("Bid Information for %s" %
                         bid.b_conference.conference_name)
         html_title = html_tag % title_string
-        assert html_title in response.content
+        self.assertContains(response, html_title)
 
     def test_review_costume_no_performer(self):
         costume = CostumeFactory()
@@ -98,4 +98,4 @@ class TestReviewCostume(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Bid Information' in response.content)
+        self.assertContains(response, 'Bid Information')

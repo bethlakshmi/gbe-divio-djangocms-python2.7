@@ -25,9 +25,9 @@ class TicketingChangeListTests(TestCase):
     def test_get_ticketitem_active(self):
         ticket = TicketItemFactory(live=True, has_coupon=False)
         response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
-        assert "True" in response.content
+        self.assertContains(response, "True")
 
     def test_get_eventcontainer_conference(self):
         ticket = TicketItemFactory()
         response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
-        assert str(ticket.bpt_event.conference) in response.content
+        self.assertContains(response, str(ticket.bpt_event.conference))

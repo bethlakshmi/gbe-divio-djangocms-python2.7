@@ -18,7 +18,7 @@ from tests.factories.gbe_factories import (
 )
 from tests.functions.gbe_functions import location
 from mock import patch, Mock
-import urllib2
+import urllib
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 
@@ -34,7 +34,7 @@ class TestProcessBPTOrderList(TestCase):
 
         self.assertEqual(process_bpt_order_list(), 0)
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_limbo(self, m_urlopen):
         '''
            get a transaction for the limbo user
@@ -67,7 +67,7 @@ class TestProcessBPTOrderList(TestCase):
         self.assertEqual(transaction.purchaser.first_name, 'John')
         self.assertEqual(transaction.purchaser.last_name, 'Smith')
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_purchase_email(self, m_urlopen):
         '''
            get a transaction for a real user via the purchase_email
@@ -102,7 +102,7 @@ class TestProcessBPTOrderList(TestCase):
         self.assertEqual(transaction.purchaser.last_name, 'Smith')
         profile.user_object.delete()
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_purchase_email_case_mismatch(self, m_urlopen):
         '''
            get a transaction for a real user via the purchase_email
@@ -137,7 +137,7 @@ class TestProcessBPTOrderList(TestCase):
         self.assertEqual(transaction.purchaser.last_name, 'Smith')
         profile.user_object.delete()
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_user_by_id(self, m_urlopen):
         '''
            get a transaction for a real user with transaction id match
@@ -176,7 +176,7 @@ class TestProcessBPTOrderList(TestCase):
         self.assertEqual(transaction.purchaser.last_name, 'Smith')
         profile.user_object.delete()
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_fake_out(self, m_urlopen):
         '''
            in a case of user email vs. purchase email, purchase wins.
@@ -212,7 +212,7 @@ class TestProcessBPTOrderList(TestCase):
         self.assertEqual(transaction.purchaser.last_name, 'Smith')
         user.delete()
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_profile(self, m_urlopen):
         '''
            match to a user with no purchase_email, but matching email
@@ -247,7 +247,7 @@ class TestProcessBPTOrderList(TestCase):
         self.assertEqual(transaction.purchaser.last_name, 'Smith')
         user.delete()
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_user(self, m_urlopen):
         '''
            match to a user with no purchase_email, but matching email
@@ -280,7 +280,7 @@ class TestProcessBPTOrderList(TestCase):
         self.assertEqual(transaction.purchaser.last_name, 'Smith')
         user.delete()
 
-    @patch('urllib2.urlopen', autospec=True)
+    @patch('urllib.request.urlopen', autospec=True)
     def test_get_transaction_user_case_mismatch(self, m_urlopen):
         '''
            match to a user with no purchase_email, but matching email
