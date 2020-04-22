@@ -47,7 +47,7 @@ ONSITE_PHONE = ("We need a number to reach you at during the expo. "
 EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
                  "it. <a href=' %s '>Update it now!</a>")
 SCHEDULE_REHEARSAL = ('You need to schedule a rehearsal slot and/or update '
-                      'act tech info for "%s". <a href = " %s ">'
+                      'act tech info for "%s". <a href = "%s">'
                       'Fix this now!</a>')
 
 profile_alerts = {'onsite_phone': ONSITE_PHONE,

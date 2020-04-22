@@ -14,6 +14,7 @@ from tests.factories.gbe_factories import(
     GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
+    TechInfoFactory,
     TroupeFactory,
     UserFactory,
     VendorFactory,
@@ -25,7 +26,6 @@ from tests.factories.scheduler_factories import (
     ResourceAllocationFactory,
     WorkerFactory,
 )
-from tests.contexts import ClassContext
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -35,13 +35,20 @@ from tests.functions.gbe_functions import (
     make_act_app_ticket,
     make_act_app_purchase,
 )
-from tests.contexts import ActTechInfoContext
+from tests.contexts import (
+    ActTechInfoContext,
+    ClassContext,
+)
 from django.utils.formats import date_format
-from gbetext import interested_explain_msg
+from gbetext import (
+    interested_explain_msg,
+    SCHEDULE_REHEARSAL
+)
 from datetime import (
     datetime,
     timedelta,
 )
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class TestIndex(TestCase):
@@ -510,3 +517,50 @@ class TestIndex(TestCase):
             self.profile.user_object.id,
             bpt_event_id))
         self.assertContains(response, "Fee has been paid, submit NOW!")
+
+    def test_act_tech_alert(self):
+        current_act_context = ActTechInfoContext(
+            performer=self.performer,
+            act=self.current_act,
+            conference=self.current_conf,
+            schedule_rehearsal=True)
+        self.current_act.tech.track_artist = ""
+        self.current_act.tech.save()
+        self.current_act.accepted = 3
+        self.current_act.save()
+        bpt_event_id = make_act_app_ticket(self.current_conf)
+        response = self.get_landing_page()
+        self.assertContains(
+            response,
+            SCHEDULE_REHEARSAL % (
+                self.current_act.b_title,
+                reverse('act_tech_wizard',
+                        urlconf='gbe.urls',
+                        args=[self.current_act.id])))
+
+    def test_no_act_tech_alert(self):
+        current_act_context = ActTechInfoContext(
+            performer=self.performer,
+            act=self.current_act,
+            conference=self.current_conf,
+            schedule_rehearsal=True)
+        self.current_act.tech = TechInfoFactory(
+            track_artist="",
+            track=SimpleUploadedFile("file.mp3", b"file_content"),
+            prop_setup="text",
+            starting_position="Onstage",
+            primary_color="text",
+            feel_of_act="text",
+            pronouns="text",
+            introduction_text="text")
+        self.current_act.accepted = 3
+        self.current_act.save()
+        bpt_event_id = make_act_app_ticket(self.current_conf)
+        response = self.get_landing_page()
+        self.assertNotContains(
+            response,
+            SCHEDULE_REHEARSAL % (
+                self.current_act.b_title,
+                reverse('act_tech_wizard',
+                        urlconf='gbe.urls',
+                        args=[self.current_act.id])))
