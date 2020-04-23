@@ -252,11 +252,4 @@ special_menu_tree = [
      'id': 41,
      'groups': ['Act Coordinator',
                 'Scheduling Mavens']},
-    {'title': 'Export',
-     'url': reverse('export_calendar',
-                    urlconf='scheduler.urls'),
-     'parent_id': 40,
-     'id': 47,
-     'groups': ['Class Coordinator',
-                'Scheduling Mavens']},
 ]
