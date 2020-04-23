@@ -51,7 +51,6 @@ class TechInfo(Model):
     def is_complete(self):
         audio_complete = (self.confirm_no_music or
                           (self.track_title and
-                           self.track_artist and
                            self.track))
         return bool(self.duration and
                     self.prop_setup and
