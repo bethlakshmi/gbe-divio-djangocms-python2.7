@@ -91,13 +91,6 @@ class TicketingEligibilityConditionFactory(DjangoModelFactory):
 
     @factory.post_generation
     def tickets(self, create, extracted, **kwargs):
-        if not create:
-            # Simple build, do nothing.
-            self.tickets.add(SubFactory(TicketItemFactory))
-            self.tickets.add(SubFactory(TicketItemFactory))
-            self.tickets.add(SubFactory(TicketItemFactory))
-            return
-
         if extracted:
             # A list of groups were passed in, use them
             for ticket in extracted:
@@ -120,13 +113,6 @@ class TicketingExclusionFactory(DjangoModelFactory):
 
     @factory.post_generation
     def tickets(self, create, extracted, **kwargs):
-        if not create:
-            # Simple build, do nothing.
-            self.tickets.add(SubFactory(TicketItemFactory))
-            self.tickets.add(SubFactory(TicketItemFactory))
-            self.tickets.add(SubFactory(TicketItemFactory))
-            return
-
         if extracted:
             # A list of groups were passed in, use them
             for ticket in extracted:

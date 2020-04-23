@@ -125,25 +125,6 @@ def verify_vendor_app_paid(user_name, conference):
     return vendor_fees_purchased > vendor_apps_submitted
 
 
-def verify_event_paid(user_name, event_id):
-    '''
-    This is extra.  Verifies if a user has paid at least once for a given
-    event.
-    user_name - This is the user name of the user in question.
-    event_id - six digit BPT number that indicates if given user has paid for
-      given event.
-    returns - true if the system recognizes the fee is paid
-    '''
-    for trans in Transaction.objects.all():
-        trans_event = trans.ticket_item.ticket_id.split('-')[0]
-        trans_user_name = trans.purchaser.matched_to_user.username
-
-        if ((str(event_id) == trans_event) and
-                (str(user_name) == trans_user_name)):
-            return True
-    return False
-
-
 def verify_bought_conference(user, conference):
     return TicketItem.objects.filter(
         Q(bpt_event__conference=conference),

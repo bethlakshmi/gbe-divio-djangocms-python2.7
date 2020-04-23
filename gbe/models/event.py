@@ -65,10 +65,6 @@ class Event(EventItem):
         return calendar_for_event[self.__class__.__name__]
 
     @property
-    def get_tickets(self):
-        return []  # self.ticketing_item.all()
-
-    @property
     def is_current(self):
         return self.e_conference.status == "upcoming"
 

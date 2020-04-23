@@ -43,6 +43,23 @@ class TestReviewCostumeList(TestCase):
 
         nt.assert_equal(response.status_code, 200)
         self.assertContains(response, 'Bid Information')
+        for bid in self.costumes:
+            self.assertContains(response, bid.b_title)
+
+    def test_review_costume_w_performer(self):
+        url = reverse(self.view_name, urlconf="gbe.urls")
+        login_as(self.privileged_user, self)
+        costume = CostumeFactory(performer=self.performer,
+                                 b_conference=self.conference,
+                                 submitted=True)
+        response = self.client.get(
+            url,
+            data={'conf_slug': self.conference.conference_slug})
+
+        nt.assert_equal(response.status_code, 200)
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, costume.b_title)
+        self.assertContains(response, self.performer.name)
 
     def test_review_costume_bad_user(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
