@@ -8,7 +8,6 @@ from .profile import Profile
 from .performer import Performer
 from .persona import Persona
 from .troupe import Troupe
-from .combo import Combo
 from .tech_info import TechInfo
 from .biddable import Biddable
 from .biddable import visible_bid_query

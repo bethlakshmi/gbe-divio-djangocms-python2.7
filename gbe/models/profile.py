@@ -217,7 +217,6 @@ class Profile(WorkerItem):
     def get_performers(self):
         performers = self.get_personae()
         performers += self.get_troupes()
-        performers += self.get_combos()
         return performers
 
     def get_personae(self):
@@ -232,16 +231,6 @@ class Profile(WorkerItem):
         for solo in solos:
             performers += solo.troupes.all()
         performers += Troupe.objects.filter(contact=self)
-        perf_set = set(performers)
-        return perf_set
-
-    def get_combos(self):
-        from gbe.models import Combo  # late import, circularity
-        solos = self.personae.all()
-        performers = list()
-        for solo in solos:
-            performers += solo.combos.all()
-        performers += Combo.objects.filter(contact=self)
         perf_set = set(performers)
         return perf_set
 

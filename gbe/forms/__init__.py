@@ -8,7 +8,6 @@ from .user_create_form import UserCreateForm
 
 # performer forms
 from .persona_form import PersonaForm
-from .combo_form import ComboForm
 from .troupe_form import TroupeForm
 
 # proposal/panel forms

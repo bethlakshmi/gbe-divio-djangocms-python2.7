@@ -252,33 +252,8 @@ phone_validation_error_text = (
     'preferred.')
 
 
-combo_form_help_texts = {
-    'contact': ('The person we should contact about this act\'s appearance at '
-                'the Expo. This can be a member of your combo or an agent, '
-                'but whoever it is will be authorized to speak for and make '
-                'decisions for you.'),
-    'name': ('If you leave this blank, it\'ll fill in with the names of the '
-             'performers involved in this act.'),
-    'membership': ('Select the performers who will be on stage with you. If '
-                   'they have not created a persona on the site, you can '
-                   'either create one for them, or just fill in their name '
-                   'in the notes and we\'ll sort it out.'),
-}
-
-
-combo_header_text = '''A combo is a one-off group of performers working \
-    together. If you want to put together an act with someone you don't \
-    usually work with, a combo is probably what you're doing. If you have a \
-    group that performs together regularly, it's probably a \
-    <a href='{% url 'gbe:troupe_create' %}'>troupe</a>. '''
-
-
-troupe_header_text = '''A troupe is an established group of performers \
-    who work together regularly under a collective name. If you are \
-    performing with a group of performers that has a website, mailing \
-    list, or engagements as that group, then you are probably a troupe. \
-    If you want to put something special together just for the Expo, \
-    it's probably a <a href='{% url 'gbe:combo_create' %}'>combo</a>.'''
+troupe_header_text = '''More than 1 person, who will be performing on stage \
+together.'''
 
 event_create_text = {
     'GenericEvent': '''Enter the details for a new event.  A generic event \
@@ -441,9 +416,8 @@ act_help_texts = {
                     'kittens will retrieve costumes and props, but we cannot '
                     'clean the stage after your act. Please do not leave '
                     'anything on the stage (water, glitter, confetti, etc.)'),
-    'performer': ('Select the stage persona, combo, or troupe who will be '
-                  'performing. Hit "create" to create a new persona, troupe, '
-                  'or combo.'),
+    'performer': ('Select the stage persona or troupe who will be performing.'
+                  ' Hit "create" to create a new persona or troupe.'),
     'other_performance': ("Don't feel badly if you're not accepted to perform "
                           "in one of the formal shows. We have a ton of other "
                           "ways to get your performance fix! Indicating that "

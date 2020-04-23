@@ -17,9 +17,6 @@ from tests.functions.gbe_functions import (
 from gbetext import default_edit_troupe_msg
 from gbe.models import UserMessage
 
-# oddly, we can edit troupes even though we can't create them, and we can
-# create combos but we can't edit them. This will have to be looked at.
-
 
 class TestCreateTroupe(TestCase):
     '''Tests for edit_troupe view'''
