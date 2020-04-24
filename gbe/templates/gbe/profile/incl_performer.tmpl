@@ -1,10 +1,10 @@
 <div class='performer_section'>
-  {% if personae or troupes or combos %}
+  {% if personae or troupes %}
     <span class='heading performers'>
       <b>Performer Items</b>
     </span>
   <br>
-    {% if personae or troupes or combos %}
+    {% if personae or troupes %}
       {% for performer in personae %}
         {% with edit_view_name='gbe:persona_edit' view_name='gbe:persona_edit' %}
           {% include 'gbe/profile/incl_performer_block.tmpl' %}
@@ -22,8 +22,5 @@
   <ul class="rightsidebar">
     <li><a href='{% url 'gbe:persona_create' %}'>Create a new stage persona</a><br></li>
     <li><a href='{% url 'gbe:troupe_create' %}'>Create a troupe</a><br></li>
-    {%comment%} take out combo - it's not working
-    <li><a href='{% url 'gbe:combo_create' %}'>Create a combo</a><br></li>
-    {% endcomment%}
   </ul>
 </div>

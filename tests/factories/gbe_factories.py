@@ -111,14 +111,6 @@ class TroupeFactory(DjangoModelFactory):
     experience = 4
 
 
-class ComboFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.Combo
-    contact = SubFactory(ProfileFactory)
-    name = Sequence(lambda n: 'Test Combo %d' % n)
-    experience = 5
-
-
 class TechInfoFactory(DjangoModelFactory):
     class Meta:
         model = conf.TechInfo

@@ -12,8 +12,6 @@ class Troupe(Performer):
     future. This suggests that a troupe should have some sort of legal
     existence, though this is not required for GBE. Further specification
     welcomed.
-    Troupes are distinct from Combos in their semantics, but at this time they
-    share the same behavior.
     '''
     membership = ManyToManyField(Persona,
                                  related_name='troupes')
