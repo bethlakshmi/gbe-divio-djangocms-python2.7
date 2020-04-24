@@ -9,7 +9,6 @@ from gbe.views import (
     CloneBidView,
     ConferenceVolunteerView,
     CostumeChangeStateView,
-    CreateComboView,
     DeleteProfileView,
     EditPersonaView,
     EditProfileView,
@@ -149,8 +148,6 @@ urlpatterns = [
         EditTroupeView, name='troupe_edit'),
     url(r'^troupe/view/(\d+)/?$',
         ViewTroupeView, name='troupe_view'),
-    url(r'^combo/create/?$',
-        CreateComboView, name='combo_create'),
 
     #  volunteers
     url(r'^volunteer/view/(?P<bid_id>\d+)/?$',

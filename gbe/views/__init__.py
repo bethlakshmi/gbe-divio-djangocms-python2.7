@@ -73,6 +73,3 @@ from .handle_user_contact_email_view import HandleUserContactEmailView
 # public views
 from .bios_teachers_view import BiosTeachersView
 from .fashion_faire_view import FashionFaireView
-
-# untested
-from .create_combo_view import CreateComboView

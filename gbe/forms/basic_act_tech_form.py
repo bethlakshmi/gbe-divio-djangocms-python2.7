@@ -78,13 +78,10 @@ class BasicActTechForm(ModelForm):
 
         if not (cleaned_data.get("confirm_no_music") or (
                 cleaned_data.get("track_title") and
-                cleaned_data.get("track_title") and
                 cleaned_data.get("track"))):
             error = ValidationError((
-                'Incomplete Audio Info - please either provide Track '
-                'Title, Artist and the audio file, or confirm that '
-                'there is no music.'),
+                'Incomplete Audio Info - please either provide track title '
+                'and the audio file, or confirm that there is no music.'),
                 code='invalid')
             self.add_error('confirm_no_music', error)
-
         return cleaned_data

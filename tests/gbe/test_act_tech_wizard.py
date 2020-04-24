@@ -41,7 +41,7 @@ class TestActTechWizard(TestCase):
     def get_full_post(self, file=None):
         data = {
             'track_title': 'track title',
-            'track_artist': 'artist',
+            'track_artist': '',
             'confirm_no_music': 0,
             'duration': '00:04:10',
             'prop_setup': "I will leave props or set pieces on-stage that " +
@@ -61,7 +61,7 @@ class TestActTechWizard(TestCase):
             data['track'] = file
         return data
 
-    def check_second_stage(self, response, artist, title, selected_rehearsal):
+    def check_second_stage(self, response, title, selected_rehearsal):
         self.assertContains(response, "Change Rehearsal")
         assert_option_state(
             response,
@@ -69,7 +69,6 @@ class TestActTechWizard(TestCase):
             date_format(selected_rehearsal.starttime, "TIME_FORMAT"),
             True)
         self.assertContains(response, "Provide Technical Information")
-        self.assertContains(response, artist)
         self.assertContains(response, title)
         self.assertContains(
             response,
@@ -189,7 +188,6 @@ class TestActTechWizard(TestCase):
             date_format(context.rehearsal.starttime, "TIME_FORMAT"),
             True)
         self.check_second_stage(response,
-                                context.act.tech.track_artist,
                                 context.act.tech.track_title,
                                 context.rehearsal)
         self.assertContains(response,
@@ -218,7 +216,6 @@ class TestActTechWizard(TestCase):
             date_format(context.rehearsal.starttime, "TIME_FORMAT"),
             True)
         self.check_second_stage(response,
-                                context.act.tech.track_artist,
                                 context.act.tech.track_title,
                                 context.rehearsal)
         self.assertContains(
@@ -296,7 +293,6 @@ class TestActTechWizard(TestCase):
         self.assertContains(response,
                             'name="%d-booking_id"' % context.sched_event.pk)
         self.check_second_stage(response,
-                                context.act.tech.track_artist,
                                 context.act.tech.track_title,
                                 extra_rehearsal)
         self.assertContains(
@@ -374,14 +370,12 @@ class TestActTechWizard(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.check_second_stage(response,
-                                data['track_artist'],
                                 data['track_title'],
                                 context.rehearsal)
         self.assertContains(
             response,
-            'Incomplete Audio Info - please either provide Track '
-            'Title, Artist and the audio file, or confirm that '
-            'there is no music.')
+            'Incomplete Audio Info - please either provide track '
+            'title and the audio file, or confirm that there is no music.')
         self.assertNotContains(response,
                                "Advanced Technical Information (Optional)")
 
