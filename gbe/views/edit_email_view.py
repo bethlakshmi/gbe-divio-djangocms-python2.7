@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from gbe_logging import log_func
-from gbe.forms import EmailPreferencesForm
+from gbe.forms import EmailPreferencesNoLoginForm
 from gbe.models import (
     Profile,
     ProfilePreferences,
@@ -70,9 +70,10 @@ class EditEmailView(View):
             email_initial = {
                 email_focus: False,
             }
-        email_form = EmailPreferencesForm(prefix='email_pref',
-                                          instance=self.profile.preferences,
-                                          initial=email_initial)
+        email_form = EmailPreferencesNoLoginForm(
+            prefix='email_pref',
+            instance=self.profile.preferences,
+            initial=email_initial)
         return render(request, 'gbe/update_email.tmpl',
                       {'email_form': email_form,
                        'email_note': intro_message[0].description,
@@ -85,9 +86,10 @@ class EditEmailView(View):
     @log_func
     def post(self, request, *args, **kwargs):
         intro_message = self.groundwork(request, args, kwargs)
-        email_form = EmailPreferencesForm(request.POST,
-                                          instance=self.profile.preferences,
-                                          prefix='email_pref')
+        email_form = EmailPreferencesNoLoginForm(
+            request.POST,
+            instance=self.profile.preferences,
+            prefix='email_pref')
 
         if email_form.is_valid():
             email_form.save(commit=True)

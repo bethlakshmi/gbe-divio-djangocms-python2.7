@@ -1,8 +1,10 @@
 {% extends 'base.tmpl' %}
 {% load staticfiles %}
-
+{% load recaptcha2 %}
 {% block title %}{{ title }}{% endblock %}
-
+{% block head %}
+  {% recaptcha_init %}
+{% endblock %}
 {% block content %}
 <p class="vanilla">
 <span class='header'><h3>{{ header }}</h3></span><br>
