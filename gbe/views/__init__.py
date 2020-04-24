@@ -18,6 +18,7 @@ from .register_persona_view import RegisterPersonaView
 from .edit_persona_view import EditPersonaView
 
 # profiles
+from .edit_email_view import EditEmailView
 from .edit_profile_view import EditProfileView
 from .register_view import RegisterView
 from .admin_profile_view import AdminProfileView

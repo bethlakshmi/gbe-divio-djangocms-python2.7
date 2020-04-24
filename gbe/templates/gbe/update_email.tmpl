@@ -1,0 +1,37 @@
+{% extends 'base.tmpl' %}
+{% load staticfiles %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<p class="vanilla">
+<span class='header'><h3>{{ header }}</h3></span><br>
+
+{{ email_note }}
+</p>
+ 
+<form method="POST" action="" enctype="multipart/form-data">
+<div class="container">
+<div class="row">
+<div class="col-md-6">
+<div class="card card-body bg-light {% if email_focus %}shadow border-danger{% endif %}">
+  <h3>Email Options</h3>
+  {% for field in email_form.visible_fields%}
+  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
+    <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
+    <div class="col-lg-11 col-md-10 col-xs-10">
+      {{ field.label }}{% if field.help_text %}
+      <span class="dropt" title="Help">
+        <img src= "{% static "img/question.png" %}" alt="?"/>
+          <span style="width:200px;float:right;text-align:left;">
+          {{ field.help_text }}
+          </span></span>{% endif %}</div>
+  </div>
+  {% endfor %}
+</div>
+</div>
+</div>
+</div>
+<br><input type="submit" value="{{button}}"> 
+</form>
+{% endblock %}

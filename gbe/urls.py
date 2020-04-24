@@ -10,6 +10,7 @@ from gbe.views import (
     ConferenceVolunteerView,
     CostumeChangeStateView,
     DeleteProfileView,
+    EditEmailView,
     EditPersonaView,
     EditProfileView,
     EditTroupeView,
@@ -217,6 +218,8 @@ urlpatterns = [
     url(r'^accounts/logout/?$', LogoutView),
     url(r'^accounts/register/?$',
         RegisterView, name='register'),
+    url(r'update_email/(?P<email>[\w.@+-]+)/?$',
+        EditEmailView.as_view(), name='email_update'),
     url(r'update_profile/?$',
         EditProfileView.as_view(), name='profile_update'),
 
