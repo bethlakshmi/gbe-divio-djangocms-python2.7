@@ -22,10 +22,6 @@ from datetime import timedelta
 from tests.functions.scheduler_functions import noon
 
 
-def unique_string(base_string):
-    return base_string % str(randint(0, 10000))
-
-
 class ClassContext:
     def __init__(self,
                  bid=None,
@@ -63,11 +59,6 @@ class ClassContext:
         if starttime:
             sched_event = SchedEventFactory(eventitem=self.bid.eventitem_ptr,
                                             starttime=starttime)
-        elif self.sched_event:
-            one_day = timedelta(1)
-            sched_event = SchedEventFactory(
-                eventitem=self.bid.eventitem_ptr,
-                starttime=self.sched_event.starttime+one_day)
         else:
             sched_event = SchedEventFactory(
                 eventitem=self.bid.eventitem_ptr,
