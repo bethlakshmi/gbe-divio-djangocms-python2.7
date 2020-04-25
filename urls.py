@@ -7,7 +7,6 @@ urlpatterns = [
     # add your own patterns here
     url(r'^', include('gbe.urls')),
     url(r'^', include('ticketing.urls')),
-    url(r'^', include('scheduler.urls')),
     url(r'^', include('gbe.email.urls')),
     url(r'^', include('gbe.reporting.urls')),
     url(r'^', include('gbe.scheduling.urls')),
