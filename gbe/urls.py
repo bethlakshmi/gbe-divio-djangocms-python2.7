@@ -218,7 +218,7 @@ urlpatterns = [
     url(r'^accounts/logout/?$', LogoutView),
     url(r'^accounts/register/?$',
         RegisterView, name='register'),
-    url(r'update_email/(?P<email>[\w.@+-]+)/?$',
+    url(r'update_email/?$',
         EditEmailView.as_view(), name='email_update'),
     url(r'update_profile/?$',
         EditProfileView.as_view(), name='profile_update'),

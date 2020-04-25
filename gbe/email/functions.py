@@ -177,8 +177,8 @@ def send_schedule_update_mail(participant_type, profile):
                             urlconf='gbe.urls'),
                     "Personal Page"),
                 'unsubscribe_link': reverse(
-                    'profile_update',
-                    urlconf='gbe.urls'
+                    'email_update',
+                    urlconf='gbe.urls',
                     ) + "?email_disable=send_schedule_change_notifications"
                 },)
 
@@ -201,8 +201,9 @@ def send_daily_schedule_mail(schedules, day, slug, email_type):
                 'bookings': bookings,
                 'day': day.strftime(GBE_DATE_FORMAT),
                 'unsubscribe_link': reverse(
-                    'profile_update',
-                    urlconf='gbe.urls') + "?email_disable=send_%s" % email_type
+                    'email_update',
+                    urlconf='gbe.urls',
+                    ) + "?email_disable=send_%s" % email_type
                 },
             priority="medium")
 

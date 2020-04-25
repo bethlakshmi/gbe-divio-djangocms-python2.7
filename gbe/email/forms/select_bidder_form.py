@@ -1,6 +1,5 @@
 from django.forms import (
     Form,
-    HiddenInput,
     ModelMultipleChoiceField,
     MultipleChoiceField,
     MultipleHiddenInput,

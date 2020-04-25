@@ -61,7 +61,7 @@ class TestMailToRoles(TestCase):
                            urlconf="gbe.email.urls")
         self.footer = unsubscribe_text % (
             Site.objects.get_current().domain + reverse(
-                'profile_update',
+                'email_update',
                 urlconf='gbe.urls') + "?email_disable=send_role_notifications")
 
     def class_coord_login(self):

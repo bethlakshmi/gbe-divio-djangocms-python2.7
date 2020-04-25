@@ -53,7 +53,7 @@ class TestMailToBidder(TestCase):
                            urlconf="gbe.email.urls")
         self.footer = unsubscribe_text % (
             Site.objects.get_current().domain + reverse(
-                'profile_update',
+                'email_update',
                 urlconf='gbe.urls') + "?email_disable=send_bid_notifications")
 
     def reduced_login(self):

@@ -15,19 +15,39 @@
 <form method="POST" action="" enctype="multipart/form-data">
 <div class="container">
 <div class="row">
-<div class="col-md-6">
+<div class="col-md-12 col-lg-6">
 <div class="card card-body bg-light {% if email_focus %}shadow border-danger{% endif %}">
   <h3>Email Options</h3>
+  {% if email_form.errors %}
+    <p style= "color:red"> There is an error on the form.</p>
+  {% endif %}
   {% for field in email_form.visible_fields%}
   <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
-    <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
-    <div class="col-lg-11 col-md-10 col-xs-10">
-      {{ field.label }}{% if field.help_text %}
+    {% if field.label == "Email" %}
+    <div class="col-lg-2 col-md-2 col-xs-2">{{ field.label }}{% if field.help_text %}
       <span class="dropt" title="Help">
         <img src= "{% static "img/question.png" %}" alt="?"/>
           <span style="width:200px;float:right;text-align:left;">
           {{ field.help_text }}
           </span></span>{% endif %}</div>
+    <div class="col-lg-10 col-md-9 col-xs-9">
+    {% if field.errors %}
+      <font color="red">!</font>&nbsp;&nbsp;{% endif %}
+      {{ field }}
+    {% if field.errors %}</br>
+      <font color="red">{{ field.errors }}</font>{% endif %}</div>
+    {% else %}
+    <div class="col-lg-2 col-md-2 col-xs-2 text-right">{% if field.label == "" %}<br>{% endif %}
+    {{ field }}</div>
+    <div class="col-lg-10 col-md-9 col-xs-9">
+      {{ field.label }}{% if field.help_text %}
+      <span class="dropt" title="Help">
+        <img src= "{% static "img/question.png" %}" alt="?"/>
+          <span style="width:200px;float:right;text-align:left;">
+          {{ field.help_text }}
+          </span></span>{% endif %}
+      {% if field.errors %}</br>
+      <font color="red">{{ field.errors }}</font>{% endif %}</div>{% endif %}
   </div>
   {% endfor %}
 </div>

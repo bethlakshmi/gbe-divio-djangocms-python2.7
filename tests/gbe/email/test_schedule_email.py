@@ -30,7 +30,7 @@ class TestScheduleEmail(TestCase):
         self.client = Client()
         Email.objects.all().delete()
         self.unsub_link = Site.objects.get_current().domain + reverse(
-            'profile_update',
+            'email_update',
             urlconf='gbe.urls') + "?email_disable=send_daily_schedule"
 
     def test_no_conference_day(self):

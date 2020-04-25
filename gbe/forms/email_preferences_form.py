@@ -1,4 +1,8 @@
-from django.forms import ModelForm
+from django.forms import (
+    EmailField,
+    Form,
+    ModelForm,
+)
 from gbe.models import ProfilePreferences
 from gbe_forms_text import (
     profile_preferences_help_texts,
@@ -19,5 +23,16 @@ class EmailPreferencesForm(ModelForm):
         labels = profile_preferences_labels
 
 
-class EmailPreferencesNoLoginForm(EmailPreferencesForm):
+class EmailPreferencesNoLoginForm(ModelForm):
+    email = EmailField(required=True)
     verification = ReCaptchaField(widget=ReCaptchaWidget(), label="")
+    class Meta:
+        model = ProfilePreferences
+        fields = ['email',
+                  'send_daily_schedule',
+                  'send_bid_notifications',
+                  'send_role_notifications',
+                  'send_schedule_change_notifications',
+                  'verification']
+        help_texts = profile_preferences_help_texts
+        labels = profile_preferences_labels
