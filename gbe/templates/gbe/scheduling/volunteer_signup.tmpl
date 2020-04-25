@@ -62,9 +62,12 @@
     <td class="vol_shift_event" id="{{occurrence.highlight|slugify}}" colspan="{{occurrence.colspan}}">
       <a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{occurrence.eventitem.pk}}" data-backdrop="true" >
     {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon" %}
-    {{ occurrence.start }}-{{ occurrence.end }} {{ occurrence.title}}</a>
+    {{ occurrence.start }}-{{ occurrence.end }} <b>{{ occurrence.title}}</b></a>
     {% include "gbe/scheduling/event_modal.tmpl"%}
     </td>
+      {% if occurrence.object.start_time.time > occurrence.object.end_time.time %}
+       <td width="{{col_fraction}}%" class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
+      {% endif %}
     {% elif occurrence.object.end_time.time > occurrence.object.start_time.time %}
       {% if time < occurrence.object.start_time.time or time >= occurrence.object.end_time.time %}
         <td width="{{col_fraction}}%" class="{% if is_hour %}vol_shift_hour{%else%}vol_shift_mid{% endif %} vol_shift_cell">&nbsp;</td>
