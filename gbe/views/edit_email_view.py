@@ -13,20 +13,21 @@ from gbe.forms import (
 from gbe.models import (
     Profile,
     ProfilePreferences,
-    UserMessage
+    UserMessage,
 )
 from gbetext import (
     default_update_profile_msg,
     email_pref_note,
 )
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.sites.models import Site
+from django.contrib.auth.models import User
 
 
 class EditEmailView(View):
-    title = "Update Your Email Preferences"
-    button = "Update My Account"
-    header = "Update Your Email Preferences"
-    profile = None
+    title = "Update Email Preferences"
+    button = "Update Settings"
+    header = "Update Email Preferences"
 
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
@@ -71,37 +72,39 @@ class EditEmailView(View):
     @never_cache
     @log_func
     def post(self, request, *args, **kwargs):
-        email_form = EmailPreferencesNoLoginForm(request.POST)
+        form = EmailPreferencesNoLoginForm(request.POST)
 
-        if email_form.is_valid():
-            profile = Profile.objects.get(
-                user_object__email=email_form.cleaned_data['email'])
+        if form.is_valid():
             try:
+                user = User.objects.get(email=form.cleaned_data['email'])
+                profile = Profile.objects.get_or_create(
+                    user_object=user,
+                    defaults={'display_name': "Unsubscribed %s" % (
+                        form.cleaned_data['email'])})
+                pref = ProfilePreferences.objects.get_or_create(profile=profile)
                 initated_email_form = EmailPreferencesForm(
                     request.POST,
                     instance=profile.preferences)
+                if not initated_email_form.is_valid():
+                    raise Http404
+                initated_email_form.save(commit=True)
             except:
-                pref = ProfilePreferences(profile=self.profile)
-                pref.save()
-                initated_email_form = EmailPreferencesForm(
-                    request.POST,
-                    instance=pref)
-
-            if not initated_email_form.is_valid():
-                raise Http404
-            initated_email_form.save(commit=True)
+                pass
+            # if there is no user with this email, don't expose that, give
+            # a positive either way
             messages.success(request, self.get_user_success_message())
             if request.user.is_authenticated:
                 redirect_to = reverse('home', urlconf='gbe.urls')
             else:
-                redirect_to = "/"
+                site = Site.objects.get_current()
+                redirect_to = "http://%s" % site.domain
 
             return HttpResponseRedirect(redirect_to)
         else:
             return render(
                 request,
                 'gbe/update_email.tmpl',
-                {'email_form': email_form,
+                {'email_form': form,
                  'email_note': self.get_intro()[0].description,
                  'title': self.title,
                  'button': self.button,
