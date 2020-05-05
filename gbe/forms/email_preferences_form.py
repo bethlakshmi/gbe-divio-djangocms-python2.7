@@ -1,6 +1,8 @@
 from django.forms import (
+    CharField,
     EmailField,
     Form,
+    HiddenInput,
     ModelForm,
 )
 from gbe.models import ProfilePreferences
@@ -23,16 +25,6 @@ class EmailPreferencesForm(ModelForm):
         labels = profile_preferences_labels
 
 
-class EmailPreferencesNoLoginForm(ModelForm):
-    email = EmailField(required=True)
+class EmailPreferencesNoLoginForm(EmailPreferencesForm):
+    token = CharField(widget=HiddenInput, required=True)
     verification = ReCaptchaField(widget=ReCaptchaWidget(), label="")
-    class Meta:
-        model = ProfilePreferences
-        fields = ['email',
-                  'send_daily_schedule',
-                  'send_bid_notifications',
-                  'send_role_notifications',
-                  'send_schedule_change_notifications',
-                  'verification']
-        help_texts = profile_preferences_help_texts
-        labels = profile_preferences_labels

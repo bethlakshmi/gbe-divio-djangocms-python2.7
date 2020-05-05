@@ -21,6 +21,9 @@
   {% if email_form.errors %}
     <p style= "color:red"> There is an error on the form.</p>
   {% endif %}
+  {% for hidden in email_form.hidden_fields %}
+    {{ hidden }}
+  {% endfor %}
   {% for field in email_form.visible_fields%}
   <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
     {% if field.label == "Email" %}

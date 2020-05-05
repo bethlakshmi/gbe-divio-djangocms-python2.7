@@ -22,6 +22,7 @@ from gbetext import (
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
+from gbe.email.functions import extract_email
 
 
 class EditEmailView(View):
@@ -54,13 +55,30 @@ class EditEmailView(View):
     @never_cache
     @log_func
     def get(self, request, *args, **kwargs):
+        email = extract_email(kwargs.get("token"))
+        if not email:
+            raise Exception("token is bad")
+        try:
+            profile = Profile.objects.get(
+                user_object__email=email)
+        except Profile.DoesNotExist:
+            raise Exception("email is bad")
+
+        try:
+            if len(profile.preferences.inform_about.strip()) > 0:
+                inform_initial = eval(profile.preferences.inform_about)
+        except ProfilePreferences.DoesNotExist:
+            pref = ProfilePreferences(profile=profile)
+            pref.save()
+
         email_focus = None
-        email_initial = {}
+        email_initial = {'token': kwargs.get("token")}
         if 'email_disable' in request.GET:
             email_focus = str(request.GET['email_disable'])
-            email_initial = {email_focus: False}
+            email_initial[email_focus] = False
 
-        email_form = EmailPreferencesNoLoginForm(initial=email_initial)
+        email_form = EmailPreferencesNoLoginForm(instance=profile.preferences,
+                                                 initial=email_initial)
         return render(request, 'gbe/update_email.tmpl',
                       {'email_form': email_form,
                        'email_note': self.get_intro()[0].description,
@@ -75,21 +93,21 @@ class EditEmailView(View):
         form = EmailPreferencesNoLoginForm(request.POST)
 
         if form.is_valid():
+            email = extract_email(form.cleaned_data["token"])
+            if not email:
+                raise Exception("token is bad")
             try:
-                user = User.objects.get(email=form.cleaned_data['email'])
-                profile = Profile.objects.get_or_create(
-                    user_object=user,
-                    defaults={'display_name': "Unsubscribed %s" % (
-                        form.cleaned_data['email'])})
-                pref = ProfilePreferences.objects.get_or_create(profile=profile)
+                pref = ProfilePreferences.objects.get(
+                    profile__user_object__email=email)
                 initated_email_form = EmailPreferencesForm(
                     request.POST,
-                    instance=profile.preferences)
+                    instance=pref)
                 if not initated_email_form.is_valid():
-                    raise Http404
+                   raise Http404
                 initated_email_form.save(commit=True)
             except:
                 pass
+
             # if there is no user with this email, don't expose that, give
             # a positive either way
             messages.success(request, self.get_user_success_message())

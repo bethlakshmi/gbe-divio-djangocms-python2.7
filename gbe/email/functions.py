@@ -375,11 +375,11 @@ def create_unsubscribe_link(email, disable=None):
         link = link + "?email_disable=" + disable
     return link
 
-def check_token(email, token):
+def extract_email(token):
+    email = None
     try:
-        key = '%s:%s' % (email, token)
         # valid for 30 days
-        TimestampSigner().unsign(key, max_age=60 * 60 * 24 * 30)
+        email = TimestampSigner().unsign(token, max_age=60 * 60 * 24 * 30)
     except (BadSignature, SignatureExpired):
         return False
-    return True
+    return email
