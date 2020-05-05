@@ -25,6 +25,11 @@ from gbetext import (
     unique_email_templates,
 )
 from scheduler.idd import get_all_container_bookings
+from django.core.signing import (
+    TimestampSigner,
+    BadSignature,
+    SignatureExpired,
+)
 
 
 def mail_send_gbe(to_list,
@@ -176,10 +181,9 @@ def send_schedule_update_mail(participant_type, profile):
                     reverse('home',
                             urlconf='gbe.urls'),
                     "Personal Page"),
-                'unsubscribe_link': reverse(
-                    'email_update',
-                    urlconf='gbe.urls',
-                    ) + "?email_disable=send_schedule_change_notifications"
+                'unsubscribe_link': create_unsubscribe_link(
+                    profile.contact_email,
+                    "send_schedule_change_notifications")
                 },)
 
 
@@ -200,10 +204,9 @@ def send_daily_schedule_mail(schedules, day, slug, email_type):
                 'badge_name': user.profile.get_badge_name(),
                 'bookings': bookings,
                 'day': day.strftime(GBE_DATE_FORMAT),
-                'unsubscribe_link': reverse(
-                    'email_update',
-                    urlconf='gbe.urls',
-                    ) + "?email_disable=send_%s" % email_type
+                'unsubscribe_link': create_unsubscribe_link(
+                    user.profile.contact_email,
+                    "send_%s" % email_type)
                 },
             priority="medium")
 
@@ -364,3 +367,19 @@ def get_user_email_templates(user):
         template_set += unique_email_templates['scheduling']
     return sorted(template_set,
                   key=lambda item: (item['name'], item['category']))
+
+def create_unsubscribe_link(email, disable=None):
+    token = TimestampSigner().sign(email)
+    link = reverse('email_update', urlconf='gbe.urls', args=[token])
+    if disable:
+        link = link + "?email_disable=" + disable
+    return link
+
+def check_token(email, token):
+    try:
+        key = '%s:%s' % (email, token)
+        # valid for 30 days
+        TimestampSigner().unsign(key, max_age=60 * 60 * 24 * 30)
+    except (BadSignature, SignatureExpired):
+        return False
+    return True
