@@ -16,6 +16,7 @@ from settings import (
     DEFAULT_FROM_EMAIL,
     DEBUG
 )
+from gbe.email.functions import create_unsubscribe_link
 
 
 class MailView(View):
@@ -42,17 +43,16 @@ class MailView(View):
             else:
                 sender = request.user.email
 
-            if self.email_type == "individual":
-                footer = ""
-            else:
-                footer = unsubscribe_text % (
-                    Site.objects.get_current().domain + reverse(
-                        'email_update',
-                        urlconf='gbe.urls'
-                        ) + "?email_disable=send_%s" % self.email_type)
-            message = mail_form.cleaned_data['html_message'] + footer
-
             for email in mail_form.cleaned_data['to']:
+                if self.email_type == "individual":
+                    footer = ""
+                else:
+                    footer = unsubscribe_text % (
+                        Site.objects.get_current().domain,
+                        create_unsubscribe_link(email, 
+                                                "send_%s" % self.email_type))
+                message = mail_form.cleaned_data['html_message'] + footer
+
                 # if we're in DEBUG mode, let the sender send to only self
                 subject = mail_form.cleaned_data['subject']
                 target = email

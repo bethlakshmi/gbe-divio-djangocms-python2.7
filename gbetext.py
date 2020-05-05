@@ -555,7 +555,7 @@ template.  The Email Template name is '''
 send_email_success_msg = '''A mail was successfully sent to '''
 unsubscribe_text = '''<br><br><div style="text-align: center;"><small> \
 This email has been sent by the burlesque-expo.com email system<br> \
-<a href="http://%s">Update email preferences</a><small></div>'''
+<a href="http://%s%s">Update email preferences</a><small></div>'''
 unsub_footer_include = "{% include 'gbe/email/unsub_footer.tmpl' %}"
 unsub_footer_plain_include = \
     "{% include 'gbe/email/unsub_footer_plain.tmpl' %}"

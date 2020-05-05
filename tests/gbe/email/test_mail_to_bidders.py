@@ -52,7 +52,8 @@ class TestMailToBidder(TestCase):
         self.url = reverse(self.view_name,
                            urlconf="gbe.email.urls")
         self.footer = unsubscribe_text % (
-            Site.objects.get_current().domain + reverse(
+            Site.objects.get_current().domain,
+            reverse(
                 'email_update',
                 urlconf='gbe.urls') + "?email_disable=send_bid_notifications")
 
