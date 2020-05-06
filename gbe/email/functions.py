@@ -211,6 +211,23 @@ def send_daily_schedule_mail(schedules, day, slug, email_type):
             priority="medium")
 
 
+def send_unsubscribe_link(user):
+    name = 'unsubscribe email'
+    template = get_or_create_template(
+        name,
+        "unsubscribe_email",
+        "Unsubscribe from GBE Mail")
+    mail_send_gbe(
+        user.email,
+        template.sender.from_email,
+        template=name,
+        context={
+            'site': Site.objects.get_current().domain,
+            'badge_name': user.profile.get_badge_name(),
+            'unsubscribe_link': create_unsubscribe_link(
+                user.profile.contact_email)},
+        priority="medium")
+
 def notify_reviewers_on_bid_change(bidder,
                                    bid,
                                    bid_type,

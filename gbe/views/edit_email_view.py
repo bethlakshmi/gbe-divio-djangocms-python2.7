@@ -26,7 +26,10 @@ from gbetext import (
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
-from gbe.email.functions import extract_email
+from gbe.email.functions import (
+    extract_email,
+    send_unsubscribe_link,
+)
 
 
 class EditEmailView(View):
@@ -110,6 +113,8 @@ class EditEmailView(View):
                         user_object__email=form.cleaned_data["email"])
                 except:
                     pass
+                if profile.user_object.is_active:
+                    send_unsubscribe_link(profile.user_object)
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="SENT_EMAIL",
