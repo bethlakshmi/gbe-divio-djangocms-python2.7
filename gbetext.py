@@ -482,6 +482,9 @@ default_window_schedule_conflict = "Your change caused a conflict.  " + \
     "You were scheduled for:"
 default_clone_msg = "You have successfully made a new copy."
 default_update_profile_msg = "Your profile has been updated."
+link_sent_msg = '''The request to send an unsubscribe link was received.  If \
+there is a valid user account available, a link will be sent to the email \
+provided.'''
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
@@ -545,6 +548,8 @@ is, if you're performing, our selection committee and stage managers will be \
 able to see your profile information. If you're teaching, the conference \
 committee members and staff will be able to see your profile information, \
 etc.).'''
+send_link_message = '''This site could not verify the email unsubscribe link. \
+Please enter your email and a new link will be mailed to you.'''
 admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\
  Paper Tickets purchase was made under a different email.  Please handle email\
  information with care and do not distribute or use for any purpose outside of\

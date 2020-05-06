@@ -7,6 +7,7 @@ from .email_preferences_form import (
     EmailPreferencesForm,
     EmailPreferencesNoLoginForm,
 )
+from .send_email_link_form import SendEmailLinkForm
 from .user_create_form import UserCreateForm
 
 # performer forms

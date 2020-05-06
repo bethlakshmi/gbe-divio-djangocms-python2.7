@@ -1,7 +1,5 @@
 from django.forms import (
     CharField,
-    EmailField,
-    Form,
     HiddenInput,
     ModelForm,
 )
