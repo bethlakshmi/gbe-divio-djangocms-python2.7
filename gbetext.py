@@ -406,6 +406,14 @@ unique_email_templates = {
          'default_base': "schedule_letter",
          'default_subject':
             "Your Schedule for Tomorrow at GBE", }, ],
+    'registrar': [
+        {'name': 'unsubscribe email',
+         'description': '''This email is sent to the email of the user when
+         someone requests to unsubscribe w/out logging in.''',
+         'category': 'registration',
+         'default_base': "unsubscribe_email",
+         'default_subject':
+            "Unsubscribe from GBE Mail", }, ],
 }
 
 default_class_submit_msg = "Your class was successfully submitted"
