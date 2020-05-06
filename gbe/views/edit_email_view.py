@@ -17,6 +17,7 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    bad_token_msg,
     default_update_profile_msg,
     email_pref_note,
     link_sent_msg,
@@ -65,11 +66,13 @@ class EditEmailView(View):
     def get(self, request, *args, **kwargs):
         email = extract_email(kwargs.get("token"))
         if not email:
+            self.token_parse_error(request)
             return self.get_email_link(request)
         try:
             profile = Profile.objects.get(
                 user_object__email=email)
         except Profile.DoesNotExist:
+            self.token_parse_error(request)
             return self.get_email_link(request)
 
         try:
@@ -120,6 +123,7 @@ class EditEmailView(View):
             if form.is_valid():
                 email = extract_email(form.cleaned_data["token"])
                 if not email:
+                    self.token_parse_error(request)
                     return self.get_email_link(request)
                 try:
                     pref = ProfilePreferences.objects.get(
@@ -144,6 +148,15 @@ class EditEmailView(View):
                 messages.success(request, user_message[0].description)
                 return self.success_redirect(request)
         return self.get_email_link(request, form)
+
+    def token_parse_error(self, request):
+        user_message = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="BAD_TOKEN",
+            defaults={
+                'summary': "Unsubscribe Link Not Valid",
+                'description': bad_token_msg})
+        messages.error(request, user_message[0].description)
 
     def success_redirect(self, request):
         if request.user.is_authenticated:

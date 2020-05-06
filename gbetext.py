@@ -485,6 +485,8 @@ default_update_profile_msg = "Your profile has been updated."
 link_sent_msg = '''The request to send an unsubscribe link was received.  If \
 there is a valid user account available, a link will be sent to the email \
 provided.'''
+bad_token_msg = '''This link is either expired or invalid.  Get a new link \
+emailed to you on this page'''
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
