@@ -24,7 +24,7 @@ from django.core.urlresolvers import reverse
 
 class TestScheduleEmail(TestCase):
     subject = "Your Schedule for Tomorrow at GBE"
-    self.get_param = "?email_disable=send_daily_schedule"
+    get_param = "?email_disable=send_daily_schedule"
 
     def setUp(self):
         self.client = Client()
