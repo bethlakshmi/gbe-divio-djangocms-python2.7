@@ -30,12 +30,12 @@ from django.contrib.auth.models import User
 from gbe.models import Conference
 from post_office.models import Email
 from tests.functions.gbe_email_functions import assert_checkbox
-from django.contrib.sites.models import Site
 
 
 class TestMailToBidder(TestCase):
     view_name = 'mail_to_bidders'
     priv_list = ['Act', 'Class', 'Costume', 'Vendor', 'Volunteer']
+    get_param = "?email_disable=send_bid_notifications"
 
     def setUp(self):
         Conference.objects.all().delete()
@@ -51,11 +51,6 @@ class TestMailToBidder(TestCase):
         self.context = ClassContext()
         self.url = reverse(self.view_name,
                            urlconf="gbe.email.urls")
-        self.footer = unsubscribe_text % (
-            Site.objects.get_current().domain,
-            reverse(
-                'email_update',
-                urlconf='gbe.urls') + "?email_disable=send_bid_notifications")
 
     def reduced_login(self):
         reduced_profile = ProfileFactory()
@@ -520,9 +515,13 @@ class TestMailToBidder(TestCase):
         assert_queued_email(
             [self.context.teacher.contact.user_object.email, ],
             data['subject'],
-            data['html_message'] + self.footer,
+            data['html_message'],
             data['sender'],
-            )
+            extras=[self.get_param, reverse(
+                'email_update',
+                urlconf='gbe.urls',
+                args=[self.context.teacher.contact.user_object.email]
+                )])
 
     def test_send_email_reduced_w_fixed_from(self):
         reduced_profile = self.reduced_login()
@@ -542,9 +541,13 @@ class TestMailToBidder(TestCase):
         assert_queued_email(
             [second_bid.performer.contact.user_object.email, ],
             data['subject'],
-            data['html_message'] + self.footer,
+            data['html_message'],
             reduced_profile.user_object.email,
-            )
+            extras=[self.get_param, reverse(
+                'email_update',
+                urlconf='gbe.urls',
+                args=[second_bid.performer.contact.user_object.email]
+                )])
 
     def test_send_email_reduced_no_hack(self):
         reduced_profile = self.reduced_login()
@@ -703,9 +706,12 @@ class TestMailToBidder(TestCase):
             assert_queued_email(
                 [user.email, ],
                 data['subject'],
-                data['html_message'] + self.footer,
+                data['html_message'],
                 data['sender'],
-                )
+                extras=[self.get_param, reverse(
+                    'email_update',
+                    urlconf='gbe.urls',
+                    args=[user.email])])
 
     def test_send_everyone_reduced(self):
         reduced_profile = self.reduced_login()
