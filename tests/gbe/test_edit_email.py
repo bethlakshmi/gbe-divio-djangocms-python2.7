@@ -171,10 +171,39 @@ class TestEditEmail(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
 
-    def test_update_email_post_invalid_form_wout_token(self):
+    def test_update_email_post_valid_form_w_bad_token(self):
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             ) + "?email_disable=send_schedule_change_notifications"
+        response = self.client.post(self.url, follow=True, data={
+            'token': "bad, bad token",
+            'send_daily_schedule': True,
+            'send_bid_notifications': False,
+            'send_role_notifications': False,
+            'send_schedule_change_notifications': True})
+        self.assertContains(response, send_link_message)
+
+    def test_update_email_post_valid_form_w_no_pref(self):
+        pref = ProfilePreferences.objects.get(profile=self.profile)
+        pref.delete()
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            ) + "?email_disable=send_schedule_change_notifications"
+        response = self.client.post(self.url, follow=True, data={
+            'token': TimestampSigner().sign(self.profile.user_object.email),
+            'send_daily_schedule': True,
+            'send_bid_notifications': False,
+            'send_role_notifications': False,
+            'send_schedule_change_notifications': True})
+        site = Site.objects.get_current()
+        self.assertRedirects(response, "http://%s" % site.domain)
+        assert_alert_exists(
+            response, 'success', 'Success', default_update_profile_msg)
+
+    def test_update_email_post_invalid_form_wout_token(self):
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email,
+            disable="send_schedule_change_notifications")
         response = self.client.post(self.url, follow=True, data={},)
         self.assertContains(response, send_link_message)
 

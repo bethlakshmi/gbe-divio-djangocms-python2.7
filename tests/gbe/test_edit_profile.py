@@ -133,22 +133,6 @@ class TestEditProfile(TestCase):
             ' id="id_email_pref-send_bid_notifications" />')
         self.assertContains(response, email_pref_note.replace("'", "&#39;"))
 
-    def test_update_profile_disable_email(self):
-        pref = ProfilePreferencesFactory()
-        url = reverse(
-            self.view_name,
-            urlconf='gbe.urls'
-            ) + "?email_disable=send_schedule_change_notifications"
-        login_as(pref.profile.user_object, self)
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<input type="checkbox" ' +
-            'name="email_pref-send_schedule_change_notifications"' +
-            ' id="id_email_pref-send_schedule_change_notifications" />')
-        self.assertContains(
-            response, "shadow-red")
-
     def test_update_profile_post_empty_display_name(self):
         data = self.get_form()
         data['display_name'] = ""

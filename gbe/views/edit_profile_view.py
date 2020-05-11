@@ -93,15 +93,8 @@ class EditProfileView(View):
                                             initial={'inform_about':
                                                      inform_initial})
         email_focus = None
-        email_initial = {}
-        if 'email_disable' in request.GET:
-            email_focus = str(request.GET['email_disable'])
-            email_initial = {
-                email_focus: False,
-            }
         email_form = EmailPreferencesForm(prefix='email_pref',
-                                          instance=self.profile.preferences,
-                                          initial=email_initial)
+                                          instance=self.profile.preferences)
         return render(request, 'gbe/update_profile.tmpl',
                       {'left_forms': [form],
                        'right_forms': [prefs_form],
