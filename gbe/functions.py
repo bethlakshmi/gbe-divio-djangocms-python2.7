@@ -119,12 +119,6 @@ def get_current_conference():
     return Conference.current_conf()
 
 
-def get_current_conference_slug():
-    conf = Conference.current_conf()
-    if conf:
-        return conf.conference_slug
-
-
 def get_conference_by_slug(slug):
     return Conference.by_slug(slug)
 
@@ -147,33 +141,6 @@ def conference_list():
 
 def conference_slugs():
     return Conference.all_slugs()
-
-
-def get_gbe_schedulable_items(confitem_type,
-                              filter_type=None,
-                              conference=None):
-    '''
-    Queries the database for the conferece items relevant for each type
-    and returns a queryset.
-    '''
-    if confitem_type in ['Panel', 'Movement', 'Lecture', 'Workshop']:
-        filter_type, confitem_type = confitem_type, 'Class'
-    elif confitem_type in ['Special Event',
-                           'Volunteer Opportunity',
-                           'Master',
-                           'Drop-In']:
-        filter_type, confitem_type = confitem_type, 'GenericEvent'
-
-    if not conference:
-        conference = Conference.current_conf()
-    confitem_class = eval(confitem_type)
-    confitems_list = confitem_class.objects.filter(e_conference=conference)
-    if filter_type is not None:
-        confitems_list = [
-            confitem for confitem in confitems_list if
-            confitem.type == filter_type]
-
-    return confitems_list
 
 
 def make_warning_msg(warning, separator="<br>-", use_user=True):

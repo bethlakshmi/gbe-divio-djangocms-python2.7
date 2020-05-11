@@ -62,11 +62,6 @@ class ShowContext:
         if starttime:
             sched_event = SchedEventFactory(eventitem=self.show.eventitem_ptr,
                                             starttime=starttime)
-        elif self.sched_event:
-            one_day = timedelta(1)
-            sched_event = SchedEventFactory(
-                eventitem=self.show.eventitem_ptr,
-                starttime=self.sched_event.starttime+one_day)
         else:
             sched_event = SchedEventFactory(
                 eventitem=self.show.eventitem_ptr,

@@ -41,10 +41,6 @@ class GenericEvent (Event):
             interest = self.volunteer_type.interest
         return interest
 
-    @property
-    def schedule_ready(self):
-        return True
-
     # tickets that apply to generic events are:
     #   - any ticket that applies to "most" iff this is not a master class
     #   - any ticket that links this event specifically

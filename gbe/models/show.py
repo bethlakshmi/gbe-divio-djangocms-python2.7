@@ -26,10 +26,6 @@ class Show (Event):
     def __str__(self):
         return self.e_title
 
-    @property
-    def schedule_ready(self):
-        return True      # shows are always ready for scheduling
-
     # tickets that apply to shows are:
     #   - any ticket that applies to "most" ("most"= no Master Classes)
     #   - any ticket that links this event specifically
