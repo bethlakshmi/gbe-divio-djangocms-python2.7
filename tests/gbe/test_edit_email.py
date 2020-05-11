@@ -14,6 +14,7 @@ from gbe.models import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_email_template_used,
     login_as
 )
 from gbetext import (
@@ -27,6 +28,9 @@ import os
 from django.contrib.sites.models import Site
 from gbe.email.functions import create_unsubscribe_link
 from django.utils.html import escape
+from post_office.models import Email
+from django.conf import settings
+from django.core.signing import TimestampSigner
 
 
 class TestEditEmail(TestCase):
@@ -43,7 +47,7 @@ class TestEditEmail(TestCase):
     def test_update_email_no_token(self):
         response = self.client.get(self.url)
         self.assertContains(response, bad_token_msg)
-        self.assertContains(response, "Email:")
+        self.assertContains(response, send_link_message)
 
     def test_update_email_bad_token(self):
         self.url = reverse(
@@ -52,13 +56,13 @@ class TestEditEmail(TestCase):
             args=["%s:%s" % (self.profile.user_object.email, "badsignature")])
         response = self.client.get(self.url)
         self.assertContains(response, bad_token_msg)
-        self.assertContains(response, "Email:")
+        self.assertContains(response, send_link_message)
 
     def test_update_email_bad_user(self):
         self.url = create_unsubscribe_link("emailedit@doesnotexist.com")
         response = self.client.get(self.url)
         self.assertContains(response, bad_token_msg)
-        self.assertContains(response, "Email:")
+        self.assertContains(response, send_link_message)
 
     def test_update_email_good_token(self):
         self.url = create_unsubscribe_link(
@@ -84,19 +88,63 @@ class TestEditEmail(TestCase):
         self.assertContains(response, "Email Options")
         self.assertNotContains(response, "Email:")
 
-    def tearDown(self):
-        del os.environ['RECAPTCHA_DISABLE']
+    def test_update_email_post_valid_user_email(self):
+        response = self.client.post(
+            self.url,
+            data={'email': self.profile.user_object.email},
+            follow=True)
+        assert_alert_exists(
+            response, 'success', 'Success', link_sent_msg)
+        queued_email = Email.objects.filter(
+            status=2,
+            to=self.profile.user_object.email,
+            subject="Unsubscribe from GBE Mail",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 1)
 
-'''
-    def test_update_email_pref_no_login(self):
-        response = self.client.get(self.url)
-        self.assertContains(response, 'id="recaptcha-verification"')
-        self.assertContains(response, email_pref_note.replace("'", "&#39;"))
+    def test_update_email_post_invalid_user_email(self):
+        response = self.client.post(
+            self.url,
+            data={'email': self.profile.user_object.email + "invalid"},
+            follow=True)
+        assert_alert_exists(
+            response, 'success', 'Success', link_sent_msg)
+        queued_email = Email.objects.filter(
+            status=2,
+            to=self.profile.user_object.email,
+            subject="Unsubscribe from GBE Mail",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 0)
 
-    def test_update_email_post_valid_form(self):
-        response = self.client.post(self.url,
-                                    data=self.get_form(),
-                                    follow=True)
+    def test_update_email_post_inactive_profile_email(self):
+        self.profile.user_object.is_active = False
+        self.profile.user_object.save()
+        response = self.client.post(
+            self.url,
+            data={'email': self.profile.user_object.email},
+            follow=True)
+        assert_alert_exists(
+            response, 'success', 'Success', link_sent_msg)
+        queued_email = Email.objects.filter(
+            status=2,
+            to=self.profile.user_object.email,
+            subject="Unsubscribe from GBE Mail",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 0)
+
+    def test_update_email_post_valid_form_w_token(self):
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            )+ "?email_disable=send_schedule_change_notifications"
+        response = self.client.post(self.url, follow=True, data={
+            'token': TimestampSigner().sign(self.profile.user_object.email),
+            'send_daily_schedule': True,
+            'send_bid_notifications': False,
+            'send_role_notifications': False,
+            'send_schedule_change_notifications': True,},)
         site = Site.objects.get_current()
         self.assertRedirects(response, "http://%s" % site.domain)
         preferences = ProfilePreferences.objects.get(profile=self.profile)
@@ -105,11 +153,17 @@ class TestEditEmail(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
 
-    def test_update_email_post_valid_form_w_login(self):
+    def test_update_email_post_valid_form_logged_in(self):
         login_as(self.profile.user_object, self)
-        response = self.client.post(self.url,
-                                    data=self.get_form(),
-                                    follow=True)
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            )+ "?email_disable=send_schedule_change_notifications"
+        response = self.client.post(self.url, follow=True, data={
+            'token': TimestampSigner().sign(self.profile.user_object.email),
+            'send_daily_schedule': True,
+            'send_bid_notifications': False,
+            'send_role_notifications': False,
+            'send_schedule_change_notifications': True,},)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         preferences = ProfilePreferences.objects.get(profile=self.profile)
         self.assertTrue(preferences.send_daily_schedule)
@@ -117,11 +171,12 @@ class TestEditEmail(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
 
-    def test_post_invalid_form(self):
-        response = self.client.post(self.url,
-                                    data=self.get_form(invalid=True),
-                                    follow=True)
-        self.assertContains(response, "Update Email Preferences")
-        self.assertContains(response, "This field is required.")
-        self.assertEqual(response.status_code, 200)
-'''
+    def test_update_email_post_invalid_form_wout_token(self):
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            )+ "?email_disable=send_schedule_change_notifications"
+        response = self.client.post(self.url, follow=True, data={},)
+        self.assertContains(response, send_link_message)
+
+    def tearDown(self):
+        del os.environ['RECAPTCHA_DISABLE']

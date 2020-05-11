@@ -111,10 +111,11 @@ class EditEmailView(View):
                 try:
                     profile = Profile.objects.get(
                         user_object__email=form.cleaned_data["email"])
+                    if profile.user_object.is_active:
+                        send_unsubscribe_link(profile.user_object)
                 except:
                     pass
-                if profile.user_object.is_active:
-                    send_unsubscribe_link(profile.user_object)
+                
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="SENT_EMAIL",
