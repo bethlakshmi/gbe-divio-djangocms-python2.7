@@ -49,7 +49,7 @@ class MailView(View):
                 else:
                     footer = unsubscribe_text % (
                         Site.objects.get_current().domain,
-                        create_unsubscribe_link(email, 
+                        create_unsubscribe_link(email,
                                                 "send_%s" % self.email_type))
                 message = mail_form.cleaned_data['html_message'] + footer
 

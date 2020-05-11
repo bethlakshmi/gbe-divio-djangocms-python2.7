@@ -228,6 +228,7 @@ def send_unsubscribe_link(user):
                 user.profile.contact_email)},
         priority="medium")
 
+
 def notify_reviewers_on_bid_change(bidder,
                                    bid,
                                    bid_type,
@@ -387,12 +388,14 @@ def get_user_email_templates(user):
     return sorted(template_set,
                   key=lambda item: (item['name'], item['category']))
 
+
 def create_unsubscribe_link(email, disable=None):
     token = TimestampSigner().sign(email)
     link = reverse('email_update', urlconf='gbe.urls', args=[token])
     if disable:
         link = link + "?email_disable=" + disable
     return link
+
 
 def extract_email(token):
     email = None

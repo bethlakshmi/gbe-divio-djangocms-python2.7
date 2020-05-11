@@ -67,7 +67,7 @@ class TestEditEmail(TestCase):
     def test_update_email_good_token(self):
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
-            )+ "?email_disable=send_schedule_change_notifications"
+            ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.get(self.url)
         self.assertContains(response, escape(email_pref_note))
         self.assertContains(response, "Email Options")
@@ -138,13 +138,13 @@ class TestEditEmail(TestCase):
     def test_update_email_post_valid_form_w_token(self):
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
-            )+ "?email_disable=send_schedule_change_notifications"
+            ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.post(self.url, follow=True, data={
             'token': TimestampSigner().sign(self.profile.user_object.email),
             'send_daily_schedule': True,
             'send_bid_notifications': False,
             'send_role_notifications': False,
-            'send_schedule_change_notifications': True,},)
+            'send_schedule_change_notifications': True})
         site = Site.objects.get_current()
         self.assertRedirects(response, "http://%s" % site.domain)
         preferences = ProfilePreferences.objects.get(profile=self.profile)
@@ -157,13 +157,13 @@ class TestEditEmail(TestCase):
         login_as(self.profile.user_object, self)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
-            )+ "?email_disable=send_schedule_change_notifications"
+            ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.post(self.url, follow=True, data={
             'token': TimestampSigner().sign(self.profile.user_object.email),
             'send_daily_schedule': True,
             'send_bid_notifications': False,
             'send_role_notifications': False,
-            'send_schedule_change_notifications': True,},)
+            'send_schedule_change_notifications': True})
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         preferences = ProfilePreferences.objects.get(profile=self.profile)
         self.assertTrue(preferences.send_daily_schedule)
@@ -174,7 +174,7 @@ class TestEditEmail(TestCase):
     def test_update_email_post_invalid_form_wout_token(self):
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
-            )+ "?email_disable=send_schedule_change_notifications"
+            ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.post(self.url, follow=True, data={},)
         self.assertContains(response, send_link_message)
 

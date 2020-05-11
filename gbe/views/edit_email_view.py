@@ -115,7 +115,7 @@ class EditEmailView(View):
                         send_unsubscribe_link(profile.user_object)
                 except:
                     pass
-                
+
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="SENT_EMAIL",
@@ -138,7 +138,7 @@ class EditEmailView(View):
                         request.POST,
                         instance=pref)
                     if not initated_email_form.is_valid():
-                       raise Http404
+                        raise Http404
                     initated_email_form.save(commit=True)
                 except:
                     pass
@@ -148,7 +148,7 @@ class EditEmailView(View):
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="UPDATE_EMAIL",
-                     defaults={
+                    defaults={
                         'summary': "Update Profile Success",
                         'description': default_update_profile_msg})
                 messages.success(request, user_message[0].description)
