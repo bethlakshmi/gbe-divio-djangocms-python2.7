@@ -57,7 +57,7 @@ class TestVolunteerWizard(TestCase):
             'e_title': "Test Volunteer Wizard #%d" % self.room.pk,
             'e_description': 'Description',
             'max_volunteer': 0,
-            'day': self.special_volunteer.window.day.pk,
+            'day': self.special_volunteer.conf_day.pk,
             'time': '11:00:00',
             'duration': 2.5,
             'approval': True,
@@ -190,7 +190,7 @@ class TestVolunteerWizard(TestCase):
                         urlconf='gbe.scheduling.urls',
                         args=[self.current_conference.conference_slug]),
                 self.current_conference.conference_slug,
-                self.special_volunteer.window.day.pk,
+                self.special_volunteer.conf_day.pk,
                 occurrence.pk))
         assert_alert_exists(
             response,
@@ -198,7 +198,7 @@ class TestVolunteerWizard(TestCase):
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
                 data['e_title'],
-                self.special_volunteer.window.day.day.strftime(
+                self.special_volunteer.conf_day.day.strftime(
                     GBE_DATE_FORMAT)))
         self.assertContains(
             response,
