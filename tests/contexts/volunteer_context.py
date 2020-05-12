@@ -17,6 +17,7 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
     WorkerFactory,
 )
+from gbe.models import ConferenceDay
 from datetime import (
     date,
     datetime,
@@ -36,8 +37,11 @@ class VolunteerContext():
             self.conference = conference or ConferenceFactory()
         else:
             self.conference = event.e_conference
-        self.conf_day = ConferenceDayFactory(
-                conference=self.conference)
+        if ConferenceDay.objects.filter(conference=self.conference).exists():
+            self.conf_day = ConferenceDay.objects.filter(
+                conference=self.conference).first()
+        else:
+            self.conf_day = ConferenceDayFactory(conference=self.conference)
         self.profile = profile or ProfileFactory()
         if not hasattr(self.profile, 'preferences'):
             ProfilePreferencesFactory(profile=self.profile)

@@ -34,6 +34,7 @@ from gbetext import (
     default_volunteer_edit_msg,
     default_volunteer_no_interest_msg
 )
+from gbe_forms_text import volunteer_labels
 from gbe.models import UserMessage
 from settings import GBE_DATETIME_FORMAT
 from post_office.models import EmailTemplate
@@ -113,7 +114,7 @@ class TestEditVolunteer(TestCase):
         login_as(context.profile, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'I am Available....')
+        self.assertContains(response, volunteer_labels['background'])
 
     def test_volunteer_edit_post_form_not_valid(self):
         # volunteer_edit, if form not valid, should return
@@ -179,7 +180,7 @@ class TestEditVolunteer(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'I am Available....')
+        self.assertContains(response, volunteer_labels['background'])
 
     def test_volunteer_submit_make_message(self):
         response, context = self.edit_volunteer()
@@ -219,81 +220,3 @@ class TestEditVolunteer(TestCase):
             '<font color="red"><ul class="errorlist">' +
             '<li>Select a valid choice. bad_data is not one of ' +
             'the available choices.</li></ul></font>')
-
-    def test_volunteer_conflict_sends_update_to_user(self):
-        response, context = self.post_conflict(staff=True)
-        assert_right_mail_right_addresses(
-            0,
-            3,
-            "A change has been made to your Volunteer Schedule!",
-            [context.profile.contact_email])
-
-    def test_volunteer_conflict_sends_warning_to_active_staff(self):
-        ProfileFactory(user_object__is_active=False)
-        response, context = self.post_conflict(staff=True)
-        assert_right_mail_right_addresses(
-            1,
-            3,
-            "URGENT: Volunteer Schedule Conflict Occurred",
-            [self.privileged_profile.contact_email,
-             context.profile.contact_email])
-
-    def test_volunteer_conflict_sends_warning_to_parentstaff(self):
-        response, context = self.post_conflict(staff=True)
-        assert_right_mail_right_addresses(
-            1,
-            3,
-            "URGENT: Volunteer Schedule Conflict Occurred",
-            [self.privileged_profile.contact_email,
-             context.profile.contact_email])
-
-    def test_volunteer_conflict_sends_warning_no_staff(self):
-        response, context = self.post_conflict(staff=False)
-        assert_right_mail_right_addresses(
-            1,
-            3,
-            "URGENT: Volunteer Schedule Conflict Occurred",
-            [self.privileged_profile.contact_email])
-
-    def test_volunteer_conflict_sends_notification_to_reviewers(self):
-        response, context = self.post_conflict(staff=True)
-        assert_right_mail_right_addresses(
-            2,
-            3,
-            "Volunteer Update Occurred",
-            [self.privileged_profile.contact_email])
-
-    def test_volunteer_conflict_emails_only_active(self):
-        self.privileged_profile.user_object.is_active = False
-        self.privileged_profile.user_object.save()
-        response, context = self.post_conflict(staff=True)
-        assert len(mail.outbox) == 2
-        assert mail.outbox[0].subject != "Volunteer Update Occurred"
-        assert mail.outbox[1].subject != "Volunteer Update Occurred"
-
-    def test_volunteer_conflict_sends_notification_w_bid_details(self):
-        EmailTemplate.objects.all().delete()
-        subject_format = "bidder: %s, bid: %s"
-        EmailTemplateSenderFactory(
-            from_email="volunteer@notify.com",
-            template__name='volunteer update notification',
-            template__subject="bidder: %s, bid: %s" % (
-                "{{ bidder }}",
-                "{{ bid.b_title }}")
-        )
-        response, context = self.post_conflict(staff=True)
-        assert_right_mail_right_addresses(
-            2,
-            3,
-            "bidder: %s, bid: %s" % (
-                str(context.profile),
-                'title'),
-            [self.privileged_profile.contact_email],
-            from_email="volunteer@notify.com")
-
-    def test_volunteer_conflict_removes_volunteer_commitment(self):
-        response, context = self.post_conflict(staff=True)
-        assert context.opp_event.volunteer_count == 0
-        assert context.opportunity.roles(
-            roles=['Staff Lead', ]
-            )[0]._item.contact_email == context.profile.contact_email
