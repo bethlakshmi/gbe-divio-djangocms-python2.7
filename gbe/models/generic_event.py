@@ -34,13 +34,6 @@ class GenericEvent (Event):
     def event_type(self):
         return self.type
 
-    @property
-    def volunteer_category_description(self):
-        interest = ''
-        if self.volunteer_type:
-            interest = self.volunteer_type.interest
-        return interest
-
     # tickets that apply to generic events are:
     #   - any ticket that applies to "most" iff this is not a master class
     #   - any ticket that links this event specifically
