@@ -468,7 +468,6 @@ class TestManageWorker(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         msg = assert_email_template_used(
             "A change has been made to your Volunteer Schedule!")
-        print(msg.body)
         self.unsub_link = Site.objects.get_current().domain + reverse(
             'email_update',
             urlconf='gbe.urls',
