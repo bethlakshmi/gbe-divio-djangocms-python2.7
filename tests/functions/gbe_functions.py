@@ -208,17 +208,19 @@ def assert_right_mail_right_addresses(
     assert msg.extra_headers == header
 
 
-def assert_queued_email(to_list, subject, message, sender):
+def assert_queued_email(to_list, subject, message, sender, extras=[]):
     queued_email = Email.objects.filter(
         status=2,
         subject=subject,
-        html_message=message,
+        html_message__startswith=message,
         headers={'Reply-to': sender},
         from_email=DEFAULT_FROM_EMAIL
         )
     for recipient in to_list:
-        assert queued_email.filter(
-            to=recipient).exists()
+        assert queued_email.filter(to=recipient).exists()
+        match = queued_email.filter(to=recipient).first()
+        for extra in extras:
+            assert extra in match.html_message
 
 
 def make_act_app_purchase(conference, user_object):

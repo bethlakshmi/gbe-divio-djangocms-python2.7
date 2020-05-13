@@ -23,6 +23,7 @@ class ListTemplateView(View):
     reviewer_permissions = ['Act Coordinator',
                             'Class Coordinator',
                             'Costume Coordinator',
+                            'Registrar',
                             'Scheduling Mavens',
                             'Vendor Coordinator',
                             'Volunteer Coordinator',

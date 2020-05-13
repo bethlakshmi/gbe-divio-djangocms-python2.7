@@ -32,7 +32,6 @@ from django.contrib.auth.models import User
 from gbe.models import Conference
 from gbetext import role_options
 from gbe_forms_text import role_option_privs
-from django.contrib.sites.models import Site
 
 
 class TestMailToRoles(TestCase):
@@ -46,6 +45,7 @@ class TestMailToRoles(TestCase):
                  "Teacher",
                  "Technical Director",
                  "Volunteer"]
+    get_param = "?email_disable=send_role_notifications"
 
     def setUp(self):
         Conference.objects.all().delete()
@@ -59,10 +59,6 @@ class TestMailToRoles(TestCase):
         self.context = ClassContext()
         self.url = reverse(self.view_name,
                            urlconf="gbe.email.urls")
-        self.footer = unsubscribe_text % (
-            Site.objects.get_current().domain + reverse(
-                'profile_update',
-                urlconf='gbe.urls') + "?email_disable=send_role_notifications")
 
     def class_coord_login(self):
         limited_profile = ProfileFactory()
@@ -664,9 +660,13 @@ class TestMailToRoles(TestCase):
         assert_queued_email(
             [volunteer.user_object.email, ],
             data['subject'],
-            data['html_message'] + self.footer,
+            data['html_message'],
             data['sender'],
-            )
+            extras=[self.get_param, reverse(
+                'email_update',
+                urlconf='gbe.urls',
+                args=[volunteer.user_object.email]
+                )])
 
     def test_send_email_failure_preserve_choices(self):
         staffcontext = StaffAreaContext(conference=self.context.conference)

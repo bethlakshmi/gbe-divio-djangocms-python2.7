@@ -50,7 +50,7 @@ class TestSetVolunteer(TestCase):
             args=[self.volunteeropp.pk, "on"],
             urlconf="gbe.scheduling.urls")
         self.unsub_link = Site.objects.get_current().domain + reverse(
-            'profile_update',
+            'email_update',
             urlconf='gbe.urls'
             ) + "?email_disable=send_schedule_change_notifications"
 

@@ -193,7 +193,6 @@ class TestCopyOccurrence(TestCase):
         }
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data=data, follow=True)
-        print(response.content)
         self.assertContains(
             response,
             self.copy_children_only_checked)

@@ -93,3 +93,9 @@ class TestTemplateList(TestCase):
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
         self.assertContains(response, "daily schedule")
+
+    def test_registrar(self):
+        grant_privilege(self.privileged_profile.user_object, 'Registrar')
+        login_as(self.privileged_profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, "unsubscribe email")

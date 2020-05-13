@@ -64,6 +64,7 @@ special_menu_tree = [
      'groups': ['Act Coordinator',
                 'Class Coordinator',
                 'Costume Coordinator',
+                'Registrar',
                 'Scheduling Mavens',
                 'Vendor Coordinator',
                 'Volunteer Coordinator',

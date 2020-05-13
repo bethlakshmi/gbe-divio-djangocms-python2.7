@@ -31,6 +31,7 @@ from django.core import mail
 
 class TestManageWorker(TestCase):
     view_name = "manage_workers"
+    get_param = "?email_disable=send_schedule_change_notifications"
 
     def setUp(self):
         self.client = Client()
@@ -49,9 +50,9 @@ class TestManageWorker(TestCase):
                   self.volunteer_opp.pk],
             urlconf="gbe.scheduling.urls")
         self.unsub_link = Site.objects.get_current().domain + reverse(
-            'profile_update',
-            urlconf='gbe.urls'
-            ) + "?email_disable=send_schedule_change_notifications"
+            'email_update',
+            urlconf='gbe.urls',
+            args=[self.volunteer.user_object.email])
 
     def get_edit_data(self):
         data = self.get_either_data()
@@ -397,6 +398,7 @@ class TestManageWorker(TestCase):
             Site.objects.get_current().domain,
             reverse('home', urlconf='gbe.urls')) in msg.body)
         assert(self.unsub_link in msg.body)
+        assert(self.get_param in msg.body)
 
     def test_post_form_valid_notification_template_fail(self):
         EmailTemplateSenderFactory(
@@ -466,7 +468,12 @@ class TestManageWorker(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         msg = assert_email_template_used(
             "A change has been made to your Volunteer Schedule!")
+        self.unsub_link = Site.objects.get_current().domain + reverse(
+            'email_update',
+            urlconf='gbe.urls',
+            args=[new_volunteer.user_object.email])
         assert(self.unsub_link in msg.body)
+        assert(self.get_param in msg.body)
 
     def test_post_form_edit_exclude_unsubscribed(self):
         new_volunteer = ProfileFactory()

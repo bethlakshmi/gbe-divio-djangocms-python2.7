@@ -406,6 +406,14 @@ unique_email_templates = {
          'default_base': "schedule_letter",
          'default_subject':
             "Your Schedule for Tomorrow at GBE", }, ],
+    'registrar': [
+        {'name': 'unsubscribe email',
+         'description': '''This email is sent to the email of the user when
+         someone requests to unsubscribe w/out logging in.''',
+         'category': 'registration',
+         'default_base': "unsubscribe_email",
+         'default_subject':
+            "Unsubscribe from GBE Mail", }, ],
 }
 
 default_class_submit_msg = "Your class was successfully submitted"
@@ -482,6 +490,11 @@ default_window_schedule_conflict = "Your change caused a conflict.  " + \
     "You were scheduled for:"
 default_clone_msg = "You have successfully made a new copy."
 default_update_profile_msg = "Your profile has been updated."
+link_sent_msg = '''The request to send an unsubscribe link was received.  If \
+there is a valid user account available, a link will be sent to the email \
+provided.'''
+bad_token_msg = '''This link is either expired or invalid.  Get a new link \
+emailed to you on this page'''
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
@@ -545,6 +558,8 @@ is, if you're performing, our selection committee and stage managers will be \
 able to see your profile information. If you're teaching, the conference \
 committee members and staff will be able to see your profile information, \
 etc.).'''
+send_link_message = '''This site could not verify the email unsubscribe link. \
+Please enter your email and a new link will be mailed to you.'''
 admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\
  Paper Tickets purchase was made under a different email.  Please handle email\
  information with care and do not distribute or use for any purpose outside of\
@@ -555,7 +570,7 @@ template.  The Email Template name is '''
 send_email_success_msg = '''A mail was successfully sent to '''
 unsubscribe_text = '''<br><br><div style="text-align: center;"><small> \
 This email has been sent by the burlesque-expo.com email system<br> \
-<a href="http://%s">Update email preferences</a><small></div>'''
+<a href="http://%s%s">Update email preferences</a><small></div>'''
 unsub_footer_include = "{% include 'gbe/email/unsub_footer.tmpl' %}"
 unsub_footer_plain_include = \
     "{% include 'gbe/email/unsub_footer_plain.tmpl' %}"

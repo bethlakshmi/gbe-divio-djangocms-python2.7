@@ -3,7 +3,11 @@ from .contact_form import ContactForm
 from .participant_form import ParticipantForm
 from .profile_admin_form import ProfileAdminForm
 from .profile_preferences_form import ProfilePreferencesForm
-from .email_preferences_form import EmailPreferencesForm
+from .email_preferences_form import (
+    EmailPreferencesForm,
+    EmailPreferencesNoLoginForm,
+)
+from .send_email_link_form import SendEmailLinkForm
 from .user_create_form import UserCreateForm
 
 # performer forms
