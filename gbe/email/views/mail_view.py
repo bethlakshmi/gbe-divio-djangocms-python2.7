@@ -44,14 +44,14 @@ class MailView(View):
                 sender = request.user.email
 
             for email in mail_form.cleaned_data['to']:
-                if self.email_type == "individual":
-                    footer = ""
-                else:
+                if self.email_type != "individual":
                     footer = unsubscribe_text % (
                         Site.objects.get_current().domain,
                         create_unsubscribe_link(email,
                                                 "send_%s" % self.email_type))
-                message = mail_form.cleaned_data['html_message'] + footer
+                    message = mail_form.cleaned_data['html_message'] + footer
+                else:
+                    message = mail_form.cleaned_data['html_message']
 
                 # if we're in DEBUG mode, let the sender send to only self
                 subject = mail_form.cleaned_data['subject']
