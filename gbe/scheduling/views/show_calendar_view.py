@@ -6,6 +6,7 @@ from django.shortcuts import (
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from gbetext import calendar_type as calendar_type_options
+from gbetext import role_options
 from django.utils.formats import date_format
 from settings import (
     GBE_TIME_FORMAT,
@@ -34,6 +35,7 @@ from scheduler.idd import (
 from scheduler.data_transfer import Person
 from gbe.scheduling.views.functions import show_general_status
 from django.conf import settings
+from gbe.scheduling.views.functions import build_icon_links
 
 
 class ShowCalendarView(View):
@@ -127,37 +129,17 @@ class ShowCalendarView(View):
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.eventitem.pk]),
             }
-            if self.conference.status != "completed":
-                occurrence_detail['favorite_link'] = reverse(
-                    'set_favorite',
-                    args=[occurrence.pk, 'on'],
-                    urlconf='gbe.scheduling.urls')
-                if role == "Interested":
-                    occurrence_detail['favorite_link'] = reverse(
-                        'set_favorite',
-                        args=[occurrence.pk, 'off'],
-                        urlconf='gbe.scheduling.urls')
-                elif role is not None:
-                    occurrence_detail['favorite_link'] = "disabled"
-                if role:
-                    occurrence_detail['highlight'] = role.lower()
-            if (self.calendar_type == 'Volunteer') and (
-                    'favorite_link' in occurrence_detail) and (
-                    occurrence_detail['favorite_link'] != "disabled"):
-                occurrence_detail['favorite_link'] = None
-            if (self.calendar_type == 'Conference') and (
-                    occurrence.start_time < (datetime.now() - timedelta(
-                        hours=settings.EVALUATION_WINDOW))
-                    ) and (
-                    role not in ("Teacher", "Performer", "Moderator")) and (
-                    eval_occurrences is not None):
-                if occurrence in eval_occurrences:
-                    occurrence_detail['evaluate'] = "disabled"
-                else:
-                    occurrence_detail['evaluate'] = reverse(
-                        'eval_event',
-                        args=[occurrence.pk, ],
-                        urlconf='gbe.scheduling.urls')
+            (occurrence_detail['favorite_link'],
+             occurrence_detail['volunteer_link'],
+             occurrence_detail['evaluate'],
+             occurrence_detail['highlight'],
+             occurrence_detail['vol_disable_msg']) = build_icon_links(
+             occurrence,
+             eval_occurrences,
+             self.calendar_type,
+             (self.conference.status == "completed"),
+             personal_schedule)
+
             display_list += [occurrence_detail]
             if hour in hour_block_size:
                 hour_block_size[hour] += 1
@@ -180,10 +162,14 @@ class ShowCalendarView(View):
             if request.user.is_authenticated and hasattr(
                     request.user,
                     'profile'):
+                all_roles = []
+                for n, m in role_options:
+                    all_roles += [m]
                 sched_response = get_schedule(
                     request.user,
                     labels=[self.calendar_type,
-                            self.conference.conference_slug])
+                            self.conference.conference_slug],
+                    roles=all_roles)
                 personal_schedule = sched_response.schedule_items
                 person = Person(
                     user=request.user,
