@@ -3,7 +3,6 @@ from .evaluation_category import EvaluationCategory
 from .conference import Conference
 from .room import Room
 from .conference_day import ConferenceDay
-from .volunteer_window import VolunteerWindow
 from .profile import Profile
 from .performer import Performer
 from .persona import Persona

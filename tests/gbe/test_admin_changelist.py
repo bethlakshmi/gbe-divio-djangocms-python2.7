@@ -6,13 +6,11 @@ from django.contrib.auth.models import User
 from gbe.models import (
     Event,
     VolunteerInterest,
-    VolunteerWindow,
 )
 from tests.factories.gbe_factories import(
     EventFactory,
     GenericEventFactory,
     VolunteerInterestFactory,
-    VolunteerWindowFactory,
 )
 from django.contrib.admin.sites import AdminSite
 
@@ -32,11 +30,6 @@ class GBEAdminChangeListTests(TestCase):
         response = self.client.get('/admin/gbe/volunteerinterest/',
                                    follow=True)
         self.assertContains(response, obj.volunteer.b_conference)
-
-    def test_get_volunteer_window_conference(self):
-        obj = VolunteerWindowFactory()
-        response = self.client.get('/admin/gbe/volunteerwindow/', follow=True)
-        self.assertContains(response, obj.day.conference)
 
     def test_get_event_subclass(self):
         obj = GenericEventFactory()

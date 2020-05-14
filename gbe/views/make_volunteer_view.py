@@ -19,18 +19,13 @@ from gbetext import (
     default_volunteer_submit_msg,
     default_volunteer_no_interest_msg,
     default_volunteer_no_bid_msg,
-    default_window_schedule_conflict,
     existing_volunteer_msg,
 )
 from gbe.views.volunteer_display_functions import (
     validate_interests,
 )
 from gbe.functions import validate_perms
-from gbe.email.functions import (
-    notify_reviewers_on_bid_change,
-    send_schedule_update_mail,
-    send_warnings_to_staff,
-)
+from gbe.email.functions import notify_reviewers_on_bid_change
 from settings import GBE_DATETIME_FORMAT
 from scheduler.idd import (
     get_all_container_bookings,
@@ -64,63 +59,6 @@ class MakeVolunteerView(MakeBidView):
     coordinator = None
     action = "Update"
 
-    def get_reduced_availability(self, the_bid, form):
-        '''  Get cases where the volunteer has reduced their availability.
-        Either by offering fewer available windows, or by adding to the
-        unavailable windows.  Either one is a case for needing to check
-        schedule conflict.
-        '''
-        reduced = []
-        for window in the_bid.available_windows.all():
-            if window not in form.cleaned_data['available_windows']:
-                reduced += [window]
-
-        for window in form.cleaned_data['unavailable_windows']:
-            if window not in the_bid.unavailable_windows.all():
-                reduced += [window]
-        return reduced
-
-    def manage_schedule_problems(self, changed_windows, profile):
-        warnings = []
-        conflicts = []
-        for window in changed_windows:
-            conflict_check = get_schedule(
-                    profile.user_object,
-                    start_time=window.start_time,
-                    end_time=window.end_time,
-                    labels=[self.bid_object.b_conference.conference_slug])
-            # choosing to error silently here, because the function does not
-            # have any errors yet, and because this is a public user case
-            for conflict in conflict_check.schedule_items:
-                if ((conflict.event not in conflicts) and
-                        conflict.role == "Volunteer"):
-                    conflicts += [conflict.event]
-                    warning = {
-                        'time': conflict.event.starttime.strftime(
-                            GBE_DATETIME_FORMAT),
-                        'event': str(conflict.event),
-                        'interest': conflict.event.eventitem.child(
-                            ).volunteer_category_description,
-                    }
-                    leads = get_all_container_bookings(
-                        occurrence_ids=[conflict.event.pk],
-                        roles=['Staff Lead', ])
-                    for lead in leads.people:
-                        warning['lead'] = str(lead.user.profile.badge_name)
-                        warning['email'] = lead.user.email
-                    for area in StaffArea.objects.filter(
-                            conference=self.bid_object.b_conference,
-                            slug__in=conflict.event.labels.values_list(
-                                'text',
-                                flat=True)):
-                        warning['lead'] = area.staff_lead.badge_name
-                        warning['email'] = area.staff_lead.user_object.email
-                    response = remove_booking(
-                        occurrence_id=conflict.event.pk,
-                        booking_id=conflict.booking_id)
-                    warnings += [warning]
-        return warnings
-
     def no_vol_bidding(self, request):
         user_message = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
@@ -145,13 +83,9 @@ class MakeVolunteerView(MakeBidView):
             self.owner = self.bid_object.profile
 
         try:
-            self.windows = self.conference.windows()
             self.available_interests = AvailableInterest.objects.filter(
                 visible=True).order_by('interest')
         except:
-            return self.no_vol_bidding(request)
-
-        if len(self.windows) == 0 or len(self.available_interests) == 0:
             return self.no_vol_bidding(request)
 
         if not self.bid_object:
@@ -188,9 +122,7 @@ class MakeVolunteerView(MakeBidView):
         if self.bid_object:
             self.form = the_form(
                 request.POST,
-                instance=self.bid_object,
-                available_windows=self.windows,
-                unavailable_windows=self.windows)
+                instance=self.bid_object)
             self.formset = [
                 VolunteerInterestForm(
                     request.POST,
@@ -200,9 +132,7 @@ class MakeVolunteerView(MakeBidView):
                 ) for interest in self.bid_object.volunteerinterest_set.all()]
         else:
             self.form = the_form(
-                request.POST,
-                available_windows=self.windows,
-                unavailable_windows=self.windows)
+                request.POST)
             self.formset = [
                 VolunteerInterestForm(
                     request.POST,
@@ -225,9 +155,7 @@ class MakeVolunteerView(MakeBidView):
         self.formset = []
         if self.bid_object:
             self.form = VolunteerBidForm(
-                instance=self.bid_object,
-                available_windows=self.windows,
-                unavailable_windows=self.windows)
+                instance=self.bid_object)
             for interest in self.bid_object.volunteerinterest_set.all():
                 self.formset += [VolunteerInterestForm(
                     instance=interest,
@@ -235,9 +163,7 @@ class MakeVolunteerView(MakeBidView):
                     prefix=str(interest.pk))]
         else:
             self.form = VolunteerBidForm(
-                initial=self.get_initial(),
-                available_windows=self.windows,
-                unavailable_windows=self.windows)
+                initial=self.get_initial())
             for interest in self.available_interests:
                 self.formset += [VolunteerInterestForm(
                     initial={'interest': interest},
@@ -277,55 +203,10 @@ class MakeVolunteerView(MakeBidView):
                       self.make_context(request))
 
     def set_valid_form(self, request):
-        if self.bid_edit:
-            changed_windows = self.get_reduced_availability(
-                self.bid_object,
-                self.form)
-            warnings = self.manage_schedule_problems(
-                changed_windows, self.bid_object.profile)
-            if warnings:
-                warn_msg = "<br><ul>"
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="AVAILABILITY_CONFLICT",
-                    defaults={
-                        'summary': "Volunteer Edit Caused Conflict",
-                        'description': default_window_schedule_conflict, })
-                for warn in warnings:
-                    warn_msg += "<li>%s working for %s - as %s" % (
-                        warn['time'],
-                        warn['event'],
-                        warn['interest']
-                    )
-                    if 'lead' in warn:
-                        warn_msg += ", Staff Lead is " + \
-                            "<a href='email: %s'>%s</a>" % (
-                                warn['email'],
-                                warn['lead']
-                            )
-                    warn_msg += "</li>"
-                warn_msg += "</ul>"
-                messages.warning(
-                    request,
-                    user_message[0].description+warn_msg)
-                send_schedule_update_mail(
-                    self.bid_type,
-                    self.bid_object.profile)
-                send_warnings_to_staff(
-                    self.bid_object.profile,
-                    self.bid_type,
-                    warnings)
-
         self.bid_object.b_conference = self.conference
         self.bid_object.profile = self.owner
         self.bid_object.save()
 
-        self.bid_object.available_windows.clear()
-        self.bid_object.unavailable_windows.clear()
-        for window in self.form.cleaned_data['available_windows']:
-            self.bid_object.available_windows.add(window)
-        for window in self.form.cleaned_data['unavailable_windows']:
-            self.bid_object.unavailable_windows.add(window)
         for interest_form in self.formset:
             vol_interest = interest_form.save(commit=False)
             vol_interest.volunteer = self.bid_object

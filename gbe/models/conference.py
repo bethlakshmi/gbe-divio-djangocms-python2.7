@@ -40,10 +40,6 @@ class Conference(Model):
         return cls.objects.order_by('-conference_slug').values_list(
             'conference_slug', flat=True)
 
-    def windows(self):
-        from gbe.models import VolunteerWindow
-        return VolunteerWindow.objects.filter(day__conference=self)
-
     class Meta:
         verbose_name = "conference"
         verbose_name_plural = "conferences"
