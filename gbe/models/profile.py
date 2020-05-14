@@ -14,7 +14,6 @@ from django.contrib.auth.models import User
 from gbe.models import (
     AvailableInterest,
     Conference,
-    VolunteerWindow,
 )
 from scheduler.models import WorkerItem
 from scheduler.idd import get_roles
@@ -195,10 +194,6 @@ class Profile(WorkerItem):
                 b_conference=conference,
                 b_title="volunteer bid: %s" % self.get_badge_name()
             )
-            volunteer.save()
-            volunteer.available_windows.add(*list(
-                VolunteerWindow.objects.filter(
-                    day__conference=conference)))
             volunteer.save()
             for interest in AvailableInterest.objects.filter(visible=True):
                 vol_interest = VolunteerInterest(

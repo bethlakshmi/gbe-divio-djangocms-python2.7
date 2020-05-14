@@ -46,15 +46,6 @@ class ConferenceDayFactory(DjangoModelFactory):
         model = conf.ConferenceDay
 
 
-class VolunteerWindowFactory(DjangoModelFactory):
-    start = time(8, 0, 0)
-    end = time(12, 0, 0)
-    day = SubFactory(ConferenceDayFactory)
-
-    class Meta:
-        model = conf.VolunteerWindow
-
-
 class WorkerItemFactory(DjangoModelFactory):
     class Meta:
         model = sched.WorkerItem
@@ -336,14 +327,6 @@ class ConferenceDayFactory(DjangoModelFactory):
         model = conf.ConferenceDay
     conference = SubFactory(ConferenceFactory)
     day = date(2016, 2, 5)
-
-
-class VolunteerWindowFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.VolunteerWindow
-    day = SubFactory(ConferenceDayFactory)
-    start = time(10)
-    end = time(14)
 
 
 class UserMessageFactory(DjangoModelFactory):

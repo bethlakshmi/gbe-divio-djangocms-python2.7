@@ -260,32 +260,6 @@ def notify_reviewers_on_bid_change(bidder,
             )
 
 
-def send_warnings_to_staff(bidder,
-                           bid_type,
-                           warnings):
-    name = '%s schedule warning' % (bid_type.lower())
-    template = get_or_create_template(
-        name,
-        "schedule_conflict",
-        "URGENT: %s Schedule Conflict Occurred" % (bid_type))
-    to_list = [user.email for user in
-               User.objects.filter(groups__name='%s Coordinator' % bid_type,
-                                   is_active=True)]
-    for warning in warnings:
-        if 'email' in warning:
-            to_list += [warning['email']]
-    if len(to_list) > 0:
-        mail_send_gbe(
-            to_list,
-            template.sender.from_email,
-            template=name,
-            context={
-                'bidder': bidder,
-                'bid_type': bid_type,
-                'warnings': warnings},
-            )
-
-
 def send_volunteer_update_to_staff(
         active_user,
         vol_profile,

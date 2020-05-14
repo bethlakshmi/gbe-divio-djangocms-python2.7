@@ -45,13 +45,3 @@ def volunteer_schedule(profile):
 @register.inclusion_tag('gbe/tag_templates/schedule_plaintext.tmpl')
 def volunteer_schedule_plaintext(profile):
     return build_schedule_context(profile)
-
-
-@register.inclusion_tag('gbe/tag_templates/warning_html.tmpl')
-def list_warnings(warnings):
-    return {'warnings': warnings}
-
-
-@register.inclusion_tag('gbe/tag_templates/warning_plaintext.tmpl')
-def list_warnings_plaintext(warnings):
-    return {'warnings': warnings}

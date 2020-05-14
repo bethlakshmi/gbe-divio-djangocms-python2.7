@@ -53,7 +53,7 @@ class TestManageVolunteerWizard(TestCase):
             'new_opp-max_volunteer': '1',
             'new_opp-approval': True,
             'new_opp-duration': '1.0',
-            'new_opp-day': self.context.window.day.pk,
+            'new_opp-day': self.context.conf_day.pk,
             'new_opp-time': '10:00:00',
             'new_opp-location': self.room.pk}
         return data
@@ -65,7 +65,7 @@ class TestManageVolunteerWizard(TestCase):
             'type': 'Volunteer',
             'max_volunteer': '1',
             'duration': '1.0',
-            'day': self.context.window.day.pk,
+            'day': self.context.conf_day.pk,
             'time': '10:00:00',
             'location': self.room.pk}
         return data

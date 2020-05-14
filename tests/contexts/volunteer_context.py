@@ -1,4 +1,5 @@
 from tests.factories.gbe_factories import (
+    ConferenceFactory,
     ConferenceDayFactory,
     GenericEventFactory,
     ProfilePreferencesFactory,
@@ -6,7 +7,6 @@ from tests.factories.gbe_factories import (
     RoomFactory,
     ShowFactory,
     VolunteerFactory,
-    VolunteerWindowFactory,
     VolunteerInterestFactory
 )
 from tests.factories.scheduler_factories import (
@@ -17,10 +17,11 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
     WorkerFactory,
 )
-from gbe.models import VolunteerWindow
+from gbe.models import ConferenceDay
 from datetime import (
     date,
     datetime,
+    time,
 )
 
 
@@ -33,22 +34,14 @@ class VolunteerContext():
                  role=None,
                  conference=None):
         if not event:
-            self.window = VolunteerWindowFactory()
-            if not conference:
-                self.conference = self.window.day.conference
-            else:
-                self.conference = conference
-                self.window.day.conference = conference
-                self.window.day.save()
+            self.conference = conference or ConferenceFactory()
         else:
             self.conference = event.e_conference
-            if not VolunteerWindow.objects.filter(
-                    day__conference=self.conference).exists():
-                self.window = VolunteerWindowFactory(
-                    day__conference=self.conference)
-            else:
-                self.window = VolunteerWindow.objects.all().first()
-        self.conf_day = self.window.day
+        if ConferenceDay.objects.filter(conference=self.conference).exists():
+            self.conf_day = ConferenceDay.objects.filter(
+                conference=self.conference).first()
+        else:
+            self.conf_day = ConferenceDayFactory(conference=self.conference)
         self.profile = profile or ProfileFactory()
         if not hasattr(self.profile, 'preferences'):
             ProfilePreferencesFactory(profile=self.profile)
@@ -72,8 +65,8 @@ class VolunteerContext():
 
         self.sched_event = SchedEventFactory(
             eventitem=self.event.eventitem_ptr,
-            starttime=datetime.combine(self.window.day.day,
-                                       self.window.start))
+            starttime=datetime.combine(self.conf_day.day,
+                                       time(12, 0, 0)))
         ResourceAllocationFactory(
             event=self.sched_event,
             resource=LocationFactory(_item=self.room))
@@ -95,21 +88,14 @@ class VolunteerContext():
                                     role="Staff Lead"))
         return staff_lead
 
-    def add_window(self):
-        add_window = VolunteerWindowFactory(
-            day=ConferenceDayFactory(
-                conference=self.conference,
-                day=date(2016, 2, 6)))
-        return add_window
-
     def add_opportunity(self, opportunity=None, start_time=None):
         opportunity = opportunity or GenericEventFactory(
             e_conference=self.conference,
             type='Volunteer',
             volunteer_type=self.interest.interest)
         start_time = start_time or datetime.combine(
-            self.window.day.day,
-            self.window.start)
+            self.conf_day.day,
+            time(12, 0, 0))
 
         opp_event = SchedEventFactory(
             eventitem=opportunity.eventitem_ptr,

@@ -169,34 +169,6 @@ class TestReviewVolunteer(TestCase):
         response = self.client.get(url)
         assert_interest_view(response, interest)
 
-    def test_review_volunteer_clean_available_windows(self):
-        context = VolunteerContext()
-        context.bid.available_windows.add(context.window)
-        context.bid.save()
-        not_there = context.add_window()
-        url = reverse(self.view_name,
-                      args=[context.bid.pk],
-                      urlconf='gbe.urls')
-
-        login_as(self.privileged_user, self)
-        response = self.client.get(url)
-        self.assertContains(response, str(context.window))
-        self.assertNotContains(response, str(not_there))
-
-    def test_review_volunteer_clean_unavailable_windows(self):
-        context = VolunteerContext()
-        context.bid.unavailable_windows.add(context.window)
-        context.bid.save()
-        not_there = context.add_window()
-        url = reverse(self.view_name,
-                      args=[context.bid.pk],
-                      urlconf='gbe.urls')
-
-        login_as(self.privileged_user, self)
-        response = self.client.get(url)
-        self.assertContains(response, str(context.window))
-        self.assertNotContains(response, str(not_there))
-
     def test_review_volunteer_clean_state(self):
         volunteer = VolunteerFactory()
         url = reverse(self.view_name,

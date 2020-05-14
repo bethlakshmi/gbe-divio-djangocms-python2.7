@@ -3,7 +3,6 @@ from django.db.models import (
     ForeignKey,
     IntegerField,
     BooleanField,
-    ManyToManyField,
 )
 from gbetext import (
     acceptance_states,
@@ -14,7 +13,6 @@ from gbe.models import (
     Biddable,
     Profile,
     visible_bid_query,
-    VolunteerWindow,
 )
 from django.utils.formats import date_format
 import pytz
@@ -31,14 +29,6 @@ class Volunteer(Biddable):
     opt_outs = TextField(blank=True)
     pre_event = BooleanField(choices=boolean_options, default=False)
     background = TextField()
-    available_windows = ManyToManyField(
-        VolunteerWindow,
-        related_name="availablewindow_set",
-        blank=True)
-    unavailable_windows = ManyToManyField(
-        VolunteerWindow,
-        related_name="unavailablewindow_set",
-        blank=True)
 
     def __str__(self):
         return self.profile.display_name
@@ -72,13 +62,6 @@ class Volunteer(Biddable):
         interest_string = ''
         for interest in self.interest_list:
             interest_string += interest + ', \n'
-        availability_string = ''
-        unavailability_string = ''
-        for window in self.available_windows.all():
-            availability_string += str(window) + ', \n'
-        for window in self.unavailable_windows.all():
-            unavailability_string += str(window) + ', \n'
-
         commitments = ''
 
         for event in self.profile.get_schedule(self.b_conference):
@@ -90,10 +73,8 @@ class Volunteer(Biddable):
                 start_time,
                 end_time)
             commitments += commitment_string
-        format_string = "Availability: %s\n Conflicts: %s\n Commitments: %s"
-        scheduling = format_string % (availability_string,
-                                      unavailability_string,
-                                      commitments)
+        format_string = "Commitments: %s"
+        scheduling = format_string % commitments
         return [self.profile.display_name,
                 self.profile.user_object.email,
                 self.profile.preferences.in_hotel,

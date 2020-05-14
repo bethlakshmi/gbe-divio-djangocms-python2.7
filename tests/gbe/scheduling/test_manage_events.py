@@ -46,7 +46,7 @@ class TestManageEventList(TestCase):
         self.url = reverse(self.view_name,
                            urlconf="gbe.scheduling.urls")
         self.volunteer_context = VolunteerContext()
-        self.day = self.volunteer_context.window.day
+        self.day = self.volunteer_context.conf_day
         self.class_context = ClassContext(conference=self.day.conference)
         self.show_context = ShowContext(conference=self.day.conference)
         self.staff_context = StaffAreaContext(conference=self.day.conference)
