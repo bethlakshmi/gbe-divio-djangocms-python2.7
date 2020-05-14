@@ -375,6 +375,8 @@ def build_icon_links(occurrence,
         favorite_link = None
     if calendar_type == 'Volunteer' and occurrence.end_time < datetime.now():
         volunteer_link = None
+    if occurrence.max_volunteer == 0:
+        volunteer_link = None
 
     return (favorite_link,
             volunteer_link,
