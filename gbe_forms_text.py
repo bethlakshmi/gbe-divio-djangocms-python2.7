@@ -298,9 +298,6 @@ volunteer_availability_options = [('SH0', 'Thursday evening (6PM-11PM)'),
 
 volunteer_labels = {
     'number_shifts': 'How many hours would you like to work?',
-    'interests': 'What are your particular areas of interest?',
-    'availability': 'I am Available....',
-    'unavailability': 'I am Not Available....',
     'opt_outs': 'Are there events that we should make sure to not schedule \
         you during?',
     'pre_event': 'Are you interested in helping with pre-event tasks?',

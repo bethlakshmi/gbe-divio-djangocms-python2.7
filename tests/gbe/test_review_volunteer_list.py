@@ -11,7 +11,6 @@ from tests.factories.gbe_factories import (
     ProfilePreferencesFactory,
     UserFactory,
     VolunteerFactory,
-    VolunteerWindowFactory,
     VolunteerInterestFactory
 )
 from tests.factories.scheduler_factories import ResourceAllocationFactory

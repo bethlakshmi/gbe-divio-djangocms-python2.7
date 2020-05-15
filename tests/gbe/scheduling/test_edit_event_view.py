@@ -160,8 +160,8 @@ class TestEditEventView(TestCase):
                 vol_context.opp_event.pk)
         )
         assert_option_state(response,
-                            vol_context.window.day.pk,
-                            vol_context.window.day.day.strftime("%b. %-d, %Y"),
+                            vol_context.conf_day.pk,
+                            vol_context.conf_day.day.strftime("%b. %-d, %Y"),
                             True)
         self.assertContains(
             response,

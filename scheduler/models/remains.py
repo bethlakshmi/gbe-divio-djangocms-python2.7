@@ -191,10 +191,6 @@ class LocationItem(ResourceItem):
     objects = InheritanceManager()
 
     @property
-    def contact_email(self):
-        return ""
-
-    @property
     def as_subtype(self):
         return self.room
 
@@ -276,18 +272,6 @@ class WorkerItem(ResourceItem):
         return WorkerItem.objects.get_subclass(
             resourceitem_id=self.resourceitem_id
         ).is_active
-
-    @property
-    def contact_email(self):
-        return WorkerItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).contact_email
-
-    @property
-    def badge_name(self):
-        return WorkerItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).describe
 
     @property
     def describe(self):
