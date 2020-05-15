@@ -10,8 +10,8 @@ from gbe.scheduling.forms import (
     ScheduleOccurrenceForm,
 )
 from gbe.scheduling.views import EventWizardView
-from gbe.duration import Duration
 from django.forms.widgets import CheckboxInput
+from datetime import timedelta
 
 
 class VolunteerWizardView(EventWizardView):
@@ -93,7 +93,7 @@ class VolunteerWizardView(EventWizardView):
                     ) and context['scheduling_form'].is_valid(
                     ) and self.is_formset_valid(context['worker_formset']):
                 volunteer_event = context['third_form'].save(commit=False)
-                volunteer_event.duration = Duration(
+                volunteer_event.duration = timedelta(
                     minutes=context['scheduling_form'].cleaned_data[
                         'duration']*60)
                 volunteer_event.save()

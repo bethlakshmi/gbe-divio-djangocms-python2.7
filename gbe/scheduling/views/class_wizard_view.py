@@ -15,7 +15,6 @@ from gbe.scheduling.forms import (
 from gbe.views.class_display_functions import get_scheduling_info
 from gbe.models import Class
 from gbe.scheduling.views import EventWizardView
-from gbe.duration import Duration
 from datetime import timedelta
 from django.contrib import messages
 from gbe.models import UserMessage
@@ -138,7 +137,7 @@ class ClassWizardView(EventWizardView):
                     ) and context['scheduling_form'].is_valid(
                     ) and self.is_formset_valid(context['worker_formset']):
                 working_class = context['third_form'].save(commit=False)
-                working_class.duration = Duration(
+                working_class.duration = timedelta(
                     minutes=context['scheduling_form'].cleaned_data[
                         'duration']*60)
                 if not hasattr(working_class, 'teacher'):
