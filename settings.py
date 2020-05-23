@@ -22,6 +22,8 @@ INSTALLED_ADDONS = [
     # </INSTALLED_ADDONS>
 ]
 
+PAYPAL_TEST = True
+
 import aldryn_addons.settings
 aldryn_addons.settings.load(locals())
 
@@ -34,6 +36,7 @@ INSTALLED_APPS.extend([
     "ticketing",
     "gbe",
     "post_office",
+    'paypal.standard.ipn',
     'import_export',
     'snowpenguin.django.recaptcha2',
 ])

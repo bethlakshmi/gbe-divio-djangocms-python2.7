@@ -35,5 +35,7 @@
      {% endif %}
    {% endif %}
    </form>
-
+     {% if payment_form %}
+     {{ payment_form.render }}
+     {% endif %}
 {% endblock %}
