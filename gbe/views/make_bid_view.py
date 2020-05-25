@@ -232,7 +232,7 @@ class MakeBidView(View):
                 request.POST.keys()):
             if not self.fee_paid():
                 try:
-                    cart_items, paypal_button = get_payment_details(
+                    cart_items, paypal_button, total = get_payment_details(
                         request.POST, self.bid_type, self.conference)
                 except Exception as e:
                     error_message = UserMessage.objects.get_or_create(
@@ -258,7 +258,8 @@ class MakeBidView(View):
                     'confirm_pay.tmpl',
                     {'dynamic_message': dynamic_message[0].description,
                      'page_title': page_title,
-                     'items': cart_items,
+                     'cart_items': cart_items,
+                     'total': total,
                      'paypal_button': paypal_button})
             else:
                 redirect = self.submit_bid(request)

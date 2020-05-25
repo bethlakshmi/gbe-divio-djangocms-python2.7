@@ -272,12 +272,14 @@ def get_payment_details(post, bid_type, conference):
     cart = []
     paypal_button = None
     form = None
+    total = 0
+    minimum = None
     ticket_items = get_ticket_list(bid_type, conference)
     if ticket_items.filter(is_minimum=True).exists():
         minimum = ticket_items.filter(is_minimum=True).order_by(
             'cost').first().cost
         form = DonationForm(post, initial={'donation_min': minimum,
-                                     'donation': minimum})
+                                           'donation': minimum})
     else:
         form = TicketPayForm(post)
         form.fields['main_ticket'].queryset = ticket_items.filter(
@@ -288,10 +290,23 @@ def get_payment_details(post, bid_type, conference):
         else:
             form.fields['add_ons'].widget = HiddenInput()
     if form.is_valid():
-        return cart, paypal_button
+        if minimum is not None:
+            cart += [("%s Submission Fee" % bid_type,
+                      form.cleaned_data['donation'])]
+            total = total + form.cleaned_data['donation']
+        else:
+            cart += [(form.cleaned_data['main_ticket'].title,
+                      form.cleaned_data['main_ticket'].cost)]
+            total = total + form.cleaned_data['main_ticket'].cost
+            for item in form.cleaned_data['add_ons']:
+                cart += [(item.title, item.cost)]
+                total = total + item.cost
+        return cart, paypal_button, total
     else:
         raise Exception(
             form,
             'PAYMENT_CHOICE_INVALID', 
             "User Made Invalid Ticket Choice",
             payment_details_error)
+
+    return cart, paypal_button, total
