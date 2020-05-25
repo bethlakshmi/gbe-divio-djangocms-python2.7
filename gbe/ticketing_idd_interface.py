@@ -21,7 +21,9 @@ from gbe.models import (
 )
 from scheduler.idd import get_roles
 from ticketing.brown_paper import *
-from gbetext import *
+from gbetext import (
+    payment_details_error,
+)
 from django.db.models import Count
 from ticketing.views import import_ticket_items
 from django.db.models import Q
@@ -230,8 +232,7 @@ def create_bpt_event(bpt_event_id, conference, events=[], display_icon=None):
     return event, count
 
 
-def get_ticket_form(bid_type, conference):
-    form = None
+def get_ticket_list(bid_type, conference):
     ticket_items = TicketItem.objects.filter(
         bpt_event__conference=conference, live=True, has_coupon=False).exclude(
         start_time__lt=datetime.now(), end_time__gt=datetime.now())
@@ -243,12 +244,18 @@ def get_ticket_form(bid_type, conference):
             bpt_event__act_submission_event=True)
     else:
         raise Exception("Invalid Bid Type: %s" % bid_type)
+    return ticket_items
+
+
+def get_ticket_form(bid_type, conference):
+    form = None
+    ticket_items = get_ticket_list(bid_type, conference)
 
     if ticket_items.filter(is_minimum=True).exists():
-        minimum_cost = ticket_items.filter(is_minimum=True).order_by(
+        minimum = ticket_items.filter(is_minimum=True).order_by(
             'cost').first().cost
-        form = DonationForm(initial={'donation': minimum_cost})
-        form.fields['donation'].min_value = minimum_cost
+        form = DonationForm(initial={'donation_min': minimum,
+                                     'donation': minimum})
     else:
         form = TicketPayForm()
         form.fields['main_ticket'].queryset = ticket_items.filter(
@@ -260,3 +267,31 @@ def get_ticket_form(bid_type, conference):
             form.fields['add_ons'].widget = HiddenInput()
 
     return form
+
+def get_payment_details(post, bid_type, conference):
+    cart = []
+    paypal_button = None
+    form = None
+    ticket_items = get_ticket_list(bid_type, conference)
+    if ticket_items.filter(is_minimum=True).exists():
+        minimum = ticket_items.filter(is_minimum=True).order_by(
+            'cost').first().cost
+        form = DonationForm(post, initial={'donation_min': minimum,
+                                     'donation': minimum})
+    else:
+        form = TicketPayForm(post)
+        form.fields['main_ticket'].queryset = ticket_items.filter(
+            add_on=False).order_by('cost')
+        if ticket_items.filter(add_on=True).exists():
+            form.fields['add_ons'].queryset = ticket_items.filter(
+                add_on=True).order_by('cost')
+        else:
+            form.fields['add_ons'].widget = HiddenInput()
+    if form.is_valid():
+        return cart, paypal_button
+    else:
+        raise Exception(
+            form,
+            'PAYMENT_CHOICE_INVALID', 
+            "User Made Invalid Ticket Choice",
+            payment_details_error)

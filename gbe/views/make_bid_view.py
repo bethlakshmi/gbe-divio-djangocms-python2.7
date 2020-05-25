@@ -23,7 +23,10 @@ from gbetext import (
     full_login_msg,
     payment_needed_msg,
 )
-from gbe.ticketing_idd_interface import get_ticket_form
+from gbe.ticketing_idd_interface import (
+    get_payment_details,
+    get_ticket_form,
+)
 
 
 class MakeBidView(View):
@@ -32,6 +35,7 @@ class MakeBidView(View):
     popup_text = None
     has_draft = True
     instructions = ''
+    payment_form = None
 
     def groundwork(self, request, args, kwargs):
         self.owner = validate_profile(request, require=False)
@@ -120,8 +124,10 @@ class MakeBidView(View):
             messages.info(
                 request,
                 user_message[0].description)
-
-            context['forms'] += [self.get_ticket_form()]
+            if self.payment_form:
+                context['forms'] += [self.payment_form]
+            else:
+                context['forms'] += [self.get_ticket_form()]
 
         return context
 
@@ -161,8 +167,7 @@ class MakeBidView(View):
         return render(
             request,
             'gbe/bid.tmpl',
-            context
-            )
+            context)
 
     def submit_bid(self, request):
         self.bid_object.submitted = True
@@ -223,8 +228,24 @@ class MakeBidView(View):
 
         self.set_valid_form(request)
 
-        if 'submit' in list(request.POST.keys()):
+        if 'submit' in list(request.POST.keys()) or 'payfee' in list(
+                request.POST.keys()):
             if not self.fee_paid():
+                try:
+                    cart_items, paypal_button = get_payment_details(
+                        request.POST, self.bid_type, self.conference)
+                except Exception as e:
+                    error_message = UserMessage.objects.get_or_create(
+                        view=self.__class__.__name__,
+                        code=e.args[1],
+                        defaults={
+                            'summary': e.args[2],
+                            'description': e.args[3]})
+                    self.payment_form = e.args[0]
+                    messages.error(
+                        request,
+                        error_message[0].description)
+                    return self.get_invalid_response(request)
                 dynamic_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="NOT_PAID_INSTRUCTIONS",
@@ -234,14 +255,13 @@ class MakeBidView(View):
                 page_title = '%s Payment' % self.bid_type
                 return render(
                     request,
-                    'dynamic_message.tmpl',
-                    {'dynamic_message': dynamic_message[0].description % (
-                        self.fee_link),
-                     'page_title': page_title})
+                    'confirm_pay.tmpl',
+                    {'dynamic_message': dynamic_message[0].description,
+                     'page_title': page_title,
+                     'items': cart_items,
+                     'paypal_button': paypal_button})
             else:
                 redirect = self.submit_bid(request)
-        elif 'payfee' in list(request.POST.keys()):
-            redirect = self.fee_link
         messages.success(request, user_message[0].description)
         return HttpResponseRedirect(
             redirect or reverse('home', urlconf='gbe.urls'))
