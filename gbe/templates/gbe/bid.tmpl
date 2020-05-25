@@ -31,11 +31,8 @@
      {% if fee_paid %}
      <input type="submit" name="submit" value="Submit For Approval">
      {% else %}
-     <input type="submit" name="payfee" formnovalidate value="Pay Fee">
+     <input type="submit" name="payfee" formnovalidate value="Proceed to Payment">
      {% endif %}
    {% endif %}
    </form>
-     {% if payment_form %}
-     {{ payment_form.render }}
-     {% endif %}
 {% endblock %}

@@ -23,6 +23,7 @@ from gbetext import (
     full_login_msg,
     payment_needed_msg,
 )
+from gbe.ticketing_idd_interface import get_ticket_form
 
 
 class MakeBidView(View):
@@ -115,15 +116,17 @@ class MakeBidView(View):
                 defaults={
                     'summary': "%s Pre-submit Message" % self.bid_type,
                     'description': fee_instructions})
-            try:
-                messages.info(
-                    request,
-                    user_message[0].description % self.fee_link)
-            except TypeError:
-                messages.info(
-                    request,
-                    user_message[0].description)
+
+            messages.info(
+                request,
+                user_message[0].description)
+
+            context['forms'] += [self.get_ticket_form()]
+
         return context
+
+    def get_ticket_form(self):
+        return get_ticket_form(self.bid_class.__name__, self.conference)
 
     def get_create_form(self, request):
         if self.bid_object:

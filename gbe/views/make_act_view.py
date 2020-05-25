@@ -3,10 +3,7 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.forms import ModelChoiceField
-from gbe.ticketing_idd_interface import (
-    performer_act_submittal_link,
-    verify_performer_app_paid,
-)
+from gbe.ticketing_idd_interface import verify_performer_app_paid
 from gbe.models import (
     Act,
     Performer,
@@ -75,7 +72,6 @@ class MakeActView(MakeBidView):
         if self.bid_object and (
                 self.bid_object.performer.contact != self.owner):
             raise Http404
-        self.fee_link = performer_act_submittal_link(request.user.id)
 
     def get_initial(self):
         initial = {}
@@ -97,11 +93,6 @@ class MakeActView(MakeBidView):
     def set_up_form(self):
         q = Performer.objects.filter(contact=self.owner)
         self.form.fields['performer'] = ModelChoiceField(queryset=q)
-
-    def make_context(self, request):
-        context = super(MakeActView, self).make_context(request)
-        context['fee_link'] = self.fee_link
-        return context
 
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):

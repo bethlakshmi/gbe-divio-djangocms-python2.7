@@ -1,25 +1,16 @@
 from gbe.views import MakeBidView
 from django.http import Http404
-from django.core.urlresolvers import reverse
-from gbe.ticketing_idd_interface import (
-    performer_act_submittal_link,
-    verify_performer_app_paid,
-)
 from gbe.forms import VendorBidForm
 from gbe.models import (
     Conference,
     Vendor,
     UserMessage
 )
-from gbe.ticketing_idd_interface import (
-    vendor_submittal_link,
-    verify_vendor_app_paid,
-)
+from gbe.ticketing_idd_interface import verify_vendor_app_paid
 from gbetext import (
     default_vendor_submit_msg,
     default_vendor_draft_msg
 )
-from paypal.standard.forms import PayPalPaymentsForm
 
 
 class MakeVendorView(MakeBidView):
@@ -48,24 +39,6 @@ class MakeVendorView(MakeBidView):
 
         if self.bid_object and (self.bid_object.profile != self.owner):
             raise Http404
-        self.fee_link = vendor_submittal_link(request.user.id)
-        # What you want the button to do.
-        self.paypal_dict = {
-            "business": "sb-azrfj1871887@business.example.com",
-            "amount": "100.00",
-            "item_name": "Vendor Fee",
-            "invoice": "123456",
-            "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
-            "return": request.build_absolute_uri(reverse(
-                'vendor_edit',
-                urlconf='gbe.urls',
-                args=[self.bid_object.pk])),
-            "cancel_return": request.build_absolute_uri(reverse(
-                'vendor_edit',
-                urlconf='gbe.urls',
-                args=[self.bid_object.pk])),
-            "custom": "premium_plan",  # Custom command to correlate to some function later (optional)
-        }
 
     def get_initial(self):
         initial = {}
@@ -79,12 +52,6 @@ class MakeVendorView(MakeBidView):
             initial = {'profile': self.owner,
                        'physical_address': self.owner.address}
         return initial
-
-    def make_context(self, request):
-        context = super(MakeVendorView, self).make_context(request)
-        context['fee_link'] = self.fee_link
-        context['payment_form'] = PayPalPaymentsForm(initial=self.paypal_dict)
-        return context
 
     def set_valid_form(self, request):
         self.bid_object.b_conference = self.conference

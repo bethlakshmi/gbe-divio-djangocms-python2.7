@@ -125,3 +125,24 @@ class BPTEventForm(forms.ModelForm):
             'conference']
         labels = bpt_event_labels
         help_texts = bpt_event_help_text
+
+class PickTicketField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "%s - $%s (USD)" % (obj.title, obj.cost)
+
+class PickTicketsField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return "%s - $%s (USD)" % (obj.title, obj.cost)
+
+class DonationForm(forms.Form):
+    donation = forms.DecimalField(required=True)
+
+class TicketPayForm(forms.Form):
+    main_ticket = PickTicketField(
+        queryset=TicketItem.objects.all(),
+        required=True,
+        empty_label=None)
+    add_ons = PickTicketsField(
+        queryset=TicketItem.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple)

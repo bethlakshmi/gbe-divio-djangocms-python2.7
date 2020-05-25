@@ -12,6 +12,10 @@ from ticketing.models import (
     TicketItem,
     Transaction,
 )
+from ticketing.forms import (
+    DonationForm,
+    TicketPayForm,
+)
 from gbe.models import (
     Conference,
 )
@@ -21,6 +25,9 @@ from gbetext import *
 from django.db.models import Count
 from ticketing.views import import_ticket_items
 from django.db.models import Q
+from datetime import datetime
+from django.forms import HiddenInput
+from django.core.validators import MinValueValidator
 
 
 def performer_act_submittal_link(user_id):
@@ -78,7 +85,6 @@ def verify_performer_app_paid(user_name, conference):
         ticket_item__bpt_event__act_submission_event=True,
         ticket_item__bpt_event__conference=conference,
         purchaser__matched_to_user__username=str(user_name)).count()
-
     # Then figure out how many acts have already been submitted.
     acts_submitted = Act.objects.filter(
         submitted=True,
@@ -222,3 +228,35 @@ def create_bpt_event(bpt_event_id, conference, events=[], display_icon=None):
     event.save()
     count = import_ticket_items([event])
     return event, count
+
+
+def get_ticket_form(bid_type, conference):
+    form = None
+    ticket_items = TicketItem.objects.filter(
+        bpt_event__conference=conference, live=True, has_coupon=False).exclude(
+        start_time__lt=datetime.now(), end_time__gt=datetime.now())
+    if bid_type == "Vendor":
+        ticket_items = ticket_items.filter(
+            bpt_event__vendor_submission_event=True)
+    elif bid_type == "Act":
+        ticket_items = ticket_items.filter(
+            bpt_event__act_submission_event=True)
+    else:
+        raise Exception("Invalid Bid Type: %s" % bid_type)
+
+    if ticket_items.filter(is_minimum=True).exists():
+        minimum_cost = ticket_items.filter(is_minimum=True).order_by(
+            'cost').first().cost
+        form = DonationForm(initial={'donation': minimum_cost})
+        form.fields['donation'].min_value = minimum_cost
+    else:
+        form = TicketPayForm()
+        form.fields['main_ticket'].queryset = ticket_items.filter(
+            add_on=False).order_by('cost')
+        if ticket_items.filter(add_on=True).exists():
+            form.fields['add_ons'].queryset = ticket_items.filter(
+                add_on=True).order_by('cost')
+        else:
+            form.fields['add_ons'].widget = HiddenInput()
+
+    return form
