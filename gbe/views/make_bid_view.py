@@ -233,18 +233,28 @@ class MakeBidView(View):
             if not self.fee_paid():
                 try:
                     cart_items, paypal_button, total = get_payment_details(
-                        request.POST, self.bid_type, self.conference)
-                except Exception as e:
-                    error_message = UserMessage.objects.get_or_create(
-                        view=self.__class__.__name__,
-                        code=e.args[1],
-                        defaults={
-                            'summary': e.args[2],
-                            'description': e.args[3]})
-                    self.payment_form = e.args[0]
-                    messages.error(
                         request,
-                        error_message[0].description)
+                        self.bid_type,
+                        self.bid_object.pk,
+                        self.conference,
+                        self.owner.pk)
+                except Exception as e:
+                    if len(e.args) > 1:
+                        error_message = UserMessage.objects.get_or_create(
+                            view=self.__class__.__name__,
+                            code=e.args[1],
+                            defaults={
+                                'summary': e.args[2],
+                                'description': e.args[3]})
+                        self.payment_form = e.args[0]
+                        messages.error(
+                            request,
+                            error_message[0].description)
+                    else:
+                        messages.error(
+                            request,
+                            e)
+
                     return self.get_invalid_response(request)
                 dynamic_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,

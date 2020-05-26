@@ -7,6 +7,7 @@
 from gbe_logging import logger
 from ticketing.models import (
     BrownPaperEvents,
+    PayPalSettings,
     RoleEligibilityCondition,
     TicketingEligibilityCondition,
     TicketItem,
@@ -29,7 +30,8 @@ from ticketing.views import import_ticket_items
 from django.db.models import Q
 from datetime import datetime
 from django.forms import HiddenInput
-from django.core.validators import MinValueValidator
+from paypal.standard.forms import PayPalPaymentsForm
+from django.core.urlresolvers import reverse
 
 
 def performer_act_submittal_link(user_id):
@@ -268,20 +270,39 @@ def get_ticket_form(bid_type, conference):
 
     return form
 
-def get_payment_details(post, bid_type, conference):
+
+def get_paypal_button(request, cart, total, custom, main_name):
+    paypal_dict = {
+        "business": PayPalSettings.objects.first().business_email,
+        "amount": total,
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "invoice": str(datetime.now()),
+        "custom": custom,
+        "item_name": main_name
+    }
+    counter = 1
+    for item in cart:
+        paypal_dict['item_name%d' % counter] = item[0]
+        paypal_dict['item_number%d' % counter] = item[1]
+        counter = counter + 1
+    return PayPalPaymentsForm(initial=paypal_dict)
+
+
+def get_payment_details(request, bid_type, bid_id, conference, user_id):
     cart = []
     paypal_button = None
     form = None
     total = 0
     minimum = None
+    main_ticket = None
     ticket_items = get_ticket_list(bid_type, conference)
     if ticket_items.filter(is_minimum=True).exists():
         minimum = ticket_items.filter(is_minimum=True).order_by(
             'cost').first().cost
-        form = DonationForm(post, initial={'donation_min': minimum,
+        form = DonationForm(request.POST, initial={'donation_min': minimum,
                                            'donation': minimum})
     else:
-        form = TicketPayForm(post)
+        form = TicketPayForm(request.POST)
         form.fields['main_ticket'].queryset = ticket_items.filter(
             add_on=False).order_by('cost')
         if ticket_items.filter(add_on=True).exists():
@@ -301,7 +322,13 @@ def get_payment_details(post, bid_type, conference):
             for item in form.cleaned_data['add_ons']:
                 cart += [(item.title, item.cost)]
                 total = total + item.cost
-        return cart, paypal_button, total
+        return (
+            cart, 
+            get_paypal_button(request, cart, total, "%s-%d-User-%d" % (
+                bid_type,
+                bid_id,
+                user_id), "%s Fees" % bid_type),
+            total)
     else:
         raise Exception(
             form,
