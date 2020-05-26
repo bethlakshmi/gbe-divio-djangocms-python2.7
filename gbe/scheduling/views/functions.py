@@ -13,7 +13,6 @@ from django.shortcuts import (
     get_object_or_404,
 )
 from django.core.urlresolvers import reverse
-from gbe.duration import Duration
 from gbe.scheduling.forms import (
     EventBookingForm,
     ScheduleOccurrenceForm,
@@ -292,7 +291,7 @@ def process_post_response(request,
             ) and context['scheduling_form'].is_valid(
             ) and additional_validity:
         new_event = context['event_form'].save(commit=False)
-        new_event.duration = Duration(
+        new_event.duration = timedelta(
             minutes=context['scheduling_form'].cleaned_data[
                 'duration']*60)
         new_event.save()
@@ -374,6 +373,8 @@ def build_icon_links(occurrence,
     if conf_completed or calendar_type == 'Volunteer':
         favorite_link = None
     if calendar_type == 'Volunteer' and occurrence.end_time < datetime.now():
+        volunteer_link = None
+    if occurrence.max_volunteer == 0:
         volunteer_link = None
 
     return (favorite_link,

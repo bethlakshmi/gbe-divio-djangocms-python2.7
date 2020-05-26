@@ -30,7 +30,6 @@ from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
 )
-from gbe.duration import Duration
 from datetime import timedelta
 
 

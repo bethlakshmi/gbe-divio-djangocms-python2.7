@@ -22,7 +22,6 @@ from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
 )
-from gbe.duration import Duration
 from datetime import timedelta
 
 
@@ -33,7 +32,7 @@ class TestEditVolunteer(TestCase):
         self.context = VolunteerContext(event=GenericEventFactory())
         self.context.sched_event.max_volunteer = 7
         self.context.sched_event.save()
-        self.context.event.duration = Duration(hours=1, minutes=30)
+        self.context.event.duration = timedelta(hours=1, minutes=30)
         self.context.event.save()
         self.room = self.context.room
         self.staff_lead = self.context.set_staff_lead()

@@ -16,6 +16,7 @@ from tests.functions.scheduler_functions import noon
 from datetime import (
     date,
     datetime,
+    timedelta,
 )
 from tests.contexts import (
     ClassContext,
@@ -31,10 +32,10 @@ class TestCalendarView(TestCase):
         self.client = Client()
         clear_conferences()
         conference = ConferenceFactory()
-        save_the_date = datetime(2016, 0o2, 0o6, 12, 00, 00)
+        save_the_date = datetime(2016, 2, 6, 12, 0, 0)
         day = ConferenceDayFactory(
             conference=conference,
-            day=date(2016, 0o2, 0o6))
+            day=date(2016, 2, 6))
         self.staffcontext = StaffAreaContext(
             conference=conference,
             starttime=save_the_date)
@@ -44,7 +45,7 @@ class TestCalendarView(TestCase):
             status='completed')
         self.other_conf_day = ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o6))
+            day=date(2015, 2, 6))
         self.other_show = ShowContext(conference=self.other_conference)
         self.classcontext = ClassContext(
             conference=conference,
@@ -102,11 +103,11 @@ class TestCalendarView(TestCase):
     def test_calendar_conference_w_default_conf_public_days(self):
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o5),
+            day=date(2016, 2, 5),
             open_to_public=False)
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o7),
+            day=date(2016, 2, 7),
             open_to_public=False)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
@@ -118,11 +119,11 @@ class TestCalendarView(TestCase):
     def test_calendar_volunteer_w_default_conf_public_days(self):
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o5),
+            day=date(2016, 2, 5),
             open_to_public=False)
         conference_day = ConferenceDayFactory(
             conference=self.staffcontext.conference,
-            day=date(2016, 0o2, 0o7),
+            day=date(2016, 2, 7),
             open_to_public=False)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
@@ -159,7 +160,7 @@ class TestCalendarView(TestCase):
         conference = ConferenceFactory(status='upcoming')
         conference_day = ConferenceDayFactory(
             conference=conference,
-            day=date(2016, 0o2, 0o6))
+            day=date(2016, 2, 6))
         url = reverse('calendar',
                       urlconf='gbe.scheduling.urls',
                       args=['Conference'])
@@ -193,7 +194,7 @@ class TestCalendarView(TestCase):
         conference = ConferenceFactory(status='upcoming')
         conference_day = ConferenceDayFactory(
             conference=conference,
-            day=date(2016, 0o2, 0o6))
+            day=date(2016, 2, 6))
         url = reverse('calendar',
                       urlconf='gbe.scheduling.urls',
                       args=['Conference'])
@@ -210,7 +211,7 @@ class TestCalendarView(TestCase):
                       args=['General'])
         ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o7))
+            day=date(2015, 2, 7))
         data = {'day': "02-06-2015"}
         response = self.client.get(url, data=data)
         self.assertContains(
@@ -227,7 +228,7 @@ class TestCalendarView(TestCase):
                       args=['General'])
         ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o7))
+            day=date(2015, 2, 7))
         data = {'day': "02-07-2015"}
         response = self.client.get(url, data=data)
         self.assertContains(
@@ -244,7 +245,7 @@ class TestCalendarView(TestCase):
                       args=['General'])
         ConferenceDayFactory(
             conference=self.other_conference,
-            day=date(2015, 0o2, 0o7))
+            day=date(2015, 2, 7))
         data = {'day': "02-07-2015"}
         response = self.client.get(url, data=data)
         self.assertContains(
@@ -258,7 +259,7 @@ class TestCalendarView(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<div class="col-lg-12 col-md-12 col-sm-12 col-12 ">',
+            '<div class="col-lg-12 col-md-12 col-sm-12 col-12">',
             1)
 
     def test_calendar_2_event_per_hour(self):
@@ -269,7 +270,7 @@ class TestCalendarView(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<div class="col-lg-6 col-md-6 col-sm-6 col-12 ">',
+            '<div class="col-lg-6 col-md-6 col-sm-6 col-12">',
             2)
         self.assertContains(response, two_opp.eventitem.e_title)
 
@@ -282,7 +283,7 @@ class TestCalendarView(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<div class="col-lg-4 col-md-4 col-sm-6 col-12 ">',
+            '<div class="col-lg-4 col-md-4 col-sm-6 col-12">',
             3)
 
     def test_calendar_4_event_per_hour(self):
@@ -295,7 +296,7 @@ class TestCalendarView(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<div class="col-lg-3 col-md-4 col-sm-6 col-12 ">',
+            '<div class="col-lg-3 col-md-4 col-sm-6 col-12">',
             4)
 
     def test_calendar_6_event_per_hour(self):
@@ -308,7 +309,7 @@ class TestCalendarView(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<div class="col-lg-2 col-md-4 col-sm-6 col-12 ">',
+            '<div class="col-lg-2 col-md-4 col-sm-6 col-12">',
             6)
 
     def test_calendar_10_event_per_hour(self):
@@ -321,7 +322,7 @@ class TestCalendarView(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<div class="col-lg-2 col-md-4 col-sm-6 col-12 ">',
+            '<div class="col-lg-2 col-md-4 col-sm-6 col-12">',
             10)
 
     def test_logged_in_no_interest(self):
@@ -404,7 +405,6 @@ class TestCalendarView(TestCase):
                       args=['Conference'])
         data = {'day': "02-06-2016"}
         response = self.client.get(url, data=data)
-
         self.assertContains(response,
                             '<a href="#" class="detail_link-disabled')
         self.assertContains(
@@ -428,16 +428,38 @@ class TestCalendarView(TestCase):
 
     def test_logged_in_volunteer(self):
         volunteer, booking = self.staffcontext.book_volunteer()
+        opportunity = booking.event
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.save()
+        ConferenceDayFactory(conference=self.staffcontext.conference,
+                             day=opportunity.starttime)
         login_as(volunteer, self)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
                       args=['Volunteer'])
-        response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<div class="col-lg-6 col-md-6 col-sm-6 col-12 volunteer">')
+        response = self.client.get(url, data={
+            'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
+        self.assertContains(response, opportunity.eventitem.e_title)
         self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
+                            'class="volunteer-icon" alt="You\'ve signed up"/>')
+
+    def test_volunteer_event_full(self):
+        volunteer, booking = self.staffcontext.book_volunteer()
+        opportunity = booking.event
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.max_volunteers = 1
+        opportunity.save()
+        ConferenceDayFactory(conference=self.staffcontext.conference,
+                             day=opportunity.starttime)
+        url = reverse('calendar',
+                      urlconf="gbe.scheduling.urls",
+                      args=['Volunteer'])
+        response = self.client.get(url, data={
+            'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
+        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(
+          response,
+          'This event has all the volunteers it needs.')
 
     def test_disabled_eval(self):
         eval_profile = self.classcontext.set_eval_answerer()

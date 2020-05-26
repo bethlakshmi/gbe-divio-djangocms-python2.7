@@ -28,7 +28,6 @@ from scheduler.models import (
     ActResource,
     ResourceAllocation,
 )
-from gbe.duration import Duration
 
 
 class TestActTechWizard(TestCase):
@@ -420,7 +419,7 @@ class TestActTechWizard(TestCase):
         context.act.tech.starting_position = "Onstage"
         context.act.tech.primary_color = "Red"
         context.act.tech.pronouns = "Me/Myself"
-        context.act.tech.duration = Duration(minutes=2)
+        context.act.tech.duration = timedelta(minutes=2)
         context.act.tech.introduction_text = "Yo this is an intro"
         context.act.tech.start_blackout = True
         context.act.tech.end_blackout = True
@@ -462,7 +461,7 @@ class TestActTechWizard(TestCase):
         context.act.tech.starting_position = "Onstage"
         context.act.tech.primary_color = "Red"
         context.act.tech.pronouns = "Me/Myself"
-        context.act.tech.duration = Duration(minutes=2)
+        context.act.tech.duration = timedelta(minutes=2)
         context.act.tech.introduction_text = "Yo this is an intro"
         data = {
             'mic_choice': mic_options[2],
@@ -492,7 +491,7 @@ class TestActTechWizard(TestCase):
         context.act.tech.starting_position = "Onstage"
         context.act.tech.primary_color = "Red"
         context.act.tech.pronouns = "Me/Myself"
-        context.act.tech.duration = Duration(minutes=2)
+        context.act.tech.duration = timedelta(minutes=2)
         context.act.tech.introduction_text = "Yo this is an intro"
         data = {
             'mic_choice': "These are bad",
