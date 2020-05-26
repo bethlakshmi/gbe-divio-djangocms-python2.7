@@ -28,7 +28,6 @@ from tests.contexts import (
     ShowContext,
     VolunteerContext,
 )
-from gbe.duration import Duration
 from datetime import timedelta
 
 
@@ -40,7 +39,7 @@ class TestEditEventView(TestCase):
         self.context = VolunteerContext(event=GenericEventFactory())
         self.context.sched_event.max_volunteer = 7
         self.context.sched_event.save()
-        self.context.event.duration = Duration(hours=1, minutes=30)
+        self.context.event.duration = timedelta(hours=1, minutes=30)
         self.context.event.save()
         self.room = self.context.room
         # because there was a bug around duplicate room names

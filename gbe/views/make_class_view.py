@@ -3,7 +3,6 @@ from django.http import Http404
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.forms import ModelChoiceField
-from gbe.duration import Duration
 from gbe.models import (
     Class,
     Persona,
@@ -17,6 +16,7 @@ from gbetext import (
     default_class_submit_msg,
     default_class_draft_msg
 )
+from datetime import timedelta
 
 
 class MakeClassView(MakeBidView):
@@ -68,7 +68,7 @@ class MakeClassView(MakeBidView):
         return context
 
     def set_valid_form(self, request):
-        self.bid_object.duration = Duration(
+        self.bid_object.duration = timedelta(
             minutes=self.bid_object.length_minutes)
         self.bid_object.b_conference = self.conference
         self.bid_object.e_conference = self.conference

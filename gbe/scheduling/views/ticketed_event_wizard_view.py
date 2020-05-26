@@ -12,7 +12,6 @@ from gbe.scheduling.forms import (
     ShowBookingForm,
 )
 from gbe.scheduling.views import EventWizardView
-from gbe.duration import Duration
 from ticketing.forms import LinkBPTEventForm
 from gbe.ticketing_idd_interface import create_bpt_event
 from gbe.functions import validate_perms
@@ -22,6 +21,7 @@ from gbetext import (
     no_tickets_found_msg,
 )
 from gbe_forms_text import event_settings
+from datetime import timedelta
 
 
 class TicketedEventWizardView(EventWizardView):
@@ -149,7 +149,7 @@ class TicketedEventWizardView(EventWizardView):
                 ) and self.is_formset_valid(context['worker_formset']) and (
                 not context['tickets'] or context['tickets'].is_valid()):
             new_event = context['second_form'].save(commit=False)
-            new_event.duration = Duration(
+            new_event.duration = timedelta(
                 minutes=context['scheduling_form'].cleaned_data[
                     'duration']*60)
             new_event.save()

@@ -9,9 +9,11 @@ from gbe.models import (
     Event,
     Room
 )
-from gbe.duration import Duration
 from gbe.functions import get_current_conference
-from datetime import time
+from datetime import (
+  timedelta,
+  time,
+)
 from settings import GBE_TIME_FORMAT
 
 
@@ -61,5 +63,5 @@ class ScheduleBasicForm(ModelForm):
             queryset=Room.objects.filter(conferences=conference))
 
     def clean_duration(self):
-        data = Duration(minutes=self.cleaned_data['duration']*60)
+        data = timedelta(minutes=self.cleaned_data['duration']*60)
         return data
