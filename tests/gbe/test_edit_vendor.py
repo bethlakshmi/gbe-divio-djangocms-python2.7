@@ -176,7 +176,6 @@ class TestEditVendor(TestCase):
             response,
             '<h2 class="subtitle">Vendor Application</h2>')
         self.assertContains(response, "Test Fee Instructions Message")
-        self.assertContains(response, 'value="Pay Fee"')
 
     def test_edit_paid_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''

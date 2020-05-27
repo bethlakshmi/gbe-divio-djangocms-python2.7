@@ -19,11 +19,7 @@
         {% else %}
           <a href='{% url 'gbe:vendor_edit' vendor.id %}' class='text-danger'> 
             <i class="fas fa-arrow-alt-circle-right"></i> <b>{{ vendor }}</b>
-          </a>(Click to edit) - {% if vendor_paid %}
-              Fee has been paid, submit NOW!{% elif vendor_pay_link %}
-              <a href = '{{vendor_pay_link}}'>Pay Fee</a>{% else %}
-              Payment instructions coming soon.{% endif %}
-          <br>
+          </a>(Click to edit)<br>
       {% endif %}
       </div>
     {% endfor %}

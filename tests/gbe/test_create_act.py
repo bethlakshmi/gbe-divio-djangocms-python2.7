@@ -161,7 +161,6 @@ class TestCreateAct(TestCase):
             response,
             fee_instructions % performer_act_submittal_link(
                 self.performer.performer_profile.user_object.id))
-        self.assertContains(response, 'value="Pay Fee"')
 
     def test_act_bid_not_post(self):
         '''act_bid, not post, not paid should take us to bid process'''
