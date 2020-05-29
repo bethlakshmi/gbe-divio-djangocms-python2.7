@@ -22,9 +22,6 @@ from gbe.models import (
 )
 from scheduler.idd import get_roles
 from ticketing.brown_paper import *
-from gbetext import (
-    payment_details_error,
-)
 from django.db.models import Count
 from ticketing.views import import_ticket_items
 from django.db.models import Q
@@ -249,17 +246,17 @@ def get_ticket_list(bid_type, conference):
     return ticket_items
 
 
-def get_ticket_form(bid_type, conference):
+def get_ticket_form(bid_type, conference, post=None):
     form = None
     ticket_items = get_ticket_list(bid_type, conference)
 
     if ticket_items.filter(is_minimum=True).exists():
         minimum = ticket_items.filter(is_minimum=True).order_by(
             'cost').first().cost
-        form = DonationForm(initial={'donation_min': minimum,
+        form = DonationForm(post, initial={'donation_min': minimum,
                                      'donation': minimum})
     else:
-        form = TicketPayForm()
+        form = TicketPayForm(post)
         form.fields['main_ticket'].queryset = ticket_items.filter(
             add_on=False).order_by('cost')
         if ticket_items.filter(add_on=True).exists():
@@ -288,52 +285,30 @@ def get_paypal_button(request, cart, total, custom, main_name):
     return PayPalPaymentsForm(initial=paypal_dict)
 
 
-def get_payment_details(request, bid_type, bid_id, conference, user_id):
+def get_payment_details(request, form, bid_type, bid_id, user_id):
     cart = []
     paypal_button = None
-    form = None
     total = 0
     minimum = None
     main_ticket = None
-    ticket_items = get_ticket_list(bid_type, conference)
-    if ticket_items.filter(is_minimum=True).exists():
-        minimum = ticket_items.filter(is_minimum=True).order_by(
-            'cost').first().cost
-        form = DonationForm(request.POST, initial={'donation_min': minimum,
-                                           'donation': minimum})
+
+    if 'donation' in list(form.cleaned_data.keys()):
+        cart += [("%s Submission Fee" % bid_type,
+                  form.cleaned_data['donation'])]
+        total = total + form.cleaned_data['donation']
     else:
-        form = TicketPayForm(request.POST)
-        form.fields['main_ticket'].queryset = ticket_items.filter(
-            add_on=False).order_by('cost')
-        if ticket_items.filter(add_on=True).exists():
-            form.fields['add_ons'].queryset = ticket_items.filter(
-                add_on=True).order_by('cost')
-        else:
-            form.fields['add_ons'].widget = HiddenInput()
-    if form.is_valid():
-        if minimum is not None:
-            cart += [("%s Submission Fee" % bid_type,
-                      form.cleaned_data['donation'])]
-            total = total + form.cleaned_data['donation']
-        else:
-            cart += [(form.cleaned_data['main_ticket'].title,
-                      form.cleaned_data['main_ticket'].cost)]
-            total = total + form.cleaned_data['main_ticket'].cost
-            for item in form.cleaned_data['add_ons']:
-                cart += [(item.title, item.cost)]
-                total = total + item.cost
-        return (
-            cart, 
-            get_paypal_button(request, cart, total, "%s-%d-User-%d" % (
-                bid_type,
-                bid_id,
-                user_id), "%s Fees" % bid_type),
-            total)
-    else:
-        raise Exception(
-            form,
-            'PAYMENT_CHOICE_INVALID', 
-            "User Made Invalid Ticket Choice",
-            payment_details_error)
+        cart += [(form.cleaned_data['main_ticket'].title,
+                  form.cleaned_data['main_ticket'].cost)]
+        total = total + form.cleaned_data['main_ticket'].cost
+        for item in form.cleaned_data['add_ons']:
+            cart += [(item.title, item.cost)]
+            total = total + item.cost
+    return (
+        cart, 
+        get_paypal_button(request, cart, total, "%s-%d-User-%d" % (
+            bid_type,
+            bid_id,
+            user_id), "%s Fees" % bid_type),
+        total)
 
     return cart, paypal_button, total

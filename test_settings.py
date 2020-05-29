@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'djangocms_text_ckeditor',
     'djangocms_video',
     'filer',
+    'paypal.standard.ipn',
     'easy_thumbnails',
     'mptt',
     'polymorphic',
@@ -102,6 +103,9 @@ try:
     SECRET_KEY
 except:
     SECRET_KEY = '0sdq74686*ayl^0!tqlt*!mgsycr)h4h#*4*_x=2_dw9cq8d!i'
+
+PAYPAL_BUY_BUTTON_IMAGE = "/static/img/paysubmit.png"
+PAYPAL_TEST = True
 
 try:
     TEMPLATES

@@ -31,6 +31,11 @@ from gbe.models import (
 from gbe.ticketing_idd_interface import (
     performer_act_submittal_link,
 )
+from tests.factories.ticketing_factories import (
+    BrownPaperEventsFactory,
+    PayPalSettingsFactory,
+    TicketItemFactory,
+)
 
 
 class TestCreateAct(TestCase):
@@ -78,6 +83,7 @@ class TestCreateAct(TestCase):
         current_conference()
         login_as(self.performer.performer_profile, self)
         POST = self.get_act_form()
+        POST['draft'] = True
         response = self.client.post(self.url, data=POST, follow=True)
         return response, POST
 
@@ -116,11 +122,20 @@ class TestCreateAct(TestCase):
 
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
+        PayPalSettingsFactory()
         login_as(self.performer.performer_profile, self)
+        event = BrownPaperEventsFactory(conference=self.current_conference,
+                                        act_submission_event=True)
+        ticket = TicketItemFactory(live=True,
+                                   bpt_event=event,
+                                   is_minimum=True,
+                                   cost=10)
         POST = self.get_act_form()
-        POST.update({'submit': ''})
+        POST.update({'submit': '',
+                     'donation': 10})
         response = self.client.post(self.url, data=POST)
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Act Submission Fee")
 
     def test_act_bid_post_no_submit(self):
         '''act_bid, not submitting and no other problems,
@@ -135,32 +150,18 @@ class TestCreateAct(TestCase):
         self.assertContains(response, expected_string)
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
-        self.assertContains(response, 'Fee has been paid, submit NOW!')
-
-    def test_act_bid_payfee(self):
-        '''users has unpaid act, and chooses to pay the fee'''
-        bpt_event_id = make_act_app_ticket(self.current_conference)
-        login_as(self.performer.performer_profile, self)
-        POST = self.get_act_form()
-        POST['payfee'] = 1
-        response = self.client.post(self.url, data=POST, follow=True)
-        self.assertRedirects(
-            response,
-            "/en/event/ID-%d/%s/" % (
-                self.performer.performer_profile.user_object.id,
-                bpt_event_id),
-            target_status_code=404)
+        self.assertContains(response, 'Not submitted')
 
     def test_act_bid_not_paid(self):
         '''act_bid, not post, not paid should take us to bid process'''
+        event = BrownPaperEventsFactory(conference=self.current_conference,
+                                        act_submission_event=True)
+        ticket = TicketItemFactory(live=True, bpt_event=event, is_minimum=True)
         login_as(self.performer.performer_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
-        self.assertContains(
-            response,
-            fee_instructions % performer_act_submittal_link(
-                self.performer.performer_profile.user_object.id))
+        self.assertContains(response, "Fee (pay what you will)")
 
     def test_act_bid_not_post(self):
         '''act_bid, not post, not paid should take us to bid process'''

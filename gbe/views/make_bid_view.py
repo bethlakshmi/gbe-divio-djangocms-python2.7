@@ -22,6 +22,7 @@ from gbetext import (
     fee_instructions,
     full_login_msg,
     payment_needed_msg,
+    payment_details_error,
 )
 from gbe.ticketing_idd_interface import (
     get_payment_details,
@@ -127,12 +128,9 @@ class MakeBidView(View):
             if self.payment_form:
                 context['forms'] += [self.payment_form]
             else:
-                context['forms'] += [self.get_ticket_form()]
-
+                context['forms'] += [get_ticket_form(self.bid_class.__name__,
+                                                     self.conference)]
         return context
-
-    def get_ticket_form(self):
-        return get_ticket_form(self.bid_class.__name__, self.conference)
 
     def get_create_form(self, request):
         if self.bid_object:
@@ -218,6 +216,7 @@ class MakeBidView(View):
         total = None
         redirect = None
         redirect = self.groundwork(request, args, kwargs)
+        ticket_form = None
         if redirect:
             return HttpResponseRedirect(redirect)
 
@@ -227,27 +226,18 @@ class MakeBidView(View):
         if not self.check_validity(request):
             return self.get_invalid_response(request)
 
-        # check payment validity
         if not self.fee_paid() and "draft" not in list(request.POST.keys()):
-            try:
-                cart_items, paypal_button, total = get_payment_details(
-                    request,
-                    self.bid_type,
-                    self.bid_object.pk,
-                    self.conference,
-                    self.owner.pk)
-            except Exception as e:
-                if len(e.args) > 1:
-                    error_message = UserMessage.objects.get_or_create(
+            ticket_form = get_ticket_form(self.bid_class.__name__,
+                                          self.conference,
+                                          request.POST)
+            if not ticket_form.is_valid():
+                error_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
-                        code=e.args[1],
+                        code="PAYMENT_CHOICE_INVALID",
                         defaults={
-                            'summary': e.args[2],
-                            'description': e.args[3]})
-                    self.payment_form = e.args[0]
-                    messages.error(request, error_message[0].description)
-                else:
-                    messages.error(request, e)
+                            'summary': "User Made Invalid Ticket Choice",
+                            'description': payment_details_error})
+                messages.error(request, error_message[0].description)
                 return self.get_invalid_response(request)
 
         # save bid
@@ -259,7 +249,14 @@ class MakeBidView(View):
         # if this isn't a draft, move forward through process, setting up
         # payment review if payment is needed 
         if "submit" in list(request.POST.keys()):
-            if not self.fee_paid() and paypal_button:
+            if ticket_form:
+                cart_items, paypal_button, total = get_payment_details(
+                    request,
+                    ticket_form,
+                    self.bid_type,
+                    self.bid_object.pk,
+                    self.owner.pk)
+
                 dynamic_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="NOT_PAID_INSTRUCTIONS",
@@ -277,6 +274,7 @@ class MakeBidView(View):
                      'paypal_button': paypal_button})
             else:
                 redirect = self.submit_bid(request)
+
         messages.success(request, user_message[0].description)
         return HttpResponseRedirect(
             redirect or reverse('home', urlconf='gbe.urls'))
