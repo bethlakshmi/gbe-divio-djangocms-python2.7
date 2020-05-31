@@ -216,7 +216,6 @@ class MakeBidView(View):
         total = None
         redirect = None
         redirect = self.groundwork(request, args, kwargs)
-        ticket_form = None
         if redirect:
             return HttpResponseRedirect(redirect)
 
@@ -227,10 +226,10 @@ class MakeBidView(View):
             return self.get_invalid_response(request)
 
         if not self.fee_paid() and "draft" not in list(request.POST.keys()):
-            ticket_form = get_ticket_form(self.bid_class.__name__,
+            self.payment_form = get_ticket_form(self.bid_class.__name__,
                                           self.conference,
                                           request.POST)
-            if not ticket_form.is_valid():
+            if not self.payment_form.is_valid():
                 error_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
                         code="PAYMENT_CHOICE_INVALID",
@@ -249,10 +248,10 @@ class MakeBidView(View):
         # if this isn't a draft, move forward through process, setting up
         # payment review if payment is needed 
         if "submit" in list(request.POST.keys()):
-            if ticket_form:
+            if self.payment_form:
                 cart_items, paypal_button, total = get_payment_details(
                     request,
-                    ticket_form,
+                    self.payment_form,
                     self.bid_type,
                     self.bid_object.pk,
                     self.owner.pk)

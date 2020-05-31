@@ -21,13 +21,10 @@ from gbetext import (
     default_act_draft_msg,
     default_act_title_conflict,
     payment_needed_msg,
+    payment_details_error,
 )
 from gbe.models import UserMessage
-from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
-    PayPalSettingsFactory,
-    TicketItemFactory,
-)
+from tests.functions.ticketing_functions import setup_fees
 
 
 class TestEditAct(TestCase):
@@ -149,17 +146,11 @@ class TestEditAct(TestCase):
         self.assertContains(response, 'Propose an Act')
 
     def test_act_edit_post_form_submit_unpaid(self):
-        PayPalSettingsFactory()
         act = ActFactory()
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
-        event = BrownPaperEventsFactory(conference=act.b_conference,
-                                        act_submission_event=True)
-        ticket = TicketItemFactory(live=True,
-                                   bpt_event=event,
-                                   is_minimum=True,
-                                   cost=10)
+        tickets = setup_fees(act.b_conference, is_act=True)
         login_as(act.performer.performer_profile, self)
         act_form = self.get_act_form(act, submit=True)
         act_form['donation'] = 10
@@ -168,19 +159,30 @@ class TestEditAct(TestCase):
         self.assertContains(response, "Act Submission Fee")
         self.assertContains(response, payment_needed_msg)
 
+    def test_act_edit_post_form_submit_bad_pay_coice(self):
+        act = ActFactory()
+        url = reverse(self.view_name,
+                      args=[act.pk],
+                      urlconf="gbe.urls")
+        tickets = setup_fees(act.b_conference, is_act=True)
+        login_as(act.performer.performer_profile, self)
+        act_form = self.get_act_form(act, submit=True)
+        act_form['donation'] = 5
+        response = self.client.post(url, data=act_form)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, payment_details_error)
+        self.assertContains(
+            response, 
+            "Ensure this value is greater than or equal to 10.00")
+
     def test_act_edit_post_form_submit_paid_other_year(self):
-        PayPalSettingsFactory()
         act = ActFactory()
         make_act_app_purchase(
             ConferenceFactory(
                 status="completed"),
             act.performer.performer_profile.user_object)
-        event = BrownPaperEventsFactory(conference=act.b_conference,
-                                        act_submission_event=True)
-        ticket = TicketItemFactory(live=True,
-                                   bpt_event=event,
-                                   is_minimum=True,
-                                   cost=10)
+        tickets = setup_fees(act.b_conference, is_act=True)
+
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")

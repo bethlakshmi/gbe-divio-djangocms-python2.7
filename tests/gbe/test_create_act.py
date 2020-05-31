@@ -28,14 +28,7 @@ from gbe.models import (
     Conference,
     UserMessage,
 )
-from gbe.ticketing_idd_interface import (
-    performer_act_submittal_link,
-)
-from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
-    PayPalSettingsFactory,
-    TicketItemFactory,
-)
+from tests.functions.ticketing_functions import setup_fees
 
 
 class TestCreateAct(TestCase):
@@ -122,14 +115,8 @@ class TestCreateAct(TestCase):
 
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
-        PayPalSettingsFactory()
         login_as(self.performer.performer_profile, self)
-        event = BrownPaperEventsFactory(conference=self.current_conference,
-                                        act_submission_event=True)
-        ticket = TicketItemFactory(live=True,
-                                   bpt_event=event,
-                                   is_minimum=True,
-                                   cost=10)
+        tickets = setup_fees(self.current_conference, is_act=True)
         POST = self.get_act_form()
         POST.update({'submit': '',
                      'donation': 10})
@@ -154,9 +141,7 @@ class TestCreateAct(TestCase):
 
     def test_act_bid_not_paid(self):
         '''act_bid, not post, not paid should take us to bid process'''
-        event = BrownPaperEventsFactory(conference=self.current_conference,
-                                        act_submission_event=True)
-        ticket = TicketItemFactory(live=True, bpt_event=event, is_minimum=True)
+        tickets = setup_fees(self.current_conference, is_act=True)
         login_as(self.performer.performer_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)

@@ -8,11 +8,7 @@ from tests.factories.gbe_factories import (
     UserMessageFactory,
     VendorFactory
 )
-from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
-    PayPalSettingsFactory,
-    TicketItemFactory,
-)
+from tests.functions.ticketing_functions import setup_fees
 from tests.functions.gbe_functions import (
     current_conference,
     login_as,
@@ -95,15 +91,13 @@ class TestCreateVendor(TestCase):
         self.assertContains(response, draft_string)
 
     def test_create_vendor_post_form_valid_submit(self):
-        PayPalSettingsFactory()
         url = reverse(self.view_name, urlconf='gbe.urls')
         login_as(self.profile, self)
-        event = BrownPaperEventsFactory(conference=self.conference,
-                                        vendor_submission_event=True)
-        ticket = TicketItemFactory(live=True, bpt_event=event)
+        tickets = setup_fees(self.conference, is_vendor=True)
+
         data = self.get_form(submit=True)
         data['thebiz-profile'] = self.profile.pk
-        data['main_ticket'] = ticket.pk
+        data['main_ticket'] = tickets[0].pk
         response = self.client.post(url,
                                     data,
                                     follow=True)
