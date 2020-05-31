@@ -23,7 +23,11 @@ from gbetext import (
     payment_needed_msg,
 )
 from gbe.models import UserMessage
-from gbe.ticketing_idd_interface import performer_act_submittal_link
+from tests.factories.ticketing_factories import (
+    BrownPaperEventsFactory,
+    PayPalSettingsFactory,
+    TicketItemFactory,
+)
 
 
 class TestEditAct(TestCase):
@@ -91,8 +95,10 @@ class TestEditAct(TestCase):
                       args=[act.pk],
                       urlconf="gbe.urls")
         login_as(act.performer.contact, self)
+        act_form = self.get_act_form(act)
+        act_form['draft'] = True
         response = self.client.post(url,
-                                    self.get_act_form(act),
+                                    act_form,
                                     follow=True)
         return response
 
@@ -143,33 +149,45 @@ class TestEditAct(TestCase):
         self.assertContains(response, 'Propose an Act')
 
     def test_act_edit_post_form_submit_unpaid(self):
+        PayPalSettingsFactory()
         act = ActFactory()
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
+        event = BrownPaperEventsFactory(conference=act.b_conference,
+                                        act_submission_event=True)
+        ticket = TicketItemFactory(live=True,
+                                   bpt_event=event,
+                                   is_minimum=True,
+                                   cost=10)
         login_as(act.performer.performer_profile, self)
-        response = self.client.post(
-            url,
-            data=self.get_act_form(act, submit=True))
+        act_form = self.get_act_form(act, submit=True)
+        act_form['donation'] = 10
+        response = self.client.post(url, data=act_form)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Act Payment')
-        self.assertContains(response, payment_needed_msg % (
-            performer_act_submittal_link(
-                act.performer.performer_profile.user_object.id)))
+        self.assertContains(response, "Act Submission Fee")
+        self.assertContains(response, payment_needed_msg)
 
     def test_act_edit_post_form_submit_paid_other_year(self):
+        PayPalSettingsFactory()
         act = ActFactory()
         make_act_app_purchase(
             ConferenceFactory(
                 status="completed"),
             act.performer.performer_profile.user_object)
+        event = BrownPaperEventsFactory(conference=act.b_conference,
+                                        act_submission_event=True)
+        ticket = TicketItemFactory(live=True,
+                                   bpt_event=event,
+                                   is_minimum=True,
+                                   cost=10)
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
         login_as(act.performer.performer_profile, self)
-        response = self.client.post(
-            url,
-            data=self.get_act_form(act, submit=True))
+        act_form = self.get_act_form(act, submit=True)
+        act_form['donation'] = 10
+        response = self.client.post(url, data=act_form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Act Payment')
 
@@ -217,6 +235,7 @@ class TestEditAct(TestCase):
     def test_edit_act_draft_make_message(self):
         response = self.post_edit_paid_act_draft()
         self.assertEqual(200, response.status_code)
+        print(response.content)
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
 

@@ -26,7 +26,11 @@ from gbe.models import (
     UserMessage,
     Vendor,
 )
-from gbe.ticketing_idd_interface import vendor_submittal_link
+from tests.factories.ticketing_factories import (
+    BrownPaperEventsFactory,
+    PayPalSettingsFactory,
+    TicketItemFactory,
+)
 
 
 class TestEditVendor(TestCase):
@@ -71,6 +75,7 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         data = self.get_vendor_form()
         data['thebiz-profile'] = vendor.profile.pk
+        data['draft'] = True
         response = self.client.post(url, data, follow=True)
         return response
 
@@ -117,37 +122,12 @@ class TestEditVendor(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_vendor_draft_msg)
 
-    def test_vendor_edit_post_form_valid_submit_not_paid(self):
-        vendor = VendorFactory()
-        login_as(vendor.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
-        data = self.get_vendor_form(submit=True)
-        data['thebiz-profile'] = vendor.profile.pk
-        response = self.client.post(url, data, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Vendor Payment")
-        self.assertContains(response, payment_needed_msg % (
-            vendor_submittal_link(vendor.profile.user_object.id)))
-
-    def test_vendor_bid_payfee(self):
-        '''users has unpaid act, and chooses to pay the fee'''
-        vendor = VendorFactory()
-        login_as(vendor.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
-        data = self.get_vendor_form()
-        data['thebiz-profile'] = vendor.profile.pk
-        data['payfee'] = 1
-        bpt_event_id = make_vendor_app_ticket(vendor.b_conference)
-        response = self.client.post(url, data, follow=True)
-        self.assertRedirects(
-            response,
-            "/en/event/ID-%d/%s/" % (
-                vendor.profile.user_object.id,
-                bpt_event_id),
-            target_status_code=404)
-
     def test_vendor_edit_post_form_valid_submit_paid_wrong_conf(self):
+        PayPalSettingsFactory()
         vendor = VendorFactory()
+        event = BrownPaperEventsFactory(conference=vendor.b_conference,
+                                        vendor_submission_event=True)
+        ticket = TicketItemFactory(live=True, bpt_event=event)
         make_vendor_app_purchase(
             ConferenceFactory(
                 status="completed"),
@@ -156,9 +136,11 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         data = self.get_vendor_form(submit=True)
         data['thebiz-profile'] = vendor.profile.pk
+        data['main_ticket'] = ticket.pk
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Vendor Payment")
+        self.assertContains(response, 'Fee has not been Paid')
+        self.assertContains(response, ticket.title)
 
     def test_edit_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''
