@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from gbe.models import Conference
 from gbetext import role_options
 from django.db.models import (
     Max,

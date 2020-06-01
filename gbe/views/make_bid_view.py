@@ -254,7 +254,7 @@ class MakeBidView(View):
                     self.payment_form,
                     self.bid_type,
                     self.bid_object.pk,
-                    self.owner.pk)
+                    self.owner.user_object.pk)
 
                 dynamic_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,

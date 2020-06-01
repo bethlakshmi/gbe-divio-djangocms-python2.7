@@ -22,8 +22,9 @@ from gbe.models import (
 )
 from scheduler.idd import get_roles
 from ticketing.brown_paper import *
-from django.db.models import Count
 from ticketing.views import import_ticket_items
+from ticketing.functions import get_fee_list
+from django.db.models import Count
 from django.db.models import Q
 from datetime import datetime
 from django.forms import HiddenInput
@@ -231,24 +232,9 @@ def create_bpt_event(bpt_event_id, conference, events=[], display_icon=None):
     return event, count
 
 
-def get_ticket_list(bid_type, conference):
-    ticket_items = TicketItem.objects.filter(
-        bpt_event__conference=conference, live=True, has_coupon=False).exclude(
-        start_time__lt=datetime.now(), end_time__gt=datetime.now())
-    if bid_type == "Vendor":
-        ticket_items = ticket_items.filter(
-            bpt_event__vendor_submission_event=True)
-    elif bid_type == "Act":
-        ticket_items = ticket_items.filter(
-            bpt_event__act_submission_event=True)
-    else:
-        raise Exception("Invalid Bid Type: %s" % bid_type)
-    return ticket_items
-
-
 def get_ticket_form(bid_type, conference, post=None):
     form = None
-    ticket_items = get_ticket_list(bid_type, conference)
+    ticket_items = get_fee_list(bid_type, conference)
 
     if ticket_items.filter(is_minimum=True).exists():
         minimum = ticket_items.filter(is_minimum=True).order_by(
@@ -268,20 +254,16 @@ def get_ticket_form(bid_type, conference, post=None):
     return form
 
 
-def get_paypal_button(request, cart, total, custom, main_name):
+def get_paypal_button(request, total, custom, item_name, number_list):
     paypal_dict = {
         "business": PayPalSettings.objects.first().business_email,
         "amount": total,
         "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
         "invoice": str(datetime.now()),
         "custom": custom,
-        "item_name": main_name
+        "item_name": item_name,
+        "item_number": number_list
     }
-    counter = 1
-    for item in cart:
-        paypal_dict['item_name%d' % counter] = item[0]
-        paypal_dict['item_number%d' % counter] = item[1]
-        counter = counter + 1
     return PayPalPaymentsForm(initial=paypal_dict)
 
 
@@ -291,6 +273,7 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
     total = 0
     minimum = None
     main_ticket = None
+    number_list = ""
 
     if 'donation' in list(form.cleaned_data.keys()):
         cart += [("%s Submission Fee" % bid_type,
@@ -299,16 +282,21 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
     else:
         cart += [(form.cleaned_data['main_ticket'].title,
                   form.cleaned_data['main_ticket'].cost)]
+        number_list = str(form.cleaned_data['main_ticket'].id)
         total = total + form.cleaned_data['main_ticket'].cost
         for item in form.cleaned_data['add_ons']:
             cart += [(item.title, item.cost)]
+            number_list = "%s %d" % (number_list,
+                                     form.cleaned_data['add_ons'].id)
             total = total + item.cost
     return (
         cart, 
-        get_paypal_button(request, cart, total, "%s-%d-User-%d" % (
-            bid_type,
-            bid_id,
-            user_id), "%s Fees" % bid_type),
+        get_paypal_button(
+            request,
+            total,
+            "%s-%d-User-%d" % (bid_type, bid_id, user_id),
+            "%s Fee(s)" % bid_type,
+            number_list),
         total)
 
     return cart, paypal_button, total
