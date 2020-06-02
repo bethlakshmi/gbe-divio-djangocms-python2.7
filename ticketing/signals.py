@@ -62,7 +62,7 @@ def pay_application_fee(sender, **kwargs):
                 Sum('cost'))
             if  float(ipn_obj.mc_gross)>= cost['cost__sum'] and (
                     ipn_obj.mc_currency == 'USD') and ticket_items.filter(
-                    id__in=ticket_pk_list, add_on=True).exists():
+                    id__in=ticket_pk_list, add_on=False).exists():
                 paid = True
                 purchased_tickets = ticket_items.filter(pk__in=ticket_pk_list)
 
@@ -94,11 +94,11 @@ def pay_application_fee(sender, **kwargs):
             bid.submitted = True
             bid.save()
             notify_reviewers_on_bid_change(
-                self.user.profile,
-                self.bid,
-                self.bid.__class__.__name__,
+                user.profile,
+                bid,
+                bid.__class__.__name__,
                 "Submission",
-                self.bid.b_conference,
-                '%s Reviewers' % self.bid.__class__.__name__,
-                reverse('%s_review' % self.bid.__class__.__name__.lower(),
+                bid.b_conference,
+                '%s Reviewers' % bid.__class__.__name__,
+                reverse('%s_review' % bid.__class__.__name__.lower(),
                         urlconf='gbe.urls'))
