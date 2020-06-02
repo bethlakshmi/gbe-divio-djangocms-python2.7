@@ -13,6 +13,8 @@ from gbe.models import (
     Vendor,
 )
 from ticketing.functions import get_fee_list
+from gbe.email.functions import notify_reviewers_on_bid_change
+from django.core.urlresolvers import reverse
 
 
 @receiver(valid_ipn_received)
@@ -50,7 +52,8 @@ def pay_application_fee(sender, **kwargs):
             paid = True
             purchased_tickets = [ticket_items.filter(
                 is_minimum=True).order_by('cost').first()]
-        # or total set of items should match total cost
+        # or total set of items should match total cost, and there should be
+        # one non-add-on
         else:
             counter = 1
             total = 0
@@ -58,7 +61,8 @@ def pay_application_fee(sender, **kwargs):
             cost = ticket_items.filter(id__in=ticket_pk_list).aggregate(
                 Sum('cost'))
             if  float(ipn_obj.mc_gross)>= cost['cost__sum'] and (
-                    ipn_obj.mc_currency == 'USD'):
+                    ipn_obj.mc_currency == 'USD') and ticket_items.filter(
+                    id__in=ticket_pk_list, add_on=True).exists():
                 paid = True
                 purchased_tickets = ticket_items.filter(pk__in=ticket_pk_list)
 
@@ -89,3 +93,12 @@ def pay_application_fee(sender, **kwargs):
                 transaction.save()
             bid.submitted = True
             bid.save()
+            notify_reviewers_on_bid_change(
+                self.user.profile,
+                self.bid,
+                self.bid.__class__.__name__,
+                "Submission",
+                self.bid.b_conference,
+                '%s Reviewers' % self.bid.__class__.__name__,
+                reverse('%s_review' % self.bid.__class__.__name__.lower(),
+                        urlconf='gbe.urls'))

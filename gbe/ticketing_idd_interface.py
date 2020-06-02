@@ -84,6 +84,7 @@ def verify_performer_app_paid(user_name, conference):
     acts_submitted = 0
     # First figure out how many acts this user has purchased
     act_fees_purchased = Transaction.objects.filter(
+        ticket_item__add_on=False,
         ticket_item__bpt_event__act_submission_event=True,
         ticket_item__bpt_event__conference=conference,
         purchaser__matched_to_user__username=str(user_name)).count()
@@ -108,20 +109,14 @@ def verify_vendor_app_paid(user_name, conference):
     returns - true if the system recognizes the vendor submittal fee is paid
     '''
     from gbe.models import Vendor
-    vendor_fees_purchased = 0
     vendor_apps_submitted = 0
 
     # First figure out how many vendor spots this user has purchased
-    for vendor_event in BrownPaperEvents.objects.filter(
-            vendor_submission_event=True,
-            conference=conference):
-        for trans in Transaction.objects.all():
-            trans_event = trans.ticket_item.ticket_id.split('-')[0]
-            trans_user_name = trans.purchaser.matched_to_user.username
-
-            if ((vendor_event.bpt_event_id == trans_event) and
-                    (str(user_name) == trans_user_name)):
-                vendor_fees_purchased += 1
+    vendor_fees_purchased = Transaction.objects.filter(
+            ticket_item__add_on=False,
+            ticket_item__bpt_event__vendor_submission_event=True,
+            ticket_item__bpt_event__conference=conference,
+            purchaser__matched_to_user__username=str(user_name)).count()
 
     # Then figure out how many vendor applications have already been submitted.
     vendor_apps_submitted = Vendor.objects.filter(
@@ -286,8 +281,7 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
         total = total + form.cleaned_data['main_ticket'].cost
         for item in form.cleaned_data['add_ons']:
             cart += [(item.title, item.cost)]
-            number_list = "%s %d" % (number_list,
-                                     form.cleaned_data['add_ons'].id)
+            number_list = "%s %d" % (number_list, item.id)
             total = total + item.cost
     return (
         cart, 
