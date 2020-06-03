@@ -27,7 +27,7 @@ def pay_application_fee(sender, **kwargs):
         if ipn_obj.receiver_email != PayPalSettings.objects.first(
                 ).business_email:
             # Not a valid payment
-            print("Email not valid: %" % ipn_obj.receiver_email)
+            print("Email not valid: %s" % ipn_obj.receiver_email)
             return
 
         # Get user and bid

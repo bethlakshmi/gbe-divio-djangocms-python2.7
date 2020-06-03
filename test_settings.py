@@ -174,6 +174,8 @@ except:
     SITE_ID = 1
     IS_RUNNING_DEVSERVER = False
 
+USE_I18N = False
+
 try:
     LANGUAGES
 except:
