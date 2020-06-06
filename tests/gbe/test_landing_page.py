@@ -461,8 +461,6 @@ class TestIndex(TestCase):
         bpt_event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, expected_string)
-        self.assertContains(response, "%d/%s" % (self.profile.user_object.id,
-                                                 bpt_event_id))
 
     def test_paid_act_draft(self):
         make_act_app_purchase(self.current_conf,
@@ -472,15 +470,8 @@ class TestIndex(TestCase):
         self.paid_act = ActFactory(performer=self.performer,
                                    submitted=False,
                                    b_conference=self.current_conf)
-        expected_string = (
-            '<b>%s</b></span> - Not submitted'
-            ) % self.paid_act.b_title
         bpt_event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
-        self.assertContains(response, expected_string)
-        self.assertNotContains(response, "%d/%s" % (
-            self.profile.user_object.id,
-            bpt_event_id))
         self.assertContains(response, "Fee has been paid, submit NOW!")
 
     def test_unpaid_vendor_draft(self):
@@ -494,8 +485,6 @@ class TestIndex(TestCase):
         bpt_event_id = make_vendor_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, expected_string)
-        self.assertContains(response, "%d/%s" % (self.profile.user_object.id,
-                                                 bpt_event_id))
 
     def test_paid_vendor_draft(self):
         make_vendor_app_purchase(self.current_conf,

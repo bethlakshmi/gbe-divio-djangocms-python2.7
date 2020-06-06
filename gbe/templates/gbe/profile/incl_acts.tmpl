@@ -19,7 +19,8 @@
             {% endif %}
         {% elif act.performer.contact == profile %}
 	  <span class="text-danger"><i class="fas fa-arrow-alt-circle-right"></i> 
-      <b>{{ act }}</b></span> - Not submitted
+      <b>{{ act }}</b></span> - {% if act_paid %}Fee has been paid, submit NOW!
+      {% else %}Not submitted{% endif %}
 	<ul>
 	    <li><a href = '{% url 'gbe:act_edit' act.id %}'> View/edit </a>
 	       this act bid</li>{% endif %}

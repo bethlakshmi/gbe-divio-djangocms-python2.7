@@ -261,7 +261,7 @@ def make_vendor_app_purchase(conference, user_object):
                                         vendor_submission_event=True)
     purchaser = PurchaserFactory(matched_to_user=user_object)
     ticket_id = "%s-1111" % (bpt_event.bpt_event_id)
-    ticket = TicketItemFactory(ticket_id=ticket_id)
+    ticket = TicketItemFactory(ticket_id=ticket_id, bpt_event=bpt_event)
     transaction = TransactionFactory(ticket_item=ticket,
                                      purchaser=purchaser)
 

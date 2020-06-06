@@ -41,7 +41,7 @@ def mail_send_gbe(to_list,
         print("Original To List:")
         print(to_list)
         to_list = []
-        for admin in ADMINS:
+        for admin in settings.ADMINS:
             to_list += [admin[1]]
 
     try:
