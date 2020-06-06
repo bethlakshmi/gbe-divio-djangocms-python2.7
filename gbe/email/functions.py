@@ -41,7 +41,7 @@ def mail_send_gbe(to_list,
         print("Original To List:")
         print(to_list)
         to_list = []
-        for admin in settings.ADMINS:
+        for admin in ADMINS:
             to_list += [admin[1]]
 
     try:
@@ -259,6 +259,23 @@ def notify_reviewers_on_bid_change(bidder,
                 'review_url': Site.objects.get_current().domain+review_url},
             )
 
+
+def notify_admin_on_error(activity, error, target_link):
+    name = '%s error' % (activity.lower())
+    template = get_or_create_template(
+        name,
+        "admin_error",
+        '%s Error' % (activity))
+    to_list = [admin[1] for admin in settings.ADMINS]
+    if len(to_list) > 0:
+        mail_send_gbe(
+            to_list,
+            template.sender.from_email,
+            template=name,
+            context={
+                'activity': activity,
+                'error': error,
+                'target_link': target_link})
 
 def send_volunteer_update_to_staff(
         active_user,

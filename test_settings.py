@@ -211,3 +211,5 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'gbe.auth.EmailUsernameAuth',
 ]
+ADMINS = [('Admin',
+           'admin@email.com'), ]

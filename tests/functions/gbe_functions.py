@@ -206,6 +206,7 @@ def assert_right_mail_right_addresses(
     assert msg.subject == expected_subject
     assert msg.to == to_email_array
     assert msg.extra_headers == header
+    return msg
 
 
 def assert_queued_email(to_list, subject, message, sender, extras=[]):
