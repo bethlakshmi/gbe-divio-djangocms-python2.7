@@ -436,6 +436,13 @@ related fees.  You can pay at Brown Paper Tickets by pressing the "Pay Fee" \
 button below.  Once the fee is paid, please return to this form and submit \
 your draft.  In the meantime, pressing either button will safe a draft of \
 your application.'''
+bid_not_submitted_msg = '''The bid has not yet been submitted.  Edit and \
+submit the bid using the button below.'''
+bid_not_paid_msg = '''Payment for your submission has not yet been received.  \
+If you've just paid with PayPal, this page should update in a minute or two.  \
+If your bid is not updated in 5 minutes or less, please contact us.<br><br>  \
+If you have not paid, use the button below to edit the bid and proceed to \
+payment.'''
 payment_needed_msg = '''
 <FONT SIZE="+2">
 Thank you for submitting your work for The Great Burlesque Expo!</FONT>

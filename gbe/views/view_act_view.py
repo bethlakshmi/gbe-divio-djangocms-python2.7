@@ -15,6 +15,7 @@ class ViewActView(ViewBidView):
     viewer_permissions = ('Act Reviewers',)
     object_form_type = ActEditForm
     bid_prefix = "The Act"
+    edit_name = "act_edit"
 
     def check_bid(self):
         if self.bid and self.bid.b_conference.act_style == "summer" and (

@@ -237,7 +237,6 @@ class TestEditAct(TestCase):
     def test_edit_act_draft_make_message(self):
         response = self.post_edit_paid_act_draft()
         self.assertEqual(200, response.status_code)
-        print(response.content)
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
 

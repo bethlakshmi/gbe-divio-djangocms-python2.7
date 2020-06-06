@@ -70,6 +70,14 @@ def vendor_submittal_link(user_id):
     return None
 
 
+def fee_paid(bid_type, user_name, conference):
+    if bid_type == "Act":
+        return verify_performer_app_paid(user_name, conference)
+    elif bid_type == "Vendor":
+        return verify_vendor_app_paid(user_name, conference)
+    return True
+
+
 def verify_performer_app_paid(user_name, conference):
     '''
     Verifies if a user has paid his or her application fee.

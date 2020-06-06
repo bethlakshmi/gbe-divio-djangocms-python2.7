@@ -131,13 +131,9 @@ class TestCreateAct(TestCase):
                               self.performer.performer_profile.user_object)
         response, data = self.post_unpaid_act_draft()
         self.assertEqual(response.status_code, 200)
-        expected_string = (
-            '<b>%s</b></span> - Not submitted'
-            ) % data['theact-b_title']
-        self.assertContains(response, expected_string)
+        self.assertContains(response, ' - Fee has been paid, submit NOW!')
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
-        self.assertContains(response, 'Not submitted')
 
     def test_act_bid_not_paid(self):
         '''act_bid, not post, not paid should take us to bid process'''

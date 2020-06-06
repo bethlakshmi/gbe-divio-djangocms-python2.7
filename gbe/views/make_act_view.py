@@ -3,7 +3,6 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.forms import ModelChoiceField
-from gbe.ticketing_idd_interface import verify_performer_app_paid
 from gbe.models import (
     Act,
     Performer,
@@ -118,8 +117,3 @@ class MakeActView(MakeBidView):
             self.conference,
             self.owner,
             'MakeActView')
-
-    def fee_paid(self):
-        return verify_performer_app_paid(
-            self.owner.user_object.username,
-            self.conference)

@@ -6,7 +6,6 @@ from gbe.models import (
     Vendor,
     UserMessage
 )
-from gbe.ticketing_idd_interface import verify_vendor_app_paid
 from gbetext import (
     default_vendor_submit_msg,
     default_vendor_draft_msg
@@ -56,11 +55,6 @@ class MakeVendorView(MakeBidView):
     def set_valid_form(self, request):
         self.bid_object.b_conference = self.conference
         self.bid_object = self.form.save()
-
-    def fee_paid(self):
-        return verify_vendor_app_paid(
-            self.owner.user_object.username,
-            self.conference)
 
     def make_post_forms(self, request, the_form):
         if self.bid_object:

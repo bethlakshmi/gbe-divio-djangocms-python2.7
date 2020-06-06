@@ -14,7 +14,9 @@ from gbe.models import (
     UserMessage,
 )
 from gbe_logging import log_func
-from gbe.functions import validate_profile
+from gbe.functions import (
+    validate_profile,
+)
 from gbe.email.functions import notify_reviewers_on_bid_change
 from gbetext import (
     no_profile_msg,
@@ -27,6 +29,7 @@ from gbetext import (
 from gbe.ticketing_idd_interface import (
     get_payment_details,
     get_ticket_form,
+    fee_paid,
 )
 
 
@@ -97,7 +100,10 @@ class MakeBidView(View):
         return user_message
 
     def make_context(self, request):
-        paid = self.fee_paid()
+        paid = fee_paid(
+            self.bid_type,
+            self.owner.user_object.username,
+            self.conference)
         instructions = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
             code="BID_INSTRUCTIONS",
@@ -152,9 +158,6 @@ class MakeBidView(View):
 
     def check_validity(self, request):
         return self.form.is_valid()
-
-    def fee_paid(self):
-        return True
 
     def set_up_form(self):
         pass
@@ -225,7 +228,10 @@ class MakeBidView(View):
         if not self.check_validity(request):
             return self.get_invalid_response(request)
 
-        if not self.fee_paid() and "draft" not in list(request.POST.keys()):
+        if not fee_paid(
+                self.bid_type,
+                self.owner.user_object.username,
+                self.conference) and "draft" not in list(request.POST.keys()):
             self.payment_form = get_ticket_form(self.bid_class.__name__,
                                                 self.conference,
                                                 request.POST)
