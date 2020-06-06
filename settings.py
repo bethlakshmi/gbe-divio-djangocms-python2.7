@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import aldryn_addons.settings
 
 INSTALLED_ADDONS = [
     # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
@@ -24,7 +25,6 @@ INSTALLED_ADDONS = [
 
 PAYPAL_BUY_BUTTON_IMAGE = "/static/img/paysubmit.png"
 
-import aldryn_addons.settings
 aldryn_addons.settings.load(locals())
 
 

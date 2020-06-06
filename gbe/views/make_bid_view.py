@@ -227,8 +227,8 @@ class MakeBidView(View):
 
         if not self.fee_paid() and "draft" not in list(request.POST.keys()):
             self.payment_form = get_ticket_form(self.bid_class.__name__,
-                                          self.conference,
-                                          request.POST)
+                                                self.conference,
+                                                request.POST)
             if not self.payment_form.is_valid():
                 error_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
@@ -246,7 +246,7 @@ class MakeBidView(View):
         self.set_valid_form(request)
 
         # if this isn't a draft, move forward through process, setting up
-        # payment review if payment is needed 
+        # payment review if payment is needed
         if "submit" in list(request.POST.keys()):
             if self.payment_form:
                 cart_items, paypal_button, total = get_payment_details(

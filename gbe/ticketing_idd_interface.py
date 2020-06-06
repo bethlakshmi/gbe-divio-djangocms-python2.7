@@ -235,7 +235,7 @@ def get_ticket_form(bid_type, conference, post=None):
         minimum = ticket_items.filter(is_minimum=True).order_by(
             'cost').first().cost
         form = DonationForm(post, initial={'donation_min': minimum,
-                                     'donation': minimum})
+                                           'donation': minimum})
     else:
         form = TicketPayForm(post)
         form.fields['main_ticket'].queryset = ticket_items.filter(
@@ -284,7 +284,7 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
             number_list = "%s %d" % (number_list, item.id)
             total = total + item.cost
     return (
-        cart, 
+        cart,
         get_paypal_button(
             request,
             total,

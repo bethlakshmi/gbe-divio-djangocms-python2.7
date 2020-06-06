@@ -815,8 +815,8 @@ bpt_event_help_text = {
 }
 
 donation_labels = {'donation': 'Fee (pay what you will)'}
-donation_help_text = {'donation': '''Our fee is set to the minimum shown 
-    here, but you may choose to pay more.'''}
+donation_help_text = {'donation': '''Our fee is set to the minimum shown \
+here, but you may choose to pay more.'''}
 
 username_label = 'Login'
 username_help = ("Required. 30 characters or fewer. Letters, digits and "

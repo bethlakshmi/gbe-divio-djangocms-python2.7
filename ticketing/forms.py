@@ -134,18 +134,22 @@ class BPTEventForm(forms.ModelForm):
         labels = bpt_event_labels
         help_texts = bpt_event_help_text
 
+
 class PickTicketField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s - $%s (USD)" % (obj.title, obj.cost)
+
 
 class PickTicketsField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return "%s - $%s (USD)" % (obj.title, obj.cost)
 
+
 class DonationForm(forms.Form):
     donation = forms.DecimalField(required=True,
                                   label=donation_labels['donation'],
                                   help_text=donation_help_text['donation'])
+
     def __init__(self, *args, **kwargs):
         super(DonationForm, self).__init__(*args, **kwargs)
         if 'initial' in kwargs:
@@ -156,6 +160,7 @@ class DonationForm(forms.Form):
                 help_text=donation_help_text['donation'],
                 min_value=initial.get('donation_min', 0),
                 initial=initial.get('donation', 0))
+
 
 class TicketPayForm(forms.Form):
     main_ticket = PickTicketField(

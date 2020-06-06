@@ -172,7 +172,7 @@ class TestEditAct(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, payment_details_error)
         self.assertContains(
-            response, 
+            response,
             "Ensure this value is greater than or equal to 10.00")
 
     def test_act_edit_post_form_submit_paid_other_year(self):

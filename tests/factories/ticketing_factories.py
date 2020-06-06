@@ -82,6 +82,7 @@ class PayPalSettingsFactory(DjangoModelFactory):
         model = tickets.PayPalSettings
     business_email = Sequence(lambda x: "%duser@email.com" % x)
 
+
 class CheckListItemFactory(DjangoModelFactory):
     class Meta:
         model = tickets.CheckListItem

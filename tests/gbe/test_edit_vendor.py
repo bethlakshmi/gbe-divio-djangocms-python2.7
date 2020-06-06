@@ -151,7 +151,7 @@ class TestEditVendor(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, payment_details_error)
         self.assertContains(
-            response, 
+            response,
             "Select a valid choice.")
 
     def test_vendor_edit_post_form_valid_submit_no_main_ticket(self):
@@ -166,7 +166,7 @@ class TestEditVendor(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, payment_details_error)
         self.assertContains(
-            response, 
+            response,
             "This field is required.")
 
     def test_edit_bid_get(self):

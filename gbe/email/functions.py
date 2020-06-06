@@ -277,6 +277,7 @@ def notify_admin_on_error(activity, error, target_link):
                 'error': error,
                 'target_link': target_link})
 
+
 def send_volunteer_update_to_staff(
         active_user,
         vol_profile,
