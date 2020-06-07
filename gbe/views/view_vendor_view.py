@@ -9,8 +9,8 @@ class ViewVendorView(ViewBidView):
     object_form_type = VendorBidForm
     bid_prefix = "The Business"
     owner_prefix = "The Contact Info"
-    edit_name = "vendor_edit"
 
     def make_context(self):
-        context = {'vendor': self.bid, }
+        context = self.get_messages()
+        context['vendor'] = self.bid
         return context

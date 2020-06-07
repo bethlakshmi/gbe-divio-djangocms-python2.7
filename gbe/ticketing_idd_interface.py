@@ -257,15 +257,25 @@ def get_ticket_form(bid_type, conference, post=None):
     return form
 
 
-def get_paypal_button(request, total, custom, item_name, number_list):
+def get_paypal_button(request, total, user_id, number_list, bid_type, bid_id):
     paypal_dict = {
         "business": PayPalSettings.objects.first().business_email,
         "amount": total,
         "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
         "invoice": str(datetime.now()),
-        "custom": custom,
-        "item_name": item_name,
-        "item_number": number_list
+        "custom": "%s-%d-User-%d" % (bid_type, bid_id, user_id),
+        "return": request.build_absolute_uri(
+            reverse(
+                "%s_view" % bid_type.lower(),
+                urlconf='gbe.urls',
+                args=[bid_id])),
+        "cancel_return": request.build_absolute_uri("%s?cancel=paypal" % (
+            reverse(
+                "%s_edit" % bid_type.lower(),
+                urlconf='gbe.urls',
+                args=[bid_id]))),
+        "item_name": "%s Fee(s)" % bid_type,
+        "item_number": number_list,
     }
     return PayPalPaymentsForm(initial=paypal_dict)
 
@@ -296,9 +306,8 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
         get_paypal_button(
             request,
             total,
-            "%s-%d-User-%d" % (bid_type, bid_id, user_id),
-            "%s Fee(s)" % bid_type,
-            number_list),
+            user_id,
+            number_list,
+            bid_type,
+            bid_id),
         total)
-
-    return cart, paypal_button, total

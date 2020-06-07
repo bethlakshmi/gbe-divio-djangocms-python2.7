@@ -427,6 +427,7 @@ default_volunteer_no_bid_msg = \
 existing_volunteer_msg = \
     "You've already offered to volunteer, " + \
     "would you like to update your proposal?"
+default_submit_msg = "Thank you for submitting your bid."
 invalid_volunteer_event = '''The following event is not currently available.  \
 It may have just reached a maximum number of volunteers. Unavailable event is \
 '''

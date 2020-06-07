@@ -22,6 +22,7 @@ from django.core.urlresolvers import reverse
 
 @receiver(valid_ipn_received)
 def pay_application_fee(sender, **kwargs):
+    print("got this far")
     activity = "PayPal Purchase Processing"
     ipn_obj = sender
     ipn_obj_link = reverse("admin:%s_%s_change" % (
