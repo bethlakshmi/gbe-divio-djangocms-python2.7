@@ -4,7 +4,9 @@
 {% block title %}
    Review Bids
 {% endblock %}
-
+{% block head %}
+{% if awaiting_payment %}<meta http-equiv="refresh" content="10">{% endif %}
+{% endblock %}
 {% block content %}
   {% if form.errors %}
     <p style= "color:red"> There is an error on the form.  </p>

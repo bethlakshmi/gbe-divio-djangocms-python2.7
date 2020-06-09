@@ -63,6 +63,7 @@ class ViewBidView(View):
                         'summary': "No Payment Needed, Not Submitted Message",
                         'description': bid_not_submitted_msg})
             else:
+                context['awaiting_payment'] = True
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="AWAITING_PAYMENT_BID",

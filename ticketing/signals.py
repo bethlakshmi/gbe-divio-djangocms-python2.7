@@ -22,7 +22,6 @@ from django.core.urlresolvers import reverse
 
 @receiver(valid_ipn_received)
 def pay_application_fee(sender, **kwargs):
-    print("got this far")
     activity = "PayPal Purchase Processing"
     ipn_obj = sender
     ipn_obj_link = reverse("admin:%s_%s_change" % (
@@ -52,6 +51,15 @@ def pay_application_fee(sender, **kwargs):
         try:
             user = User.objects.get(pk=int(custom[3]))
             bid = eval(custom[0]).objects.get(pk=int(custom[1]))
+            if bid.submitted == True:
+                notify_admin_on_error(
+                    activity,
+                    "Payment recieved for a bid that has already been " +
+                    "submitted.  Bid name: %s, Bid Type: %s, Bid PK: %s" % (
+                        bid.b_title,
+                        bid.__class__.__name__,
+                        bid.pk),
+                    ipn_obj_link)
         except:
             notify_admin_on_error(
                 activity,
@@ -62,7 +70,6 @@ def pay_application_fee(sender, **kwargs):
         # Check values
         ticket_items = get_fee_list(custom[0], bid.b_conference)
         ticket_pk_list = list(map(int, ipn_obj.item_number.split()))
-
         # minimum should be more than suggested donation
         if ticket_items.filter(is_minimum=True).exists() and float(
                 ipn_obj.mc_gross) >= ticket_items.filter(

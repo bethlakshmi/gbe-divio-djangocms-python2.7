@@ -314,3 +314,44 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         self.assertTrue(reverse("admin:%s_%s_change" % (
             "ipn",
             "paypalipn"), args=(ipn_obj.id, )) in msg.body)
+
+    def test_valid_vendor_payment_already_submitted(self):
+        privileged_profile = ProfileFactory()
+        grant_privilege(
+            privileged_profile.user_object,
+            'Vendor Reviewers')
+        vendor = VendorFactory(submitted=True)
+        tickets = setup_fees(vendor.b_conference, is_vendor=True)
+        vendor_params = IPN_POST_PARAMS
+        vendor_params["receiver_email"] = PayPalSettings.objects.first(
+            ).business_email
+        vendor_params["custom"] = "%s-%d-User-%d" % (
+            "Vendor",
+            vendor.pk,
+            vendor.profile.user_object.pk)
+        cost = 0
+        for ticket in tickets:
+            cost = cost + ticket.cost
+        vendor_params["mc_currency"] = "USD"
+        vendor_params["mc_gross"] = cost
+        vendor_params["item_number"] = str(tickets[0].pk)
+        ipn_obj = self.assertGotSignal(valid_ipn_received,
+                                       params=vendor_params)
+        self.assertEqual(Purchaser.objects.filter(
+            matched_to_user=vendor.profile.user_object).count(), 1)
+        self.assertEqual(Transaction.objects.filter(
+            purchaser__matched_to_user=vendor.profile.user_object).count(), 1)
+        msg = assert_right_mail_right_addresses(
+            0,
+            2,
+            "PayPal Purchase Processing Error",
+            [admin[1] for admin in settings.ADMINS])
+        self.assertTrue(
+            "Payment recieved for a bid that has already been " +
+            "submitted.  Bid name: %s, Bid Type: %s, Bid PK: %s" % (
+                vendor.b_title,
+                "Vendor",
+                vendor.pk))
+        self.assertTrue(reverse("admin:%s_%s_change" % (
+            "ipn",
+            "paypalipn"), args=(ipn_obj.id, )) in msg.body)
