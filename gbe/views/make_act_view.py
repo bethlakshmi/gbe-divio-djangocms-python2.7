@@ -46,7 +46,7 @@ class MakeActView(MakeBidView):
         # first, diagnose if we have a act/view mismatch
         if self.conference.act_style == "summer" and (
                 self.__class__.__name__ == "MakeActView"):
-            redirect_prefix = 'summer_act_'
+            redirect_prefix = 'summeract_'
         elif self.conference.act_style == "normal" and (
                 self.__class__.__name__ == "MakeSummerActView"):
             redirect_prefix = 'act_'
