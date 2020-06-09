@@ -22,8 +22,8 @@ from gbe.models import (
 
 class TestSummerAct(TestCase):
     '''Tests for create_act view'''
-    create_name = 'summer_act_create'
-    edit_name = 'summer_act_edit'
+    create_name = 'summeract_create'
+    edit_name = 'summeract_edit'
 
     def setUp(self):
         self.url = reverse(self.create_name, urlconf='gbe.urls')
