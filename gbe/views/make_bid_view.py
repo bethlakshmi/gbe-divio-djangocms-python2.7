@@ -271,7 +271,7 @@ class MakeBidView(View):
                 page_title = '%s Payment' % self.bid_type
                 return render(
                     request,
-                    'confirm_pay.tmpl',
+                    'gbe/confirm_pay.tmpl',
                     {'dynamic_message': dynamic_message[0].description,
                      'page_title': page_title,
                      'cart_items': cart_items,
