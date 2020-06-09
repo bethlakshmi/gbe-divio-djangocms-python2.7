@@ -51,7 +51,7 @@ def pay_application_fee(sender, **kwargs):
         try:
             user = User.objects.get(pk=int(custom[3]))
             bid = eval(custom[0]).objects.get(pk=int(custom[1]))
-            if bid.submitted == True:
+            if bid.submitted is True:
                 notify_admin_on_error(
                     activity,
                     "Payment recieved for a bid that has already been " +

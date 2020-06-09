@@ -27,7 +27,7 @@ from django.core.urlresolvers import reverse
 
 
 class ViewBidView(View):
-    # Any view inheriting from this view should have an edit_view that 
+    # Any view inheriting from this view should have an edit_view that
     # is named as "bidobject_edit" where the model BidObject is lower case
     performer = None
 
@@ -44,7 +44,6 @@ class ViewBidView(View):
         if self.performer:
             context['performer'] = self.performer
         return context
-
 
     def get_messages(self):
         context = {}
@@ -69,7 +68,7 @@ class ViewBidView(View):
                     code="AWAITING_PAYMENT_BID",
                     defaults={
                         'summary': "Bid Awaits Payment - Wait for Refresh",
-                        'description': bid_not_paid_msg})                
+                        'description': bid_not_paid_msg})
             context['not_submit_message'] = user_message[0].description
         elif self.is_owner:
             user_message = UserMessage.objects.get_or_create(
@@ -77,7 +76,7 @@ class ViewBidView(View):
                 code="BID_SUBMITTED",
                 defaults={
                     'summary': "Thanks for submitting bid",
-                    'description': default_submit_msg})       
+                    'description': default_submit_msg})
             context['submit_message'] = user_message[0].description
         return context
 
