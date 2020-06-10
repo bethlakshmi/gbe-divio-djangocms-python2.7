@@ -34,6 +34,7 @@ def get_tickets(linked_event, most=False, conference=False):
 
 
 def get_fee_list(bid_type, conference):
+    ticket_items = []
     ticket_items = TicketItem.objects.filter(
         bpt_event__conference=conference, live=True, has_coupon=False).exclude(
         start_time__lt=datetime.now(), end_time__gt=datetime.now())
@@ -43,6 +44,4 @@ def get_fee_list(bid_type, conference):
     elif bid_type == "Act":
         ticket_items = ticket_items.filter(
             bpt_event__act_submission_event=True)
-    else:
-        raise Exception("Invalid Bid Type: %s" % bid_type)
     return ticket_items

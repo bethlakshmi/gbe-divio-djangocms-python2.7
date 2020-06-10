@@ -32,44 +32,6 @@ from paypal.standard.forms import PayPalPaymentsForm
 from django.core.urlresolvers import reverse
 
 
-def performer_act_submittal_link(user_id):
-    '''
-    defines the act submission url for BPT to be used for payment.
-    In other words, this gives you a string that a given user should go
-    to at BPT to pay the fee.
-    user_id - the integer User ID of the user.
-    returns - the URL string described above.
-    '''
-    act_sub_events = BrownPaperEvents.objects.filter(
-        act_submission_event=True,
-        conference=Conference.objects.filter(status="upcoming").first())
-    if (act_sub_events.count() > 0):
-        return ('http://www.brownpapertickets.com/event/ID-' +
-                str(user_id) +
-                '/' +
-                act_sub_events[0].bpt_event_id)
-    return None
-
-
-def vendor_submittal_link(user_id):
-    '''
-    defines the vendor url for BPT to be used for payment.  In other words,
-    this gives you a string that a given user should go to at BPT to pay the
-    fee.
-    user_id - the integer User ID of the user.
-    returns - the URL string described above.
-    '''
-    vendor_events = BrownPaperEvents.objects.filter(
-        vendor_submission_event=True,
-        conference=Conference.objects.filter(status="upcoming").first())
-    if (vendor_events.count() > 0):
-        return ('http://www.brownpapertickets.com/event/ID-' +
-                str(user_id) +
-                '/' +
-                vendor_events[0].bpt_event_id)
-    return None
-
-
 def fee_paid(bid_type, user_name, conference):
     if bid_type == "Act":
         return verify_performer_app_paid(user_name, conference)
