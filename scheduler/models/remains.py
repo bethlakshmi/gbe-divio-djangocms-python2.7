@@ -135,9 +135,6 @@ class ActItem(ResourceItem):
             resourceitem_id=self.resourceitem_id
         ).b_title
 
-    def __str__(self):
-        return str(self.describe)
-
 
 class ActResource(Resource):
     '''

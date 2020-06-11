@@ -42,9 +42,6 @@ class Biddable(Model):
         verbose_name_plural = "biddable items"
         app_label = "gbe"
 
-    def __str__(self):
-        return self.b_title
-
     @property
     def ready_for_review(self):
         return (self.submitted and

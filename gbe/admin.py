@@ -12,7 +12,6 @@ class ConferenceAdmin(admin.ModelAdmin):
     list_filter = ['status', 'act_style']
 
 
-@admin.register(StaffArea)
 class StaffAreaAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'conference',
@@ -25,12 +24,17 @@ class StaffAreaAdmin(admin.ModelAdmin):
 
 
 class BidAdmin(ImportExportActionModelAdmin):
-    list_display = (str, 'submitted', 'accepted', 'created_at', 'updated_at')
+    list_display = ('b_title',
+                    'profile',
+                    'submitted',
+                    'accepted',
+                    'created_at',
+                    'updated_at')
     list_filter = ['submitted', 'accepted', 'b_conference']
 
 
 class ClassAdmin(BidAdmin):
-    list_display = ('__str__',
+    list_display = ('b_title',
                     'teacher',
                     'submitted',
                     'accepted',
@@ -65,10 +69,6 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('display_name', 'user_object', 'phone', 'purchase_email')
     search_fields = ['display_name',
                      'user_object__email']
-
-
-class BidEvalAdmin(admin.ModelAdmin):
-    list_display = ('bid', 'evaluator', 'vote', 'notes')
 
 
 class ClassProposalAdmin(admin.ModelAdmin):
@@ -178,48 +178,36 @@ class CastingAdmin(admin.ModelAdmin):
     list_display_links = None
 
 
-class FlexibleEvalAdmin(admin.ModelAdmin):
-    list_display = ('bid',
-                    'evaluator',
-                    'category',
-                    'ranking')
-    list_filter = ['category', ]
-
-
 class EvalCategoryAdmin(admin.ModelAdmin):
     list_display = ('category',
                     'visible',
                     'help_text')
     list_filter = ['visible', ]
 
+admin.site.register(ActCastingOption, CastingAdmin)
+admin.site.register(Act, ActAdmin)
+admin.site.register(AvailableInterest, AvailableInterestAdmin)
+admin.site.register(Biddable, BidAdmin)
+admin.site.register(Class, ClassAdmin)
+admin.site.register(ClassProposal, ClassProposalAdmin)
 admin.site.register(Conference, ConferenceAdmin)
 admin.site.register(ConferenceDay, ConferenceDayAdmin)
-admin.site.register(VolunteerInterest, VolunteerInterestAdmin)
-admin.site.register(AvailableInterest, AvailableInterestAdmin)
-admin.site.register(Profile, ProfileAdmin)
-admin.site.register(Biddable, BidAdmin)
-admin.site.register(Act, ActAdmin)
-admin.site.register(Class, ClassAdmin)
-admin.site.register(Vendor, BidAdmin)
-admin.site.register(Volunteer, BidAdmin)
-admin.site.register(Costume, BidAdmin)
-admin.site.register(Show, ShowAdmin)
-admin.site.register(Room, RoomAdmin)
-admin.site.register(ClassProposal, ClassProposalAdmin)
-admin.site.register(ActBidEvaluation)
-admin.site.register(BidEvaluation, BidEvalAdmin)
-admin.site.register(TechInfo)
-admin.site.register(PerformerFestivals)
-admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
-admin.site.register(Persona, PerformerAdmin)
-admin.site.register(Performer, PerformerAdmin)
-admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(ConferenceVolunteer, ConferenceVolunteerAdmin)
-admin.site.register(GenericEvent, GenericAdmin)
-admin.site.register(Event, EventAdmin)
-admin.site.register(UserMessage, MessageAdmin)
-admin.site.register(ShowVote)
-admin.site.register(FlexibleEvaluation, FlexibleEvalAdmin)
+admin.site.register(Costume, BidAdmin)
 admin.site.register(EvaluationCategory, EvalCategoryAdmin)
 admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
-admin.site.register(ActCastingOption, CastingAdmin)
+admin.site.register(Event, EventAdmin)
+admin.site.register(GenericEvent, GenericAdmin)
+admin.site.register(PerformerFestivals)
+admin.site.register(Performer, PerformerAdmin)
+admin.site.register(Persona, PerformerAdmin)
+admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
+admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Show, ShowAdmin)
+admin.site.register(StaffArea, StaffAreaAdmin)
+admin.site.register(Room, RoomAdmin)
+admin.site.register(Troupe, TroupeAdmin)
+admin.site.register(UserMessage, MessageAdmin)
+admin.site.register(Vendor, BidAdmin)
+admin.site.register(Volunteer, BidAdmin)
+admin.site.register(VolunteerInterest, VolunteerInterestAdmin)

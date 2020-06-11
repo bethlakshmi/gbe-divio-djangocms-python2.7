@@ -402,9 +402,6 @@ class Profile(WorkerItem):
                 pref.save()
         return True
 
-    def __str__(self):
-        return self.display_name
-
     @property
     def describe(self):
         return self.display_name
