@@ -28,9 +28,7 @@ from gbe.models import (
     Conference,
     UserMessage,
 )
-from gbe.ticketing_idd_interface import (
-    performer_act_submittal_link,
-)
+from tests.functions.ticketing_functions import setup_fees
 
 
 class TestCreateAct(TestCase):
@@ -78,6 +76,7 @@ class TestCreateAct(TestCase):
         current_conference()
         login_as(self.performer.performer_profile, self)
         POST = self.get_act_form()
+        POST['draft'] = True
         response = self.client.post(self.url, data=POST, follow=True)
         return response, POST
 
@@ -117,10 +116,13 @@ class TestCreateAct(TestCase):
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
         login_as(self.performer.performer_profile, self)
+        tickets = setup_fees(self.current_conference, is_act=True)
         POST = self.get_act_form()
-        POST.update({'submit': ''})
+        POST.update({'submit': '',
+                     'donation': 10})
         response = self.client.post(self.url, data=POST)
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Act Submission Fee")
 
     def test_act_bid_post_no_submit(self):
         '''act_bid, not submitting and no other problems,
@@ -129,39 +131,18 @@ class TestCreateAct(TestCase):
                               self.performer.performer_profile.user_object)
         response, data = self.post_unpaid_act_draft()
         self.assertEqual(response.status_code, 200)
-        expected_string = (
-            '<b>%s</b></span> - Not submitted'
-            ) % data['theact-b_title']
-        self.assertContains(response, expected_string)
+        self.assertContains(response, ' - Fee has been paid, submit NOW!')
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
-        self.assertContains(response, 'Fee has been paid, submit NOW!')
-
-    def test_act_bid_payfee(self):
-        '''users has unpaid act, and chooses to pay the fee'''
-        bpt_event_id = make_act_app_ticket(self.current_conference)
-        login_as(self.performer.performer_profile, self)
-        POST = self.get_act_form()
-        POST['payfee'] = 1
-        response = self.client.post(self.url, data=POST, follow=True)
-        self.assertRedirects(
-            response,
-            "/en/event/ID-%d/%s/" % (
-                self.performer.performer_profile.user_object.id,
-                bpt_event_id),
-            target_status_code=404)
 
     def test_act_bid_not_paid(self):
         '''act_bid, not post, not paid should take us to bid process'''
+        tickets = setup_fees(self.current_conference, is_act=True)
         login_as(self.performer.performer_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
-        self.assertContains(
-            response,
-            fee_instructions % performer_act_submittal_link(
-                self.performer.performer_profile.user_object.id))
-        self.assertContains(response, 'value="Pay Fee"')
+        self.assertContains(response, "Fee (pay what you will)")
 
     def test_act_bid_not_post(self):
         '''act_bid, not post, not paid should take us to bid process'''

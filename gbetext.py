@@ -427,6 +427,7 @@ default_volunteer_no_bid_msg = \
 existing_volunteer_msg = \
     "You've already offered to volunteer, " + \
     "would you like to update your proposal?"
+default_submit_msg = "Thank you for submitting your bid."
 invalid_volunteer_event = '''The following event is not currently available.  \
 It may have just reached a maximum number of volunteers. Unavailable event is \
 '''
@@ -436,6 +437,13 @@ related fees.  You can pay at Brown Paper Tickets by pressing the "Pay Fee" \
 button below.  Once the fee is paid, please return to this form and submit \
 your draft.  In the meantime, pressing either button will safe a draft of \
 your application.'''
+bid_not_submitted_msg = '''The bid has not yet been submitted.  Edit and \
+submit the bid using the button below.'''
+bid_not_paid_msg = '''Payment for your submission has not yet been received.  \
+If you've just paid with PayPal, this page should update in a minute or two.  \
+If your bid is not updated in 5 minutes or less, please contact us.<br><br>  \
+If you have not paid, use the button below to edit the bid and proceed to \
+payment.'''
 payment_needed_msg = '''
 <FONT SIZE="+2">
 Thank you for submitting your work for The Great Burlesque Expo!</FONT>
@@ -577,6 +585,8 @@ create_ticket_event_success_msg = "Created and linked a new BPT Event: "
 no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
 Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
 tickets listed, users will be unable to purchase entrance to this event.'''
+payment_details_error = '''Your choice for fee selections was not valid, \
+please check the form and try again.'''
 set_volunteer_role_summary = "Volunteer Offer %s"
 set_volunteer_role_msg = "Volunteer offer has been set to %s: <br/>"
 set_favorite_msg = '''Your interest has been set and will appear on your \

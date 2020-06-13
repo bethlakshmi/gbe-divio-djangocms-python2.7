@@ -8,6 +8,7 @@ from tests.factories.gbe_factories import (
     UserMessageFactory,
     VendorFactory
 )
+from tests.functions.ticketing_functions import setup_fees
 from tests.functions.gbe_functions import (
     current_conference,
     login_as,
@@ -68,6 +69,7 @@ class TestCreateVendor(TestCase):
                       urlconf='gbe.urls')
         login_as(self.profile, self)
         data = self.get_form()
+        data['draft'] = True
         data['thebiz-profile'] = self.profile.pk
         response = self.client.post(url,
                                     data,
@@ -87,19 +89,20 @@ class TestCreateVendor(TestCase):
             ) % data['thebiz-b_title']
         self.assertContains(response, "(Click to edit)")
         self.assertContains(response, draft_string)
-        ticket_link = "%d/%s" % (self.profile.user_object.id, bpt_event_id)
-        self.assertContains(response, ticket_link)
 
     def test_create_vendor_post_form_valid_submit(self):
         url = reverse(self.view_name, urlconf='gbe.urls')
         login_as(self.profile, self)
+        tickets = setup_fees(self.conference, is_vendor=True)
+
         data = self.get_form(submit=True)
         data['thebiz-profile'] = self.profile.pk
+        data['main_ticket'] = tickets[0].pk
         response = self.client.post(url,
                                     data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Vendor Payment')
+        self.assertContains(response, 'Fee has not been Paid')
 
     def test_create_vendor_post_form_invalid(self):
         url = reverse(self.view_name,

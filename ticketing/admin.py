@@ -1,15 +1,11 @@
-#
-# models.py - Contains Django code for the built-in Admin webpage
-# edited by mdb 6/6/2014
-# edited by bb 7/26/2014
-#
-
-
 from django.contrib import admin
 from ticketing.models import *
 
 
-# Register your models here.
+class PayPalSettingsAdmin(admin.ModelAdmin):
+    list_display = ('business_email', )
+
+
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('ticket_item',
                     'purchaser',
@@ -145,6 +141,7 @@ class TicketEligibilityConditionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(BrownPaperSettings)
+admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(BrownPaperEvents, BPTEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)

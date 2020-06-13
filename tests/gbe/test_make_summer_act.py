@@ -22,8 +22,8 @@ from gbe.models import (
 
 class TestSummerAct(TestCase):
     '''Tests for create_act view'''
-    create_name = 'summer_act_create'
-    edit_name = 'summer_act_edit'
+    create_name = 'summeract_create'
+    edit_name = 'summeract_edit'
 
     def setUp(self):
         self.url = reverse(self.create_name, urlconf='gbe.urls')
@@ -49,14 +49,18 @@ class TestSummerAct(TestCase):
                      }
         if not valid:
             form_dict['theact-shows_preferences'] = [2]
+        if not submit:
+            form_dict['draft'] = True
+        else:
+            form_dict['submit'] = True
+        print('submit is %s' % submit)
         return form_dict
 
     def post_paid_act_submission(self, act_form=None):
         if not act_form:
-            act_form = self.get_act_form()
+            act_form = self.get_act_form(submit=True)
         url = reverse(self.create_name, urlconf='gbe.urls')
         login_as(self.performer.performer_profile, self)
-        act_form.update({'submit': ''})
         make_act_app_purchase(self.current_conference,
                               self.performer.performer_profile.user_object)
         response = self.client.post(url, data=act_form, follow=True)
@@ -69,7 +73,7 @@ class TestSummerAct(TestCase):
                       urlconf="gbe.urls")
         login_as(act.performer.contact, self)
         response = self.client.post(url,
-                                    self.get_act_form(act),
+                                    self.get_act_form(),
                                     follow=True)
         return response
 

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from gbe.models import Conference
 from gbetext import role_options
 from django.db.models import (
     Max,
@@ -24,6 +23,17 @@ class BrownPaperSettings(models.Model):
 
     class Meta:
         verbose_name_plural = 'Brown Paper Settings'
+
+
+class PayPalSettings(models.Model):
+    '''
+    This class is used to hold basic settings sent to Paypal to identify
+    payment.
+    '''
+    business_email = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = 'PayPal Settings'
 
 
 class BrownPaperEvents(models.Model):
@@ -117,7 +127,11 @@ class TicketItem(models.Model):
                                   related_name="ticketitems",
                                   blank=True)
     live = models.BooleanField(default=False)
+    add_on = models.BooleanField(default=False)
     has_coupon = models.BooleanField(default=False)
+    start_time = models.DateTimeField(blank=True, null=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+    is_minimum = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s %s' % (self.ticket_id, self.title)
@@ -180,6 +194,8 @@ class Transaction(models.Model):
     reference = models.CharField(max_length=30)
     payment_source = models.CharField(max_length=30)
     import_date = models.DateTimeField(auto_now=True)
+    invoice = models.CharField(max_length=100, blank=True, null=True)
+    custom = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return '%s (%s)' % (self.reference, self.purchaser)

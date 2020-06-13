@@ -3,10 +3,6 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.forms import ModelChoiceField
-from gbe.ticketing_idd_interface import (
-    performer_act_submittal_link,
-    verify_performer_app_paid,
-)
 from gbe.models import (
     Act,
     Performer,
@@ -50,7 +46,7 @@ class MakeActView(MakeBidView):
         # first, diagnose if we have a act/view mismatch
         if self.conference.act_style == "summer" and (
                 self.__class__.__name__ == "MakeActView"):
-            redirect_prefix = 'summer_act_'
+            redirect_prefix = 'summeract_'
         elif self.conference.act_style == "normal" and (
                 self.__class__.__name__ == "MakeSummerActView"):
             redirect_prefix = 'act_'
@@ -75,7 +71,6 @@ class MakeActView(MakeBidView):
         if self.bid_object and (
                 self.bid_object.performer.contact != self.owner):
             raise Http404
-        self.fee_link = performer_act_submittal_link(request.user.id)
 
     def get_initial(self):
         initial = {}
@@ -97,11 +92,6 @@ class MakeActView(MakeBidView):
     def set_up_form(self):
         q = Performer.objects.filter(contact=self.owner)
         self.form.fields['performer'] = ModelChoiceField(queryset=q)
-
-    def make_context(self, request):
-        context = super(MakeActView, self).make_context(request)
-        context['fee_link'] = self.fee_link
-        return context
 
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):
@@ -127,8 +117,3 @@ class MakeActView(MakeBidView):
             self.conference,
             self.owner,
             'MakeActView')
-
-    def fee_paid(self):
-        return verify_performer_app_paid(
-            self.owner.user_object.username,
-            self.conference)

@@ -21,9 +21,10 @@ from gbetext import (
     default_act_draft_msg,
     default_act_title_conflict,
     payment_needed_msg,
+    payment_details_error,
 )
 from gbe.models import UserMessage
-from gbe.ticketing_idd_interface import performer_act_submittal_link
+from tests.functions.ticketing_functions import setup_fees
 
 
 class TestEditAct(TestCase):
@@ -91,8 +92,10 @@ class TestEditAct(TestCase):
                       args=[act.pk],
                       urlconf="gbe.urls")
         login_as(act.performer.contact, self)
+        act_form = self.get_act_form(act)
+        act_form['draft'] = True
         response = self.client.post(url,
-                                    self.get_act_form(act),
+                                    act_form,
                                     follow=True)
         return response
 
@@ -147,15 +150,30 @@ class TestEditAct(TestCase):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
+        tickets = setup_fees(act.b_conference, is_act=True)
         login_as(act.performer.performer_profile, self)
-        response = self.client.post(
-            url,
-            data=self.get_act_form(act, submit=True))
+        act_form = self.get_act_form(act, submit=True)
+        act_form['donation'] = 10
+        response = self.client.post(url, data=act_form)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Act Payment')
-        self.assertContains(response, payment_needed_msg % (
-            performer_act_submittal_link(
-                act.performer.performer_profile.user_object.id)))
+        self.assertContains(response, "Act Submission Fee")
+        self.assertContains(response, payment_needed_msg)
+
+    def test_act_edit_post_form_submit_bad_pay_choice(self):
+        act = ActFactory()
+        url = reverse(self.view_name,
+                      args=[act.pk],
+                      urlconf="gbe.urls")
+        tickets = setup_fees(act.b_conference, is_act=True)
+        login_as(act.performer.performer_profile, self)
+        act_form = self.get_act_form(act, submit=True)
+        act_form['donation'] = 5
+        response = self.client.post(url, data=act_form)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, payment_details_error)
+        self.assertContains(
+            response,
+            "Ensure this value is greater than or equal to 10.00")
 
     def test_act_edit_post_form_submit_paid_other_year(self):
         act = ActFactory()
@@ -163,13 +181,15 @@ class TestEditAct(TestCase):
             ConferenceFactory(
                 status="completed"),
             act.performer.performer_profile.user_object)
+        tickets = setup_fees(act.b_conference, is_act=True)
+
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
         login_as(act.performer.performer_profile, self)
-        response = self.client.post(
-            url,
-            data=self.get_act_form(act, submit=True))
+        act_form = self.get_act_form(act, submit=True)
+        act_form['donation'] = 10
+        response = self.client.post(url, data=act_form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Act Payment')
 

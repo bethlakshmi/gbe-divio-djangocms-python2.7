@@ -260,6 +260,24 @@ def notify_reviewers_on_bid_change(bidder,
             )
 
 
+def notify_admin_on_error(activity, error, target_link):
+    name = '%s error' % (activity.lower())
+    template = get_or_create_template(
+        name,
+        "admin_error",
+        '%s Error' % (activity))
+    to_list = [admin[1] for admin in settings.ADMINS]
+    if len(to_list) > 0:
+        mail_send_gbe(
+            to_list,
+            template.sender.from_email,
+            template=name,
+            context={
+                'activity': activity,
+                'error': error,
+                'target_link': target_link})
+
+
 def send_volunteer_update_to_staff(
         active_user,
         vol_profile,
