@@ -8,14 +8,7 @@ from django.shortcuts import (
     render,
     get_object_or_404,
 )
-from gbe.models import (
-    UserMessage,
-    Vendor,
-)
-from gbe.forms import (
-    VendorBidForm,
-    ParticipantForm,
-)
+from gbe.models import UserMessage
 from gbe.functions import validate_perms
 from gbetext import (
     bid_not_submitted_msg,
@@ -38,9 +31,8 @@ class ViewBidView(View):
         return self.bid.profile
 
     def make_context(self):
-        display_forms = self.get_display_forms()
         context = self.get_messages()
-        context['readonlyform'] = display_forms
+        context['readonlyform'] = self.get_display_forms()
         if self.performer:
             context['performer'] = self.performer
         return context

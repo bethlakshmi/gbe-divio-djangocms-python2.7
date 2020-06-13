@@ -159,7 +159,7 @@ class TestEditAct(TestCase):
         self.assertContains(response, "Act Submission Fee")
         self.assertContains(response, payment_needed_msg)
 
-    def test_act_edit_post_form_submit_bad_pay_coice(self):
+    def test_act_edit_post_form_submit_bad_pay_choice(self):
         act = ActFactory()
         url = reverse(self.view_name,
                       args=[act.pk],
