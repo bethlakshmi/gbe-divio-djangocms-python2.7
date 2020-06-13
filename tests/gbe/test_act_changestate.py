@@ -12,6 +12,7 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.scheduler_factories import (
+    EventLabelFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
     WorkerFactory,
@@ -45,8 +46,10 @@ class TestActChangestate(TestCase):
     def setUp(self):
         self.client = Client()
         self.context = ActTechInfoContext()
-        self.show = ShowFactory()
+        self.show = ShowFactory(e_conference=self.context.conference)
         self.sched_event = SchedEventFactory(eventitem=self.show.eventitem_ptr)
+        EventLabelFactory(event=self.sched_event,
+                          text=self.context.conference.conference_slug)
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Act Coordinator')
         grant_privilege(self.privileged_user, 'Act Reviewers')
@@ -298,11 +301,12 @@ class TestActChangestate(TestCase):
         grant_privilege(self.privileged_user, 'Act Reviewers')
         conflict = SchedEventFactory(
             starttime=self.context.sched_event.starttime)
+        EventLabelFactory(event=conflict,
+                          text=self.context.conference.conference_slug)
         ResourceAllocationFactory(
             event=conflict,
             resource=WorkerFactory(
-                _item=self.context.performer.performer_profile)
-        )
+                _item=self.context.performer.performer_profile))
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data,

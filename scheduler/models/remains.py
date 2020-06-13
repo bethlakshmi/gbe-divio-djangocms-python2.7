@@ -73,7 +73,10 @@ class Resource(models.Model):
     @property
     def type(self):
         child = Resource.objects.get_subclass(id=self.id)
-        return child.type
+        if child.__class__.__name__ != "Resource":
+            return child.type
+        else:
+            return "Resource (no child)"
 
     @property
     def item(self):
@@ -87,7 +90,7 @@ class Resource(models.Model):
 
     def __str__(self):
         allocated_resource = Resource.objects.get_subclass(id=self.id)
-        if allocated_resource:
+        if allocated_resource.__class__.__name__ != "Resource":
             return str(allocated_resource)
         else:
             return "Error in resource allocation, no resource"
@@ -172,7 +175,7 @@ class ActResource(Resource):
 
     @property
     def type(self):
-        return "act"
+        return "Act"
 
     def __str__(self):
         try:
@@ -299,28 +302,6 @@ class WorkerItem(ResourceItem):
             events = events.filter(
                 eventitem__event__e_conference=conference)
         return events
-
-    def get_schedule(self):
-        '''
-        way of getting the schedule nuances of GBE-specific logic
-        by calling the subclasses for their specific schedule
-        '''
-        child = WorkerItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id)
-        return child.get_schedule()
-
-    def get_conflicts(self, new_event):
-        '''
-        Looks at all current bookings and returns all conflicts.
-        Best to do *before* allocating as a resource.
-        Returns = a list of conflicts.  And empty list means no conflicts.
-        Any conflict listed overlaps with the new_event that was provided.
-        '''
-        conflicts = []
-        for event in self.get_schedule():
-            if event.check_conflict(new_event):
-                conflicts += [event]
-        return conflicts
 
 
 class Worker(Resource):
@@ -469,6 +450,8 @@ class Event(Schedulable):
         allocated worker for the new model - right now, focused on create
         uses the Person from the data_transfer objects.
         '''
+        from scheduler.idd import get_schedule
+
         warnings = []
         time_format = GBE_DATETIME_FORMAT
 
@@ -481,10 +464,13 @@ class Event(Schedulable):
             worker = Worker(_item=person.user.profile, role=person.role)
         worker.save()
 
-        for conflict in worker.workeritem.get_conflicts(self):
+        for conflict in get_schedule(
+                    user=worker.workeritem.user_object,
+                    start_time=self.start_time,
+                    end_time=self.end_time).schedule_items:
             warnings += [Warning(code="SCHEDULE_CONFLICT",
                                  user=person.user,
-                                 occurrence=conflict)]
+                                 occurrence=conflict.event)]
         if person.booking_id:
             allocation = ResourceAllocation.objects.get(
                 id=person.booking_id)
@@ -566,7 +552,7 @@ class Event(Schedulable):
                 return "%d acts" % acts
         return 0
 
-    def get_acts(self, status=None):
+    def get_acts(self):
         '''
         Returns a list of acts allocated to this event,
         filtered by acceptance status if specified
@@ -575,8 +561,6 @@ class Event(Schedulable):
         act_resources = [ar.resource_ptr for ar in ActResource.objects.all()]
         acts = [allocation.resource.item.act for allocation in allocations
                 if allocation.resource in act_resources]
-        if status:
-            acts = [act for act in acts if act.accepted == status]
         return acts
 
     @property
@@ -612,10 +596,7 @@ class Event(Schedulable):
             _item__act__accepted=3).order_by('_item__act__performer__name')
 
     def __str__(self):
-        try:
-            return self.eventitem.describe
-        except:
-            return "No Event Item"
+        return self.eventitem.describe
 
     @property
     def location(self):
@@ -698,9 +679,6 @@ class ResourceAllocation(Schedulable):
         l = self.get_label()
         l.text = text
         l.save()
-
-    def __str__(self):
-        return ("%s - %s" % (str(self.event), str(self.resource)))
 
 
 class Ordering(models.Model):

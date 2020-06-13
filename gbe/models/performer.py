@@ -37,10 +37,6 @@ class Performer (WorkerItem):
         related_name="image_performer")
     festivals = TextField(blank=True)     # placeholder only
 
-    def get_schedule(self):
-        return Performer.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id).get_schedule()
-
     def get_profiles(self):
         '''
         Gets all of the people performing in the act
