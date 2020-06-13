@@ -20,13 +20,14 @@ from tests.functions.gbe_functions import (
 from gbetext import (
     default_vendor_submit_msg,
     default_vendor_draft_msg,
+    payment_details_error,
     payment_needed_msg,
 )
 from gbe.models import (
     UserMessage,
     Vendor,
 )
-from gbe.ticketing_idd_interface import vendor_submittal_link
+from tests.functions.ticketing_functions import setup_fees
 
 
 class TestEditVendor(TestCase):
@@ -71,6 +72,7 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         data = self.get_vendor_form()
         data['thebiz-profile'] = vendor.profile.pk
+        data['draft'] = True
         response = self.client.post(url, data, follow=True)
         return response
 
@@ -117,37 +119,10 @@ class TestEditVendor(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_vendor_draft_msg)
 
-    def test_vendor_edit_post_form_valid_submit_not_paid(self):
-        vendor = VendorFactory()
-        login_as(vendor.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
-        data = self.get_vendor_form(submit=True)
-        data['thebiz-profile'] = vendor.profile.pk
-        response = self.client.post(url, data, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Vendor Payment")
-        self.assertContains(response, payment_needed_msg % (
-            vendor_submittal_link(vendor.profile.user_object.id)))
-
-    def test_vendor_bid_payfee(self):
-        '''users has unpaid act, and chooses to pay the fee'''
-        vendor = VendorFactory()
-        login_as(vendor.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
-        data = self.get_vendor_form()
-        data['thebiz-profile'] = vendor.profile.pk
-        data['payfee'] = 1
-        bpt_event_id = make_vendor_app_ticket(vendor.b_conference)
-        response = self.client.post(url, data, follow=True)
-        self.assertRedirects(
-            response,
-            "/en/event/ID-%d/%s/" % (
-                vendor.profile.user_object.id,
-                bpt_event_id),
-            target_status_code=404)
-
     def test_vendor_edit_post_form_valid_submit_paid_wrong_conf(self):
         vendor = VendorFactory()
+        tickets = setup_fees(vendor.b_conference, is_vendor=True)
+
         make_vendor_app_purchase(
             ConferenceFactory(
                 status="completed"),
@@ -156,9 +131,43 @@ class TestEditVendor(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         data = self.get_vendor_form(submit=True)
         data['thebiz-profile'] = vendor.profile.pk
+        data['main_ticket'] = tickets[0].pk
+        data['add_ons'] = tickets[1].pk
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Vendor Payment")
+        self.assertContains(response, 'Fee has not been Paid')
+        self.assertContains(response, tickets[0].title)
+        self.assertContains(response, tickets[1].title)
+
+    def test_vendor_edit_post_form_valid_submit_bad_pay_choice(self):
+        vendor = VendorFactory()
+        tickets = setup_fees(vendor.b_conference, is_vendor=True)
+        login_as(vendor.profile, self)
+        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
+        data = self.get_vendor_form(submit=True)
+        data['thebiz-profile'] = vendor.profile.pk
+        data['main_ticket'] = tickets[0].pk + 1000
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, payment_details_error)
+        self.assertContains(
+            response,
+            "Select a valid choice.")
+
+    def test_vendor_edit_post_form_valid_submit_no_main_ticket(self):
+        vendor = VendorFactory()
+        tickets = setup_fees(vendor.b_conference, is_vendor=True)
+        login_as(vendor.profile, self)
+        url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
+        data = self.get_vendor_form(submit=True)
+        data['thebiz-profile'] = vendor.profile.pk
+        data['add_ons'] = tickets[1].pk
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, payment_details_error)
+        self.assertContains(
+            response,
+            "This field is required.")
 
     def test_edit_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''
@@ -168,6 +177,7 @@ class TestEditVendor(TestCase):
             summary="Vendor Bid Instructions",
             description="Test Fee Instructions Message")
         vendor = VendorFactory()
+        tickets = setup_fees(vendor.b_conference, is_vendor=True)
         login_as(vendor.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[vendor.pk])
         response = self.client.get(url)
@@ -176,11 +186,13 @@ class TestEditVendor(TestCase):
             response,
             '<h2 class="subtitle">Vendor Application</h2>')
         self.assertContains(response, "Test Fee Instructions Message")
-        self.assertContains(response, 'value="Pay Fee"')
+        self.assertContains(response, tickets[0].title)
+        self.assertContains(response, tickets[1].cost)
 
     def test_edit_paid_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''
         vendor = VendorFactory()
+        tickets = setup_fees(vendor.b_conference, is_vendor=True)
         make_vendor_app_purchase(vendor.b_conference,
                                  vendor.profile.user_object)
         login_as(vendor.profile, self)
@@ -191,6 +203,8 @@ class TestEditVendor(TestCase):
             response,
             '<h2 class="subtitle">Vendor Application</h2>')
         self.assertContains(response, 'value="Submit For Approval"')
+        self.assertNotContains(response, tickets[0].title)
+        self.assertNotContains(response, tickets[1].title)
 
     def test_edit_bid_get_no_help(self):
         '''edit_bid, not post, should take us to edit process'''

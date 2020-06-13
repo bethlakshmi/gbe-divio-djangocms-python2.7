@@ -1,0 +1,13 @@
+Hello Admin!
+
+An error has occured while performing {{activity}} at {% now DATETIME_FORMAT %} (approximately).
+
+The error was: {{error|safe}}
+
+{% if target_link %}
+When this error occurred, the system was performing work on the object at the following URL:
+{{target_link}}"></a> 
+{% endif %}
+
+
+- The GBE Web System

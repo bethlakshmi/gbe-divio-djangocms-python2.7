@@ -8,3 +8,4 @@ class ViewSummerActView(ViewActView):
 
     object_form_type = SummerActForm
     bid_prefix = "The Summer Act"
+    edit_name = "summeract_edit"

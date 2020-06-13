@@ -11,7 +11,7 @@ from tests.functions.gbe_functions import login_as
 
 class TestViewSummerAct(TestCase):
     '''Tests for view_act view'''
-    view_name = 'summer_act_view'
+    view_name = 'summeract_view'
 
     def setUp(self):
         self.client = Client()

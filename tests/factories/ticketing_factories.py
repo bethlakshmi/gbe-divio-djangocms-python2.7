@@ -43,7 +43,7 @@ class TicketItemFactory(DjangoModelFactory):
         model = tickets.TicketItem
     bpt_event = SubFactory(BrownPaperEventsFactory)
     ticket_id = "111111-222222"
-    title = "Test Ticket Item"
+    title = Sequence(lambda x: "Ticket Item #%d" % x)
     cost = 99.99
     modified_by = "Ticket Item Mock"
 
@@ -75,6 +75,12 @@ class TransactionFactory(DjangoModelFactory):
     reference = Sequence(lambda x: "reference: #%d" % x)
     payment_source = Sequence(lambda x: "payment_source: #%d" % x)
     import_date = timezone.now()
+
+
+class PayPalSettingsFactory(DjangoModelFactory):
+    class Meta:
+        model = tickets.PayPalSettings
+    business_email = Sequence(lambda x: "%duser@email.com" % x)
 
 
 class CheckListItemFactory(DjangoModelFactory):

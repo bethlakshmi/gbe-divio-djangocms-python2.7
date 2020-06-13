@@ -4,7 +4,6 @@ from django.test import TestCase
 from django.test import Client
 from django.core.urlresolvers import reverse
 from tests.factories.gbe_factories import (
-    EmailTemplateSenderFactory,
     PersonaFactory,
     ProfilePreferencesFactory,
     ProfileFactory,
@@ -23,7 +22,6 @@ from tests.contexts import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    assert_right_mail_right_addresses,
     assert_hidden_value,
     assert_rank_choice_exists,
     clear_conferences,
@@ -37,7 +35,6 @@ from gbetext import (
 from gbe_forms_text import volunteer_labels
 from gbe.models import UserMessage
 from settings import GBE_DATETIME_FORMAT
-from post_office.models import EmailTemplate
 from django.core import mail
 
 

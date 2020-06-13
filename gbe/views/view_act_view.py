@@ -20,7 +20,7 @@ class ViewActView(ViewBidView):
         if self.bid and self.bid.b_conference.act_style == "summer" and (
                 self.__class__.__name__ != "ViewSummerActView"):
             return reverse(
-                'summer_act_view',
+                'summeract_view',
                 urlconf='gbe.urls',
                 args=[self.bid.pk])
         elif self.bid and not self.bid.b_conference.act_style == "summer" and (

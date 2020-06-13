@@ -7,58 +7,37 @@
 from gbe_logging import logger
 from ticketing.models import (
     BrownPaperEvents,
+    PayPalSettings,
     RoleEligibilityCondition,
     TicketingEligibilityCondition,
     TicketItem,
     Transaction,
+)
+from ticketing.forms import (
+    DonationForm,
+    TicketPayForm,
 )
 from gbe.models import (
     Conference,
 )
 from scheduler.idd import get_roles
 from ticketing.brown_paper import *
-from gbetext import *
-from django.db.models import Count
 from ticketing.views import import_ticket_items
+from ticketing.functions import get_fee_list
+from django.db.models import Count
 from django.db.models import Q
+from datetime import datetime
+from django.forms import HiddenInput
+from paypal.standard.forms import PayPalPaymentsForm
+from django.core.urlresolvers import reverse
 
 
-def performer_act_submittal_link(user_id):
-    '''
-    defines the act submission url for BPT to be used for payment.
-    In other words, this gives you a string that a given user should go
-    to at BPT to pay the fee.
-    user_id - the integer User ID of the user.
-    returns - the URL string described above.
-    '''
-    act_sub_events = BrownPaperEvents.objects.filter(
-        act_submission_event=True,
-        conference=Conference.objects.filter(status="upcoming").first())
-    if (act_sub_events.count() > 0):
-        return ('http://www.brownpapertickets.com/event/ID-' +
-                str(user_id) +
-                '/' +
-                act_sub_events[0].bpt_event_id)
-    return None
-
-
-def vendor_submittal_link(user_id):
-    '''
-    defines the vendor url for BPT to be used for payment.  In other words,
-    this gives you a string that a given user should go to at BPT to pay the
-    fee.
-    user_id - the integer User ID of the user.
-    returns - the URL string described above.
-    '''
-    vendor_events = BrownPaperEvents.objects.filter(
-        vendor_submission_event=True,
-        conference=Conference.objects.filter(status="upcoming").first())
-    if (vendor_events.count() > 0):
-        return ('http://www.brownpapertickets.com/event/ID-' +
-                str(user_id) +
-                '/' +
-                vendor_events[0].bpt_event_id)
-    return None
+def fee_paid(bid_type, user_name, conference):
+    if bid_type == "Act":
+        return verify_performer_app_paid(user_name, conference)
+    elif bid_type == "Vendor":
+        return verify_vendor_app_paid(user_name, conference)
+    return True
 
 
 def verify_performer_app_paid(user_name, conference):
@@ -75,10 +54,10 @@ def verify_performer_app_paid(user_name, conference):
     acts_submitted = 0
     # First figure out how many acts this user has purchased
     act_fees_purchased = Transaction.objects.filter(
+        ticket_item__add_on=False,
         ticket_item__bpt_event__act_submission_event=True,
         ticket_item__bpt_event__conference=conference,
         purchaser__matched_to_user__username=str(user_name)).count()
-
     # Then figure out how many acts have already been submitted.
     acts_submitted = Act.objects.filter(
         submitted=True,
@@ -100,20 +79,14 @@ def verify_vendor_app_paid(user_name, conference):
     returns - true if the system recognizes the vendor submittal fee is paid
     '''
     from gbe.models import Vendor
-    vendor_fees_purchased = 0
     vendor_apps_submitted = 0
 
     # First figure out how many vendor spots this user has purchased
-    for vendor_event in BrownPaperEvents.objects.filter(
-            vendor_submission_event=True,
-            conference=conference):
-        for trans in Transaction.objects.all():
-            trans_event = trans.ticket_item.ticket_id.split('-')[0]
-            trans_user_name = trans.purchaser.matched_to_user.username
-
-            if ((vendor_event.bpt_event_id == trans_event) and
-                    (str(user_name) == trans_user_name)):
-                vendor_fees_purchased += 1
+    vendor_fees_purchased = Transaction.objects.filter(
+            ticket_item__add_on=False,
+            ticket_item__bpt_event__vendor_submission_event=True,
+            ticket_item__bpt_event__conference=conference,
+            purchaser__matched_to_user__username=str(user_name)).count()
 
     # Then figure out how many vendor applications have already been submitted.
     vendor_apps_submitted = Vendor.objects.filter(
@@ -222,3 +195,81 @@ def create_bpt_event(bpt_event_id, conference, events=[], display_icon=None):
     event.save()
     count = import_ticket_items([event])
     return event, count
+
+
+def get_ticket_form(bid_type, conference, post=None):
+    form = None
+    ticket_items = get_fee_list(bid_type, conference)
+
+    if ticket_items.filter(is_minimum=True).exists():
+        minimum = ticket_items.filter(is_minimum=True).order_by(
+            'cost').first().cost
+        form = DonationForm(post, initial={'donation_min': minimum,
+                                           'donation': minimum})
+    else:
+        form = TicketPayForm(post)
+        form.fields['main_ticket'].queryset = ticket_items.filter(
+            add_on=False).order_by('cost')
+        if ticket_items.filter(add_on=True).exists():
+            form.fields['add_ons'].queryset = ticket_items.filter(
+                add_on=True).order_by('cost')
+        else:
+            form.fields['add_ons'].widget = HiddenInput()
+
+    return form
+
+
+def get_paypal_button(request, total, user_id, number_list, bid_type, bid_id):
+    paypal_dict = {
+        "business": PayPalSettings.objects.first().business_email,
+        "amount": total,
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "invoice": str(datetime.now()),
+        "custom": "%s-%d-User-%d" % (bid_type, bid_id, user_id),
+        "return": request.build_absolute_uri(
+            reverse(
+                "%s_view" % bid_type.lower(),
+                urlconf='gbe.urls',
+                args=[bid_id])),
+        "cancel_return": request.build_absolute_uri("%s?cancel=paypal" % (
+            reverse(
+                "%s_edit" % bid_type.lower(),
+                urlconf='gbe.urls',
+                args=[bid_id]))),
+        "item_name": "%s Fee(s)" % bid_type,
+        "item_number": number_list,
+    }
+    return PayPalPaymentsForm(initial=paypal_dict)
+
+
+def get_payment_details(request, form, bid_type, bid_id, user_id):
+    cart = []
+    paypal_button = None
+    total = 0
+    minimum = None
+    main_ticket = None
+    number_list = ""
+
+    if 'donation' in list(form.cleaned_data.keys()):
+        cart += [("%s Submission Fee" % bid_type,
+                  form.cleaned_data['donation'])]
+        total = total + form.cleaned_data['donation']
+    else:
+        cart += [(form.cleaned_data['main_ticket'].title,
+                  form.cleaned_data['main_ticket'].cost)]
+        number_list = str(form.cleaned_data['main_ticket'].id)
+        total = total + form.cleaned_data['main_ticket'].cost
+        for item in form.cleaned_data['add_ons']:
+            cart += [(item.title, item.cost)]
+            number_list = "%s %d" % (number_list, item.id)
+            total = total + item.cost
+    return (
+        cart,
+        get_paypal_button(
+            request,
+            total,
+            user_id,
+            number_list,
+            bid_type,
+            bid_id),
+        total)

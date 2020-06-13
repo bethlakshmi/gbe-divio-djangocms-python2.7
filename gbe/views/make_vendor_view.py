@@ -1,18 +1,10 @@
 from gbe.views import MakeBidView
 from django.http import Http404
-from gbe.ticketing_idd_interface import (
-    performer_act_submittal_link,
-    verify_performer_app_paid,
-)
 from gbe.forms import VendorBidForm
 from gbe.models import (
     Conference,
     Vendor,
     UserMessage
-)
-from gbe.ticketing_idd_interface import (
-    vendor_submittal_link,
-    verify_vendor_app_paid,
 )
 from gbetext import (
     default_vendor_submit_msg,
@@ -46,7 +38,6 @@ class MakeVendorView(MakeBidView):
 
         if self.bid_object and (self.bid_object.profile != self.owner):
             raise Http404
-        self.fee_link = vendor_submittal_link(request.user.id)
 
     def get_initial(self):
         initial = {}
@@ -61,19 +52,9 @@ class MakeVendorView(MakeBidView):
                        'physical_address': self.owner.address}
         return initial
 
-    def make_context(self, request):
-        context = super(MakeVendorView, self).make_context(request)
-        context['fee_link'] = self.fee_link
-        return context
-
     def set_valid_form(self, request):
         self.bid_object.b_conference = self.conference
         self.bid_object = self.form.save()
-
-    def fee_paid(self):
-        return verify_vendor_app_paid(
-            self.owner.user_object.username,
-            self.conference)
 
     def make_post_forms(self, request, the_form):
         if self.bid_object:

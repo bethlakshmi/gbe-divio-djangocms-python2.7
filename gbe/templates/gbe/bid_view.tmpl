@@ -4,7 +4,9 @@
 {% block title %}
    Review Bids
 {% endblock %}
-
+{% block head %}
+{% if awaiting_payment %}<meta http-equiv="refresh" content="10">{% endif %}
+{% endblock %}
 {% block content %}
   {% if form.errors %}
     <p style= "color:red"> There is an error on the form.  </p>
@@ -12,7 +14,19 @@
     {% if error %}
     <p style= "color:red"> {{ error }}  </p>
     {% endif %}
-  <p class="vanilla">{{title}} </p>
+{% if not_submit_message %}
+<div class="review-pane">
+  {{ not_submit_message | safe }}<br><br>
+  {% if edit_url %}
+  <div class="text-center">
+  <a href="{{edit_url}}" role="button" class="btn btn-default btn-primary">
+  Edit & Submit</a></div>
+  {% endif %}
+</div>
+{% endif %}
+{% if submit_message %}
+<p class="lead text-center">{{ submit_message | safe }}</p>
+{% endif %}
   <div class="review-pane">
     <h2 class="review-title">Bid Information</h2>
      Submitted proposals cannot be modified, please contact the expo for any issues or concerns.  We'll be in contact during or after our review process.

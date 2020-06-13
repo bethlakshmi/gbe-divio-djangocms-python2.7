@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import aldryn_addons.settings
 
 INSTALLED_ADDONS = [
     # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
@@ -22,7 +23,8 @@ INSTALLED_ADDONS = [
     # </INSTALLED_ADDONS>
 ]
 
-import aldryn_addons.settings
+PAYPAL_BUY_BUTTON_IMAGE = "/static/img/paysubmit.png"
+
 aldryn_addons.settings.load(locals())
 
 
@@ -34,6 +36,7 @@ INSTALLED_APPS.extend([
     "ticketing",
     "gbe",
     "post_office",
+    'paypal.standard.ipn',
     'import_export',
     'snowpenguin.django.recaptcha2',
 ])
@@ -97,10 +100,12 @@ USER_CONTACT_RECIPIENT_ADDRESSES = ['betty@burlesque-expo.com',
 RECAPTCHA_PRIVATE_KEY = "6Lf1dx0UAAAAANMxh-BqrW_9IU-0n4OZyWin6sGB"
 RECAPTCHA_PUBLIC_KEY = "6Lf1dx0UAAAAAMcHUhPsGFc7LUQWHQOfiUWKx1m1"
 
+PAYPAL_TEST = False
+
 if DEBUG:
     RECAPTCHA_PRIVATE_KEY = '6Le0dx0UAAAAACNZynxCx5mUovu3M1Au3XFeeFKN'
     RECAPTCHA_PUBLIC_KEY = '6Le0dx0UAAAAAFGd_HJzX22FdzhwI-GCh8nCoXoU'
-
+    PAYPAL_TEST = True
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

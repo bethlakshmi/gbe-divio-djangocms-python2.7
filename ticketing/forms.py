@@ -7,7 +7,15 @@
 from ticketing.models import *
 from django import forms
 from gbe.models import Show, GenericEvent, Event
-from gbe_forms_text import *
+from gbe_forms_text import (
+    bpt_event_help_text,
+    bpt_event_labels,
+    donation_help_text,
+    donation_labels,
+    link_event_help_text,
+    link_event_labels,
+    ticket_item_labels
+)
 from django.db.models import Q
 from django.forms.widgets import CheckboxSelectMultiple
 
@@ -125,3 +133,41 @@ class BPTEventForm(forms.ModelForm):
             'conference']
         labels = bpt_event_labels
         help_texts = bpt_event_help_text
+
+
+class PickTicketField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "%s - $%s (USD)" % (obj.title, obj.cost)
+
+
+class PickTicketsField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return "%s - $%s (USD)" % (obj.title, obj.cost)
+
+
+class DonationForm(forms.Form):
+    donation = forms.DecimalField(required=True,
+                                  label=donation_labels['donation'],
+                                  help_text=donation_help_text['donation'])
+
+    def __init__(self, *args, **kwargs):
+        super(DonationForm, self).__init__(*args, **kwargs)
+        if 'initial' in kwargs:
+            initial = kwargs.get('initial', {})
+            self.fields['donation'] = forms.DecimalField(
+                required=True,
+                label=donation_labels['donation'],
+                help_text=donation_help_text['donation'],
+                min_value=initial.get('donation_min', 0),
+                initial=initial.get('donation', 0))
+
+
+class TicketPayForm(forms.Form):
+    main_ticket = PickTicketField(
+        queryset=TicketItem.objects.all(),
+        required=True,
+        empty_label=None)
+    add_ons = PickTicketsField(
+        queryset=TicketItem.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple)
