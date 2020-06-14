@@ -4,8 +4,11 @@ from django.test import (
 )
 from django.contrib.auth.models import User
 from tests.factories.ticketing_factories import(
+    NoEventRoleExclusionFactory,
     RoleEligibilityConditionFactory,
+    RoleExclusionFactory,
     TicketingEligibilityConditionFactory,
+    TicketingExclusionFactory,
     TicketItemFactory,
 )
 from tests.factories.gbe_factories import ConferenceFactory
@@ -14,6 +17,7 @@ from tests.functions.gbe_functions import (
     make_act_app_purchase,
     make_vendor_app_purchase,
 )
+from django.core.urlresolvers import reverse
 
 
 class TicketingChangeListTests(TestCase):
@@ -73,3 +77,44 @@ class TicketingChangeListTests(TestCase):
             follow=True)
         self.assertContains(response, role_condition.role)
         self.assertContains(response, role_condition.checklistitem)
+
+    def test_get_ticketing_eligibility_edit_ticket_exclude(self):
+        ticket = TicketItemFactory()
+        ticket2 = TicketItemFactory()
+        ticket3 = TicketItemFactory()
+        match_condition = TicketingEligibilityConditionFactory(
+            tickets=[ticket])
+        exclusion = TicketingExclusionFactory(
+            condition=match_condition,
+            tickets=[ticket2, ticket3])
+        response = self.client.get(
+            reverse("admin:ticketing_ticketingeligibilitycondition_change",
+                    args=(match_condition.id,)),
+            follow=True)
+        self.assertContains(response, "%s, %s" % (ticket2, ticket3))
+
+    def test_get_ticketing_eligibility_edit_role_exclude(self):
+        ticket = TicketItemFactory()
+        match_condition = TicketingEligibilityConditionFactory(
+            tickets=[ticket])
+        exclusion = NoEventRoleExclusionFactory(
+            condition=match_condition,
+            role="Volunteer")
+        response = self.client.get(
+            reverse("admin:ticketing_ticketingeligibilitycondition_change",
+                    args=(match_condition.id,)),
+            follow=True)
+        self.assertContains(response, "Volunteer")
+
+    def test_get_ticketing_eligibility_edit_role_exclude_event(self):
+        ticket = TicketItemFactory()
+        match_condition = TicketingEligibilityConditionFactory(
+            tickets=[ticket])
+        exclusion = RoleExclusionFactory(
+            condition=match_condition,
+            role="Performer")
+        response = self.client.get(
+            reverse("admin:ticketing_ticketingeligibilitycondition_change",
+                    args=(match_condition.id,)),
+            follow=True)
+        self.assertContains(response, "Performer, %s" % exclusion.event)
