@@ -44,14 +44,11 @@ class EventItemAdmin(admin.ModelAdmin):
             return str(obj.child().__class__.__name__)
 
     def conference(self, obj):
-        try:
-            return obj.child().e_conference
-        except:
-            return "!! no conference !!"
+        return obj.get_conference()
 
 
 class EventAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'eventitem', 'starttime', 'max_volunteer')
+    list_display = ('id', 'eventitem', 'starttime', 'max_volunteer', 'labels')
     list_filter = ['starttime',
                    'max_volunteer',
                    'eventitem__event__e_conference',

@@ -16,11 +16,6 @@ class BrownPaperSettings(models.Model):
     client_username = models.CharField(max_length=30)
     last_poll_time = models.DateTimeField()
 
-    def __str__(self):
-        return 'Settings:  %s (%s) - %s' % (self.developer_token,
-                                            self.client_username,
-                                            self.last_poll_time)
-
     class Meta:
         verbose_name_plural = 'Brown Paper Settings'
 
@@ -168,14 +163,7 @@ class Purchaser(models.Model):
     matched_to_user = models.ForeignKey(User, default=None)
 
     def __str__(self):
-        try:
-            return str(self.matched_to_user)
-        except:
-            return "USER ERROR: "+self.email+' - id: '+str(self.id)
-
-    def get_badge_name(self):
-        return str(
-            self.first_name.capitalize() + " " + self.last_name.capitalize())
+        return str(self.matched_to_user)
 
 
 class Transaction(models.Model):
@@ -196,9 +184,6 @@ class Transaction(models.Model):
     import_date = models.DateTimeField(auto_now=True)
     invoice = models.CharField(max_length=100, blank=True, null=True)
     custom = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return '%s (%s)' % (self.reference, self.purchaser)
 
 
 class CheckListItem(models.Model):

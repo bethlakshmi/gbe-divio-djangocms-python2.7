@@ -622,30 +622,6 @@ class Event(Schedulable):
                                       role='Volunteer').count()
         return count - self.max_volunteer
 
-    def check_conflict(self, other_event):
-        '''
-        Check this event vs. another event to see if the times conflict.
-        Useful whenever we want to check on shared resources.
-        - if they start at the same time, it doesn't matter how long they are
-        - if this event start time is after the other event, but the other
-        event ends *after* this event starts - it's a conflict
-        - if this event starts first, but bleeds into the other event by
-        overlapping end_time - it's a conflict
-        '''
-        self_start = self.start_time.replace(tzinfo=pytz.utc)
-        other_start = other_event.start_time.replace(tzinfo=pytz.utc)
-        self_end = self.end_time.replace(tzinfo=pytz.utc)
-        other_end = other_event.end_time.replace(tzinfo=pytz.utc)
-
-        is_conflict = False
-        if self_start == other_start:
-            is_conflict = True
-        elif (self_start > other_start and self_start < other_end):
-            is_conflict = True
-        elif (self_start < other_start and self_end > other_start):
-            is_conflict = True
-        return is_conflict
-
     # New with Scheduler API
     def add_label(self, label):
         label = EventLabel(text=label, event=self)
@@ -655,7 +631,7 @@ class Event(Schedulable):
     # New with Scheduler API
     @property
     def labels(self):
-        return EventLabel.objects.filter(event=self)
+        return self.eventlabel_set.values_list('text', flat=True)
 
 
 class ResourceAllocation(Schedulable):
@@ -700,9 +676,6 @@ class Label (models.Model):
     '''
     text = models.TextField(default='')
     allocation = models.OneToOneField(ResourceAllocation)
-
-    def __str__(self):
-        return self.text
 
 
 class EventLabel (models.Model):

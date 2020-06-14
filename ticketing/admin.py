@@ -2,6 +2,10 @@ from django.contrib import admin
 from ticketing.models import *
 
 
+class BrownPaperSettingsAdmin(admin.ModelAdmin):
+    list_display = ('developer_token', 'client_username', 'last_poll_time')
+
+
 class PayPalSettingsAdmin(admin.ModelAdmin):
     list_display = ('business_email', )
 
@@ -13,7 +17,9 @@ class TransactionAdmin(admin.ModelAdmin):
                     'order_date',
                     'import_date')
     list_filter = ['order_date',
-                   'import_date']
+                   'import_date',
+                   'ticket_item__bpt_event__act_submission_event',
+                   'ticket_item__bpt_event__vendor_submission_event']
     search_fields = ['ticket_item__title',
                      'purchaser__matched_to_user__username']
 
@@ -140,7 +146,7 @@ class TicketEligibilityConditionAdmin(admin.ModelAdmin):
     ]
 
 
-admin.site.register(BrownPaperSettings)
+admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(BrownPaperEvents, BPTEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
