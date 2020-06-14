@@ -41,7 +41,7 @@ class ClassAdmin(BidAdmin):
                     'created_at',
                     'updated_at')
     list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
-    search_fields = ['e_title']
+    search_fields = ['e_title', 'teacher__name']
 
 
 class ActAdmin(admin.ModelAdmin):
@@ -52,7 +52,7 @@ class ActAdmin(admin.ModelAdmin):
                     'created_at',
                     'updated_at')
     list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
-    search_fields = ['b_title']
+    search_fields = ['b_title', 'performer__name']
 
 
 class PerformerAdmin(admin.ModelAdmin):
@@ -206,6 +206,7 @@ admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Show, ShowAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
+admin.site.register(TechInfo)
 admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(UserMessage, MessageAdmin)
 admin.site.register(Vendor, BidAdmin)

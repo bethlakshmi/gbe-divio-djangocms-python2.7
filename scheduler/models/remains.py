@@ -282,7 +282,7 @@ class WorkerItem(ResourceItem):
     def __str__(self):
         return str(self.describe)
 
-    def get_bookings(self, role='All', conference=None):
+    def get_bookings(self, role, conference=None):
         '''
         Returns the events for which this Worker is booked as "role".
         should remain focused on the upward connection of resource
@@ -290,15 +290,10 @@ class WorkerItem(ResourceItem):
         '''
         from scheduler.models import Event
 
-        if role in ['All', None]:
-            events = Event.objects.filter(
-                resources_allocated__resource__worker___item=self)
-        else:
-            events = Event.objects.filter(
-                resources_allocated__resource__worker___item=self,
-                resources_allocated__resource__worker__role=role)
+        events = Event.objects.filter(
+            resources_allocated__resource__worker___item=self,
+            resources_allocated__resource__worker__role=role)
         if conference:
-
             events = events.filter(
                 eventitem__event__e_conference=conference)
         return events
@@ -398,18 +393,6 @@ class Event(Schedulable):
         acts_booked = len([a for a in allocs
                            if isinstance(a.resource.as_subtype, ActResource)])
         return self.max_volunteer - acts_booked > 0
-
-    @property
-    def confitem(self):
-        '''
-        Returns the conference item corresponding to this event
-        '''
-        import gbe.models as conf
-        try:
-            return conf.Event.objects.get_subclass(
-                event_id=self.eventitem.event.event_id)
-        except:
-            return None   # need to do some defensive programming here
 
     @property
     def foreign_event_id(self):
@@ -684,9 +667,6 @@ class EventLabel (models.Model):
     '''
     text = models.CharField(default='', max_length=200)
     event = models.ForeignKey(Event)
-
-    def __str__(self):
-        return self.text
 
     class Meta:
         app_label = "scheduler"
