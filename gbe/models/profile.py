@@ -253,44 +253,6 @@ class Profile(WorkerItem):
         shows = sorted(shows, key=lambda show: show[0].e_title)
         return shows
 
-    # DEPRECATE or refactor
-    def get_schedule(self, conference=None):
-        '''
-        Gets all schedule items for a conference, if a conference is provided
-        Otherwise, it's the same logic as schedule() below.
-        '''
-        events = self.schedule
-        if conference:
-            conf_events = [x for x in events if x.eventitem.get_conference() == conference]
-        else:
-            conf_events = events
-        return conf_events
-
-    # DEPRECATE
-    @property
-    def schedule(self):
-        '''
-        Gets all of a person's schedule.  Every way the actual human could be
-        committed:
-        - via profile
-        - via performer(s)
-        - via performing in acts
-        Returns schedule as a list of Scheduler.Events
-        NOTE:  Things that haven't been booked with start times won't be here.
-        '''
-        from scheduler.models import Event as sEvent
-        acts = self.get_acts()
-        events = sum([list(sEvent.objects.filter(
-            resources_allocated__resource__actresource___item=act))
-            for act in acts if act.accepted == 3], [])
-        for performer in self.get_performers():
-            events += [e for e in sEvent.objects.filter(
-                resources_allocated__resource__worker___item=performer)]
-        events += [e for e in sEvent.objects.filter(
-            resources_allocated__resource__worker___item=self).exclude(
-            resources_allocated__resource__worker__role__in=not_scheduled_roles)]
-        return sorted(set(events), key=lambda event: event.start_time)
-
     # DEPRECATE, yes it's new.  Deprecate anyway, this hack gets through
     # GBE2018 safely.  Used by get_schedule IDD call.  Treat as private
     # and log any additional use here.
