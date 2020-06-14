@@ -52,7 +52,8 @@ class TicketingChangeListTests(TestCase):
 
     def test_get_transaction_vendor_fee_paid(self):
         conference = ConferenceFactory()
-        transaction = make_vendor_app_purchase(conference, self.privileged_user)
+        transaction = make_vendor_app_purchase(conference,
+                                               self.privileged_user)
         response = self.client.get('/admin/ticketing/transaction/',
                                    follow=True)
         self.assertContains(response, transaction.ticket_item.ticket_id)
