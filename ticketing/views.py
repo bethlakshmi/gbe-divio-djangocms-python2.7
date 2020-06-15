@@ -19,7 +19,13 @@ from ticketing.models import (
 from ticketing.forms import *
 from ticketing.brown_paper import *
 from gbe.functions import *
-from gbe.models import Conference
+from gbe.models import (
+    Conference,
+    UserMessage,
+)
+from gbetext import (
+    intro_ticket_message,
+)
 import pytz
 from django.db.models import Q
 
@@ -62,7 +68,17 @@ def ticket_items(request, conference_choice=None):
     else:
         events = BrownPaperEvents.objects.exclude(
             conference__status='completed')
-    context = {'events': events,
+    intro = UserMessage.objects.get_or_create(
+                view="ViewTicketItems",
+                code="INTRO_MESSAGE",
+                defaults={
+                    'summary': "Introduction Message",
+                    'description': intro_ticket_message})
+    context = {'intro': intro[0].description,
+               'act_fees': events.filter(act_submission_event=True),
+               'vendor_fees': events.filter(vendor_submission_event=True),
+               'events': events.filter(act_submission_event=False,
+                                       vendor_submission_event=False),
                'conference_slugs': conference_slugs(),
                'conf_slug': conference_choice}
     return render(request, r'ticketing/ticket_items.tmpl', context)

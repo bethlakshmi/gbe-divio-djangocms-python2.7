@@ -579,6 +579,8 @@ group_filter_note = '''The recipients listed here include only active users,
 who have agreed to be contacted by the Expo.  Disabled users and users who
 have set their preference to not receive email of this kind will not be
 included.'''
+intro_ticket_message = '''The tickets below are all the ticket events & items \
+available for the current conference.'''
 link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
 create_ticket_event_success_msg = "Created and linked a new BPT Event: "

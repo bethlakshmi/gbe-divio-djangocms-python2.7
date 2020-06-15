@@ -1139,3 +1139,39 @@ div.hierarchy-1
     background-color: rgb(223, 240, 216);
 }
 .vol_header {padding: 0 3px 0 3px;}
+
+.gbe_accordion {
+  margin: 20px auto;
+}
+ 
+.gbe_accordion .card,
+.gbe_accordion .card:last-child .card-header {
+  border-color:#aaaaaa;
+}
+.gbe_accordion .card-header {
+    color: #fff;
+    background-color: #aaaaaa;
+    border-color: #aaaaaa;
+}
+.gbe_accordion .mb-0 {
+    margin: 0px;
+}
+.gbe_accordion .fa-stack {
+  font-size: 18px;
+}
+.gbe_accordion .card-body {
+  background-color: #ebebeb;
+}
+.gbe_accordion .btn {
+  width: 100%;
+  font-weight: bold;
+  color: #fff;
+  padding: 0;
+  font-size: 16px;
+}
+ 
+.gbe_accordion .btn-link:hover,
+.gbe_accordion .btn-link:focus {
+  text-decoration: none;
+}
+ 

@@ -1,5 +1,5 @@
 {% extends "base.tmpl" %}
-{% load staticfiles %}
+{% load staticfiles sekizai_tags %}
 {% block title %}
   Great Burlesque Exposition 
 {% endblock %}
@@ -21,6 +21,57 @@ tickets on the site.</p><br>
    {% include "conference_list.tmpl" %}
 </div>
 
+<div id="accordion" class="gbe_accordion">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+Act Fees
+          <span class="fa-stack fa-sm">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+Act Stuff
+     </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+Vendor Fees
+          <span class="fa-stack fa-2x">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+      <div class="card-body">
+Vendor Stuff
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingThree">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          Tickets
+          <span class="fa-stack fa-2x">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+      <div class="card-body">
 <table class="ticketing">
   <tr class="header ticketing">
     <th class="ticketing">Event</th>
@@ -67,6 +118,10 @@ tickets on the site.</p><br>
   </tr>
 {% endfor %}   
 </table>
+</div></div></div>
+</div>
+
+
 
 <br>
 
@@ -75,5 +130,15 @@ tickets on the site.</p><br>
     <input type="hidden" name="Import" value="1">
     <input type="submit" value="Synchronize with Brown Paper Tickets"> 
 </form>
-
+{% addtoblock "js" %}
+<script>
+$("#accordion").on("hide.bs.collapse show.bs.collapse", e => {
+  $(e.target)
+    .prev()
+    .find("i:last-child")
+    .toggleClass("fa-minus fa-plus");
+});
+</script>
+{% endaddtoblock %}
 {% endblock %}
+
