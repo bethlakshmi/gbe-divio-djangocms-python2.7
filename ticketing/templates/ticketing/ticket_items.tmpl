@@ -3,6 +3,9 @@
 {% block title %}
   Great Burlesque Exposition 
 {% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
+{% endblock %}
 {% block content %}
 <div class="container review">
  <ul class="nav nav-tabs" id="inner">
@@ -43,7 +46,7 @@ Act Fees
     </div>
     <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
       <div class="card-body">
-Act Stuff
+{% include "ticketing/ticket_list_display.tmpl" with events=act_fees%}
      </div>
     </div>
   </div>
@@ -61,7 +64,7 @@ Vendor Fees
     </div>
     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
       <div class="card-body">
-Vendor Stuff
+{% include "ticketing/ticket_list_display.tmpl" with events=vendor_fees%}
       </div>
     </div>
   </div>
@@ -79,59 +82,10 @@ Vendor Stuff
     </div>
     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
       <div class="card-body">
-<table class="ticketing">
-  <tr class="header ticketing">
-    <th class="ticketing">Event</th>
-    <th class="ticketing">Purpose</th>
-    <th class="ticketing">Events</th>
-    <th class="ticketing">Reg Info</th>
-  </tr>
-{% for event in events %}
-  <tr class="dark_row ticketing"><td class="ticketing" colspan=4>
-  {{ event.title }}
-  </td></tr>
-  <tr class="dark_row ticketing">
-    <td class="ticketing"><a href="{% url 'ticketing:bptevent_edit' event.id %}">{{event}}</a></td>
-    <td class="ticketing">{% if event.primary %}Primary, {%endif%}
-    {% if event.act_submission_event %}Act Fee, {%endif%}
-    {% if event.vendor_submission_event %}Vendor Fee, {%endif%}
-    </td>
-    <td class="ticketing">
-      {% if event.include_conference %}Includes Conference,{% endif %}
-      {% if event.include_most %}All Except Master Class,{% endif %}
-    </td>
-    <td class="ticketing">{% if event.badgeable %}Badges Given{%endif%}
-    {% if event.badgeable and event.ticket_style %}<br>{% endif %}
-    {% if event.ticket_style %}Ticket Notes: {{event.ticket_style}}{% endif %}</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td colspan=3>
-<table>
-{% for item in event.ticketitems.all %}
-<tr {% if item.active %}class="visible"{% endif %}>    
-  <td class="ticket_item">
-  <a href="{% url 'ticketing:ticket_item_edit' item.id %}">{{item.ticket_id}}</a>
-  </td>
-  <td class="ticket_item">{{ item.title | safe }}</td>
-  <td class="ticket_item">{% if item.active %}Visible{% else %}Hidden{% endif %}</td>
-  <td class="ticket_item">${{ item.cost }}</td>
-  <td class="ticket_item">{{ item.modified_by }}</td>
-  <td class="ticket_item">{{ item.datestamp }}</td>
-</tr>   
-{% endfor %}  
-</table>
-    </td>
-  </tr>
-{% endfor %}   
-</table>
+{% include "ticketing/ticket_list_display.tmpl" with events=events%}
 </div></div></div>
 </div>
-
-
-
 <br>
-
 <form method="POST" action={% url 'ticketing:ticket_items' %} enctype="multipart/form-data">
 {% csrf_token %}
     <input type="hidden" name="Import" value="1">

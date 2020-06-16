@@ -1,0 +1,40 @@
+{% for event in events %}
+<div class="row"><div class="col-xs-8 col-sm-9 col-md-10">
+<h3>{{event.title}} - ({{event}})</h3>
+</div><div class="col-xs-4 col-sm-3 col-md-2 text-right">
+<div class="btn-group" role="group" aria-label="...">
+  <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn btn-default btn-sm" id="action-button">
+    <i class="fa fa-pencil text-muted" aria-hidden="true"></i></a>
+  <a href="/scheduler/delete_occurrence/4643?next=/scheduling/manage?GBE2020-day=27&amp;filter=Filter" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
+    <i class="fa fa-trash-o text-muted" aria-hidden="true"></i></a></div>
+</div></div>
+<ul>
+{% if event.primary %}<li>Primary</li>{%endif%}
+{% if event.include_conference %}<li>Includes Conference</li>{% endif %}
+{% if event.include_most %}<li>Includes all evemts except Master Classes</li>{% endif %}
+{% if event.badgeable %}<li>Badges Given</li>{%endif%}
+{% if event.ticket_style %}<li>Ticket Notes: {{event.ticket_style}}</li>{% endif %}
+</ul>
+<table>
+  <tr class="header ticketing">
+    <th class="ticketing">Ticket Item ID</th>
+    <th class="ticketing">Title</th>
+    <th class="ticketing">Visibility to Users</th>
+    <th class="ticketing">Cost</th>
+    <th class="ticketing">Source of Input</th>
+    <th class="ticketing">Last Modified Date</th>
+  </tr>
+{% for item in event.ticketitems.all %}
+<tr class="{% if item.active %}visible {% endif %} ticketing">    
+  <td class="ticket_item">
+  <a href="{% url 'ticketing:ticket_item_edit' item.id %}">{{item.ticket_id}}</a>
+  </td>
+  <td class="ticket_item">{{ item.title | safe }}</td>
+  <td class="ticket_item">{% if item.active %}Visible{% else %}Hidden{% endif %}</td>
+  <td class="ticket_item">${{ item.cost }}</td>
+  <td class="ticket_item">{{ item.modified_by }}</td>
+  <td class="ticket_item">{{ item.datestamp }}</td>
+</tr>   
+{% endfor %}  
+</table>
+{% endfor %}   

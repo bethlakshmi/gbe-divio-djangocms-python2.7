@@ -1146,7 +1146,7 @@ div.hierarchy-1
  
 .gbe_accordion .card,
 .gbe_accordion .card:last-child .card-header {
-  border-color:#aaaaaa;
+  border-color:#585858;
 }
 .gbe_accordion .card-header {
     color: #fff;
@@ -1157,21 +1157,26 @@ div.hierarchy-1
     margin: 0px;
 }
 .gbe_accordion .fa-stack {
-  font-size: 18px;
+  font-size: 14px;
 }
 .gbe_accordion .card-body {
   background-color: #ebebeb;
 }
-.gbe_accordion .btn {
+.gbe_accordion button.btn {
   width: 100%;
   font-weight: bold;
   color: #fff;
   padding: 0;
   font-size: 16px;
 }
- 
+.gbe_accordion a.btn {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
 .gbe_accordion .btn-link:hover,
 .gbe_accordion .btn-link:focus {
   text-decoration: none;
+  outline: none;
 }
  
