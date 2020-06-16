@@ -4,6 +4,13 @@
   Great Burlesque Exposition 
 {% endblock %}
 {% block content %}
+<div class="container review">
+ <ul class="nav nav-tabs" id="inner">
+ {% for slug in conference_slugs %}
+  <li role="presentation" {% if conf_slug == slug %}class="active"{% endif %}><a href="?conference={{slug}}" class="gbe-tab" >{{slug}}</a></li>
+ {% endfor %}
+ </ul>
+ <div class="scheduling-area">
 <h2 class="subtitle">Edit Ticket Items</h2>
 <p class="font_large">Click on a type of ticket to edit or delete it, or click
 the button below to add.</p>
@@ -111,7 +118,7 @@ Vendor Stuff
   <td class="ticket_item">${{ item.cost }}</td>
   <td class="ticket_item">{{ item.modified_by }}</td>
   <td class="ticket_item">{{ item.datestamp }}</td>
-<tr>   
+</tr>   
 {% endfor %}  
 </table>
     </td>
@@ -130,6 +137,7 @@ Vendor Stuff
     <input type="hidden" name="Import" value="1">
     <input type="submit" value="Synchronize with Brown Paper Tickets"> 
 </form>
+</div></div>
 {% addtoblock "js" %}
 <script>
 $("#accordion").on("hide.bs.collapse show.bs.collapse", e => {
