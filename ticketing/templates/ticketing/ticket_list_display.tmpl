@@ -9,7 +9,7 @@
     <i class="fa fa-trash-o text-muted" aria-hidden="true"></i></a></div>
 </div></div>
 <div class="row">
-{% if event.linked_events %}
+{% if event.linked_events.count > 0 %}
   <div class="col-6">
     <b>Linked Events for this Ticket Type:</b><ul>
     {% for cal_event in event.linked_events.all %}

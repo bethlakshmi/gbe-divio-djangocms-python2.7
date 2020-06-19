@@ -17,17 +17,19 @@ from ticketing.models import (
     Transaction,
 )
 from ticketing.forms import *
-from ticketing.brown_paper import *
-from gbe.functions import *
+from gbe.functions import (
+    conference_slugs,
+    get_current_conference,
+    validate_perms,
+)
 from gbe.models import (
     Conference,
     UserMessage,
 )
-from gbetext import (
-    intro_ticket_message,
-)
+from gbetext import intro_ticket_message
 import pytz
 from django.db.models import Q
+from gbe.ticketing_idd_interface import get_ticket_form
 
 
 def index(request):
@@ -75,6 +77,10 @@ def ticket_items(request, conference_choice=None):
                     'summary': "Introduction Message",
                     'description': intro_ticket_message})
     context = {'intro': intro[0].description,
+               'act_pay_form': get_ticket_form("Act",
+                                               get_current_conference()),
+               'vendor_pay_form': get_ticket_form("Vendor",
+                                                  get_current_conference()),
                'act_fees': events.filter(act_submission_event=True),
                'vendor_fees': events.filter(vendor_submission_event=True),
                'events': events.filter(act_submission_event=False,
@@ -108,25 +114,6 @@ def transactions(request):
                'error': error,
                'count': count}
     return render(request, r'ticketing/transactions.tmpl', context)
-
-
-def import_ticket_items(events=None):
-    '''
-    Function is used to initiate an import from BPT or other sources of
-    new Ticket Items.  It will not override existing items.
-    '''
-    import_item_list = get_bpt_price_list(events)
-
-    for i_item in import_item_list:
-        ticket_item, created = TicketItem.objects.get_or_create(
-            ticket_id=i_item['ticket_id'],
-            defaults=i_item)
-        if not created:
-            ticket_item.modified_by = 'BPT Import'
-            ticket_item.live = i_item['live']
-            ticket_item.cost = i_item['cost']
-            ticket_item.save()
-    return len(import_item_list)
 
 
 @never_cache

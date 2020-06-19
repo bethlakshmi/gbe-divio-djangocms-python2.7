@@ -4,7 +4,26 @@ from ticketing.models import (
 )
 from itertools import chain
 from datetime import datetime
+from ticketing.brown_paper import get_bpt_price_list
 
+
+def import_ticket_items(events=None):
+    '''
+    Function is used to initiate an import from BPT or other sources of
+    new Ticket Items.  It will not override existing items.
+    '''
+    import_item_list = get_bpt_price_list(events)
+
+    for i_item in import_item_list:
+        ticket_item, created = TicketItem.objects.get_or_create(
+            ticket_id=i_item['ticket_id'],
+            defaults=i_item)
+        if not created:
+            ticket_item.modified_by = 'BPT Import'
+            ticket_item.live = i_item['live']
+            ticket_item.cost = i_item['cost']
+            ticket_item.save()
+    return len(import_item_list)
 
 def get_tickets(linked_event, most=False, conference=False):
     general_events = []
