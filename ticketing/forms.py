@@ -29,8 +29,9 @@ class TicketItemForm(forms.ModelForm):
     error_css_class = 'error'
 
     bpt_event = forms.ModelChoiceField(
-                            queryset=BrownPaperEvents.objects.all(),
-                            empty_label=None)
+        queryset=BrownPaperEvents.objects.exclude(
+            conference__status='completed'),
+        empty_label=None)
 
     class Meta:
         model = TicketItem
@@ -40,6 +41,10 @@ class TicketItemForm(forms.ModelForm):
                   'bpt_event',
                   'has_coupon',
                   'live',
+                  'start_time',
+                  'end_time',
+                  'is_minimum',
+                  'add_on'
                   ]
         labels = ticket_item_labels
 
@@ -122,7 +127,6 @@ class BPTEventForm(forms.ModelForm):
             'title',
             'description',
             'display_icon',
-            'primary',
             'act_submission_event',
             'vendor_submission_event',
             'linked_events',

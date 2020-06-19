@@ -5,6 +5,7 @@ from django.db.models import (
     Max,
     Min,
 )
+from datetime import datetime
 
 
 class BrownPaperSettings(models.Model):
@@ -50,7 +51,6 @@ class BrownPaperEvents(models.Model):
     '''
     bpt_event_id = models.CharField(max_length=10,
                                     unique=True)
-    primary = models.BooleanField(default=False)
     act_submission_event = models.BooleanField(default=False,
                                                verbose_name='Act Fee')
     vendor_submission_event = models.BooleanField(default=False,
@@ -70,7 +70,7 @@ class BrownPaperEvents(models.Model):
     display_icon = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return self.bpt_event_id
+        return "%s - %s" % (self.bpt_event_id, self.title)
 
     @property
     def visible(self):
@@ -138,8 +138,18 @@ class TicketItem(models.Model):
 
     @property
     def active(self):
-        return self.live and not self.has_coupon
+        live_now = True
+        if self.live and not self.has_coupon:
+            if self.start_time and datetime.now() < self.start_time:
+                live_now = False
+            if self.end_time and datetime.now() > self.end_time:
+                live_now = False
+        else:
+            live_now = False
+        return live_now
 
+    class Meta:
+        ordering = ['cost']
 
 class Purchaser(models.Model):
     '''

@@ -63,13 +63,11 @@ class BPTEventsAdmin(admin.ModelAdmin):
     search_fields = ('title', )
     list_display = ('title',
                     'bpt_event_id',
-                    'primary',
                     'act_submission_event',
                     'vendor_submission_event',
                     'include_conference',
                     'include_most')
     list_filter = ['conference',
-                   'primary',
                    'act_submission_event',
                    'vendor_submission_event',
                    'badgeable',
@@ -85,8 +83,7 @@ class BPTEventsAdmin(admin.ModelAdmin):
                 are synced.''',
         }),
         ('Event Links', {
-            'fields': ('primary',
-                       'act_submission_event',
+            'fields': ('act_submission_event',
                        'vendor_submission_event',
                        'include_conference',
                        'include_most',

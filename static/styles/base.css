@@ -1174,6 +1174,12 @@ div.hierarchy-1
   margin-top: 20px;
   margin-bottom: 10px;
 }
+#ticket_button {
+    font-size: 12px;
+}
+#ticket_action {
+  width: 70px;
+}
 .gbe_accordion .btn-link:hover,
 .gbe_accordion .btn-link:focus {
   text-decoration: none;
