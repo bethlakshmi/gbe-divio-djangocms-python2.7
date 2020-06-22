@@ -3,9 +3,11 @@
 <h3>{{event.title}} - ({{event}})</h3>
 </div><div class="col-xs-4 col-sm-3 col-md-2 text-right">
 <div class="btn-group" role="group" aria-label="...">
+  <a href="{% url 'ticketing:ticket_item_edit' %}?bpt_event_id={{event.bpt_event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn btn-default btn-sm" id="action-button">
+    <i class="fa fa-plus text-muted" aria-hidden="true"></i><i class="fa fa-ticket text-muted" aria-hidden="true"></i></a>
   <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn btn-default btn-sm" id="action-button">
     <i class="fa fa-pencil text-muted" aria-hidden="true"></i></a>
-  <a href="/scheduler/delete_occurrence/4643?next=/scheduling/manage?GBE2020-day=27&amp;filter=Filter" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
+    <a href="/scheduler/delete_occurrence/4643?next=/scheduling/manage?GBE2020-day=27&amp;filter=Filter" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
     <i class="fa fa-trash-o text-muted" aria-hidden="true"></i></a></div>
 </div></div>
 <div class="row">
@@ -19,7 +21,7 @@
 <div class="col-6">
 <ul>
 {% if event.include_conference %}<li>Includes all Conference Classes</li>{% endif %}
-{% if event.include_most %}<li>Includes all evemts except Master Classes</li>{% endif %}
+{% if event.include_most %}<li>Includes all events except Master Classes</li>{% endif %}
 {% if event.badgeable %}<li>Badges are given by reg desk</li>{%endif%}
 {% if event.ticket_style %}<li>Ticket Notes: {{event.ticket_style}}</li>{% endif %}
 </ul></div>

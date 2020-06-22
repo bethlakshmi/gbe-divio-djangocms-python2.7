@@ -14,7 +14,8 @@ from gbe_forms_text import (
     donation_labels,
     link_event_help_text,
     link_event_labels,
-    ticket_item_labels
+    ticket_item_labels,
+    ticket_item_help_text,
 )
 from django.db.models import Q
 from django.forms.widgets import CheckboxSelectMultiple
@@ -31,7 +32,8 @@ class TicketItemForm(forms.ModelForm):
     bpt_event = forms.ModelChoiceField(
         queryset=BrownPaperEvents.objects.exclude(
             conference__status='completed'),
-        empty_label=None)
+        empty_label=None,
+        label=ticket_item_labels['bpt_event'])
 
     class Meta:
         model = TicketItem
@@ -47,6 +49,7 @@ class TicketItemForm(forms.ModelForm):
                   'add_on'
                   ]
         labels = ticket_item_labels
+        help_texts = ticket_item_help_text
 
     def save(self, user, commit=True):
         form = super(TicketItemForm, self).save(commit=False)
@@ -124,6 +127,7 @@ class BPTEventForm(forms.ModelForm):
     class Meta:
         model = BrownPaperEvents
         fields = [
+            'bpt_event_id',
             'title',
             'description',
             'display_icon',

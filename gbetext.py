@@ -581,6 +581,13 @@ have set their preference to not receive email of this kind will not be
 included.'''
 intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
+intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \
+events.  For Paypal, it's simply a container for a set of prices.  These \
+containers define payment for act fees, vendor fees, or entry into the expo \
+for all or some events.'''
+intro_make_ticket_message = '''This page makes an individual ticket (and \
+price) for either a fee or entry into the expo.  The BPT Event connected to \
+this ticket defines what the customer gets when they pay for the ticket.'''
 link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
 create_ticket_event_success_msg = "Created and linked a new BPT Event: "

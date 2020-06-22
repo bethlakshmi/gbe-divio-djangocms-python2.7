@@ -26,7 +26,11 @@ from gbe.models import (
     Conference,
     UserMessage,
 )
-from gbetext import intro_ticket_message
+from gbetext import (
+    intro_bptevent_message,
+    intro_make_ticket_message,
+    intro_ticket_message,
+)
 import pytz
 from django.db.models import Q
 from gbe.ticketing_idd_interface import get_ticket_form
@@ -122,8 +126,14 @@ def ticket_item_edit(request, item_id=None):
     Used to display a form for editing ticket, adding or removing ticket items.
     '''
     validate_perms(request, ('Ticketing - Admin', ))
-
+    intro = UserMessage.objects.get_or_create(
+                view="EditTicketItem",
+                code="INTRO_MESSAGE",
+                defaults={
+                    'summary': "Introduction Message",
+                    'description': intro_make_ticket_message})
     error = ''
+    title = "Edit Ticket Item"
 
     if (request.method == 'POST'):
 
@@ -172,21 +182,41 @@ def ticket_item_edit(request, item_id=None):
             item = get_object_or_404(TicketItem, id=item_id)
             form = TicketItemForm(instance=item)
         else:
-            form = TicketItemForm()
+            title = "Create Ticket Item"
+            initial = None
+            if request.GET and request.GET.get('bpt_event_id'):
+                initial = {'bpt_event': get_object_or_404(
+                    BrownPaperEvents,
+                    bpt_event_id=request.GET.get('bpt_event_id'))}
+            form = TicketItemForm(initial=initial)
 
-    context = {'forms': [form], 'error': error, 'can_delete': True}
+    context = {'forms': [form],
+               'title': title,
+               'intro': intro[0].description,
+               'is_ticket': False,
+               'error': error, 'can_delete': True}
     return render(request, r'ticketing/ticket_item_edit.tmpl', context)
 
 
 @never_cache
-def bptevent_edit(request, event_id):
+def bptevent_edit(request, event_id=None):
     '''
     Used to display a form for editing events.
     Deleting and adding events should only be done by an Admin
     '''
     validate_perms(request, ('Ticketing - Admin', ))
+    event = None
+    title = "Create Ticketed Event"
+    intro = UserMessage.objects.get_or_create(
+                view="EditBPTEvent",
+                code="INTRO_MESSAGE",
+                defaults={
+                    'summary': "Introduction Message",
+                    'description': intro_bptevent_message})
 
-    event = get_object_or_404(BrownPaperEvents, id=event_id)
+    if event_id:
+        event = get_object_or_404(BrownPaperEvents, id=event_id)
+        title = "Edit Ticketed Event"
 
     if (request.method == 'POST'):
 
@@ -197,15 +227,12 @@ def bptevent_edit(request, event_id):
             form.save()
             return HttpResponseRedirect(reverse('ticket_items',
                                                 urlconf='ticketing.urls'))
-        else:
-            return render(request,
-                          r'ticketing/ticket_item_edit.tmpl',
-                          {'forms': [form], 'can_delete': False})
-
-            # return render(request, r'ticketing/ticket_item_edit.tmpl')
-
     else:
         form = BPTEventForm(instance=event)
 
-    context = {'forms': [form], 'can_delete': False}
+    context = {'forms': [form],
+               'can_delete': False,
+               'intro': intro[0].description,
+               'title': title,
+               'is_ticket': False}
     return render(request, r'ticketing/ticket_item_edit.tmpl', context)

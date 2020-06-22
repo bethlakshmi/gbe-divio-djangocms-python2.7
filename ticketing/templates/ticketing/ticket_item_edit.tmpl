@@ -1,14 +1,17 @@
 {% extends "base.tmpl" %}
 {% load staticfiles %}
 {% block title %}
-  Great Burlesque Exposition 
+  Edit Ticket Item
 {% endblock %}
 {% block content %}
 
-<h2 class="subtitle">Edit Ticketing</h2>
+<h2 class="subtitle">{{title}}</h2>
+<p>{{intro}}</p>
+<br>
+{% if is_ticket %}
+Notes:  Ticket Item Id must be unique.  Changing it will create a new Ticket Item.
 <br><br>
-Notes:  Ticket Item Id must be unique.  Editing it will create a new Ticket Item.
-
+{% endif %}
 {% if error %}
 <font color=red>
 <br>

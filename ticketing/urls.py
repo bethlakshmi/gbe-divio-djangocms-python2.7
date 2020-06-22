@@ -21,6 +21,8 @@ urlpatterns = [
     url(r'^ticketing/ticket_item_edit/(?P<item_id>\d+)/?$',
         views.ticket_item_edit,
         name='ticket_item_edit'),
+    url(r'^ticketing/bptevent_edit/?$', views.bptevent_edit,
+        name='bptevent_edit'),
     url(r'^ticketing/bptevent_edit/(?P<event_id>\d+)/?$', views.bptevent_edit,
         name='bptevent_edit'),
     url(r'^ticketing/transactions/?$', views.transactions,

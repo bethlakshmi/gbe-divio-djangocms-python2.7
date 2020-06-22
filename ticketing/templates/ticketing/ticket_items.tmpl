@@ -14,19 +14,19 @@
  {% endfor %}
  </ul>
  <div class="scheduling-area">
+<div class="row">
+<div class="col-8">
 <h2 class="subtitle">Edit Ticket Items</h2>
-<p class="font_large">Click on a type of ticket to edit or delete it, or click
-the button below to add.</p>
-<p class="hint">
-Note:  The Show to Public flag below indicates of the ticket item is displayed
-to end users.  By default it is "false".</p>
-<p class="hint">
-<span class="visible">Items that look like this</span> are currently visible under lists for
-tickets on the site.</p><br>
-<p class="font_large">To add a new ticket item,
-<a href={% url 'ticketing:ticket_item_edit' %}> click here</a>.
-</p>
 
+<p>{{ intro }}</p>
+<br>
+<span class="visible">Items that look like this</span> are currently visible under lists for
+tickets on the site.
+
+</div>
+<div class="col-4 text-right">
+  <a href="{% url 'ticketing:bptevent_edit' %}" role="button" class="btn btn-primary">Create Event</a></div>
+</div>
 
 <div id="accordion" class="gbe_accordion">
   <div class="card">
