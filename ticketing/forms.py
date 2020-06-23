@@ -6,7 +6,12 @@
 
 from ticketing.models import *
 from django import forms
-from gbe.models import Show, GenericEvent, Event
+from gbe.models import (
+    Conference,
+    Show,
+    GenericEvent,
+    Event
+)
 from gbe_forms_text import (
     bpt_event_help_text,
     bpt_event_labels,
@@ -123,10 +128,14 @@ class BPTEventForm(forms.ModelForm):
         queryset=event_set,
         required=False,
         label=bpt_event_labels['linked_events'])
-
+    conference = forms.ModelChoiceField(
+        queryset=Conference.objects.exclude(
+            status='completed'),
+        empty_label=None)
     class Meta:
         model = BrownPaperEvents
         fields = [
+            'conference',
             'bpt_event_id',
             'title',
             'description',
@@ -137,8 +146,7 @@ class BPTEventForm(forms.ModelForm):
             'include_conference',
             'include_most',
             'badgeable',
-            'ticket_style',
-            'conference']
+            'ticket_style']
         labels = bpt_event_labels
         help_texts = bpt_event_help_text
 

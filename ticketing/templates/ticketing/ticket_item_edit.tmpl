@@ -25,10 +25,12 @@ Notes:  Ticket Item Id must be unique.  Changing it will create a new Ticket Ite
 <form action="" method="post">
 {% include "form_table_wrapper.tmpl" %}
 <br>
-<input type="submit" value="Save Ticket Item">
-{% if can_delete %}
-<input type="submit" value="Delete Ticket Item" name="delete_item">
-{% endif %}
+<input type="submit" value="Delete" name="delete_item" class="btn btn-secondary">
+<div class="float-right">
+<a href="{{cancel_url}}"><input type="button" name="cancel" value="Cancel" class="btn btn-secondary"></a>
+<input type="submit" value="{{button_text}}" name="submit_done" class="btn btn-primary">
+<input type="submit" value="{{another_button_text}} >" name="submit_another" class="btn btn-primary">
+</div>
 </form>
 
 {% endblock %}

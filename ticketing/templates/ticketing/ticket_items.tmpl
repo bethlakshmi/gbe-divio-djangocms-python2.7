@@ -41,7 +41,7 @@ Act Fees
         </button>
       </h2>
     </div>
-    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+    <div id="collapseOne" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
       <div class="card-body">
 <h4>Preview</h4>
 <div class="panel panel-default">
@@ -64,7 +64,7 @@ Vendor Fees
         </button>
       </h2>
     </div>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+    <div id="collapseTwo" class="collapse{% if open_panel == "vendor" %} show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordion">
       <div class="card-body">
 <h4>Preview</h4>
 <div class="panel panel-default">
@@ -87,7 +87,7 @@ Vendor Fees
         </button>
       </h2>
     </div>
-    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+    <div id="collapseThree" class="collapse{% if open_panel == "ticket" %} show{% endif %}" aria-labelledby="headingThree" data-parent="#accordion">
       <div class="card-body">
 {% include "ticketing/ticket_list_display.tmpl" with events=events%}
 </div></div></div>

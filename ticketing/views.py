@@ -67,6 +67,7 @@ def ticket_items(request, conference_choice=None):
         import_ticket_items()
 
     conference_choice = request.GET.get('conference', None)
+    open_panel = request.GET.get('open_panel', "")
 
     if conference_choice:
         events = BrownPaperEvents.objects.filter(
@@ -87,6 +88,7 @@ def ticket_items(request, conference_choice=None):
                                                   get_current_conference()),
                'act_fees': events.filter(act_submission_event=True),
                'vendor_fees': events.filter(vendor_submission_event=True),
+               'open_panel': open_panel,
                'events': events.filter(act_submission_event=False,
                                        vendor_submission_event=False),
                'conference_slugs': conference_slugs(),
@@ -134,7 +136,9 @@ def ticket_item_edit(request, item_id=None):
                     'description': intro_make_ticket_message})
     error = ''
     title = "Edit Ticket Item"
-
+    another_button_text = "Edit & Add More"
+    cancel_url = reverse('ticket_items', urlconf='ticketing.urls')
+    button_text = 'Edit Ticket'
     if (request.method == 'POST'):
 
         if 'delete_item' in request.POST:
@@ -171,32 +175,56 @@ def ticket_item_edit(request, item_id=None):
             if form.is_valid():
                 item = form.save(str(request.user))
                 form.save_m2m()
+                if 'submit_another' in request.POST:
+                    return HttpResponseRedirect(reverse(
+                            'ticket_item_edit',
+                            urlconf='ticketing.urls'))
                 return HttpResponseRedirect(
-                    '%s?conference=%s' % (
+                    '%s?conference=%s&open_panel=%s' % (
                         reverse(
                             'ticket_items',
                             urlconf='ticketing.urls'),
-                        str(item.bpt_event.conference.conference_slug)))
+                        str(item.bpt_event.conference.conference_slug),
+                        make_open_panel(item.bpt_event)))
     else:
         if (item_id is not None):
             item = get_object_or_404(TicketItem, id=item_id)
             form = TicketItemForm(instance=item)
+            cancel_url = "%s?open_panel=%s" % (cancel_url,
+                                               make_open_panel(item.bpt_event))
         else:
             title = "Create Ticket Item"
+            button_text = 'Create Ticket'
+            another_button_text = "Create & Add More"
             initial = None
             if request.GET and request.GET.get('bpt_event_id'):
-                initial = {'bpt_event': get_object_or_404(
+                bpt_event = get_object_or_404(
                     BrownPaperEvents,
-                    bpt_event_id=request.GET.get('bpt_event_id'))}
+                    bpt_event_id=request.GET.get('bpt_event_id'))
+                initial = {'bpt_event': bpt_event}
+                cancel_url = "%s?open_panel=%s" % (cancel_url,
+                                                   make_open_panel(bpt_event))
             form = TicketItemForm(initial=initial)
 
     context = {'forms': [form],
                'title': title,
                'intro': intro[0].description,
-               'is_ticket': False,
-               'error': error, 'can_delete': True}
+               'is_ticket': True,
+               'button_text': button_text,
+               'cancel_url': cancel_url,
+               'another_button_text': another_button_text,
+               'error': error,
+              }
     return render(request, r'ticketing/ticket_item_edit.tmpl', context)
 
+
+def make_open_panel(bpt_event):
+    open_panel = "ticket"
+    if bpt_event.act_submission_event:
+        open_panel = "act"
+    elif bpt_event.vendor_submission_event:
+        open_panel = "vendor"
+    return open_panel
 
 @never_cache
 def bptevent_edit(request, event_id=None):
@@ -207,16 +235,23 @@ def bptevent_edit(request, event_id=None):
     validate_perms(request, ('Ticketing - Admin', ))
     event = None
     title = "Create Ticketed Event"
+    button_text = 'Create Event'
+    another_button_text = "Create & Add Tickets"
     intro = UserMessage.objects.get_or_create(
                 view="EditBPTEvent",
                 code="INTRO_MESSAGE",
                 defaults={
                     'summary': "Introduction Message",
                     'description': intro_bptevent_message})
+    cancel_url = reverse('ticket_items', urlconf='ticketing.urls')
 
     if event_id:
         event = get_object_or_404(BrownPaperEvents, id=event_id)
         title = "Edit Ticketed Event"
+        button_text = 'Edit Event'
+        another_button_text = "Edit & Add Tickets"
+        cancel_url = "%s?open_panel=%s" % (cancel_url,
+                                          make_open_panel(event))
 
     if (request.method == 'POST'):
 
@@ -224,15 +259,20 @@ def bptevent_edit(request, event_id=None):
         form = BPTEventForm(request.POST, instance=event)
 
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('ticket_items',
-                                                urlconf='ticketing.urls'))
+            updated_event = form.save()
+            return HttpResponseRedirect("%s?conference=%s&open_panel=%s" % (
+                reverse('ticket_items', urlconf='ticketing.urls'),
+                str(updated_event.conference.conference_slug),
+                make_open_panel(updated_event)))
     else:
         form = BPTEventForm(instance=event)
 
     context = {'forms': [form],
-               'can_delete': False,
                'intro': intro[0].description,
                'title': title,
-               'is_ticket': False}
+               'is_ticket': False,
+               'cancel_url': cancel_url,
+               'button_text': button_text,
+               'another_button_text': another_button_text,
+               }
     return render(request, r'ticketing/ticket_item_edit.tmpl', context)
