@@ -200,9 +200,9 @@ def ticket_item_edit(request, item_id=None):
             item = form.save(str(request.user))
             form.save_m2m()
             if 'submit_another' in request.POST:
-                return HttpResponseRedirect(reverse(
-                    'ticket_item_edit',
-                    urlconf='ticketing.urls'))
+                return HttpResponseRedirect("%s?bpt_event_id=%s" % (
+                    reverse('ticket_item_edit', urlconf='ticketing.urls'),
+                    item.bpt_event.bpt_event_id))
             return HttpResponseRedirect(
                 '%s?conference=%s&open_panel=%s' % (
                     reverse(
@@ -330,10 +330,16 @@ def bptevent_edit(request, event_id=None):
 
         if form.is_valid():
             updated_event = form.save()
-            return HttpResponseRedirect("%s?conference=%s&open_panel=%s" % (
-                reverse('ticket_items', urlconf='ticketing.urls'),
-                str(updated_event.conference.conference_slug),
-                make_open_panel(updated_event)))
+            if 'submit_another' in request.POST:
+                return HttpResponseRedirect("%s?bpt_event_id=%s" % (
+                    reverse('ticket_item_edit', urlconf='ticketing.urls'),
+                    updated_event.bpt_event_id))
+            else:
+                return HttpResponseRedirect(
+                    "%s?conference=%s&open_panel=%s" % (
+                        reverse('ticket_items', urlconf='ticketing.urls'),
+                        str(updated_event.conference.conference_slug),
+                        make_open_panel(updated_event)))
     else:
         form = BPTEventForm(instance=event)
         can_delete = False
