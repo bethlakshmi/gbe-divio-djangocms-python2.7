@@ -588,6 +588,14 @@ for all or some events.'''
 intro_make_ticket_message = '''This page makes an individual ticket (and \
 price) for either a fee or entry into the expo.  The BPT Event connected to \
 this ticket defines what the customer gets when they pay for the ticket.'''
+delete_ticket_fail_message = '''Deletion failed, transactions exist for this \
+ticket.'''
+delete_ticket_success_message = '''The ticket was successfully deleted (no \
+transactions found).'''
+delete_event_success_message = '''The BPT Event was successfully deleted (no \
+transactions for any ticket found).'''
+delete_event_fail_message = '''Deletion failed, transactions exist for tickets \
+for this event.'''
 link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
 create_ticket_event_success_msg = "Created and linked a new BPT Event: "

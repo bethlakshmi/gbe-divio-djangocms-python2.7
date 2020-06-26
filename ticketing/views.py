@@ -27,6 +27,10 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    delete_event_success_message,
+    delete_event_fail_message,
+    delete_ticket_fail_message,
+    delete_ticket_success_message,
     intro_bptevent_message,
     intro_make_ticket_message,
     intro_ticket_message,
@@ -34,6 +38,7 @@ from gbetext import (
 import pytz
 from django.db.models import Q
 from gbe.ticketing_idd_interface import get_ticket_form
+from django.contrib import messages
 
 
 def index(request):
@@ -122,6 +127,38 @@ def transactions(request):
     return render(request, r'ticketing/transactions.tmpl', context)
 
 
+def delete_ticket_item(request, view, item):
+    success = False
+    if Transaction.objects.filter(ticket_item=item).exists():
+        error = UserMessage.objects.get_or_create(
+            view=view,
+            code="DELETE_FAIL",
+            defaults={
+                'summary': "Transactions Block Deletion",
+                'description': delete_ticket_fail_message})
+        messages.error(
+            request,
+            "%s  Ticket Item Id: %s, Title: %s" % (
+                error[0].description,
+                item.ticket_id,
+                item.title))
+    else:
+        success_msg = UserMessage.objects.get_or_create(
+            view=view,
+            code="DELETE_SUCCESS",
+            defaults={
+                'summary': "Ticket Item Deleted",
+                'description': delete_ticket_success_message})
+        messages.success(
+            request,
+            "%s  Ticket Item Id: %s, Title: %s" % (
+                success_msg[0].description,
+                item.ticket_id,
+                item.title))
+        item.delete()
+        success = True
+    return success
+
 @never_cache
 def ticket_item_edit(request, item_id=None):
     '''
@@ -134,69 +171,59 @@ def ticket_item_edit(request, item_id=None):
                 defaults={
                     'summary': "Introduction Message",
                     'description': intro_make_ticket_message})
-    error = ''
     title = "Edit Ticket Item"
     another_button_text = "Edit & Add More"
     cancel_url = reverse('ticket_items', urlconf='ticketing.urls')
+    can_delete = True
     button_text = 'Edit Ticket'
-    if (request.method == 'POST'):
-
-        if 'delete_item' in request.POST:
-
-            item = get_object_or_404(TicketItem, id=item_id)
-
-            # Check to see if ticket item is used in a
-            # transaction before deleting.
-
-            trans_exists = False
-            for trans in Transaction.objects.all():
-                if (trans.ticket_item.ticket_id == item.ticket_id):
-                    trans_exists = True
-                    break
-
-            if (not trans_exists):
-                item.delete()
-                return HttpResponseRedirect(
-                    '%s?conference=%s' % (
-                        reverse(
-                            'ticket_items',
-                            urlconf='ticketing.urls'),
-                        str(item.bpt_event.conference.conference_slug)))
-            else:
-                error = 'Cannot remove Ticket Item: %s \
-                        It is used in a Transaction.' % item.ticket_id
-                logger.error(error)
-                form = TicketItemForm(instance=item)
-
+    if 'delete_item' in request.POST or 'delete_item' in request.GET:
+        item = get_object_or_404(TicketItem, id=item_id)
+        cancel_url = "%s?conference=%s&open_panel=%s" % (
+            cancel_url,
+            str(item.bpt_event.conference.conference_slug),
+            make_open_panel(item.bpt_event))
+        success = delete_ticket_item(request, "EditTicketItem", item)
+        if success or 'delete_item' in request.GET:
+            return HttpResponseRedirect(
+                '%s?conference=%s&open_panel=%s' % (
+                    reverse(
+                        'ticket_items',
+                        urlconf='ticketing.urls'),
+                    str(item.bpt_event.conference.conference_slug),
+                    make_open_panel(item.bpt_event)))
         else:
-            # save the item using the Forms API
+            form = TicketItemForm(instance=item)
 
-            form = TicketItemForm(request.POST)
-            if form.is_valid():
-                item = form.save(str(request.user))
-                form.save_m2m()
-                if 'submit_another' in request.POST:
-                    return HttpResponseRedirect(reverse(
-                            'ticket_item_edit',
-                            urlconf='ticketing.urls'))
-                return HttpResponseRedirect(
-                    '%s?conference=%s&open_panel=%s' % (
-                        reverse(
-                            'ticket_items',
-                            urlconf='ticketing.urls'),
-                        str(item.bpt_event.conference.conference_slug),
-                        make_open_panel(item.bpt_event)))
+    elif (request.method == 'POST'):
+        form = TicketItemForm(request.POST)
+        if form.is_valid():
+            item = form.save(str(request.user))
+            form.save_m2m()
+            if 'submit_another' in request.POST:
+                return HttpResponseRedirect(reverse(
+                    'ticket_item_edit',
+                    urlconf='ticketing.urls'))
+            return HttpResponseRedirect(
+                '%s?conference=%s&open_panel=%s' % (
+                    reverse(
+                        'ticket_items',
+                        urlconf='ticketing.urls'),
+                    str(item.bpt_event.conference.conference_slug),
+                    make_open_panel(item.bpt_event)))
     else:
         if (item_id is not None):
             item = get_object_or_404(TicketItem, id=item_id)
             form = TicketItemForm(instance=item)
-            cancel_url = "%s?open_panel=%s" % (cancel_url,
-                                               make_open_panel(item.bpt_event))
+            cancel_url = "%s?conference=%s&open_panel=%s" % (
+                cancel_url,
+                str(item.bpt_event.conference.conference_slug),
+                make_open_panel(item.bpt_event))
         else:
             title = "Create Ticket Item"
             button_text = 'Create Ticket'
             another_button_text = "Create & Add More"
             initial = None
+            can_delete = False
             if request.GET and request.GET.get('bpt_event_id'):
                 bpt_event = get_object_or_404(
                     BrownPaperEvents,
@@ -212,8 +239,8 @@ def ticket_item_edit(request, item_id=None):
                'is_ticket': True,
                'button_text': button_text,
                'cancel_url': cancel_url,
+               'can_delete': can_delete,
                'another_button_text': another_button_text,
-               'error': error,
               }
     return render(request, r'ticketing/ticket_item_edit.tmpl', context)
 
@@ -244,6 +271,7 @@ def bptevent_edit(request, event_id=None):
                     'summary': "Introduction Message",
                     'description': intro_bptevent_message})
     cancel_url = reverse('ticket_items', urlconf='ticketing.urls')
+    can_delete = True
 
     if event_id:
         event = get_object_or_404(BrownPaperEvents, id=event_id)
@@ -253,7 +281,49 @@ def bptevent_edit(request, event_id=None):
         cancel_url = "%s?open_panel=%s" % (cancel_url,
                                           make_open_panel(event))
 
-    if (request.method == 'POST'):
+    if event and ('delete_item' in request.POST or 'delete_item' in request.GET):
+        success = True
+        for ticket_item in event.ticketitems.all():
+            item_deleted = delete_ticket_item(request,
+                                              "EditBPTEvent",
+                                              ticket_item)
+            success = success and item_deleted
+        if success:
+            success_msg = UserMessage.objects.get_or_create(
+                view="EditBPTEvent",
+                code="DELETE_EVENT_SUCCESS",
+                defaults={
+                    'summary': "BPT Event Deleted",
+                    'description': delete_event_success_message})
+            messages.success(
+                request,
+                "%s  BPT Event Id: %s, Title: %s" % (
+                    success_msg[0].description,
+                    event.bpt_event_id,
+                    event.title))
+            event.delete()
+        else:
+            error = UserMessage.objects.get_or_create(
+                view="EditBPTEvent",
+                code="DELETE_EVENT_FAIL",
+                defaults={
+                    'summary': "Transactions Block Deletion",
+                    'description': delete_event_fail_message})
+            messages.error(
+                request,
+                "%s  BPT Event Id: %s, Title: %s" % (
+                    error[0].description,
+                    event.bpt_event_id,
+                    event.title))
+            form = BPTEventForm(instance=event)
+        # go to ticket list if successful post, or if user started there
+        if success or 'delete_item' in request.GET:
+            return HttpResponseRedirect("%s?conference=%s&open_panel=%s" % (
+                reverse('ticket_items', urlconf='ticketing.urls'),
+                str(event.conference.conference_slug),
+                make_open_panel(event)))
+
+    elif (request.method == 'POST'):
 
         # save the item using the Forms API
         form = BPTEventForm(request.POST, instance=event)
@@ -266,11 +336,13 @@ def bptevent_edit(request, event_id=None):
                 make_open_panel(updated_event)))
     else:
         form = BPTEventForm(instance=event)
+        can_delete = False
 
     context = {'forms': [form],
                'intro': intro[0].description,
                'title': title,
                'is_ticket': False,
+               'can_delete': can_delete,
                'cancel_url': cancel_url,
                'button_text': button_text,
                'another_button_text': another_button_text,

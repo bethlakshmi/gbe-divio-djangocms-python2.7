@@ -9,23 +9,15 @@
 <p>{{intro}}</p>
 <br>
 {% if is_ticket %}
-Notes:  Ticket Item Id must be unique.  Changing it will create a new Ticket Item.
+Note:  Ticket Item Id must be unique.  Changing it will create a new Ticket Item.
 <br><br>
 {% endif %}
-{% if error %}
-<font color=red>
-<br>
-<br>
-{{error}}
-<br>
-<br>
-</font>
-{% endif %}
-
 <form action="" method="post">
 {% include "form_table_wrapper.tmpl" %}
 <br>
+{% if can_delete %}
 <input type="submit" value="Delete" name="delete_item" class="btn btn-secondary">
+{% endif %}
 <div class="float-right">
 <a href="{{cancel_url}}"><input type="button" name="cancel" value="Cancel" class="btn btn-secondary"></a>
 <input type="submit" value="{{button_text}}" name="submit_done" class="btn btn-primary">
