@@ -162,6 +162,7 @@ def delete_ticket_item(request, view, item):
         success = True
     return success
 
+
 @never_cache
 def ticket_item_edit(request, item_id=None):
     '''
@@ -217,13 +218,15 @@ def ticket_item_edit(request, item_id=None):
             updated_tickets += [item.id]
             if 'submit_another' in request.POST:
                 return HttpResponseRedirect(
-                    "%s?bpt_event_id=%s&updated_tickets=%s&updated_events=%s" % (
+                    ("%s?bpt_event_id=%s&updated_tickets=%s" +
+                     "&updated_events=%s") % (
                         reverse('ticket_item_edit', urlconf='ticketing.urls'),
                         item.bpt_event.bpt_event_id,
                         str(updated_tickets),
                         request.GET.get('updated_events', '[]')))
             return HttpResponseRedirect(
-                '%s?conference=%s&open_panel=%s&updated_tickets=%s&updated_events=%s' % (
+                ('%s?conference=%s&open_panel=%s&updated_tickets=%s' +
+                 '&updated_events=%s') % (
                     reverse(
                         'ticket_items',
                         urlconf='ticketing.urls'),
@@ -261,8 +264,7 @@ def ticket_item_edit(request, item_id=None):
                'button_text': button_text,
                'cancel_url': cancel_url,
                'can_delete': can_delete,
-               'another_button_text': another_button_text,
-              }
+               'another_button_text': another_button_text}
     return render(request, r'ticketing/ticket_item_edit.tmpl', context)
 
 
@@ -273,6 +275,7 @@ def make_open_panel(bpt_event):
     elif bpt_event.vendor_submission_event:
         open_panel = "vendor"
     return open_panel
+
 
 @never_cache
 def bptevent_edit(request, event_id=None):
@@ -300,9 +303,10 @@ def bptevent_edit(request, event_id=None):
         button_text = 'Edit Event'
         another_button_text = "Edit & Add Tickets"
         cancel_url = "%s?open_panel=%s" % (cancel_url,
-                                          make_open_panel(event))
+                                           make_open_panel(event))
 
-    if event and ('delete_item' in request.POST or 'delete_item' in request.GET):
+    if event and (
+            'delete_item' in request.POST or 'delete_item' in request.GET):
         success = True
         for ticket_item in event.ticketitems.all():
             item_deleted = delete_ticket_item(request,

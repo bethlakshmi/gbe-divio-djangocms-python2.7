@@ -25,6 +25,7 @@ def import_ticket_items(events=None):
             ticket_item.save()
     return len(import_item_list)
 
+
 def get_tickets(linked_event, most=False, conference=False):
     general_events = []
 

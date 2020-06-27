@@ -132,6 +132,7 @@ class BPTEventForm(forms.ModelForm):
         queryset=Conference.objects.exclude(
             status='completed'),
         empty_label=None)
+
     class Meta:
         model = BrownPaperEvents
         fields = [

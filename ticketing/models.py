@@ -151,6 +151,7 @@ class TicketItem(models.Model):
     class Meta:
         ordering = ['cost']
 
+
 class Purchaser(models.Model):
     '''
     This class is used to hold the information for a given person who has
