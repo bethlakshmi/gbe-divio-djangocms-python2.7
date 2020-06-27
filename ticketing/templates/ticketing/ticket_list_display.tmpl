@@ -1,5 +1,5 @@
 {% for event in events %}
-<div class="row"><div class="col-xs-8 col-sm-9 col-md-10">
+<div class="row"><div class="col-xs-8 col-sm-9 col-md-10{% if event.id in updated_events %} shadow-red{% endif %}">
 <h3>{{event.title}} - ({{event}})</h3>
 </div><div class="col-xs-4 col-sm-3 col-md-2 text-right">
 <div class="btn-group" role="group" aria-label="...">
@@ -27,7 +27,8 @@
 </ul></div>
 </div>
 
-<table>
+<table class="order-column table table-bordered" >
+  <thead>
   <tr class="header ticketing">
     <th class="ticketing">Ticket Item ID</th>
     <th class="ticketing">Title</th>
@@ -36,10 +37,12 @@
     <th class="ticketing">Cost</th>
     <th class="ticketing">Source of Input</th>
     <th class="ticketing">Last Modified Date</th>
-    <th class="ticketing" id="ticket_action">Action</th>
+    <th class="ticketing">Action</th>
   </tr>
+  </thead>
+  <tbody>
 {% for item in event.ticketitems.all %}
-<tr class="{% if item.active %}visible {% endif %} ticketing">    
+<tr class="{% if item.active %}visible {% endif %}{% if item.id in updated_tickets %}success {% endif %}ticketing">    
   <td class="ticket_item">{{item.ticket_id}}</td>
   <td class="ticket_item">{{ item.title | safe }}</td>
   <td class="ticket_item">{% if item.start_time and item.end_time %}
@@ -62,6 +65,6 @@
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
         <i class="fa fa-trash-o text-muted" aria-hidden="true" id="ticket_button"></i></a></div></td>
 </tr>   
-{% endfor %}  
-</table>
+{% endfor %}
+</tbody></table>
 {% endfor %}   

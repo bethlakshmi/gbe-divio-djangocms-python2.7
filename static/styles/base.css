@@ -1179,6 +1179,11 @@ div.hierarchy-1
 }
 #ticket_action {
   width: 70px;
+  padding: 0px;
+  text-align: center;
+}
+#ticket_action>div>a {
+  margin: 2px 0px 2px 0px;
 }
 .gbe_accordion .btn-link:hover,
 .gbe_accordion .btn-link:focus {

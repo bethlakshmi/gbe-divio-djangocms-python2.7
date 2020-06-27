@@ -74,8 +74,6 @@ def ticket_items(request, conference_choice=None):
         import_ticket_items()
 
     conference_choice = request.GET.get('conference', None)
-    open_panel = request.GET.get('open_panel', "")
-
     if conference_choice:
         events = BrownPaperEvents.objects.filter(
             conference__conference_slug=conference_choice)
@@ -95,7 +93,10 @@ def ticket_items(request, conference_choice=None):
                                                   get_current_conference()),
                'act_fees': events.filter(act_submission_event=True),
                'vendor_fees': events.filter(vendor_submission_event=True),
-               'open_panel': open_panel,
+               'open_panel': request.GET.get('open_panel', ""),
+               'updated_tickets': eval(
+                    request.GET.get('updated_tickets', '[]')),
+               'updated_events': eval(request.GET.get('updated_events', '[]')),
                'events': events.filter(act_submission_event=False,
                                        vendor_submission_event=False),
                'conference_slugs': conference_slugs(),
@@ -187,12 +188,13 @@ def ticket_item_edit(request, item_id=None):
         success = delete_ticket_item(request, "EditTicketItem", item)
         if success or 'delete_item' in request.GET:
             return HttpResponseRedirect(
-                '%s?conference=%s&open_panel=%s' % (
+                '%s?conference=%s&open_panel=%s&updated_events=%s' % (
                     reverse(
                         'ticket_items',
                         urlconf='ticketing.urls'),
                     str(item.bpt_event.conference.conference_slug),
-                    make_open_panel(item.bpt_event)))
+                    make_open_panel(item.bpt_event),
+                    str([item.bpt_event.id])))
         else:
             form = TicketItemForm(instance=item)
 
@@ -211,17 +213,24 @@ def ticket_item_edit(request, item_id=None):
                 success_msg[0].description,
                 item.ticket_id,
                 item.title))
+            updated_tickets = eval(request.GET.get('updated_tickets', '[]'))
+            updated_tickets += [item.id]
             if 'submit_another' in request.POST:
-                return HttpResponseRedirect("%s?bpt_event_id=%s" % (
-                    reverse('ticket_item_edit', urlconf='ticketing.urls'),
-                    item.bpt_event.bpt_event_id))
+                return HttpResponseRedirect(
+                    "%s?bpt_event_id=%s&updated_tickets=%s&updated_events=%s" % (
+                        reverse('ticket_item_edit', urlconf='ticketing.urls'),
+                        item.bpt_event.bpt_event_id,
+                        str(updated_tickets),
+                        request.GET.get('updated_events', '[]')))
             return HttpResponseRedirect(
-                '%s?conference=%s&open_panel=%s' % (
+                '%s?conference=%s&open_panel=%s&updated_tickets=%s&updated_events=%s' % (
                     reverse(
                         'ticket_items',
                         urlconf='ticketing.urls'),
                     str(item.bpt_event.conference.conference_slug),
-                    make_open_panel(item.bpt_event)))
+                    make_open_panel(item.bpt_event),
+                    str(updated_tickets),
+                    request.GET.get('updated_events', '[]')))
     else:
         if (item_id is not None):
             item = get_object_or_404(TicketItem, id=item_id)
@@ -330,10 +339,12 @@ def bptevent_edit(request, event_id=None):
             form = BPTEventForm(instance=event)
         # go to ticket list if successful post, or if user started there
         if success or 'delete_item' in request.GET:
-            return HttpResponseRedirect("%s?conference=%s&open_panel=%s" % (
-                reverse('ticket_items', urlconf='ticketing.urls'),
-                str(event.conference.conference_slug),
-                make_open_panel(event)))
+            return HttpResponseRedirect(
+                "%s?conference=%s&open_panel=%s&updated_events=%s" % (
+                    reverse('ticket_items', urlconf='ticketing.urls'),
+                    str(event.conference.conference_slug),
+                    make_open_panel(event),
+                    str([event.id])))
 
     elif (request.method == 'POST'):
         # save the item using the Forms API
@@ -352,15 +363,18 @@ def bptevent_edit(request, event_id=None):
                 updated_event.bpt_event_id,
                 updated_event.title))
             if 'submit_another' in request.POST:
-                return HttpResponseRedirect("%s?bpt_event_id=%s" % (
-                    reverse('ticket_item_edit', urlconf='ticketing.urls'),
-                    updated_event.bpt_event_id))
+                return HttpResponseRedirect(
+                    "%s?bpt_event_id=%s&updated_events=%s" % (
+                        reverse('ticket_item_edit', urlconf='ticketing.urls'),
+                        updated_event.bpt_event_id,
+                        str([updated_event.id])))
             else:
                 return HttpResponseRedirect(
-                    "%s?conference=%s&open_panel=%s" % (
+                    "%s?conference=%s&open_panel=%s&updated_events=%s" % (
                         reverse('ticket_items', urlconf='ticketing.urls'),
                         str(updated_event.conference.conference_slug),
-                        make_open_panel(updated_event)))
+                        make_open_panel(updated_event),
+                        str([updated_event.id])))
     else:
         form = BPTEventForm(instance=event)
         can_delete = False
