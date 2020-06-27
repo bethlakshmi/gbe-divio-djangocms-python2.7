@@ -27,6 +27,8 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    edit_event_message,
+    edit_ticket_message,
     delete_event_success_message,
     delete_event_fail_message,
     delete_ticket_fail_message,
@@ -199,6 +201,16 @@ def ticket_item_edit(request, item_id=None):
         if form.is_valid():
             item = form.save(str(request.user))
             form.save_m2m()
+            success_msg = UserMessage.objects.get_or_create(
+                view="EditTicketItem",
+                code="EDIT_TICKET_MESSAGE",
+                defaults={
+                    'summary': "Ticket Edited Message",
+                    'description': edit_ticket_message})
+            messages.success(request, "%s  Ticket Item Id: %s, Title: %s" % (
+                success_msg[0].description,
+                item.ticket_id,
+                item.title))
             if 'submit_another' in request.POST:
                 return HttpResponseRedirect("%s?bpt_event_id=%s" % (
                     reverse('ticket_item_edit', urlconf='ticketing.urls'),
@@ -324,12 +336,21 @@ def bptevent_edit(request, event_id=None):
                 make_open_panel(event)))
 
     elif (request.method == 'POST'):
-
         # save the item using the Forms API
         form = BPTEventForm(request.POST, instance=event)
 
         if form.is_valid():
             updated_event = form.save()
+            success_msg = UserMessage.objects.get_or_create(
+                view="EditBPTEvent",
+                code="EDIT_EVENT_MESSAGE",
+                defaults={
+                    'summary': "BPT Event Edited Message",
+                    'description': edit_event_message})
+            messages.success(request, "%s  BPT Event Id: %s, Title: %s" % (
+                success_msg[0].description,
+                updated_event.bpt_event_id,
+                updated_event.title))
             if 'submit_another' in request.POST:
                 return HttpResponseRedirect("%s?bpt_event_id=%s" % (
                     reverse('ticket_item_edit', urlconf='ticketing.urls'),
