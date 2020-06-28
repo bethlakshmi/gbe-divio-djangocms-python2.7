@@ -362,7 +362,6 @@ class TestApproveVolunteer(TestCase):
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
             class_context.bid.e_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
-        print(response.content)
         self.assertContains(response, conflict_msg)
 
     def test_email_fail(self):
