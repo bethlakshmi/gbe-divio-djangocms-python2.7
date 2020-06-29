@@ -3,7 +3,10 @@ from django.shortcuts import get_object_or_404
 from gbe.functions import validate_perms
 from scheduler.idd import get_occurrences
 from gbe.scheduling.views.functions import show_general_status
-from gbe.models import StaffArea
+from gbe.models import (
+    Conference,
+    StaffArea,
+)
 from gbetext import role_commit_map
 from django.core.urlresolvers import reverse
 
@@ -45,7 +48,8 @@ def staff_area_view(request, parent_type, target):
             area = parent_response.occurrences[0]
             opps_response = get_occurrences(
                 parent_event_id=parent_response.occurrences[0].pk)
-            conference = area.confitem.e_conference
+            conference = Conference.objects.filter(
+                conference_slug__in=area.labels).first()
             if conference.status != 'completed':
                 edit_link = reverse(
                     "edit_event",

@@ -77,9 +77,7 @@ class ApproveVolunteerView(View):
                 'occurrence': pending_person.occurrence,
                 'staff_areas': StaffArea.objects.filter(
                     conference=self.conference,
-                    slug__in=pending_person.occurrence.labels.values_list(
-                        'text',
-                        flat=True)),
+                    slug__in=pending_person.occurrence.labels),
                 'state': pending_person.role.split(' ', 1)[0],
                 'status': "",
                 'label': pending_person.label,

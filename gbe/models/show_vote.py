@@ -20,9 +20,6 @@ class ShowVote(Model):
                         blank=True,
                         null=True)
 
-    def __str__(self):
-        return "<ShowVote %s - %s>" % (str(self.show), str(self.vote))
-
     class Meta:
         verbose_name = "show vote"
         verbose_name_plural = "show votes"

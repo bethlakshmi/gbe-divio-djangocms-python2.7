@@ -30,9 +30,6 @@ class ClassProposal(Model):
         blank=True,
         null=True)
 
-    def __str__(self):
-        return self.title
-
     @property
     def bid_review_header(self):
         return (['Title',

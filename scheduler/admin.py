@@ -44,14 +44,11 @@ class EventItemAdmin(admin.ModelAdmin):
             return str(obj.child().__class__.__name__)
 
     def conference(self, obj):
-        try:
-            return obj.child().e_conference
-        except:
-            return "!! no conference !!"
+        return obj.get_conference()
 
 
 class EventAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'eventitem', 'starttime', 'max_volunteer')
+    list_display = ('id', 'eventitem', 'starttime', 'max_volunteer', 'labels')
     list_filter = ['starttime',
                    'max_volunteer',
                    'eventitem__event__e_conference',
@@ -110,17 +107,17 @@ class EventEvalGradeAdmin(admin.ModelAdmin):
     list_display_links = ('event',)
 
 
-admin.site.register(EventItem, EventItemAdmin)
-admin.site.register(LocationItem)
-admin.site.register(WorkerItem)
-admin.site.register(ResourceItem)
+admin.site.register(ActItem)
+admin.site.register(ActResource, ActResourceAdmin)
 admin.site.register(Event, EventAdmin)
+admin.site.register(EventContainer, EventContainerAdmin)
+admin.site.register(EventItem, EventItemAdmin)
+admin.site.register(EventLabel, EventLabelAdmin)
 admin.site.register(Location)
-admin.site.register(Worker, WorkerAdmin)
+admin.site.register(LocationItem)
+admin.site.register(Ordering, OrderAdmin)
+admin.site.register(ResourceItem)
 admin.site.register(Resource)
 admin.site.register(ResourceAllocation, ResourceAllocationAdmin)
-admin.site.register(ActItem)
-admin.site.register(Ordering, OrderAdmin)
-admin.site.register(ActResource, ActResourceAdmin)
-admin.site.register(EventContainer, EventContainerAdmin)
-admin.site.register(EventLabel, EventLabelAdmin)
+admin.site.register(Worker, WorkerAdmin)
+admin.site.register(WorkerItem)

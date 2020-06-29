@@ -21,12 +21,9 @@ def get_schedule(user=None,
     if len(labels) > 0:
         basic_filter = basic_filter.filter(
                 event__eventlabel__text__in=labels)
-    if start_time:
-        basic_filter = basic_filter.filter(
-            event__starttime__gte=start_time.replace(tzinfo=None))
     if end_time:
         basic_filter = basic_filter.filter(
-            event__starttime__lt=end_time.replace(tzinfo=None))
+            event__starttime__lte=end_time.replace(tzinfo=None))
     if act:
         basic_filter = basic_filter.filter(
             resource__actresource___item=act)
@@ -46,47 +43,53 @@ def get_schedule(user=None,
                 booking_label = None
                 if hasattr(item, 'label'):
                     booking_label = item.label
-                sched_items += [ScheduleItem(
-                    user=user,
-                    event=item.event,
-                    role="Performer",
-                    label=booking_label,
-                    order=item.resource.as_subtype.order)]
+                if (start_time and item.event.end_time >= start_time) or (
+                        start_time is None):
+                    sched_items += [ScheduleItem(
+                        user=user,
+                        event=item.event,
+                        role="Performer",
+                        label=booking_label,
+                        order=item.resource.as_subtype.order)]
         if len(bookable_items['performers']) > 0:
             for item in worker_filter.filter(
                     resource__worker___item__in=bookable_items['performers']):
                 booking_label = None
                 if hasattr(item, 'label'):
                     booking_label = item.label
-                sched_items += [ScheduleItem(
-                    user=user,
-                    event=item.event,
-                    role=item.resource.as_subtype.role,
-                    label=booking_label)]
+                if (start_time and item.event.end_time >= start_time) or (
+                        start_time is None):
+                    sched_items += [ScheduleItem(
+                        user=user,
+                        event=item.event,
+                        role=item.resource.as_subtype.role,
+                        label=booking_label)]
         worker_filter = worker_filter.filter(
             resource__worker___item=user.profile)
 
     for item in worker_filter:
-        resource = item.resource.as_subtype
-        booking_label = None
-        if hasattr(item, 'label'):
-            booking_label = item.label
-        if resource.__class__.__name__ == "Worker":
-            sched_items += [ScheduleItem(
-                user=resource.workeritem.user_object,
-                event=item.event,
-                role=resource.role,
-                label=booking_label,
-                booking_id=item.pk)]
-        if resource.__class__.__name__ == "ActResource":
-            for profile in resource._item.act.get_performer_profiles():
+        if (start_time and item.event.end_time >= start_time) or (
+                start_time is None):
+            resource = item.resource.as_subtype
+            booking_label = None
+            if hasattr(item, 'label'):
+                booking_label = item.label
+            if resource.__class__.__name__ == "Worker":
                 sched_items += [ScheduleItem(
-                    user=profile.user_object,
+                    user=resource.workeritem.user_object,
                     event=item.event,
-                    role=resource.role or "Performing",
+                    role=resource.role,
                     label=booking_label,
-                    booking_id=item.pk,
-                    order=resource.order)]
+                    booking_id=item.pk)]
+            if resource.__class__.__name__ == "ActResource":
+                for profile in resource._item.act.get_performer_profiles():
+                    sched_items += [ScheduleItem(
+                        user=profile.user_object,
+                        event=item.event,
+                        role=resource.role or "Performing",
+                        label=booking_label,
+                        booking_id=item.pk,
+                        order=resource.order)]
     response = ScheduleResponse(
         schedule_items=sorted(
             set(sched_items),

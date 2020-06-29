@@ -135,15 +135,20 @@ class ActChangeStateView(BidChangeStateView):
                                     role=casting))
                 self.show_set_act_status(request, set_response)
             for worker in self.object.get_performer_profiles():
-                conflicts = worker.get_conflicts(self.new_show)
-                for problem in conflicts:
+                response = get_schedule(
+                    user=worker.user_object,
+                    labels=[self.new_show.eventitem.child(
+                        ).e_conference.conference_slug],
+                    start_time=self.new_show.start_time,
+                    end_time=self.new_show.end_time)
+                for problem in response.schedule_items:
                     messages.warning(
                         request,
                         "%s is booked for - %s - %s" % (
                             str(worker),
-                            str(problem),
+                            str(problem.event),
                             date_format(
-                                problem.starttime,
+                                problem.event.starttime,
                                 "DATETIME_FORMAT")
                         )
                     )
