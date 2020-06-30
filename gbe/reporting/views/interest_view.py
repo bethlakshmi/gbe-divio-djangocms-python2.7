@@ -7,10 +7,7 @@ from gbe.functions import (
     validate_perms,
 )
 from django.core.urlresolvers import reverse
-from scheduler.idd import (
-    get_occurrences,
-    get_schedule,
-)
+from scheduler.idd import get_occurrences
 from gbe.models import (
     Class,
     Performer,

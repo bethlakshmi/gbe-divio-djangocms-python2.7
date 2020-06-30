@@ -264,6 +264,7 @@ def make_vendor_app_purchase(conference, user_object):
     ticket = TicketItemFactory(ticket_id=ticket_id, bpt_event=bpt_event)
     transaction = TransactionFactory(ticket_item=ticket,
                                      purchaser=purchaser)
+    return transaction
 
 
 def make_vendor_app_ticket(conference):

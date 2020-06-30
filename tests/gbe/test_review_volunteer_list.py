@@ -13,7 +13,10 @@ from tests.factories.gbe_factories import (
     VolunteerFactory,
     VolunteerInterestFactory
 )
-from tests.factories.scheduler_factories import ResourceAllocationFactory
+from tests.factories.scheduler_factories import (
+    EventLabelFactory,
+    ResourceAllocationFactory,
+)
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -127,6 +130,8 @@ class TestReviewVolunteerList(TestCase):
             event=booked_sched,
             resource=worker
         )
+        EventLabelFactory(event=booked_sched,
+                          text=self.volunteer.b_conference.conference_slug)
         login_as(self.privileged_user, self)
         response = self.client.get(
             self.url,

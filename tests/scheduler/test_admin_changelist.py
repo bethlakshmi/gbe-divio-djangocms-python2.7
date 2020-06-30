@@ -3,15 +3,20 @@ from django.test import (
     TestCase
 )
 from django.contrib.auth.models import User
-from scheduler.models import (
-    ResourceAllocation,
-)
 from tests.factories.gbe_factories import(
     ClassFactory,
     ProfileFactory,
 )
+from tests.factories.scheduler_factories import(
+    ActResourceFactory,
+    EventItemFactory,
+    LocationFactory,
+    ResourceAllocationFactory,
+    ResourceFactory,
+)
 from tests.contexts import(
     ClassContext,
+    ShowContext,
     VolunteerContext,
 )
 from django.contrib.admin.sites import AdminSite
@@ -32,18 +37,51 @@ class SchedulerChangeListTests(TestCase):
         response = self.client.get('/admin/scheduler/resourceallocation/',
                                    follow=True)
         self.assertContains(response, str("Profile"))
-
-    def test_get_allocation_genericevent_type(self):
-        context = VolunteerContext()
-        response = self.client.get('/admin/scheduler/resourceallocation/',
-                                   follow=True)
         self.assertContains(response, "Volunteer")
+        self.assertContains(response, str(context.conference))
 
     def test_get_allocation_class_type(self):
         context = ClassContext()
         response = self.client.get('/admin/scheduler/resourceallocation/',
                                    follow=True)
         self.assertContains(response, "Class")
+        self.assertContains(response, "location")
+
+    def test_get_allocation_show_type(self):
+        context = ShowContext()
+        response = self.client.get('/admin/scheduler/resourceallocation/',
+                                   follow=True)
+        self.assertContains(response, "Act")
+        self.assertContains(response, "Show")
+
+    def test_get_allocation_eventitem_no_child(self):
+        allocation = ResourceAllocationFactory(
+            event__eventitem=EventItemFactory())
+        response = self.client.get('/admin/scheduler/resourceallocation/',
+                                   follow=True)
+        self.assertContains(response, "no child")
+
+    def test_get_allocation_eventitem_no_resource(self):
+        allocation = ResourceAllocationFactory(
+            resource=ResourceFactory())
+        response = self.client.get('/admin/scheduler/resourceallocation/',
+                                   follow=True)
+        self.assertContains(response,
+                            "Error in resource allocation, no resource")
+        self.assertContains(response, "Resource (no child)")
+
+    def test_get_allocation_no_actresource_child(self):
+        allocation = ResourceAllocationFactory(
+            resource=ActResourceFactory())
+        response = self.client.get('/admin/scheduler/resourceallocation/',
+                                   follow=True)
+        self.assertContains(response, "No Act Item")
+
+    def test_get_allocation_no_locationresource_child(self):
+        allocation = ResourceAllocationFactory(resource=LocationFactory())
+        response = self.client.get('/admin/scheduler/resourceallocation/',
+                                   follow=True)
+        self.assertContains(response, "No Location Item")
 
     def test_get_eventitem_genericevent(self):
         context = VolunteerContext()
@@ -58,8 +96,11 @@ class SchedulerChangeListTests(TestCase):
                                    follow=True)
         self.assertContains(response, "Class")
 
-    def test_get_eventcontainer_conference(self):
-        context = VolunteerContext()
+    def test_get_eventcontainer(self):
+        context = ShowContext()
+        rehearsal, slot = context.make_rehearsal()
         response = self.client.get('/admin/scheduler/eventcontainer/',
                                    follow=True)
-        self.assertContains(response, str(context.conference))
+        self.assertContains(response, rehearsal.e_title)
+        self.assertContains(response, context.show.e_title)
+        self.assertContains(response, context.conference.conference_name)

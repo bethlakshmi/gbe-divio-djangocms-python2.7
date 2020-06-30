@@ -299,10 +299,8 @@ def send_volunteer_update_to_staff(
         if lead.user.email not in to_list:
             to_list += [lead.user.email]
     for area in StaffArea.objects.filter(
-            conference__conference_slug__in=occurrence.labels.values_list(
-                'text',
-                flat=True),
-            slug__in=occurrence.labels.values_list('text', flat=True),
+            conference__conference_slug__in=occurrence.labels,
+            slug__in=occurrence.labels,
             staff_lead__isnull=False):
         if area.staff_lead.user_object.email not in to_list:
             to_list += [area.staff_lead.user_object.email]

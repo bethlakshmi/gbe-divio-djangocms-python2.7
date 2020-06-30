@@ -15,6 +15,7 @@ from gbe.models import (
     visible_bid_query,
 )
 from django.utils.formats import date_format
+from scheduler.idd import get_schedule
 import pytz
 
 
@@ -64,12 +65,14 @@ class Volunteer(Biddable):
             interest_string += interest + ', \n'
         commitments = ''
 
-        for event in self.profile.get_schedule(self.b_conference):
-            start_time = date_format(event.start_time, 'DATETIME_FORMAT')
-            end_time = date_format(event.end_time, 'TIME_FORMAT')
+        response = get_schedule(user=self.profile.user_object,
+                                labels=[self.b_conference.conference_slug])
+        for item in response.schedule_items:
+            start_time = date_format(item.event.start_time, 'DATETIME_FORMAT')
+            end_time = date_format(item.event.end_time, 'TIME_FORMAT')
 
             commitment_string = "%s - %s to %s, \n " % (
-                str(event),
+                str(item.event),
                 start_time,
                 end_time)
             commitments += commitment_string
