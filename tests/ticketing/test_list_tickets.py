@@ -1,4 +1,3 @@
-from django.http import Http404
 from django.core.files import File
 from ticketing.models import (
     BrownPaperEvents,
@@ -277,4 +276,5 @@ class TestListTickets(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visible')
-        self.assertContains(response, 'Hidden', 2)
+        self.assertContains(response, 'Hidden')
+        self.assertContains(response, 'Requires Coupon')

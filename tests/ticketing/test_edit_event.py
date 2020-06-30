@@ -1,5 +1,3 @@
-from django.http import Http404
-from django.core.exceptions import PermissionDenied
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import ProfileFactory
@@ -7,10 +5,7 @@ from tests.factories.ticketing_factories import (
     BrownPaperEventsFactory,
     TransactionFactory,
 )
-from tests.functions.gbe_functions import location
 from django.core.urlresolvers import reverse
-from django.test.client import RequestFactory
-from ticketing.views import bptevent_edit
 from ticketing.models import BrownPaperEvents
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -31,7 +26,6 @@ class TestEditBPTEvent(TestCase):
         self.bpt_event = BrownPaperEventsFactory.create()
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
-        self.factory = RequestFactory()
 
     def get_bptevent_form(self):
         return {
@@ -51,9 +45,6 @@ class TestEditBPTEvent(TestCase):
         }
 
     def test_edit_event_user_is_not_ticketing(self):
-        '''
-            The user does not have the right privileges.  Send PermissionDenied
-        '''
         user = ProfileFactory.create().user_object
         url = reverse('bptevent_edit',
                       urlconf='ticketing.urls',
