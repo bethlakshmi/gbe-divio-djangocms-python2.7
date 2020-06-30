@@ -13,7 +13,6 @@ from tests.factories.scheduler_factories import (
     EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
-    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
     WorkerFactory,
@@ -24,6 +23,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from scheduler.models import Ordering
 
 
 class ShowContext:
@@ -95,11 +95,9 @@ class ShowContext:
     def order_act(self, act, order):
         alloc = self.sched_event.resources_allocated.filter(
             resource__actresource___item=self.acts[0]).first()
-        try:
-            alloc.ordering = order
-            alloc.ordering.save()
-        except:
-            OrderingFactory(allocation=alloc, order=order)
+        ordering, created = Ordering.objects.get_or_create(allocation=alloc)
+        ordering.order = order
+        ordering.save()
 
     def set_interest(self, interested_profile=None):
         interested_profile = interested_profile or ProfileFactory()

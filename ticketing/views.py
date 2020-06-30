@@ -35,6 +35,7 @@ from gbetext import (
     delete_ticket_success_message,
     intro_bptevent_message,
     intro_make_ticket_message,
+    intro_ticket_assign_message,
     intro_ticket_message,
 )
 import pytz
@@ -108,6 +109,40 @@ def ticket_items(request, conference_choice=None):
                'conf_slug': conference_choice}
     return render(request, r'ticketing/ticket_items.tmpl', context)
 
+
+@never_cache
+def ticket_to_event(request, conference_choice):
+    '''
+    Represents the view for working with ticket items.  This will have a
+    list of current ticket items, and the ability to synch them.
+    '''
+    validate_perms(request, ('Ticketing - Admin', ))
+    conf_slug = request.GET.get('conference')
+    events = BrownPaperEvents.objects.filter(
+        conference__conference_slug=conf_slug)
+
+    intro = UserMessage.objects.get_or_create(
+                view="ViewTicketItems",
+                code="INTRO_MESSAGE",
+                defaults={
+                    'summary': "Introduction Message",
+                    'description': intro_ticket_assign_message})
+    context = {'intro': intro[0].description,
+               'act_pay_form': get_ticket_form("Act",
+                                               get_current_conference()),
+               'vendor_pay_form': get_ticket_form("Vendor",
+                                                  get_current_conference()),
+               'act_fees': events.filter(act_submission_event=True),
+               'vendor_fees': events.filter(vendor_submission_event=True),
+               'open_panel': request.GET.get('open_panel', ""),
+               'updated_tickets': eval(
+                    request.GET.get('updated_tickets', '[]')),
+               'updated_events': eval(request.GET.get('updated_events', '[]')),
+               'events': events.filter(act_submission_event=False,
+                                       vendor_submission_event=False),
+               'conference_slugs': conference_slugs(),
+               'conf_slug': conference_choice}
+    return render(request, r'ticketing/ticket_items.tmpl', context)
 
 @never_cache
 def transactions(request):
