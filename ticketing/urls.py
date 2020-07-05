@@ -1,9 +1,3 @@
-#
-# models.py - Contains Django code for defining the URL structure for ticketing
-# edited by mdb 5/9/2014
-# edited by bb 7/27/2015
-#
-
 from django.conf.urls import url
 from ticketing import views
 
@@ -12,9 +6,9 @@ app_name = "ticketing"
 urlpatterns = [
     url('^ticketing/$', views.index,
         name='index'),
-    url(r'^ticketing/ticket_assignment/(?P<conference_choice>[\w-]+)/?$',
-        views.ticket_to_event,
-        name='ticket_assignment'),
+    url(r'^ticketing/ticket_check/(?P<conference_choice>[\w-]+)/?$',
+        views.check_ticket_to_event,
+        name='ticket_check'),
     url(r'^ticketing/ticket_items/$', views.ticket_items,
         name='ticket_items'),
     url(r'^ticketing/ticket_items/?$', views.ticket_items,
@@ -30,4 +24,8 @@ urlpatterns = [
         name='bptevent_edit'),
     url(r'^ticketing/transactions/?$', views.transactions,
         name='transactions'),
+    url(r'^ticketing/set_ticket_to_event/(?P<bpt_event_id>\d+)/' +
+        '(?P<state>on|off)/(?P<gbe_eventitem_id>\d+)/?$',
+        views.set_ticket_to_event,
+        name='set_ticket_to_event'),
 ]

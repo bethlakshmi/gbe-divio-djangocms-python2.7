@@ -25,6 +25,7 @@ from gbe.functions import (
 )
 from gbe.models import (
     Conference,
+    Event,
     UserMessage,
 )
 from gbetext import (
@@ -112,7 +113,7 @@ def ticket_items(request, conference_choice=None):
 
 
 @never_cache
-def ticket_to_event(request, conference_choice):
+def check_ticket_to_event(request, conference_choice):
     '''
     Represents the view for working with ticket items.  This will have a
     list of current ticket items, and the ability to synch them.
@@ -135,6 +136,21 @@ def ticket_to_event(request, conference_choice):
                'gbe_events': gbe_events,
                'slug': conference_choice}
     return render(request, r'ticketing/ticket_event_check.tmpl', context)
+
+@never_cache
+def set_ticket_to_event(request, bpt_event_id, state, gbe_eventitem_id):
+    bpt_event = get_object_or_404(BrownPaperEvents, bpt_event_id=bpt_event_id)
+    gbe_event = get_object_or_404(Event, eventitem_id=gbe_eventitem_id)
+    if state == "on":
+        bpt_event.linked_events.add(gbe_event)
+        bpt_event.save()
+    elif state == "off" and bpt_event.linked_events.filter(
+            eventitem_id=gbe_eventitem_id).exists():
+        bpt_event.linked_events.remove(gbe_event)
+    return HttpResponseRedirect(request.GET.get('next', reverse(
+        'ticket_check', 
+        urlconf='ticketing.urls',
+        args=[bpt_event.conference.conference_slug])))
 
 @never_cache
 def transactions(request):
