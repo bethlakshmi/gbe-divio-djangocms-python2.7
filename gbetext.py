@@ -581,6 +581,8 @@ have set their preference to not receive email of this kind will not be
 included.'''
 intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
+intro_ticket_assign_message = '''This grid shows what tickets are connected \
+to which GBE event.'''
 intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \
 events.  For Paypal, it's simply a container for a set of prices.  These \
 containers define payment for act fees, vendor fees, or entry into the expo \

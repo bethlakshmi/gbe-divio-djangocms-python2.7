@@ -1,0 +1,92 @@
+{% extends "base.tmpl" %}
+{% load staticfiles sekizai_tags %}
+{% block title %}
+  Check Ticket to Events Assignments
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+{% endblock %}
+
+{% block content %}
+  <h2 class="review-title">Check Ticket to Event Assignments - {{slug}}</h2>
+<br>  <p>{{ intro }}</p>
+  <table id="bid_review" class="order-column table table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr class="bid-table">
+        <th class="bid-table">&nbsp;</th>
+      {% for bpt_event in bpt_events %}
+        <th class="bid-table"><div><span>
+        <a href="{% url 'ticketing:ticket_item_edit' bpt_event.id %}">{{ bpt_event.title }}</a>
+        </span></div></th>
+      {% endfor %}
+      </tr>
+    </thead>
+    <tfoot>
+      <tr class="bid-table">
+        <th class="bid-table">&nbsp;</th>
+      {% for bpt_event in bpt_events %}
+        <th class="bid-table"><div><span>
+        <a href="{% url 'ticketing:ticket_item_edit' bpt_event.id %}">{{ bpt_event.title }}</a>
+        </span></div></th>
+      {% endfor %}
+      </tr>
+    </tfoot>
+    <tbody>
+    {% for gbe_event in gbe_events %}
+      <tr class="bid-table">
+        <td class="bid-table"><a href="{% url 'scheduling:detail_view' gbe_event.eventitem_id  %}">{{gbe_event.e_title}}</a></td>
+      {% for bpt_event in bpt_events %}
+        <td class="bid-table text-center">
+          {% if gbe_event in bpt_event.linked_events.all %}<a href="#" data-toggle="tooltip" title="Remove Event from Ticket">
+            <i class="fas fa-check text-success active-check"></i></a>
+          {% elif bpt_event.include_most and gbe_event.type != "Master Class" %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most'"></i>
+          {% else %}<a href="#" data-toggle="tooltip" title="Add Event to Ticket"><i class="fas fa-plus link-events-plus"></i></a>{% endif %}
+        </td>
+      {% endfor %}
+      </tr>
+    {% endfor %}
+      <tr class="bid-table">
+        <td class="bid-table"><i>All Conference Classes</i></td>
+        {% for bpt_event in bpt_events %}
+        <td class="bid-table text-center">
+          {% if bpt_event.include_conference or bpt_event.include_most %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most' or 'Includes Conference'"></i>{% else %}&nbsp;{% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+    </tbody>
+  </table>
+{% addtoblock "js" %}
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script>
+  $(document).ready(function() {
+    var table = $('#bid_review').DataTable({
+        "paging": false,
+        "columnDefs": [{"targets": [ 2 ], "visible": false },]});
+
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+} );
+  </script>
+  <script> $(".active-check").hover(function () {
+        $(this).addClass('fa-times');
+        $(this).addClass('text-danger');
+        $(this).removeClass('fa-check');
+        $(this).removeClass('text-success');
+    }, function () {
+        $(this).removeClass('fa-times');
+        $(this).removeClass('text-danger');
+        $(this).addClass('fa-check');
+        $(this).addClass('text-success');
+    });
+  </script>
+{% endaddtoblock %}
+{% endblock %}
+
+

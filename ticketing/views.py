@@ -21,6 +21,7 @@ from gbe.functions import (
     conference_slugs,
     get_current_conference,
     validate_perms,
+    get_ticketable_gbe_events,
 )
 from gbe.models import (
     Conference,
@@ -117,32 +118,23 @@ def ticket_to_event(request, conference_choice):
     list of current ticket items, and the ability to synch them.
     '''
     validate_perms(request, ('Ticketing - Admin', ))
-    conf_slug = request.GET.get('conference')
-    events = BrownPaperEvents.objects.filter(
-        conference__conference_slug=conf_slug)
+    bpt_events = BrownPaperEvents.objects.filter(
+        conference__conference_slug=conference_choice,
+        act_submission_event=False,
+        vendor_submission_event=False).order_by('title')
+    gbe_events = get_ticketable_gbe_events(conference_choice)
 
     intro = UserMessage.objects.get_or_create(
-                view="ViewTicketItems",
+                view="CheckTicketEventItems",
                 code="INTRO_MESSAGE",
                 defaults={
                     'summary': "Introduction Message",
                     'description': intro_ticket_assign_message})
     context = {'intro': intro[0].description,
-               'act_pay_form': get_ticket_form("Act",
-                                               get_current_conference()),
-               'vendor_pay_form': get_ticket_form("Vendor",
-                                                  get_current_conference()),
-               'act_fees': events.filter(act_submission_event=True),
-               'vendor_fees': events.filter(vendor_submission_event=True),
-               'open_panel': request.GET.get('open_panel', ""),
-               'updated_tickets': eval(
-                    request.GET.get('updated_tickets', '[]')),
-               'updated_events': eval(request.GET.get('updated_events', '[]')),
-               'events': events.filter(act_submission_event=False,
-                                       vendor_submission_event=False),
-               'conference_slugs': conference_slugs(),
-               'conf_slug': conference_choice}
-    return render(request, r'ticketing/ticket_items.tmpl', context)
+               'bpt_events': bpt_events,
+               'gbe_events': gbe_events,
+               'slug': conference_choice}
+    return render(request, r'ticketing/ticket_event_check.tmpl', context)
 
 @never_cache
 def transactions(request):

@@ -1190,4 +1190,9 @@ div.hierarchy-1
   text-decoration: none;
   outline: none;
 }
- 
+.link-events-plus {
+  color: gainsboro;
+}
+.link-events-plus:hover {
+  color: black;
+}

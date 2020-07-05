@@ -4,14 +4,13 @@
 # edited by bb 7/27/2015
 #
 
-from ticketing.models import *
-from django import forms
-from gbe.models import (
-    Conference,
-    Show,
-    GenericEvent,
-    Event
+from ticketing.models import (
+    BrownPaperEvents,
+    TicketItem,
 )
+from gbe.functions import get_ticketable_gbe_events
+from django import forms
+from gbe.models import Conference
 from gbe_forms_text import (
     bpt_event_help_text,
     bpt_event_labels,
@@ -22,7 +21,6 @@ from gbe_forms_text import (
     ticket_item_labels,
     ticket_item_help_text,
 )
-from django.db.models import Q
 from django.forms.widgets import CheckboxSelectMultiple
 
 
@@ -118,14 +116,8 @@ class BPTEventForm(forms.ModelForm):
     '''
     required_css_class = 'required'
     error_css_class = 'error'
-    shows = Show.objects.all()
-    genericevents = GenericEvent.objects.exclude(type="Volunteer")
-    event_set = Event.objects.filter(
-        Q(show__in=shows) |
-        Q(genericevent__in=genericevents)).exclude(
-            e_conference__status="completed")
     linked_events = forms.ModelMultipleChoiceField(
-        queryset=event_set,
+        queryset=get_ticketable_gbe_events().order_by('e_title'),
         required=False,
         label=bpt_event_labels['linked_events'])
     conference = forms.ModelChoiceField(

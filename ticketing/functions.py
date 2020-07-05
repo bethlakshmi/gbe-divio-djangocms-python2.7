@@ -1,7 +1,4 @@
-from ticketing.models import (
-    BrownPaperEvents,
-    TicketItem,
-)
+from ticketing.models import *
 from itertools import chain
 from datetime import datetime
 from ticketing.brown_paper import get_bpt_price_list
