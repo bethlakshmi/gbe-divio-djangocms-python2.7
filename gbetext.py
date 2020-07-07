@@ -602,6 +602,8 @@ delete_event_fail_message = '''Deletion failed, transactions exist for tickets \
 for this event.'''
 link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
+unlink_event_to_ticket_success_msg = '''Successfully disconnected the  \
+following tickets from events: '''
 create_ticket_event_success_msg = "Created and linked a new BPT Event: "
 no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
 Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
