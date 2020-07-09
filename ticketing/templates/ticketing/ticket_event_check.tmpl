@@ -1,20 +1,16 @@
-{% extends "base.tmpl" %}
 {% load staticfiles sekizai_tags %}
-{% block title %}
-  Check Ticket to Events Assignments
-{% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
 {% endblock %}
 
 {% block content %}
-  <h2 class="review-title">Check Ticket to Event Assignments - {{slug}}</h2>
-<br>  <p>{{ intro }}</p>
+  <h2 class="review-title">Check Ticket to Event Assignments - {{conf_slug}}</h2>
+<br>  <p>{{ check_intro }}</p>
   <table id="bid_review" class="order-column table table-bordered" cellspacing="0" width="100%">
     <thead>
       <tr class="bid-table">
         <th class="bid-table">&nbsp;</th>
-      {% for bpt_event in bpt_events %}
+      {% for bpt_event in events %}
         <th class="bid-table"><div><span>
         <a href="{% url 'ticketing:ticket_item_edit' bpt_event.id %}">{{ bpt_event.title }}</a>
         </span></div></th>
@@ -24,7 +20,7 @@
     <tfoot>
       <tr class="bid-table">
         <th class="bid-table">&nbsp;</th>
-      {% for bpt_event in bpt_events %}
+      {% for bpt_event in events %}
         <th class="bid-table"><div><span>
         <a href="{% url 'ticketing:ticket_item_edit' bpt_event.id %}">{{ bpt_event.title }}</a>
         </span></div></th>
@@ -35,7 +31,7 @@
     {% for gbe_event in gbe_events %}
       <tr class="bid-table">
         <td class="bid-table"><a href="{% url 'scheduling:detail_view' gbe_event.eventitem_id  %}">{{gbe_event.e_title}}</a></td>
-      {% for bpt_event in bpt_events %}
+      {% for bpt_event in events %}
         <td class="bid-table text-center">
           {% if gbe_event in bpt_event.linked_events.all %}
           <a href="{% url 'ticketing:set_ticket_to_event' bpt_event.bpt_event_id 'off' gbe_event.eventitem_id %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Remove Event from Ticket">
@@ -48,7 +44,7 @@
     {% endfor %}
       <tr class="bid-table">
         <td class="bid-table"><i>All Conference Classes</i></td>
-        {% for bpt_event in bpt_events %}
+        {% for bpt_event in events %}
         <td class="bid-table text-center">
           {% if bpt_event.include_conference or bpt_event.include_most %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most' or 'Includes Conference'"></i>{% else %}&nbsp;{% endif %}
         </td>

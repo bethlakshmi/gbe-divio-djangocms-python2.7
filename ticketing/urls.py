@@ -6,9 +6,6 @@ app_name = "ticketing"
 urlpatterns = [
     url('^ticketing/$', views.index,
         name='index'),
-    url(r'^ticketing/ticket_check/(?P<conference_choice>[\w-]+)/?$',
-        views.check_ticket_to_event,
-        name='ticket_check'),
     url(r'^ticketing/ticket_items/$', views.ticket_items,
         name='ticket_items'),
     url(r'^ticketing/ticket_items/?$', views.ticket_items,
