@@ -4,17 +4,17 @@ https://control.divio.com/api/v1/apps/serve/aldryn-django/1.11.29.2/c6001c72-b90
 https://control.divio.com/api/v1/apps/serve/aldryn-sso/1.7.0/3ef75ae5-729a-4c44-ac3e-fa5950511e90/aldryn-sso-1.7.0.tar.gz#egg=aldryn-sso==1.7.0
 https://control.divio.com/api/v1/apps/serve/aldryn-django-cms/3.6.0.8/eef0b35d-0fb4-44d7-bef1-248950a46af5/aldryn-django-cms-3.6.0.8.tar.gz#egg=aldryn-django-cms==3.6.0.8
 https://control.divio.com/api/v1/apps/serve/aldryn-common/1.0.4/1021e5a2-d7d6-4dde-8976-c2db74c52c68/aldryn-common-1.0.4.tar.gz#egg=aldryn-common==1.0.4
-https://control.divio.com/api/v1/apps/serve/djangocms-bootstrap4/1.5.0/f938e98b-459c-4a9c-9a6b-47e7a6f786f3/djangocms-bootstrap4-1.5.0.tar.gz#egg=djangocms-bootstrap4==1.5.0
+https://control.divio.com/api/v1/apps/serve/djangocms-bootstrap4/1.6.0/66df98a5-f796-4465-a3b8-6eaf875b5f9c/djangocms-bootstrap4-1.6.0.tar.gz#egg=djangocms-bootstrap4==1.6.0
 https://control.divio.com/api/v1/apps/serve/djangocms-file/2.4.0/e815a2bc-5259-415f-a33a-42812c0393f8/djangocms-file-2.4.0.tar.gz#egg=djangocms-file==2.4.0
-https://control.divio.com/api/v1/apps/serve/djangocms-history/1.1.0/d135d7f2-6575-4ffa-90d6-75a962c1596a/djangocms-history-1.1.0.tar.gz#egg=djangocms-history==1.1.0
+https://control.divio.com/api/v1/apps/serve/djangocms-history/1.2.0/ac980f1b-fd43-4cbd-86c0-640257600a03/djangocms-history-1.2.0.tar.gz#egg=djangocms-history==1.2.0
 https://control.divio.com/api/v1/apps/serve/djangocms-icon/1.5.0/bbe20c66-8c48-4651-a819-6965ca015c34/djangocms-icon-1.5.0.tar.gz#egg=djangocms-icon==1.5.0
-https://control.divio.com/api/v1/apps/serve/djangocms-link/2.5.0/e39a5d58-7801-40b0-945a-75a5ebd8e2cc/djangocms-link-2.5.0.tar.gz#egg=djangocms-link==2.5.0
+https://control.divio.com/api/v1/apps/serve/djangocms-link/2.6.1/edd5b233-6457-4162-9985-c18da089b77a/djangocms-link-2.6.1.tar.gz#egg=djangocms-link==2.6.1
 https://control.divio.com/api/v1/apps/serve/djangocms-picture/2.4.0/2cde774a-2683-4ca3-97bb-41cf1753e839/djangocms-picture-2.4.0.tar.gz#egg=djangocms-picture==2.4.0
 https://control.divio.com/api/v1/apps/serve/djangocms-snippet/2.3.0/f9d22c0e-06b9-4bf5-82e5-dfdcaaa11803/djangocms-snippet-2.3.0.tar.gz#egg=djangocms-snippet==2.3.0
 https://control.divio.com/api/v1/apps/serve/djangocms-style/2.3.0/a4969f68-cc5c-4d5e-9f2d-f96fe558c518/djangocms-style-2.3.0.tar.gz#egg=djangocms-style==2.3.0
 https://control.divio.com/api/v1/apps/serve/djangocms-text-ckeditor/3.9.0/b69a0a27-5e76-4db2-86b6-c4931f16688f/djangocms-text-ckeditor-3.9.0.tar.gz#egg=djangocms-text-ckeditor==3.9.0
 https://control.divio.com/api/v1/apps/serve/djangocms-video/2.3.0/7a79d118-8440-4132-838d-96dc641358b9/djangocms-video-2.3.0.tar.gz#egg=djangocms-video==2.3.0
-https://control.divio.com/api/v1/apps/serve/django-filer/1.7.0/633d9275-51a0-42bc-8355-143db1b20ca4/django-filer-1.7.0.tar.gz#egg=django-filer==1.7.0
+https://control.divio.com/api/v1/apps/serve/django-filer/1.7.1/51d763aa-2153-4038-8658-020e2b301005/django-filer-1.7.1.tar.gz#egg=django-filer==1.7.1
 # </INSTALLED_ADDONS>
 django-formtools==2.1
 django-post_office==3.2.1
