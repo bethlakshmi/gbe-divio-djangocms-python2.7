@@ -34,7 +34,7 @@
       {% for bpt_event in events %}
         <td class="bid-table text-center">
           {% if gbe_event in bpt_event.linked_events.all %}
-          <a href="{% url 'ticketing:set_ticket_to_event' bpt_event.bpt_event_id 'off' gbe_event.eventitem_id %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Remove Event from Ticket">
+          <a href="{% url 'ticketing:set_ticket_to_event' bpt_event.bpt_event_id 'off' gbe_event.eventitem_id %}" data-toggle="tooltip" title="Remove Event from Ticket">
             <i class="fas fa-check text-success active-check"></i></a>
           {% elif bpt_event.include_most and gbe_event.type != "Master Class" %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most'"></i>
           {% else %}<a href="{% url 'ticketing:set_ticket_to_event' bpt_event.bpt_event_id 'on' gbe_event.eventitem_id %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Add Event to Ticket"><i class="fas fa-plus link-events-plus"></i></a>{% endif %}

@@ -89,8 +89,12 @@ Vendor Fees
     </div>
     <div id="collapseThree" class="collapse{% if open_panel == "ticket" %} show{% endif %}" aria-labelledby="headingThree" data-parent="#accordion">
       <div class="card-body">
-{% include "ticketing/ticket_event_check.tmpl" %}
-{% include "ticketing/ticket_list_display.tmpl" with events=events%}
+{% if events|length > 0 %}
+  {% include "ticketing/ticket_event_check.tmpl" %}
+  {% include "ticketing/ticket_list_display.tmpl" with events=events%}
+{% else %}
+  No ticket events have been created, use the "Create Event" button above to create some.
+{% endif %}
 </div></div></div>
 </div>
 <br>

@@ -13,7 +13,8 @@ from django.test import TestCase
 from django.test import Client
 from ticketing.views import ticket_items
 from tests.factories.gbe_factories import (
-    ProfileFactory
+    ProfileFactory,
+    ShowFactory,
 )
 from mock import patch, Mock
 import urllib
@@ -63,6 +64,10 @@ class TestListTickets(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
+        self.assertContains(
+            response,
+            'No ticket events have been created, use the "Create Event" ' +
+            'button above to create some.')
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_get_inventory(self, m_urlopen):
@@ -257,6 +262,9 @@ class TestListTickets(TestCase):
             url,
             data={"conference": ticket.bpt_event.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "All Conference Classes")
+        print(response.content)
+        self.assertNotContains(response, "fas fa-check")
 
     def test_ticket_active_state(self):
         '''
@@ -324,3 +332,62 @@ class TestListTickets(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visible')
         self.assertContains(response, 'Minimum Donation')
+
+    def test_ticket_includes_conference(self):
+        active_ticket = TicketItemFactory(live=True,
+                                          bpt_event__include_conference=True)
+        url = reverse(
+            self.view_name,
+            urlconf='ticketing.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "All Conference Classes")
+        self.assertContains(response, "fas fa-check")
+        self.assertNotContains(response, "set_ticket_to_event")
+        self.assertContains(
+            response,
+            "To change, edit ticket and remove 'Includes Most' or " +
+            "'Includes Conference'")
+        self.assertContains(response, "Includes all Conference Classes")
+
+    def test_ticket_includes_most(self):
+        active_ticket = TicketItemFactory(live=True,
+                                          bpt_event__include_most=True)
+        gbe_event = ShowFactory(
+            e_conference=active_ticket.bpt_event.conference)
+        url = reverse(
+            self.view_name,
+            urlconf='ticketing.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "All Conference Classes")
+        self.assertContains(response, gbe_event.e_title)
+        self.assertContains(response, "fas fa-check", 2)
+        self.assertNotContains(response, "set_ticket_to_event")
+        self.assertContains(
+            response,
+            "To change, edit ticket and remove 'Includes Most'")
+        self.assertContains(
+            response,
+            "To change, edit ticket and remove 'Includes Most' or " +
+            "'Includes Conference'")
+        self.assertContains(response,
+                            "Includes all events except Master Classes")
+
+    def test_ticket_linked_event(self):
+        active_ticket = TicketItemFactory(live=True)
+        gbe_event = ShowFactory(
+            e_conference=active_ticket.bpt_event.conference)
+        active_ticket.bpt_event.linked_events.add(gbe_event)
+        active_ticket.bpt_event.save()
+        url = reverse(
+            self.view_name,
+            urlconf='ticketing.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)

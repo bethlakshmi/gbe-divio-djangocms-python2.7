@@ -93,7 +93,8 @@ def ticket_items(request, conference_choice=None):
         events = BrownPaperEvents.objects.exclude(
             conference__status='completed').order_by('title')
         conference = get_current_conference()
-        conference_choice = conference.conference_slug
+        if conference:
+            conference_choice = conference.conference_slug
     intro = UserMessage.objects.get_or_create(
                 view="ViewTicketItems",
                 code="INTRO_MESSAGE",
@@ -124,8 +125,10 @@ def ticket_items(request, conference_choice=None):
                'gbe_events': gbe_events}
     return render(request, r'ticketing/ticket_items.tmpl', context)
 
+
 @never_cache
 def set_ticket_to_event(request, bpt_event_id, state, gbe_eventitem_id):
+    validate_perms(request, ('Ticketing - Admin', ))
     bpt_event = get_object_or_404(BrownPaperEvents, bpt_event_id=bpt_event_id)
     gbe_event = get_object_or_404(Event, eventitem_id=gbe_eventitem_id)
     if state == "on" and not bpt_event.linked_events.filter(
@@ -138,10 +141,12 @@ def set_ticket_to_event(request, bpt_event_id, state, gbe_eventitem_id):
             defaults={
                 'summary': "Ticket Was Linked to GBE Event",
                 'description': link_event_to_ticket_success_msg})
-        messages.success(request, "%s  Ticket Event Item: %s, GBE Event: %s" % (
-            success_msg[0].description,
-            bpt_event.title,
-            gbe_event.e_title))
+        messages.success(
+            request,
+            "%s  Ticket Event Item: %s, GBE Event: %s" % (
+                success_msg[0].description,
+                bpt_event.title,
+                gbe_event.e_title))
     elif state == "off" and bpt_event.linked_events.filter(
             eventitem_id=gbe_eventitem_id).exists():
         bpt_event.linked_events.remove(gbe_event)
@@ -151,14 +156,19 @@ def set_ticket_to_event(request, bpt_event_id, state, gbe_eventitem_id):
             defaults={
                 'summary': "Ticket Was Removed from GBE Event",
                 'description': unlink_event_to_ticket_success_msg})
-        messages.success(request, "%s  Ticket Event Item: %s, GBE Event: %s" % (
+        messages.success(
+            request,
+            "%s  Ticket Event Item: %s, GBE Event: %s" % (
                 success_msg[0].description,
                 bpt_event.title,
                 gbe_event.e_title))
-    return HttpResponseRedirect(request.GET.get('next', reverse(
-        'ticket_check', 
-        urlconf='ticketing.urls',
-        args=[bpt_event.conference.conference_slug])))
+    return HttpResponseRedirect(
+        '%s?conference=%s&open_panel=%s&updated_events=%s' % (
+            reverse('ticket_items', urlconf='ticketing.urls'),
+            bpt_event.conference.conference_slug,
+            make_open_panel(bpt_event),
+            str([bpt_event.id])))
+
 
 @never_cache
 def transactions(request):

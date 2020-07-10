@@ -150,7 +150,7 @@ class TestEditTicketItem(TestCase):
                 str(self.ticketitem.bpt_event.conference.conference_slug),
                 str([self.ticketitem.bpt_event.id])))
         self.assertContains(
-            response, 
+            response,
             delete_ticket_success_message)
 
     def test_ticket_form_delete_missing_item(self):
