@@ -1,6 +1,7 @@
 import pytz
 from django.db.models import (
     BooleanField,
+    CASCADE,
     CharField,
     FileField,
     ForeignKey,
@@ -30,11 +31,12 @@ class Vendor(Biddable):
     Note that company name is stored in the title field inherited
     from Biddable, and description is also inherited
     '''
-    profile = ForeignKey(Profile)
+    profile = ForeignKey(Profile, on_delete=CASCADE)
     website = URLField(blank=True)
-    physical_address = TextField()  # require physical address
+    physical_address = TextField()
     publish_physical_address = BooleanField(default=False)
     img = FilerImageField(
+        on_delete=CASCADE,
         null=True,
         related_name="image_vendor")
     want_help = BooleanField(choices=boolean_options,

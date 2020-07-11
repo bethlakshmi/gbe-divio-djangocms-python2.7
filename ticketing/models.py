@@ -58,6 +58,7 @@ class BrownPaperEvents(models.Model):
     badgeable = models.BooleanField(default=False)
     ticket_style = models.CharField(max_length=50, blank=True)
     conference = models.ForeignKey('gbe.Conference',
+                                   on_delete=models.CASCADE,
                                    related_name='ticketing_item',
                                    blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -101,6 +102,7 @@ class BrownPaperEvents(models.Model):
 class EventDetail(models.Model):
     detail = models.CharField(max_length=50, blank=True)
     bpt_event = models.ForeignKey(BrownPaperEvents,
+                                  on_delete=models.CASCADE,
                                   blank=True)
 
 
@@ -119,6 +121,7 @@ class TicketItem(models.Model):
     datestamp = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=30)
     bpt_event = models.ForeignKey(BrownPaperEvents,
+                                  on_delete=models.CASCADE,
                                   related_name="ticketitems",
                                   blank=True)
     live = models.BooleanField(default=False)
@@ -160,7 +163,9 @@ class Purchaser(models.Model):
     # Note - if this is none, then we don't know who to match this purchase to
     # in our system.  This scenario will be pretty common.
 
-    matched_to_user = models.ForeignKey(User, default=None)
+    matched_to_user = models.ForeignKey(User,
+                                        on_delete=models.CASCADE,
+                                        default=None)
 
     def __str__(self):
         return str(self.matched_to_user)
@@ -173,8 +178,8 @@ class Transaction(models.Model):
     and a specific ticket item.
     '''
 
-    ticket_item = models.ForeignKey(TicketItem)
-    purchaser = models.ForeignKey(Purchaser)
+    ticket_item = models.ForeignKey(TicketItem, on_delete=models.CASCADE)
+    purchaser = models.ForeignKey(Purchaser, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     order_date = models.DateTimeField()
     shipping_method = models.CharField(max_length=50)
@@ -213,6 +218,7 @@ class EligibilityCondition(models.Model):
     '''
     checklistitem = models.ForeignKey(
         CheckListItem,
+        on_delete=models.CASCADE,
         related_name="%(app_label)s_%(class)s")
 
     def is_excluded(self, held_tickets, profile, conference):
@@ -270,6 +276,7 @@ class Exclusion(models.Model):
     '''
     condition = models.ForeignKey(
         EligibilityCondition,
+        on_delete=models.CASCADE,
         related_name="%(app_label)s_%(class)s")
 
     class Meta:
@@ -316,7 +323,10 @@ class RoleExclusion(Exclusion):
     '''
     role = models.CharField(max_length=25,
                             choices=role_options)
-    event = models.ForeignKey('gbe.Event', blank=True, null=True)
+    event = models.ForeignKey('gbe.Event',
+                              on_delete=models.CASCADE,
+                              blank=True,
+                              null=True)
 
     def __str__(self):
         describe = self.role

@@ -1,5 +1,6 @@
 from itertools import chain
 from django.db.models import (
+    CASCADE,
     CharField,
     ForeignKey,
 )
@@ -24,6 +25,7 @@ class GenericEvent (Event):
                      blank=False,
                      default="Special")
     volunteer_type = ForeignKey(AvailableInterest,
+                                on_delete=CASCADE,
                                 blank=True,
                                 null=True)
 

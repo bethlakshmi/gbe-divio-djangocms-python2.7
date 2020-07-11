@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     ForeignKey,
     Model,
     IntegerField,
@@ -14,6 +15,7 @@ from gbetext import vote_options
 class ShowVote(Model):
 
     show = ForeignKey(Show,
+                      on_delete=CASCADE,
                       blank=True,
                       null=True)
     vote = IntegerField(choices=vote_options,

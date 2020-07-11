@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     Model,
     ForeignKey,
     BooleanField,
@@ -19,8 +20,9 @@ class ConferenceVolunteer(Model):
     (fits with the class proposal above)
     '''
     presenter = ForeignKey(Persona,
+                           on_delete=CASCADE,
                            related_name='conf_volunteer')
-    bid = ForeignKey(ClassProposal)
+    bid = ForeignKey(ClassProposal, on_delete=CASCADE)
     how_volunteer = CharField(max_length=20,
                               choices=conference_participation_types,
                               default='Any of the Above')

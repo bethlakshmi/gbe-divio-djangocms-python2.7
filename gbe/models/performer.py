@@ -1,6 +1,6 @@
 from model_utils.managers import InheritanceManager
-
 from django.db.models import (
+    CASCADE,
     ForeignKey,
     CharField,
     PositiveIntegerField,
@@ -25,7 +25,9 @@ class Performer (WorkerItem):
     company, not of the members, and so forth.
     '''
     objects = InheritanceManager()
-    contact = ForeignKey(Profile, related_name='contact')
+    contact = ForeignKey(Profile,
+                         on_delete=CASCADE,
+                         related_name='contact')
     name = CharField(max_length=100,     # How this Performer is listed
                      unique=True)        # in a playbill.
     homepage = URLField(blank=True)
@@ -33,6 +35,7 @@ class Performer (WorkerItem):
     experience = PositiveIntegerField()       # in years
     awards = TextField(blank=True)
     img = FilerImageField(
+        on_delete=CASCADE,
         null=True,
         related_name="image_performer")
     festivals = TextField(blank=True)     # placeholder only

@@ -1,5 +1,6 @@
 import pytz
 from django.db.models import(
+    CASCADE,
     CharField,
     ForeignKey,
     OneToOneField,
@@ -32,10 +33,11 @@ class Act (Biddable, ActItem):
     Until approved, an Act is simply a proposal.
     '''
     performer = ForeignKey(Performer,
+                           on_delete=CASCADE,
                            related_name='acts',
                            blank=True,
                            null=True)
-    tech = OneToOneField(TechInfo, blank=True)
+    tech = OneToOneField(TechInfo, on_delete=CASCADE, blank=True)
     video_link = URLField(blank=True)
     video_choice = CharField(max_length=2,
                              choices=video_options,

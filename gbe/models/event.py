@@ -1,5 +1,6 @@
 from model_utils.managers import InheritanceManager
 from django.db.models import (
+    CASCADE,
     CharField,
     DurationField,
     TextField,
@@ -31,10 +32,12 @@ class Event(EventItem):
     event_id = AutoField(primary_key=True)
     e_conference = ForeignKey(
         Conference,
+        on_delete=CASCADE,
         related_name="e_conference_set",
         blank=True,
         null=True)
     default_location = ForeignKey(Room,
+                                  on_delete=CASCADE,
                                   blank=True,
                                   null=True)
 

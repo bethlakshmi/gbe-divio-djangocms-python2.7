@@ -143,7 +143,7 @@ class ActResource(Resource):
     A schedulable object wrapping an Act
     '''
     objects = InheritanceManager()
-    _item = models.ForeignKey(ActItem)
+    _item = models.ForeignKey(ActItem, on_delete=models.CASCADE)
     role = models.CharField(max_length=50,
                             blank=True)
 
@@ -234,7 +234,7 @@ class Location(Resource):
     A resource which is a location.
     '''
     objects = InheritanceManager()
-    _item = models.ForeignKey(LocationItem)
+    _item = models.ForeignKey(LocationItem, on_delete=models.CASCADE)
 
     @property
     def type(self):
@@ -303,7 +303,7 @@ class Worker(Resource):
     objects = InheritanceManager()
     An allocatable person
     '''
-    _item = models.ForeignKey(WorkerItem)
+    _item = models.ForeignKey(WorkerItem, on_delete=models.CASCADE)
     role = models.CharField(max_length=50,
                             choices=role_options,
                             blank=True)
@@ -378,7 +378,9 @@ class Event(Schedulable):
     An Event is a schedulable item with a conference model item as its payload.
     '''
     objects = InheritanceManager()
-    eventitem = models.ForeignKey(EventItem, related_name="scheduler_events")
+    eventitem = models.ForeignKey(EventItem,
+                                  on_delete=models.CASCADE,
+                                  related_name="scheduler_events")
     starttime = models.DateTimeField(blank=True)
     max_volunteer = models.PositiveIntegerField(default=0)
     approval_needed = models.BooleanField(default=False)
@@ -622,8 +624,12 @@ class ResourceAllocation(Schedulable):
     ResourceAllocations get their scheduling data from their Event.
     '''
     objects = InheritanceManager()
-    event = models.ForeignKey(Event, related_name="resources_allocated")
-    resource = models.ForeignKey(Resource, related_name="allocations")
+    event = models.ForeignKey(Event,
+                              on_delete=models.CASCADE,
+                              related_name="resources_allocated")
+    resource = models.ForeignKey(Resource,
+                                 on_delete=models.CASCADE,
+                                 related_name="allocations")
 
     def get_label(self):
         try:
@@ -649,7 +655,8 @@ class Ordering(models.Model):
     indices are allowed.
     '''
     order = models.IntegerField(default=0)
-    allocation = models.OneToOneField(ResourceAllocation)
+    allocation = models.OneToOneField(ResourceAllocation,
+                                      on_delete=models.CASCADE)
 
 
 class Label (models.Model):
@@ -657,7 +664,8 @@ class Label (models.Model):
     A decorator allowing free-entry "tags" on allocations
     '''
     text = models.TextField(default='')
-    allocation = models.OneToOneField(ResourceAllocation)
+    allocation = models.OneToOneField(ResourceAllocation,
+                                      on_delete=models.CASCADE)
 
 
 class EventLabel (models.Model):
@@ -665,7 +673,7 @@ class EventLabel (models.Model):
     A decorator allowing free-entry "tags" on allocations
     '''
     text = models.CharField(default='', max_length=200)
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     class Meta:
         app_label = "scheduler"
@@ -677,5 +685,9 @@ class EventContainer (models.Model):
     Another decorator. Links one Event to another. Used to link
     a volunteer shift (Generic Event) to a Show (or other conf event)
     '''
-    parent_event = models.ForeignKey(Event, related_name='contained_events')
-    child_event = models.OneToOneField(Event, related_name='container_event')
+    parent_event = models.ForeignKey(Event,
+                                     on_delete=models.CASCADE,
+                                     related_name='contained_events')
+    child_event = models.OneToOneField(Event,
+                                       on_delete=models.CASCADE,
+                                       related_name='container_event')

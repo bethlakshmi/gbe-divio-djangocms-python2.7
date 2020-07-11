@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     TextField,
     ForeignKey,
     IntegerField,
@@ -23,7 +24,9 @@ class Volunteer(Biddable):
     '''
     Represents a conference attendee's participation as a volunteer.
     '''
-    profile = ForeignKey(Profile, related_name="volunteering")
+    profile = ForeignKey(Profile,
+                         on_delete=CASCADE,
+                         related_name="volunteering")
     number_shifts = IntegerField(choices=volunteer_shift_options)
     availability = TextField(blank=True)
     unavailability = TextField(blank=True)

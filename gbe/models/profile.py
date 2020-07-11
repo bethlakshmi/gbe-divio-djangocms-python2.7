@@ -5,6 +5,7 @@ from django.template import (
 from django.urls import reverse
 from django.conf import settings
 from django.db.models import (
+    CASCADE,
     CharField,
     OneToOneField,
     TextField,
@@ -35,7 +36,7 @@ class Profile(WorkerItem):
     the information gathered up in the User object. (which we'll
     expose with properties, I suppose)
     '''
-    user_object = OneToOneField(User)
+    user_object = OneToOneField(User, on_delete=CASCADE)
     display_name = CharField(max_length=128, blank=True)
 
     # used for linking tickets
@@ -235,9 +236,9 @@ class Profile(WorkerItem):
         for performer in performers:
             acts += performer.acts.all()
         if show_historical:
-            f = lambda a: not a.is_current
+            def f(a): return not a.is_current
         else:
-            f = lambda a: a.is_current
+            def f(a): return a.is_current
         return list(filter(f, acts))
 
     def get_shows(self):
