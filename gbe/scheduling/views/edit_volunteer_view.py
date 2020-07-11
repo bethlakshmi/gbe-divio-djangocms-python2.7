@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbe.functions import validate_perms
 from gbe.scheduling.views.functions import (
     process_post_response,

@@ -29,7 +29,7 @@ from django.db.models import Q
 from datetime import datetime
 from django.forms import HiddenInput
 from paypal.standard.forms import PayPalPaymentsForm
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 def fee_paid(bid_type, user_name, conference):

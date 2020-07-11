@@ -6,7 +6,7 @@ from django.test import Client
 from tests.factories.gbe_factories import ProfileFactory
 from tests.factories.ticketing_factories import BrownPaperEventsFactory
 from tests.functions.gbe_functions import location
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.client import RequestFactory
 from ticketing.views import bptevent_edit
 from tests.functions.gbe_functions import (

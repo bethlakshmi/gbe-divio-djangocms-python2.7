@@ -6,7 +6,7 @@ from gbe.forms import (
     ClassProposalForm,
 )
 from cms.models.pluginmodel import CMSPlugin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class ClassIdeaPlugin(CMSPluginBase):

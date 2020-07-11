@@ -16,7 +16,7 @@ from gbetext import (
     default_submit_msg,
 )
 from gbe.ticketing_idd_interface import fee_paid
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class ViewBidView(View):

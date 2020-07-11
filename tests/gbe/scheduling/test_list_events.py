@@ -2,7 +2,7 @@ from django.test import (
     TestCase,
     Client
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.functions.gbe_functions import (
     clear_conferences,
     login_as,

@@ -1,7 +1,7 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,

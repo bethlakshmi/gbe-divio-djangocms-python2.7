@@ -11,7 +11,7 @@ from scheduler.idd import (
     get_schedule,
 )
 from scheduler.data_transfer import Person
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbetext import role_options
 
 

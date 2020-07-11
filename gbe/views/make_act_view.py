@@ -1,6 +1,6 @@
 from gbe.views import MakeBidView
 from django.http import Http404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.forms import ModelChoiceField
 from gbe.models import (

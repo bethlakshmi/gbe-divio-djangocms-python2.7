@@ -20,7 +20,7 @@ from mock import patch, Mock
 import urllib
 from django.shortcuts import get_object_or_404
 from decimal import Decimal
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,

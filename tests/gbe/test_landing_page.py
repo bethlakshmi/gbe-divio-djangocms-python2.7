@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 from django.test import Client
 from django.test.client import RequestFactory
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import(
     ActFactory,
     ClassFactory,

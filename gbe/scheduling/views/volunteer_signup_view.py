@@ -4,7 +4,7 @@ from django.shortcuts import (
     render,
 )
 from django.http import Http404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbetext import (
     pending_note,
     role_options,

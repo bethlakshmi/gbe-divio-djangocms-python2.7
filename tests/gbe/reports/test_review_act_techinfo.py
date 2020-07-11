@@ -1,5 +1,5 @@
 from pytz import utc
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from datetime import (
     datetime,
     time,

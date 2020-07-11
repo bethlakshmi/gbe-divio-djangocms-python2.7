@@ -17,7 +17,7 @@ from tests.functions.gbe_functions import (
     make_act_app_purchase,
     make_vendor_app_purchase,
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class TicketingChangeListTests(TestCase):

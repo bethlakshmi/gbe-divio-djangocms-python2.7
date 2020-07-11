@@ -6,7 +6,7 @@ from django.shortcuts import (
     render,
 )
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import View
 from django.forms import HiddenInput
 from django.contrib import messages

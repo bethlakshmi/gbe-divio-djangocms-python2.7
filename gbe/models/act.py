@@ -24,7 +24,6 @@ from gbetext import (
 )
 from scheduler.models import ActItem
 from django.utils.formats import date_format
-from django.core.urlresolvers import reverse
 
 
 class Act (Biddable, ActItem):

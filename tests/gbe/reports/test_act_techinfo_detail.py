@@ -1,5 +1,5 @@
 from pytz import utc
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, Client
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (

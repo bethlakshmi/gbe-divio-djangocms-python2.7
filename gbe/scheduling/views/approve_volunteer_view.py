@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from settings import GBE_DATETIME_FORMAT
 from gbe.models import (
     Conference,

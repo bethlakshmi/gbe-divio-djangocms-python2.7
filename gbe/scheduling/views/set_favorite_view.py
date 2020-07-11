@@ -2,7 +2,7 @@ from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from scheduler.data_transfer import Person
 from scheduler.idd import (
     get_bookings,

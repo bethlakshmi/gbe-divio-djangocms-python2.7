@@ -2,7 +2,7 @@ from django.test import (
     TestCase,
     Client
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     EmailTemplateSenderFactory,
     ProfileFactory,

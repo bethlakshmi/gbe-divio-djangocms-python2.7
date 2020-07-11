@@ -7,7 +7,7 @@ from django.http import Http404
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.formats import date_format
 from datetime import timedelta
 from settings import (
