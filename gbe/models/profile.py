@@ -313,18 +313,18 @@ class Profile(WorkerItem):
         from gbe.models import Vendor  # late import, circularity
         vendors = Vendor.objects.filter(profile=self)
         if historical:
-            f = lambda v: not v.is_current
+            def f(v): return not v.is_current
         else:
-            f = lambda v: v.is_current
+            def f(v): return v.is_current
         return list(filter(f, vendors))
 
     def proposed_classes(self, historical=False):
         classes = sum([list(teacher.is_teaching.all())
                        for teacher in self.personae.all()], [])
         if historical:
-            f = lambda c: not c.is_current
+            def f(c): return not c.is_current
         else:
-            f = lambda c: c.is_current
+            def f(c): return c.is_current
         classes = list(filter(f, classes))
         return classes
 
