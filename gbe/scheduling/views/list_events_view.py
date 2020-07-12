@@ -40,7 +40,7 @@ class ListEventsView(View):
     conference = None
     event_type = "All"
 
-    def setup(self, request, args, kwargs):
+    def groundwork(self, request, args, kwargs):
         context = {}
 
         if "event_type" in kwargs:
@@ -97,7 +97,7 @@ class ListEventsView(View):
         return items
 
     def get(self, request, *args, **kwargs):
-        context = self.setup(request, args, kwargs)
+        context = self.groundwork(request, args, kwargs)
         items = self.get_events_list_by_type()
         events = []
         eval_occurrences = []

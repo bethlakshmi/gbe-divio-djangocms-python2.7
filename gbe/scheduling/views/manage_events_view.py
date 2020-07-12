@@ -39,7 +39,7 @@ class ManageEventsView(View):
     template = 'gbe/scheduling/manage_event.tmpl'
     conference = None
 
-    def setup(self, request, args, kwargs):
+    def groundwork(self, request, args, kwargs):
         validate_perms(request, ('Scheduling Mavens',))
         context = {}
         self.conference = None
@@ -158,7 +158,7 @@ class ManageEventsView(View):
     @never_cache
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        context = self.setup(request, args, kwargs)
+        context = self.groundwork(request, args, kwargs)
 
         if context['selection_form'].is_valid() and (
                 len(context['selection_form'].cleaned_data['day']) > 0 or len(
