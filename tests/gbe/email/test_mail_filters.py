@@ -1,9 +1,4 @@
 from django.test import TestCase
-from django.test import Client
-from tests.factories.gbe_factories import ProfileFactory
-from tests.functions.gbe_functions import grant_privilege
-from django.contrib.auth.models import User
-from gbe.models import Conference
 
 
 class TestMailFilters(TestCase):

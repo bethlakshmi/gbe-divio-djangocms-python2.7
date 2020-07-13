@@ -17,15 +17,10 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-    assert_role_choice,
-)
 from settings import GBE_DATE_FORMAT
+from tests.gbe.scheduling.test_scheduling import TestScheduling
 
-
-class TestClassWizard(TestCase):
+class TestClassWizard(TestScheduling):
     '''Tests for the 2nd and 3rd stage in the class wizard view'''
     view_name = 'create_class_wizard'
 
@@ -90,7 +85,7 @@ class TestClassWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "conference")
+        self.assert_event_was_picked_in_wizard(response, "conference")
         self.assertContains(response, str(self.test_class.b_title))
         self.assertContains(response, str(self.test_class.teacher))
 
@@ -112,8 +107,8 @@ class TestClassWizard(TestCase):
         self.assertContains(
             response,
             ('<input type="radio" name="accepted_class" value="%d" ' +
-             'id="id_accepted_class_1" checked />') %
-            self.test_class.pk)
+             'id="id_accepted_class_1" checked />') % self.test_class.pk,
+            html=True)
 
     def test_invalid_form(self):
         login_as(self.privileged_user, self)
@@ -137,7 +132,8 @@ class TestClassWizard(TestCase):
         self.assertContains(
             response,
             '<input type="radio" name="accepted_class" value="" ' +
-            'id="id_accepted_class_0" checked />')
+            'id="id_accepted_class_0" checked />',
+            html=True)
         self.assertContains(
             response,
             'Make New Class')
@@ -148,9 +144,9 @@ class TestClassWizard(TestCase):
             response,
             '<option value="%d">%s</option>' % (
                 self.day.pk,
-                self.day.day.strftime(GBE_DATE_FORMAT)
-            ))
-        assert_role_choice(response, 'Teacher')
+                self.day.day.strftime(GBE_DATE_FORMAT)),
+            html=True)
+        self.assert_role_choice(response, 'Teacher')
 
     def test_auth_user_load_class(self):
         login_as(self.privileged_user, self)
@@ -170,13 +166,14 @@ class TestClassWizard(TestCase):
             response,
             '<option value="%d">%s</option>' % (
                 self.day.pk,
-                self.day.day.strftime(GBE_DATE_FORMAT)
-            ))
+                self.day.day.strftime(GBE_DATE_FORMAT)),
+            html=True)
         self.assertContains(
             response,
             '<option value="%d" selected>%s</option>' % (
                 self.test_class.teacher.pk,
-                str(self.test_class.teacher)))
+                str(self.test_class.teacher)),
+            html=True)
 
     def test_auth_user_load_panel(self):
         panel = ClassFactory(b_conference=self.current_conference,
@@ -202,7 +199,8 @@ class TestClassWizard(TestCase):
             response,
             '<option value="%d" selected>%s</option>' % (
                 panel.teacher.pk,
-                str(panel.teacher)))
+                str(panel.teacher)),
+            html=True)
 
     def test_auth_user_edit_class(self):
         login_as(self.privileged_user, self)
@@ -330,7 +328,7 @@ class TestClassWizard(TestCase):
             self.url,
             data=data,
             follow=True)
-        assert_good_sched_event_form_wizard(response, self.test_class)
+        self.assert_good_sched_event_form_wizard(response, self.test_class)
 
     def test_get_empty_schedule_info(self):
         self.test_class.schedule_constraints = ""
@@ -344,4 +342,5 @@ class TestClassWizard(TestCase):
             self.url,
             data=data,
             follow=True)
-        assert_good_sched_event_form_wizard(response, self.test_class)
+        print(response.content)
+        self.assert_good_sched_event_form_wizard(response, self.test_class)
