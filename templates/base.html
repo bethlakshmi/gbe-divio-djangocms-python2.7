@@ -12,23 +12,12 @@
 
     {% render_block "css" %}
     {{ ALDRYN_SNAKE.render_head }}
-    <link rel="stylesheet"
-        type="text/css"
-        href= {% static "styles/gbe_bootstrap.min.css" %} media="all"/>
-    <link rel="stylesheet"
-        type="text/css"
-        href= {% static "styles/base.css" %} media="all"/>
-    <link rel="stylesheet"
-        type="text/css"
-        href= {% static "styles/menus.css" %} media="all"/>
-    <link rel="stylesheet"
-        type="text/css"
-        href= {% static "styles/gallery.css" %} media="all"/>
-    <link rel="shortcut icon"
-        href= {% static "img/favicon.ico" %}
-	type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href='{% static "styles/gbe_bootstrap.min.css" %}' media="all"/>
+    <link rel="stylesheet" type="text/css" href='{% static "styles/base.css" %}' media="all"/>
+    <link rel="stylesheet" type="text/css" href='{% static "styles/menus.css" %}' media="all"/>
+    <link rel="stylesheet" type="text/css" href='{% static "styles/gallery.css" %}' media="all"/>
+    <link rel="shortcut icon" href='{% static "img/favicon.ico" %}' type="image/x-icon"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-
     <link href="https://fonts.googleapis.com/css?family=Vast+Shadow&display=swap" rel="stylesheet">
 
   {% block head %}
@@ -74,7 +63,6 @@
       </div> <!-- panel for main content -->
       <div class='container footer'>{% static_placeholder 'footer'%}</div>
     </div>
-  </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

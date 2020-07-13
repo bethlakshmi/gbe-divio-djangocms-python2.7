@@ -29,10 +29,10 @@ from gbetext import (
 from django.contrib.auth.models import User
 from gbe.models import Conference
 from post_office.models import Email
-from tests.functions.gbe_email_functions import assert_checkbox
+from tests.gbe.email.test_mail_filters import TestMailFilters
 
 
-class TestMailToBidder(TestCase):
+class TestMailToBidder(TestMailFilters):
     view_name = 'mail_to_bidders'
     priv_list = ['Act', 'Class', 'Costume', 'Vendor', 'Volunteer']
     get_param = "?email_disable=send_bid_notifications"
@@ -121,14 +121,14 @@ class TestMailToBidder(TestCase):
         n = 0
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             0,
             self.context.conference.pk,
             self.context.conference.conference_slug,
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "x_conference",
             0,
@@ -136,14 +136,14 @@ class TestMailToBidder(TestCase):
             self.context.conference.conference_slug,
             checked=False)
         for priv in self.priv_list:
-            assert_checkbox(
+            self.assert_checkbox(
                 response,
                 "bid_type",
                 n,
                 priv,
                 priv,
                 checked=False)
-            assert_checkbox(
+            self.assert_checkbox(
                 response,
                 "x_bid_type",
                 n,
@@ -165,28 +165,28 @@ class TestMailToBidder(TestCase):
     def test_reduced_login_first_get(self):
         self.reduced_login()
         response = self.client.get(self.url, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             0,
             self.context.conference.pk,
             self.context.conference.conference_slug,
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "bid_type",
             0,
             "Act",
             "Act",
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "x_conference",
             0,
             self.context.conference.pk,
             self.context.conference.conference_slug,
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "x_bid_type",
             0,
@@ -202,28 +202,28 @@ class TestMailToBidder(TestCase):
         extra_conf = ConferenceFactory()
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             0,
             self.context.conference.pk,
             self.context.conference.conference_slug,
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             1,
             extra_conf.pk,
             extra_conf.conference_slug,
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "x_conference",
             0,
             self.context.conference.pk,
             self.context.conference.conference_slug,
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "x_conference",
             1,
@@ -463,7 +463,8 @@ class TestMailToBidder(TestCase):
             response,
             '<input type="email" name="sender" ' +
             'value="%s" id="id_sender" />' % (
-                self.privileged_profile.user_object.email))
+                self.privileged_profile.user_object.email),
+            html=True)
 
     def test_pick_no_admin_fixed_email(self):
         act_bid = ActFactory(submitted=True)
@@ -479,7 +480,8 @@ class TestMailToBidder(TestCase):
             response,
             '<input type="hidden" name="sender" ' +
             'value="%s" id="id_sender" />' % (
-                reduced_profile.user_object.email))
+                reduced_profile.user_object.email),
+            html=True)
 
     def test_send_email_success_status(self):
         login_as(self.privileged_profile, self)
@@ -623,7 +625,8 @@ class TestMailToBidder(TestCase):
         self.assertContains(
             response,
             to_string % (self.context.teacher.contact.user_object.email,
-                         self.context.teacher.contact.display_name))
+                         self.context.teacher.contact.display_name),
+            html=True)
 
     def test_send_email_failure_preserve_conference_choice(self):
         login_as(self.privileged_profile, self)
@@ -636,7 +639,7 @@ class TestMailToBidder(TestCase):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             0,
@@ -654,7 +657,7 @@ class TestMailToBidder(TestCase):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "bid_type",
             1,
@@ -676,7 +679,8 @@ class TestMailToBidder(TestCase):
             response,
             '<input type="checkbox" name="email-select-state" value="3" ' +
             'class="form-check-input" id="id_email-select-state_4" checked ' +
-            '/>')
+            '/>',
+            html=True)
 
     def test_pick_no_post_action(self):
         second_class = ClassFactory(accepted=2)
