@@ -20,6 +20,7 @@ from tests.functions.gbe_functions import (
 from settings import GBE_DATE_FORMAT
 from tests.gbe.scheduling.test_scheduling import TestScheduling
 
+
 class TestClassWizard(TestScheduling):
     '''Tests for the 2nd and 3rd stage in the class wizard view'''
     view_name = 'create_class_wizard'

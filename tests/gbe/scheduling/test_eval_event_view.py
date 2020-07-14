@@ -135,14 +135,17 @@ class TestEvalEventView(TestCase):
                 checked = "checked "
             self.assertContains(
                 response,
-                grade_input % (q1.pk, g, q1.pk, n, checked))
+                grade_input % (q1.pk, g, q1.pk, n, checked),
+                html=True)
             n = n + 1
         self.assertContains(
             response,
-            answer_textarea % (q2.pk, q2.pk))
+            answer_textarea % (q2.pk, q2.pk),
+            html=True)
         self.assertContains(
             response,
-            boolean_checkbox % (q3.pk, q3.pk))
+            boolean_checkbox % (q3.pk, q3.pk),
+            html=True)
 
     def test_get_eval_own_class(self):
         q1 = EventEvalQuestionFactory(answer_type="grade")

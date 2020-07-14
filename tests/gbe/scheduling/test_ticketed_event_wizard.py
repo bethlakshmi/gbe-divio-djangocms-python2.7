@@ -27,11 +27,6 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-    assert_role_choice,
-)
 from settings import GBE_DATE_FORMAT
 from gbetext import (
     create_ticket_event_success_msg,
@@ -41,9 +36,10 @@ from gbetext import (
 from mock import patch, Mock
 import urllib
 from django.core.files import File
+from tests.gbe.scheduling.test_scheduling import TestScheduling
 
 
-class TestTicketedEventWizard(TestCase):
+class TestTicketedEventWizard(TestScheduling):
     '''This view makes Master and Drop In and associates them w. tickets'''
     view_name = 'create_ticketed_event_wizard'
 
@@ -89,9 +85,9 @@ class TestTicketedEventWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "master")
-        assert_role_choice(response, "Teacher")
-        assert_role_choice(response, "Volunteer")
+        self.assert_event_was_picked_in_wizard(response, "master")
+        self.assert_role_choice(response, "Teacher")
+        self.assert_role_choice(response, "Volunteer")
 
     def test_authorized_user_can_access_dropin(self):
         self.url = reverse(
@@ -102,10 +98,10 @@ class TestTicketedEventWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "drop-in")
-        assert_role_choice(response, "Teacher")
-        assert_role_choice(response, "Volunteer")
-        assert_role_choice(response, "Staff Lead")
+        self.assert_event_was_picked_in_wizard(response, "drop-in")
+        self.assert_role_choice(response, "Teacher")
+        self.assert_role_choice(response, "Volunteer")
+        self.assert_role_choice(response, "Staff Lead")
 
     def test_authorized_user_can_access_special(self):
         self.url = reverse(
@@ -116,8 +112,8 @@ class TestTicketedEventWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "special")
-        assert_role_choice(response, "Staff Lead")
+        self.assert_event_was_picked_in_wizard(response, "special")
+        self.assert_role_choice(response, "Staff Lead")
         self.assertNotContains(response, "More...")
 
     def test_authorized_user_can_access_show(self):
@@ -129,9 +125,9 @@ class TestTicketedEventWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "show")
-        assert_role_choice(response, "Producer")
-        assert_role_choice(response, "Technical Director")
+        self.assert_event_was_picked_in_wizard(response, "show")
+        self.assert_role_choice(response, "Producer")
+        self.assert_role_choice(response, "Technical Director")
         self.assertNotContains(response, "More...")
 
     def test_authorized_user_can_also_get_volunteer_mgmt(self):

@@ -74,7 +74,7 @@ class TestManageEventList(TestCase):
             input_field,
             input_index,
             checked)
-        self.assertContains(response, assert_string)
+        self.assertContains(response, assert_string, html=True)
 
     def assert_hidden_input_selected(
             self,
@@ -95,9 +95,9 @@ class TestManageEventList(TestCase):
             input_field,
             input_index)
         if exists:
-            self.assertContains(response, assert_string)
+            self.assertContains(response, assert_string, html=True)
         else:
-            self.assertNotContains(response, assert_string)
+            self.assertNotContains(response, assert_string, html=True)
 
     def test_no_login_gives_error(self):
         response = self.client.get(self.url)

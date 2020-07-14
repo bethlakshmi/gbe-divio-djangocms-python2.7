@@ -17,14 +17,11 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-)
 from settings import GBE_DATE_FORMAT
+from tests.gbe.scheduling.test_scheduling import TestScheduling
 
 
-class TestRehearsalWizard(TestCase):
+class TestRehearsalWizard(TestScheduling):
     '''Tests for the 2nd stage in the rehearsal wizard view'''
     view_name = 'rehearsal_wizard'
 
@@ -43,7 +40,7 @@ class TestRehearsalWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "rehearsal")
+        self.assert_event_was_picked_in_wizard(response, "rehearsal")
         self.assertContains(response, str(self.show_volunteer.event.e_title))
         self.assertContains(response,
                             "Make New Show")

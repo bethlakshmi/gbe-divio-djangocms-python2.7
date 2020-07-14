@@ -112,21 +112,6 @@ def assert_rank_choice_exists(response, interest, selection=None):
                 value, text), 'utf-8') in response.content
 
 
-def assert_hidden_value(response, field_id, name, value):
-    assert bytes('<input type="hidden" name="%s" value="%s" id="%s" />' % (
-        name, value, field_id), 'utf-8') in response.content
-
-
-def assert_radio_state(response, name, button_id, value, checked=False):
-    checked_state = ""
-    if checked:
-        checked_state = "checked "
-    checked_button = (
-        '<input type="radio" name="%s" value="%s" id="%s" %s/>' % (
-                    name, value, button_id, checked_state))
-    assert bytes(checked_button, 'utf-8') in response.content
-
-
 def assert_option_state(response, value, text, selected=False):
     selected_state = ""
     if selected:

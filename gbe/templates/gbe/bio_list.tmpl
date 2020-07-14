@@ -28,12 +28,12 @@
 	  <b>{{ class.role }}</b> -
 	  {% if class.detail_id %}
 	  <a href='{% url 'scheduling:detail_view' class.detail_id  %}'>
-	  {{ class.event }}</a></br>
+	  {{ class.event }}</a><br>
 	{% else %}
-	  {{ class.event }}</br>
+	  {{ class.event }}<br>
 	{% endif %}
 	{% endfor %}
-	</br>
+	<br>
         {{teacher.bio.bio |safe}}
         <br><br>
       </div>

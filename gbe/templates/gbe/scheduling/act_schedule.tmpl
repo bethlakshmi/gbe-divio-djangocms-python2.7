@@ -7,29 +7,25 @@
 {% block content %}
 <h2>{{title}}</h2>
 <p><font color="red">RED</font> highlighting means that the owner of this act has deactivated their account.</p>
-   <table>
+<form method="POST" action="" enctype="multipart/form-data">
+{% csrf_token %}
+  <table>
    <tr>
-	<th>Performer</th>
-	<th>Act Title</th>
-	<th>Show</th>
-	<th>Order</th>
+    <th>Performer</th>
+    <th>Act Title</th>
+    <th>Show</th>
+    <th>Order</th>
    </tr>   
-    <form method="POST" action="" enctype="multipart/form-data">
-    {% csrf_token %}
-	{% for form, state in forms %}
-	  <tr {% if not state %}bgcolor="red"{% endif %}>
-	    {% for field in form.visible_fields %}<td>{{ field }}
-	      {% if field.errors %}<br><font color="red">{{ field.errors }}</font>
+
+    {% for form, state in forms %}
+      <tr {% if not state %}bgcolor="red"{% endif %}>
+      	{% for field in form.visible_fields %}<td>{{ field }}
+      		{% if field.errors %}<br><font color="red">{{ field.errors }}</font>
         {% endif %}</td>{% endfor %}
-	  </tr>
-	  {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-	{% endfor %}
-
+      </tr>
+      {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+    {% endfor %}
    </table> 
-
   <input type = "submit" name="submit" value="Submit">
-  
-  </form>
-
-
+ </form>
 {% endblock %}

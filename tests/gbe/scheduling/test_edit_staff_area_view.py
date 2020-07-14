@@ -20,11 +20,6 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-    assert_role_choice,
-)
 from settings import GBE_DATE_FORMAT
 from tests.contexts import (
     StaffAreaContext,

@@ -8,9 +8,10 @@ from gbe_forms_text import (
     class_schedule_options,
     event_type_options,
 )
+from tests.gbe.test_gbe import TestGBE
 
 
-class TestScheduling(TestCase):
+class TestScheduling(TestGBE):
     def assert_good_sched_event_form_wizard(self, response, eventitem):
         assert response.status_code is 200
         if eventitem.__class__.__name__ == "Class":

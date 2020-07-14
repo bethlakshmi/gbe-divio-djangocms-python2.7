@@ -13,16 +13,11 @@ from scheduler.models import Event
 from gbe.models import StaffArea
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    assert_hidden_value,
     assert_option_state,
     grant_privilege,
     login_as,
 )
 from gbe_forms_text import event_type_options
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-)
 from datetime import (
     datetime,
     timedelta,
@@ -39,9 +34,10 @@ from gbe_forms_text import (
     copy_mode_choices,
 )
 from gbetext import no_conf_day_msg
+from tests.gbe.test_gbe import TestGBE
 
 
-class TestCopyOccurrence(TestCase):
+class TestCopyOccurrence(TestGBE):
     view_name = 'copy_staff_schedule'
     copy_date_format = "%a, %b %-d, %Y %-I:%M %p"
     copy_children_only_checked = '<input type="radio" name="copy_mode" ' + \
@@ -171,7 +167,8 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            self.copy_children_only_checked)
+            self.copy_children_only_checked,
+            html=True)
         self.assertContains(
             response,
             '<option value="%d" selected>' % (
@@ -181,7 +178,7 @@ class TestCopyOccurrence(TestCase):
             self.vol_opp.eventitem.e_title,
             (self.vol_opp.start_time + delta).strftime(
                         self.copy_date_format)))
-        assert_hidden_value(response, "id_room", "room", new_room.pk)
+        self.assert_hidden_value(response, "id_room", "room", new_room.pk)
 
     def test_authorized_user_pick_mode_children_same_conf(self):
         target_context = StaffAreaContext(conference=self.context.conference)
@@ -195,7 +192,8 @@ class TestCopyOccurrence(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            self.copy_children_only_checked)
+            self.copy_children_only_checked,
+            html=True)
         self.assertContains(
             response,
             '<option value="%d" selected>' % (

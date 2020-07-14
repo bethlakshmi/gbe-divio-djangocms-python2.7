@@ -19,12 +19,10 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-)
+from tests.gbe.scheduling.test_scheduling import TestScheduling
 
 
-class TestStaffAreaWizard(TestCase):
+class TestStaffAreaWizard(TestScheduling):
     view_name = 'staff_area_wizard'
 
     def setUp(self):
@@ -61,7 +59,7 @@ class TestStaffAreaWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "staff")
+        self.assert_event_was_picked_in_wizard(response, "staff")
         self.assertContains(response, "Select Event Type: Staff Area")
         self.assertContains(response, "Create Staff Area")
 
