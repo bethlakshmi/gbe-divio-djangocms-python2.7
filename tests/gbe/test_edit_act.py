@@ -212,21 +212,30 @@ class TestEditAct(TestCase):
         self.assertContains(response, 'Propose an Act')
         constraint_selected = '<input type="checkbox" name="theact-%s" ' + \
             'value="%d" id="id_theact-%s_%d" checked />'
-        self.assertContains(response, constraint_selected % (
-            "shows_preferences",
-            0,
-            "shows_preferences",
-            0))
-        self.assertContains(response, constraint_selected % (
-            "other_performance",
-            1,
-            "other_performance",
-            1))
-        self.assertContains(response, constraint_selected % (
-            "other_performance",
-            3,
-            "other_performance",
-            3))
+        self.assertContains(
+            response,
+            constraint_selected % (
+                "shows_preferences",
+                0,
+                "shows_preferences",
+                0),
+            html=True)
+        self.assertContains(
+            response,
+            constraint_selected % (
+                "other_performance",
+                1,
+                "other_performance",
+                1),
+            html=True)
+        self.assertContains(
+            response,
+            constraint_selected % (
+                "other_performance",
+                3,
+                "other_performance",
+                3),
+            html=True)
 
     def test_edit_act_submit_make_message(self):
         response = self.post_edit_paid_act_submission()

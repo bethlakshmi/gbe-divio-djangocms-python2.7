@@ -46,10 +46,9 @@ class TestScheduling(TestGBE):
                 y += 1
             x += 1
         self.assertContains(
-            response, 
+            response,
             '<a data-toggle="collapse" href="#collapse1">')
         self.assertContains(response, checked_button, html=True)
-
 
     def assert_role_choice(self, response, role_type):
         self.assertContains(

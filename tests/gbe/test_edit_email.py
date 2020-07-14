@@ -76,7 +76,8 @@ class TestEditEmail(TestCase):
             response,
             '<input type="checkbox" ' +
             'name="send_schedule_change_notifications"' +
-            ' id="id_send_schedule_change_notifications" />')
+            ' id="id_send_schedule_change_notifications" />',
+            html=True)
         self.assertContains(
             response, "shadow-red")
 

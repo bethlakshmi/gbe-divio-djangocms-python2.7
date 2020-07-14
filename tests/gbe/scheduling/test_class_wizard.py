@@ -343,5 +343,4 @@ class TestClassWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        print(response.content)
         self.assert_good_sched_event_form_wizard(response, self.test_class)

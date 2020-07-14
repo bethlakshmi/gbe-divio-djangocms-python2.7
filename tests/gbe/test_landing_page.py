@@ -412,7 +412,7 @@ class TestIndex(TestCase):
             self.assertNotContains(
                 response,
                 "%s &lt;%s&gt;;<br>" % (person.display_name,
-                                         person.user_object.email))
+                                        person.user_object.email))
         self.assertNotContains(response,
                                interested_explain_msg)
 
