@@ -49,7 +49,7 @@ class Profile(WorkerItem):
     address1 = CharField(max_length=128, blank=True)
     address2 = CharField(max_length=128, blank=True)
     city = CharField(max_length=128, blank=True)
-    state = CharField(max_length=2,
+    state = CharField(max_length=5,
                       choices=states_options,
                       blank=True)
     zip_code = CharField(max_length=10, blank=True)  # allow for ext ZIP

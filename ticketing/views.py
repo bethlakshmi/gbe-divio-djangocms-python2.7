@@ -5,7 +5,7 @@
 #
 
 from gbe_logging import logger
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse
