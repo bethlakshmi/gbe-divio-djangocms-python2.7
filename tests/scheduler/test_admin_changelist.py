@@ -85,20 +85,6 @@ class SchedulerChangeListTests(TestCase):
         self.assertContains(response, "Act")
         self.assertContains(response, "Show")
 
-        allocation = ResourceAllocationFactory(
-            event__eventitem=EventItemFactory())
-        response = self.client.get('/admin/scheduler/resourceallocation/',
-                                   follow=True)
-        self.assertContains(response, "no child")
-
-    def test_get_allocation_eventitem_no_resource(self):
-        allocation = ResourceAllocationFactory(
-            resource=ResourceFactory())
-        response = self.client.get('/admin/scheduler/resourceallocation/',
-                                   follow=True)
-        self.assertContains(response,
-                            "Error in resource allocation, no resource")
-        self.assertContains(response, "Resource (no child)")
 
     def test_get_allocation_no_actresource_child(self):
         allocation = ResourceAllocationFactory(
