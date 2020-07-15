@@ -263,7 +263,6 @@ class TestListTickets(TestCase):
             data={"conference": ticket.bpt_event.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "All Conference Classes")
-        print(response.content)
         self.assertNotContains(response, "fas fa-check")
 
     def test_ticket_active_state(self):

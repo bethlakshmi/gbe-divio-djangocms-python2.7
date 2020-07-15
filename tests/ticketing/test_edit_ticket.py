@@ -71,7 +71,6 @@ class TestEditTicketItem(TestCase):
             self.ticketitem.bpt_event.bpt_event_id))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Create Ticket Item')
-        print(response.content)
         self.assertContains(response, '<option value="%s" selected>' % (
             self.ticketitem.bpt_event.id))
 

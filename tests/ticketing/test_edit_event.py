@@ -88,7 +88,6 @@ class TestEditBPTEvent(TestCase):
                       args=[self.bpt_event.pk])
         login_as(self.privileged_user, self)
         response = self.client.get("%s?delete_item=True" % url, follow=True)
-        print(response)
         self.assertRedirects(
             response,
             "%s?conference=%s&open_panel=ticket&updated_events=[None]" % (
