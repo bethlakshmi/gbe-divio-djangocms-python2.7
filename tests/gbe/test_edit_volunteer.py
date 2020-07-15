@@ -61,6 +61,7 @@ class TestEditVolunteer(TestGBE):
                 'availability': ('SH0',),
                 'background': 'this is the background',
                 'b_title': 'title',
+                'pre_event': False,
                 '%d-rank' % interest_pk: rank,
                 '%d-interest' % interest_pk: avail_pk,
                 'submit': True,
