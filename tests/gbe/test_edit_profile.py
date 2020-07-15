@@ -134,7 +134,7 @@ class TestEditProfile(TestCase):
             '<input type="checkbox" name="email_pref-send_bid_notifications"' +
             ' id="id_email_pref-send_bid_notifications" />',
             html=True)
-        self.assertContains(response, email_pref_note.replace("'", "&#39;"))
+        self.assertContains(response, email_pref_note.replace("'", "&#x27;"))
 
     def test_update_profile_post_empty_display_name(self):
         data = self.get_form()

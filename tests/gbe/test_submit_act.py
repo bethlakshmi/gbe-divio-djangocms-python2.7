@@ -44,5 +44,5 @@ class TestSubmitAct(TestCase):
 
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
-        error_string = "Error: You don&#39;t own that act."
+        error_string = "Error: You don&#x27;t own that act."
         self.assertContains(response, error_string)

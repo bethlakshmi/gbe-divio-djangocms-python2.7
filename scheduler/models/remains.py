@@ -276,6 +276,8 @@ class WorkerItem(ResourceItem):
     def describe(self):
         child = WorkerItem.objects.get_subclass(
             resourceitem_id=self.resourceitem_id)
+        if child.__class__.__name__ == "WorkerItem":
+            return "Worker Item (no child_event)"
         return child.__class__.__name__ + ":  " + child.describe
 
     def __str__(self):
@@ -363,10 +365,10 @@ class EventItem (models.Model):
 
     @property
     def describe(self):
-        try:
-            child = self.child()
+        child = self.child()
+        if child.__class__.__name__ != "EventItem":
             return str(child)
-        except:
+        else:
             return "no child"
 
     def __str__(self):
