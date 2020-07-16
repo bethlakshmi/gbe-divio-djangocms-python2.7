@@ -1,7 +1,7 @@
 {% for event in events %}
-<div class="row"><div class="col-xs-8 col-sm-9 col-md-10{% if event.id in updated_events %} shadow-red{% endif %}">
+<div class="row"><div class="col-xs-7 col-sm-9 col-md-9{% if event.id in updated_events %} shadow-red{% endif %}">
 <h3>{{event.title}} - ({{event}})</h3>
-</div><div class="col-xs-4 col-sm-3 col-md-2 text-right">
+</div><div class="col-xs-5 col-sm-3 col-md-3 text-right">
 <div class="btn-group" role="group" aria-label="...">
   <a href="{% url 'ticketing:ticket_item_edit' %}?bpt_event_id={{event.bpt_event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn btn-default btn-sm" id="action-button">
     <i class="fa fa-plus text-muted" aria-hidden="true"></i><i class="fa fa-ticket text-muted" aria-hidden="true"></i></a>
