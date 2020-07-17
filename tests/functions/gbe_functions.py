@@ -53,11 +53,7 @@ def grant_privilege(user_or_profile, privilege):
     '''Add named privilege to user's groups. If group does not exist, create it
     '''
     user = _user_for(user_or_profile)
-    try:
-        g, _ = Group.objects.get_or_create(name=privilege)
-    except:
-        g = Group(name=privilege)
-        g.save()
+    g, _ = Group.objects.get_or_create(name=privilege)
     if g in user.groups.all():
         return
     else:

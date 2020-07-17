@@ -21,7 +21,6 @@ class BrownPaperEventsFactory(DjangoModelFactory):
     description = "This is a desription"
     bpt_event_id = Sequence(lambda x: "%d" % x)
     conference = SubFactory(ConferenceFactory)
-    primary = False
     act_submission_event = False
     vendor_submission_event = False
     include_conference = False

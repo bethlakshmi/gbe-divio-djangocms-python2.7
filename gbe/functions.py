@@ -22,6 +22,7 @@ from gbetext import (
 )
 import json
 from settings import GBE_DATETIME_FORMAT
+from django.db.models import Q
 
 
 def jsonify(data):
@@ -157,3 +158,16 @@ def make_warning_msg(warning, separator="<br>-", use_user=True):
             str(warning.occurrence),
             warning.occurrence.starttime.strftime(GBE_DATETIME_FORMAT))
     return message_text
+
+
+def get_ticketable_gbe_events(conference_slug=None):
+    shows = Show.objects.all()
+    genericevents = GenericEvent.objects.filter(
+        type__in=('Drop-In', 'Master', 'Special'))
+    event_set = Event.objects.filter(
+        Q(show__in=shows) |
+        Q(genericevent__in=genericevents))
+    if conference_slug:
+        return event_set.filter(e_conference__conference_slug=conference_slug)
+    else:
+        return event_set.exclude(e_conference__status="completed")

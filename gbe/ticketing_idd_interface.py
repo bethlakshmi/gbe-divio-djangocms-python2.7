@@ -22,8 +22,10 @@ from gbe.models import (
 )
 from scheduler.idd import get_roles
 from ticketing.brown_paper import *
-from ticketing.views import import_ticket_items
-from ticketing.functions import get_fee_list
+from ticketing.functions import (
+    get_fee_list,
+    import_ticket_items,
+)
 from django.db.models import Count
 from django.db.models import Q
 from datetime import datetime
