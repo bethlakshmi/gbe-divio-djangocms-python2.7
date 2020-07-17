@@ -1,31 +1,28 @@
 {% extends "base.tmpl" %}
 {% load staticfiles %}
 {% block title %}
-  Great Burlesque Exposition 
+  Edit Ticket Item
 {% endblock %}
 {% block content %}
 
-<h2 class="subtitle">Edit Ticketing</h2>
+<h2 class="subtitle">{{title}}</h2>
+<p>{{intro}}</p>
+<br>
+{% if is_ticket %}
+Note:  Ticket Item Id must be unique.  Changing it will create a new Ticket Item.
 <br><br>
-Notes:  Ticket Item Id must be unique.  Editing it will create a new Ticket Item.
-
-{% if error %}
-<font color=red>
-<br>
-<br>
-{{error}}
-<br>
-<br>
-</font>
 {% endif %}
-
 <form action="" method="post">
 {% include "form_table_wrapper.tmpl" %}
 <br>
-<input type="submit" value="Save Ticket Item">
 {% if can_delete %}
-<input type="submit" value="Delete Ticket Item" name="delete_item">
+<input type="submit" value="Delete" name="delete_item" class="btn btn-secondary">
 {% endif %}
+<div class="float-right">
+<a href="{{cancel_url}}"><input type="button" name="cancel" value="Cancel" class="btn btn-secondary"></a>
+<input type="submit" value="{{button_text}}" name="submit_done" class="btn btn-primary">
+<input type="submit" value="{{another_button_text}} >" name="submit_another" class="btn btn-primary">
+</div>
 </form>
 
 {% endblock %}

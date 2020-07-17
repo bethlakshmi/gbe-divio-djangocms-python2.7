@@ -10,9 +10,6 @@ from django.http import (
     Http404,
     HttpResponseRedirect,
 )
-from django.core.urlresolvers import reverse
-from django.contrib import messages
-from gbe.models import UserMessage
 from gbe.functions import validate_perms
 from gbe.email.functions import get_user_email_templates
 

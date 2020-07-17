@@ -776,10 +776,26 @@ presenter_help_text = {
 
 ticket_item_labels = {
     'ticket_id': 'Ticket Item Id:',
-    'title': 'Title:',
-    'active': 'Display Item to Users?:',
+    'live': 'Display Item to Users?:',
     'cost': 'Ticket Price:',
     'bpt_event': 'Event in BPT',
+    'is_minimum': 'Act as minimum donation',
+    'has_coupon': 'Coupon Required',
+}
+ticket_item_help_text = {
+    'ticket_id': 'If using BPT, this must match the BPT configuration to sync. \
+    if using PayPal, this is used for tracking only.',
+    'live': 'Will be shown on this site, if it is within the start/end time',
+    'bpt_event': 'Ticket collection - all tickets within this event count the \
+    same.',
+    'is_minimum': 'A donation supercedes any other ticket.  The lowest cost \
+    among all tickets is the minimum.',
+    'has_coupon': 'Coupon Required, only works with BPT, not available with \
+    PayPal.  Anything with a cooupon is not shown in this site.',
+    'start_time': 'When the event becomes available & is shown on site',
+    'end_time': 'When the event is no longer available & is not shown on site',
+    'add_on': 'Does not consitute a qualifying purchase for what the event \
+    gives the user, it is an additional feature after a main purchase',
 }
 link_event_labels = {
     'bpt_events': "Choose from existing tickets",
@@ -799,10 +815,13 @@ bpt_event_labels = {
     'include_conference': 'Includes the Conference?:',
     'include_most': 'Whole Shebang?:',
     'badgeable': 'Print a Badge?:',
-    'ticket_style': 'Other Ticket Notes:'
+    'ticket_style': 'Other Ticket Notes:',
+    'bpt_event_id': '(BPT) Event Id',
 }
 
 bpt_event_help_text = {
+    'bpt_event_id': 'Must match the event if using BPT.  If using PayPal, \
+    this value is irrelevant, but required.',
     'act_submission_event': 'Used to submit Act Applications',
     'vendor_submission_event': 'Used to submit Vendor Applications',
     'linked_events': ('Conference Items and Volunteer Opportunties are not in '

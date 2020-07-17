@@ -53,7 +53,6 @@ class TestSummerAct(TestCase):
             form_dict['draft'] = True
         else:
             form_dict['submit'] = True
-        print('submit is %s' % submit)
         return form_dict
 
     def post_paid_act_submission(self, act_form=None):

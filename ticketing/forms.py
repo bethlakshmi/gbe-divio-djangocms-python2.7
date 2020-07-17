@@ -4,9 +4,13 @@
 # edited by bb 7/27/2015
 #
 
-from ticketing.models import *
+from ticketing.models import (
+    BrownPaperEvents,
+    TicketItem,
+)
+from gbe.functions import get_ticketable_gbe_events
 from django import forms
-from gbe.models import Show, GenericEvent, Event
+from gbe.models import Conference
 from gbe_forms_text import (
     bpt_event_help_text,
     bpt_event_labels,
@@ -14,9 +18,9 @@ from gbe_forms_text import (
     donation_labels,
     link_event_help_text,
     link_event_labels,
-    ticket_item_labels
+    ticket_item_labels,
+    ticket_item_help_text,
 )
-from django.db.models import Q
 from django.forms.widgets import CheckboxSelectMultiple
 
 
@@ -29,8 +33,16 @@ class TicketItemForm(forms.ModelForm):
     error_css_class = 'error'
 
     bpt_event = forms.ModelChoiceField(
-                            queryset=BrownPaperEvents.objects.all(),
-                            empty_label=None)
+        queryset=BrownPaperEvents.objects.exclude(
+            conference__status='completed'),
+        empty_label=None,
+        label=ticket_item_labels['bpt_event'])
+    start_time = forms.CharField(
+        help_text=ticket_item_help_text['start_time'],
+        widget=forms.TextInput(attrs={'placeholder':'MM/DD/YYYY'}))
+    end_time = forms.CharField(
+        help_text=ticket_item_help_text['end_time'],
+        widget=forms.TextInput(attrs={'placeholder':'MM/DD/YYYY'}))
 
     class Meta:
         model = TicketItem
@@ -40,8 +52,13 @@ class TicketItemForm(forms.ModelForm):
                   'bpt_event',
                   'has_coupon',
                   'live',
+                  'start_time',
+                  'end_time',
+                  'is_minimum',
+                  'add_on'
                   ]
         labels = ticket_item_labels
+        help_texts = ticket_item_help_text
 
     def save(self, user, commit=True):
         form = super(TicketItemForm, self).save(commit=False)
@@ -105,32 +122,30 @@ class BPTEventForm(forms.ModelForm):
     '''
     required_css_class = 'required'
     error_css_class = 'error'
-    shows = Show.objects.all()
-    genericevents = GenericEvent.objects.exclude(type="Volunteer")
-    event_set = Event.objects.filter(
-        Q(show__in=shows) |
-        Q(genericevent__in=genericevents)).exclude(
-            e_conference__status="completed")
     linked_events = forms.ModelMultipleChoiceField(
-        queryset=event_set,
+        queryset=get_ticketable_gbe_events().order_by('e_title'),
         required=False,
         label=bpt_event_labels['linked_events'])
+    conference = forms.ModelChoiceField(
+        queryset=Conference.objects.exclude(
+            status='completed'),
+        empty_label=None)
 
     class Meta:
         model = BrownPaperEvents
         fields = [
+            'conference',
+            'bpt_event_id',
             'title',
             'description',
             'display_icon',
-            'primary',
             'act_submission_event',
             'vendor_submission_event',
             'linked_events',
             'include_conference',
             'include_most',
             'badgeable',
-            'ticket_style',
-            'conference']
+            'ticket_style']
         labels = bpt_event_labels
         help_texts = bpt_event_help_text
 

@@ -11,10 +11,10 @@ from tests.factories.scheduler_factories import (
     EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
-    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
 )
+from scheduler.models import Ordering
 
 
 class ActTechInfoContext():
@@ -88,8 +88,6 @@ class ActTechInfoContext():
     def order_act(self, act, order):
         alloc = self.sched_event.resources_allocated.filter(
             resource__actresource___item=act).first()
-        try:
-            alloc.ordering = order
-            alloc.ordering.save()
-        except:
-            OrderingFactory(allocation=alloc, order=order)
+        ordering, created = Ordering.objects.get_or_create(allocation=alloc)
+        ordering.order = order
+        ordering.save()
