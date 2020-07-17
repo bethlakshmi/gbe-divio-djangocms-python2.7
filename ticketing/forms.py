@@ -37,11 +37,13 @@ class TicketItemForm(forms.ModelForm):
             conference__status='completed'),
         empty_label=None,
         label=ticket_item_labels['bpt_event'])
-    start_time = forms.CharField(
+    start_time = forms.DateField(
         help_text=ticket_item_help_text['start_time'],
+        required=False,
         widget=forms.TextInput(attrs={'placeholder':'MM/DD/YYYY'}))
-    end_time = forms.CharField(
+    end_time = forms.DateField(
         help_text=ticket_item_help_text['end_time'],
+        required=False,
         widget=forms.TextInput(attrs={'placeholder':'MM/DD/YYYY'}))
 
     class Meta:

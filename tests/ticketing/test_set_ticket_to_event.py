@@ -8,7 +8,7 @@ from tests.factories.ticketing_factories import (
     BrownPaperEventsFactory,
     TransactionFactory,
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from ticketing.models import BrownPaperEvents
 from tests.functions.gbe_functions import (
     grant_privilege,

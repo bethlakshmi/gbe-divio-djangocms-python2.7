@@ -45,7 +45,6 @@ class TestEditEmail(TestCase):
         os.environ['RECAPTCHA_DISABLE'] = 'True'
 
     def test_update_email_no_token(self):
-        print(self.url)
         response = self.client.get(self.url)
         self.assertContains(response, bad_token_msg)
         self.assertContains(response, send_link_message)
