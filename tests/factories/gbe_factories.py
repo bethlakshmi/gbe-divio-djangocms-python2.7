@@ -12,7 +12,6 @@ from factory.django import ImageField
 import gbe.models as conf
 from django.contrib.auth.models import User
 import scheduler.models as sched
-from django.utils.text import slugify
 from datetime import (
     date,
     time,

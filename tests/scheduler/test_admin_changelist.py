@@ -85,7 +85,6 @@ class SchedulerChangeListTests(TestCase):
         self.assertContains(response, "Act")
         self.assertContains(response, "Show")
 
-
     def test_get_allocation_no_actresource_child(self):
         allocation = ResourceAllocationFactory(
             resource=ActResourceFactory())

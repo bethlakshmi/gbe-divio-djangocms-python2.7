@@ -320,10 +320,7 @@ class Worker(Resource):
         return self.role
 
     def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Worker Item"
+        return self.item.describe
 
 
 class EventItem (models.Model):
