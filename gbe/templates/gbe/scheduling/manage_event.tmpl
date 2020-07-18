@@ -68,6 +68,7 @@
   <div class="col-12">
     Toggle column(s):
       <a class="toggle-vis" id="gbe-table-select" data-column="0">Title</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="0">Parent</a> - 
       <a class="toggle-vis" id="gbe-table-select" data-column="1">Location</a> - 
       <a class="toggle-vis" id="gbe-table-select" data-column="2">Date/Time</a> - 
       <a class="toggle-vis" id="gbe-table-select" data-column="3">Duration</a> - 
@@ -78,24 +79,28 @@
     <thead>
       <tr class="bid-table">
         <th class="bid-table">Title</th>
+        <th class="bid-table">Parent</th>
+        <th class="bid-table">Area</th>
         <th class="bid-table">Location</th>
         <th class="bid-table">Date/Time</th>
         <th class="bid-table">Duration</th>
         <th class="bid-table">Type</th>
-        <th class="bid-table">Current Volunteer</th>
-        <th class="bid-table">Max Volunteer</th>
+        <th class="bid-table">Current #</th>
+        <th class="bid-table">Max #</th>
         <th class="bid-table">Action</th>
       </tr>
     </thead>
     <tfoot>
       <tr class="bid-table">
         <th class="bid-table">Title</th>
+        <th class="bid-table">Parent</th>
+        <th class="bid-table">Area</th>
         <th class="bid-table">Location</th>
         <th class="bid-table">Date/Time</th>
         <th class="bid-table">Duration</th>
         <th class="bid-table">Type</th>
-        <th class="bid-table">Current Volunteer</th>
-        <th class="bid-table">Max Volunteer</th>
+        <th class="bid-table">Current #</th>
+        <th class="bid-table">Max #</th>
         <th class="bid-table">Action</th>
       </tr>
     </tfoot>
@@ -103,6 +108,9 @@
     {% for occurrence in occurrences %}
       <tr class="bid-table {% if occurrence.id in success_occurrences %}success{% endif %}">
        <td class="bid-table">{{ occurrence.title}}</td>
+       <td class="bid-table"><a href="{{occurrence.parent_link}}" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a></td>
+       <td class="bid-table">{% for area in occurrence.staff_areas %}
+        <a href="{% url "scheduling:edit_staff" area.pk %}" data-toggle="tooltip" title="Edit">{{area.slug}}</a>{% endfor %}</a></td>
        <td class="bid-table">{{ occurrence.location}}</td>
        <td class="bid-table">{{ occurrence.start}}</td>
        <td class="bid-table">{{ occurrence.duration }}</td>
