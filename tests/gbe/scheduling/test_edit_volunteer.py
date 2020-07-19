@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
     GenericEventFactory,
@@ -14,18 +14,16 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_good_sched_event_form_wizard,
-)
 from settings import GBE_DATE_FORMAT
 from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
 )
 from datetime import timedelta
+from tests.gbe.test_gbe import TestGBE
 
 
-class TestEditVolunteer(TestCase):
+class TestEditVolunteer(TestGBE):
     view_name = 'edit_volunteer'
 
     def setUp(self):
@@ -103,18 +101,21 @@ class TestEditVolunteer(TestCase):
         self.assertContains(
             response,
             '<option value="" selected>---------</option>')
-        self.assertContains(
+        self.assert_hidden_value(
             response,
-            'type="hidden" name="alloc_id" value="-1" id="id_alloc_id" />')
+            "id_alloc_id",
+            "alloc_id",
+            -1)
 
     def test_vol_is_booked(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, follow=True)
-        self.assertContains(
+        self.assert_hidden_value(
             response,
-            'type="hidden" name="alloc_id" value="%d" id="id_alloc_id" />' % (
-                self.context.allocation.pk))
+            "id_alloc_id",
+            "alloc_id",
+            self.context.allocation.pk)
         assert_option_state(
             response,
             self.context.profile.pk,
@@ -200,15 +201,19 @@ class TestEditVolunteer(TestCase):
             True)
         self.assertContains(
             response,
-            'name="max_volunteer" value="3" required id="id_max_volunteer" />')
+            '<input type="number" name="max_volunteer" value="3" ' +
+            'required id="id_max_volunteer" />',
+            html=True)
         self.assertContains(
             response,
-            'name="duration" value="2.5" min="0.5" max="12" step="any" ' +
-            'required id="id_duration" />')
+            '<input type="number" name="duration" value="2.5" min="0.5" ' +
+            'max="12" step="any" required id="id_duration" />',
+            html=True)
         self.assertContains(
             response,
             '<input type="checkbox" name="approval" ' +
-            'id="id_approval" checked />')
+            'id="id_approval" checked />',
+            html=True)
 
     def test_auth_user_bad_schedule_assign(self):
         login_as(self.privileged_user, self)
@@ -257,7 +262,8 @@ class TestEditVolunteer(TestCase):
         self.assertContains(
             response,
             '<input type="checkbox" name="approval" ' +
-            'id="id_approval" checked />')
+            'id="id_approval" checked />',
+            html=True)
         self.assertContains
 
     def test_inactive_user_not_listed(self):

@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbe.forms import ContactForm
 from gbe.email.functions import send_user_contact_email
 from gbe_logging import log_func

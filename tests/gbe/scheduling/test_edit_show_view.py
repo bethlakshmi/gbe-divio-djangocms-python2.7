@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
@@ -101,7 +101,8 @@ class TestEditShowWizard(TestCase):
         self.assertContains(
             response,
             '<input type="number" name="current_acts" value="1" ' +
-            'readonly="readonly" id="id_current_acts" />')
+            'readonly="readonly" id="id_current_acts" />',
+            html=True)
 
     def test_good_user_get_empty_room_rehearsal(self):
         not_this_room = RoomFactory()
@@ -165,7 +166,8 @@ class TestEditShowWizard(TestCase):
 
         self.assertContains(
             response,
-            self.title_field % "New Rehearsal Slot")
+            self.title_field % "New Rehearsal Slot",
+            html=True)
 
     def test_create_slot_error(self):
         login_as(self.privileged_profile, self)
@@ -206,7 +208,8 @@ class TestEditShowWizard(TestCase):
             self.assertContains(
                 response,
                 self.title_field % (
-                    slot.child_event.eventitem.child().e_title))
+                    slot.child_event.eventitem.child().e_title),
+                html=True)
             self.assertRedirects(
                 response,
                 "%s?changed_id=%d&rehearsal_open=True" % (
@@ -238,7 +241,8 @@ class TestEditShowWizard(TestCase):
         self.assertTrue(len(slots), 1)
         self.assertContains(
             response,
-            self.title_field % "Modify Rehearsal Slot")
+            self.title_field % "Modify Rehearsal Slot",
+            html=True)
         self.assertContains(response, self.room.name)
 
     def test_edit_error(self):
@@ -255,7 +259,8 @@ class TestEditShowWizard(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            self.title_field % "Modify Rehearsal Slot")
+            self.title_field % "Modify Rehearsal Slot",
+            html=True)
         self.assertContains(
             response,
             '<ul class="errorlist"><li>This field is required.</li></ul>')

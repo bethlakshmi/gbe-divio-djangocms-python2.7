@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     Model,
     ForeignKey,
     IntegerField,
@@ -16,10 +17,10 @@ class BidEvaluation(Model):
     '''
     A response to a bid, cast by a privileged GBE staff member
     '''
-    evaluator = ForeignKey(Profile)
+    evaluator = ForeignKey(Profile, on_delete=CASCADE)
     vote = IntegerField(choices=vote_options)
     notes = TextField(blank=True)
-    bid = ForeignKey(Biddable)
+    bid = ForeignKey(Biddable, on_delete=CASCADE)
 
     class Meta:
         app_label = "gbe"

@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.test import Client
 from tests.factories.gbe_factories import ProfileFactory
@@ -97,7 +97,8 @@ class TestMailToPerson(TestCase):
             response,
             '<input type="email" name="sender" ' +
             'value="%s" id="id_sender" />' % (
-                self.privileged_profile.user_object.email))
+                self.privileged_profile.user_object.email),
+            html=True)
 
     def test_pick_no_admin_fixed_email(self):
         reduced_profile = self.reduced_login()
@@ -106,7 +107,8 @@ class TestMailToPerson(TestCase):
             response,
             '<input type="hidden" name="sender" ' +
             'value="%s" id="id_sender" />' % (
-                reduced_profile.user_object.email))
+                reduced_profile.user_object.email),
+            html=True)
 
     def test_send_email_success_status(self):
         login_as(self.privileged_profile, self)

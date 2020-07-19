@@ -19,7 +19,7 @@ from datetime import (
 from gbe.email.views import schedule_email
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class TestScheduleEmail(TestCase):

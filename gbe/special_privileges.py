@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 special_menu_tree = [
     {'title': 'Contact',

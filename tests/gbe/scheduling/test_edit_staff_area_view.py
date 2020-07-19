@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Max
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
@@ -19,11 +19,6 @@ from tests.functions.gbe_functions import (
     assert_option_state,
     grant_privilege,
     login_as,
-)
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-    assert_role_choice,
 )
 from settings import GBE_DATE_FORMAT
 from tests.contexts import (

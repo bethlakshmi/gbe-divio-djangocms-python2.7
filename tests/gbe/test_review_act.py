@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
@@ -98,8 +98,8 @@ class TestReviewAct(TestCase):
             self.eval_cat.pk,
             self.act.pk,
             self.eval_cat.pk)
-        self.assertContains(response, bid_id_input)
-        self.assertContains(response, evaluator_input)
+        self.assertContains(response, bid_id_input, html=True)
+        self.assertContains(response, evaluator_input, html=True)
 
     def test_review_act_old_act(self):
         conference = ConferenceFactory(status="completed",
@@ -186,7 +186,7 @@ class TestReviewAct(TestCase):
                                      evaluation.ranking,
                                      evaluation.category.pk,
                                      evaluation.ranking+1)
-        self.assertContains(response, test_result)
+        self.assertContains(response, test_result, html=True)
         self.assertContains(response, evaluation.category.category)
         self.assertContains(response, evaluation.category.help_text)
 
@@ -220,9 +220,11 @@ class TestReviewAct(TestCase):
         response = self.client.get(url)
         reviewer_string = '<th class="rotate"><div><span>%s</span></div></th>'
         self.assertContains(response,
-                            reviewer_string % str(evaluation1.evaluator))
+                            reviewer_string % str(evaluation1.evaluator),
+                            html=True)
         self.assertContains(response,
-                            reviewer_string % str(evaluation2.evaluator))
+                            reviewer_string % str(evaluation2.evaluator),
+                            html=True)
         self.assertContains(response, evaluation1.category.category, 4)
         self.assertContains(response, evaluation2.category.category, 4)
         self.assertContains(response, "<td>2</td>", 1)

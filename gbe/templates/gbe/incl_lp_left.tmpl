@@ -1,7 +1,7 @@
 {% load cms_tags %}
 <p>
 {% if admin_message %}
-    <font color=red>{{admin_message}}</font></br></br>
+    <font color=red>{{admin_message}}</font><br><br>
 {% elif user.is_authenticated %}
 {% static_placeholder 'user_welcome_auth' %}
 {% else %}

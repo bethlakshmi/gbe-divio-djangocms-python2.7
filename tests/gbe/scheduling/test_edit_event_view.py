@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
     GenericEventFactory,
@@ -18,20 +18,16 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-    assert_role_choice,
-)
 from settings import GBE_DATE_FORMAT
 from tests.contexts import (
     ShowContext,
     VolunteerContext,
 )
 from datetime import timedelta
+from tests.gbe.scheduling.test_scheduling import TestScheduling
 
 
-class TestEditEventView(TestCase):
+class TestEditEventView(TestScheduling):
     '''This view edits classes that were made through the wizard'''
     view_name = 'edit_event'
 
@@ -81,7 +77,7 @@ class TestEditEventView(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_role_choice(response, "Staff Lead")
+        self.assert_role_choice(response, "Staff Lead")
         self.assertNotContains(response, "Volunteer Management")
         self.assertContains(response, "Finish")
         self.assertContains(response, self.context.event.e_title)

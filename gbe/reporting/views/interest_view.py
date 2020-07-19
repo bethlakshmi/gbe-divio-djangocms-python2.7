@@ -6,7 +6,7 @@ from gbe.functions import (
     get_conference_by_slug,
     validate_perms,
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from scheduler.idd import get_occurrences
 from gbe.models import (
     Class,

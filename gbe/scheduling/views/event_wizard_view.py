@@ -8,7 +8,7 @@ from django.shortcuts import (
     render,
 )
 from gbe.functions import validate_perms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from scheduler.data_transfer import Person
 from scheduler.idd import create_occurrence
 from gbe.scheduling.forms import (

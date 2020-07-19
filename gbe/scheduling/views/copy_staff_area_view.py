@@ -17,7 +17,7 @@ from django.utils.text import slugify
 from django.contrib import messages
 from gbe.models import UserMessage
 from gbetext import no_conf_day_msg
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class CopyStaffAreaView(CopyCollectionsView):

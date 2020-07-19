@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ActFactory,
     ProfileFactory,
@@ -44,5 +44,5 @@ class TestSubmitAct(TestCase):
 
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
-        error_string = "Error: You don&#39;t own that act."
+        error_string = "Error: You don&#x27;t own that act."
         self.assertContains(response, error_string)

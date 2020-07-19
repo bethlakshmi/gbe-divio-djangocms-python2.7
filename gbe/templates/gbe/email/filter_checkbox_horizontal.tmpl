@@ -5,10 +5,9 @@
           {% elif field.css_classes == 'required'%}
             <font color="red">*</font>
           {% endif %}
-          {{ field.label }}:&nbsp;&nbsp;</label>
-          {% if field.errors %}
-            </font>
-          {% endif %}
+          {{ field.label }}:&nbsp;&nbsp;
+          {% if field.errors %}</font>{% endif %}
+        </label>
       </div>
       <div class="form-group col-md-9 col-12">
       {% for checkbox in field %}

@@ -1,6 +1,6 @@
 {% extends 'base.tmpl' %}
 {% load gbe_tags %}
-{% load staticfiles sekizai_tags %}
+{% load static sekizai_tags %}
 
 {% block title %}
    Act Tech Report
@@ -27,7 +27,7 @@
   {% endfor %}
   
   {% if scheduling_link and scheduling_link|length > 0 %}
-    </br></br>
+    <br><br>
     <a href="{{scheduling_link}}">Schedule Acts for this Show</a>
   {% endif %}
 <br><br>

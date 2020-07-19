@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from gbe_logging import log_func
 from gbe.forms import PersonaForm

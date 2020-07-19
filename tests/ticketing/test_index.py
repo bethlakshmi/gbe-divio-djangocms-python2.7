@@ -11,7 +11,7 @@ from ticketing.views import (
 from tests.factories.gbe_factories import (
     UserFactory
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.functions.gbe_functions import login_as
 from django.contrib.auth.models import User
 

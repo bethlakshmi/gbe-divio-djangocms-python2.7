@@ -2,7 +2,7 @@ from django.test import (
     TestCase,
     Client
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     EmailTemplateSenderFactory,
     ProfileFactory,
@@ -96,11 +96,13 @@ class TestManageWorker(TestCase):
         self.assertContains(
             response,
             '<input type="hidden" name="alloc_id" value="' +
-            str(alloc.pk) + '" id="id_alloc_id" />')
+            str(alloc.pk) + '" id="id_alloc_id" />',
+            html=True)
         self.assertContains(
             response,
             '<input type="text" name="label" value="' + notes +
-            '" maxlength="100" id="id_label" />')
+            '" maxlength="100" id="id_label" />',
+            html=True)
         self.assertContains(
             response,
             '<form method="POST" action="%s' % (reverse(

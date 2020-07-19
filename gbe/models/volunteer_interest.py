@@ -7,8 +7,8 @@ from gbe_forms_text import rank_interest_options
 
 
 class VolunteerInterest(models.Model):
-    interest = models.ForeignKey(AvailableInterest)
-    volunteer = models.ForeignKey(Volunteer)
+    interest = models.ForeignKey(AvailableInterest, on_delete=models.CASCADE)
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)
     rank = models.IntegerField(choices=rank_interest_options,
                                blank=True)
 

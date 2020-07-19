@@ -1,5 +1,5 @@
 from django.views.decorators.cache import never_cache
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import (
     render,
     get_object_or_404,

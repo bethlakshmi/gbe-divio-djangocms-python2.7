@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     Model,
     OneToOneField,
     CharField,
@@ -15,6 +16,7 @@ class ProfilePreferences(Model):
     Expo and with the site.
     '''
     profile = OneToOneField(Profile,
+                            on_delete=CASCADE,
                             related_name='preferences')
     in_hotel = CharField(max_length=10,
                          blank=True,

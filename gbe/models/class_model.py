@@ -1,6 +1,7 @@
 import pytz
 from itertools import chain
 from django.db.models import (
+    CASCADE,
     CharField,
     ForeignKey,
     IntegerField,
@@ -34,6 +35,7 @@ class Class(Biddable, Event):
     spectate/participate.
     '''
     teacher = ForeignKey(Persona,
+                         on_delete=CASCADE,
                          related_name='is_teaching')
     minimum_enrollment = IntegerField(blank=True, default=1)
     maximum_enrollment = IntegerField(blank=True, default=20, null=True)

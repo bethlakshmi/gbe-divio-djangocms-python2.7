@@ -1,4 +1,4 @@
-  {% load staticfiles %}
+  {% load static %}
     
     {# Include the hidden fields #}
     {% for hidden in form.hidden_fields %}
@@ -61,7 +61,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="sched_side col-md-5 col-sm-6 col-12 float-right">
 	  <h3>Booking Information</h3>
 	  {% for label, details in scheduling_info.display_info %}
-	    <label class="sched_detail">{{label}}:</label></br>{{ details }}</br></br>
+	    <label class="sched_detail">{{label}}:</label><br>{{ details }}<br><br>
 	  {% endfor %}
 	  <br>
 	  <a href="{{ scheduling_info.reference }}">More information</a>
@@ -82,7 +82,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-2 col-md-4 col-sm-3 col-xs-7 event-booking-cell">
 	{{ scheduling_form.day }}
         {% if scheduling_form.day.errors %}
- 	<br/><label>
+ 	<br><label>
 	  <font color="red">{{ scheduling_form.day.errors }}</font>
         </label>{% endif %}
       </div>
@@ -101,7 +101,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-2 col-md-4 col-sm-3 col-xs-7 event-booking-cell">
 	{{ scheduling_form.time }}
         {% if scheduling_form.time.errors %}
- 	<br/><label>
+ 	<br><label>
 	  <font color="red">{{ scheduling_form.time.errors }}</font>
         </label>{% endif %}
       </div>
@@ -120,7 +120,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-2 col-md-2 col-sm-7 col-xs-7 event-booking-cell">
 	{{ scheduling_form.duration }}
         {% if scheduling_form.duration.errors %}
- 	<br/><label>
+ 	<br><label>
 	  <font color="red">{{ scheduling_form.duration.errors }}</font>
         </label>{% endif %}
       </div>
@@ -177,7 +177,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-3 col-md-3 col-sm-7 col-xs-7 event-booking-cell">
 	{{ scheduling_form.location }}
         {% if scheduling_form.location.errors %}
- 	<br/><label>
+ 	<br><label>
 	  <font color="red">{{ scheduling_form.location.errors }}</font>
         </label>{% endif %}
       </div>
@@ -230,7 +230,7 @@ Changing fields in this section will change them in all calendar items.
         </label>
 	{{ tickets.bpt_events }}
         {% if tickets.bpt_events.errors %}
- 	<br/><label>
+ 	<br><label>
 	  <font color="red">{{ tickets.bpt_events.errors }}</font>
         </label>{% endif %}
       </div>
@@ -245,7 +245,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-md-3 col-sm-9 col-12 event-booking-cell">
 	{{ tickets.bpt_event_id }}
         {% if tickets.bpt_event_id.errors %}
- 	<br/><label>
+ 	<br><label>
 	  <font color="red">{{ tickets.bpt_event_id.errors }}</font>
         </label>{% endif %}
       </div>
@@ -266,7 +266,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-md-3 col-sm-9 col-12 event-booking-cell">
 	{{ tickets.display_icon }}
         {% if tickets.display_icon.errors %}
- 	<br/><label>
+ 	<br><label>
 	  <font color="red">{{ tickets.display_icon.errors }}</font>
         </label>{% endif %}
       </div>

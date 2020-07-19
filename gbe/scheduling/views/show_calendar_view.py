@@ -4,7 +4,7 @@ from django.shortcuts import (
     render,
 )
 from django.http import Http404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbetext import calendar_type as calendar_type_options
 from gbetext import role_options
 from django.utils.formats import date_format

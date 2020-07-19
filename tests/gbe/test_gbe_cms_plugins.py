@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from cms.api import add_plugin
 from cms.models import Placeholder

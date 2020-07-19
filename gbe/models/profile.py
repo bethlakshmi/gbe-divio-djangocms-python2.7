@@ -2,9 +2,10 @@ from django.template import (
     loader,
     Context,
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django.db.models import (
+    CASCADE,
     CharField,
     OneToOneField,
     TextField,
@@ -35,7 +36,7 @@ class Profile(WorkerItem):
     the information gathered up in the User object. (which we'll
     expose with properties, I suppose)
     '''
-    user_object = OneToOneField(User)
+    user_object = OneToOneField(User, on_delete=CASCADE)
     display_name = CharField(max_length=128, blank=True)
 
     # used for linking tickets
@@ -48,7 +49,7 @@ class Profile(WorkerItem):
     address1 = CharField(max_length=128, blank=True)
     address2 = CharField(max_length=128, blank=True)
     city = CharField(max_length=128, blank=True)
-    state = CharField(max_length=2,
+    state = CharField(max_length=5,
                       choices=states_options,
                       blank=True)
     zip_code = CharField(max_length=10, blank=True)  # allow for ext ZIP
@@ -235,9 +236,9 @@ class Profile(WorkerItem):
         for performer in performers:
             acts += performer.acts.all()
         if show_historical:
-            f = lambda a: not a.is_current
+            def f(a): return not a.is_current
         else:
-            f = lambda a: a.is_current
+            def f(a): return a.is_current
         return list(filter(f, acts))
 
     def get_shows(self):
@@ -312,18 +313,18 @@ class Profile(WorkerItem):
         from gbe.models import Vendor  # late import, circularity
         vendors = Vendor.objects.filter(profile=self)
         if historical:
-            f = lambda v: not v.is_current
+            def f(v): return not v.is_current
         else:
-            f = lambda v: v.is_current
+            def f(v): return v.is_current
         return list(filter(f, vendors))
 
     def proposed_classes(self, historical=False):
         classes = sum([list(teacher.is_teaching.all())
                        for teacher in self.personae.all()], [])
         if historical:
-            f = lambda c: not c.is_current
+            def f(c): return not c.is_current
         else:
-            f = lambda c: c.is_current
+            def f(c): return c.is_current
         classes = list(filter(f, classes))
         return classes
 

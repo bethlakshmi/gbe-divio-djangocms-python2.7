@@ -1,6 +1,6 @@
 import nose.tools as nt
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.client import RequestFactory
 from django.test import Client
 from tests.factories.gbe_factories import (

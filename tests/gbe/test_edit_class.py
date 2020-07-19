@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ClassFactory,
     PersonaFactory,
@@ -136,21 +136,30 @@ class TestEditClass(TestCase):
         self.assertEqual(response.status_code, 200)
         constraint_selected = '<input type="checkbox" name="theclass-%s" ' + \
             'value="%d" id="id_theclass-%s_%d" checked />'
-        self.assertContains(response, constraint_selected % (
-            "schedule_constraints",
-            0,
-            "schedule_constraints",
-            0))
-        self.assertContains(response, constraint_selected % (
-            "avoided_constraints",
-            1,
-            "avoided_constraints",
-            1))
-        self.assertContains(response, constraint_selected % (
-            "avoided_constraints",
-            2,
-            "avoided_constraints",
-            2))
+        self.assertContains(
+            response,
+            constraint_selected % (
+                "schedule_constraints",
+                0,
+                "schedule_constraints",
+                0),
+            html=True)
+        self.assertContains(
+            response,
+            constraint_selected % (
+                "avoided_constraints",
+                1,
+                "avoided_constraints",
+                1),
+            html=True)
+        self.assertContains(
+            response,
+            constraint_selected % (
+                "avoided_constraints",
+                2,
+                "avoided_constraints",
+                2),
+            html=True)
 
     def test_edit_class_post_with_submit(self):
         response, data = self.post_class_edit_submit()

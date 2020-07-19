@@ -13,7 +13,7 @@
   <div class="col-md-9 col-sm-9 col-12 read-only-info">{{performer.name}}</div></div>
   <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Web Site:</div>
   <div class="col-md-9 col-sm-9 col-12 read-only-info">{% if performer.homepage %}
-   <a href="{{performer.homepage}}">Web Site{%else%}No Website{% endif %}</a></div></div>
+   <a href="{{performer.homepage}}">Web Site{%else%}No Website{% endif %}</div></div>
   <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Experience:</div>
   <div class="col-md-9 col-sm-9 col-12 read-only-info">{{performer.experience}}</div></div>
   <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Awards:</div>
@@ -34,9 +34,9 @@
    <a href="mailto:{{performer.contact.user_object.email}}">{{performer.contact.user_object.email}}</a></div>
   <div class="col-md-3 col-sm-4 col-12 read-only-label">Address:</div>
   <div class="col-md-9 col-sm-8 col-12 read-only-info">
-   {{performer.contact.address1}}</br>
-   {% if performer.contact.address2 %}{{performer.contact.address2}}</br>{% endif %}
-   {{performer.contact.city}}, {{performer.contact.state}} {{performer.contact.zip_code}}</br>
+   {{performer.contact.address1}}<br>
+   {% if performer.contact.address2 %}{{performer.contact.address2}}<br>{% endif %}
+   {{performer.contact.city}}, {{performer.contact.state}} {{performer.contact.zip_code}}<br>
    {{performer.contact.country}}
   </div>
   <div class="col-md-3 col-sm-4 col-12 read-only-label">Phone:</div>

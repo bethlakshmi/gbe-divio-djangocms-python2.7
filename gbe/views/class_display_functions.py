@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbe_forms_text import (
     classbid_labels,
     class_schedule_options,

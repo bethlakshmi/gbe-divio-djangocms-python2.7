@@ -25,7 +25,7 @@ from tests.factories.gbe_factories import (
 from mock import patch, Mock
 import urllib
 from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.functions.gbe_functions import login_as
 
 

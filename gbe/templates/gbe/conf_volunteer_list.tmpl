@@ -1,5 +1,5 @@
 {% extends 'base.tmpl' %}
-{% load staticfiles %}
+{% load static %}
 
 {% block title %}
    {{ page_title }}
@@ -71,7 +71,7 @@ personal connection you have to that particular panel.</P>
               {% endif %}
               {{ field }}
               {% if field.errors %}
-              </br>
+              <br>
               <font color="red">{{ field.errors }}</font>
               {% endif %}
           </td>
@@ -95,7 +95,7 @@ personal connection you have to that particular panel.</P>
     <br/>
     If you have an idea for a panel, please
     <a href='{% url 'gbe:class_propose' %}'>let us know</a>.
-  </br></br>
+  <br><br>
 
   {% endif %}
 
