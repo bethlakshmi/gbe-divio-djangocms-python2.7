@@ -3,7 +3,7 @@ from django.contrib.auth import (
     login,
 )
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 from gbe_logging import log_func
 from gbe.forms import UserCreateForm

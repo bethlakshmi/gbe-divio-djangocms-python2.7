@@ -1,4 +1,4 @@
-  {% load staticfiles %}
+  {% load static %}
 
     {% csrf_token %}
     
@@ -7,7 +7,7 @@
     {{ hidden }}
     {% endfor %}
   {% if form.form_title %}
-  </br>
+  <br>
   <span class="formtitle">{{ form.form_title }}</span>
   {% endif %}
   <font color="red">

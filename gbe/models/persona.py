@@ -1,4 +1,7 @@
-from django.db.models import ForeignKey
+from django.db.models import (
+    CASCADE,
+    ForeignKey,
+)
 from gbe.models import (
     Performer,
     Profile,
@@ -16,7 +19,9 @@ class Persona (Performer):
     have multiple Personae.
     performer_profile is the profile of the user who dons this persona.
     '''
-    performer_profile = ForeignKey(Profile, related_name="personae")
+    performer_profile = ForeignKey(Profile,
+                                   on_delete=CASCADE,
+                                   related_name="personae")
 
     '''
     Returns the single profile associated with this persona

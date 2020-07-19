@@ -1,8 +1,7 @@
-from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfilePreferencesFactory,
@@ -22,7 +21,6 @@ from tests.contexts import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    assert_hidden_value,
     assert_rank_choice_exists,
     clear_conferences,
     login_as,
@@ -36,9 +34,10 @@ from gbe_forms_text import volunteer_labels
 from gbe.models import UserMessage
 from settings import GBE_DATETIME_FORMAT
 from django.core import mail
+from tests.gbe.test_gbe import TestGBE
 
 
-class TestEditVolunteer(TestCase):
+class TestEditVolunteer(TestGBE):
     '''Tests for edit_volunteer view'''
     view_name = 'volunteer_edit'
 
@@ -62,6 +61,7 @@ class TestEditVolunteer(TestCase):
                 'availability': ('SH0',),
                 'background': 'this is the background',
                 'b_title': 'title',
+                'pre_event': False,
                 '%d-rank' % interest_pk: rank,
                 '%d-interest' % interest_pk: avail_pk,
                 'submit': True,
@@ -149,7 +149,7 @@ class TestEditVolunteer(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Volunteer at the Expo')
-        assert_hidden_value(
+        self.assert_hidden_value(
             response,
             "id_b_title",
             "b_title",

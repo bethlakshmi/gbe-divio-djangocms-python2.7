@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 from django.test import Client
 from django.test.client import RequestFactory
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import(
     ActFactory,
     ClassFactory,
@@ -411,8 +411,8 @@ class TestIndex(TestCase):
         for person in interested:
             self.assertNotContains(
                 response,
-                "%s &lt;%s&gt;;</br>" % (person.display_name,
-                                         person.user_object.email))
+                "%s &lt;%s&gt;;<br>" % (person.display_name,
+                                        person.user_object.email))
         self.assertNotContains(response,
                                interested_explain_msg)
 

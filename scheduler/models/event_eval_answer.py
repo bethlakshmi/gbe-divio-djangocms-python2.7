@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     Model,
     ForeignKey,
 )
@@ -10,9 +11,9 @@ from scheduler.models import (
 
 
 class EventEvalAnswer(Model):
-    question = ForeignKey(EventEvalQuestion)
-    profile = ForeignKey(WorkerItem)
-    event = ForeignKey(Event)
+    question = ForeignKey(EventEvalQuestion, on_delete=CASCADE)
+    profile = ForeignKey(WorkerItem, on_delete=CASCADE)
+    event = ForeignKey(Event, on_delete=CASCADE)
 
     class Meta:
         app_label = "scheduler"

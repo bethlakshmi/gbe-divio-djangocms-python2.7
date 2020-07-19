@@ -12,7 +12,7 @@ from tests.contexts import ClassContext
 from gbe.models import (
     Conference
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from scheduler.models import Event as sEvent
 from datetime import datetime, date, time
 import pytz

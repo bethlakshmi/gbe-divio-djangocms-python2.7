@@ -1,5 +1,5 @@
 {% extends "base.tmpl" %}
-{% load staticfiles sekizai_tags %}
+{% load static sekizai_tags %}
 {% block title %}
   Manage Expo Schedule
 {% endblock %}
@@ -57,7 +57,7 @@
    </div></div>
    <div class="form-row">
    <div class="form-group col-12" id="filter-button"><br>
-      <input type="submit" class="btn btn-primary" name="filter" value="Filter"></form>
+      <input type="submit" class="btn btn-primary" name="filter" value="Filter">
    {% if conference.status != "completed" %}
       <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-primary">Create</a>
    {% endif %}</div></div>
@@ -129,6 +129,7 @@
 {% endif %}
  </div>
 </div>
+</form>
 {% addtoblock "js" %}
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script>

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
     ProfilePreferencesFactory,
@@ -76,7 +76,8 @@ class TestEditEmail(TestCase):
             response,
             '<input type="checkbox" ' +
             'name="send_schedule_change_notifications"' +
-            ' id="id_send_schedule_change_notifications" />')
+            ' id="id_send_schedule_change_notifications" />',
+            html=True)
         self.assertContains(
             response, "shadow-red")
 
@@ -89,6 +90,9 @@ class TestEditEmail(TestCase):
         self.assertNotContains(response, "Email:")
 
     def test_update_email_post_valid_user_email(self):
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            )
         response = self.client.post(
             self.url,
             data={'email': self.profile.user_object.email},
@@ -104,6 +108,9 @@ class TestEditEmail(TestCase):
         self.assertEqual(queued_email.count(), 1)
 
     def test_update_email_post_invalid_user_email(self):
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            )
         response = self.client.post(
             self.url,
             data={'email': self.profile.user_object.email + "invalid"},
@@ -119,6 +126,9 @@ class TestEditEmail(TestCase):
         self.assertEqual(queued_email.count(), 0)
 
     def test_update_email_post_inactive_profile_email(self):
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            )
         self.profile.user_object.is_active = False
         self.profile.user_object.save()
         response = self.client.post(

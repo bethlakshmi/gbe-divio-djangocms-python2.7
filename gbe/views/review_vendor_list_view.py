@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbe.models import Vendor
 from gbe.views import ReviewBidListView
 

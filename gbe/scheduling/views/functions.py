@@ -12,7 +12,7 @@ from gbe.functions import (
 from django.shortcuts import (
     get_object_or_404,
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbe.scheduling.forms import (
     EventBookingForm,
     ScheduleOccurrenceForm,

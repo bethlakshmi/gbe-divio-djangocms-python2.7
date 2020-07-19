@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     CharField,
     Model,
     ForeignKey,
@@ -16,12 +17,12 @@ from gbe.models import (
 
 
 class FlexibleEvaluation(Model):
-    evaluator = ForeignKey(Profile)
-    bid = ForeignKey(Biddable)
+    evaluator = ForeignKey(Profile, on_delete=CASCADE)
+    bid = ForeignKey(Biddable, on_delete=CASCADE)
     ranking = IntegerField(validators=[MinValueValidator(-1),
                                        MaxValueValidator(5)],
                            blank=True)
-    category = ForeignKey(EvaluationCategory)
+    category = ForeignKey(EvaluationCategory, on_delete=CASCADE)
 
     class Meta:
         app_label = "gbe"

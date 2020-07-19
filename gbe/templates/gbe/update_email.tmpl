@@ -1,5 +1,5 @@
 {% extends 'base.tmpl' %}
-{% load staticfiles %}
+{% load static %}
 {% load recaptcha2 %}
 {% block title %}{{ title }}{% endblock %}
 {% block head %}
@@ -35,7 +35,7 @@
           <span style="width:200px;float:right;text-align:left;">
           {{ field.help_text }}
           </span></span>{% endif %}
-      {% if field.errors %}</br>
+      {% if field.errors %}<br>
       <font color="red">{{ field.errors }}</font>{% endif %}</div>
   </div>
   {% endfor %}

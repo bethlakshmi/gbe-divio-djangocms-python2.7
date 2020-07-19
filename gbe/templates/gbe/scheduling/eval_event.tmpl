@@ -1,5 +1,5 @@
 {% extends "base.tmpl" %}
-{% load staticfiles %}
+{% load static %}
 {% load thumbnail %}
 
 {% block title %}
@@ -10,74 +10,64 @@
     <H1 class="sched_detail_title">{{event.e_title}}</H1>
     <div class="sched_block font_regular">
       <div class="sched_desc">
-	{{event.e_description |safe}}
-	</br></br>
+  {{event.e_description |safe}}<br><br>
       </div>
       <div class="sched_times container">
-	<div class="col-12 sched-sub-box">
-	  <div class="col-11 ">
-  	    <label class="sched_detail">Time:</label>
-	    {{ occurrence.start_time|date:_("DATETIME_FORMAT")}} -
-	    {{ occurrence.end_time|date:_("TIME_FORMAT")}}
-	  </div>
-	  <div class="col-11 ">
-	    {% for presenter in presenters %}
-	      <label class="sched_detail">{{ presenter.role }}:</label>
-	      {{ presenter.presenter.name }}<br>
-	    {% endfor %}
-	  </div>
-	</div>
-      </div>
+  <div class="col-12 sched-sub-box">
+    <div class="col-11 ">
+        <label class="sched_detail">Time:</label>
+      {{ occurrence.start_time|date:_("DATETIME_FORMAT")}} -
+      {{ occurrence.end_time|date:_("TIME_FORMAT")}}
     </div>
+    <div class="col-11 ">
+      {% for presenter in presenters %}
+        <label class="sched_detail">{{ presenter.role }}:</label>
+        {{ presenter.presenter.name }}<br>
+      {% endfor %}
+</div></div></div></div>
 <div class="event_booking">
 <h4>Please Give Us Your Feedback</h4>
-
 <p>{{ intro }}</p>
 <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  {# Include the hidden fields #}
-    {% for hidden in form.hidden_fields %}
-    {{ hidden }}
-    {% endfor %}
+  {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
   <font color=red>*</font> indicates a required field
   {% if form.errors or scheduling_form.errors or tickets.errors %}
     <p style= "color:red"> There is an error on the form.</p>
   {% endif %}
-  <font color="red">
-  {{ form.non_field_errors }}
-</font>
+  <font color="red">{{ form.non_field_errors }}</font>
 
 {# Include the visible fields #}
   {% for field in form.visible_fields %}
     <div class="form-group"><div class="row">
-      <div class="col-md-6 col-12">
-	<label for="{{field.name}}" class="control-label">	      
+      <div class="col-md-6 col-12"> 
+  <label for="{{field.name}}" class="control-label">
           {% if field.errors %}
             <font color="red">!&nbsp;&nbsp;
-	  {% elif field.css_classes == 'required' %}
+    {% elif field.css_classes == 'required' %}
             <font color="red">*</font>
           {% endif %} 
           {{ field.label_tag }}
           {% if field.errors %}</font>{% endif %} 
           {% if field.help_text %}<span class="dropt" title="Help">
-            <img src= "{% static "img/question.png" %}" alt="?"/>
+            <img src= "{% static "img/question.png" %}" alt="?">
             <span style="width:200px;float:right;text-align:left;">
               {{ field.help_text }}
           </span></span>{% endif %}
       </label></div>
       <div class="col-md-6 col-12 horizontal-input">
-	{{ field }}
+  {{ field }}
         {% if field.errors %}
       </div>
     </div>
     <div class="row"><div class="col-md-3 col-12">&nbsp;</div>
       <div class="col-md-9 col-12">
- 	<label>
-	  <font color="red">{{ field.errors }}</font>
+  <label>
+    <font color="red">{{ field.errors }}</font>
         </label>{% endif %}
       </div>
     </div></div>
-    {% endfor %}</div>
+    {% endfor %}
   <div class="form-row pull-right">
     <input type="submit" class="next" name="submit" value="Send Evaluation">
   </div>

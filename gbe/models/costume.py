@@ -1,6 +1,7 @@
 import pytz
 from django.db.models import (
     ForeignKey,
+    CASCADE,
     CharField,
     BooleanField,
     PositiveIntegerField,
@@ -33,8 +34,13 @@ class Costume(Biddable):
       - act_title is optional, and therefore does not fit the rules of
         Biddable's title
     '''
-    profile = ForeignKey(Profile, related_name="costumes")
-    performer = ForeignKey(Persona, blank=True, null=True)
+    profile = ForeignKey(Profile,
+                         on_delete=CASCADE,
+                         related_name="costumes")
+    performer = ForeignKey(Persona,
+                           on_delete=CASCADE,
+                           blank=True,
+                           null=True)
     creator = CharField(max_length=128)
     act_title = CharField(max_length=128, blank=True, null=True)
     debut_date = CharField(max_length=128, blank=True, null=True)

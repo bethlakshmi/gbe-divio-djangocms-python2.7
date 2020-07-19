@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     Model,
     CharField,
     ForeignKey,
@@ -15,7 +16,7 @@ class PerformerFestivals(Model):
     experience = CharField(max_length=20,
                            choices=festival_experience,
                            default='No')
-    act = ForeignKey(Act)
+    act = ForeignKey(Act, on_delete=CASCADE)
 
     class Meta:
         verbose_name_plural = 'performer festivals'

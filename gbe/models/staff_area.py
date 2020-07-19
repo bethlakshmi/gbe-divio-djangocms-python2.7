@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     CharField,
     TextField,
     ForeignKey,
@@ -23,14 +24,17 @@ class StaffArea(Model):
     slug = SlugField()
     description = TextField()
     conference = ForeignKey(
-        Conference)
+        Conference,
+        on_delete=CASCADE)
     default_location = ForeignKey(Room,
+                                  on_delete=CASCADE,
                                   blank=True,
                                   null=True)
     default_volunteers = IntegerField(default="1",
                                       blank=True,
                                       null=True)
     staff_lead = ForeignKey(Profile,
+                            on_delete=CASCADE,
                             blank=True,
                             null=True)
 

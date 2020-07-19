@@ -12,7 +12,7 @@ from post_office import mail
 from post_office.models import EmailTemplate
 import os
 from django.contrib.sites.models import Site
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbe.models import (
     Show,
     StaffArea,

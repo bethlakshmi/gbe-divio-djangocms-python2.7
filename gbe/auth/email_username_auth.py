@@ -9,12 +9,13 @@ class EmailUsernameAuth(ModelBackend):
     Recognizes EITHER Uername or Password
     """
 
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         UserModel = get_user_model()
-        if username is None:
-            username = kwargs.get(UserModel.USERNAME_FIELD)
-        users = UserModel.objects.filter(
-            Q(username=username) | Q(email=username))
-        for user in users:
+        try:
+            user = UserModel.objects.get(email=username)
+        except UserModel.DoesNotExist:
+            return None
+        else:
             if user.check_password(password):
                 return user
+        return None

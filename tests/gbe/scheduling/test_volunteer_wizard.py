@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     GenericEventFactory,
@@ -16,18 +16,14 @@ from tests.contexts import (
 from scheduler.models import Event
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    assert_radio_state,
     grant_privilege,
     login_as,
 )
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
-)
 from settings import GBE_DATE_FORMAT
+from tests.gbe.scheduling.test_scheduling import TestScheduling
 
 
-class TestVolunteerWizard(TestCase):
+class TestVolunteerWizard(TestScheduling):
     '''Tests for the 2nd and 3rd stage in the volunteer wizard view'''
     view_name = 'create_volunteer_wizard'
 
@@ -72,7 +68,7 @@ class TestVolunteerWizard(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        assert_event_was_picked_in_wizard(response, "volunteer")
+        self.assert_event_was_picked_in_wizard(response, "volunteer")
         self.assertContains(response, str(self.show_volunteer.event.e_title))
         self.assertContains(response,
                             str(self.special_volunteer.event.e_title))
@@ -162,17 +158,18 @@ class TestVolunteerWizard(TestCase):
                 'pick_topic': True,
                 'volunteer_topic': ""},
             follow=True)
-        assert_radio_state(response,
-                           "volunteer_topic",
-                           "id_volunteer_topic_3_0",
-                           "",
-                           True)
+        self.assert_radio_state(response,
+                                "volunteer_topic",
+                                "id_volunteer_topic_3_0",
+                                "",
+                                True)
         self.assertContains(
             response,
             'Make New Volunteer Opportunity')
         self.assertContains(
             response,
-            '<input type="checkbox" name="approval" id="id_approval" />')
+            '<input type="checkbox" name="approval" id="id_approval" />',
+            html=True)
 
     def test_auth_user_create_opp(self):
         login_as(self.privileged_user, self)

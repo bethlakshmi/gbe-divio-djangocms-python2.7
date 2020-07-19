@@ -41,7 +41,7 @@
                   <a class="social" href="#" data-toggle="modal" data-target="#Modal{{vendor.pk}}" data-backdrop="true" >
                     <i class="fa fa-external-link"></i>
                   </a>
-            {% if request.user.is_superuser %}</br></br>{% if vendor.img %}
+            {% if request.user.is_superuser %}<br><br>{% if vendor.img %}
                   <a class="social" href="/admin/filer/image/{{vendor.img.pk}}/?_pick=file&_popup=1" target="_blank">
                     <i class="fa fa-pencil"></i>
                   </a>{% endif %}

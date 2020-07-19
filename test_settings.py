@@ -128,26 +128,26 @@ except:
                 'aldryn_django.context_processors.debug',
                 'sekizai.context_processors.sekizai',
                 'cms.context_processors.cms_settings',
-                'aldryn_boilerplates.context_processors.boilerplate',
                 'aldryn_snake.template_api.template_processor'],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
-                'aldryn_boilerplates.template_loaders.AppDirectoriesLoader',
-                'django.template.loaders.app_directories.Loader',
-                'django.template.loaders.eggs.Loader']},
+                'django.template.loaders.app_directories.Loader']},
         'BACKEND': 'django.template.backends.django.DjangoTemplates'}]
-
 
 MIDDLEWARE = (
     'cms.middleware.utils.ApphookReloadMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'aldryn_django.middleware.LanguagePrefixFallbackMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'aldryn_sites.middleware.SiteMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',

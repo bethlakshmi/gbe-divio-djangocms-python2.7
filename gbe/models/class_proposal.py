@@ -1,5 +1,6 @@
 from django.db.models import (
     BooleanField,
+    CASCADE,
     CharField,
     EmailField,
     ForeignKey,
@@ -27,6 +28,7 @@ class ClassProposal(Model):
     display = BooleanField(default=False)
     conference = ForeignKey(
         Conference,
+        on_delete=CASCADE,
         blank=True,
         null=True)
 

@@ -1,4 +1,5 @@
 from django.db.models import (
+    CASCADE,
     BooleanField,
     CharField,
     DateTimeField,
@@ -33,6 +34,7 @@ class Biddable(Model):
     updated_at = DateTimeField(auto_now=True)
     b_conference = ForeignKey(
         Conference,
+        on_delete=CASCADE,
         related_name="b_conference_set",
         blank=True,
         null=True)

@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
@@ -14,7 +14,6 @@ from tests.functions.gbe_functions import (
     is_login_page,
     login_as,
 )
-from tests.functions.gbe_email_functions import assert_checkbox
 from tests.contexts import (
     ClassContext,
     ShowContext,
@@ -32,9 +31,10 @@ from django.contrib.auth.models import User
 from gbe.models import Conference
 from gbetext import role_options
 from gbe_forms_text import role_option_privs
+from tests.gbe.email.test_mail_filters import TestMailFilters
 
 
-class TestMailToRoles(TestCase):
+class TestMailToRoles(TestMailFilters):
     view_name = 'mail_to_roles'
     role_list = ['Interested',
                  'Moderator',
@@ -73,7 +73,7 @@ class TestMailToRoles(TestCase):
     def test_full_login_first_get(self):
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             0,
@@ -82,7 +82,7 @@ class TestMailToRoles(TestCase):
             checked=False)
         n = 0
         for role in role_options:
-            assert_checkbox(
+            self.assert_checkbox(
                 response,
                 "roles",
                 n,
@@ -100,7 +100,7 @@ class TestMailToRoles(TestCase):
             login_as(limited_profile, self)
 
             response = self.client.get(self.url, follow=True)
-            assert_checkbox(
+            self.assert_checkbox(
                 response,
                 "conference",
                 0,
@@ -109,7 +109,7 @@ class TestMailToRoles(TestCase):
                 checked=False)
             n = 0
             for role in sorted(roles):
-                assert_checkbox(
+                self.assert_checkbox(
                     response,
                     "roles",
                     n,
@@ -123,14 +123,14 @@ class TestMailToRoles(TestCase):
         extra_conf = ConferenceFactory()
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             0,
             self.context.conference.pk,
             self.context.conference.conference_slug,
             checked=False)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             1,
@@ -212,7 +212,7 @@ class TestMailToRoles(TestCase):
         self.assertNotContains(
             response,
             interested.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             0,
@@ -237,7 +237,7 @@ class TestMailToRoles(TestCase):
         self.assertNotContains(
             response,
             interested.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             0,
@@ -301,7 +301,7 @@ class TestMailToRoles(TestCase):
         self.assertContains(
             response,
             anothershowcontext.performer.contact.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             0,
@@ -309,7 +309,7 @@ class TestMailToRoles(TestCase):
             showcontext.show.e_title,
             checked=False,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             1,
@@ -343,14 +343,14 @@ class TestMailToRoles(TestCase):
         self.assertContains(
             response,
             showcontext.performer.contact.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             0,
             showcontext.show.pk,
             showcontext.show.e_title,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             1,
@@ -399,7 +399,7 @@ class TestMailToRoles(TestCase):
         self.assertContains(
             response,
             specialstaffcontext.profile.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             0,
@@ -407,7 +407,7 @@ class TestMailToRoles(TestCase):
             special.e_title,
             checked=False,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "staff_areas",
             0,
@@ -415,7 +415,7 @@ class TestMailToRoles(TestCase):
             staffcontext.area.title,
             checked=False,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             0,
@@ -449,14 +449,14 @@ class TestMailToRoles(TestCase):
         self.assertContains(
             response,
             specialstaffcontext.profile.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             0,
             special.pk,
             special.e_title,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "staff_areas",
             0,
@@ -464,7 +464,7 @@ class TestMailToRoles(TestCase):
             staffcontext.area.title,
             checked=False,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             0,
@@ -500,7 +500,7 @@ class TestMailToRoles(TestCase):
         self.assertNotContains(
             response,
             special.e_title)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             1,
@@ -533,7 +533,7 @@ class TestMailToRoles(TestCase):
         self.assertNotContains(
             response,
             specialstaffcontext.profile.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             0,
@@ -541,14 +541,14 @@ class TestMailToRoles(TestCase):
             special.e_title,
             checked=False,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "staff_areas",
             0,
             staffcontext.area.pk,
             staffcontext.area.title,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             0,
@@ -582,7 +582,7 @@ class TestMailToRoles(TestCase):
         self.assertContains(
             response,
             specialstaffcontext.profile.user_object.email)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             0,
@@ -590,7 +590,7 @@ class TestMailToRoles(TestCase):
             special.e_title,
             checked=False,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "staff_areas",
             0,
@@ -598,7 +598,7 @@ class TestMailToRoles(TestCase):
             staffcontext.area.title,
             checked=False,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             0,
@@ -686,26 +686,26 @@ class TestMailToRoles(TestCase):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "conference",
             0,
             self.context.conference.pk,
             self.context.conference.conference_slug)
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "roles",
             0,
             "Interested",
             "Interested")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "events",
             0,
             showcontext.show.pk,
             showcontext.show.e_title,
             prefix="event-select")
-        assert_checkbox(
+        self.assert_checkbox(
             response,
             "event_collections",
             2,

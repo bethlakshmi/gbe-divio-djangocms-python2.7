@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
 from django.db.models import Max
@@ -221,7 +221,8 @@ class TestActTechWizard(TestCase):
             response,
             '<input type="checkbox" name="prop_setup" value="I have props '
             'I will need set before my number" '
-            'id="id_prop_setup_1" checked />')
+            'id="id_prop_setup_1" checked />',
+            html=True)
 
     def test_book_rehearsal_and_exit(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -298,7 +299,8 @@ class TestActTechWizard(TestCase):
             response,
             '<input type="checkbox" name="prop_setup" value="I have props '
             'I will need set before my number" '
-            'id="id_prop_setup_1" checked />')
+            'id="id_prop_setup_1" checked />',
+            html=True)
         resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
         alloc = ResourceAllocation.objects.filter(
             resource__in=resources)
@@ -441,10 +443,14 @@ class TestActTechWizard(TestCase):
                             'name="%d-booking_id"' % context.sched_event.pk)
         self.assertContains(
             response,
-            'name="start_blackout" id="id_start_blackout" checked />')
+            '<input type="checkbox" name="start_blackout" ' +
+            'id="id_start_blackout" checked />',
+            html=True)
         self.assertContains(
             response,
-            'name="end_blackout" id="id_end_blackout" checked />')
+            '<input type="checkbox" name="end_blackout" ' +
+            'id="id_end_blackout" checked />',
+            html=True)
         self.assertContains(response, "so special!")
         assert_option_state(response,
                             mic_options[2][0],

@@ -3,7 +3,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 from gbe_logging import log_func
 from gbe.forms import (
@@ -23,6 +23,7 @@ from gbetext import (
     link_sent_msg,
     send_link_message,
 )
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
@@ -37,7 +38,7 @@ class EditEmailView(View):
     button = "Update Settings"
     header = "Update Email Preferences"
 
-    @csrf_exempt
+    @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(EditEmailView, self).dispatch(*args, **kwargs)
 
@@ -67,7 +68,11 @@ class EditEmailView(View):
     @never_cache
     @log_func
     def get(self, request, *args, **kwargs):
-        email = extract_email(kwargs.get("token"))
+        if "token" in kwargs and kwargs.get("token") is not None:
+            email = extract_email(kwargs.get("token"))
+        else:
+            self.token_parse_error(request)
+            return self.get_email_link(request)
         if not email:
             self.token_parse_error(request)
             return self.get_email_link(request)

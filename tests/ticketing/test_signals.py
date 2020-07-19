@@ -24,7 +24,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
 )
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 @override_settings(ROOT_URLCONF='paypal.standard.ipn.tests.test_urls')

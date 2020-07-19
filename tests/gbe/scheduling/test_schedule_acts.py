@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import (
     Client,
     TestCase
@@ -184,7 +184,8 @@ class TestScheduleActs(TestCase):
         self.assertContains(
             response,
             input_text % (self.context.acts[0].resourceitem_id,
-                          self.context.acts[0].resourceitem_id))
+                          self.context.acts[0].resourceitem_id),
+            html=True)
 
     def test_good_user_post_invalid(self):
         login_as(self.privileged_profile, self)

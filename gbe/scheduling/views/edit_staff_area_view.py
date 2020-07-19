@@ -9,7 +9,7 @@ from django.shortcuts import (
 )
 from django.contrib import messages
 from gbe.models import UserMessage
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from gbe.models import (
     StaffArea,
 )

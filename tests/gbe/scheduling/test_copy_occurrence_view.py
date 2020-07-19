@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tests.factories.gbe_factories import (
     ClassFactory,
     ConferenceFactory,
@@ -13,14 +13,9 @@ from tests.factories.gbe_factories import (
 from scheduler.models import Event
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    assert_hidden_value,
     assert_option_state,
     grant_privilege,
     login_as,
-)
-from tests.functions.gbe_scheduling_functions import (
-    assert_event_was_picked_in_wizard,
-    assert_good_sched_event_form_wizard,
 )
 from datetime import (
     datetime,
@@ -40,9 +35,10 @@ from gbe_forms_text import (
     copy_mode_choices,
     copy_errors,
 )
+from tests.gbe.test_gbe import TestGBE
 
 
-class TestCopyOccurrence(TestCase):
+class TestCopyOccurrence(TestGBE):
     view_name = 'copy_event_schedule'
     copy_date_format = "%a, %b %-d, %Y %-I:%M %p"
 
@@ -259,15 +255,17 @@ class TestCopyOccurrence(TestCase):
         self.assertContains(
             response,
             '<input type="radio" name="copy_mode" value="include_parent" ' +
-            'id="id_copy_mode_1" required checked />')
+            'id="id_copy_mode_1" required checked />',
+            html=True)
         self.assertContains(
             response,
             '<input type="radio" name="copy_mode" value="include_parent" ' +
-            'id="id_copy_mode_1" required checked />')
+            'id="id_copy_mode_1" required checked />',
+            html=True)
         self.assertContains(
             response,
             '<option value="%d" selected>' % another_day.pk)
-        assert_hidden_value(response, "id_room", "room", self.context.room.pk)
+        self.assert_hidden_value(response, "id_room", "room", self.context.room.pk)
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
             show_context.opportunity.e_title,
@@ -348,7 +346,8 @@ class TestCopyOccurrence(TestCase):
             response,
             '<input type="radio" name="copy_mode" ' +
             'value="copy_children_only" ' +
-            'id="id_copy_mode_0" required checked />')
+            'id="id_copy_mode_0" required checked />',
+            html=True)
         self.assertContains(
             response,
             '<option value="%d" selected>' % (
@@ -507,7 +506,7 @@ class TestCopyOccurrence(TestCase):
         max_pk = Event.objects.latest('pk').pk
         response = self.client.post(url, data=data, follow=True)
         new_occurrences = []
-        for occurrence in Event.objects.filter(pk__gt=max_pk):
+        for occurrence in Event.objects.filter(pk__gt=max_pk).order_by('pk'):
             new_occurrences += [occurrence.pk]
         redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
             reverse('manage_event_list',

@@ -1,5 +1,6 @@
 from django.db.models import (
     BooleanField,
+    CASCADE,
     DateField,
     ForeignKey,
     Model,
@@ -10,7 +11,7 @@ from django.utils.formats import date_format
 
 class ConferenceDay(Model):
     day = DateField(blank=True)
-    conference = ForeignKey(Conference)
+    conference = ForeignKey(Conference, on_delete=CASCADE)
     open_to_public = BooleanField(default=True)
 
     def __str__(self):

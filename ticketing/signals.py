@@ -17,7 +17,7 @@ from gbe.email.functions import (
     notify_admin_on_error,
     notify_reviewers_on_bid_change,
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 @receiver(valid_ipn_received)

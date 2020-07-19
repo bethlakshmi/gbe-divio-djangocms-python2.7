@@ -8,7 +8,7 @@ from gbe.models import (
     StaffArea,
 )
 from gbetext import role_commit_map
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 def staff_area_view(request, parent_type, target):
