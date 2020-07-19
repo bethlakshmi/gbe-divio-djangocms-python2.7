@@ -201,6 +201,9 @@ class TestManageEventList(TestCase):
             conference__status="completed",
             day=self.day.day + timedelta(3))
         context = ClassContext(conference=old_conf_day.conference)
+        vol_context = VolunteerContext(conference=old_conf_day.conference)
+        staff_context = StaffAreaContext(conference=old_conf_day.conference)
+        booking, self.vol_opp = staff_context.book_volunteer()
         data = {
             "%s-calendar_type" % old_conf_day.conference.conference_slug: [
                 0, 1, 2],
@@ -220,6 +223,16 @@ class TestManageEventList(TestCase):
         self.assertNotContains(
             response,
             '<i class="fa fa-plus" aria-hidden="true">')
+        self.assertContains(response, vol_context.opportunity.e_title)
+        self.assertContains(response, reverse(
+            'detail_view',
+            urlconf='gbe.scheduling.urls',
+            args=[vol_context.event.eventitem_id]))
+        self.assertContains(response, vol_context.event.e_title)
+        self.assertNotContains(response, reverse(
+            "edit_staff",
+            urlconf="gbe.scheduling.urls",
+            args=[staff_context.area.pk]))
 
     def test_good_user_get_conference_cal(self):
         login_as(self.privileged_profile, self)
@@ -276,6 +289,16 @@ class TestManageEventList(TestCase):
         self.assertContains(response, self.show_context.show.e_title)
         self.assertContains(response, self.vol_opp.event.eventitem.e_title)
         self.assertContains(response, '<td class="bid-table">Volunteer</td>')
+        self.assertContains(response,
+                            self.volunteer_context.opportunity.e_title)
+        self.assertContains(
+            response,
+            '<a href="%s" data-toggle="tooltip" title="Edit">%s</a>' % (
+                reverse('edit_event',
+                        urlconf='gbe.scheduling.urls',
+                        args=[self.day.conference.conference_slug,
+                              self.volunteer_context.sched_event.pk]),
+                self.volunteer_context.event.e_title))
         for value in range(0, 2):
             self.assert_visible_input_selected(
                 response,
@@ -349,6 +372,13 @@ class TestManageEventList(TestCase):
         response = self.client.get(self.url, data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.vol_opp.event.eventitem.e_title)
+        self.assertContains(
+            response,
+            '<a href="%s" data-toggle="tooltip" title="Edit">%s</a>' % (
+                reverse("edit_staff",
+                        urlconf="gbe.scheduling.urls",
+                        args=[self.staff_context.area.pk]),
+                self.staff_context.area.slug))
         index = 0
         for area in StaffArea.objects.filter(
                 conference=self.day.conference).order_by('title'):

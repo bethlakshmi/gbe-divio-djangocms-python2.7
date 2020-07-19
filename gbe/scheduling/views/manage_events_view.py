@@ -131,7 +131,13 @@ class ManageEventsView(View):
                     'edit_event',
                     urlconf='gbe.scheduling.urls',
                     args=[self.conference.conference_slug, parent.pk])
-            for area in StaffArea.objects.filter(slug__in=occurrence.labels):
+                if self.conference.status == "completed":
+                    display_item['parent_link'] = reverse(
+                        'detail_view',
+                        urlconf='gbe.scheduling.urls',
+                        args=[parent.eventitem.event.eventitem_id])
+            for area in StaffArea.objects.filter(slug__in=occurrence.labels,
+                                                 conference=self.conference):
                 display_item['staff_areas'] += [area]
 
             display_list += [display_item]
