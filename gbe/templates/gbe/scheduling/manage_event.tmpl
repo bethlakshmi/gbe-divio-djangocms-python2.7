@@ -110,7 +110,7 @@
        <td class="bid-table">{{ occurrence.title}}</td>
        <td class="bid-table"><a href="{{occurrence.parent_link}}" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a></td>
        <td class="bid-table">{% for area in occurrence.staff_areas %}
-        {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</a></td>
+        {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</td>
        <td class="bid-table">{{ occurrence.location}}</td>
        <td class="bid-table">{{ occurrence.start}}</td>
        <td class="bid-table">{{ occurrence.duration }}</td>
