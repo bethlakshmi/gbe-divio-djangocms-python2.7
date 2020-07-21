@@ -250,7 +250,11 @@ class Event(Schedulable):
                 details="Over booked by %s volunteers" % (
                     self.extra_volunteers()))]
         if person.label:
-            allocation.set_label(person.label)
+            # refactor
+            from scheduler.models import Label
+            l, created = Label.objects.get_or_create(allocation=allocation)
+            l.text = person.label
+            l.save()
         return BookingResponse(warnings=warnings,
                                booking_id=allocation.pk,
                                occurrence=self)
@@ -296,6 +300,8 @@ class Event(Schedulable):
                 details="Over booked by %s acts" % (
                     num_acts - self.max_volunteer))]
         if act.order:
+            # refactor
+            from scheduler.models import Ordering
             ordering = Ordering.objects.get_or_create(allocation=allocation)
             ordering[0].order = act.order
             ordering[0].save()
@@ -387,11 +393,6 @@ class Event(Schedulable):
                                       role='Volunteer').count()
         return count - self.max_volunteer
 
-    # New with Scheduler API
-    def add_label(self, label):
-        label = EventLabel(text=label, event=self)
-        label.save()
-        return label
 
     # New with Scheduler API
     @property
@@ -413,52 +414,9 @@ class ResourceAllocation(Schedulable):
                                  related_name="allocations")
 
     def get_label(self):
-        try:
+        if hasattr(self, 'label'):
             return self.label
-        except Label.DoesNotExist:
-            l = Label(allocation=self, text="")
-            l.save()
-            return l
-
-    def set_label(self, text):
-        l = self.get_label()
-        l.text = text
-        l.save()
-
-
-class Ordering(models.Model):
-    '''
-    A decorator for Allocations to allow representation of orderings
-    Attaches to an Allocation. No effort is made to ensure uniqueness or
-    completeness of an ordering, this is handled later in the business
-    logic.
-    Orderings are assumed to sort from low to high. Negative ordering
-    indices are allowed.
-    '''
-    order = models.IntegerField(default=0)
-    allocation = models.OneToOneField(ResourceAllocation,
-                                      on_delete=models.CASCADE)
-
-
-class Label (models.Model):
-    '''
-    A decorator allowing free-entry "tags" on allocations
-    '''
-    text = models.TextField(default='')
-    allocation = models.OneToOneField(ResourceAllocation,
-                                      on_delete=models.CASCADE)
-
-
-class EventLabel (models.Model):
-    '''
-    A decorator allowing free-entry "tags" on allocations
-    '''
-    text = models.CharField(default='', max_length=200)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-
-    class Meta:
-        app_label = "scheduler"
-        unique_together = (('text', 'event'), )
+        return ""
 
 
 class EventContainer (models.Model):

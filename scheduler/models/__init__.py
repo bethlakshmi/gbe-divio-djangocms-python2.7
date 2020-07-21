@@ -12,12 +12,11 @@ from .remains import (
     EventItem,
     Event,
     ResourceAllocation,
-    Ordering,
-    Label,
-    EventLabel,
     EventContainer,
 )
-
+from .event_label import EventLabel
+from .label import Label
+from .ordering import Ordering
 
 # regular user reviews, after the event occurs
 from .event_eval_question import EventEvalQuestion
