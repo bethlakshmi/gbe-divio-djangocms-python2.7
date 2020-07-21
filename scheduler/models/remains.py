@@ -2,10 +2,13 @@ from django.db import models
 from django.db.models import Q
 from django.core.validators import RegexValidator
 from scheduler.models import (
+    ActItem,
+    ActResource,
     Location,
     LocationItem,
     Resource,
     ResourceItem,
+    Schedulable,
 )
 from scheduler.data_transfer import (
     Person,
@@ -20,122 +23,6 @@ from settings import GBE_DATETIME_FORMAT
 from django.utils.formats import date_format
 from django.core.exceptions import MultipleObjectsReturned
 import pytz
-
-
-class Schedulable(models.Model):
-    '''
-    Interface for an item that can appear on a conference schedule - either an
-    event or a resource allocation. (resource allocations can include, eg,
-    volunteer commitments for a particular person, or for a particular event,
-    or for a block of time - so this is a pretty flexible idea)
-    Note that conference models should NEVER inherit this directly or
-    indirectly.
-    This is why we use the indirection model: we don't want to store scheduler
-    data in the conference model.
-    '''
-    objects = InheritanceManager()
-
-    @property
-    def start_time(self):
-        try:
-            return self.starttime
-        except:
-            return None
-
-    @property
-    def end_time(self):
-        return self.starttime + self.duration
-
-    class Meta:
-        abstract = True
-
-
-class ActItem(ResourceItem):
-    '''
-    Payload object for an Act
-    '''
-    objects = InheritanceManager()
-
-    @property
-    def as_subtype(self):
-        return self.act
-
-    def get_castings(self):
-        '''
-        Returns a list of all shows and cast roles this act is scheduled for.
-        '''
-        resources = ActResource.objects.filter(_item=self)
-        result = []
-        for resource in resources:
-            if resource.show:
-                result += [(resource.show, resource.role)]
-        return result
-
-    def get_scheduled_rehearsals(self):
-        '''
-        Returns a list of all shows this act is scheduled to appear in.
-        '''
-        resources = ActResource.objects.filter(_item=self)
-
-        return [i for i in [
-            res.rehearsal for res in resources] if i is not None]
-
-    @property
-    def bio(self):
-        return ActItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).bio
-
-    @property
-    def describe(self):
-        return ActItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).b_title
-
-
-class ActResource(Resource):
-    '''
-    A schedulable object wrapping an Act
-    '''
-    objects = InheritanceManager()
-    _item = models.ForeignKey(ActItem, on_delete=models.CASCADE)
-    role = models.CharField(max_length=50,
-                            blank=True)
-
-    @property
-    def show(self):
-        ra = ResourceAllocation.objects.filter(resource=self).first()
-        if ra and ra.event.event_type_name == 'Show':
-            return ra.event
-        else:
-            return None
-
-    @property
-    def order(self):
-        try:
-            ra = ResourceAllocation.objects.filter(resource=self).first()
-            if ra and ra.ordering:
-                return ra.ordering.order
-        except:
-            return None
-
-    @property
-    def rehearsal(self):
-        ra = ResourceAllocation.objects.filter(resource=self).first()
-        if ra and ra.event.event_type_name == 'GenericEvent':
-            return ra.event
-        else:
-            return None
-
-    @property
-    def type(self):
-        return "Act"
-
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Act Item"
 
 
 class WorkerItem(ResourceItem):

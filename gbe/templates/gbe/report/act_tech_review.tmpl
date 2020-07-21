@@ -14,7 +14,9 @@
 
 
   <p class="vanilla">{{title}} </p>
-  <h2 class="review-title">Act Tech Info for {{this_show}}</h2>
+  
+  <h2 class="review-title">{% if this_show %}Act Tech Info for {{this_show}}
+  {% else %}Pick the Show{% endif %}</h2>
   <br/>
       {% include "conference_picker.tmpl" %}
   <br/>
