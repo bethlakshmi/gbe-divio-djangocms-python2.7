@@ -1,6 +1,12 @@
 from django.db import models
 from django.db.models import Q
 from django.core.validators import RegexValidator
+from scheduler.models import (
+    Location,
+    LocationItem,
+    Resource,
+    ResourceItem,
+)
 from scheduler.data_transfer import (
     Person,
     BookingResponse,
@@ -42,57 +48,6 @@ class Schedulable(models.Model):
 
     class Meta:
         abstract = True
-
-
-class ResourceItem(models.Model):
-    '''
-    The payload for a resource
-    '''
-    objects = InheritanceManager()
-    resourceitem_id = models.AutoField(primary_key=True)
-
-    @property
-    def describe(self):
-        child = ResourceItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id)
-        return child.__class__.__name__ + ":  " + child.describe
-
-    def __str__(self):
-        return str(self.describe)
-
-
-class Resource(models.Model):
-    '''
-    A person, place, or thing that can be allocated for an event.
-    A resource has a payload and properties derived from that payload.
-    This is basically a tag interface, allowing us to select all resources.
-    '''
-    objects = InheritanceManager()
-
-    @property
-    def type(self):
-        child = Resource.objects.get_subclass(id=self.id)
-        if child.__class__.__name__ != "Resource":
-            return child.type
-        else:
-            return "Resource (no child)"
-
-    @property
-    def item(self):
-        child = Resource.objects.get_subclass(id=self.id)
-        return child._item
-
-    @property
-    def as_subtype(self):
-        child = Resource.objects.get_subclass(id=self.id)
-        return child
-
-    def __str__(self):
-        allocated_resource = Resource.objects.get_subclass(id=self.id)
-        if allocated_resource.__class__.__name__ != "Resource":
-            return str(allocated_resource)
-        else:
-            return "Error in resource allocation, no resource"
 
 
 class ActItem(ResourceItem):
@@ -181,70 +136,6 @@ class ActResource(Resource):
             return self.item.describe
         except:
             return "No Act Item"
-
-
-class LocationItem(ResourceItem):
-    '''
-    "Payload" object for a Location
-    '''
-    objects = InheritanceManager()
-
-    @property
-    def as_subtype(self):
-        return self.room
-
-    def get_resource(self):
-        '''
-        Return the resource corresonding to this item
-        To do: find a way to make this work at the Resource level
-        '''
-        try:
-            loc = Location.objects.select_subclasses().get(_item=self)
-        except:
-            loc = Location(_item=self)
-            loc.save()
-        return loc
-
-    @property
-    def get_bookings(self):
-        '''
-        Returns the events for which this LocationItem is booked.
-        should remain focused on the upward connection of resource
-        allocations, and avoid being subclass specific
-        '''
-        from scheduler.models import Event
-
-        events = Event.objects.filter(
-            resources_allocated__resource__location___item=self
-        ).order_by(
-            'starttime')
-        return events
-
-    @property
-    def describe(self):
-        return LocationItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id).name
-
-    def __str__(self):
-        return str(self.describe)
-
-
-class Location(Resource):
-    '''
-    A resource which is a location.
-    '''
-    objects = InheritanceManager()
-    _item = models.ForeignKey(LocationItem, on_delete=models.CASCADE)
-
-    @property
-    def type(self):
-        return "location"
-
-    def __str__(self):
-        try:
-            return self.item.describe
-        except:
-            return "No Location Item"
 
 
 class WorkerItem(ResourceItem):
@@ -410,9 +301,13 @@ class Event(Schedulable):
                 assignment.delete()
         for location in locations:
             if location is not None:
-                ra = ResourceAllocation(
-                    resource=location.get_resource(),
-                    event=self)
+                try:
+                    loc = Location.objects.select_subclasses().get(
+                        _item=location)
+                except:
+                    loc = Location(_item=location)
+                    loc.save()
+                ra = ResourceAllocation(resource=loc, event=self)
                 ra.save()
 
     # New - from refactoring

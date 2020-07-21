@@ -17,7 +17,6 @@ from gbe.models import (
 )
 from gbe.functions import validate_perms
 from scheduler.idd import (
-    get_bookings,
     get_people,
     set_person,
 )
