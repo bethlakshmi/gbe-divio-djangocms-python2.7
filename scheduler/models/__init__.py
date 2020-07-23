@@ -4,17 +4,16 @@ from .location_item import LocationItem
 from .location import Location
 from .act_item import ActItem
 from .act_resource import ActResource
+from .worker_item import WorkerItem
+from .worker import Worker
 from .schedulable import Schedulable
+from .event_item import EventItem
 from .remains import (
-    ResourceItem,
-    WorkerItem,
-    Worker,
-    EventItem,
     Event,
     ResourceAllocation,
-    EventContainer,
 )
 from .event_label import EventLabel
+from .event_container import EventContainer
 from .label import Label
 from .ordering import Ordering
 

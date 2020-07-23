@@ -1,14 +1,16 @@
 from django.db import models
 from django.db.models import Q
-from django.core.validators import RegexValidator
 from scheduler.models import (
     ActItem,
     ActResource,
+    EventItem,
     Location,
     LocationItem,
     Resource,
     ResourceItem,
     Schedulable,
+    WorkerItem,
+    Worker,
 )
 from scheduler.data_transfer import (
     Person,
@@ -16,138 +18,9 @@ from scheduler.data_transfer import (
     Warning,
     Error,
 )
-from datetime import datetime, timedelta
 from model_utils.managers import InheritanceManager
 from gbetext import *
 from settings import GBE_DATETIME_FORMAT
-from django.utils.formats import date_format
-from django.core.exceptions import MultipleObjectsReturned
-import pytz
-
-
-class WorkerItem(ResourceItem):
-    '''
-    Payload object for a person as resource (staff/volunteer/teacher)
-    '''
-    objects = InheritanceManager()
-
-    @property
-    def as_subtype(self):
-        '''
-        Returns this item as its underlying conference type.
-        (either Performer or Profile)
-        '''
-        from django.core.exceptions import ObjectDoesNotExist
-        try:
-            p = self.performer
-        except ObjectDoesNotExist:
-            p = self.profile
-        return p
-
-    @property
-    def is_active(self):
-        return WorkerItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id
-        ).is_active
-
-    @property
-    def describe(self):
-        child = WorkerItem.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id)
-        if child.__class__.__name__ == "WorkerItem":
-            return "Worker Item (no child_event)"
-        return child.__class__.__name__ + ":  " + child.describe
-
-    def __str__(self):
-        return str(self.describe)
-
-    def get_bookings(self, role, conference=None):
-        '''
-        Returns the events for which this Worker is booked as "role".
-        should remain focused on the upward connection of resource
-        allocations, and avoid being sub class specific
-        '''
-        from scheduler.models import Event
-
-        events = Event.objects.filter(
-            resources_allocated__resource__worker___item=self,
-            resources_allocated__resource__worker__role=role)
-        if conference:
-            events = events.filter(
-                eventitem__event__e_conference=conference)
-        return events
-
-
-class Worker(Resource):
-    '''
-    objects = InheritanceManager()
-    An allocatable person
-    '''
-    _item = models.ForeignKey(WorkerItem, on_delete=models.CASCADE)
-    role = models.CharField(max_length=50,
-                            choices=role_options,
-                            blank=True)
-
-    @property
-    def workeritem(self):
-        return WorkerItem.objects.get_subclass(
-            resourceitem_id=self._item.resourceitem_id)
-
-    @property
-    def type(self):
-        return self.role
-
-    def __str__(self):
-        return self.item.describe
-
-
-class EventItem (models.Model):
-    '''
-    The payload for an event (ie, a class, act, show, or generic event)
-    The EventItem must not impose any DB usage on its implementing model
-    classes.
-    '''
-    objects = InheritanceManager()
-    eventitem_id = models.AutoField(primary_key=True)
-    visible = models.BooleanField(default=True)
-
-    def child(self):
-        return EventItem.objects.get_subclass(eventitem_id=self.eventitem_id)
-
-    def get_conference(self):
-        return self.child().e_conference
-
-    # DEPRECATE - when scheduling refactored
-    def roles(self, roles=['Teacher',
-                           'Panelist',
-                           'Moderator',
-                           'Staff Lead']):
-        try:
-            container = EventContainer.objects.filter(
-                child_event__eventitem=self).first()
-            people = Worker.objects.filter(
-                (Q(allocations__event__eventitem=self) &
-                 Q(role__in=roles)) |
-                (Q(allocations__event=container.parent_event) &
-                 Q(role__in=roles))).distinct().order_by(
-                'role', '_item')
-        except:
-            people = Worker.objects.filter(
-                allocations__event__eventitem=self,
-                role__in=roles
-            ).distinct().order_by('role', '_item')
-        return people
-
-    @property
-    def describe(self):
-        child = self.child()
-        if child.__class__.__name__ != "EventItem":
-            return str(child)
-        else:
-            return "no child"
-
-    def __str__(self):
-        return str(self.describe)
 
 
 class Event(Schedulable):
@@ -417,16 +290,3 @@ class ResourceAllocation(Schedulable):
         if hasattr(self, 'label'):
             return self.label
         return ""
-
-
-class EventContainer (models.Model):
-    '''
-    Another decorator. Links one Event to another. Used to link
-    a volunteer shift (Generic Event) to a Show (or other conf event)
-    '''
-    parent_event = models.ForeignKey(Event,
-                                     on_delete=models.CASCADE,
-                                     related_name='contained_events')
-    child_event = models.OneToOneField(Event,
-                                       on_delete=models.CASCADE,
-                                       related_name='container_event')
