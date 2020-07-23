@@ -273,7 +273,6 @@ class Event(Schedulable):
                                       role='Volunteer').count()
         return count - self.max_volunteer
 
-
     # New with Scheduler API
     @property
     def labels(self):
