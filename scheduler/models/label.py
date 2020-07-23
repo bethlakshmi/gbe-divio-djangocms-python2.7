@@ -12,4 +12,4 @@ class Label(Model):
     A decorator allowing free-entry "tags" on allocations
     '''
     text = TextField(default='')
-    allocation =OneToOneField(ResourceAllocation, on_delete=CASCADE)
+    allocation = OneToOneField(ResourceAllocation, on_delete=CASCADE)

@@ -15,6 +15,6 @@ class EventContainer(Model):
     parent_event = ForeignKey(Event,
                               on_delete=CASCADE,
                               related_name='contained_events')
-    child_event = OneToOneField(Event, 
+    child_event = OneToOneField(Event,
                                 on_delete=CASCADE,
                                 related_name='container_event')

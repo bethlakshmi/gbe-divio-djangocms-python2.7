@@ -1,5 +1,10 @@
-from django.db import models
-from django.db.models import Q
+from django.db.models import (
+    BooleanField,
+    CASCADE,
+    DateTimeField,
+    ForeignKey,
+    PositiveIntegerField,
+)
 from scheduler.models import (
     ActItem,
     ActResource,
@@ -19,7 +24,6 @@ from scheduler.data_transfer import (
     Error,
 )
 from model_utils.managers import InheritanceManager
-from gbetext import *
 from settings import GBE_DATETIME_FORMAT
 
 
@@ -28,19 +32,19 @@ class Event(Schedulable):
     An Event is a schedulable item with a conference model item as its payload.
     '''
     objects = InheritanceManager()
-    eventitem = models.ForeignKey(EventItem,
-                                  on_delete=models.CASCADE,
-                                  related_name="scheduler_events")
-    starttime = models.DateTimeField(blank=True)
-    max_volunteer = models.PositiveIntegerField(default=0)
-    approval_needed = models.BooleanField(default=False)
+    eventitem = ForeignKey(EventItem,
+                           on_delete=CASCADE,
+                           related_name="scheduler_events")
+    starttime = DateTimeField(blank=True)
+    max_volunteer = PositiveIntegerField(default=0)
+    approval_needed = BooleanField(default=False)
 
     def has_act_opening(self):
         '''
         returns True if the count of acts allocated to this event is less than
         max_volunteer
         '''
-        allocs = ResourceAllocation.objects.filter(event=self)
+        allocs = self.resources_allocated.all()
         acts_booked = len([a for a in allocs
                            if isinstance(a.resource.as_subtype, ActResource)])
         return self.max_volunteer - acts_booked > 0
@@ -56,7 +60,8 @@ class Event(Schedulable):
         and replaces them with the given list.  Locations are expected to be
         location items
         '''
-        for assignment in ResourceAllocation.objects.filter(event=self):
+        from scheduler.models import ResourceAllocation
+        for assignment in self.resources_allocated.all():
             if assignment.resource.as_subtype.__class__.__name__ == "Location":
                 assignment.delete()
         for location in locations:
@@ -74,7 +79,7 @@ class Event(Schedulable):
     @property
     def people(self):
         people = []
-        for booking in ResourceAllocation.objects.filter(event=self):
+        for booking in self.resources_allocated.all():
             if booking.resource.as_subtype.__class__.__name__ == "Worker":
                 person = Person(booking=booking)
                 if hasattr(booking, 'label'):
@@ -89,6 +94,7 @@ class Event(Schedulable):
         uses the Person from the data_transfer objects.
         '''
         from scheduler.idd import get_schedule
+        from scheduler.models import ResourceAllocation
 
         warnings = []
         time_format = GBE_DATETIME_FORMAT
@@ -138,6 +144,7 @@ class Event(Schedulable):
         allocated worker for the new model - right now, focused on create
         uses the BookableAct from the data_transfer objects.
         '''
+        from scheduler.models import ResourceAllocation
         warnings = []
         time_format = GBE_DATETIME_FORMAT
 
@@ -184,7 +191,7 @@ class Event(Schedulable):
 
     @property
     def volunteer_count(self):
-        allocations = ResourceAllocation.objects.filter(event=self)
+        allocations = self.resources_allocated.all()
         volunteers = allocations.filter(
             resource__worker__role='Volunteer').count()
         if volunteers > 0:
@@ -201,7 +208,7 @@ class Event(Schedulable):
         Returns a list of acts allocated to this event,
         filtered by acceptance status if specified
         '''
-        allocations = ResourceAllocation.objects.filter(event=self)
+        allocations = self.resources_allocated.all()
         act_resources = [ar.resource_ptr for ar in ActResource.objects.all()]
         acts = [allocation.resource.item.act for allocation in allocations
                 if allocation.resource in act_resources]
@@ -271,22 +278,3 @@ class Event(Schedulable):
     @property
     def labels(self):
         return self.eventlabel_set.values_list('text', flat=True)
-
-
-class ResourceAllocation(Schedulable):
-    '''
-    Joins a particular Resource to a particular Event
-    ResourceAllocations get their scheduling data from their Event.
-    '''
-    objects = InheritanceManager()
-    event = models.ForeignKey(Event,
-                              on_delete=models.CASCADE,
-                              related_name="resources_allocated")
-    resource = models.ForeignKey(Resource,
-                                 on_delete=models.CASCADE,
-                                 related_name="allocations")
-
-    def get_label(self):
-        if hasattr(self, 'label'):
-            return self.label
-        return ""

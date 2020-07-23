@@ -1,6 +1,7 @@
 from model_utils.managers import InheritanceManager
 from django.db.models import Model
 
+
 class Schedulable(Model):
     '''
     Interface for an item that can appear on a conference schedule - either an

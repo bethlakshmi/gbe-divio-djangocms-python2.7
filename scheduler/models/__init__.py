@@ -8,10 +8,8 @@ from .worker_item import WorkerItem
 from .worker import Worker
 from .schedulable import Schedulable
 from .event_item import EventItem
-from .remains import (
-    Event,
-    ResourceAllocation,
-)
+from .event import Event
+from .resource_allocation import ResourceAllocation
 from .event_label import EventLabel
 from .event_container import EventContainer
 from .label import Label
