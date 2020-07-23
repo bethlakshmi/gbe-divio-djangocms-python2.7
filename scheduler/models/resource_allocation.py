@@ -22,8 +22,3 @@ class ResourceAllocation(Schedulable):
     resource = ForeignKey(Resource,
                           on_delete=CASCADE,
                           related_name="allocations")
-
-    def get_label(self):
-        if hasattr(self, 'label'):
-            return self.label
-        return ""
