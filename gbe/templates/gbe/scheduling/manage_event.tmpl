@@ -109,7 +109,7 @@
     {% for occurrence in occurrences %}
       <tr class="bid-table {% if occurrence.id in success_occurrences %}success{% endif %}">
        <td class="bid-table">{{ occurrence.title}}</td>
-       <td class="bid-table"><a href="{{occurrence.parent_link}}" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a></td>
+       <td class="bid-table">{% if occurrence.parent_title %}<a href="{{occurrence.parent_link}}" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a>{% endif %}</td>
        <td class="bid-table">{% for area in occurrence.staff_areas %}
         {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</td>
        <td class="bid-table">{{ occurrence.location}}</td>
