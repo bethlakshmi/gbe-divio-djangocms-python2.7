@@ -47,10 +47,7 @@ import pytz
 from django.db.models import Q
 from gbe.ticketing_idd_interface import get_ticket_form
 from django.contrib import messages
-from ticketing.brown_paper import (
-    get_bpt_last_poll_time,
-    process_bpt_order_list,
-)
+from ticketing.brown_paper import process_bpt_order_list
 from ticketing.functions import import_ticket_items
 
 
@@ -120,7 +117,7 @@ def ticket_items(request, conference_choice=None):
                'events': events.filter(act_submission_event=False,
                                        vendor_submission_event=False),
                'conference_slugs': conference_slugs(),
-               'conf_slug': conference_choice,
+               'conference': conference,
                'check_intro': check_intro[0].description,
                'gbe_events': gbe_events}
     return render(request, r'ticketing/ticket_items.tmpl', context)
@@ -168,32 +165,6 @@ def set_ticket_to_event(request, bpt_event_id, state, gbe_eventitem_id):
             bpt_event.conference.conference_slug,
             make_open_panel(bpt_event),
             str([bpt_event.id])))
-
-
-@never_cache
-def transactions(request):
-    '''
-    Represents the view for working with ticket items.  This will have a
-    list of current ticket items, and the ability to synch them.
-    '''
-    validate_perms(request, ('Ticketing - Transactions', ))
-
-    count = -1
-    error = ''
-
-    if ('Sync' in request.POST):
-        count = process_bpt_order_list()
-
-    transactions = Transaction.objects.all()
-    purchasers = Purchaser.objects.all()
-    sync_time = get_bpt_last_poll_time()
-
-    context = {'transactions': transactions,
-               'purchasers': purchasers,
-               'sync_time': sync_time,
-               'error': error,
-               'count': count}
-    return render(request, r'ticketing/transactions.tmpl', context)
 
 
 def delete_ticket_item(request, view, item):
