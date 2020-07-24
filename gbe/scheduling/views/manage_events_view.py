@@ -109,6 +109,7 @@ class ManageEventsView(View):
                 'current_volunteer': occurrence.volunteer_count,
                 'max_volunteer': occurrence.max_volunteer,
                 'approval_needed': occurrence.approval_needed,
+                'staff_areas': [],
                 'detail_link': reverse(
                     'detail_view',
                     urlconf='gbe.scheduling.urls',
@@ -123,6 +124,22 @@ class ManageEventsView(View):
                     urlconf='gbe.scheduling.urls',
                     args=[self.conference.conference_slug,
                           occurrence.pk])
+            if hasattr(occurrence, 'container_event'):
+                parent = occurrence.container_event.parent_event
+                display_item['parent_title'] = parent.eventitem.event.e_title
+                display_item['parent_link'] = reverse(
+                    'edit_event',
+                    urlconf='gbe.scheduling.urls',
+                    args=[self.conference.conference_slug, parent.pk])
+                if self.conference.status == "completed":
+                    display_item['parent_link'] = reverse(
+                        'detail_view',
+                        urlconf='gbe.scheduling.urls',
+                        args=[parent.eventitem.event.eventitem_id])
+            for area in StaffArea.objects.filter(slug__in=occurrence.labels,
+                                                 conference=self.conference):
+                display_item['staff_areas'] += [area]
+
             display_list += [display_item]
 
         display_list.sort(key=lambda k: k['sort_start'])

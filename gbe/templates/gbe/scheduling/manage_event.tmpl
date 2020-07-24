@@ -68,34 +68,40 @@
   <div class="col-12">
     Toggle column(s):
       <a class="toggle-vis" id="gbe-table-select" data-column="0">Title</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="1">Location</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="2">Date/Time</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="3">Duration</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="4">Type</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="5">Current Volunteer</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="6">Max Volunteer</a>
+      <a class="toggle-vis" id="gbe-table-select" data-column="1">Parent</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="2">Area</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="3">Location</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="4">Date/Time</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="5">Duration</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="6">Type</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="7">Current Volunteer</a> - 
+      <a class="toggle-vis" id="gbe-table-select" data-column="8">Max Volunteer</a>
   <table id="event_review" class="order-column table table-bordered" cellspacing="0" width="100%">
     <thead>
       <tr class="bid-table">
         <th class="bid-table">Title</th>
+        <th class="bid-table">Parent</th>
+        <th class="bid-table">Area</th>
         <th class="bid-table">Location</th>
         <th class="bid-table">Date/Time</th>
         <th class="bid-table">Duration</th>
         <th class="bid-table">Type</th>
-        <th class="bid-table">Current Volunteer</th>
-        <th class="bid-table">Max Volunteer</th>
+        <th class="bid-table">Current #</th>
+        <th class="bid-table">Max #</th>
         <th class="bid-table">Action</th>
       </tr>
     </thead>
     <tfoot>
       <tr class="bid-table">
         <th class="bid-table">Title</th>
+        <th class="bid-table">Parent</th>
+        <th class="bid-table">Area</th>
         <th class="bid-table">Location</th>
         <th class="bid-table">Date/Time</th>
         <th class="bid-table">Duration</th>
         <th class="bid-table">Type</th>
-        <th class="bid-table">Current Volunteer</th>
-        <th class="bid-table">Max Volunteer</th>
+        <th class="bid-table">Current #</th>
+        <th class="bid-table">Max #</th>
         <th class="bid-table">Action</th>
       </tr>
     </tfoot>
@@ -103,6 +109,9 @@
     {% for occurrence in occurrences %}
       <tr class="bid-table {% if occurrence.id in success_occurrences %}success{% endif %}">
        <td class="bid-table">{{ occurrence.title}}</td>
+       <td class="bid-table">{% if occurrence.parent_title %}<a href="{{occurrence.parent_link}}" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a>{% endif %}</td>
+       <td class="bid-table">{% for area in occurrence.staff_areas %}
+        {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</td>
        <td class="bid-table">{{ occurrence.location}}</td>
        <td class="bid-table">{{ occurrence.start}}</td>
        <td class="bid-table">{{ occurrence.duration }}</td>
