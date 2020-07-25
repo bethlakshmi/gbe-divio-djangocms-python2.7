@@ -579,6 +579,9 @@ group_filter_note = '''The recipients listed here include only active users,
 who have agreed to be contacted by the Expo.  Disabled users and users who
 have set their preference to not receive email of this kind will not be
 included.'''
+intro_transaction_message = '''Transactions marked in blue are associated \
+with the "limbo" user as a placeholder, because no user matching the \
+purchaser's email could be found.'''
 intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
 intro_ticket_assign_message = '''This grid shows what tickets are connected \

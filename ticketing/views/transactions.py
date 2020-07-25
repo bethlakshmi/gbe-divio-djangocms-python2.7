@@ -10,6 +10,8 @@ from ticketing.models import (
 )
 from ticketing.brown_paper import get_bpt_last_poll_time
 from django.shortcuts import render
+from gbe.models import UserMessage
+from gbetext import intro_transaction_message
 
 
 @never_cache
@@ -25,6 +27,12 @@ def transactions(request):
     else:
         conference = get_current_conference()
 
+    intro = UserMessage.objects.get_or_create(
+                view="ViewTransactions",
+                code="INTRO_MESSAGE",
+                defaults={
+                    'summary': "Introduction Message",
+                    'description': intro_transaction_message})
     count = -1
     error = ''
 
@@ -44,5 +52,6 @@ def transactions(request):
                'transactions': transactions,
                'sync_time': sync_time,
                'error': error,
-               'count': count}
+               'count': count,
+               'intro': intro[0].description}
     return render(request, r'ticketing/transactions.tmpl', context)

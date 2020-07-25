@@ -39,10 +39,12 @@ Results:  {{count}} new transactions were added to the system.
 <div class="container review">
 {% include "conference_tabs.tmpl" %} 
  <div class="scheduling-area">
+ 	{{intro | safe}}
 {% for item in transactions %}
 {% ifchanged item.ticket_item.bpt_event %}
 {% if not forloop.first %}</tbody></table>{% endif %}
 <h3>{{item.ticket_item.bpt_event.title }} ({{item.ticket_item.bpt_event.bpt_event_id }})</h3>
+{% include 'ticketing/event_details.tmpl' with event=item.ticket_item.bpt_event %}
 <table id="" class="order-column table table-bordered datatable" cellspacing="0" width="100%">
   <thead>
   <tr class="bid-table">
@@ -70,8 +72,10 @@ Results:  {{count}} new transactions were added to the system.
   </tfoot>
   <tbody>
  {% endifchanged %}
-<tr class="{% if item.id in updated_transactions %}success {% endif %}bid-table">
-  <td class="bid-table">{{ item.purchaser.matched_to_user.profile.display_name }}</td>
+<tr class="{% if item.id in updated_transactions %}success {% elif not item.purchaser.matched_to_user.profile %}info {% endif %}bid-table">
+  <td class="bid-table">{% if item.purchaser.matched_to_user.profile %}
+  {{ item.purchaser.matched_to_user.profile.display_name }}{% else %}
+  {{ item.purchaser.matched_to_user }}{% endif %}</td>
   <td class="bid-table">{% if item.purchaser.email|length > 15 %}
     <a href="#" data-toggle="tooltip" title="{{ item.purchaser.email }}">
     {{ item.purchaser.email|truncatechars:15 }}</a>{% else %}
@@ -97,6 +101,3 @@ Results:  {{count}} new transactions were added to the system.
   </script>
 {% endaddtoblock %}
 {% endblock %}
-
-
-
