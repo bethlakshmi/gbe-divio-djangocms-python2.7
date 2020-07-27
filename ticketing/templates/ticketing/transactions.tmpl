@@ -33,13 +33,18 @@ Results:  {{count}} new transactions were added to the system.
 <form method="POST" action={% url 'ticketing:transactions' %} enctype="multipart/form-data">
 {% csrf_token %}
     <input type="hidden" name="Sync" value="1">
-    <a href="{% url 'ticketing:bptevent_edit' %}" role="button" class="btn btn-primary">Synchronize with Brown Paper Tickets</a>
+    <a href="{% url 'ticketing:transactions' %}" role="button" class="btn btn-primary">Synchronize with Brown Paper Tickets</a>
 </form>
 </div></div></div><br><br>
 <div class="container review">
 {% include "conference_tabs.tmpl" %} 
  <div class="scheduling-area">
  	{{intro | safe}}
+<br><br>
+<div class="btn-group btn-group-toggle">
+    <a class="btn {% ifequal view_format "ticket" %}btn-secondary disabled{% else %}btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
+    <a class="btn {% ifequal view_format "user" %}btn-secondary disabled{% else %}btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
+</div>
 {% for item in transactions %}
 {% ifchanged item.ticket_item.bpt_event %}
 {% if not forloop.first %}</tbody></table>{% endif %}
@@ -53,7 +58,7 @@ Results:  {{count}} new transactions were added to the system.
     <th class="bid-table">Source</th>
     <th class="bid-table">Ticket</th>
     <th class="bid-table">Amount</th>
-    <th class="bid-table">Date</th>
+    <th class="bid-table">Purchase Date</th>
     <th class="bid-table">Invoice</th>
     <th class="bid-table">Action</th>
   </tr>
@@ -65,7 +70,7 @@ Results:  {{count}} new transactions were added to the system.
     <th class="bid-table">Source</th>
     <th class="bid-table">Ticket</th>
     <th class="bid-table">Amount</th>
-    <th class="bid-table">Date</th>
+    <th class="bid-table">Purchase Date</th>
     <th class="bid-table">ID</th>
     <th class="bid-table">Action</th>
   </tr>
@@ -74,11 +79,11 @@ Results:  {{count}} new transactions were added to the system.
  {% endifchanged %}
 <tr class="{% if item.id in updated_transactions %}success {% elif not item.purchaser.matched_to_user.profile %}info {% endif %}bid-table">
   <td class="bid-table">{% if item.purchaser.matched_to_user.profile %}
-  {{ item.purchaser.matched_to_user.profile.display_name }}{% else %}
-  {{ item.purchaser.matched_to_user }}{% endif %}</td>
+  	{% if can_edit %}<a href="{% url 'gbe:admin_profile' item.purchaser.matched_to_user.profile.resourceitem_id %}?next={{ request.get_full_path }}">{% endif %}{{ item.purchaser.matched_to_user.profile.display_name }}{% if can_edit %}{% endif %}</a>{% else %}
+  {{ item.purchaser.last_name }}, {{ item.purchaser.first_name }} <br>({{ item.purchaser.matched_to_user }}){% endif %}</td>
   <td class="bid-table">{% if item.purchaser.email|length > 15 %}
-    <a href="#" data-toggle="tooltip" title="{{ item.purchaser.email }}">
-    {{ item.purchaser.email|truncatechars:15 }}</a>{% else %}
+    <span title="{{ item.purchaser.email }}">
+    {{ item.purchaser.email|truncatechars:15 }}</span>{% else %}
    {{ item.purchaser.email}}{% endif %}</td>
   <td class="bid-table">{{ item.payment_source }}</td>
   <td class="bid-table">{{ item.ticket_item.title}}</td>

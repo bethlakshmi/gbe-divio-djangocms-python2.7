@@ -27,6 +27,8 @@ def transactions(request):
     else:
         conference = get_current_conference()
 
+    view_format = request.GET.get('format', 'ticket')
+
     intro = UserMessage.objects.get_or_create(
                 view="ViewTransactions",
                 code="INTRO_MESSAGE",
@@ -47,11 +49,14 @@ def transactions(request):
 
     sync_time = get_bpt_last_poll_time()
 
+    user_editor = validate_perms(request, ('Registrar', ), require=False)
     context = {'conference_slugs': conference_slugs(),
                'conference': conference,
                'transactions': transactions,
                'sync_time': sync_time,
                'error': error,
                'count': count,
-               'intro': intro[0].description}
+               'intro': intro[0].description,
+               'can_edit': user_editor,
+               'view_format': view_format}
     return render(request, r'ticketing/transactions.tmpl', context)
