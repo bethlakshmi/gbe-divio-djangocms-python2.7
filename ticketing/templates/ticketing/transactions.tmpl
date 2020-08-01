@@ -45,6 +45,7 @@ Results:  {{count}} new transactions were added to the system.
     <a class="btn {% ifequal view_format "ticket" %}btn-secondary disabled{% else %}btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
     <a class="btn {% ifequal view_format "user" %}btn-secondary disabled{% else %}btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
 </div>
+{% ifequal view_format "ticket" %}
 {% for item in transactions %}
 {% ifchanged item.ticket_item.bpt_event %}
 {% if not forloop.first %}</tbody></table>{% endif %}
@@ -81,10 +82,7 @@ Results:  {{count}} new transactions were added to the system.
   <td class="bid-table">{% if item.purchaser.matched_to_user.profile %}
   	{% if can_edit %}<a href="{% url 'gbe:admin_profile' item.purchaser.matched_to_user.profile.resourceitem_id %}?next={{ request.get_full_path }}">{% endif %}{{ item.purchaser.matched_to_user.profile.display_name }}{% if can_edit %}{% endif %}</a>{% else %}
   {{ item.purchaser.last_name }}, {{ item.purchaser.first_name }} <br>({{ item.purchaser.matched_to_user }}){% endif %}</td>
-  <td class="bid-table">{% if item.purchaser.email|length > 15 %}
-    <span title="{{ item.purchaser.email }}">
-    {{ item.purchaser.email|truncatechars:15 }}</span>{% else %}
-   {{ item.purchaser.email}}{% endif %}</td>
+  <td class="bid-table">{% include "email_crop.tmpl" with email=item.purchaser.email %}</td>
   <td class="bid-table">{{ item.payment_source }}</td>
   <td class="bid-table">{{ item.ticket_item.title}}</td>
   <td class="bid-table">${{ item.amount }}</td>
@@ -95,6 +93,45 @@ Results:  {{count}} new transactions were added to the system.
     <div class="btn-group" role="group" aria-label="...">Actions</div></td>
 </tr>
 {% endfor %}</tbody></table>
+{% else %}
+<table id="" class="order-column table table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+  <tr class="bid-table">
+    <th class="bid-table">Email (Username)</th>
+    <th class="bid-table">Badge Name (Last, First)</th>
+    <th class="bid-table">Tickets</th>
+    <th class="bid-table">Action</th>
+  </tr>
+  </thead>
+    <tfoot>
+  <tr class="bid-table">
+    <th class="bid-table">Email (Username)</th>
+    <th class="bid-table">Badge Name (Last, First)</th>
+    <th class="bid-table">Tickets</th>
+    <th class="bid-table">Action</th>
+  </tr>
+  </tfoot>
+  <tbody>
+  {% for user in users %}
+  {% if user.username == 'limbo' %}
+{% for purchaser in user.purchaser_set.all %}
+  	{% if purchaser.transaction_set.all|length > 0 %}
+<tr class="info bid-table">
+  <td class="bid-table">{% include "email_crop.tmpl" with email=purchaser.email %}<br>(No user account)</td>
+  <td class="bid-table">N/A<br>({{purchaser.last_name}}, {{purchaser.first_name}})</td>
+  <td class="bid-table" id="sub-table"><table width=100%>{% include "transaction_row.tmpl" %}</table></td>
+  <td class="bid-table">Action</td></tr>
+{% endif %}{% endfor %}{% else %}
+<tr class="{% if user.pk in updated_transactions %}success {% elif not user.profile.is_active %}red {% endif %}bid-table">
+  <td class="bid-table">{% include "email_crop.tmpl" with email=user.email %}<br>({{user}})</td>
+  <td class="bid-table">{{user.profile.display_name}},<br>({{user.last_name}}, {{user.first_name}})</td>
+  <td class="bid-table" id="sub-table"><table width=100%>{% for purchaser in user.purchaser_set.all %}
+  	{% if purchaser.transaction_set.all|length > 0 %}
+      {% include "transaction_row.tmpl" %}{% endif %}{% endfor %}</table>
+  </td>
+  <td class="bid-table">Action</td>
+</tr>{% endif %}{% endfor %}</tbody></table>
+{% endifequal %}
 </div></div>
 {% addtoblock "js" %}
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>

@@ -6,13 +6,14 @@ from gbe.functions import (
     validate_perms,
 )
 from ticketing.models import (
+  Purchaser,
   Transaction,
 )
 from ticketing.brown_paper import get_bpt_last_poll_time
 from django.shortcuts import render
 from gbe.models import UserMessage
 from gbetext import intro_transaction_message
-
+from django.contrib.auth.models  import User
 
 @never_cache
 def transactions(request):
@@ -41,22 +42,25 @@ def transactions(request):
     if ('Sync' in request.POST):
         count = process_bpt_order_list()
 
-    transactions = Transaction.objects.filter(
-      ticket_item__bpt_event__conference=conference).order_by(
-      'ticket_item__bpt_event',
-      'ticket_item__title',
-      'purchaser')
-
     sync_time = get_bpt_last_poll_time()
 
     user_editor = validate_perms(request, ('Registrar', ), require=False)
     context = {'conference_slugs': conference_slugs(),
                'conference': conference,
-               'transactions': transactions,
                'sync_time': sync_time,
                'error': error,
                'count': count,
                'intro': intro[0].description,
                'can_edit': user_editor,
                'view_format': view_format}
+    if view_format == "ticket":
+        context['transactions'] = Transaction.objects.filter(
+            ticket_item__bpt_event__conference=conference).order_by(
+            'ticket_item__bpt_event',
+            'ticket_item__title',
+            'purchaser')
+    else:
+        context['users'] = User.objects.filter(
+            purchaser__transaction__ticket_item__bpt_event__conference=conference
+            ).distinct().order_by('email')
     return render(request, r'ticketing/transactions.tmpl', context)

@@ -1,0 +1,3 @@
+{% for transaction in purchaser.transaction_set.all %}<tr id="clear-row">
+<td>{% include "email_crop.tmpl" with email=purchaser.email %}</td>
+<td>{{ transaction.ticket_item.title }}{% if transaction.ticket_item.bpt_event.vendor_submission_event %} - Vendor{% elif transaction.ticket_item.bpt_event.act_submission_event %} - Act{% endif %}</td><td>{{ transaction.import_date }}</td></tr>{%endfor %}
