@@ -16,7 +16,8 @@ class TransactionAdmin(admin.ModelAdmin):
                     'amount',
                     'order_date',
                     'import_date')
-    list_filter = ['order_date',
+    list_filter = ['ticket_item__bpt_event__conference',
+                   'order_date',
                    'import_date',
                    'ticket_item__bpt_event__act_submission_event',
                    'ticket_item__bpt_event__vendor_submission_event']

@@ -79,12 +79,10 @@ Results:  {{count}} new transactions were added to the system.
   <tbody>
  {% endifchanged %}
 <tr class="{% if item.id in updated_transactions %}success {% elif not item.purchaser.matched_to_user.profile %}info {% endif %}bid-table">
-  <td class="bid-table">{% if item.purchaser.matched_to_user.profile %}
-  	{% if can_edit %}<a href="{% url 'gbe:admin_profile' item.purchaser.matched_to_user.profile.resourceitem_id %}?next={{ request.get_full_path }}">{% endif %}{{ item.purchaser.matched_to_user.profile.display_name }}{% if can_edit %}{% endif %}</a>{% else %}
-  {{ item.purchaser.last_name }}, {{ item.purchaser.first_name }} <br>({{ item.purchaser.matched_to_user }}){% endif %}</td>
+  <td class="bid-table">{% include "ticketing/purchaser_name.tmpl" with user=item.purchaser.matched_to_user purchaser=item.purchaser %}</td>
   <td class="bid-table">{% include "email_crop.tmpl" with email=item.purchaser.email %}</td>
   <td class="bid-table">{{ item.payment_source }}</td>
-  <td class="bid-table">{{ item.ticket_item.title}}</td>
+  <td class="bid-table">{{ item.ticket_item.title}}{% if item.ticket_item.bpt_event.vendor_submission_event %} - Vendor{% elif item.ticket_item.bpt_event.act_submission_event %} - Act{% endif %}</td>
   <td class="bid-table">${{ item.amount }}</td>
   <td class="bid-table">{{ item.import_date }}</td>
   <td class="bid-table">
@@ -119,15 +117,15 @@ Results:  {{count}} new transactions were added to the system.
 <tr class="info bid-table">
   <td class="bid-table">{% include "email_crop.tmpl" with email=purchaser.email %}<br>(No user account)</td>
   <td class="bid-table">N/A<br>({{purchaser.last_name}}, {{purchaser.first_name}})</td>
-  <td class="bid-table" id="sub-table"><table width=100%>{% include "transaction_row.tmpl" %}</table></td>
+  <td class="bid-table" id="sub-table"><table width=100%>{% include "ticketing/transaction_row.tmpl" %}</table></td>
   <td class="bid-table">Action</td></tr>
 {% endif %}{% endfor %}{% else %}
 <tr class="{% if user.pk in updated_transactions %}success {% elif not user.profile.is_active %}red {% endif %}bid-table">
-  <td class="bid-table">{% include "email_crop.tmpl" with email=user.email %}<br>({{user}})</td>
+  <td class="bid-table">{% include "email_crop.tmpl" with email=user.email %}<br>({% include "ticketing/purchaser_name.tmpl" with purchaser=user %})</td>
   <td class="bid-table">{{user.profile.display_name}},<br>({{user.last_name}}, {{user.first_name}})</td>
   <td class="bid-table" id="sub-table"><table width=100%>{% for purchaser in user.purchaser_set.all %}
   	{% if purchaser.transaction_set.all|length > 0 %}
-      {% include "transaction_row.tmpl" %}{% endif %}{% endfor %}</table>
+      {% include "ticketing/transaction_row.tmpl" %}{% endif %}{% endfor %}</table>
   </td>
   <td class="bid-table">Action</td>
 </tr>{% endif %}{% endfor %}</tbody></table>
