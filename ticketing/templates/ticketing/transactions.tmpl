@@ -30,10 +30,10 @@ Results:  {{count}} new transactions were added to the system.
 {% endif %}
 </div>
 <div class="col-4">
-<form method="POST" action={% url 'ticketing:transactions' %} enctype="multipart/form-data">
+<form method="POST" action="{% url 'ticketing:transactions' %}" enctype="multipart/form-data">
 {% csrf_token %}
     <input type="hidden" name="Sync" value="1">
-    <a href="{% url 'ticketing:transactions' %}" role="button" class="btn btn-primary">Synchronize with Brown Paper Tickets</a>
+    <button type="submit" class="btn btn-primary">Synchronize with Brown Paper Tickets</button>
 </form>
 </div></div></div><br><br>
 <div class="container review">

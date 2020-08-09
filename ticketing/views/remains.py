@@ -47,7 +47,6 @@ import pytz
 from django.db.models import Q
 from gbe.ticketing_idd_interface import get_ticket_form
 from django.contrib import messages
-from ticketing.brown_paper import process_bpt_order_list
 from ticketing.functions import import_ticket_items
 
 

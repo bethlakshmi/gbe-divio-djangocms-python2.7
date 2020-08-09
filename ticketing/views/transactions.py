@@ -9,11 +9,19 @@ from ticketing.models import (
   Purchaser,
   Transaction,
 )
-from ticketing.brown_paper import get_bpt_last_poll_time
+from ticketing.brown_paper import (
+    get_bpt_last_poll_time,
+    process_bpt_order_list,
+)
 from django.shortcuts import render
 from gbe.models import UserMessage
-from gbetext import intro_transaction_message
-from django.contrib.auth.models  import User
+from gbetext import (
+    import_transaction_message,
+    intro_transaction_message,
+)
+from django.contrib.auth.models import User
+from django.contrib import messages
+
 
 @never_cache
 def transactions(request):
@@ -31,16 +39,24 @@ def transactions(request):
     view_format = request.GET.get('format', 'ticket')
 
     intro = UserMessage.objects.get_or_create(
-                view="ViewTransactions",
-                code="INTRO_MESSAGE",
-                defaults={
-                    'summary': "Introduction Message",
-                    'description': intro_transaction_message})
+      view="ViewTransactions",
+      code="INTRO_MESSAGE",
+      defaults={'summary': "Introduction Message",
+                'description': intro_transaction_message})
     count = -1
     error = ''
 
     if ('Sync' in request.POST):
         count = process_bpt_order_list()
+        success_msg = UserMessage.objects.get_or_create(
+          view="ViewTransactions",
+          code="IMPORT_MESSAGE",
+          defaults={
+                    'summary': "Import BPT Transactions Message",
+                    'description': import_transaction_message})
+        messages.success(request, "%s   Transactions imported: %s" % (
+            success_msg[0].description,
+            count))
 
     sync_time = get_bpt_last_poll_time()
 
