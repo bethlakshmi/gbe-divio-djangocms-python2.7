@@ -1,6 +1,5 @@
 from django.contrib import admin
 from gbe.models import *
-from model_utils.managers import InheritanceManager
 from import_export.admin import ImportExportActionModelAdmin
 
 

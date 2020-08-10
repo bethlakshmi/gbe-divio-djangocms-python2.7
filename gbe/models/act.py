@@ -24,6 +24,7 @@ from gbetext import (
     video_options,
 )
 from scheduler.models import ActItem
+from scheduler.idd import get_schedule
 from django.utils.formats import date_format
 
 
@@ -92,19 +93,30 @@ class Act (Biddable, ActItem):
     @property
     def bid_review_summary(self):
         castings = ""
-        for (show, role) in self.get_castings():
-            if len(castings) > 0:
-                castings += ", %s" % (str(show.eventitem))
-            else:
-                castings += str(show.eventitem)
-            if len(role) > 0:
-                castings += ' - %s' % role
+        cast_shows = []
+        for item in get_schedule(act=self).schedule_items:
+            if item.event.event_type_name == "Show" and (
+                    item.event.eventitem.pk not in cast_shows):
+                if len(castings) > 0:
+                    castings += ", %s" % str(item.event.eventitem)
+                else:
+                    castings += str(item.event.eventitem)
+                castings += ' - %s' % item.role
+                cast_shows += [item.event.eventitem.pk]
 
         return [self.performer.name,
                 self.b_title,
                 date_format(self.updated_at, 'DATETIME_FORMAT'),
                 acceptance_states[self.accepted][1],
                 castings]
+
+    @property
+    def is_complete(self):
+        if self.tech.is_complete:
+            for item in get_schedule(act=self).schedule_items:
+                if item.event.event_type_name == 'GenericEvent':
+                    return True
+        return False
 
     def validate_unique(self, *args, **kwargs):
         # conference, title and performer contact should all be unique before
