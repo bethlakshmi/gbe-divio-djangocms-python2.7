@@ -1,22 +1,19 @@
-from .remains import (
-    Schedulable,
-    ResourceItem,
-    Resource,
-    ActItem,
-    ActResource,
-    LocationItem,
-    Location,
-    WorkerItem,
-    Worker,
-    EventItem,
-    Event,
-    ResourceAllocation,
-    Ordering,
-    Label,
-    EventLabel,
-    EventContainer,
-)
-
+from .resource import Resource
+from .resource_item import ResourceItem
+from .location_item import LocationItem
+from .location import Location
+from .act_item import ActItem
+from .act_resource import ActResource
+from .worker_item import WorkerItem
+from .worker import Worker
+from .schedulable import Schedulable
+from .event_item import EventItem
+from .event import Event
+from .resource_allocation import ResourceAllocation
+from .event_label import EventLabel
+from .event_container import EventContainer
+from .label import Label
+from .ordering import Ordering
 
 # regular user reviews, after the event occurs
 from .event_eval_question import EventEvalQuestion

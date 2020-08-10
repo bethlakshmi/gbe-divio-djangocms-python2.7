@@ -98,8 +98,8 @@ class TestReviewActList(TestCase):
             self.url,
             data={'conf_slug': context.conference.conference_slug})
         self.assertContains(response, context.acts[0].b_title)
-        self.assertContains(response, "%s, %s" % (
-            context.show.e_title,
+        self.assertContains(response, "%s - Performing" % context.show.e_title)
+        self.assertContains(response, "%s - Performing" % (
             context2.show.e_title))
 
     def test_review_act_has_reviews(self):
