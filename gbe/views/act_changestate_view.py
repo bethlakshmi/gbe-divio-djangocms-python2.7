@@ -79,7 +79,7 @@ class ActChangeStateView(BidChangeStateView):
 
         # Determine if the current show should be changed
         if self.object.accepted in self.show_booked_states:
-            response = get_schedule(act=self.object)
+            response = get_schedule(commitment=self.object)
             show_general_status(request, response, self.__class__.__name__)
             show, rehearsals = self.parse_act_schedule(response.schedule_items)
 

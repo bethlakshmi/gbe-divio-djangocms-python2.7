@@ -33,7 +33,7 @@ def act_techinfo_detail(request, act_id):
     act = get_object_or_404(Act, pk=act_id)
     if act.accepted == 3:
         response = get_schedule(labels=[act.b_conference.conference_slug],
-                                act=act)
+                                commitment=act)
         show_general_status(request, response, "ActTechinfoDetail")
         for item in response.schedule_items:
             if item.event not in shows and Show.objects.filter(

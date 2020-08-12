@@ -94,14 +94,15 @@ class Act (Biddable, ActItem):
     def bid_review_summary(self):
         castings = ""
         cast_shows = []
-        for item in get_schedule(act=self).schedule_items:
+        for item in get_schedule(commitment=self).schedule_items:
             if item.event.event_type_name == "Show" and (
                     item.event.eventitem.pk not in cast_shows):
                 if len(castings) > 0:
                     castings += ", %s" % str(item.event.eventitem)
                 else:
                     castings += str(item.event.eventitem)
-                castings += ' - %s' % item.role
+                if item.order.role and len(item.order.role) > 0:
+                    castings += ' - %s' % item.order.role
                 cast_shows += [item.event.eventitem.pk]
 
         return [self.performer.name,
@@ -113,7 +114,7 @@ class Act (Biddable, ActItem):
     @property
     def is_complete(self):
         if self.tech.is_complete:
-            for item in get_schedule(act=self).schedule_items:
+            for item in get_schedule(commitment=self).schedule_items:
                 if item.event.event_type_name == 'GenericEvent':
                     return True
         return False

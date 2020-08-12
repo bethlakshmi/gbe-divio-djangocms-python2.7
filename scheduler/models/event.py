@@ -7,7 +7,6 @@ from django.db.models import (
 )
 from scheduler.models import (
     ActItem,
-    ActResource,
     EventItem,
     Location,
     LocationItem,
@@ -41,13 +40,9 @@ class Event(Schedulable):
 
     def has_act_opening(self):
         '''
-        returns True if the count of acts allocated to this event is less than
-        max_volunteer
+        REFACTOR
         '''
-        allocs = self.resources_allocated.all()
-        acts_booked = len([a for a in allocs
-                           if isinstance(a.resource.as_subtype, ActResource)])
-        return self.max_volunteer - acts_booked > 0
+        pass
 
     @property
     def foreign_event_id(self):

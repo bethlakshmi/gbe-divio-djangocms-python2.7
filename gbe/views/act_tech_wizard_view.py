@@ -188,7 +188,7 @@ class ActTechWizardView(View):
         if self.act.performer.contact != profile:
             validate_perms(request, self.permissions)
         response = get_schedule(labels=[self.act.b_conference.conference_slug],
-                                act=self.act)
+                                commitment=self.act)
 
         for item in response.schedule_items:
             # group acts will have multiple items for same show

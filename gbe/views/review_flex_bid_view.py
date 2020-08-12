@@ -38,8 +38,11 @@ from gbetext import (
     default_act_review_success_msg,
 )
 from gbe.views import ReviewBidView
-from scheduler.models import ActResource
 from collections import OrderedDict
+from scheduler.idd import (
+    get_occurrences,
+    get_schedule,
+)
 
 
 class FlexibleReviewBidView(ReviewBidView):
@@ -58,28 +61,25 @@ class FlexibleReviewBidView(ReviewBidView):
     notes = None
 
     def create_action_form(self, act):
-
+        choices = []
         self.actionform = BidStateChangeForm(instance=act)
-        start = Show.objects.filter(
-            scheduler_events__resources_allocated__resource__actresource___item=act
-            ).first()
-        if not start:
-            start = ""
-            casting = ""
-        else:
-            casting = ActResource.objects.filter(
-                allocations__event__eventitem=start,
-                _item=act).first().role
-        q = Show.objects.filter(
-            e_conference=act.b_conference,
-            scheduler_events__isnull=False).order_by(
-                'scheduler_events__starttime')
-        self.actionform.fields['show'] = ModelChoiceField(
-            queryset=q,
-            empty_label=None,
+        start = 0
+        casting = ""
+        for item in get_schedule(commitment=act).schedule_items:
+            if item.event.event_type_name == "Show":
+                start = item.event.eventitem.pk
+                casting = item.order.role
+        response = get_occurrences(
+            foreign_event_ids=Show.objects.filter(
+                e_conference=act.b_conference).values_list(
+                'eventitem_id',
+                flat=True))
+        for occurrence in response.occurrences:
+            choices += [(occurrence.eventitem.pk, str(occurrence))]
+        self.actionform.fields['show'] = ChoiceField(
+            choices=choices,
             label='Pick a Show',
-            initial=start,
-            to_field_name='eventitem_id')
+            initial=start)
         self.actionform.fields['casting'] = ChoiceField(
             choices=get_act_casting(),
             required=False,

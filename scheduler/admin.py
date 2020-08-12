@@ -17,7 +17,6 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
                     'resource_type')
     list_filter = ['event__eventitem__event__e_conference',
                    'resource__worker__role',
-                   'resource__actresource__role',
                    'resource__location']
 
     def resource_type(self, obj):
@@ -68,13 +67,11 @@ class WorkerAdmin(admin.ModelAdmin):
     list_filter = ['role', '_item']
 
 
-class ActResourceAdmin(admin.ModelAdmin):
-    list_display = ('_item', 'role')
-    list_filter = ['role', '_item__act__b_conference']
-
-
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order', 'allocation')
+    list_display = ('order', 'performer', 'role', 'class_id')
+
+    def performer(self, obj):
+        return str(obj.allocation.resource)
 
 
 class EventLabelAdmin(admin.ModelAdmin):
@@ -108,7 +105,6 @@ class EventEvalGradeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ActItem)
-admin.site.register(ActResource, ActResourceAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventContainer, EventContainerAdmin)
 admin.site.register(EventItem, EventItemAdmin)

@@ -255,7 +255,6 @@ class Profile(WorkerItem):
     # and log any additional use here.
     def get_bookable_items(self):
         return {
-            "acts": [act for act in self.get_acts() if act.accepted == 3],
             "performers": self.get_performers(),
         }
 
