@@ -1,5 +1,15 @@
 
 
+class Commitment(object):
+    def __init__(self,
+                 role=None,
+                 decorator_class=None):
+        if decorator_class:
+            self.class_name = decorator_class.__class__.__name__
+            self.class_id = decorator_class.pk
+        self.role = role
+
+
 class Person(object):
     def __init__(self,
                  booking_id=None,
@@ -9,7 +19,9 @@ class Person(object):
                  role=None,
                  label=None,
                  worker=None,
-                 booking=None):
+                 booking=None,
+                 commitment=None,
+                 users=None):
         self.booking_id = None
         if booking:
             self.booking_id = booking.pk
@@ -32,6 +44,8 @@ class Person(object):
         if booking_id:
             self.booking_id = booking_id
         self.label = label
+        self.commitment = commitment
+        self.users = users
 
 
 class Casting(object):

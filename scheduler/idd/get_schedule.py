@@ -54,7 +54,8 @@ def get_schedule(user=None,
                         event=item.event,
                         role=item.resource.as_subtype.role,
                         label=booking_label,
-                        order=order)]
+                        order=order,
+                        booking_id=item.pk)]
         worker_filter = worker_filter.filter(
             resource__worker___item=user.profile)
 

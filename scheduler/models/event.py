@@ -89,7 +89,10 @@ class Event(Schedulable):
         uses the Person from the data_transfer objects.
         '''
         from scheduler.idd import get_schedule
-        from scheduler.models import ResourceAllocation
+        from scheduler.models import (
+            Ordering,
+            ResourceAllocation,
+        )
 
         warnings = []
         time_format = GBE_DATETIME_FORMAT
@@ -98,18 +101,27 @@ class Event(Schedulable):
         if person.public_id:
             item = WorkerItem.objects.get(pk=person.public_id)
             worker = Worker(_item=item, role=person.role)
-
         else:
             worker = Worker(_item=person.user.profile, role=person.role)
         worker.save()
 
-        for conflict in get_schedule(
-                    user=worker.workeritem.user_object,
-                    start_time=self.start_time,
-                    end_time=self.end_time).schedule_items:
-            warnings += [Warning(code="SCHEDULE_CONFLICT",
-                                 user=person.user,
-                                 occurrence=conflict.event)]
+        if person.user:
+            users = [person.user]
+        elif person.users:
+            users = person.users
+        else:
+            users = [worker.workeritem.user_object]
+
+        for user in users:
+            for conflict in get_schedule(
+                        user=user,
+                        start_time=self.start_time,
+                        end_time=self.end_time).schedule_items:
+                if person.booking_id and (
+                        person.booking_id != conflict.booking_id):
+                    warnings += [Warning(code="SCHEDULE_CONFLICT",
+                                         user=user,
+                                         occurrence=conflict.event)]
         if person.booking_id:
             allocation = ResourceAllocation.objects.get(
                 id=person.booking_id)
@@ -118,6 +130,13 @@ class Event(Schedulable):
             allocation = ResourceAllocation(event=self,
                                             resource=worker)
         allocation.save()
+        if person.commitment:
+            ordering, created = Ordering.objects.get_or_create(
+                allocation=allocation)
+            ordering.role = person.commitment.role
+            ordering.class_name = person.commitment.class_name
+            ordering.class_id = person.commitment.class_id
+            ordering.save()
         if self.extra_volunteers() > 0:
             warnings += [Warning(
                 code="OCCURRENCE_OVERBOOKED",
@@ -129,57 +148,6 @@ class Event(Schedulable):
             l, created = Label.objects.get_or_create(allocation=allocation)
             l.text = person.label
             l.save()
-        return BookingResponse(warnings=warnings,
-                               booking_id=allocation.pk,
-                               occurrence=self)
-
-    # New - from refactoring
-    def allocate_act(self, act):
-        '''
-        allocated worker for the new model - right now, focused on create
-        uses the BookableAct from the data_transfer objects.
-        '''
-        from scheduler.models import ResourceAllocation
-        warnings = []
-        time_format = GBE_DATETIME_FORMAT
-
-        worker = None
-        item = ActItem.objects.get(pk=act.act_id)
-        resource = ActResource(_item=item)
-        if act.role:
-            resource.role = act.role
-        resource.save()
-
-        if act.booking_id:
-            try:
-                allocation = ResourceAllocation.objects.get(
-                    id=act.booking_id)
-                allocation.resource = resource
-                allocation.event = self
-            except ResourceAllocation.DoesNotExist:
-                return BookingResponse(
-                    errors=[Error(
-                        code="BOOKING_NOT_FOUND",
-                        details="Booking id %s not found" % act.booking_id), ],
-                    booking_id=act.booking_id)
-        else:
-            allocation = ResourceAllocation(event=self,
-                                            resource=resource)
-        allocation.save()
-
-        num_acts = ActResource.objects.filter(
-                allocations__event=self).count()
-        if num_acts > self.max_volunteer:
-            warnings += [Warning(
-                code="OCCURRENCE_OVERBOOKED",
-                details="Over booked by %s acts" % (
-                    num_acts - self.max_volunteer))]
-        if act.order:
-            # refactor
-            from scheduler.models import Ordering
-            ordering = Ordering.objects.get_or_create(allocation=allocation)
-            ordering[0].order = act.order
-            ordering[0].save()
         return BookingResponse(warnings=warnings,
                                booking_id=allocation.pk,
                                occurrence=self)
