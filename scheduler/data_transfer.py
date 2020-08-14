@@ -23,12 +23,16 @@ class Person(object):
                  commitment=None,
                  users=None):
         self.booking_id = None
+        self.commitment = None
         if booking:
             self.booking_id = booking.pk
             self.occurrence = booking.event
             worker = booking.resource.worker
+            if hasattr(booking, 'ordering'):
+                self.commitment = booking.ordering
         else:
             self.occurrence = None
+            self.commitment = commitment
 
         if worker:
             self.role = worker.role
@@ -44,7 +48,6 @@ class Person(object):
         if booking_id:
             self.booking_id = booking_id
         self.label = label
-        self.commitment = commitment
         self.users = users
 
 
