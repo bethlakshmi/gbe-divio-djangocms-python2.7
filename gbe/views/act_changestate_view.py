@@ -116,7 +116,7 @@ class ActChangeStateView(BidChangeStateView):
 
             # if both show and role are same, do nothing
             person = Person(public_id=self.object.performer.pk,
-                            role="performer",
+                            role="Performer",
                             commitment=Commitment(role=casting,
                                                   decorator_class=self.object))
             profiles = self.object.get_performer_profiles()

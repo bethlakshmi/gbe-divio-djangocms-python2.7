@@ -17,7 +17,10 @@ from gbe.models import (
     Conference,
 )
 from scheduler.models import WorkerItem
-from scheduler.idd import get_roles
+from scheduler.idd import (
+    get_roles,
+    get_schedule,
+)
 from gbetext import (
     best_time_to_call_options,
     phone_number_format_error,
@@ -243,10 +246,10 @@ class Profile(WorkerItem):
         shows = []
         for act in acts:
             if act.accepted == 3 and act.is_current:
-                for show in Show.objects.filter(
-                        scheduler_events__resources_allocated__resource__actresource___item=act
-                        ):
-                    shows += [(show, act)]
+                for item in get_schedule(commitment=act).schedule_items:
+                    for show in Show.objects.filter(
+                            eventitem_id=item.event.eventitem.eventitem_id):
+                        shows += [(show, act)]
         shows = sorted(shows, key=lambda show: show[0].e_title)
         return shows
 

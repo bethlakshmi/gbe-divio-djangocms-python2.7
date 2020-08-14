@@ -214,8 +214,9 @@ class TestScheduleActs(TestCase):
         self.assertRedirects(
             response,
             reverse('home', urlconf='gbe.urls'))
-        self.assertEqual(new_show.sched_event.volunteer_count, "2 acts")
-        self.assertEqual(self.context.sched_event.volunteer_count, 0)
+        self.assertEqual(new_show.sched_event.role_count("Volunteer"),
+                         "2 acts")
+        self.assertEqual(self.context.sched_event.role_count("Volunteer"), 0)
 
     def test_good_user_get_only_conf_shows(self):
         not_this_conf_show = ShowFactory()

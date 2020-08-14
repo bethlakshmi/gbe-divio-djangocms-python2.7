@@ -18,7 +18,7 @@ def refactor_act_resource(apps, schema_editor):
         for booking in resource.allocations.all():
             performer = Worker(
                 _item=resource._item.act.performer,
-                role="performer")
+                role="Performer")
             performer.save()
             booking.resource = performer
             booking.save()

@@ -152,19 +152,11 @@ class Event(Schedulable):
                                booking_id=allocation.pk,
                                occurrence=self)
 
-    @property
-    def volunteer_count(self):
+    def role_count(self, role="Volunteer"):
         allocations = self.resources_allocated.all()
-        volunteers = allocations.filter(
-            resource__worker__role='Volunteer').count()
-        if volunteers > 0:
-            return "%d volunteers" % volunteers
-        else:
-            acts = ActResource.objects.filter(
-                allocations__in=allocations).count()
-            if acts > 0:
-                return "%d acts" % acts
-        return 0
+        participants = allocations.filter(
+            resource__worker__role=role).count()
+        return participants
 
     def get_acts(self):
         '''

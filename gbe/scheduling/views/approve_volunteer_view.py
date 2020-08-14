@@ -88,7 +88,7 @@ class ApproveVolunteerView(View):
                 row['status'] = 'success'
             elif not row['volunteer'].is_active:
                 row['status'] = "danger"
-            elif pending_person.occurrence.volunteer_count >= (
+            elif pending_person.occurrence.role_count("Volunteer") >= (
                     pending_person.occurrence.max_volunteer):
                 row['status'] = "warning"
             elif pending_person.role == "Pending Volunteer":
