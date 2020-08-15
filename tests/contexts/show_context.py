@@ -118,7 +118,7 @@ class ShowContext:
         slot = SchedEventFactory(
             eventitem=rehearsal.eventitem_ptr,
             starttime=start_time,
-            max_volunteer=10)
+            max_commitments=10)
         if room:
             ResourceAllocationFactory(
                 event=slot,

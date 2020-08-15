@@ -7,7 +7,9 @@ class Commitment(object):
         if decorator_class:
             self.class_name = decorator_class.__class__.__name__
             self.class_id = decorator_class.pk
-        self.role = role
+        self.role = ""
+        if role:
+            self.role = role
 
 
 class Person(object):

@@ -39,11 +39,12 @@ from scheduler.idd import (
     get_occurrences,
     get_schedule,
     remove_booking,
-    set_act,
+    set_person,
 )
 from gbe.scheduling.views.functions import show_general_status
 from scheduler.data_transfer import (
-    BookableAct,
+    Commitment,
+    Person,
     ScheduleItem,
 )
 from django.contrib import messages
@@ -71,7 +72,6 @@ class ActTechWizardView(View):
                 parent_event_id=show.pk)
             choices = []
             initial = None
-
             for event in response.occurrences:
                 if (show.pk in self.rehearsals) and (
                         event == self.rehearsals[show.pk].event):
@@ -80,7 +80,7 @@ class ActTechWizardView(View):
                     initial = {
                         'rehearsal': event.pk,
                         'booking_id': self.rehearsals[show.pk].booking_id}
-                elif event.has_act_opening():
+                elif event.has_commitment_space("Act"):
                     choices += [(event.pk,
                                  date_format(event.starttime, "TIME_FORMAT"))]
             if request:
@@ -112,13 +112,15 @@ class ActTechWizardView(View):
             return error, bookings, forms, request
 
         for rehearsal_form in forms:
-            bookable = BookableAct(act=self.act)
+            person = Person(public_id=self.act.performer.pk,
+                            role="performer",
+                            commitment=Commitment(decorator_class=self.act))
             if rehearsal_form.cleaned_data['booking_id']:
-                bookable.booking_id = \
-                    rehearsal_form.cleaned_data['booking_id']
-            response = set_act(
-                occurrence_id=rehearsal_form.cleaned_data['rehearsal'],
-                act=bookable)
+                person.booking_id = int(
+                    rehearsal_form.cleaned_data['booking_id'])
+            response = set_person(
+                occurrence_id=int(rehearsal_form.cleaned_data['rehearsal']),
+                person=person)
             # errors are internal, and not OK to show regular user
             if response.errors:
                 error = True

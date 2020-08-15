@@ -109,6 +109,7 @@ class ManageEventsView(View):
                 'current_volunteer': occurrence.role_count("Volunteer"),
                 'current_acts': occurrence.role_count("Performer"),
                 'max_volunteer': occurrence.max_volunteer,
+                'max_commitments': occurrence.max_commitments,
                 'approval_needed': occurrence.approval_needed,
                 'staff_areas': [],
                 'detail_link': reverse(

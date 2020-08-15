@@ -72,7 +72,7 @@ class ActTechInfoContext():
                                         e_conference=self.conference)
         rehearsal_event = SchedEventFactory(
             eventitem=rehearsal.eventitem_ptr,
-            max_volunteer=10,
+            max_commitments=10,
             starttime=self.sched_event.starttime)
         event_container = EventContainerFactory(
             child_event=rehearsal_event,

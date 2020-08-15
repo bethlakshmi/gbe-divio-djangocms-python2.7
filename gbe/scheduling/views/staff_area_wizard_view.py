@@ -11,7 +11,6 @@ from gbe.scheduling.forms import (
 )
 from gbe.scheduling.views import EventWizardView
 from gbe.functions import validate_perms
-from gbe_forms_text import event_settings
 
 
 class StaffAreaWizardView(EventWizardView):

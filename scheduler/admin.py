@@ -47,9 +47,15 @@ class EventItemAdmin(admin.ModelAdmin):
 
 
 class EventAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'eventitem', 'starttime', 'max_volunteer', 'labels')
+    list_display = ('id',
+                    'eventitem',
+                    'starttime',
+                    'max_volunteer',
+                    'max_commitments',
+                    'labels')
     list_filter = ['starttime',
                    'max_volunteer',
+                   'max_commitments',
                    'eventitem__event__e_conference',
                    'approval_needed', ]
 

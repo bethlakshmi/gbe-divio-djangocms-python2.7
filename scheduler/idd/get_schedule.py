@@ -23,7 +23,7 @@ def get_schedule(user=None,
                 event__eventlabel__text__in=labels)
     if end_time:
         basic_filter = basic_filter.filter(
-            event__starttime__lte=end_time.replace(tzinfo=None))
+            event__starttime__lt=end_time.replace(tzinfo=None))
     if commitment:
         basic_filter = basic_filter.filter(
             ordering__class_name=commitment.__class__.__name__,
@@ -47,7 +47,7 @@ def get_schedule(user=None,
                     order = item.ordering
                 if hasattr(item, 'label'):
                     booking_label = item.label
-                if (start_time and item.event.end_time >= start_time) or (
+                if (start_time and item.event.end_time > start_time) or (
                         start_time is None):
                     sched_items += [ScheduleItem(
                         user=user,

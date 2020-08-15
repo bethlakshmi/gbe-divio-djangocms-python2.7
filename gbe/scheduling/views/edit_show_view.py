@@ -66,7 +66,7 @@ class EditShowView(EditEventView):
                                      ] == int(rehearsal_slot.pk)):
                     actionform.append(errorcontext['error_slot_form'])
                 else:
-                    num_volunteers = rehearsal_slot.max_volunteer
+                    num_volunteers = rehearsal_slot.max_commitments
                     date = rehearsal_slot.start_time.date()
 
                     time = rehearsal_slot.start_time.time
@@ -86,7 +86,7 @@ class EditShowView(EditEventView):
                             initial={'opp_event_id': rehearsal.event_id,
                                      'opp_sched_id': rehearsal_slot.pk,
                                      'current_acts': len(response.castings),
-                                     'max_volunteer': num_volunteers,
+                                     'max_commitments': num_volunteers,
                                      'day': day,
                                      'time': time,
                                      'location': room,
@@ -120,7 +120,7 @@ class EditShowView(EditEventView):
         initial_rehearsal_info = {
                 'type':  "Rehearsal Slot",
                 'duration': 1.0,
-                'max_volunteer': 10,
+                'max_commitments': 10,
                 'day': get_conference_day(
                     conference=self.conference,
                     date=self.occurrence.starttime.date()),
@@ -162,7 +162,7 @@ class EditShowView(EditEventView):
                 response = create_occurrence(
                     self.event.eventitem_id,
                     self.start_time,
-                    self.max_volunteer,
+                    max_commitments=self.max_commitments,
                     locations=[self.room],
                     labels=data['labels'],
                     parent_event_id=self.parent_id)
@@ -184,7 +184,7 @@ class EditShowView(EditEventView):
                 response = update_occurrence(
                     data['opp_sched_id'],
                     self.start_time,
-                    self.max_volunteer,
+                    max_commitments=self.max_commitments,
                     locations=[self.room])
             else:
                 context = {

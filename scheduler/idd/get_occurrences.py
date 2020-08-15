@@ -16,7 +16,8 @@ def get_occurrences(parent_event_id=None,
                     label_sets=[],
                     day=None,
                     foreign_event_ids=None,
-                    max_volunteer=None):
+                    max_volunteer=None,
+                    max_commitments=None):
     if len(labels) > 0 and len(label_sets) > 0:
         return OccurrencesResponse(
             errors=[Error(
@@ -43,6 +44,9 @@ def get_occurrences(parent_event_id=None,
     if max_volunteer is not None:
         filter_occurrences = filter_occurrences.filter(
             max_volunteer__gte=max_volunteer)
+    if max_commitments is not None:
+        filter_occurrences = filter_occurrences.filter(
+            max_commitments__gte=max_commitments)
     if day:
         filter_occurrences = filter_occurrences.filter(
             starttime__range=(

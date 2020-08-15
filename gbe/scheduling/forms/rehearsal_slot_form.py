@@ -27,7 +27,7 @@ class RehearsalSlotForm(ScheduleBasicForm):
         model = GenericEvent
         fields = ['e_title',
                   'current_acts',
-                  'max_volunteer',
+                  'max_commitments',
                   'duration',
                   'day',
                   'time',

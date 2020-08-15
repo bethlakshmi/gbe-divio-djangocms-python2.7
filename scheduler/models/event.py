@@ -37,12 +37,13 @@ class Event(Schedulable):
     starttime = DateTimeField(blank=True)
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
+    max_commitments = PositiveIntegerField(default=0)
 
-    def has_act_opening(self):
-        '''
-        REFACTOR
-        '''
-        pass
+    def has_commitment_space(self, commitment_class_name):
+        from scheduler.models import Ordering
+        return (Ordering.objects.filter(
+            allocation__event=self,
+            class_name=commitment_class_name).count() < self.max_commitments)
 
     @property
     def foreign_event_id(self):
@@ -103,6 +104,7 @@ class Event(Schedulable):
             worker = Worker(_item=item, role=person.role)
         else:
             worker = Worker(_item=person.user.profile, role=person.role)
+            #### is there a leak here?  what happens to old workers that aren't linked??
         worker.save()
 
         if person.user:
@@ -117,7 +119,7 @@ class Event(Schedulable):
                         user=user,
                         start_time=self.start_time,
                         end_time=self.end_time).schedule_items:
-                if person.booking_id and (
+                if not person.booking_id or (
                         person.booking_id != conflict.booking_id):
                     warnings += [Warning(code="SCHEDULE_CONFLICT",
                                          user=user,
@@ -126,6 +128,7 @@ class Event(Schedulable):
             allocation = ResourceAllocation.objects.get(
                 id=person.booking_id)
             allocation.resource = worker
+            allocation.event = self
         else:
             allocation = ResourceAllocation(event=self,
                                             resource=worker)
