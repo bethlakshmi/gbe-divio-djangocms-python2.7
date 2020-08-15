@@ -36,15 +36,12 @@ class ScheduleBasicForm(ModelForm):
     duration = FloatField(min_value=0.5,
                           max_value=12,
                           required=True)
-    max_commitments = IntegerField(required=True)
-
     class Meta:
         model = Event
         fields = ['e_title',
                   'e_description',
                   'duration',
                   'max_volunteer',
-                  'max_commitments',
                   'day',
                   'time',
                   'location',

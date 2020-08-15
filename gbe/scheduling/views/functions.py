@@ -19,7 +19,6 @@ from gbe.scheduling.forms import (
 )
 from scheduler.data_transfer import Person
 from scheduler.idd import (
-    get_bookings,
     get_occurrence,
     get_occurrences,
     get_people,

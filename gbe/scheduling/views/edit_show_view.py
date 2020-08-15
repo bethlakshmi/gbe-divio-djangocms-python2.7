@@ -7,7 +7,7 @@ from gbe.scheduling.forms import RehearsalSlotForm
 from gbe.functions import get_conference_day
 from gbetext import rehearsal_delete_msg
 from scheduler.idd import (
-    get_acts,
+    get_bookings,
     get_occurrences,
     create_occurrence,
     update_occurrence,
@@ -66,7 +66,7 @@ class EditShowView(EditEventView):
                                      ] == int(rehearsal_slot.pk)):
                     actionform.append(errorcontext['error_slot_form'])
                 else:
-                    num_volunteers = rehearsal_slot.max_commitments
+                    max_commitments = rehearsal_slot.max_commitments
                     date = rehearsal_slot.start_time.date()
 
                     time = rehearsal_slot.start_time.time
@@ -78,15 +78,16 @@ class EditShowView(EditEventView):
                         room = location.room
                     elif self.occurrence.location:
                         room = self.occurrence.location.room
-                    response = get_acts(rehearsal_slot.pk)
-
+                    response = get_bookings(
+                        [rehearsal_slot.pk],
+                        roles=["Performer"])
                     actionform.append(
                         RehearsalSlotForm(
                             instance=rehearsal,
                             initial={'opp_event_id': rehearsal.event_id,
                                      'opp_sched_id': rehearsal_slot.pk,
-                                     'current_acts': len(response.castings),
-                                     'max_commitments': num_volunteers,
+                                     'current_acts': len(response.people),
+                                     'max_volunteer': max_commitments,
                                      'day': day,
                                      'time': time,
                                      'location': room,
@@ -120,7 +121,7 @@ class EditShowView(EditEventView):
         initial_rehearsal_info = {
                 'type':  "Rehearsal Slot",
                 'duration': 1.0,
-                'max_commitments': 10,
+                'max_volunteer': 10,
                 'day': get_conference_day(
                     conference=self.conference,
                     date=self.occurrence.starttime.date()),
@@ -162,7 +163,7 @@ class EditShowView(EditEventView):
                 response = create_occurrence(
                     self.event.eventitem_id,
                     self.start_time,
-                    max_commitments=self.max_commitments,
+                    max_commitments=self.max_volunteer,
                     locations=[self.room],
                     labels=data['labels'],
                     parent_event_id=self.parent_id)
@@ -173,18 +174,20 @@ class EditShowView(EditEventView):
             self.event = get_object_or_404(
                 GenericEvent,
                 event_id=request.POST['opp_event_id'])
-            casting_response = get_acts(int(request.POST['opp_sched_id']))
+            casting_response = get_bookings(
+                        [int(request.POST['opp_sched_id'])],
+                        roles=["Performer"])
             self.event_form = RehearsalSlotForm(
                 request.POST,
                 instance=self.event,
-                initial={'current_acts': len(casting_response.castings)})
+                initial={'current_acts': len(casting_response.people)})
             if self.event_form.is_valid():
                 data = self.get_basic_form_settings()
                 self.event_form.save()
                 response = update_occurrence(
                     data['opp_sched_id'],
                     self.start_time,
-                    max_commitments=self.max_commitments,
+                    max_commitments=self.max_volunteer,
                     locations=[self.room])
             else:
                 context = {
