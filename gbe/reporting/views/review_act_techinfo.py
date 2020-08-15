@@ -38,7 +38,7 @@ def review_act_techinfo(request, show_id=None):
 
     if show_id:
         show = get_object_or_404(Show, eventitem_id=show_id)
-        response = get_people(parent_event_ids=[show.eventitem_id],
+        response = get_people(foreign_event_ids=[show.eventitem_id],
                               roles=["Performer"])
         show_general_status(request, response, "ReviewActTechinfo")
         for performer in response.people:

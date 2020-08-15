@@ -3,13 +3,13 @@
 class Commitment(object):
     def __init__(self,
                  role=None,
-                 decorator_class=None):
+                 decorator_class=None,
+                 order=None):
         if decorator_class:
             self.class_name = decorator_class.__class__.__name__
             self.class_id = decorator_class.pk
-        self.role = ""
-        if role:
-            self.role = role
+        self.role = role
+        self.order = order
 
 
 class Person(object):

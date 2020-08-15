@@ -7,7 +7,11 @@ from scheduler.data_transfer import (
 from django.db.models import Q
 
 
-def get_people(parent_event_ids=[], labels=[], label_sets=[], roles=[]):
+def get_people(parent_event_ids=[],
+               foreign_event_ids=[],
+               labels=[],
+               label_sets=[],
+               roles=[]):
     if len(labels) > 0 and len(label_sets) > 0:
         return PeopleResponse(
             errors=[Error(
@@ -24,6 +28,9 @@ def get_people(parent_event_ids=[], labels=[], label_sets=[], roles=[]):
             event__container_event__parent_event__eventitem__eventitem_id__in=(
                 parent_event_ids)) |
             Q(event__eventitem__eventitem_id__in=parent_event_ids))
+    if len(foreign_event_ids) > 0:
+        bookings = bookings.filter(
+            event__eventitem__eventitem_id__in=foreign_event_ids)
     if len(roles) > 0:
         bookings = bookings.filter(resource__worker__role__in=roles)
     for booking in bookings:

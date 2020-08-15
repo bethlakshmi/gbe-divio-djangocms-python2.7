@@ -117,7 +117,7 @@
        <td class="bid-table">{{ occurrence.duration }}</td>
        <td class="bid-table">{{ occurrence.type }}</td>
        <td class="bid-table{% if occurrence.approval_needed%} approval_needed{%endif%}">{% if occurrence.current_acts %}{{ occurrence.current_acts }} acts{% else %}{{ occurrence.current_volunteer }}{% endif %}</td>
-       <td class="bid-table{% if occurrence.approval_needed%} approval_needed{%endif%}">{{ occurrence.max_volunteer }}</td>
+       <td class="bid-table{% if occurrence.approval_needed%} approval_needed{%endif%}">{% if occurrence.max_commitments %}{{ occurrence.max_commitments }} acts{% else %}{{ occurrence.max_volunteer }}{% endif %}</td>
        <td class="bid-table"><div class="btn-group" role="group" aria-label="...">
         <a href="{{ occurrence.detail_link }}" data-toggle="tooltip" title="View" class="btn btn-default btn-sm" id="action-button">
          <i class="fa fa-eye" aria-hidden="true"></i></a>

@@ -136,7 +136,10 @@ class Event(Schedulable):
         if person.commitment:
             ordering, created = Ordering.objects.get_or_create(
                 allocation=allocation)
-            ordering.role = person.commitment.role
+            if person.commitment.role:
+                ordering.role = person.commitment.role
+            if person.commitment.order:
+                ordering.order = person.commitment.order
             ordering.class_name = person.commitment.class_name
             ordering.class_id = person.commitment.class_id
             ordering.save()
