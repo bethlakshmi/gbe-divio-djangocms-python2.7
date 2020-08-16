@@ -92,7 +92,7 @@ class ShowContext:
             resource=WorkerFactory(_item=act.performer, role="Performer"))
         order = OrderingFactory(
             allocation=booking,
-            class_id=self.act.pk,
+            class_id=act.pk,
             class_name="Act",
             role=act_role)
         return (act, booking)

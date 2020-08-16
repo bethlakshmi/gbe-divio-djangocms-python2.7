@@ -33,18 +33,18 @@ class TestScheduleActs(TestCase):
 
     def get_basic_post(self):
         allocation = self.context.sched_event.resources_allocated.filter(
-            resource__actresource___item=self.context.acts[0]).first()
+            ordering__class_id=self.context.acts[0].pk).first()
         data = {
             '%d-performer' %
-            self.context.acts[0].resourceitem_id: 'changed performer',
+            self.context.acts[0].pk: 'changed performer',
             '%d-title' %
-            self.context.acts[0].resourceitem_id: 'changed title',
+            self.context.acts[0].pk: 'changed title',
             '%d-booking_id' %
-            self.context.acts[0].resourceitem_id: allocation.pk,
+            self.context.acts[0].pk: allocation.pk,
             '%d-show' %
-            self.context.acts[0].resourceitem_id: str(
+            self.context.acts[0].pk: str(
                 self.context.sched_event.pk),
-            '%d-order' % self.context.acts[0].resourceitem_id: 1}
+            '%d-order' % self.context.acts[0].pk: 1}
         return data
 
     def assert_good_form_display(self, response):
@@ -168,7 +168,7 @@ class TestScheduleActs(TestCase):
             response,
             reverse('home', urlconf='gbe.urls'))
         allocation = self.context.sched_event.resources_allocated.filter(
-            resource__actresource___item=self.context.acts[0]).first()
+            ordering__class_id=self.context.acts[0].pk).first()
         self.assertEqual(allocation.ordering.order, 1)
 
     def test_good_user_get_success_w_label(self):
@@ -178,21 +178,20 @@ class TestScheduleActs(TestCase):
             self.url)
         self.assert_good_form_display(response)
         allocation = self.context.sched_event.resources_allocated.filter(
-            resource__actresource___item=self.context.acts[0]).first()
+            ordering__class_id=self.context.acts[0].pk).first()
         input_text = '<input type="number" name="%d-order" ' + \
                      'value="2" required id="id_%d-order" />'
         self.assertContains(
             response,
-            input_text % (self.context.acts[0].resourceitem_id,
-                          self.context.acts[0].resourceitem_id),
+            input_text % (self.context.acts[0].pk, self.context.acts[0].pk),
             html=True)
 
     def test_good_user_post_invalid(self):
         login_as(self.privileged_profile, self)
         data = self.get_basic_post()
-        data['%d-show' % self.context.acts[0].resourceitem_id] = 'bad'
-        data['%d-order' % self.context.acts[0].resourceitem_id] = 'very bad'
-        data['%d-booking_id' % self.context.acts[0].resourceitem_id] = \
+        data['%d-show' % self.context.acts[0].pk] = 'bad'
+        data['%d-order' % self.context.acts[0].pk] = 'very bad'
+        data['%d-booking_id' % self.context.acts[0].pk] = \
             'adfasdfasdfkljasdfklajsdflkjasdlkfjalksjdflkasjdflkjasdl'
         response = self.client.post(
             self.url,
@@ -205,7 +204,7 @@ class TestScheduleActs(TestCase):
         new_show = ShowContext(conference=self.context.conference)
         login_as(self.privileged_profile, self)
         data = self.get_basic_post()
-        data['%d-show' % self.context.acts[0].resourceitem_id] = str(
+        data['%d-show' % self.context.acts[0].pk] = str(
             new_show.sched_event.pk)
 
         response = self.client.post(
@@ -214,9 +213,8 @@ class TestScheduleActs(TestCase):
         self.assertRedirects(
             response,
             reverse('home', urlconf='gbe.urls'))
-        self.assertEqual(new_show.sched_event.role_count("Volunteer"),
-                         "2 acts")
-        self.assertEqual(self.context.sched_event.role_count("Volunteer"), 0)
+        self.assertEqual(new_show.sched_event.role_count("Performer"), 2)
+        self.assertEqual(self.context.sched_event.role_count("Performer"), 0)
 
     def test_good_user_get_only_conf_shows(self):
         not_this_conf_show = ShowFactory()
