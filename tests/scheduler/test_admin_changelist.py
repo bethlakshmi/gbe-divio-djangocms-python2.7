@@ -8,7 +8,6 @@ from tests.factories.gbe_factories import(
     ProfileFactory,
 )
 from tests.factories.scheduler_factories import(
-    ActResourceFactory,
     EventItemFactory,
     LocationFactory,
     ResourceAllocationFactory,
@@ -84,13 +83,6 @@ class SchedulerChangeListTests(TestCase):
                                    follow=True)
         self.assertContains(response, "Act")
         self.assertContains(response, "Show")
-
-    def test_get_allocation_no_actresource_child(self):
-        allocation = ResourceAllocationFactory(
-            resource=ActResourceFactory())
-        response = self.client.get('/admin/scheduler/resourceallocation/',
-                                   follow=True)
-        self.assertContains(response, "No Act Item")
 
     def test_get_allocation_no_locationresource_child(self):
         allocation = ResourceAllocationFactory(resource=LocationFactory())

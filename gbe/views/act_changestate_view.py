@@ -101,12 +101,11 @@ class ActChangeStateView(BidChangeStateView):
                 return HttpResponseRedirect(reverse(
                     "act_review", urlconf='gbe.urls', args=[self.object.pk]))
             casting = request.POST['casting']
+            role = "Performer"
             if request.POST['accepted'] == '2':
                 casting = "Waitlisted"
-            # because at the time of this comment, not all waitlisted acts
-            # have a role of waitlisted.  Can be removed after 2020.
-            if self.object.accepted == 2:
                 role = "Waitlisted"
+
             same_show = False
             same_role = False
             if show and show.event.eventitem == self.new_show.eventitem:
@@ -116,7 +115,7 @@ class ActChangeStateView(BidChangeStateView):
 
             # if both show and role are same, do nothing
             person = Person(public_id=self.object.performer.pk,
-                            role="Performer",
+                            role=role,
                             commitment=Commitment(role=casting,
                                                   decorator_class=self.object))
             profiles = self.object.get_performer_profiles()

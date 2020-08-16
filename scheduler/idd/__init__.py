@@ -5,7 +5,6 @@ from .test_booking import test_booking
 from .remove_booking import remove_booking
 from .set_person import set_person
 from .update_occurrence import update_occurrence
-from .get_acts import get_acts
 from .get_bookings import get_bookings
 from .get_all_container_bookings import get_all_container_bookings
 from .get_people import get_people

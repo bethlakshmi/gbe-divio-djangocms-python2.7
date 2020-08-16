@@ -7,12 +7,13 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.scheduler_factories import (
-    ActResourceFactory,
     EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
+    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
+    WorkerFactory,
 )
 from scheduler.models import Ordering
 
@@ -57,11 +58,15 @@ class ActTechInfoContext():
                 event=self.sched_event,
                 resource=LocationFactory(_item=self.room.locationitem_ptr))
         # schedule the act into the show
-        ResourceAllocationFactory(
+        booking = ResourceAllocationFactory(
             event=self.sched_event,
-            resource=ActResourceFactory(
-                _item=self.act.actitem_ptr,
-                role=act_role))
+            resource=WorkerFactory(
+                _item=self.act.performer,
+                role="Performer"))
+        self.order = OrderingFactory(
+            allocation=booking,
+            class_id=self.act.pk,
+            class_name="Act")
         if schedule_rehearsal:
             self.rehearsal = self._schedule_rehearsal(
                 self.sched_event,
@@ -80,14 +85,21 @@ class ActTechInfoContext():
         EventLabelFactory(event=rehearsal_event,
                           text=self.conference.conference_slug)
         if act:
-            ResourceAllocationFactory(
-                resource=ActResourceFactory(_item=act.actitem_ptr),
-                event=rehearsal_event)
+            booking = ResourceAllocationFactory(
+                event=rehearsal_event,
+                resource=WorkerFactory(
+                    _item=act.performer,
+                    role="Performer"))
+            OrderingFactory(
+                allocation=booking,
+                class_id=act.pk,
+                class_name="Act")
+
         return rehearsal_event
 
     def order_act(self, act, order):
         alloc = self.sched_event.resources_allocated.filter(
-            resource__actresource___item=act).first()
+            resource__worker___item=act.performer).first()
         ordering, created = Ordering.objects.get_or_create(allocation=alloc)
         ordering.order = order
         ordering.save()

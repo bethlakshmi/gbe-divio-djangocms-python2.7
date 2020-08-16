@@ -53,18 +53,6 @@ class Person(object):
         self.users = users
 
 
-class Casting(object):
-    def __init__(self,
-                 booking):
-        self.booking_id = booking.pk
-        self.role = booking.resource.actresource.role
-        self.act = booking.resource.actresource._item.resourceitem_id
-        try:
-            self.order = booking.ordering.order
-        except:
-            self.order = None
-
-
 class BookableAct(object):
     def __init__(self,
                  booking_id=None,
@@ -174,15 +162,6 @@ class PeopleResponse(GeneralResponse):
                  errors=[]):
         self.people = people
         super(PeopleResponse, self).__init__(warnings, errors)
-
-
-class CastingResponse(GeneralResponse):
-    def __init__(self,
-                 castings=[],
-                 warnings=[],
-                 errors=[]):
-        self.castings = castings
-        super(CastingResponse, self).__init__(warnings, errors)
 
 
 class ScheduleResponse(GeneralResponse):

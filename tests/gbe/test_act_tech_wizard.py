@@ -25,7 +25,7 @@ from settings import GBE_DATETIME_FORMAT
 from datetime import timedelta
 from gbe.models import Act
 from scheduler.models import (
-    ActResource,
+    Ordering,
     ResourceAllocation,
 )
 
@@ -278,7 +278,7 @@ class TestActTechWizard(TestCase):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
+        resources = Ordering.objects.filter(class_id=context.act.pk)
         alloc = ResourceAllocation.objects.get(
             event=context.rehearsal,
             resource__in=resources)
@@ -301,7 +301,7 @@ class TestActTechWizard(TestCase):
             'I will need set before my number" '
             'id="id_prop_setup_1" checked />',
             html=True)
-        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
+        resources = Ordering.objects.filter(class_id=context.act.pk)
         alloc = ResourceAllocation.objects.filter(
             resource__in=resources)
         self.assertEqual(alloc.count(), 2)
@@ -329,7 +329,7 @@ class TestActTechWizard(TestCase):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
+        resources = Ordering.objects.filter(class_id=context.act.pk)
         alloc = ResourceAllocation.objects.get(
             event=context.rehearsal,
             resource__in=resources)

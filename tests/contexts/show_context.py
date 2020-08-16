@@ -9,10 +9,10 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.scheduler_factories import (
-    ActResourceFactory,
     EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
+    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
     WorkerFactory,
@@ -89,12 +89,17 @@ class ShowContext:
                                 submitted=True)
         booking = ResourceAllocationFactory(
             event=self.sched_event,
-            resource=ActResourceFactory(_item=act, role=act_role))
+            resource=WorkerFactory(_item=act.performer, role="Performer"))
+        order = OrderingFactory(
+            allocation=booking,
+            class_id=self.act.pk,
+            class_name="Act",
+            role=act_role)
         return (act, booking)
 
     def order_act(self, act, order):
         alloc = self.sched_event.resources_allocated.filter(
-            resource__actresource___item=self.acts[0]).first()
+            resource__worker___item=act.performer).first()
         ordering, created = Ordering.objects.get_or_create(allocation=alloc)
         ordering.order = order
         ordering.save()

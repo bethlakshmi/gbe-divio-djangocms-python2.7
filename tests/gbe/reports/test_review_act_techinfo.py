@@ -6,16 +6,8 @@ from datetime import (
 )
 from django.test import TestCase, Client
 from tests.factories.gbe_factories import (
-    ActFactory,
-    ConferenceDayFactory,
     ConferenceFactory,
     ProfileFactory,
-    ShowFactory,
-)
-from tests.factories.scheduler_factories import (
-    ActResourceFactory,
-    ResourceAllocationFactory,
-    SchedEventFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,

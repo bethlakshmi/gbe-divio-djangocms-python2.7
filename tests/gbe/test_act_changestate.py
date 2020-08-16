@@ -28,7 +28,7 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from scheduler.models import (
-    ActResource,
+    Ordering,
     ResourceAllocation,
 )
 from gbe.models import UserMessage
@@ -131,8 +131,8 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=data,
                                     follow=True)
-        casting = ActResource.objects.get(_item=self.context.act,
-                                          role="Hosted by...")
+        casting = Ordering.objects.get(class_id=self.context.act.pk,
+                                       role="Hosted by...")
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -257,7 +257,7 @@ class TestActChangestate(TestCase):
             'act wait list',
             "Your act proposal has changed status to Wait List"
         )
-        casting = ActResource.objects.get(_item=act)
+        casting = Ordering.objects.get(class_id=act.pk)
         assert(casting.role == "Waitlisted")
 
     def test_act_changestate_post_waitlisted_act(self):
@@ -278,7 +278,7 @@ class TestActChangestate(TestCase):
             'act wait list',
             "Your act proposal has changed status to Wait List"
         )
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == "Waitlisted")
         with self.assertRaises(ResourceAllocation.DoesNotExist):
             ResourceAllocation.objects.get(event=rehearsal_event)
@@ -313,8 +313,7 @@ class TestActChangestate(TestCase):
                                     follow=True)
         self.assertContains(
             response,
-            "is booked for"
-        )
+            "Conflicting booking: %s" % str(conflict))
         assert_email_template_used(
             "test template", "actemail@notify.com")
 
@@ -332,7 +331,7 @@ class TestActChangestate(TestCase):
             'act accepted - %s' % self.show.e_title.lower(),
             "Your act has been cast in %s" % self.show.e_title
         )
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == "")
 
     def test_act_accept_notification_template_fail(self):
@@ -369,7 +368,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=data,
                                     follow=True)
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -390,7 +389,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(url,
                                     data=data,
                                     follow=True)
-        casting = ActResource.objects.get(_item=act)
+        casting = Ordering.objects.get(class_id=act.pk)
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -440,7 +439,7 @@ class TestActChangestate(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data)
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == "Waitlisted")
 
     def test_bad_show(self):

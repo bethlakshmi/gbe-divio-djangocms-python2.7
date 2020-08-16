@@ -164,17 +164,6 @@ class Event(Schedulable):
             resource__worker__role=role).count()
         return participants
 
-    def get_acts(self):
-        '''
-        Returns a list of acts allocated to this event,
-        filtered by acceptance status if specified
-        '''
-        allocations = self.resources_allocated.all()
-        act_resources = [ar.resource_ptr for ar in ActResource.objects.all()]
-        acts = [allocation.resource.item.act for allocation in allocations
-                if allocation.resource in act_resources]
-        return acts
-
     @property
     def event_type_name(self):
         '''

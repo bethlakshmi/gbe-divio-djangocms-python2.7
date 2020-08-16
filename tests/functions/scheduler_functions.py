@@ -1,6 +1,6 @@
 from tests.factories.scheduler_factories import (
-    ActResourceFactory,
     EventLabelFactory,
+    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
     WorkerFactory
@@ -40,8 +40,13 @@ def book_act_item_for_show(actitem, eventitem):
     booking = ResourceAllocationFactory.create(
         event=SchedEventFactory.create(
             eventitem=eventitem),
-        resource=ActResourceFactory.create(
-            _item=actitem))
+        resource=WorkerFactory.create(
+            _item=actitem.performer,
+            role="Performer"))
+    order = OrderingFactory(
+        allocation=booking,
+        class_id=actitem,
+        class_name="Act")
     EventLabelFactory(
         event=booking.event,
         text=eventitem.e_conference.conference_slug

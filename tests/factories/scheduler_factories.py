@@ -32,13 +32,6 @@ class ActItemFactory(DjangoModelFactory):
         model = sched.ActItem
 
 
-class ActResourceFactory(DjangoModelFactory):
-    _item = SubFactory(ActItemFactory)
-
-    class Meta:
-        model = sched.ActResource
-
-
 class LocationItemFactory(DjangoModelFactory):
     class Meta:
         model = sched.LocationItem
