@@ -108,9 +108,11 @@ def env_stuff(request, conference_choice=None):
                                    ': ' +
                                    str(commit.event.eventitem) +
                                    ', ')
-            for act in acts.filter(performer=performer):
-                for commit in commits.filter(resource__actresource___item=act):
-                    show_list += str(commit.event.eventitem)+', '
+            act_ids = acts.filter(
+                performer=performer).values_list('pk', flat=True)
+            for commit in commits.filter(ordering__class_id__in=act_ids,
+                                         event__eventlabel__text="General"):
+                show_list += str(commit.event.eventitem)+', '
 
         person_details.append(
             [person.get_badge_name().encode('utf-8').strip(),
