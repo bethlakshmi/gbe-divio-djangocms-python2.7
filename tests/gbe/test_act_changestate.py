@@ -331,8 +331,10 @@ class TestActChangestate(TestCase):
             'act accepted - %s' % self.show.e_title.lower(),
             "Your act has been cast in %s" % self.show.e_title
         )
-        casting = Ordering.objects.get(class_id=self.context.act.pk)
-        assert(casting.role == "")
+        casting = Ordering.objects.get(
+            class_id=self.context.act.pk,
+            allocation__event=self.context.sched_event)
+        assert(casting.role == "Waitlisted")
 
     def test_act_accept_notification_template_fail(self):
         # accepted -> accepted - error case
@@ -439,7 +441,9 @@ class TestActChangestate(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data)
-        casting = Ordering.objects.get(class_id=self.context.act.pk)
+        casting = Ordering.objects.get(
+            class_id=self.context.act.pk,
+            allocation__event=self.context.sched_event)
         assert(casting.role == "Waitlisted")
 
     def test_bad_show(self):

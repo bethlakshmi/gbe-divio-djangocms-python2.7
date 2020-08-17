@@ -37,7 +37,7 @@ class Show (Event):
 
     def get_acts(self):
         acts = []
-        response = get_people(parent_event_ids=[show.eventitem_id],
+        response = get_people(parent_event_ids=[self.eventitem_id],
                               roles=["Performer"])
         for performer in response.people:
             act = get_object_or_404(

@@ -45,7 +45,7 @@ def book_act_item_for_show(actitem, eventitem):
             role="Performer"))
     order = OrderingFactory(
         allocation=booking,
-        class_id=actitem,
+        class_id=actitem.pk,
         class_name="Act")
     EventLabelFactory(
         event=booking.event,

@@ -46,7 +46,7 @@ class TestEditShowWizard(TestCase):
             'create_slot': 'create_slot',
             'new_slot-e_title': 'New Rehearsal Slot',
             'new_slot-type': "Rehearsal Slot",
-            'new_slot-max_commitments': '1',
+            'new_slot-max_volunteer': '1',
             'new_slot-duration': '1.0',
             'new_slot-day': self.context.days[0].pk,
             'new_slot-time': '10:00:00',
@@ -57,7 +57,7 @@ class TestEditShowWizard(TestCase):
         data = {
             'e_title': 'Copied Rehearsal Slot',
             'type': 'Rehearsal Slot',
-            'max_commitments': '1',
+            'max_volunteer': '1',
             'duration': '1.0',
             'day': self.context.days[0].pk,
             'time': '10:00:00',
@@ -172,7 +172,7 @@ class TestEditShowWizard(TestCase):
     def test_create_slot_error(self):
         login_as(self.privileged_profile, self)
         data = self.get_new_slot_data(self.context)
-        data['new_slot-max_commitments'] = ''
+        data['new_slot-max_volunteer'] = ''
 
         # number of volunteers is missing, it's required
         response = self.client.post(
@@ -249,7 +249,7 @@ class TestEditShowWizard(TestCase):
         login_as(self.privileged_profile, self)
         data, rehearsal, slot = self.get_basic_action_data(self.context,
                                                            'edit_slot')
-        data['max_commitments'] = ''
+        data['max_volunteer'] = ''
 
         # number of volunteers is missing, it's required
         response = self.client.post(

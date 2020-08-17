@@ -36,10 +36,12 @@ class ActTechInfoContext():
                                      b_conference=self.conference,
                                      accepted=3,
                                      submitted=True)
+        role = "Performer"
         if set_waitlist:
             self.act.accepted = 2
             self.act.save()
             act_role = "Waitlisted"
+            role = "Waitlisted"
         self.tech = self.act.tech
 
         # schedule the show
@@ -62,11 +64,12 @@ class ActTechInfoContext():
             event=self.sched_event,
             resource=WorkerFactory(
                 _item=self.act.performer,
-                role="Performer"))
+                role=role))
         self.order = OrderingFactory(
             allocation=booking,
             class_id=self.act.pk,
-            class_name="Act")
+            class_name="Act",
+            role=act_role)
         if schedule_rehearsal:
             self.rehearsal = self._schedule_rehearsal(
                 self.sched_event,
@@ -99,7 +102,8 @@ class ActTechInfoContext():
 
     def order_act(self, act, order):
         alloc = self.sched_event.resources_allocated.filter(
-            resource__worker___item=act.performer).first()
+            ordering__class_id=act.pk,
+            event=self.sched_event).first()
         ordering, created = Ordering.objects.get_or_create(allocation=alloc)
         ordering.order = order
         ordering.save()

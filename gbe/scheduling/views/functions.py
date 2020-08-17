@@ -150,7 +150,7 @@ def get_event_display_info(eventitem_id):
         if len(casting.commitment.role):
             featured_grid_list += [{
                 'bio': act.bio,
-                'role': casting.role}]
+                'role': casting.commitment.role}]
         else:
             bio_grid_list += [act.bio]
 
