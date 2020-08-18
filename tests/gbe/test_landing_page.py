@@ -355,7 +355,7 @@ class TestIndex(TestCase):
             conference=self.current_conf,
             show=current_act_context.show,
             sched_event=current_act_context.sched_event)
-        self.current_act.accepted=3
+        self.current_act.accepted = 3
         self.current_act.save()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

@@ -76,7 +76,7 @@ def get_schedule(user=None,
                     role=resource.role,
                     label=booking_label,
                     booking_id=item.pk,
-                    order=order)]                    
+                    order=order)]
     response = ScheduleResponse(
         schedule_items=sorted(
             set(sched_items),

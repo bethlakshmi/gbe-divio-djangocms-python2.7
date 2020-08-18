@@ -8,7 +8,15 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     ShowFactory
 )
-from scheduler.models import EventItem
+from tests.factories.scheduler_factories import (
+    ResourceAllocationFactory,
+    OrderingFactory,
+    WorkerFactory
+)
+from scheduler.models import (
+    EventItem,
+    ResourceAllocation
+)
 from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
@@ -88,6 +96,22 @@ class TestScheduleActs(TestCase):
             self.view_name,
             urlconf="gbe.scheduling.urls")
         response = self.client.get(bad_url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response,
+                            "Select a current or upcoming show to schedule")
+        self.assertContains(
+            response,
+            '<option value="%s">%s</option>' % (
+                self.context.show.pk,
+                self.context.show.e_title)
+            )
+
+    def test_post_no_show(self):
+        login_as(self.privileged_profile, self)
+        bad_url = reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls")
+        response = self.client.post(bad_url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
                             "Select a current or upcoming show to schedule")
@@ -188,20 +212,40 @@ class TestScheduleActs(TestCase):
 
     def test_good_user_post_invalid(self):
         login_as(self.privileged_profile, self)
+        act, booking = self.context.book_act()
         data = self.get_basic_post()
-        data['%d-show' % self.context.acts[0].pk] = 'bad'
-        data['%d-order' % self.context.acts[0].pk] = 'very bad'
-        data['%d-booking_id' % self.context.acts[0].pk] = \
-            'adfasdfasdfkljasdfklajsdflkjasdlkfjalksjdflkasjdflkjasdl'
+        data['%d-performer' % act.pk] = 'changed performer'
+        data['%d-title' % act.pk] = 'changed title'
+        data['%d-booking_id' % act.pk] = booking.pk + 100
+        data['%d-show' % act.pk] = 'bad'
+        data['%d-order' % act.pk] = 'very bad'
         response = self.client.post(
             self.url,
             data=data)
         self.assertContains(response, '<ul class="errorlist">', 2)
         self.assertContains(response, 'Select a valid choice.')
         self.assertContains(response, 'Enter a whole number.')
+        self.assertContains(
+            response,
+            ('<input type="hidden" name="%d-booking_id" value="%d" ' +
+             'id="id_%d-booking_id">') % (
+                self.context.acts[0].pk,
+                data['%d-booking_id' % self.context.acts[0].pk],
+                self.context.acts[0].pk), html=True)
 
     def test_good_user_change_show(self):
         new_show = ShowContext(conference=self.context.conference)
+        rehearsal, slot = self.context.make_rehearsal()
+        # this is a small hack - the show has an event label the rehearsal
+        # doesn't
+        booking = ResourceAllocationFactory(
+            event=slot,
+            resource=WorkerFactory(_item=self.context.acts[0].performer,
+                                   role="Performer"))
+        order = OrderingFactory(
+            allocation=booking,
+            class_id=self.context.acts[0].pk,
+            class_name="Act")
         login_as(self.privileged_profile, self)
         data = self.get_basic_post()
         data['%d-show' % self.context.acts[0].pk] = str(
@@ -215,6 +259,8 @@ class TestScheduleActs(TestCase):
             reverse('home', urlconf='gbe.urls'))
         self.assertEqual(new_show.sched_event.role_count("Performer"), 2)
         self.assertEqual(self.context.sched_event.role_count("Performer"), 0)
+        self.assertFalse(
+            ResourceAllocation.objects.filter(pk=booking.pk).exists())
 
     def test_good_user_get_only_conf_shows(self):
         not_this_conf_show = ShowFactory()

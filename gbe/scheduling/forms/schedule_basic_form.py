@@ -36,6 +36,7 @@ class ScheduleBasicForm(ModelForm):
     duration = FloatField(min_value=0.5,
                           max_value=12,
                           required=True)
+
     class Meta:
         model = Event
         fields = ['e_title',

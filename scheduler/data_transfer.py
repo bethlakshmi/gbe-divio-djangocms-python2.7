@@ -53,25 +53,6 @@ class Person(object):
         self.users = users
 
 
-class BookableAct(object):
-    def __init__(self,
-                 booking_id=None,
-                 act=None,
-                 role=None,
-                 order=None):
-        self.booking_id = None
-        self.order = None
-        self.role = None
-        if role:
-            self.role = role
-        if booking_id:
-            self.booking_id = booking_id
-        if act:
-            self.act_id = act.actitem_ptr_id
-        if order:
-            self.order = order
-
-
 class ScheduleItem(object):
     def __init__(self,
                  user=None,

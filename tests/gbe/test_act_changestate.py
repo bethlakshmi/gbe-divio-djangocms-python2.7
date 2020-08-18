@@ -8,8 +8,10 @@ from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
     ActFactory,
     EmailTemplateSenderFactory,
+    PersonaFactory,
     ProfileFactory,
     ShowFactory,
+    TroupeFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
@@ -259,6 +261,24 @@ class TestActChangestate(TestCase):
         )
         casting = Ordering.objects.get(class_id=act.pk)
         assert(casting.role == "Waitlisted")
+
+    def test_act_changestate_troupe(self):
+        # No decision -> accept
+        # new show, new role
+        act = ActFactory(b_conference=self.context.conference,
+                         performer=TroupeFactory())
+        act.performer.membership.add(PersonaFactory())
+        act.performer.membership.add(PersonaFactory())
+
+        url = reverse(self.view_name,
+                      args=[act.pk],
+                      urlconf='gbe.urls')
+        self.data['accepted'] = '3'
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=self.data, follow=True)
+        self.assertContains(response, "%s<br>Performer/Act: %s " % (
+            act_status_change_msg,
+            str(act.performer)))
 
     def test_act_changestate_post_waitlisted_act(self):
         # accepted -> waitlist

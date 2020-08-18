@@ -104,7 +104,8 @@ class Event(Schedulable):
             worker = Worker(_item=item, role=person.role)
         else:
             worker = Worker(_item=person.user.profile, role=person.role)
-            #### is there a leak here?  what happens to old workers that aren't linked??
+            # TODO is there a leak here?  what happens to old workers
+            # that aren't linked??
         worker.save()
 
         if person.user:

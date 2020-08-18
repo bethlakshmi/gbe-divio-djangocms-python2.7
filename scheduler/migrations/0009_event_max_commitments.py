@@ -6,9 +6,9 @@ from django.db import migrations, models
 def separate_max(apps, schema_editor):
     Event = apps.get_model('scheduler', 'Event')
     for event in Event.objects.all():
-      if event.max_volunteer > 0:
-        event.max_commitments = event.max_volunteer
-        event.save()
+        if event.max_volunteer > 0:
+            event.max_commitments = event.max_volunteer
+            event.save()
 
 
 class Migration(migrations.Migration):

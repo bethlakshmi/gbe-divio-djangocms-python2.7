@@ -40,9 +40,7 @@ class Show (Event):
         response = get_people(parent_event_ids=[self.eventitem_id],
                               roles=["Performer"])
         for performer in response.people:
-            act = get_object_or_404(
-                Act,
-                pk=performer.commitment.class_id)
+            act = Act.objects.get(pk=performer.commitment.class_id)
             acts += [act]
         return acts
 

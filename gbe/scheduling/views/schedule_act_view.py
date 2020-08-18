@@ -137,7 +137,6 @@ class ScheduleAct(View):
                                     decorator_class=act,
                                     order=form.cleaned_data['order']))
                 if int(form.cleaned_data['show']) != self.show_event.pk:
-                    # TODO - make test for this
                     sched_response = get_schedule(commitment=act)
                     for item in sched_response.schedule_items:
                         if item.booking_id != int(
@@ -147,7 +146,7 @@ class ScheduleAct(View):
                                 item.booking_id)
                             if remove_response.booking_id == item.booking_id:
                                 messages.success(
-                                   request, 
+                                    request,
                                     "Removed Rehearsal Booking: rehearsal - " +
                                     "%s, performer - %s" % (
                                         str(item.event),
