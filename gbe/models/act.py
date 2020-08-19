@@ -23,12 +23,11 @@ from gbetext import (
     act_not_unique,
     video_options,
 )
-from scheduler.models import ActItem
 from scheduler.idd import get_schedule
 from django.utils.formats import date_format
 
 
-class Act (Biddable, ActItem):
+class Act (Biddable):
     '''
     A performance, either scheduled or proposed.
     Until approved, an Act is simply a proposal.

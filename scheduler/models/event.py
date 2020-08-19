@@ -6,7 +6,6 @@ from django.db.models import (
     PositiveIntegerField,
 )
 from scheduler.models import (
-    ActItem,
     EventItem,
     Location,
     LocationItem,

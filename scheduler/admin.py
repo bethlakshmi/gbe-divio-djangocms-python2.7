@@ -110,7 +110,6 @@ class EventEvalGradeAdmin(admin.ModelAdmin):
     list_display_links = ('event',)
 
 
-admin.site.register(ActItem)
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventContainer, EventContainerAdmin)
 admin.site.register(EventItem, EventItemAdmin)
