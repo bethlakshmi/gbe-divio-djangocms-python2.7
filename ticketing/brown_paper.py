@@ -329,6 +329,7 @@ def bpt_save_order_to_database(event_id, bpt_order):
     trans.payment_source = 'Brown Paper Tickets'
 
     trans.save()
+    return True
 
 
 def attempt_match_purchaser_to_user(purchaser, tracker_id='None'):
