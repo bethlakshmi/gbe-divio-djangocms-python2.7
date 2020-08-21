@@ -229,8 +229,9 @@ def process_bpt_order_list():
                 ticket_number = bpt_order.find('ticket_number').text
 
                 if not (transaction_reference_exists(ticket_number)):
-                    bpt_save_order_to_database(event.bpt_event_id, bpt_order)
-                    count += 1
+                    if bpt_save_order_to_database(event.bpt_event_id,
+                                                  bpt_order):
+                        count += 1
 
     # Recheck to see if any emails match to users now.  For example, if
     # a new user created a profile after purchasing a ticket.
@@ -274,7 +275,12 @@ def bpt_save_order_to_database(event_id, bpt_order):
     # Locate the TicketItem or throw exception if it doesn't exist.
 
     ticket_item_id = '%s-%s' % (event_id, bpt_order.find('price_id').text)
+    if not TicketItem.objects.filter(ticket_id=ticket_item_id).exists():
+        logger.error("Ticket Item for id %s does not exist" % (
+            ticket_item_id))
+        return False
     trans.ticket_item = TicketItem.objects.get(ticket_id=ticket_item_id)
+
     trans.amount = trans.ticket_item.cost
 
     # Build a purchaser object.
