@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('gbe', '0015_auto_20200714_2336'),
+        ('scheduler', '0010_delete_actresource'),
     ]
 
     operations = [
