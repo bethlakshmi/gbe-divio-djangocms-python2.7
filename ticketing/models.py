@@ -179,7 +179,7 @@ class Purchaser(models.Model):
                                         default=None)
 
     def __str__(self):
-        return str(self.matched_to_user)
+        return "%s (%s)" % (self.email, str(self.matched_to_user))
 
 
 class Transaction(models.Model):
@@ -200,6 +200,10 @@ class Transaction(models.Model):
     import_date = models.DateTimeField(auto_now=True)
     invoice = models.CharField(max_length=100, blank=True, null=True)
     custom = models.CharField(max_length=100, blank=True, null=True)
+
+    def total_count(self):
+        return Transaction.objects.filter(
+            purchaser=self.purchaser, ticket_item=self.ticket_item).count()
 
 
 class CheckListItem(models.Model):
