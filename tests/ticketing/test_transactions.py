@@ -12,7 +12,7 @@ from tests.factories.ticketing_factories import (
     TicketItemFactory
 )
 import nose.tools as nt
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
@@ -26,7 +26,13 @@ from mock import patch, Mock
 import urllib
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from tests.functions.gbe_functions import login_as
+from tests.functions.gbe_functions import (
+    assert_alert_exists,
+    grant_privilege,
+    login_as,
+)
+from gbetext import import_transaction_message
+from tests.contexts import PurchasedTicketContext
 
 
 class TestTransactions(TestCase):
@@ -35,11 +41,8 @@ class TestTransactions(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.client = Client()
-        group, created = Group.objects.get_or_create(
-            name='Ticketing - Transactions')
-        self.privileged_user = ProfileFactory.create().\
-            user_object
-        self.privileged_user.groups.add(group)
+        self.privileged_user = ProfileFactory()
+        grant_privilege(self.privileged_user, 'Ticketing - Transactions')
         self.url = reverse('transactions', urlconf='ticketing.urls')
 
     @nt.raises(PermissionDenied)
@@ -58,16 +61,34 @@ class TestTransactions(TestCase):
         '''
            privileged user gets the list
         '''
-        BrownPaperEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
-        ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
-        BrownPaperSettingsFactory()
+        context = PurchasedTicketContext()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        nt.assert_equal(response.status_code, 200)
+        self.assertContains(response, context.transaction.purchaser.email)
+        self.assertContains(response, context.profile.display_name)
+        self.assertContains(response, context.transaction.ticket_item.title)
+        self.assertNotContains(response, "- Vendor")
+        self.assertNotContains(response, "- Act")
+
+    def test_transactions_w_privilege_userview_editpriv(self):
+        '''
+           privileged user gets the list
+        '''
+        context = PurchasedTicketContext()
+        context.transaction.ticket_item.bpt_event.act_submission_event = True
+        context.transaction.ticket_item.bpt_event.save()
+        grant_privilege(self.privileged_user, 'Registrar')
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url + "?format=user")
+        self.assertContains(response, context.profile.user_object.email)
+        self.assertContains(response, context.profile.display_name)
+        self.assertContains(response,
+                            "%s - Act" % context.transaction.ticket_item.title)
+        self.assertNotContains(response, "- Vendor")
+        self.assertContains(response, reverse(
+            'admin_profile',
+            urlconf="gbe.urls",
+            args=[context.profile.resourceitem_id]))
 
     def test_transactions_empty(self):
         '''
@@ -78,6 +99,63 @@ class TestTransactions(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         nt.assert_equal(response.status_code, 200)
+
+    def test_transactions_old_conf_limbo_purchase(self):
+        '''
+           privileged user gets the list
+        '''
+        limbo, created = User.objects.get_or_create(username='limbo')
+        old_context = PurchasedTicketContext()
+        old_context.conference.status = "past"
+        old_context.conference.save()
+        old_context.transaction.purchaser.matched_to_user = limbo
+        old_context.transaction.purchaser.save()
+        old_ticket = old_context.transaction.ticket_item
+        old_ticket.bpt_event.vendor_submission_event = True
+        old_ticket.bpt_event.save()
+        context = PurchasedTicketContext()
+        login_as(self.privileged_user, self)
+        response = self.client.get("%s?conference=%s" % (
+            self.url,
+            old_context.conference.conference_slug))
+        self.assertContains(response, old_context.transaction.purchaser.email)
+        self.assertContains(response, "%s, %s" % (
+            old_context.transaction.purchaser.last_name,
+            old_context.transaction.purchaser.first_name))
+        self.assertContains(
+            response,
+            "%s - Vendor" % old_context.transaction.ticket_item.title)
+        self.assertNotContains(response, "- Act")
+        self.assertNotContains(response, context.transaction.purchaser.email)
+        self.assertNotContains(response, context.profile.display_name)
+        self.assertNotContains(response, context.transaction.ticket_item.title)
+
+    def test_transactions_old_conf_limbo_purchase_user_view(self):
+        '''
+           privileged user gets the list
+        '''
+        limbo, created = User.objects.get_or_create(username='limbo')
+        old_context = PurchasedTicketContext()
+        old_context.conference.status = "past"
+        old_context.conference.save()
+        old_context.transaction.purchaser.matched_to_user = limbo
+        old_context.transaction.purchaser.save()
+        context = PurchasedTicketContext()
+        login_as(self.privileged_user, self)
+        response = self.client.get("%s?format=user&conference=%s" % (
+            self.url,
+            old_context.conference.conference_slug))
+        self.assertContains(response, old_context.transaction.purchaser.email)
+        self.assertContains(response, "N/A<br>(%s, %s)" % (
+            old_context.transaction.purchaser.last_name,
+            old_context.transaction.purchaser.first_name))
+        self.assertContains(response,
+                            old_context.transaction.ticket_item.title)
+        self.assertNotContains(response, "- Vendor")
+        self.assertNotContains(response, "- Act")
+        self.assertNotContains(response, context.transaction.purchaser.email)
+        self.assertNotContains(response, context.profile.display_name)
+        self.assertNotContains(response, context.transaction.ticket_item.title)
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_transactions_sync(self, m_urlopen):
@@ -116,3 +194,9 @@ class TestTransactions(TestCase):
         nt.assert_equal(transaction.purchaser.matched_to_user, limbo)
         nt.assert_equal(transaction.purchaser.first_name, 'John')
         nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s   Transactions imported: %s" % (
+                                import_transaction_message,
+                                "1"))

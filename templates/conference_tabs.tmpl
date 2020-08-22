@@ -1,0 +1,6 @@
+ <ul class="nav nav-tabs" id="inner">
+ {% for slug in conference_slugs %}
+  <li role="presentation" {% if conference.conference_slug == slug %}class="active"{% endif %}><a href="{{ request.path }}?conference={{slug}}" class="gbe-tab" >{{slug}}</a></li>
+ {% endfor %}
+ </ul>
+ 

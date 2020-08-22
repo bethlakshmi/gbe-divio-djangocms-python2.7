@@ -10,22 +10,7 @@
   <a href="{% url 'ticketing:bptevent_edit' event.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
     <i class="fa fa-trash-o text-muted" aria-hidden="true"></i></a></div>
 </div></div>
-<div class="row">
-{% if event.linked_events.count > 0 %}
-  <div class="col-6">
-    <b>Linked Events for this Ticket Type:</b><ul>
-    {% for cal_event in event.linked_events.all %}
-    <li><a href="{% url 'scheduling:detail_view' cal_event.eventitem_id  %}">{{ cal_event }}</a></li>
-    {% endfor %}
-  </ul></div>{% endif %}
-<div class="col-6">
-<ul>
-{% if event.include_conference %}<li>Includes all Conference Classes</li>{% endif %}
-{% if event.include_most %}<li>Includes all events except Master Classes</li>{% endif %}
-{% if event.badgeable %}<li>Badges are given by reg desk</li>{%endif%}
-{% if event.ticket_style %}<li>Ticket Notes: {{event.ticket_style}}</li>{% endif %}
-</ul></div>
-</div>
+{% include 'ticketing/event_details.tmpl' %}
 
 <table class="order-column table table-bordered" >
   <thead>

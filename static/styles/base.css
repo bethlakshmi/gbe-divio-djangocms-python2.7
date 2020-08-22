@@ -292,6 +292,14 @@ h3.readonlyform
     padding: 2px;
     vertical-align: top;
  }
+#sub-table
+ {  border: 1px solid black;
+    border-collapse:collapse;
+    padding: 0px;
+    vertical-align: top;}
+#clear-row {
+  background-color: transparent;
+}
 .bid-form
 {
     border: 1px solid black;
