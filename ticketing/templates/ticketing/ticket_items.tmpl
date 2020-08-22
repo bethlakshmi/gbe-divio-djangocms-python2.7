@@ -8,11 +8,7 @@
 {% endblock %}
 {% block content %}
 <div class="container review">
- <ul class="nav nav-tabs" id="inner">
- {% for slug in conference_slugs %}
-  <li role="presentation" {% if conf_slug == slug %}class="active"{% endif %}><a href="?conference={{slug}}" class="gbe-tab" >{{slug}}</a></li>
- {% endfor %}
- </ul>
+{% include "conference_tabs.tmpl" %} 
  <div class="scheduling-area">
 <div class="row">
 <div class="col-8">
