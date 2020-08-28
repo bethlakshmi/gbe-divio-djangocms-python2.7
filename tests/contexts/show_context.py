@@ -87,9 +87,12 @@ class ShowContext:
         act = act or ActFactory(b_conference=self.conference,
                                 accepted=3,
                                 submitted=True)
+        role = "Performer"
+        if act.accepted == 2:
+            role = "Waitlisted"
         booking = ResourceAllocationFactory(
             event=self.sched_event,
-            resource=WorkerFactory(_item=act.performer, role="Performer"))
+            resource=WorkerFactory(_item=act.performer, role=role))
         order = OrderingFactory(
             allocation=booking,
             class_id=act.pk,

@@ -107,9 +107,7 @@ class Event(Schedulable):
             # that aren't linked??
         worker.save()
 
-        if person.user:
-            users = [person.user]
-        elif person.users:
+        if person.users:
             users = person.users
         else:
             users = [worker.workeritem.user_object]

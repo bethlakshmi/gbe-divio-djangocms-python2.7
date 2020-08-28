@@ -47,7 +47,7 @@ class ScheduleAct(View):
         if 'show_id' in list(request.GET.keys()):
             show_id = int(request.GET['show_id'])
         elif 'show_id' in kwargs:
-            show_id = kwargs['show_id']
+            show_id = int(kwargs['show_id'])
         else:
             return self.select_shows(request)
 
@@ -62,8 +62,8 @@ class ScheduleAct(View):
             if occurrence.eventitem.eventitem_id == show.eventitem_id:
                 self.show_event = occurrence
         if not self.show_event:
-            # TODO - this thread needs a regressive test
-            messages.error(request, "Show id %d not found" % show_id)
+            messages.error(request,
+                           "Schedule for show id %d not found" % show_id)
             return self.select_shows(request)
         act_response = get_people(foreign_event_ids=[show.eventitem_id],
                                   roles=["Performer"])
