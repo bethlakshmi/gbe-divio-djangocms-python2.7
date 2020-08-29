@@ -36,6 +36,7 @@ from scheduler.models import (
 from gbe.models import UserMessage
 from gbetext import (
     act_status_change_msg,
+    act_status_no_change_msg,
     bidder_email_fail_msg,
     no_casting_msg,
 )
@@ -116,6 +117,7 @@ class TestActChangestate(TestCase):
             event=rehearsal_event).count(), 1)
         self.assertEqual(ResourceAllocation.objects.filter(
             event=self.context.sched_event).count(), 2)
+        self.assertContains(response, act_status_no_change_msg)
 
     def test_act_change_role_keep_rehearsal(self):
         # accepted -> accepted
@@ -338,7 +340,7 @@ class TestActChangestate(TestCase):
             "test template", "actemail@notify.com")
 
     def test_act_accept_makes_template_per_show(self):
-        # accepted -> accepted
+        # waitlisted -> accepted
         # change show, same role
         self.context = ActTechInfoContext(set_waitlist=True)
         self.url = reverse(self.view_name,
@@ -353,8 +355,8 @@ class TestActChangestate(TestCase):
         )
         casting = Ordering.objects.get(
             class_id=self.context.act.pk,
-            allocation__event=self.context.sched_event)
-        assert(casting.role == "Waitlisted")
+            allocation__event=self.sched_event)
+        assert(casting.role == "")
 
     def test_act_accept_notification_template_fail(self):
         # accepted -> accepted - error case
@@ -463,7 +465,7 @@ class TestActChangestate(TestCase):
                                     data=self.data)
         casting = Ordering.objects.get(
             class_id=self.context.act.pk,
-            allocation__event=self.context.sched_event)
+            allocation__event=self.sched_event)
         assert(casting.role == "Waitlisted")
 
     def test_bad_show(self):
