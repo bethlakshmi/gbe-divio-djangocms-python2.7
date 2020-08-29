@@ -452,7 +452,7 @@ class TestCopyOccurrence(TestGBE):
         max_pk = Event.objects.latest('pk').pk
         response = self.client.post(url, data=data, follow=True)
         new_occurrences = []
-        for occurrence in Event.objects.filter(pk__gt=max_pk):
+        for occurrence in Event.objects.filter(pk__gt=max_pk).order_by('pk'):
             new_occurrences += [occurrence.pk]
         redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
             reverse('manage_event_list',
