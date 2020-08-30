@@ -90,6 +90,7 @@ class ShowContext:
         role = "Performer"
         if act.accepted == 2:
             role = "Waitlisted"
+            act_role = 'Waitlisted'
         booking = ResourceAllocationFactory(
             event=self.sched_event,
             resource=WorkerFactory(_item=act.performer, role=role))

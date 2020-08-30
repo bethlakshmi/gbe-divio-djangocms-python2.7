@@ -112,7 +112,7 @@ class ActChangeStateView(BidChangeStateView):
             same_role = False
             if show and show.event.eventitem == self.new_show.eventitem:
                 same_show = True
-                if casting == show.order.role:
+                if casting == show.commitment.role:
                     user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
                         code="ACT_NO_CHANGE",

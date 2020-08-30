@@ -70,7 +70,7 @@ class FlexibleReviewBidView(ReviewBidView):
                 roles=["Performer", "Waitlisted"]).schedule_items:
             if item.event.event_type_name == "Show":
                 start = item.event.eventitem.pk
-                casting = item.order.role
+                casting = item.commitment.role
         response = get_occurrences(
             foreign_event_ids=Show.objects.filter(
                 e_conference=act.b_conference).values_list(

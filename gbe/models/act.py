@@ -102,8 +102,8 @@ class Act (Biddable):
                     castings += ", %s" % str(item.event.eventitem)
                 else:
                     castings += str(item.event.eventitem)
-                if item.order.role and len(item.order.role) > 0:
-                    castings += ' - %s' % item.order.role
+                if item.commitment.role and len(item.commitment.role) > 0:
+                    castings += ' - %s' % item.commitment.role
                 cast_shows += [item.event.eventitem.pk]
 
         return [self.performer.name,
