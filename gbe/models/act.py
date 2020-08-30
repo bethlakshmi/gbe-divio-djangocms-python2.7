@@ -93,15 +93,17 @@ class Act (Biddable):
     def bid_review_summary(self):
         castings = ""
         cast_shows = []
-        for item in get_schedule(commitment=self).schedule_items:
+        for item in get_schedule(commitment=self,
+                                 roles=["Performer", "Waitlisted"]
+                                 ).schedule_items:
             if item.event.event_type_name == "Show" and (
                     item.event.eventitem.pk not in cast_shows):
                 if len(castings) > 0:
                     castings += ", %s" % str(item.event.eventitem)
                 else:
                     castings += str(item.event.eventitem)
-                if item.order.role and len(item.order.role) > 0:
-                    castings += ' - %s' % item.order.role
+                if item.commitment.role and len(item.commitment.role) > 0:
+                    castings += ' - %s' % item.commitment.role
                 cast_shows += [item.event.eventitem.pk]
 
         return [self.performer.name,

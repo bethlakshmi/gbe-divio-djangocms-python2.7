@@ -60,7 +60,7 @@ def review_act_techinfo(request, show_id=None):
                 elif Show.objects.filter(
                         eventitem_id=item.event.eventitem.eventitem_id
                         ).exists():
-                    order = item.order.order
+                    order = item.commitment.order
             acts += [{'act': act, 'rehearsals': rehearsals, 'order': order}]
         if validate_perms(request, ('Scheduling Mavens',), require=False):
             scheduling_link = reverse(

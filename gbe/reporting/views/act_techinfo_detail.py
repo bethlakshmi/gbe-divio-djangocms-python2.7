@@ -39,7 +39,7 @@ def act_techinfo_detail(request, act_id):
             if item.event not in shows and Show.objects.filter(
                     eventitem_id=item.event.eventitem.eventitem_id).exists():
                 shows += [item.event]
-                order = item.order.order
+                order = item.commitment.order
             elif item.event not in rehearsals and GenericEvent.objects.filter(
                     eventitem_id=item.event.eventitem.eventitem_id,
                     type='Rehearsal Slot').exists():

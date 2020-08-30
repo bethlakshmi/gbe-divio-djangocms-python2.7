@@ -26,6 +26,7 @@ class Person(object):
                  users=None):
         self.booking_id = None
         self.commitment = None
+        self.users = None
         if booking:
             self.booking_id = booking.pk
             self.occurrence = booking.event
@@ -51,6 +52,10 @@ class Person(object):
             self.booking_id = booking_id
         self.label = label
         self.users = users
+        if users is not None:
+            self.users = users
+        elif self.user is not None:
+            self.users = [self.user]
 
 
 class ScheduleItem(object):
@@ -61,14 +66,14 @@ class ScheduleItem(object):
                  role=None,
                  label=None,
                  booking_id=None,
-                 order=None):
+                 commitment=None):
         self.user = user
         self.group_id = group_id
         self.role = role
         self.label = label
         self.event = event
         self.booking_id = booking_id
-        self.order = order
+        self.commitment = commitment
 
 
 class Answer(object):

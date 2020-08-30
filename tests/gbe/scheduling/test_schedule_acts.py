@@ -90,6 +90,17 @@ class TestScheduleActs(TestCase):
         response = self.client.get(bad_url, follow=True)
         self.assertEqual(response.status_code, 404)
 
+    def test_good_user_get_unscheduled_show(self):
+        show = ShowFactory()
+        login_as(self.privileged_profile, self)
+        show_request_url = reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[show.pk])
+        response = self.client.get(show_request_url, follow=True)
+        self.assertContains(response,
+                            "Schedule for show id %d not found" % show.pk)
+
     def test_good_user_get_no_show(self):
         login_as(self.privileged_profile, self)
         bad_url = reverse(
@@ -127,6 +138,17 @@ class TestScheduleActs(TestCase):
         response = self.client.get(self.url)
         self.assert_good_form_display(response)
 
+    def test_good_user_get_no_acts(self):
+        no_act_context = ShowContext(act=ActFactory(
+            accepted=2,
+            b_conference=self.context.conference))
+        no_act_url = reverse(self.view_name,
+                             urlconf="gbe.scheduling.urls",
+                             args=[no_act_context.show.pk])
+        login_as(self.privileged_profile, self)
+        response = self.client.get(no_act_url)
+        self.assertContains(response, "No Acts have been cast in this show")
+
     def test_good_user_get_inactive_user(self):
         inactive = ProfileFactory(
             display_name="Inactive Profile",
@@ -146,14 +168,6 @@ class TestScheduleActs(TestCase):
         response = self.client.get(self.url)
         self.assert_good_form_display(response)
 
-    def test_good_user_get_success_not_scheduled(self):
-        show = ShowFactory()
-        login_as(self.privileged_profile, self)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn(b'<ul class="errorlist">', response.content)
-        self.assertIn(b'Performer', response.content)
-
     def test_good_user_get_w_waitlist(self):
         wait_act = ActFactory(accepted=2,
                               b_conference=self.context.conference)
@@ -161,6 +175,7 @@ class TestScheduleActs(TestCase):
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
         self.assert_good_form_display(response)
+        self.assertNotContains(response, wait_act.b_title)
 
     def test_good_user_get_show(self):
         login_as(self.privileged_profile, self)

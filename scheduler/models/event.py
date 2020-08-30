@@ -107,9 +107,7 @@ class Event(Schedulable):
             # that aren't linked??
         worker.save()
 
-        if person.user:
-            users = [person.user]
-        elif person.users:
+        if person.users:
             users = person.users
         else:
             users = [worker.workeritem.user_object]
@@ -136,7 +134,7 @@ class Event(Schedulable):
         if person.commitment:
             ordering, created = Ordering.objects.get_or_create(
                 allocation=allocation)
-            if person.commitment.role:
+            if person.commitment.role is not None:
                 ordering.role = person.commitment.role
             if person.commitment.order:
                 ordering.order = person.commitment.order

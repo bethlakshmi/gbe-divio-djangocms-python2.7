@@ -65,10 +65,12 @@ class FlexibleReviewBidView(ReviewBidView):
         self.actionform = BidStateChangeForm(instance=act)
         start = 0
         casting = ""
-        for item in get_schedule(commitment=act).schedule_items:
+        for item in get_schedule(
+                commitment=act,
+                roles=["Performer", "Waitlisted"]).schedule_items:
             if item.event.event_type_name == "Show":
                 start = item.event.eventitem.pk
-                casting = item.order.role
+                casting = item.commitment.role
         response = get_occurrences(
             foreign_event_ids=Show.objects.filter(
                 e_conference=act.b_conference).values_list(

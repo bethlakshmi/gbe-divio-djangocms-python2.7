@@ -16,6 +16,7 @@ from gbe.email.functions import send_bid_state_change_mail
 from gbetext import (
     acceptance_states,
     act_status_change_msg,
+    act_status_no_change_msg,
     no_casting_msg,
 )
 from scheduler.idd import (
@@ -78,7 +79,8 @@ class ActChangeStateView(BidChangeStateView):
 
         # Determine if the current show should be changed
         if self.object.accepted in self.show_booked_states:
-            response = get_schedule(commitment=self.object)
+            response = get_schedule(commitment=self.object,
+                                    roles=["Performer", "Waitlisted"])
             show_general_status(request, response, self.__class__.__name__)
             show, rehearsals = self.parse_act_schedule(response.schedule_items)
 
@@ -110,10 +112,22 @@ class ActChangeStateView(BidChangeStateView):
             same_role = False
             if show and show.event.eventitem == self.new_show.eventitem:
                 same_show = True
-                if casting == show.order.role:
-                    same_role = True
+                if casting == show.commitment.role:
+                    user_message = UserMessage.objects.get_or_create(
+                        view=self.__class__.__name__,
+                        code="ACT_NO_CHANGE",
+                        defaults={
+                            'summary': "Act State Not Changed",
+                            'description': act_status_no_change_msg})
+                    messages.success(
+                        request,
+                        "%s<br>Performer/Act: %s - %s" % (
+                            user_message[0].description,
+                            self.object.performer.name,
+                            self.object.b_title))
+                    return super(ActChangeStateView, self).bid_state_change(
+                        request)
 
-            # if both show and role are same, do nothing
             person = Person(public_id=self.object.performer.pk,
                             role=role,
                             commitment=Commitment(role=casting,
