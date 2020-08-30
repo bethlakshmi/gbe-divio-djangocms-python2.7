@@ -51,7 +51,6 @@ class Person(object):
         if booking_id:
             self.booking_id = booking_id
         self.label = label
-        self.users = users
         if users is not None:
             self.users = users
         elif self.user is not None:
