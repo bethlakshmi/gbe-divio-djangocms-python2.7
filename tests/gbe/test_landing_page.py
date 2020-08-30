@@ -353,11 +353,17 @@ class TestIndex(TestCase):
         second_act_context = ActTechInfoContext(
             performer=self.performer,
             conference=self.current_conf,
-            show=current_act_context.show)
+            show=current_act_context.show,
+            sched_event=current_act_context.sched_event)
+        self.current_act.accepted = 3
+        self.current_act.save()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
                             second_act_context.act.b_title,
+                            count=3)
+        self.assertContains(response,
+                            current_act_context.act.b_title,
                             count=3)
         self.assertContains(response,
                             second_act_context.show.e_title,

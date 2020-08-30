@@ -106,8 +106,10 @@ class ManageEventsView(View):
                 'duration': occurrence.eventitem.event.duration.total_seconds(
                     ) / timedelta(hours=1).total_seconds(),
                 'type': event_type,
-                'current_volunteer': occurrence.volunteer_count,
+                'current_volunteer': occurrence.role_count("Volunteer"),
+                'current_acts': occurrence.role_count("Performer"),
                 'max_volunteer': occurrence.max_volunteer,
+                'max_commitments': occurrence.max_commitments,
                 'approval_needed': occurrence.approval_needed,
                 'staff_areas': [],
                 'detail_link': reverse(

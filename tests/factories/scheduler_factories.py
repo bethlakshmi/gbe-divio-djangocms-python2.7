@@ -27,18 +27,6 @@ class ResourceFactory(DjangoModelFactory):
         model = sched.Resource
 
 
-class ActItemFactory(DjangoModelFactory):
-    class Meta:
-        model = sched.ActItem
-
-
-class ActResourceFactory(DjangoModelFactory):
-    _item = SubFactory(ActItemFactory)
-
-    class Meta:
-        model = sched.ActResource
-
-
 class LocationItemFactory(DjangoModelFactory):
     class Meta:
         model = sched.LocationItem
@@ -75,6 +63,7 @@ class SchedEventFactory(DjangoModelFactory):
     eventitem = SubFactory(GenericEventFactory)
     starttime = datetime(2015, 2, 4)
     max_volunteer = 0
+    max_commitments = 0
 
     class Meta:
         model = sched.Event

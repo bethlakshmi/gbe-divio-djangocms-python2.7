@@ -8,8 +8,10 @@ from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
     ActFactory,
     EmailTemplateSenderFactory,
+    PersonaFactory,
     ProfileFactory,
     ShowFactory,
+    TroupeFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
@@ -28,12 +30,13 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from scheduler.models import (
-    ActResource,
+    Ordering,
     ResourceAllocation,
 )
 from gbe.models import UserMessage
 from gbetext import (
     act_status_change_msg,
+    act_status_no_change_msg,
     bidder_email_fail_msg,
     no_casting_msg,
 )
@@ -114,6 +117,7 @@ class TestActChangestate(TestCase):
             event=rehearsal_event).count(), 1)
         self.assertEqual(ResourceAllocation.objects.filter(
             event=self.context.sched_event).count(), 2)
+        self.assertContains(response, act_status_no_change_msg)
 
     def test_act_change_role_keep_rehearsal(self):
         # accepted -> accepted
@@ -131,8 +135,8 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=data,
                                     follow=True)
-        casting = ActResource.objects.get(_item=self.context.act,
-                                          role="Hosted by...")
+        casting = Ordering.objects.get(class_id=self.context.act.pk,
+                                       role="Hosted by...")
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -257,8 +261,26 @@ class TestActChangestate(TestCase):
             'act wait list',
             "Your act proposal has changed status to Wait List"
         )
-        casting = ActResource.objects.get(_item=act)
+        casting = Ordering.objects.get(class_id=act.pk)
         assert(casting.role == "Waitlisted")
+
+    def test_act_changestate_troupe(self):
+        # No decision -> accept
+        # new show, new role
+        act = ActFactory(b_conference=self.context.conference,
+                         performer=TroupeFactory())
+        act.performer.membership.add(PersonaFactory())
+        act.performer.membership.add(PersonaFactory())
+
+        url = reverse(self.view_name,
+                      args=[act.pk],
+                      urlconf='gbe.urls')
+        self.data['accepted'] = '3'
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=self.data, follow=True)
+        self.assertContains(response, "%s<br>Performer/Act: %s " % (
+            act_status_change_msg,
+            str(act.performer)))
 
     def test_act_changestate_post_waitlisted_act(self):
         # accepted -> waitlist
@@ -278,7 +300,7 @@ class TestActChangestate(TestCase):
             'act wait list',
             "Your act proposal has changed status to Wait List"
         )
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == "Waitlisted")
         with self.assertRaises(ResourceAllocation.DoesNotExist):
             ResourceAllocation.objects.get(event=rehearsal_event)
@@ -313,13 +335,12 @@ class TestActChangestate(TestCase):
                                     follow=True)
         self.assertContains(
             response,
-            "is booked for"
-        )
+            "Conflicting booking: %s" % str(conflict))
         assert_email_template_used(
             "test template", "actemail@notify.com")
 
     def test_act_accept_makes_template_per_show(self):
-        # accepted -> accepted
+        # waitlisted -> accepted
         # change show, same role
         self.context = ActTechInfoContext(set_waitlist=True)
         self.url = reverse(self.view_name,
@@ -332,7 +353,9 @@ class TestActChangestate(TestCase):
             'act accepted - %s' % self.show.e_title.lower(),
             "Your act has been cast in %s" % self.show.e_title
         )
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(
+            class_id=self.context.act.pk,
+            allocation__event=self.sched_event)
         assert(casting.role == "")
 
     def test_act_accept_notification_template_fail(self):
@@ -369,7 +392,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=data,
                                     follow=True)
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -390,7 +413,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(url,
                                     data=data,
                                     follow=True)
-        casting = ActResource.objects.get(_item=act)
+        casting = Ordering.objects.get(class_id=act.pk)
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -440,7 +463,9 @@ class TestActChangestate(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data)
-        casting = ActResource.objects.get(_item=self.context.act)
+        casting = Ordering.objects.get(
+            class_id=self.context.act.pk,
+            allocation__event=self.sched_event)
         assert(casting.role == "Waitlisted")
 
     def test_bad_show(self):

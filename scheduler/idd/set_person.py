@@ -26,4 +26,9 @@ def set_person(occurrence_id=None, person=None):
         return BookingResponse(errors=[Error(
             code="OCCURRENCE_NOT_FOUND",
             details="Neither booking id nor occurrence id provided")])
+    if person.booking_id and not ResourceAllocation.objects.filter(
+            pk=person.booking_id).exists():
+        return BookingResponse(errors=[Error(
+                code="BOOKING_NOT_FOUND",
+                details="Booking id %s not found" % person.booking_id), ])
     return occurrence.allocate_person(person)

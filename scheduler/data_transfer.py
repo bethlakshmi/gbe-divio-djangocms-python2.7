@@ -1,5 +1,17 @@
 
 
+class Commitment(object):
+    def __init__(self,
+                 role=None,
+                 decorator_class=None,
+                 order=None):
+        if decorator_class:
+            self.class_name = decorator_class.__class__.__name__
+            self.class_id = decorator_class.pk
+        self.role = role
+        self.order = order
+
+
 class Person(object):
     def __init__(self,
                  booking_id=None,
@@ -9,14 +21,21 @@ class Person(object):
                  role=None,
                  label=None,
                  worker=None,
-                 booking=None):
+                 booking=None,
+                 commitment=None,
+                 users=None):
         self.booking_id = None
+        self.commitment = None
+        self.users = None
         if booking:
             self.booking_id = booking.pk
             self.occurrence = booking.event
             worker = booking.resource.worker
+            if hasattr(booking, 'ordering'):
+                self.commitment = booking.ordering
         else:
             self.occurrence = None
+            self.commitment = commitment
 
         if worker:
             self.role = worker.role
@@ -32,37 +51,10 @@ class Person(object):
         if booking_id:
             self.booking_id = booking_id
         self.label = label
-
-
-class Casting(object):
-    def __init__(self,
-                 booking):
-        self.booking_id = booking.pk
-        self.role = booking.resource.actresource.role
-        self.act = booking.resource.actresource._item.resourceitem_id
-        try:
-            self.order = booking.ordering.order
-        except:
-            self.order = None
-
-
-class BookableAct(object):
-    def __init__(self,
-                 booking_id=None,
-                 act=None,
-                 role=None,
-                 order=None):
-        self.booking_id = None
-        self.order = None
-        self.role = None
-        if role:
-            self.role = role
-        if booking_id:
-            self.booking_id = booking_id
-        if act:
-            self.act_id = act.actitem_ptr_id
-        if order:
-            self.order = order
+        if users is not None:
+            self.users = users
+        elif self.user is not None:
+            self.users = [self.user]
 
 
 class ScheduleItem(object):
@@ -73,14 +65,14 @@ class ScheduleItem(object):
                  role=None,
                  label=None,
                  booking_id=None,
-                 order=None):
+                 commitment=None):
         self.user = user
         self.group_id = group_id
         self.role = role
         self.label = label
         self.event = event
         self.booking_id = booking_id
-        self.order = order
+        self.commitment = commitment
 
 
 class Answer(object):
@@ -155,15 +147,6 @@ class PeopleResponse(GeneralResponse):
                  errors=[]):
         self.people = people
         super(PeopleResponse, self).__init__(warnings, errors)
-
-
-class CastingResponse(GeneralResponse):
-    def __init__(self,
-                 castings=[],
-                 warnings=[],
-                 errors=[]):
-        self.castings = castings
-        super(CastingResponse, self).__init__(warnings, errors)
 
 
 class ScheduleResponse(GeneralResponse):

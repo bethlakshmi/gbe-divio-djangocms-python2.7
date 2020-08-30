@@ -11,6 +11,7 @@ from scheduler.idd import get_occurrence
 def create_occurrence(foreign_event_id,
                       start_time,
                       max_volunteer=0,
+                      max_commitments=0,
                       people=[],
                       locations=[],
                       parent_event_id=None,
@@ -26,6 +27,7 @@ def create_occurrence(foreign_event_id,
         eventitem=EventItem.objects.get(eventitem_id=foreign_event_id),
         starttime=start_time,
         max_volunteer=max_volunteer,
+        max_commitments=max_commitments,
         approval_needed=approval)
     response.occurrence.save()
     if len(locations) > 0:

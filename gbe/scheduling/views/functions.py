@@ -19,13 +19,14 @@ from gbe.scheduling.forms import (
 )
 from scheduler.data_transfer import Person
 from scheduler.idd import (
-    get_bookings,
     get_occurrence,
     get_occurrences,
+    get_people,
     update_occurrence,
 )
 from django.contrib import messages
 from gbe.models import (
+    Act,
     Conference,
     Event,
     Performer,
@@ -138,24 +139,23 @@ def get_event_display_info(eventitem_id):
     '''
     try:
         item = Event.objects.get_subclass(eventitem_id=eventitem_id)
-        response = get_occurrences(foreign_event_ids=[eventitem_id])
     except Event.DoesNotExist:
         raise Http404
     bio_grid_list = []
     featured_grid_list = []
-    occurrence_ids = []
-    for sched_event in response.occurrences:
-        occurrence_ids += [sched_event.pk]
-        for casting in sched_event.casting_list:
-            if len(casting.role):
-                featured_grid_list += [{
-                    'bio': casting._item.bio,
-                    'role': casting.role,
-                    }]
-            else:
-                bio_grid_list += [casting._item.bio]
-    booking_response = get_bookings(
-        occurrence_ids,
+    response = get_people(foreign_event_ids=[eventitem_id],
+                          roles=["Performer"])
+    for casting in response.people:
+        act = Act.objects.get(pk=casting.commitment.class_id)
+        if len(casting.commitment.role):
+            featured_grid_list += [{
+                'bio': act.bio,
+                'role': casting.commitment.role}]
+        else:
+            bio_grid_list += [act.bio]
+
+    booking_response = get_people(
+        foreign_event_ids=[eventitem_id],
         roles=['Teacher', 'Panelist', 'Moderator', 'Staff Lead'])
     people = []
     if len(booking_response.people) == 0 and (
@@ -174,12 +174,13 @@ def get_event_display_info(eventitem_id):
                         pk=person.public_id),
                 }]
 
-    eventitem_view = {'event': item,
-                      'scheduled_events': response.occurrences,
-                      'bio_grid_list': bio_grid_list,
-                      'featured_grid_list': featured_grid_list,
-                      'people': people,
-                      }
+    eventitem_view = {
+        'event': item,
+        'scheduled_events': get_occurrences(
+            foreign_event_ids=[eventitem_id]).occurrences,
+        'bio_grid_list': bio_grid_list,
+        'featured_grid_list': featured_grid_list,
+        'people': people}
     return eventitem_view
 
 

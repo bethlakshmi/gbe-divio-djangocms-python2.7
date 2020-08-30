@@ -3,10 +3,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from gbe_logging import log_func
-from scheduler.models import (
-    ActResource,
-    ResourceAllocation,
-)
 from django.utils.formats import date_format
 from gbe.views import BidChangeStateView
 from gbe.models import (
@@ -20,16 +16,20 @@ from gbe.email.functions import send_bid_state_change_mail
 from gbetext import (
     acceptance_states,
     act_status_change_msg,
+    act_status_no_change_msg,
     no_casting_msg,
 )
 from scheduler.idd import (
     get_occurrences,
     get_schedule,
     remove_booking,
-    set_act,
+    set_person,
 )
 from gbe.scheduling.views.functions import show_general_status
-from scheduler.data_transfer import BookableAct
+from scheduler.data_transfer import (
+    Commitment,
+    Person,
+)
 from django.http import Http404
 
 
@@ -79,12 +79,10 @@ class ActChangeStateView(BidChangeStateView):
 
         # Determine if the current show should be changed
         if self.object.accepted in self.show_booked_states:
-            response = get_schedule(act=self.object)
+            response = get_schedule(commitment=self.object,
+                                    roles=["Performer", "Waitlisted"])
             show_general_status(request, response, self.__class__.__name__)
             show, rehearsals = self.parse_act_schedule(response.schedule_items)
-
-        if show and show.role and show.role == "Performing":
-            show.role = ""
 
         # if the act has been accepted, set the show.
         if self.act_accepted(request):
@@ -105,53 +103,53 @@ class ActChangeStateView(BidChangeStateView):
                 return HttpResponseRedirect(reverse(
                     "act_review", urlconf='gbe.urls', args=[self.object.pk]))
             casting = request.POST['casting']
+            role = "Performer"
             if request.POST['accepted'] == '2':
                 casting = "Waitlisted"
-            # because at the time of this comment, not all waitlisted acts
-            # have a role of waitlisted.  Can be removed after 2020.
-            if self.object.accepted == 2:
                 role = "Waitlisted"
+
             same_show = False
             same_role = False
             if show and show.event.eventitem == self.new_show.eventitem:
                 same_show = True
-                if casting == show.role:
-                    same_role = True
+                if casting == show.commitment.role:
+                    user_message = UserMessage.objects.get_or_create(
+                        view=self.__class__.__name__,
+                        code="ACT_NO_CHANGE",
+                        defaults={
+                            'summary': "Act State Not Changed",
+                            'description': act_status_no_change_msg})
+                    messages.success(
+                        request,
+                        "%s<br>Performer/Act: %s - %s" % (
+                            user_message[0].description,
+                            self.object.performer.name,
+                            self.object.b_title))
+                    return super(ActChangeStateView, self).bid_state_change(
+                        request)
 
-            # if both show and role are same, do nothing
+            person = Person(public_id=self.object.performer.pk,
+                            role=role,
+                            commitment=Commitment(role=casting,
+                                                  decorator_class=self.object))
+            profiles = self.object.get_performer_profiles()
+            if len(profiles) > 1:
+                person.users = [profile.user_object for profile in profiles]
+            else:
+                person.user = profiles[0].user_object
             if same_show and not same_role:
-                set_response = set_act(act=BookableAct(
-                    act=self.object,
-                    booking_id=show.booking_id,
-                    role=casting))
+                person.booking_id = show.booking_id
+                set_response = set_person(person=person)
                 self.show_set_act_status(request, set_response)
                 if request.POST['accepted'] != '3':
                     self.clear_bookings(request, rehearsals)
             elif not same_show:
                 self.clear_bookings(request, rehearsals, show)
-                set_response = set_act(
+                set_response = set_person(
                     occurrence_id=self.new_show.pk,
-                    act=BookableAct(act=self.object,
-                                    role=casting))
+                    person=person)
                 self.show_set_act_status(request, set_response)
-            for worker in self.object.get_performer_profiles():
-                response = get_schedule(
-                    user=worker.user_object,
-                    labels=[self.new_show.eventitem.child(
-                        ).e_conference.conference_slug],
-                    start_time=self.new_show.start_time,
-                    end_time=self.new_show.end_time)
-                for problem in response.schedule_items:
-                    messages.warning(
-                        request,
-                        "%s is booked for - %s - %s" % (
-                            str(worker),
-                            str(problem.event),
-                            date_format(
-                                problem.event.starttime,
-                                "DATETIME_FORMAT")
-                        )
-                    )
+
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="ACT_ACCEPTED",

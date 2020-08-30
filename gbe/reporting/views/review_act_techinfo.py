@@ -15,7 +15,7 @@ from gbe.models import (
     Show,
 )
 from scheduler.idd import (
-    get_acts,
+    get_people,
     get_schedule
 )
 from gbe.scheduling.views.functions import show_general_status
@@ -38,15 +38,18 @@ def review_act_techinfo(request, show_id=None):
 
     if show_id:
         show = get_object_or_404(Show, eventitem_id=show_id)
-        response = get_acts(foreign_event_ids=[show.eventitem_id])
+        response = get_people(foreign_event_ids=[show.eventitem_id],
+                              roles=["Performer"])
         show_general_status(request, response, "ReviewActTechinfo")
-        for casting in response.castings:
+        for performer in response.people:
             rehearsals = []
             order = -1
-            act = get_object_or_404(Act, resourceitem_id=casting.act)
+            act = get_object_or_404(
+                Act,
+                pk=performer.commitment.class_id)
             sched_response = get_schedule(
                 labels=[act.b_conference.conference_slug],
-                act=act)
+                commitment=act)
             show_general_status(request, sched_response, "ReviewActTechinfo")
             for item in sched_response.schedule_items:
                 if item.event not in rehearsals and (
@@ -57,7 +60,7 @@ def review_act_techinfo(request, show_id=None):
                 elif Show.objects.filter(
                         eventitem_id=item.event.eventitem.eventitem_id
                         ).exists():
-                    order = item.order
+                    order = item.commitment.order
             acts += [{'act': act, 'rehearsals': rehearsals, 'order': order}]
         if validate_perms(request, ('Scheduling Mavens',), require=False):
             scheduling_link = reverse(

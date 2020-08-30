@@ -9,6 +9,7 @@ from gbe.models import (
 )
 from gbetext import cue_options
 from ticketing.functions import get_tickets
+from scheduler.idd import get_people
 
 
 class Show (Event):
@@ -35,7 +36,13 @@ class Show (Event):
         return get_tickets(self, most=True)
 
     def get_acts(self):
-        return self.scheduler_events.first().get_acts()
+        acts = []
+        response = get_people(parent_event_ids=[self.eventitem_id],
+                              roles=["Performer"])
+        for performer in response.people:
+            act = Act.objects.get(pk=performer.commitment.class_id)
+            acts += [act]
+        return acts
 
     class Meta:
         app_label = "gbe"

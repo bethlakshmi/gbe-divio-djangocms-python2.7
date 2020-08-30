@@ -25,7 +25,6 @@ from settings import GBE_DATETIME_FORMAT
 from datetime import timedelta
 from gbe.models import Act
 from scheduler.models import (
-    ActResource,
     ResourceAllocation,
 )
 
@@ -278,10 +277,9 @@ class TestActTechWizard(TestCase):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
         alloc = ResourceAllocation.objects.get(
             event=context.rehearsal,
-            resource__in=resources)
+            ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
         response = self.client.post(url, data)
         success_msg = "%s  Rehearsal Name:  %s, Start Time: %s" % (
@@ -301,9 +299,8 @@ class TestActTechWizard(TestCase):
             'I will need set before my number" '
             'id="id_prop_setup_1" checked />',
             html=True)
-        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
         alloc = ResourceAllocation.objects.filter(
-            resource__in=resources)
+            ordering__class_id=context.act.pk)
         self.assertEqual(alloc.count(), 2)
         assert_option_state(
             response,
@@ -329,10 +326,9 @@ class TestActTechWizard(TestCase):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        resources = ActResource.objects.filter(_item=context.act.actitem_ptr)
         alloc = ResourceAllocation.objects.get(
             event=context.rehearsal,
-            resource__in=resources)
+            ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
         response = self.client.post(url, data)
         assert_option_state(

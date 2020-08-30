@@ -15,11 +15,6 @@ def get_roles(user,
         basic_filter = basic_filter.filter(
                 event__eventlabel__text__in=labels)
     bookable_items = user.profile.get_bookable_items()
-    if len(bookable_items['acts']) > 0:
-        if basic_filter.filter(
-                resource__actresource___item__in=bookable_items['acts']
-                ).exists():
-            roles = ["Performer"]
 
     worker_items = bookable_items['performers']
     worker_items += [user.profile]

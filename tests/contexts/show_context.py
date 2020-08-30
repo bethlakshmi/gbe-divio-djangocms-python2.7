@@ -9,10 +9,10 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.scheduler_factories import (
-    ActResourceFactory,
     EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
+    OrderingFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
     WorkerFactory,
@@ -87,14 +87,23 @@ class ShowContext:
         act = act or ActFactory(b_conference=self.conference,
                                 accepted=3,
                                 submitted=True)
+        role = "Performer"
+        if act.accepted == 2:
+            role = "Waitlisted"
+            act_role = 'Waitlisted'
         booking = ResourceAllocationFactory(
             event=self.sched_event,
-            resource=ActResourceFactory(_item=act, role=act_role))
+            resource=WorkerFactory(_item=act.performer, role=role))
+        order = OrderingFactory(
+            allocation=booking,
+            class_id=act.pk,
+            class_name="Act",
+            role=act_role)
         return (act, booking)
 
     def order_act(self, act, order):
         alloc = self.sched_event.resources_allocated.filter(
-            resource__actresource___item=self.acts[0]).first()
+            resource__worker___item=act.performer).first()
         ordering, created = Ordering.objects.get_or_create(allocation=alloc)
         ordering.order = order
         ordering.save()
@@ -118,7 +127,7 @@ class ShowContext:
         slot = SchedEventFactory(
             eventitem=rehearsal.eventitem_ptr,
             starttime=start_time,
-            max_volunteer=10)
+            max_commitments=10)
         if room:
             ResourceAllocationFactory(
                 event=slot,

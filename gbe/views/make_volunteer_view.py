@@ -29,7 +29,6 @@ from gbe.email.functions import notify_reviewers_on_bid_change
 from settings import GBE_DATETIME_FORMAT
 from scheduler.idd import (
     get_all_container_bookings,
-    get_schedule,
     remove_booking,
 )
 

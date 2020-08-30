@@ -6,8 +6,6 @@ from django.db.models import (
     PositiveIntegerField,
 )
 from scheduler.models import (
-    ActItem,
-    ActResource,
     EventItem,
     Location,
     LocationItem,
@@ -38,16 +36,13 @@ class Event(Schedulable):
     starttime = DateTimeField(blank=True)
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
+    max_commitments = PositiveIntegerField(default=0)
 
-    def has_act_opening(self):
-        '''
-        returns True if the count of acts allocated to this event is less than
-        max_volunteer
-        '''
-        allocs = self.resources_allocated.all()
-        acts_booked = len([a for a in allocs
-                           if isinstance(a.resource.as_subtype, ActResource)])
-        return self.max_volunteer - acts_booked > 0
+    def has_commitment_space(self, commitment_class_name):
+        from scheduler.models import Ordering
+        return (Ordering.objects.filter(
+            allocation__event=self,
+            class_name=commitment_class_name).count() < self.max_commitments)
 
     @property
     def foreign_event_id(self):
@@ -94,7 +89,10 @@ class Event(Schedulable):
         uses the Person from the data_transfer objects.
         '''
         from scheduler.idd import get_schedule
-        from scheduler.models import ResourceAllocation
+        from scheduler.models import (
+            Ordering,
+            ResourceAllocation,
+        )
 
         warnings = []
         time_format = GBE_DATETIME_FORMAT
@@ -103,26 +101,46 @@ class Event(Schedulable):
         if person.public_id:
             item = WorkerItem.objects.get(pk=person.public_id)
             worker = Worker(_item=item, role=person.role)
-
         else:
             worker = Worker(_item=person.user.profile, role=person.role)
+            # TODO is there a leak here?  what happens to old workers
+            # that aren't linked??
         worker.save()
 
-        for conflict in get_schedule(
-                    user=worker.workeritem.user_object,
-                    start_time=self.start_time,
-                    end_time=self.end_time).schedule_items:
-            warnings += [Warning(code="SCHEDULE_CONFLICT",
-                                 user=person.user,
-                                 occurrence=conflict.event)]
+        if person.users:
+            users = person.users
+        else:
+            users = [worker.workeritem.user_object]
+
+        for user in users:
+            for conflict in get_schedule(
+                        user=user,
+                        start_time=self.start_time,
+                        end_time=self.end_time).schedule_items:
+                if not person.booking_id or (
+                        person.booking_id != conflict.booking_id):
+                    warnings += [Warning(code="SCHEDULE_CONFLICT",
+                                         user=user,
+                                         occurrence=conflict.event)]
         if person.booking_id:
             allocation = ResourceAllocation.objects.get(
                 id=person.booking_id)
             allocation.resource = worker
+            allocation.event = self
         else:
             allocation = ResourceAllocation(event=self,
                                             resource=worker)
         allocation.save()
+        if person.commitment:
+            ordering, created = Ordering.objects.get_or_create(
+                allocation=allocation)
+            if person.commitment.role is not None:
+                ordering.role = person.commitment.role
+            if person.commitment.order:
+                ordering.order = person.commitment.order
+            ordering.class_name = person.commitment.class_name
+            ordering.class_id = person.commitment.class_id
+            ordering.save()
         if self.extra_volunteers() > 0:
             warnings += [Warning(
                 code="OCCURRENCE_OVERBOOKED",
@@ -138,81 +156,11 @@ class Event(Schedulable):
                                booking_id=allocation.pk,
                                occurrence=self)
 
-    # New - from refactoring
-    def allocate_act(self, act):
-        '''
-        allocated worker for the new model - right now, focused on create
-        uses the BookableAct from the data_transfer objects.
-        '''
-        from scheduler.models import ResourceAllocation
-        warnings = []
-        time_format = GBE_DATETIME_FORMAT
-
-        worker = None
-        item = ActItem.objects.get(pk=act.act_id)
-        resource = ActResource(_item=item)
-        if act.role:
-            resource.role = act.role
-        resource.save()
-
-        if act.booking_id:
-            try:
-                allocation = ResourceAllocation.objects.get(
-                    id=act.booking_id)
-                allocation.resource = resource
-                allocation.event = self
-            except ResourceAllocation.DoesNotExist:
-                return BookingResponse(
-                    errors=[Error(
-                        code="BOOKING_NOT_FOUND",
-                        details="Booking id %s not found" % act.booking_id), ],
-                    booking_id=act.booking_id)
-        else:
-            allocation = ResourceAllocation(event=self,
-                                            resource=resource)
-        allocation.save()
-
-        num_acts = ActResource.objects.filter(
-                allocations__event=self).count()
-        if num_acts > self.max_volunteer:
-            warnings += [Warning(
-                code="OCCURRENCE_OVERBOOKED",
-                details="Over booked by %s acts" % (
-                    num_acts - self.max_volunteer))]
-        if act.order:
-            # refactor
-            from scheduler.models import Ordering
-            ordering = Ordering.objects.get_or_create(allocation=allocation)
-            ordering[0].order = act.order
-            ordering[0].save()
-        return BookingResponse(warnings=warnings,
-                               booking_id=allocation.pk,
-                               occurrence=self)
-
-    @property
-    def volunteer_count(self):
+    def role_count(self, role="Volunteer"):
         allocations = self.resources_allocated.all()
-        volunteers = allocations.filter(
-            resource__worker__role='Volunteer').count()
-        if volunteers > 0:
-            return "%d volunteers" % volunteers
-        else:
-            acts = ActResource.objects.filter(
-                allocations__in=allocations).count()
-            if acts > 0:
-                return "%d acts" % acts
-        return 0
-
-    def get_acts(self):
-        '''
-        Returns a list of acts allocated to this event,
-        filtered by acceptance status if specified
-        '''
-        allocations = self.resources_allocated.all()
-        act_resources = [ar.resource_ptr for ar in ActResource.objects.all()]
-        acts = [allocation.resource.item.act for allocation in allocations
-                if allocation.resource in act_resources]
-        return acts
+        participants = allocations.filter(
+            resource__worker__role=role).count()
+        return participants
 
     @property
     def event_type_name(self):
@@ -238,13 +186,6 @@ class Event(Schedulable):
     @property
     def duration(self):
         return self.eventitem.child().sched_duration
-
-    # get castings as in what acts have been booked for this event
-    @property
-    def casting_list(self):
-        return ActResource.objects.filter(
-            allocations__event=self,
-            _item__act__accepted=3).order_by('_item__act__performer__name')
 
     def __str__(self):
         return self.eventitem.describe

@@ -14,7 +14,7 @@ def get_schedule(user=None,
                  start_time=None,
                  end_time=None,
                  roles=[],
-                 act=None):
+                 commitment=None):
     basic_filter = ResourceAllocation.objects.all()
     sched_items = []
 
@@ -23,10 +23,11 @@ def get_schedule(user=None,
                 event__eventlabel__text__in=labels)
     if end_time:
         basic_filter = basic_filter.filter(
-            event__starttime__lte=end_time.replace(tzinfo=None))
-    if act:
+            event__starttime__lt=end_time.replace(tzinfo=None))
+    if commitment:
         basic_filter = basic_filter.filter(
-            resource__actresource___item=act)
+            ordering__class_name=commitment.__class__.__name__,
+            ordering__class_id=commitment.pk)
 
     if len(roles) > 0:
         worker_filter = basic_filter.filter(
@@ -37,33 +38,24 @@ def get_schedule(user=None,
             resource__worker__role__in=not_scheduled_roles)
     if user:
         bookable_items = user.profile.get_bookable_items()
-        if len(bookable_items['acts']) > 0:
-            for item in basic_filter.filter(
-                    resource__actresource___item__in=bookable_items['acts']):
-                booking_label = None
-                if hasattr(item, 'label'):
-                    booking_label = item.label
-                if (start_time and item.event.end_time >= start_time) or (
-                        start_time is None):
-                    sched_items += [ScheduleItem(
-                        user=user,
-                        event=item.event,
-                        role="Performer",
-                        label=booking_label,
-                        order=item.resource.as_subtype.order)]
         if len(bookable_items['performers']) > 0:
             for item in worker_filter.filter(
                     resource__worker___item__in=bookable_items['performers']):
                 booking_label = None
+                order = None
+                if hasattr(item, 'ordering'):
+                    order = item.ordering
                 if hasattr(item, 'label'):
                     booking_label = item.label
-                if (start_time and item.event.end_time >= start_time) or (
+                if (start_time and item.event.end_time > start_time) or (
                         start_time is None):
                     sched_items += [ScheduleItem(
                         user=user,
                         event=item.event,
                         role=item.resource.as_subtype.role,
-                        label=booking_label)]
+                        label=booking_label,
+                        commitment=order,
+                        booking_id=item.pk)]
         worker_filter = worker_filter.filter(
             resource__worker___item=user.profile)
 
@@ -75,21 +67,16 @@ def get_schedule(user=None,
             if hasattr(item, 'label'):
                 booking_label = item.label
             if resource.__class__.__name__ == "Worker":
+                order = None
+                if hasattr(item, 'ordering'):
+                    order = item.ordering
                 sched_items += [ScheduleItem(
                     user=resource.workeritem.user_object,
                     event=item.event,
                     role=resource.role,
                     label=booking_label,
-                    booking_id=item.pk)]
-            if resource.__class__.__name__ == "ActResource":
-                for profile in resource._item.act.get_performer_profiles():
-                    sched_items += [ScheduleItem(
-                        user=profile.user_object,
-                        event=item.event,
-                        role=resource.role or "Performing",
-                        label=booking_label,
-                        booking_id=item.pk,
-                        order=resource.order)]
+                    booking_id=item.pk,
+                    commitment=order)]
     response = ScheduleResponse(
         schedule_items=sorted(
             set(sched_items),

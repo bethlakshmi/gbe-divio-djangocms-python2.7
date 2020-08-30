@@ -23,12 +23,11 @@ from gbetext import (
     act_not_unique,
     video_options,
 )
-from scheduler.models import ActItem
 from scheduler.idd import get_schedule
 from django.utils.formats import date_format
 
 
-class Act (Biddable, ActItem):
+class Act (Biddable):
     '''
     A performance, either scheduled or proposed.
     Until approved, an Act is simply a proposal.
@@ -94,14 +93,17 @@ class Act (Biddable, ActItem):
     def bid_review_summary(self):
         castings = ""
         cast_shows = []
-        for item in get_schedule(act=self).schedule_items:
+        for item in get_schedule(commitment=self,
+                                 roles=["Performer", "Waitlisted"]
+                                 ).schedule_items:
             if item.event.event_type_name == "Show" and (
                     item.event.eventitem.pk not in cast_shows):
                 if len(castings) > 0:
                     castings += ", %s" % str(item.event.eventitem)
                 else:
                     castings += str(item.event.eventitem)
-                castings += ' - %s' % item.role
+                if item.commitment.role and len(item.commitment.role) > 0:
+                    castings += ' - %s' % item.commitment.role
                 cast_shows += [item.event.eventitem.pk]
 
         return [self.performer.name,
@@ -113,7 +115,7 @@ class Act (Biddable, ActItem):
     @property
     def is_complete(self):
         if self.tech.is_complete:
-            for item in get_schedule(act=self).schedule_items:
+            for item in get_schedule(commitment=self).schedule_items:
                 if item.event.event_type_name == 'GenericEvent':
                     return True
         return False

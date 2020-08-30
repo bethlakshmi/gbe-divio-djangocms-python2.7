@@ -541,6 +541,6 @@ class TestManageWorker(TestCase):
             'SCHEDULE_CONFLICT  <br>- Affected user: %s<br>- ' % (
                 self.volunteer.display_name) +
             'Conflicting booking: %s, Start Time: %s' % (
-                self.volunteer_opp.eventitem.e_title,
+                overbook_opp.eventitem.e_title,
                 'Fri, Feb 5 12:00 PM')
             )

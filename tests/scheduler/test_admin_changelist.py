@@ -8,13 +8,13 @@ from tests.factories.gbe_factories import(
     ProfileFactory,
 )
 from tests.factories.scheduler_factories import(
-    ActResourceFactory,
     EventItemFactory,
     LocationFactory,
     ResourceAllocationFactory,
     ResourceFactory,
 )
 from tests.contexts import(
+    ActTechInfoContext,
     ClassContext,
     ShowContext,
     VolunteerContext,
@@ -32,6 +32,13 @@ class SchedulerChangeListTests(TestCase):
         self.client.login(
             username=self.privileged_user.username,
             password=password)
+
+    def test_get_ordering_performer(self):
+        context = ActTechInfoContext(act_role="Featured")
+        response = self.client.get('/admin/scheduler/ordering/',
+                                   follow=True)
+        self.assertContains(response, str(context.performer))
+        self.assertContains(response, "Featured")
 
     def test_get_eventitem_genericevent(self):
         context = VolunteerContext()
@@ -84,13 +91,6 @@ class SchedulerChangeListTests(TestCase):
                                    follow=True)
         self.assertContains(response, "Act")
         self.assertContains(response, "Show")
-
-    def test_get_allocation_no_actresource_child(self):
-        allocation = ResourceAllocationFactory(
-            resource=ActResourceFactory())
-        response = self.client.get('/admin/scheduler/resourceallocation/',
-                                   follow=True)
-        self.assertContains(response, "No Act Item")
 
     def test_get_allocation_no_locationresource_child(self):
         allocation = ResourceAllocationFactory(resource=LocationFactory())

@@ -1,5 +1,6 @@
 from django.db.models import (
     CASCADE,
+    CharField,
     IntegerField,
     Model,
     OneToOneField,
@@ -18,3 +19,6 @@ class Ordering(Model):
     '''
     order = IntegerField(default=0)
     allocation = OneToOneField(ResourceAllocation, on_delete=CASCADE)
+    role = CharField(max_length=50, blank=True)
+    class_name = CharField(max_length=50, blank=True)
+    class_id = IntegerField(blank=True, null=True)

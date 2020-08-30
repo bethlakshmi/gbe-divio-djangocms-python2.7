@@ -82,7 +82,7 @@
             <td class="bid-table">{{row.occurrence.start_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
             <td class="bid-table">
             {{row.occurrence.end_time|date:_("SHORT_DATETIME_FORMAT") }}</td>
-            <td class="bid-table">{{row.occurrence.volunteer_count|cut:" volunteers"}}</td>
+            <td class="bid-table">{{row.occurrence.role_count|cut:" volunteers"}}</td>
             <td class="bid-table">{{row.occurrence.max_volunteer}}</td>
             <td class="bid-table"> {% if row.parent_event %}
 <a href="{% url 'scheduling:edit_event' conference.conference_slug row.parent_event.pk%}">

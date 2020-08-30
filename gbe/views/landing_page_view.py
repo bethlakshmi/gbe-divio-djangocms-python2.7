@@ -88,6 +88,7 @@ def LandingPageView(request, profile_id=None, historical=False):
                                 'action': "Review",
                                 'bid_type': bid_type}]
         bookings = []
+        booking_ids = []
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
             gbe_event = booking.event.eventitem.child()
@@ -112,7 +113,9 @@ def LandingPageView(request, profile_id=None, historical=False):
                             'eval_event',
                             args=[booking.event.pk, ],
                             urlconf='gbe.scheduling.urls')
-            bookings += [booking_item]
+            if booking.event.pk not in booking_ids:
+                bookings += [booking_item]
+                booking_ids += [booking.event.pk]
         current_conf = get_current_conference()
         context = {
             'profile': viewer_profile,

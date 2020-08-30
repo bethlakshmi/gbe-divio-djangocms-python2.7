@@ -89,6 +89,7 @@ class CopyOccurrenceView(CopyCollectionsView):
             gbe_event_copy.eventitem_id,
             occurrence.starttime + delta,
             max_volunteer=occurrence.max_volunteer,
+            max_commitments=occurrence.max_commitments,
             locations=[new_event_room],
             parent_event_id=parent_event_id,
             labels=labels,
