@@ -40,7 +40,6 @@ from scheduler.idd import (
 from scheduler.data_transfer import Person
 from gbe.scheduling.views.functions import show_general_status
 from django.conf import settings
-from collections import OrderedDict
 
 
 class VolunteerSignupView(View):
