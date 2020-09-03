@@ -16,6 +16,7 @@
   <p>This list includes only active users.  Inactive users can be viewed only
   in the administration pages.  To reactivate a missing user, contact an
   admin.</p>
+  <p>Troupes owned by a user are shown in parenthesis under the user's name.</p>
 
   <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
   press "Shift" to sort a secondary column.</div>
@@ -23,7 +24,7 @@
   <div>
     Toggle column(s):
     {% for header_item in header %}
-      <a class="toggle-vis" data-column="{{ forloop.counter0 }}">
+      <a class="toggle-vis" id="gbe-table-select" data-column="{{ forloop.counter0 }}">
 	{{ header_item }}</a>{% if not forloop.last %} - {% endif %}
     {% endfor %}
   </div>
@@ -46,7 +47,7 @@
     {% for row in rows %}
       <tr class="bid-table">
         {% for value in row.profile %}
-        <td class="bid-table">{{ value }}</td>	
+        <td class="bid-table">{{ value | safe }}</td>	
 	{% endfor %}
 	<td class="bid-table">
 	  {{ row.contact_info.contact_email }}<br/>
