@@ -11,10 +11,7 @@
 {% block content %}
   <h2 class="review-title">{% if title %}{{title}}{% else %}Manage Users{% endif %}</h2>
 
-  <p>This list includes only active users.  Inactive users can be viewed only
-  in the administration pages.  To reactivate a missing user, contact an
-  admin.</p>
-  <p>Troupes owned by a user are shown in parenthesis under the user's name.</p>
+  <p>{{intro}}</p>
 
   <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
   press "Shift" to sort a secondary column.</div>

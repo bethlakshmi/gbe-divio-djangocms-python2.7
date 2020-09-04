@@ -255,7 +255,7 @@ urlpatterns = [
         ReviewProfilesView,
         name='manage_users'),
     url(r'^troupe/manage/?$',
-        ReviewTroupesView,
+        ReviewTroupesView.as_view(),
         name='manage_troupes'),
     url(r'^profile/admin/(?P<profile_id>\d+)/?$',
         AdminProfileView.as_view(),

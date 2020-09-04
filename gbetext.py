@@ -683,3 +683,11 @@ Specify the days for this conference before proceeding.'''
 rehearsal_delete_msg = '''This rehearsal slot was deleted.  If any acts were \
 booked for this slot, they will be warned on their account page to fine a new \
 slot.'''
+troupe_intro_msg = '''This list includes only Troupes with active contacts \
+(i.e. the person who entered this troupe in our system is an active user). \
+Contact an administrator if a troupe you are looking for is not visible.  \
+Inactive troupe members are also filtered from the membership list.'''
+profile_intro_msg = '''This list includes only active users.  Inactive users \
+can be viewed only in the administration pages.  To reactivate a missing \
+user, contact an admin.  Troupes owned by a user are shown in parenthesis \
+under the user's name.'''
