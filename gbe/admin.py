@@ -170,9 +170,11 @@ class EmailTemplateSenderAdmin(admin.ModelAdmin):
 class CastingAdmin(admin.ModelAdmin):
     list_display = ('casting',
                     'show_as_special',
+                    'display_header',
                     'display_order',)
     list_editable = ('casting',
                      'show_as_special',
+                     'display_header',
                      'display_order',)
     list_display_links = None
 
