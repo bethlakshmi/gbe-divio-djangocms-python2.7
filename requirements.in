@@ -1,8 +1,8 @@
 # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
 https://control.divio.com/api/v1/apps/serve/aldryn-addons/1.1.0/7a2d5a44-16e2-4ef8-bfe0-1e61c8601b33/aldryn-addons-1.1.0.tar.gz#egg=aldryn-addons==1.1.0
-https://control.divio.com/api/v1/apps/serve/aldryn-django/3.0.9.1/fd454db7-febe-4df9-902d-66839057a1d7/aldryn-django-3.0.9.1.tar.gz#egg=aldryn-django==3.0.9.1
-https://control.divio.com/api/v1/apps/serve/aldryn-sso/2.0.0/e6eccefa-e8f5-492d-8e71-79fc99f30201/aldryn-sso-2.0.0.tar.gz#egg=aldryn-sso==2.0.0
-https://control.divio.com/api/v1/apps/serve/aldryn-django-cms/3.7.4.1/290eec9d-c49f-435e-8003-a476f81b7acf/aldryn-django-cms-3.7.4.1.tar.gz#egg=aldryn-django-cms==3.7.4.1
+https://control.divio.com/api/v1/apps/serve/aldryn-django/3.0.10.1/1d7a72d3-ccc1-44b6-8457-42b831c497dc/aldryn-django-3.0.10.1.tar.gz#egg=aldryn-django==3.0.10.1
+https://control.divio.com/api/v1/apps/serve/aldryn-sso/1.7.0/3ef75ae5-729a-4c44-ac3e-fa5950511e90/aldryn-sso-1.7.0.tar.gz#egg=aldryn-sso==1.7.0
+https://control.divio.com/api/v1/apps/serve/aldryn-django-cms/3.7.3.1/b8a3ddbe-5a74-4b29-b101-51e05b04d14c/aldryn-django-cms-3.7.3.1.tar.gz#egg=aldryn-django-cms==3.7.3.1
 https://control.divio.com/api/v1/apps/serve/aldryn-common/1.0.4/1021e5a2-d7d6-4dde-8976-c2db74c52c68/aldryn-common-1.0.4.tar.gz#egg=aldryn-common==1.0.4
 https://control.divio.com/api/v1/apps/serve/djangocms-bootstrap4/1.6.0/66df98a5-f796-4465-a3b8-6eaf875b5f9c/djangocms-bootstrap4-1.6.0.tar.gz#egg=djangocms-bootstrap4==1.6.0
 https://control.divio.com/api/v1/apps/serve/djangocms-file/2.4.0/e815a2bc-5259-415f-a33a-42812c0393f8/djangocms-file-2.4.0.tar.gz#egg=djangocms-file==2.4.0
