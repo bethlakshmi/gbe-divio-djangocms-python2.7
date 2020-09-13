@@ -24,13 +24,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='actcastingoption',
             name='display_header',
-            field=models.CharField(default='', help_text='Displayed as header of event page', max_length=150),
+            field=models.CharField(
+                default='',
+                help_text='Displayed as header of event page',
+                max_length=150),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='actcastingoption',
             name='casting',
-            field=models.CharField(help_text='Displayed on act review page when making casting.', max_length=50, unique=True),
+            field=models.CharField(
+                help_text='Displayed on act review page when making casting.',
+                max_length=50, unique=True),
         ),
         migrations.RunPython(default_to_category)
     ]

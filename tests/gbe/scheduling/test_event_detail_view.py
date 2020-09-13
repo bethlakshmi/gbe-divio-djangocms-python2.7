@@ -109,6 +109,7 @@ class TestEventDetailView(TestCase):
     def test_feature_performers(self):
         ActCastingOptionFactory(casting="Regular Act",
                                 show_as_special=False,
+                                display_header="Check Out these Performers",
                                 display_order=0)
         ActCastingOptionFactory(display_order=1)
 
@@ -119,7 +120,7 @@ class TestEventDetailView(TestCase):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, context.performer.name)
-        self.assertContains(response, "Hosted By...")
+        self.assertContains(response, "Hostest with the mostest")
 
     def test_bio_grid_for_admin(self):
         superuser = User.objects.create_superuser('test_bio_grid_editor',
@@ -136,6 +137,7 @@ class TestEventDetailView(TestCase):
     def test_feature_grid_for_admin(self):
         ActCastingOptionFactory(casting="Regular Act",
                                 show_as_special=False,
+                                display_header="Check Out these Performers",
                                 display_order=0)
         ActCastingOptionFactory(display_order=1)
 
@@ -172,6 +174,7 @@ class TestEventDetailView(TestCase):
     def test_feature_grid_for_admin_w_image(self):
         ActCastingOptionFactory(casting="Regular Act",
                                 show_as_special=False,
+                                display_header="Check Out these Performers",
                                 display_order=0)
         ActCastingOptionFactory(display_order=1)
 
