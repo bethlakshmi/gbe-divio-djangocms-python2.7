@@ -146,23 +146,26 @@ def get_event_display_info(eventitem_id):
     featured_grid_list = []
     response = get_people(foreign_event_ids=[eventitem_id],
                           roles=["Performer"])
-    regular_roles = ActCastingOption.objects.filter(
-        show_as_special=False).values_list('casting', flat=True)
+    regular_roles = {}
+    special_roles = {}
+    for casting in ActCastingOption.objects.filter():
+        if casting.show_as_special:
+            special_roles[casting.casting] = casting.display_header
+        else:
+            regular_roles[casting.casting] = casting.display_header
     for casting in response.people:
         act = Act.objects.get(pk=casting.commitment.class_id)
         if len(casting.commitment.role) > 0 and (
                 casting.commitment.role not in regular_roles):
             featured_grid_list += [{
                 'bio': act.bio,
-                'role': casting.commitment.role}]
+                'role': special_roles[casting.commitment.role]}]
         else:
-            role = "Check out our fabulous Performers!"
-            if len(casting.commitment.role) > 0:
-                role = casting.commitment.role
-            if role in bio_grid_list:
-                bio_grid_list[role] += [act.bio]
+            header = regular_roles[casting.commitment.role]
+            if header in bio_grid_list:
+                bio_grid_list[header] += [act.bio]
             else:
-                bio_grid_list[role] = [act.bio]
+                bio_grid_list[header] = [act.bio]
 
     booking_response = get_people(
         foreign_event_ids=[eventitem_id],
