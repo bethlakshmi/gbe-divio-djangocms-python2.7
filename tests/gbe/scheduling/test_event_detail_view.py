@@ -40,6 +40,11 @@ class TestEventDetailView(TestCase):
     view_name = 'detail_view'
 
     def setUp(self):
+        self.regular_casting = ActCastingOptionFactory(
+            casting="Regular Act",
+            show_as_special=False,
+            display_header="Check Out these Performers",
+            display_order=0)
         Conference.objects.all().delete()
         self.client = Client()
         self.context = ActTechInfoContext()
@@ -100,20 +105,20 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, self.context.room.map_embed)
 
     def test_bio_grid(self):
+        another_context = ActTechInfoContext(
+            sched_event=self.context.sched_event,
+            conference=self.context.conference)
         self.context.performer.homepage = "www.testhomepage.com"
         self.context.performer.save()
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, self.context.performer.homepage)
+        self.assertContains(response, self.regular_casting.display_header)
+        self.assertContains(response, another_context.performer.name)
 
     def test_feature_performers(self):
-        ActCastingOptionFactory(casting="Regular Act",
-                                show_as_special=False,
-                                display_header="Check Out these Performers",
-                                display_order=0)
         ActCastingOptionFactory(display_order=1)
-
-        context = ActTechInfoContext(act_role="Hosted By...")
+        context = ActTechInfoContext(act_role="Hosted by...")
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[context.show.eventitem_id])
@@ -121,6 +126,33 @@ class TestEventDetailView(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertContains(response, context.performer.name)
         self.assertContains(response, "Hostest with the mostest")
+
+    def test_bad_casting(self):
+        ActCastingOptionFactory(display_order=1)
+        context = ActTechInfoContext(act_role="Weirdo")
+        another_context = ActTechInfoContext(
+            act_role="Weirdo",
+            sched_event=context.sched_event,
+            conference=context.conference)
+        url = reverse(self.view_name,
+                      urlconf="gbe.scheduling.urls",
+                      args=[context.show.eventitem_id])
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, context.performer.name)
+        self.assertContains(response, another_context.performer.name)
+        self.assertContains(response, "Fabulous Performers")
+
+    def test_empty_casting(self):
+        ActCastingOptionFactory(display_order=1)
+        context = ActTechInfoContext(act_role="")
+        url = reverse(self.view_name,
+                      urlconf="gbe.scheduling.urls",
+                      args=[context.show.eventitem_id])
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, context.performer.name)
+        self.assertContains(response, "Fabulous Performers")
 
     def test_bio_grid_for_admin(self):
         superuser = User.objects.create_superuser('test_bio_grid_editor',
@@ -135,13 +167,9 @@ class TestEventDetailView(TestCase):
             "/admin/gbe/performer/%d" % self.context.performer.pk)
 
     def test_feature_grid_for_admin(self):
-        ActCastingOptionFactory(casting="Regular Act",
-                                show_as_special=False,
-                                display_header="Check Out these Performers",
-                                display_order=0)
         ActCastingOptionFactory(display_order=1)
 
-        context = ActTechInfoContext(act_role="Hosted By...")
+        context = ActTechInfoContext(act_role="Hosted by...")
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[context.show.eventitem_id])
@@ -172,13 +200,8 @@ class TestEventDetailView(TestCase):
                 self.context.performer.img.pk))
 
     def test_feature_grid_for_admin_w_image(self):
-        ActCastingOptionFactory(casting="Regular Act",
-                                show_as_special=False,
-                                display_header="Check Out these Performers",
-                                display_order=0)
         ActCastingOptionFactory(display_order=1)
-
-        context = ActTechInfoContext(act_role="Hosted By...")
+        context = ActTechInfoContext(act_role="Hosted by...")
         set_image(context.performer)
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",

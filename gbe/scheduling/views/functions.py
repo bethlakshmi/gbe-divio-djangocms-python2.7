@@ -156,12 +156,17 @@ def get_event_display_info(eventitem_id):
     for casting in response.people:
         act = Act.objects.get(pk=casting.commitment.class_id)
         if len(casting.commitment.role) > 0 and (
-                casting.commitment.role not in regular_roles):
+                casting.commitment.role in special_roles):
             featured_grid_list += [{
                 'bio': act.bio,
                 'role': special_roles[casting.commitment.role]}]
         else:
-            header = regular_roles[casting.commitment.role]
+            if len(casting.commitment.role) > 0 and (
+                    casting.commitment.role in regular_roles):
+                header = regular_roles[casting.commitment.role]
+            else:
+                header = "Fabulous Performers"
+
             if header in bio_grid_list:
                 bio_grid_list[header] += [act.bio]
             else:
