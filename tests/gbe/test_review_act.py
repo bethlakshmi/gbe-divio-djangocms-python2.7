@@ -407,11 +407,7 @@ class TestReviewAct(TestCase):
     def test_review_default_role_present(self):
         response = self.get_act_w_roles(self.act)
         self.assertEqual(response.status_code, 200)
-        assert_option_state(response, "", "Regular Act", True)
-
-    def test_review_special_role_present(self):
-        response = self.get_act_w_roles(self.act)
-        self.assertEqual(response.status_code, 200)
+        assert_option_state(response, "Regular Act", "Regular Act", False)
         assert_option_state(response, "Hosted by...", "Hosted by...", False)
 
     def test_review_special_role_already_cast(self):

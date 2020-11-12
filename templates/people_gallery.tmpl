@@ -1,15 +1,15 @@
 {% load thumbnail %}
-
+{% for header, grid_list in grid_items.items %}
     <!-- Gallery Section Start -->
     <section id="gallery" class="section">
       <div class="container">
       <div class="row">
         <div class="col-md-12 perf-div">
-          <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">{{heading}}</h2>
+          <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">{{header}}</h2>
         </div>
       </div>
         <div class="gallery-wrap wow fadeInDown">
-      {% for item in grid_items %}
+      {% for item in grid_list %}
         {% cycle '<div class="row">' '' '' '' %}
         <div class="col-sm-3 col-12 gallery-pn">
             <div class="gallery-item">
@@ -43,3 +43,5 @@
         {% cycle '' '' '' '</div>' %}
       {% endfor %}
     <!-- Gallery Section End -->
+  </div></div></section>
+{% endfor %}

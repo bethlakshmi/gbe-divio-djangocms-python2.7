@@ -114,6 +114,7 @@ class ActCastingOptionFactory(DjangoModelFactory):
     class Meta:
         model = conf.ActCastingOption
     casting = "Hosted by..."
+    display_header = "Hostest with the mostest"
     display_order = 0
 
 

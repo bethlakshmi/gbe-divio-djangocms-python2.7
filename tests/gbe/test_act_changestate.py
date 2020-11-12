@@ -57,11 +57,16 @@ class TestActChangestate(TestCase):
         grant_privilege(self.privileged_user, 'Act Coordinator')
         grant_privilege(self.privileged_user, 'Act Reviewers')
         self.data = {'show': self.show.eventitem_id,
-                     'casting': '',
+                     'casting': 'Regular Act',
                      'accepted': '2'}
         self.url = reverse(self.view_name,
                            args=[self.context.act.pk],
                            urlconf='gbe.urls')
+        self.regular_casting = ActCastingOptionFactory(
+            casting="Regular Act",
+            show_as_special=False,
+            display_header="Check Out these Performers",
+            display_order=1)
 
     def test_act_accept_to_wait_same_show(self):
         # accepted -> waitlisted
@@ -103,7 +108,7 @@ class TestActChangestate(TestCase):
             act=self.context.act)
         login_as(self.privileged_user, self)
         data = {
-            'casting': "",
+            'casting': "Regular Act",
             'accepted': 3,
             'show': self.context.show.eventitem_id,
         }
@@ -356,7 +361,7 @@ class TestActChangestate(TestCase):
         casting = Ordering.objects.get(
             class_id=self.context.act.pk,
             allocation__event=self.sched_event)
-        assert(casting.role == "")
+        assert(casting.role == "Regular Act")
 
     def test_act_accept_notification_template_fail(self):
         # accepted -> accepted - error case

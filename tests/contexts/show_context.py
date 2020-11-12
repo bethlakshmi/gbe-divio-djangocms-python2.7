@@ -33,7 +33,7 @@ class ShowContext:
                  conference=None,
                  room=None,
                  starttime=None,
-                 act_role=''):
+                 act_role='Regular Act'):
         self.performer = performer or PersonaFactory()
         self.conference = conference or ConferenceFactory()
         if not self.conference.conferenceday_set.exists():
@@ -83,7 +83,7 @@ class ShowContext:
                                     role="Producer"))
         return producer
 
-    def book_act(self, act=None, act_role=''):
+    def book_act(self, act=None, act_role='Regular Act'):
         act = act or ActFactory(b_conference=self.conference,
                                 accepted=3,
                                 submitted=True)

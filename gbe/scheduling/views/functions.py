@@ -27,6 +27,7 @@ from scheduler.idd import (
 from django.contrib import messages
 from gbe.models import (
     Act,
+    ActCastingOption,
     Conference,
     Event,
     Performer,
@@ -141,18 +142,35 @@ def get_event_display_info(eventitem_id):
         item = Event.objects.get_subclass(eventitem_id=eventitem_id)
     except Event.DoesNotExist:
         raise Http404
-    bio_grid_list = []
+    bio_grid_list = {}
     featured_grid_list = []
     response = get_people(foreign_event_ids=[eventitem_id],
                           roles=["Performer"])
+    regular_roles = {}
+    special_roles = {}
+    for casting in ActCastingOption.objects.filter():
+        if casting.show_as_special:
+            special_roles[casting.casting] = casting.display_header
+        else:
+            regular_roles[casting.casting] = casting.display_header
     for casting in response.people:
         act = Act.objects.get(pk=casting.commitment.class_id)
-        if len(casting.commitment.role):
+        if len(casting.commitment.role) > 0 and (
+                casting.commitment.role in special_roles):
             featured_grid_list += [{
                 'bio': act.bio,
-                'role': casting.commitment.role}]
+                'role': special_roles[casting.commitment.role]}]
         else:
-            bio_grid_list += [act.bio]
+            if len(casting.commitment.role) > 0 and (
+                    casting.commitment.role in regular_roles):
+                header = regular_roles[casting.commitment.role]
+            else:
+                header = "Fabulous Performers"
+
+            if header in bio_grid_list:
+                bio_grid_list[header] += [act.bio]
+            else:
+                bio_grid_list[header] = [act.bio]
 
     booking_response = get_people(
         foreign_event_ids=[eventitem_id],

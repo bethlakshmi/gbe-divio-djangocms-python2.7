@@ -27,7 +27,7 @@ class ActTechInfoContext():
                  conference=None,
                  room_name=None,
                  schedule_rehearsal=False,
-                 act_role="",
+                 act_role="Regular Act",
                  set_waitlist=False):
         self.show = show or ShowFactory()
         self.conference = conference or self.show.e_conference
