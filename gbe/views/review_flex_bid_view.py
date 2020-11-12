@@ -62,7 +62,7 @@ class FlexibleReviewBidView(ReviewBidView):
 
     def create_action_form(self, act):
         choices = []
-        self.actionform = BidStateChangeForm(instance=act)
+        self.actionform = self.bid_state_change_form(instance=act)
         start = 0
         casting = ""
         for item in get_schedule(
