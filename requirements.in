@@ -45,3 +45,5 @@ dj_email_url
 configparser
 django-appconf
 django-paypal
+django-autocomplete-light
+
