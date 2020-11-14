@@ -25,6 +25,7 @@ from .register_view import RegisterView
 from .admin_profile_view import AdminProfileView
 from .delete_profile_view import DeleteProfileView
 from .review_profiles_view import ReviewProfilesView
+from .profile_autocomplete import ProfileAutocomplete
 
 # make
 from .make_act_view import MakeActView

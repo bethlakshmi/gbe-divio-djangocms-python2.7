@@ -4,7 +4,9 @@ from aldryn_django.utils import i18n_patterns
 import aldryn_addons.urls
 from gbe.views import (
 	PersonaAutocomplete,
+    ProfileAutocomplete,
 )
+
 
 urlpatterns = [
     # add your own patterns here
@@ -12,6 +14,11 @@ urlpatterns = [
         r'^persona-autocomplete/$',
         PersonaAutocomplete.as_view(),
         name='persona-autocomplete',
+    ),
+    url(
+        r'^profile-autocomplete/$',
+        ProfileAutocomplete.as_view(),
+        name='profile-autocomplete',
     ),
     url(r'^', include('gbe.urls')),
     url(r'^', include('ticketing.urls')),
