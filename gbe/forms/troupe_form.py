@@ -6,7 +6,6 @@ from gbe_forms_text import (
     persona_help_texts,
     persona_labels,
 )
-from gbe.forms.common_queries import visible_personas
 from gbe.forms import PersonaForm
 from dal import autocomplete
 
