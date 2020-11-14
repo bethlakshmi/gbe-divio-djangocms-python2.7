@@ -2,9 +2,17 @@
 from django.conf.urls import url, include
 from aldryn_django.utils import i18n_patterns
 import aldryn_addons.urls
+from gbe.views import (
+	PersonaAutocomplete,
+)
 
 urlpatterns = [
     # add your own patterns here
+    url(
+        r'^persona-autocomplete/$',
+        PersonaAutocomplete.as_view(),
+        name='persona-autocomplete',
+    ),
     url(r'^', include('gbe.urls')),
     url(r'^', include('ticketing.urls')),
     url(r'^', include('gbe.email.urls')),

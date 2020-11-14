@@ -8,13 +8,12 @@ from gbe_forms_text import (
 )
 from gbe.forms.common_queries import visible_personas
 from gbe.forms import PersonaForm
+from dal import autocomplete
 
 
 class TroupeForm(PersonaForm):
     required_css_class = 'required'
     error_css_class = 'error'
-    membership = ModelMultipleChoiceField(
-        queryset=visible_personas)
 
     class Meta:
         model = Troupe
@@ -30,3 +29,6 @@ class TroupeForm(PersonaForm):
                   ]
         help_texts = persona_help_texts
         labels = persona_labels
+        widgets = {
+            'membership': autocomplete.ModelSelect2Multiple(
+                url='persona-autocomplete')}

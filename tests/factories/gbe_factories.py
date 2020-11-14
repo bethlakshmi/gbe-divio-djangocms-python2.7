@@ -2,13 +2,15 @@ from django.contrib.auth.models import User
 from post_office.models import EmailTemplate
 from factory import (
     Sequence,
-    DjangoModelFactory,
     SubFactory,
     RelatedFactory,
     LazyAttribute,
     SelfAttribute
 )
-from factory.django import ImageField
+from factory.django import (
+    DjangoModelFactory,
+    ImageField,
+)
 import gbe.models as conf
 from django.contrib.auth.models import User
 import scheduler.models as sched
