@@ -9,13 +9,12 @@ class ProfileAutocomplete(autocomplete.Select2QuerySetView):
             return Profile.objects.none()
 
         qs = Profile.objects.filter(user_object__is_active=True).exclude(
-        	display_name='')
+            display_name='')
 
         if self.q:
             qs = qs.filter(
-            	Q(display_name__icontains=self.q) |
+                Q(display_name__icontains=self.q) |
                 Q(user_object__username__icontains=self.q) |
                 Q(user_object__first_name__icontains=self.q) |
                 Q(user_object__last_name__icontains=self.q))
-
         return qs

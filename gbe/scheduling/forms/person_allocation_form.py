@@ -44,4 +44,4 @@ class PersonAllocationForm(Form):
 
         if use_personas:
             self.fields['worker'].queryset = visible_personas
-            self.fields['worker'].widget.url='persona-autocomplete'
+            self.fields['worker'].widget.url = 'persona-autocomplete'

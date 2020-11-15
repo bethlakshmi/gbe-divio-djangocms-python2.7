@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from aldryn_django.utils import i18n_patterns
 import aldryn_addons.urls
 from gbe.views import (
-	PersonaAutocomplete,
+    PersonaAutocomplete,
     ProfileAutocomplete,
 )
 
