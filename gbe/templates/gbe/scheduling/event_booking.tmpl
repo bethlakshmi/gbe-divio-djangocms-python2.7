@@ -273,9 +273,9 @@ Changing fields in this section will change them in all calendar items.
   </div>
 {% endif %}
 </div></div>
-{% if worker_formset %}
 {% addtoblock "js" %}
 {{ worker_formset.0.media }}
+{{ form.media }}
 <script>
 (function($) {
     $('#add-form').click(function() {
@@ -297,4 +297,3 @@ Changing fields in this section will change them in all calendar items.
 })($)
 </script>
 {% endaddtoblock %}
-{% endif %}
