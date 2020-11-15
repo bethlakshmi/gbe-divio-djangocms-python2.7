@@ -5,7 +5,10 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     UserFactory,
 )
-from tests.functions.gbe_functions import login_as
+from tests.functions.gbe_functions import (
+    grant_privilege,
+    login_as,
+)
 from gbe.functions import validate_profile
 
 
@@ -14,7 +17,8 @@ class TestProfileAutoComplete(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = ProfileFactory()
+        self.user = ProfileFactory().user_object
+        grant_privilege(self.user, 'Scheduling Mavens')
 
     def test_list_profile(self):
         profile = ProfileFactory()
@@ -26,8 +30,7 @@ class TestProfileAutoComplete(TestCase):
     def test_no_access_profile(self):
         profile = ProfileFactory()
         response = self.client.get(self.url)
-        self.assertNotContains(response, profile.display_name)
-        self.assertNotContains(response, profile.pk)
+        self.assertEqual(response.status_code, 403)
 
     def test_list_profile_w_search_by_display_name(self):
         profile1 = ProfileFactory()
