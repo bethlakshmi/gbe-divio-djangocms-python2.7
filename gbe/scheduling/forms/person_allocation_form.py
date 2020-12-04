@@ -6,11 +6,12 @@ from django.forms import (
     ModelChoiceField,
     Select,
 )
+from gbetext import role_options
+from dal import autocomplete
 from gbe.forms.common_queries import (
     visible_personas,
     visible_profiles,
 )
-from gbetext import role_options
 
 
 class PersonAllocationForm(Form):
@@ -26,8 +27,8 @@ class PersonAllocationForm(Form):
         queryset=visible_profiles,
         required=False,
         label="",
-        widget=Select(
-            attrs={'style': 'width:250px'}))
+        widget=autocomplete.ModelSelect2(
+                url='profile-autocomplete'))
     label = CharField(max_length=100, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -43,3 +44,4 @@ class PersonAllocationForm(Form):
 
         if use_personas:
             self.fields['worker'].queryset = visible_personas
+            self.fields['worker'].widget.url = 'persona-autocomplete'

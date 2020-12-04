@@ -12,6 +12,7 @@ from .review_bid_list_view import ReviewBidListView
 from .clone_bid_view import CloneBidView
 
 # personas
+from .persona_autocomplete import PersonaAutocomplete
 from .view_troupe_view import ViewTroupeView
 from .edit_troupe_view import EditTroupeView
 from .register_persona_view import RegisterPersonaView
@@ -24,6 +25,7 @@ from .register_view import RegisterView
 from .admin_profile_view import AdminProfileView
 from .delete_profile_view import DeleteProfileView
 from .review_profiles_view import ReviewProfilesView
+from .profile_autocomplete import ProfileAutocomplete
 
 # make
 from .make_act_view import MakeActView

@@ -93,7 +93,9 @@ INSTALLED_APPS = [
     'gbe',
     'post_office',
     'import_export',
-    'snowpenguin.django.recaptcha2'
+    'snowpenguin.django.recaptcha2',
+    'dal',
+    'dal_select2',
 ]
 
 PASSWORD_HASHERS = (
