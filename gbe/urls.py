@@ -47,6 +47,7 @@ from gbe.views import (
     ReviewVolunteerView,
     ReviewVolunteerListView,
     SubmitActView,
+    ThemeView,
     VendorChangeStateView,
     ViewActView,
     ViewClassView,
@@ -68,6 +69,7 @@ urlpatterns = [
     #  landing page
     url(r'^gbe/?',
         LandingPageView, name='home'),
+    url(r'^style.css', ThemeView.as_view(), name='theme_style'),
 
     #  bios
     url(r'^bios/teachers/?$',

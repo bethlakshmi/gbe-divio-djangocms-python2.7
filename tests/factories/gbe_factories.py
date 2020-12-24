@@ -1,14 +1,16 @@
 from django.contrib.auth.models import User
 from post_office.models import EmailTemplate
 from factory import (
-    Sequence,
-    DjangoModelFactory,
-    SubFactory,
-    RelatedFactory,
     LazyAttribute,
-    SelfAttribute
+    RelatedFactory,
+    SelfAttribute,
+    Sequence,
+    SubFactory,
 )
-from factory.django import ImageField
+from factory.django import (
+    DjangoModelFactory,
+    ImageField,
+)
 import gbe.models as conf
 from django.contrib.auth.models import User
 import scheduler.models as sched
@@ -392,3 +394,32 @@ class StaffAreaFactory(DjangoModelFactory):
 
     class Meta:
         model = conf.StaffArea
+
+class StyleVersionFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleVersion
+    name = Sequence(lambda n: 'Style Version %d' % n)
+    number = 1.0
+
+
+class StyleSelectorFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleSelector
+    selector = Sequence(lambda n: 'style_selector_%d' % n)
+    target_element_usage = "div"
+    used_for = "General"
+
+
+class StylePropertyFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleProperty
+    selector = SubFactory(StyleSelectorFactory)
+    style_property = Sequence(lambda n: 'style_property_%d' % n)
+
+
+class StyleValueFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleValue
+    style_property = SubFactory(StylePropertyFactory)
+    style_version = SubFactory(StyleVersionFactory)
+    value = "pink"

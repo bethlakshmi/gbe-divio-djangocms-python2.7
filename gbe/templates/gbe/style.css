@@ -1,0 +1,4 @@
+{% for selector, properties in selectors.items %}{{ selector | safe }} { {% for property, value in properties.items %}
+    {{ property }}: {{ value }};{% endfor %}
+}
+{% endfor %}
