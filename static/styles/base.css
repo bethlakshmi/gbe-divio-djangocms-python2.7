@@ -62,7 +62,6 @@ div.banner > a > img {
 }
 
 div.footer{
-  color:#FFF;
   margin: 0px;
   text-align: center;
   font-size: 11px;
@@ -87,14 +86,9 @@ div.login_text{
     font-size:12px    
 }
 #login-dp .bottom{
-    background-color:rgba(180, 80, 80);
-    border-top:1px solid #ddd;
     clear:both;
     padding:14px;
     width: 100%;
-}
-div.bottom  a, .help-block a {
-    color: white;
 }
 #login-dp .social-buttons{
     margin:12px 0    
@@ -107,12 +101,7 @@ div.bottom  a, .help-block a {
 }
 
 @media(max-width:768px){
-    #login-dp{
-        background-color: inherit;
-        color: #fff;
-    }
     #login-dp .bottom{
-        background-color: inherit;
         border-top:0 none;
     }
 }
@@ -122,6 +111,7 @@ button.login-button {
   padding-bottom: 7px;
   margin-top: 3px;
   margin-right: 3px;
+  margin-bottom: 7px;
   border-radius: 4px;
   font-family: 'Vast Shadow', cursive;
   font-size: 18px;

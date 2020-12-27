@@ -130,6 +130,13 @@ init_values = [
             'prop_val': [('color', '#af1515'),
                          ('background-color', 'transparent')]},
     {
+            'selector': '#gbe_header_menu',
+            'pseudo_class': '',
+            'description': 'Non-active text in navbar, on hoever.',
+            'target_element': 'font',
+            'usage': 'Navbar',
+            'prop_val': [('color', 'black')]},
+    {
             'selector': '.active>#gbe_header_menu',
             'pseudo_class': '',
             'description': 'Currenty active navbar menu item, matches panel of content.',
@@ -160,13 +167,21 @@ init_values = [
             'prop_val': [('color', '#e9faa3'),
                          ('background-color', "#000")]},
     {
+            'selector': '#gbe_dropdown',
+            'pseudo_class': 'focus',
+            'description': 'Dropdown menu text, on focus (selected but not currently moused over)',
+            'target_element': 'a',
+            'usage': 'Navbar',
+            'prop_val': [('color', '#e9faa3'),
+                         ('background-color', "#000")]},
+    {
             'selector': '.gbe-panel',
             'pseudo_class': '',
             'description': 'top level panel on every page, all content is inside',
             'target_element': 'div',
             'usage': 'General',
             'prop_val': [('background-color', '#ebebeb'),
-                         ('border-color', 'ddd')]},
+                         ('border-color', '#ddd')]},
     {
             'selector': '.gbe-footer',
             'pseudo_class': '',
