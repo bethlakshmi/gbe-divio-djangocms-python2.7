@@ -1,12 +1,12 @@
-from inventory.tests.test_migrations import TestMigrations
-from inventory.tests.factories import StyleValueFactory
-from inventory.models import StyleValue
+from tests.gbe.test_migrations import TestMigrations
+from tests.factories.gbe_factories import StyleValueFactory
+from gbe.models import StyleValue
 
 
 class TestBaselineStyles(TestMigrations):
 
-    migrate_from = '0005_auto_20201221_1913'
-    migrate_to = '0004_auto_20201221_1909'
+    migrate_from = '0004_auto_20201224_1145'
+    migrate_to = '0003_auto_20201224_0729'
 
     def setUpBeforeMigration(self, apps):
         self.value = StyleValueFactory(

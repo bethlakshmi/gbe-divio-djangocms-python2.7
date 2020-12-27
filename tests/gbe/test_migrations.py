@@ -8,7 +8,7 @@ class TestMigrations(TestCase):
 
     @property
     def app(self):
-        return apps.get_containing_app_config(type(self).__module__).name
+        return apps.get_containing_app_config("gbe").name
 
     migrate_from = None
     migrate_to = None
