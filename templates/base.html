@@ -23,7 +23,7 @@
   {% block head %}
   {% endblock head %}
   </head>
-  <body style="background-image: url({% static "img/curtains.jpeg" %})">
+  <body class="gbe-body" style="background-image: url({% static "img/curtains.jpeg" %})">
     <div class="container">
     {% cms_toolbar %}
     <div class='banner'>{% static_placeholder 'banner' %}
@@ -46,11 +46,11 @@
 	    {% endif %}
         </div>
     </nav>
-     <div class="panel panel-default">
+     <div class="panel panel-default gbe-panel">
         <div class="panel-body">
         {% if messages %}
 	{% for message in messages %}
-	{% if message.tags == "error" %}<div class="alert alert-danger">{% else %}<div class="alert alert-{{message.tags}}">{% endif %}
+	{% if message.tags == "error" %}<div class="alert gbe-alert-danger">{% else %}<div class="alert gbe-alert-{{message.tags}}">{% endif %}
           <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
           <strong>{{message.tags|capfirst}}:</strong> {{message|safe}}
 	</div>

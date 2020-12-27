@@ -92,6 +92,7 @@ div.login_text{
     border-top:1px solid #ddd;
     clear:both;
     padding:14px;
+    width: 100%;
 }
 div.bottom  a, .help-block a {
     color: white;

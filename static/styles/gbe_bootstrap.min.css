@@ -347,14 +347,6 @@ dt,kbd kbd,label{font-weight:700}
 .small,small{font-size:85%}
 .mark,mark{background-color:#fcf8e3;padding:.2em}
 .list-inline,.list-unstyled{list-style:none;padding-left:0}
-.text-left{text-align:left}
-.text-right{text-align:right}
-.text-center{text-align:center}
-.text-justify{text-align:justify}
-.text-nowrap{white-space:nowrap}
-.text-lowercase{text-transform:lowercase}
-.text-uppercase{text-transform:uppercase}
-.text-capitalize{text-transform:capitalize}
 .text-muted{color:#777}
 .text-primary{color:#337ab7}
 a.text-primary:focus,a.text-primary:hover{color:#286090}
