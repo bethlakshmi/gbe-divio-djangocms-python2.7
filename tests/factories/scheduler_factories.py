@@ -1,9 +1,9 @@
 from factory import (
-    DjangoModelFactory,
     SubFactory,
     RelatedFactory,
     Sequence
 )
+from factory.django import DjangoModelFactory
 import scheduler.models as sched
 from datetime import datetime
 from tests.factories.gbe_factories import (

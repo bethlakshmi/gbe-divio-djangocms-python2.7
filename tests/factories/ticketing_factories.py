@@ -1,9 +1,9 @@
 import factory
 from factory import (
-    DjangoModelFactory,
     Sequence,
     SubFactory
 )
+from factory.django import DjangoModelFactory
 import ticketing.models as tickets
 import gbe.models as conf
 from tests.factories.gbe_factories import (
