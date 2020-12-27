@@ -84,7 +84,7 @@ def clear_conferences():
 
 
 def assert_alert_exists(response, tag, label, text):
-    alert_html = '<div class="alert alert-%s">\n' + \
+    alert_html = '<div class="alert gbe-alert-%s">\n' + \
         '          <a href="#" class="close" data-dismiss="alert" ' + \
         'aria-label="close">&times;</a>\n' + \
         '          <strong>%s:</strong> %s\n' \
