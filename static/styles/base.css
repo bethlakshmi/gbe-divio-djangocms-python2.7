@@ -82,7 +82,6 @@ div.login_text{
     min-width: 250px;
     padding: 14px 14px 0;
     overflow:hidden;
-    background-color:rgba(180, 80, 80);
 }
 #login-dp .help-block{
     font-size:12px    
@@ -121,9 +120,6 @@ div.bottom  a, .help-block a {
 button.login-button {
   padding-top: 7px;
   padding-bottom: 7px;
-  color: white;
-  background-color:rgb(107, 46, 46);
-  border-color:#471f1f;
   margin-top: 3px;
   margin-right: 3px;
   border-radius: 4px;

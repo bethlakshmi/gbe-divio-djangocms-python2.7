@@ -2,22 +2,25 @@
 from django.db import migrations
 
 
-init_values = {
-        'body.gbe-body': {
+init_values = [
+    {
+            'selector': 'body.gbe-body',
             'pseudo_class': '',
             'description': 'Body of the page, except printable pages',
             'target_element': 'div',
             'usage': 'Big Table',
             'prop_val': [('background-color', 'white'),
                          ('color', 'black')]},
-        'body.gbe-printable': {
+    {
+            'selector': 'body.gbe-printable',
             'pseudo_class': '',
             'description': 'Body of the page, when it is printable',
             'target_element': 'div',
             'usage': 'Big Table',
             'prop_val': [('background-color', 'white'),
                          ('color', 'black')]},
-        '.gbe-alert-danger': {
+    {
+            'selector': '.gbe-alert-danger',
             'pseudo_class': '',
             'description': 'Alerts that show up dynamically on Error',
             'target_element': 'div',
@@ -25,7 +28,8 @@ init_values = {
             'prop_val': [('background-color', '#f8d7da'),
                          ('border-color', '#f5c6cb'),
                          ('color', '#721c24')]},
-        '.gbe-alert-info': {
+    {
+            'selector': '.gbe-alert-info',
             'pseudo_class': '',
             'description': 'Alerts that show up dynamically as Information',
             'target_element': 'div',
@@ -33,7 +37,8 @@ init_values = {
             'prop_val': [('background-color', '#d1ecf1'),
                          ('border-color', '#bee5eb'),
                          ('color', '#0c5460')]},
-        '.gbe-alert-success': {
+    {
+            'selector': '.gbe-alert-success',
             'pseudo_class': '',
             'description': 'Alerts that show up dynamically on Success',
             'target_element': 'div',
@@ -41,7 +46,8 @@ init_values = {
             'prop_val': [('background-color', '#d4edda'),
                          ('border-color', '#c3e6cb'),
                          ('color', '#155724')]},
-        '.gbe-alert-warning': {
+    {
+            'selector': '.gbe-alert-warning',
             'pseudo_class': '',
             'description': 'Alerts that show up dynamically on Warning',
             'target_element': 'div',
@@ -49,7 +55,8 @@ init_values = {
             'prop_val': [('background-color', '#fff3cd'),
                          ('border-color', '#ffeeba'),
                          ('color', '#856404')]},
-        '.gbe-btn-primary': {
+    {
+            'selector': '.gbe-btn-primary',
             'pseudo_class': 'hover',
             'description': 'Buttons do the main work flow.',
             'target_element': 'input',
@@ -57,7 +64,8 @@ init_values = {
             'prop_val': [('background-color', '#471f1f'),
                          ('border-color', '#471f1f'),
                          ('color', '#fff')]},
-        '.gbe-btn-primary': {
+    {
+            'selector': '.gbe-btn-primary',
             'pseudo_class': '',
             'description': 'Buttons do the main work flow.',
             'target_element': 'input',
@@ -65,28 +73,39 @@ init_values = {
             'prop_val': [('background-color', 'rgb(107, 46, 46)'),
                          ('border-color', '#471f1f'),
                          ('color', '#fff')]},
-        'button.login-button': {
+    {
+            'selector': '.login-button',
             'pseudo_class': '',
             'description': 'Login drop down button on nav bar.',
             'target_element': 'button',
             'usage': 'General',
             'prop_val': [('color', 'white'),
                          ('background-color', 'rgb(107, 46, 46)'),
-                         ('border-color', '#471f1f;')]},
-        '#login-dp': {
+                         ('border-color', '#471f1f')]},
+    {
+            'selector': '.login-button',
+            'pseudo_class': 'hover',
+            'description': 'Login drop down button on nav bar, hover.',
+            'target_element': 'button',
+            'usage': 'General',
+            'prop_val': [('color', 'light grey')]},
+    {
+            'selector': '#login-dp',
             'pseudo_class': '',
             'description': 'The drop down for login, upper right under menu.',
             'target_element': 'div',
             'usage': 'General',
             'prop_val': [('background-color', 'rgba(180, 80, 80)'),
                          ('color', '#212529')]},
-        '#login-dp a': {
+    {
+            'selector': '#login-dp a',
             'pseudo_class': '',
             'description': 'Links in the login dropdown',
             'target_element': 'a',
             'usage': 'General',
             'prop_val': [('color', 'white')]},
-        '#login-dp .bottom': {
+    {
+            'selector': '#login-dp .bottom',
             'pseudo_class': '',
             'description': 'Bottom of the login box - box for new users',
             'target_element': 'div',
@@ -94,62 +113,69 @@ init_values = {
             'prop_val': [('background-color', 'rgba(180, 80, 80)'),
                          ('border-top-color', '#ddd'),
                          ('color', 'white')]},
-        '.gbe-navbar-default': {
+    {
+            'selector': '.gbe-navbar-default',
             'pseudo_class': '',
             'description': 'Navbar in default state - the not-active options',
             'target_element': 'div',
             'usage': 'Navbar',
             'prop_val': [('background-color', 'rgba(229,229,229,.49)'),
                          ('border-color', 'transparent')]},
-        '#gbe_header_menu': {
+    {
+            'selector': '#gbe_header_menu',
             'pseudo_class': 'hover',
             'description': 'Non-active text in navbar, on hoever.',
             'target_element': 'font',
             'usage': 'Navbar',
             'prop_val': [('color', '#af1515'),
                          ('background-color', 'transparent')]},
-        '.active>#gbe_header_menu': {
+    {
+            'selector': '.active>#gbe_header_menu',
             'pseudo_class': '',
             'description': 'Currenty active navbar menu item, matches panel of content.',
             'target_element': 'a',
             'usage': 'Navbar',
             'prop_val': [('background-color', '#ebebeb'),
                          ('text-shadow', '0px 0px 8px #F03')]},
-        '.gbe-dropdown-menu': {
+    {
+            'selector': '.gbe-dropdown-menu',
             'pseudo_class': '',
             'description': 'Dropdown navigational menu (any level)',
             'target_element': 'ul',
             'usage': 'Navbar',
             'prop_val': [('background-color', '#ad0325')]},
-        '#gbe_dropdown': {
+    {
+            'selector': '#gbe_dropdown',
             'pseudo_class': '',
             'description': 'Dropdown menu text',
             'target_element': 'a',
             'usage': 'Navbar',
             'prop_val': [('color', '#fff')]},
-        '#gbe_dropdown': {
+    {
+            'selector': '#gbe_dropdown',
             'pseudo_class': 'hover',
             'description': 'Dropdown menu text, on hover',
             'target_element': 'a',
             'usage': 'Navbar',
             'prop_val': [('color', '#e9faa3'),
                          ('background-color', "#000")]},
-        '.gbe-panel': {
+    {
+            'selector': '.gbe-panel',
             'pseudo_class': '',
             'description': 'top level panel on every page, all content is inside',
             'target_element': 'div',
             'usage': 'General',
             'prop_val': [('background-color', '#ebebeb'),
                          ('border-color', 'ddd')]},
-        '.gbe-footer': {
+    {
+            'selector': '.gbe-footer',
             'pseudo_class': '',
             'description': 'footer at bottom of every page',
             'target_element': 'div',
             'usage': 'General',
             'prop_val': [('color', '#fff'),
                          ('background-color', 'transparent'),
-                         ('border-color', 'transparent')]},
-    }
+                         ('border-color', 'transparent')]}]
 
 
 def initialize_style(apps, schema_editor):
@@ -166,9 +192,9 @@ def initialize_style(apps, schema_editor):
         currently_test=True)
     version.save()
 
-    for select_key, select_val in init_values.items():
+    for select_val in init_values:
         selector = StyleSelector(
-            selector=select_key,
+            selector=select_val['selector'],
             description=select_val['description'],
             pseudo_class=select_val['pseudo_class'],
             target_element_usage=select_val['target_element'],
@@ -190,9 +216,9 @@ def destroy_style(apps, schema_editor):
     StyleVersion = apps.get_model("gbe", "StyleVersion")
     StyleSelector = apps.get_model("gbe", "StyleSelector")
     StyleVersion.objects.filter(name="Baseline", number=1.0).delete()
-    for select_key, select_val in init_values.items():
+    for select_val in init_values:
         StyleSelector.objects.filter(
-            selector=select_key,
+            selector=select_val['selector'],
             pseudo_class=select_val['pseudo_class']).delete()
 
 
