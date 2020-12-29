@@ -395,6 +395,7 @@ class StaffAreaFactory(DjangoModelFactory):
     class Meta:
         model = conf.StaffArea
 
+
 class StyleVersionFactory(DjangoModelFactory):
     class Meta:
         model = conf.StyleVersion
