@@ -886,4 +886,7 @@ ul#id_to{margin-left:0px;position: relative;}
 .btn{padding:6px 12px;font-size:14px;line-height:1.42857143;}
 .dropdown-menu{font-size:14px;}
 .btn-group-sm>.btn,.btn-sm{padding:5px 10px;font-size:12px;line-height:1.5;border-radius:3px}
+/* these two lines control the layout of the panel of the landing page */
+.container:after,.container:before{content:" ";display:table}
+.container:after{clear:both}
 

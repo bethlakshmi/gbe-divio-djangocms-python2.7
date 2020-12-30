@@ -5,7 +5,7 @@
 
 {% block content %}
 <p class="vanilla">
-<span class='header'><h3>{{ header }}</h3></span><br>
+<span class='header'><h3 class="gbe-title">{{ header }}</h3></span><br>
 
 {{ email_note }}
 </p>
@@ -24,8 +24,8 @@
   {% endfor %}
 </div>
 <div class="col-md-6">
-<div class="card card-body bg-light {% if email_focus %}shadow border-danger{% endif %}">
-  <h3>Email Options</h3>
+<div class="card card-body gbe-bg-light {% if email_focus %}shadow gbe-border-danger{% endif %}">
+  <h3 class="gbe-subtitle">Email Options</h3>
   {% for field in email_form.visible_fields%}
   <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
     <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
@@ -46,7 +46,7 @@
 </div>
 </div>
 </div>
-  <input type="submit" value="{{button}}"> 
+  <input type="submit" value="{{button}}" class="btn gbe-btn-primary"> 
 
 </form>
 

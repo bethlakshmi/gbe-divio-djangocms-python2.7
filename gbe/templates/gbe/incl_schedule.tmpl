@@ -1,6 +1,6 @@
 <div class = "schedule_section">
-  <h3>{% if not historical %}
-     <a href="{% url 'scheduling:volunteer_signup' %}" style="padding:1px 5px;" class="btn btn-primary btn-sm float-right">Volunteer</a>{%endif%}
+  <h3 class="gbe-title">{% if not historical %}
+     <a href="{% url 'scheduling:volunteer_signup' %}" style="padding:1px 5px;" class="btn gbe-btn-primary btn-sm float-right">Volunteer</a>{%endif%}
     {% if profile.display_name %}
       {{ profile.display_name }}'s
     {% else %}
@@ -12,7 +12,7 @@
       {% with cs=booking.conference.status %}
         {% if cs != "completed" and not historical or cs == "completed" and historical %}
           {% ifchanged booking.conference %}
-	    <h4>{{booking.conference}}</h4>
+	    <h4 class="gbe-subtitle">{{booking.conference}}</h4>
           {% endifchanged%}
           <div class='event'>
 	    {% if booking.role == "Interested"%}
