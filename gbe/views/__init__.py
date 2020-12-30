@@ -1,6 +1,5 @@
 from .down_view import DownView
 from .landing_page_view import LandingPageView
-from .theme_view import ThemeView
 
 # parent bid classes
 from .make_bid_view import MakeBidView

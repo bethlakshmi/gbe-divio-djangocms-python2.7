@@ -683,3 +683,11 @@ Specify the days for this conference before proceeding.'''
 rehearsal_delete_msg = '''This rehearsal slot was deleted.  If any acts were \
 booked for this slot, they will be warned on their account page to fine a new \
 slot.'''
+user_messages = {
+    "THEME_INSTRUCTIONS": {
+        'summary':  "Instructions at top of theme edit page",
+        'description': '''This page displays the current saved styles of the
+        theme being edited.  Update it to get an update to this page's
+        style.'''
+    },
+}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static sekizai_tags %}
+{% block title %}
+   {{page_title}}
+{% endblock %}
+{% block head %}
+    <link href="{% url 'themes:theme_style' version.pk %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<h2>{{title}}</h2>
+<p>{{ instructions | safe }}</p>
+
+<form action="" method="post" enctype="multipart/form-data">
+
+    {% for value, form in forms %}
+    {% ifchanged value.style_property.selector.used_for %}<h4>{{ value.style_property.selector.used_for }}</h4>{% endifchanged %}
+    {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
+    {% include "form_table.tmpl" %}
+    {% endfor %}
+<div class="row">
+  <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7">
+    <input type="submit" name="update" value="Update" class="btn gbe-btn-primary" >
+    <input type="submit" name="finish" value="Finish" class="btn gbe-btn-primary" >
+    <input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" >
+  </div>
+</div>
+</form>
+{% addtoblock "js" %}
+<script src="/static/js/jscolor.js"></script>
+{% endaddtoblock %}
+{% endblock %}
