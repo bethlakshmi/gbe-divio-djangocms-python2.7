@@ -1,11 +1,11 @@
 {% extends 'gbe/bid_review_frame.tmpl' %}
 {% block review_form %}
     <div class="reviewer_col col-md-6 col-sm-12">
-      <h2>Review Information</h2>
-      <p><font color=red>*</font> indicates a required field</p>
+      <h2 class="gbe-title">Review Information</h2>
+      <p><font class="gbe-form-required">*</font> indicates a required field</p>
       <form action="" method="post">
       {% include "form_table.tmpl" %}
-      <input type="submit" value="Submit Form"> 
+      <input type="submit" value="Submit Form" class="gbe-btn-primary"> 
       </form>
     </div>
 {% endblock %}

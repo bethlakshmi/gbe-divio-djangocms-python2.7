@@ -225,10 +225,9 @@ div.side_box {
 
 /* used in bid review and readonly forms */
 div.review-pane {
-    border: 1px solid black;
+    border: 1px solid;
     margin: 10px;
     padding: 10px;
-    background-color: #E3E3E3;
 }
 
 h2.review-title

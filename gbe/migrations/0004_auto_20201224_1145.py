@@ -198,11 +198,13 @@ init_values = [
     {
             'selector': '.gbe-bg-light',
             'pseudo_class': '',
-            'description': '''lighter colored panels - like Email Options
-            on update profile.''',
+            'description': '''lighter colored panels - sub panels within
+            site, including update profile email options, review bids,
+            view bids, and others.''',
             'target_element': 'div',
             'usage': 'Forms',
-            'prop_val': [('background-color', 'rgba(248, 249, 250, 1)')]},
+            'prop_val': [('background-color', 'rgba(248, 249, 250, 1)'),
+                         ('border-color', 'rgba(50, 50, 50, 1)')]},
     {
             'selector': '.gbe-border-danger',
             'pseudo_class': '',
