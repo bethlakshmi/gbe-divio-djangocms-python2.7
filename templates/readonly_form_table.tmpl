@@ -7,43 +7,37 @@
     <li><b>Bold choices</b> - have been selected</li>
    </ul>
   {% endif %}
-    <table>
+  <div class="container">
       {% for info in readonlyform %}
       	 {% if info.form_title %}
-        <tr>
-	  <td colspan=2>
-	    <br>
-   	    <span class="readonlyform formtitle">{{info.form_title}}
-	    </span>
-	  </td>
-	</tr>
+  <div class="row">
+    <div class="col-12">
+   	    <span class="readonlyform gbe-subtitle">{{info.form_title}}</span>
+	  </div></div>
       	 {% elif info.prefix %}
         <tr>
-	  <td colspan=2>
-	    <br>
- 	    <h3 class="readonlyform">{{info.prefix}}
-	    </h3>
-	  </td>
-	</tr>
+  <div class="row">
+    <div class="col-12">
+ 	    <h3 class="gbe-subtitle readonlyform">{{info.prefix}}</h3>
+    </div></div>
 	{% endif %}
         {% for field in info.visible_fields %}
-        <tr>
-         <td class="readonlyform form_label">{{ field.label_tag }}
-            {% if field.help_text %}
-            <span class="dropt" title="Help">
-              <img src= "{% static "img/question.png" %}" alt="?"/>
-              <span style="width:200px;float:right;text-align:left;">
-                {{ field.help_text }}
-              </span>
-            </span>
-            {% endif %}
-         </td>
-
-         <td class="readonlyform 
-	            form_field 
+  <div class="row">
+    <div class="col-md-4 readonlyform form_label">
+    {{ field.label_tag }}
+    {% if field.help_text %}
+     <span class="dropt" title="Help">
+       <img src= "{% static "img/question.png" %}" alt="?"/>
+       <span style="width:200px;float:right;text-align:left;">
+         {{ field.help_text }}
+       </span>
+     </span>
+    {% endif %}
+    </div>
+    <div class="col-md-8 readonlyform form_field 
 		    {% if field.field.choices|length > 7 and field.value|length %}
 		      long_choice
-  		    {%endif%}">
+  		  {%endif%}">
           {% if field.value %}
             {% if field.field.widget.input_type == "url" %}
               <a href="{{field.value}}">Go to {{ field.label }}</a>
@@ -91,18 +85,14 @@
           {% else %}
                <ul class="long_choice">
               {% for choice_id, choice_label in field.field.choices %}	
-                    <li>
-                      <i>{{ choice_label }}</i>
-                    </li>
-	        
+                    <li><i>{{ choice_label }}</i></li>
 	      {% endfor %}
                </ul>
           {% endif %} 
-	 
-         </td>
-        </tr>
+         </div>
+        </div>
         {% endfor %}
      {% endfor %}
-    </table>
+    </div>
     
     

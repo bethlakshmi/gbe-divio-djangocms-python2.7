@@ -45,7 +45,7 @@
     </tr>
       {% if field.errors %}
     <tr class="flex_review_row">
- 	    <label for="field.name">	      
+ 	    <label for="{{field.name}}">	      
               <font color="red">{{ field.errors }}</font>
             </label>
     </tr>
@@ -71,7 +71,7 @@
     </tr>
       {% if field.errors %}
     <tr class="flex_review_row">
- 	    <label for="field.name">	      
+ 	    <label for="{{field.name}}">	      
               <font color="red">{{ field.errors }}</font>
             </label>
     </tr>

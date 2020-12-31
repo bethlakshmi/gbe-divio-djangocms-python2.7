@@ -5,8 +5,21 @@ body {
   padding: 0px;
 }
 
+.gbe-draft {
+  font-weight: bold;
+}
+.gbe-title {
+  font-family: 'Vast Shadow', cursive;
+  font-size: 24px;
+  letter-spacing: normal;
+  font-weight: normal;
+  text-transform: none;
+  font-style: normal;
+  vertical-align: middle;
+}
+
 /* Used in django CMS provided styles, do not delete */
-.subtitle{
+.gbe-subtitle, .subtitle{
   font-family: 'Vast Shadow', cursive;
   font-size: 20px;
   color: #000;
@@ -303,7 +316,6 @@ h3.readonlyform
 }
 .errorlist
 {
-    color: red;
     padding: 0;
     font-weight: normal;
 }
@@ -334,8 +346,8 @@ span.dropt {border-bottom: background: white;}
 span.dropt:hover {text-decoration: none; background: #ffffff; z-index: 6; }
 span.dropt span {position: absolute; left: -9999px; z-index: 6;
   margin: 4px 0 0 0px; padding: 3px 3px 3px 3px; 
-  border-style:solid; border-color:black; border-width:1px;}
-span.dropt:hover span {left: 30%; margin: 0px 0 0 0px; background: #ffffff; z-index:6;} 
+  border-style:solid; border-width:1px;}
+span.dropt:hover span {left: 30%; margin: 0px 0 0 0px; z-index:6;} 
 
 .ticketing
 {
@@ -1058,12 +1070,7 @@ td.form_field.long_choice > ul > li
 .event-booking-cell {
   min-height: 32px;
 }
-.formtitle
-{
-  font-family: 'Vast Shadow', cursive;
-  font-size: 20px;
-  color: black;
-}
+
 
 input#id_max_volunteer, input#id_new_opp-max_volunteer, input#id_new_slot-max_volunteer
 {

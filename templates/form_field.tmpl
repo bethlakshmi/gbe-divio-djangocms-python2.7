@@ -13,7 +13,7 @@
                 <font class="gbe-form-error">
             {% endif %}
             {% if field.name in draft_fields %}
-	        <b>{{ field.label_tag }}</b>
+	        <font class="gbe-draft">{{ field.label_tag }}</font>
 	    {% else %}
 	        {{ field.label_tag }}
 	    {% endif %}
@@ -43,7 +43,7 @@
         <div class="row">
 	  <div class="col-md-2">&nbsp;</div>
 	  <div class="col-md-4">
- 	    <label for="field.name">	      
+ 	    <label for="{{field.name}}">	      
               <font class="gbe-form-error">{{ field.errors }}</font>
             </label>
 	  </div>

@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<H2 class="subtitle">I've Got An Idea!</H2>
+<H2 class="gbe-title">I've Got An Idea!</H2>
 <p>
 The Conference is the heart and soul of The Great Burlesque Exposition &mdash;
 and we want it to be just the collection of classes and panels you want to
@@ -13,15 +13,13 @@ take! If you have an idea for a class or panel that you would like to see at
 The Expo <em>but which you don't want to teach</em> use the form below to tell
 us all about it and we'll do our best to track down the best people for the
 job. If you have a class that <em>you</em> want to teach, submit it
-<a href="{% url 'gbe:class_create' %}">here</a>, and if you've
-got a panel you'd like to moderate or sit on, you can suggest it
-<a href="{% url 'gbe:conference_volunteer' %}">here</a>.
+<a href="{% url 'gbe:class_create' %}">here</a>.
 </p>
    <form action="" method="post">
    <table>
     {% include "form_table.tmpl" %}
    </table>
-   <input type="submit" name="submit" value="Submit My Idea">
+   <input type="submit" class="btn gbe-btn-primary" name="submit" value="Submit My Idea">
    </form>
 
   
