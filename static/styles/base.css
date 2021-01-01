@@ -342,7 +342,7 @@ hr.bid-table
 
 /*used for help text*/
 span.dropt {border-bottom: background: white;}
-span.dropt:hover {text-decoration: none; background: #ffffff; z-index: 6; }
+span.dropt:hover {text-decoration: none; background: transparent; z-index: 6; }
 span.dropt span {position: absolute; left: -9999px; z-index: 6;
   margin: 4px 0 0 0px; padding: 3px 3px 3px 3px; 
   border-style:solid; border-width:1px;}
@@ -442,7 +442,6 @@ td.describe
 .helptext
 {
   font-style: italic;
-  color: grey;
 }
 
 .listblock

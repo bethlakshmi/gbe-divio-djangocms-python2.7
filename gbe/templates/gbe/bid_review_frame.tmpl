@@ -8,7 +8,7 @@
 {% block content %}
   
   {% if form.errors %}
-    <p style= "color:red"> There is an error on the form.  </p>
+    <p class="gbe-form-error"> There is an error on the form.  </p>
   {% endif %}
   <p class="vanilla">{{title}} </p>
   <div class="review-pane gbe-bg-light">
@@ -34,10 +34,10 @@
     {% if actionURL %}
     {% block review_results %}
     {% endblock %}
-    <div class="side_box gbe-bg-light col-lg-5 col-md-4 col-sm-12">
+    <div class="side_box gbe-bg-light col-lg-5 col-md-5 col-sm-12">
       <h2 class="gbe-title">Bid Control for Coordinator</h2>
         {% if actionform.errors %}
-        <p style= "color:red"> There is an error on the form.  </p>
+        <p class="gbe-form-error"> There is an error on the form.  </p>
           {% for field in actionform.visible_fields %}
             <ul>
               {% if field.errors %}
