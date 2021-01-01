@@ -8,6 +8,9 @@ body {
 .gbe-draft {
   font-weight: bold;
 }
+.gbe-form-required {
+  font-weight: bold;
+}
 .gbe-title {
   font-family: 'Vast Shadow', cursive;
   font-size: 24px;

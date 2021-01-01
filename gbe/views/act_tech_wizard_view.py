@@ -193,6 +193,7 @@ class ActTechWizardView(View):
                                 commitment=self.act)
 
         for item in response.schedule_items:
+            print(item)
             # group acts will have multiple items for same show
             if item.event not in self.shows and Show.objects.filter(
                     eventitem_id=item.event.eventitem.eventitem_id).exists():
@@ -203,6 +204,7 @@ class ActTechWizardView(View):
                 show_key = item.event.container_event.parent_event.pk
                 self.rehearsals[show_key] = item
         if len(self.shows) == 0:
+            print("no shows")
             raise Http404
 
     def rehearsal_booked(self):
