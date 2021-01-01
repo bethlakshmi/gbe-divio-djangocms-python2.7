@@ -10,12 +10,8 @@
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
 {% endblock %}
-{% block content %}
-
-
-  <p class="vanilla">{{title}} </p>
-  
-  <h2 class="review-title">{% if this_show %}Act Tech Info for {{this_show}}
+{% block content %}  
+  <h2 class="review-title gbe-title">{% if this_show %}Act Tech Info for {{this_show}}
   {% else %}Pick the Show{% endif %}</h2>
   <br/>
       {% include "conference_picker.tmpl" %}

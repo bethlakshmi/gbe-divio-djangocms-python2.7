@@ -214,6 +214,15 @@ init_values = [
             'prop_val': [('background-color', 'rgba(248, 249, 250, 1)'),
                          ('border-color', 'rgba(50, 50, 50, 1)')]},
     {
+            'selector': '.gbe-bg-dark',
+            'pseudo_class': '',
+            'description': '''darker colored panels - sub panels within
+            site, including act tech info.''',
+            'target_element': 'div',
+            'usage': 'Forms',
+            'prop_val': [('background-color', 'rgba(195, 189, 191,1)'),
+                         ('border-color', 'rgba(50, 50, 50, 1)')]},
+    {
             'selector': '.gbe-border-danger',
             'pseudo_class': '',
             'description': 'important outline to give focus on active panels',
