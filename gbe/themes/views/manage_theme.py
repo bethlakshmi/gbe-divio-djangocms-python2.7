@@ -60,7 +60,8 @@ class ManageTheme(View):
                 style_version=self.style_version).order_by(
                 'style_property__selector__used_for',
                 'style_property__selector__selector',
-                'style_property__selector__pseudo_class'):
+                'style_property__selector__pseudo_class',
+                'style_property__style_property'):
             if request:
                 form = ColorStyleValueForm(request.POST,
                                            instance=value,

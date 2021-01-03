@@ -32,7 +32,6 @@ h2,h3{page-break-after:avoid}
 }
 .img-thumbnail{background-color:transparent}
 body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.42857143;}
-#gbe-table-select{color:#b31900;text-decoration:underline}
 a:focus,a:hover{color:#23527c;text-decoration:underline}
 a:focus{outline:-webkit-focus-ring-color auto 5px;outline-offset:-2px}
 .carousel-inner>.item>a>img,.carousel-inner>.item>img,.img-responsive,.thumbnail a>img,.thumbnail>img{display:block;max-width:100%;height:auto}

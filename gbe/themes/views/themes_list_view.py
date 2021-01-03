@@ -19,9 +19,20 @@ class ThemesListView(View):
 
     def get_context_dict(self):
         return {
+            'columns': [
+                'ID',
+                'Name',
+                'Number',
+                'Created',
+                'Updated',
+                'On Live',
+                'On Test',
+                'Action'],
             'title': self.title,
             'page_title': self.title,
-            'themes': self.object_type.objects.all(),
+            'themes': self.object_type.objects.all().order_by(
+                "name",
+                "number"),
             'details_off': True,
             'changed_id': self.changed_id}
 

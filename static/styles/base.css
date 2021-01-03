@@ -287,13 +287,14 @@ h3.readonlyform
     padding: 2px;
     vertical-align: top;
  }
-.bid-table, .gbe-table-header>th
+.bid-table, .gbe-table-header>th, .gbe-table-row>td
 {
     border: 1px solid black;
     border-collapse:collapse;
     padding: 2px;
     vertical-align: top;
  }
+#gbe-table-select{color:#b31900;text-decoration:underline}
 #sub-table
  {  border: 1px solid black;
     border-collapse:collapse;
