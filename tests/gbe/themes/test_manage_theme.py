@@ -1,20 +1,16 @@
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
-from inventory.tests.factories import (
+from tests.factories.gbe_factories import (
     StyleValueFactory,
     StyleVersionFactory,
     UserFactory
 )
-from inventory.tests.functions import (
-    login_as,
-    assert_option_state,
-)
+from tests.functions.gbe_functions import login_as
 from datetime import (
     date,
     timedelta,
 )
-from inventory.models import Item
 
 
 class TestManageTheme(TestCase):
@@ -26,14 +22,14 @@ class TestManageTheme(TestCase):
         self.value = StyleValueFactory()
         self.url = reverse(
             self.view_name,
-            urlconf="inventory.urls",
+            urlconf="gbe.themes.urls",
             args=[self.value.style_version.pk])
         self.title = "Manage Styles Settings for %s, version %d" % (
             self.value.style_version.name,
             self.value.style_version.number)
         self.style_url = reverse(
             "theme_style",
-            urlconf="inventory.urls",
+            urlconf="gbe.themes.urls",
             args=[self.value.style_version.pk])
 
     def test_no_login(self):
@@ -60,7 +56,7 @@ class TestManageTheme(TestCase):
         login_as(self.user, self)
         response = self.client.get(reverse(
             self.view_name,
-            urlconf="inventory.urls",
+            urlconf="gbe.themes.urls",
             args=[empty.pk]))
         self.assertContains(
             response,
@@ -69,14 +65,14 @@ class TestManageTheme(TestCase):
                 empty.number))
         self.assertContains(response, reverse(
             "theme_style",
-            urlconf="inventory.urls",
+            urlconf="gbe.themes.urls",
             args=[empty.pk]))
 
     def test_get_bad_id(self):
         login_as(self.user, self)
         response = self.client.get(reverse(
             self.view_name,
-            urlconf="inventory.urls",
+            urlconf="gbe.themes.urls",
             args=[self.value.style_version.pk+1]))
         self.assertEqual(404, response.status_code)
 
@@ -89,8 +85,9 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             "Updated %s" % self.value.style_version)
-        self.assertRedirects(response,
-                             reverse("items_list", urlconf="inventory.urls"))
+        self.assertRedirects(response, "%s?changed_id=%d" % (
+            reverse('themes_list', urlconf='gbe.themes.urls'),
+            self.value.style_version.pk))
 
     def test_post_basics_update(self):
         login_as(self.user, self)
@@ -119,7 +116,7 @@ class TestManageTheme(TestCase):
             follow=True)
         self.assertContains(response, "The last update was canceled.")
         self.assertRedirects(response,
-                             reverse("items_list", urlconf="inventory.urls"))
+                             reverse("themes_list", urlconf="gbe.themes.urls"))
 
     def test_post_basics_bad_data(self):
         login_as(self.user, self)

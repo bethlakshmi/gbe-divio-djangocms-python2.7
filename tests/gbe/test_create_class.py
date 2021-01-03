@@ -100,8 +100,8 @@ class TestCreateClass(TestCase):
             response,
             reverse("persona_create",
                     urlconf='gbe.urls') + "?next=/class/create")
-        title = '<h2 class="subtitle">Tell Us About Your Stage Persona</h2>'
-        self.assertContains(response, title)
+        title = '<h2 class="gbe-title">Tell Us About Your Stage Persona</h2>'
+        self.assertContains(response, title, html=True)
         assert response.status_code == 200
 
     def test_class_bid_post_with_submit(self):

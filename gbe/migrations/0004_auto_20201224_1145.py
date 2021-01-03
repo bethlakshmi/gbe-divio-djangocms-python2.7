@@ -183,6 +183,22 @@ init_values = [
             'prop_val': [('color', 'rgba(128,128,128,1)')]},
 
     {
+            'selector': '.gbe-text-success',
+            'pseudo_class': '',
+            'description': '''Text that means to show success, like icons for
+            something that is live.''',
+            'target_element': 'i',
+            'usage': 'Big Table',
+            'prop_val': [('color', 'rgba(35,145,60,1)')]},
+    {
+            'selector': '.gbe-text-muted',
+            'pseudo_class': '',
+            'description': '''Text that is possibly active, but muted to
+            defer tp something else.''',
+            'target_element': 'i',
+            'usage': 'Big Table',
+            'prop_val': [('color', 'rgba(108, 117, 125,1)')]},
+    {
             'selector': '.gbe-draft',
             'pseudo_class': '',
             'description': 'The * on required form fields',
@@ -370,6 +386,10 @@ def initialize_style(apps, schema_editor):
     StyleSelector = apps.get_model("gbe", "StyleSelector")
     StyleProperty = apps.get_model("gbe", "StyleProperty")
     StyleValue = apps.get_model("gbe", "StyleValue")
+    Group = apps.get_model('auth', 'Group')
+    Group.objects.bulk_create([
+        Group(name=u'Theme Editor'),
+    ])
     version = StyleVersion(
         name="Baseline",
         number=1.0,
@@ -401,6 +421,12 @@ def destroy_style(apps, schema_editor):
     StyleVersion = apps.get_model("gbe", "StyleVersion")
     StyleSelector = apps.get_model("gbe", "StyleSelector")
     StyleVersion.objects.filter(name="Baseline", number=1.0).delete()
+    Group = apps.get_model('auth', 'Group')
+    Group.objects.filter(
+        name__in=[
+            u'Theme Editor',
+        ]
+    ).delete()
     for select_val in init_values:
         StyleSelector.objects.filter(
             selector=select_val['selector'],

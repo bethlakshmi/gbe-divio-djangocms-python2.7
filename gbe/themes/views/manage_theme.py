@@ -16,6 +16,7 @@ from gbe.models import (
 from gbe.themes.forms import ColorStyleValueForm
 from django.contrib import messages
 from gbetext import user_messages
+from datetime import datetime
 
 
 class ManageTheme(View):
@@ -74,7 +75,7 @@ class ManageTheme(View):
 
     @never_cache
     def get(self, request, *args, **kwargs):
-        redirect = self.groundwork(request, args, kwargs)
+        self.groundwork(request, args, kwargs)
         forms = self.setup_forms()
         return render(request, self.template, self.make_context(forms))
 
@@ -83,8 +84,8 @@ class ManageTheme(View):
     def post(self, request, *args, **kwargs):
         if 'cancel' in list(request.POST.keys()):
             messages.success(request, "The last update was canceled.")
-            return HttpResponseRedirect(reverse('home',
-                                                urlconf='gbe.urls'))
+            return HttpResponseRedirect(reverse('themes_list',
+                                                urlconf='gbe.themes.urls'))
         self.groundwork(request, args, kwargs)
         forms = self.setup_forms(request)
         all_valid = True
@@ -94,10 +95,13 @@ class ManageTheme(View):
         if all_valid:
             for value, form in forms:
                 form.save()
+            self.style_version.updated_at = datetime.now()
+            self.style_version.save()
             messages.success(request, "Updated %s" % self.style_version)
             if 'finish' in list(request.POST.keys()):
-                return HttpResponseRedirect(
-                    reverse('home', urlconf='gbe.urls'))
+                return HttpResponseRedirect("%s?changed_id=%d" % (
+                    reverse('themes_list', urlconf='gbe.themes.urls'),
+                    self.style_version.pk))
         else:
             messages.error(
                 request,

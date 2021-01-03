@@ -20,7 +20,7 @@ class StyleVersion(Model):
     currently_test = BooleanField(default=False)
 
     def __str__(self):
-        return ("%s - version %d" % (self.name, self.number))
+        return ("{} - version {:.1f}".format(self.name, self.number))
 
     class Meta:
         app_label = "gbe"

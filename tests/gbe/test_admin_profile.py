@@ -66,7 +66,9 @@ class TestAdminProfile(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<input type="submit" value="Update User Account">')
+            '<input type="submit" value="Update User Account" ' +
+            'class="btn gbe-btn-primary">',
+            html=True)
         self.assertContains(
             response,
             admin_note)

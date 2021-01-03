@@ -1,0 +1,106 @@
+{% extends 'base.tmpl' %}
+{% load gbe_tags %}
+{% load static sekizai_tags %}
+
+{% block title %}
+   Act Tech Report
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
+{% endblock %}
+{% block content %}  
+  <h2 class="review-title gbe-title">{{ title }}</h2>
+  <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
+  press "Shift" to sort a secondary column.</div>
+  <br/>
+  <div>
+    Toggle column(s):
+    <a class="toggle-vis" id="gbe-table-select" data-column="0">ID</a> -
+    <a class="toggle-vis" id="gbe-table-select" data-column="1">Name</a> -
+    <a class="toggle-vis" id="gbe-table-select" data-column="2">Number</a> -
+    <a class="toggle-vis" id="gbe-table-select" data-column="3">Created</a> -
+    <a class="toggle-vis" id="gbe-table-select" data-column="4">Updated</a> -
+    <a class="toggle-vis" id="gbe-table-select" data-column="5">On Live</a> -
+    <a class="toggle-vis" id="gbe-table-select" data-column="6">On Test</a> -
+    <a class="toggle-vis" id="gbe-table-select" data-column="7">Action</a>
+  </div>
+  <br/>
+  <table id="bid_review" class="order-column" cellspacing="0" width="100%">
+    <thead>
+      <tr class="bid-table">
+          <th class="bid-table">ID</th>
+          <th class="bid-table">Name</th>
+          <th class="bid-table">Number</th>
+          <th class="bid-table">Created</th>
+          <th class="bid-table">Updated</th>
+          <th class="bid-table">On Live</th>
+          <th class="bid-table">On Test</th>
+          <th class="bid-table">Action</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr class="bid-table">
+          <th class="bid-table">ID</th>
+          <th class="bid-table">Name</th>
+          <th class="bid-table">Number</th>
+          <th class="bid-table">Created</th>
+          <th class="bid-table">Updated</th>
+          <th class="bid-table">On Live</th>
+          <th class="bid-table">On Test</th>
+          <th class="bid-table">Action</th>
+      </tr>
+    </tfoot>
+    <tbody>
+    {% for theme in themes %}
+      <tr class="bid-table">
+        <td class="bid-table">{{ theme.pk }}</td>
+        <td class="bid-table">{{ theme.name }}</td>
+        <td class="bid-table">{{ theme.number|floatformat:1 }}</td>
+        <td class="bid-table">{{ theme.created_at }}</td>
+        <td class="bid-table">{{ theme.updated_at }}</td>
+        <td class="bid-table">{% if theme.currently_live %}
+          <i class="gbe-text-success fas fa-check-circle" title="This version is currently publicly visible on the live site"></i>{% else %}
+          <a href="{% url 'themes:activate_theme' theme.pk 'live' %}"><i class="fas fa-upload gbe-text-muted" title="Activate this version on the live site"></i></a>
+          {% endif %}</td>
+        <td class="bid-table">{% if theme.currently_test %}
+          <i class="gbe-text-success fas fa-check-circle" title="This version is currently visible on all test sites (anything with DEBUG on)"></i>
+          {% else %}<a href="{% url 'themes:activate_theme' theme.pk 'test' %}"><i class="fas fa-upload gbe-text-muted" title="Activate this version on all test sites"></i></a>
+          {% endif %}</td>
+        <td class="bid-table">
+  <div class="btn-group">
+    <a class="gbe-detail" href="{% url 'themes:manage_theme' theme.id %}" title="Edit">
+      <i class="fas fa-edit"></i></a>&nbsp;&nbsp;
+    <a class="gbe-detail"  title="Clone - not yet available">
+      <i class="fas fa-clone"></i></a></div>
+	      </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script>
+  $(document).ready(function() {
+    var table = $('#bid_review').DataTable({
+      "paging": false,
+      "columnDefs": [
+        { "width": "5%", "targets": 0 }
+      ]
+    } );
+ 
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+ 
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+ 
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+  } );
+  </script>
+{% endaddtoblock %}
+{% endblock %}
