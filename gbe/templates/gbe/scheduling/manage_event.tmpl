@@ -16,10 +16,10 @@
 <div class="container review">
  <ul class="nav nav-tabs" id="inner">
  {% for slug in conference_slugs %}
-  <li role="presentation" {% if conference.conference_slug == slug %}class="active"{% endif %}><a href="{% url "scheduling:manage_event_list" slug %}?{{ request.GET.urlencode }}" class="gbe-tab" >{{slug}}</a></li>
+  <li role="presentation"><a href="{% url 'scheduling:manage_event_list' slug %}?{{ request.GET.urlencode }}" class="{% if conference.conference_slug == slug %}gbe-tab-active{% else %}gbe-tab{% endif %}">{{slug}}</a></li>
  {% endfor %}
  </ul>
- <div class="scheduling-area">
+ <div class="gbe-tab-area">
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.day %}
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
    <div class="form-row">

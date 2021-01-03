@@ -348,7 +348,6 @@ tbody.collapse.in{display:table-row-group}
 .dropdown-menu-left{left:0;right:auto}
 .dropdown-header{display:block;font-size:12px;color:#777}
 .dropdown-backdrop{position:fixed;left:0;right:0;bottom:0;top:0;z-index:990}
-.nav-justified>.dropdown .dropdown-menu,.nav-tabs.nav-justified>.dropdown .dropdown-menu{left:auto;top:auto}
 .pull-right>.dropdown-menu{right:0;left:auto}
 .dropup .caret,.navbar-fixed-bottom .dropdown .caret{border-top:0;border-bottom:4px dashed;border-bottom:4px solid\9;content:""}
 .dropup .dropdown-menu,.navbar-fixed-bottom .dropdown .dropdown-menu{top:auto;bottom:100%;margin-bottom:2px}
@@ -408,26 +407,11 @@ select[multiple].input-group-sm>.form-control,select[multiple].input-group-sm>.i
 .input-group-btn>.btn:active,.input-group-btn>.btn:focus,.input-group-btn>.btn:hover{z-index:2}
 .input-group-btn:first-child>.btn,.input-group-btn:first-child>.btn-group{margin-right:-1px}
 .input-group-btn:last-child>.btn,.input-group-btn:last-child>.btn-group{z-index:2;margin-left:-1px}
-.gbe-tab{padding:10px 15px; height}
-.nav>li>a:focus,.nav>li>a:hover{text-decoration:none;background-color:#eee}
 .nav>li.disabled>a{color:#777}
 .nav>li.disabled>a:focus,.nav>li.disabled>a:hover{color:#777;text-decoration:none;background-color:transparent;cursor:not-allowed}
 .nav .open>a,.nav .open>a:focus,.nav .open>a:hover{background-color:#eee;border-color:#337ab7}
 .nav .nav-divider{height:1px;margin:9px 0;overflow:hidden;background-color:#e5e5e5}
 .nav>li>a>img{max-width:none}
-.nav-tabs{border-bottom:1px solid #ddd}
-.nav-tabs>li{float:left;margin-bottom:-1px; height: 30px;}
-.nav-tabs>li>a{margin-right:2px;line-height:1.42857143;border:1px solid transparent;border-radius:4px 4px 0 0}
-.nav-tabs>li>a:hover{border-color:#eee #eee #ddd}
-.nav-tabs>li.active>a,.nav-tabs>li.active>a:focus,.nav-tabs>li.active>a:hover{color:#555;background-color:#8e0e0a;border:1px solid #ddd;border-bottom-color:transparent;cursor:default}
-.nav-tabs.nav-justified{width:100%;border-bottom:0}
-.nav-tabs.nav-justified>li{float:none}
-.nav-tabs.nav-justified>li>a{text-align:center;margin-bottom:5px;margin-right:0;border-radius:4px}
-.nav-tabs.nav-justified>.active>a,.nav-tabs.nav-justified>.active>a:focus,.nav-tabs.nav-justified>.active>a:hover{border:1px solid #ddd}
-@media (min-width:768px){.nav-tabs.nav-justified>li{display:table-cell;width:1%}
-.nav-tabs.nav-justified>li>a{margin-bottom:0;border-bottom:1px solid #ddd;border-radius:4px 4px 0 0}
-.nav-tabs.nav-justified>.active>a,.nav-tabs.nav-justified>.active>a:focus,.nav-tabs.nav-justified>.active>a:hover{border-bottom-color:#8e0e0a}
-}
 .nav-pills>li{float:left}
 .nav-justified>li,.nav-stacked>li{float:none}
 .nav-pills>li>a{border-radius:4px}
@@ -436,17 +420,8 @@ select[multiple].input-group-sm>.form-control,select[multiple].input-group-sm>.i
 .nav-stacked>li+li{margin-top:2px;margin-left:0}
 .nav-justified{width:100%}
 .nav-justified>li>a{text-align:center;margin-bottom:5px}
-.nav-tabs-justified{border-bottom:0}
-.nav-tabs-justified>li>a{margin-right:0;border-radius:4px}
-.nav-tabs-justified>.active>a,.nav-tabs-justified>.active>a:focus,.nav-tabs-justified>.active>a:hover{border:1px solid #ddd}
-@media (min-width:768px){.nav-justified>li{display:table-cell;width:1%}
-.nav-justified>li>a{margin-bottom:0}
-.nav-tabs-justified>li>a{border-bottom:1px solid #ddd;border-radius:4px 4px 0 0}
-.nav-tabs-justified>.active>a,.nav-tabs-justified>.active>a:focus,.nav-tabs-justified>.active>a:hover{border-bottom-color:#8e0e0a}
-}
 .tab-content>.tab-pane{display:none}
 .tab-content>.active{display:block}
-.nav-tabs .dropdown-menu{margin-top:-1px;border-top-right-radius:0;border-top-left-radius:0}
 .navbar{margin-bottom:-2px;border:1px solid transparent; display:block;}
 .navbar-collapse{padding-right:5px;padding-left:5px;}
 .navbar-collapse.in{overflow-y:auto}
@@ -888,4 +863,3 @@ ul#id_to{margin-left:0px;position: relative;}
 /* these two lines control the layout of the panel of the landing page */
 .container:after,.container:before{content:" ";display:table}
 .container:after{clear:both}
-

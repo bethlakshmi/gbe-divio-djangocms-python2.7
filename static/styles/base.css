@@ -121,7 +121,28 @@ div.login_text{
         border-top:0 none;
     }
 }
-
+.gbe-tab-active, .gbe-tab-active:hover, .gbe-tab-area {
+  background-color: rgba(221, 221, 221, 1);
+}
+.gbe-tab-active, .gbe-tab-active:hover {
+  color: rgba(180, 80, 80, 1);
+  padding:10px 15px;
+  height: 30px;
+  text-decoration-line: none;
+}
+.gbe-tab {
+  color: rgba(150, 150, 150, 1);
+  padding:10px 15px;
+}
+.gbe-tab:hover {
+  color: rgba(150, 150, 150, 1);
+  background-color: rgba(238, 238, 238, 1);
+  border-color: rgba(238, 238, 238, 1);
+  text-decoration-line: none;
+}
+.gbe-tab-area {
+  padding: 15px;
+}
 button.login-button {
   padding-top: 7px;
   padding-bottom: 7px;
@@ -521,7 +542,6 @@ td.describe
   background: white;
 }
 
-
 /*Schedule detail view*/
 .sched_block
 {
@@ -803,6 +823,12 @@ div.gbe-alert
 .device-small > li.active > a > li:hover {
   background-color: inherit;
 }
+/* small display, landing page */
+.landing-tabs:before, .landing-tabs:after, .navbar:before, .navbar:after {
+  content: " ";
+  display: table;
+}
+.landing-tabs:after, .navbar:after {clear: both;}
 
 /* big device */
 @media only screen and (min-width : 768px) {
@@ -1108,14 +1134,6 @@ div.hierarchy-1
 {
   padding-left: 20px;
 }
-#inner > li.active > a {
-  background-color: rgb(221, 221, 221);
-  color: rgba(180, 80, 80);
-}
-
-#inner > li > a {
-  color: rgba(150, 150, 150);
-}
 .scheduling-area {
   background-color: rgb(221, 221, 221);
   padding: 15px;
@@ -1196,3 +1214,6 @@ div.hierarchy-1
 .link-events-plus:hover {
   color: black;
 }
+
+.nav-tabs>li{float:left;margin-bottom:-3px; height: 30px;}
+
