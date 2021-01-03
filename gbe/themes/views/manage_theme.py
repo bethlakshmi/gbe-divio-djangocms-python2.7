@@ -17,6 +17,7 @@ from gbe.themes.forms import ColorStyleValueForm
 from django.contrib import messages
 from gbetext import user_messages
 from datetime import datetime
+from gbe.functions import validate_perms
 
 
 class ManageTheme(View):
@@ -24,8 +25,10 @@ class ManageTheme(View):
     template = 'gbe/themes/manage_theme.tmpl'
     page_title = 'Manage Style Settings'
     style_version = None
+    permissions = ('Theme Editor',)
 
     def groundwork(self, request, args, kwargs):
+        self.profile = validate_perms(request, self.permissions)
         self.style_version = None
         version_id = kwargs.get("version_id")
         self.style_version = get_object_or_404(StyleVersion, id=version_id)

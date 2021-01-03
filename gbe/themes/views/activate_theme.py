@@ -8,11 +8,13 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from gbe.models import StyleVersion
 from django.contrib import messages
+from gbe.functions import validate_perms
 
 
 class ActivateTheme(View):
     object_type = StyleVersion
     style_version = None
+    permissions = ('Theme Editor',)
 
     def groundwork(self, request, args, kwargs):
         self.style_version = None
@@ -28,6 +30,7 @@ class ActivateTheme(View):
 
     @never_cache
     def get(self, request, *args, **kwargs):
+        self.profile = validate_perms(request, self.permissions)
         self.groundwork(request, args, kwargs)
         current = None
         if self.target == "live":

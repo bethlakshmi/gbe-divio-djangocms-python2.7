@@ -2,11 +2,14 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    ProfileFactory,
     StyleValueFactory,
     StyleVersionFactory,
-    UserFactory
 )
-from tests.functions.gbe_functions import login_as
+from tests.functions.gbe_functions import (
+    grant_privilege,
+    login_as,
+)
 from datetime import (
     date,
     timedelta,
@@ -18,7 +21,9 @@ class TestManageTheme(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = UserFactory()
+        self.user = ProfileFactory().user_object
+        grant_privilege(self.user, u'Theme Editor')
+
         self.value = StyleValueFactory()
         self.url = reverse(
             self.view_name,
@@ -37,6 +42,11 @@ class TestManageTheme(TestCase):
         self.assertRedirects(response,
                              "/login/?next=%s" % self.url,
                              fetch_redirect_response=False)
+
+    def test_unauthorized_user(self):
+        login_as(ProfileFactory(), self)
+        response = self.client.get(self.url)
+        self.assertEqual(403, response.status_code)
 
     def test_get(self):
         login_as(self.user, self)

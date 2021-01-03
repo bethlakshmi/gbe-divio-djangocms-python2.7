@@ -4,12 +4,14 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from gbe.models import StyleVersion
+from gbe.functions import validate_perms
 
 
 class ThemesListView(View):
     object_type = StyleVersion
     template = 'gbe/themes/theme_list.tmpl'
     title = "List of Themes and Versions"
+    permissions = ('Theme Editor',)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -25,5 +27,6 @@ class ThemesListView(View):
 
     @never_cache
     def get(self, request, *args, **kwargs):
+        self.profile = validate_perms(request, self.permissions)
         self.changed_id = int(request.GET.get('changed_id', default=-1))
         return render(request, self.template, self.get_context_dict())

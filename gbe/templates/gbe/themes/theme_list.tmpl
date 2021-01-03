@@ -1,9 +1,8 @@
 {% extends 'base.tmpl' %}
-{% load gbe_tags %}
 {% load static sekizai_tags %}
 
 {% block title %}
-   Act Tech Report
+   {{page_title}}
 {% endblock %}
 
 {% block head %}
@@ -54,7 +53,7 @@
     </tfoot>
     <tbody>
     {% for theme in themes %}
-      <tr class="bid-table">
+      <tr class="bid-table {% if theme.pk == changed_id %}gbe-table-success{% endif %}">
         <td class="bid-table">{{ theme.pk }}</td>
         <td class="bid-table">{{ theme.name }}</td>
         <td class="bid-table">{{ theme.number|floatformat:1 }}</td>
