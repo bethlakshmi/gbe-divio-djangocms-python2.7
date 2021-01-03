@@ -6,8 +6,7 @@
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
-  <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
 {% endblock %}
 {% block content %}  
   <h2 class="review-title gbe-title">{{ title }}</h2>
@@ -28,7 +27,7 @@
   <br/>
   <table id="bid_review" class="order-column" cellspacing="0" width="100%">
     <thead>
-      <tr class="bid-table">
+      <tr class="gbe-table-header">
           <th class="bid-table">ID</th>
           <th class="bid-table">Name</th>
           <th class="bid-table">Number</th>
@@ -40,7 +39,7 @@
       </tr>
     </thead>
     <tfoot>
-      <tr class="bid-table">
+      <tr class="gbe-table-header">
           <th class="bid-table">ID</th>
           <th class="bid-table">Name</th>
           <th class="bid-table">Number</th>
@@ -57,8 +56,8 @@
         <td class="bid-table">{{ theme.pk }}</td>
         <td class="bid-table">{{ theme.name }}</td>
         <td class="bid-table">{{ theme.number|floatformat:1 }}</td>
-        <td class="bid-table">{{ theme.created_at }}</td>
-        <td class="bid-table">{{ theme.updated_at }}</td>
+        <td class="bid-table">{{ theme.created_at|date:"M j, Y, g:i A" }}</td>
+        <td class="bid-table">{{ theme.updated_at|date:"M j, Y, g:i A" }}</td>
         <td class="bid-table">{% if theme.currently_live %}
           <i class="gbe-text-success fas fa-check-circle" title="This version is currently publicly visible on the live site"></i>{% else %}
           <a href="{% url 'themes:activate_theme' theme.pk 'live' %}"><i class="fas fa-upload gbe-text-muted" title="Activate this version on the live site"></i></a>
@@ -81,8 +80,11 @@
 
 {% addtoblock "js" %}
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
   <script>
   $(document).ready(function() {
+    $.fn.dataTable.moment( 'MMM D, YYYY, H:mm A' );
     var table = $('#bid_review').DataTable({
       "paging": false,
       "columnDefs": [
