@@ -28,31 +28,31 @@
   <table id="bid_review" class="order-column" cellspacing="0" width="100%">
     <thead>
       <tr class="gbe-table-header">
-          <th class="bid-table">ID</th>
-          <th class="bid-table">Name</th>
-          <th class="bid-table">Number</th>
-          <th class="bid-table">Created</th>
-          <th class="bid-table">Updated</th>
-          <th class="bid-table">On Live</th>
-          <th class="bid-table">On Test</th>
-          <th class="bid-table">Action</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Created</th>
+          <th>Updated</th>
+          <th>On Live</th>
+          <th>On Test</th>
+          <th>Action</th>
       </tr>
     </thead>
     <tfoot>
       <tr class="gbe-table-header">
-          <th class="bid-table">ID</th>
-          <th class="bid-table">Name</th>
-          <th class="bid-table">Number</th>
-          <th class="bid-table">Created</th>
-          <th class="bid-table">Updated</th>
-          <th class="bid-table">On Live</th>
-          <th class="bid-table">On Test</th>
-          <th class="bid-table">Action</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Created</th>
+          <th>Updated</th>
+          <th>On Live</th>
+          <th>On Test</th>
+          <th>Action</th>
       </tr>
     </tfoot>
     <tbody>
     {% for theme in themes %}
-      <tr class="bid-table {% if theme.pk == changed_id %}gbe-table-success{% endif %}">
+      <tr class="gbe-table-row {% if theme.pk == changed_id %}gbe-table-success{% endif %}">
         <td class="bid-table">{{ theme.pk }}</td>
         <td class="bid-table">{{ theme.name }}</td>
         <td class="bid-table">{{ theme.number|floatformat:1 }}</td>
@@ -70,7 +70,7 @@
   <div class="btn-group">
     <a class="gbe-detail" href="{% url 'themes:manage_theme' theme.id %}" title="Edit">
       <i class="fas fa-edit"></i></a>&nbsp;&nbsp;
-    <a class="gbe-detail"  title="Clone - not yet available">
+    <a class="gbe-detail" title="Clone - not yet available">
       <i class="fas fa-clone"></i></a></div>
 	      </td>
       </tr>

@@ -190,6 +190,31 @@ init_values = [
             'usage': 'Big Table',
             'prop_val': [('background-color', 'rgba(195, 230, 203, 1)')]},
     {
+            'selector': '.gbe-table-header>th',
+            'pseudo_class': '',
+            'description': 'Header and footer of tables',
+            'target_element': 'tr',
+            'usage': 'Big Table',
+            'prop_val': [('background-color', 'rgba(200,200,200,1)'),
+                         ('border-color', 'rgba(50,50,50,1)'),
+                         ('color', 'rgba(0,0,0,1)')]},
+    {
+            'selector': '.gbe-table-header>th',
+            'pseudo_class': 'hover',
+            'description': 'Header and footer of tables, when moused over',
+            'target_element': 'tr',
+            'usage': 'Big Table',
+            'prop_val': [('background-color', 'rgba(0,0,0,0.25)')]},
+    {
+            'selector': '.gbe-table-row>td',
+            'pseudo_class': '',
+            'description': 'Non-header/footer rows',
+            'target_element': 'tr',
+            'usage': 'Big Table',
+            'prop_val': [('background-color', 'rgba(248, 249, 250, 1)'),
+                         ('border-color', 'rgba(50,50,50,1)'),
+                         ('color', 'rgba(0,0,0,1)')]},
+    {
             'selector': '.gbe-text-success',
             'pseudo_class': '',
             'description': '''Text that means to show success, like icons for

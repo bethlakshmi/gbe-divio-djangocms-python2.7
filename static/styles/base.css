@@ -287,7 +287,7 @@ h3.readonlyform
     padding: 2px;
     vertical-align: top;
  }
-.bid-table
+.bid-table, .gbe-table-header>th
 {
     border: 1px solid black;
     border-collapse:collapse;
