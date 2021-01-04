@@ -4,7 +4,6 @@ body {
   border: 0px;
   padding: 0px;
 }
-
 .gbe-draft {
   font-weight: bold;
 }
@@ -54,8 +53,7 @@ body {
 div.container {
     top:0;
 }
-
-    
+.gbe-btn-group {display: inline-block;}
 div.banner {
   left: 0px;
   top: 0px;
@@ -64,8 +62,6 @@ div.banner {
   margin-bottom: 10px;
   overflow: hidden;
 }
-
-
 .big_block {
   width: inherit;
   box-sizing: initial;
@@ -120,20 +116,6 @@ div.login_text{
     #login-dp .bottom{
         border-top:0 none;
     }
-}
-.gbe-tab-active, .gbe-tab-active:hover {
-  padding:10px 15px;
-  height: 30px;
-  text-decoration-line: none;
-}
-.gbe-tab {
-  padding:10px 15px;
-}
-.gbe-tab:hover {
-  text-decoration-line: none;
-}
-.gbe-tab-area {
-  padding: 15px;
 }
 button.login-button {
   padding-top: 7px;
@@ -323,9 +305,6 @@ h3.readonlyform
     padding: 2px;
     text-align: center;
  }
-.approval_needed {
-    background-color: #feffb9
-}
 .error_row
 {
     color: red;
@@ -815,12 +794,6 @@ div.gbe-alert
 .device-small > li.active > a > li:hover {
   background-color: inherit;
 }
-/* small display, landing page */
-.landing-tabs:before, .landing-tabs:after, .navbar:before, .navbar:after {
-  content: " ";
-  display: table;
-}
-.landing-tabs:after, .navbar:after {clear: both;}
 
 /* big device */
 @media only screen and (min-width : 768px) {
@@ -1206,6 +1179,27 @@ div.hierarchy-1
 .link-events-plus:hover {
   color: black;
 }
-
+/* small display, tabs on landing page */
+.landing-tabs:before, .landing-tabs:after, .navbar:before, .navbar:after {
+  content: " ";
+  display: table;
+}
+.landing-tabs:after, .navbar:after {clear: both;}
+/* tab alignment - forms and landing */
 .nav-tabs>li{float:left;margin-bottom:-3px; height: 30px;}
-
+/* tabs on forms */
+.gbe-tab-active, .gbe-tab-active:hover {
+  padding:10px 15px;
+  height: 30px;
+  text-decoration-line: none;
+}
+.gbe-tab {
+  padding:10px 15px;
+}
+.gbe-tab:hover {
+  text-decoration-line: none;
+}
+.gbe-tab-area {
+  padding: 15px;
+}
+/* end tabs */

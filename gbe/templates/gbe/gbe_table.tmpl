@@ -7,9 +7,13 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
 {% endblock %}
-{% block content %}  
+{% block content %}
+{% block before_table %}
   <h2 class="review-title gbe-title">{{ title }}</h2>
+{% endblock %}
+{% if columns %}
   <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
   press "Shift" to sort a secondary column.</div>
   <br/>
@@ -20,7 +24,7 @@
     {% endfor %}
   </div>
   <br/>
-  <table id="gbe-table" class="order-column" cellspacing="0" width="100%">
+  <table id="gbe-table" cellspacing="0" width="100%">
     <thead>
       <tr class="gbe-table-header">
     {% for column in columns %}
@@ -38,7 +42,9 @@
     {% endblock %}
     </tbody>
   </table>
-
+{% endif %}
+{% block after_table %}
+{% endblock %}
 {% addtoblock "js" %}
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>

@@ -1,14 +1,9 @@
-{% extends "base.tmpl" %}
+{% extends "gbe/gbe_table.tmpl" %}
 {% load static sekizai_tags %}
 {% block title %}
   Manage Expo Schedule
 {% endblock %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-{% endblock %}
-
-{% block content %}
+{% block before_table %}
 <form class="form-inline" action="" method="get" enctype="multipart/form-data">
  {% for form in other_forms %}
   {{ form }}
@@ -57,110 +52,45 @@
    </div></div>
    <div class="form-row">
    <div class="form-group col-12" id="filter-button"><br>
-      <input type="submit" class="btn btn-primary" name="filter" value="Filter">
+      <input type="submit" class="btn gbe-btn-primary" name="filter" value="Filter">
    {% if conference.status != "completed" %}
-      <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-primary">Create</a>
+      <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn gbe-btn-primary">Create</a>
    {% endif %}</div></div>
    Yellow = volunteers must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>
-{% if occurrences %}
- <div class="row">
-  <div class="col-12">
-    Toggle column(s):
-      <a class="toggle-vis" id="gbe-table-select" data-column="0">Title</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="1">Parent</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="2">Area</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="3">Location</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="4">Date/Time</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="5">Duration</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="6">Type</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="7">Current Volunteer</a> - 
-      <a class="toggle-vis" id="gbe-table-select" data-column="8">Max Volunteer</a>
-  <table id="event_review" class="order-column table table-bordered" cellspacing="0" width="100%">
-    <thead>
-      <tr class="bid-table">
-        <th class="bid-table">Title</th>
-        <th class="bid-table">Parent</th>
-        <th class="bid-table">Area</th>
-        <th class="bid-table">Location</th>
-        <th class="bid-table">Date/Time</th>
-        <th class="bid-table">Duration</th>
-        <th class="bid-table">Type</th>
-        <th class="bid-table">Current #</th>
-        <th class="bid-table">Max #</th>
-        <th class="bid-table">Action</th>
-      </tr>
-    </thead>
-    <tfoot>
-      <tr class="bid-table">
-        <th class="bid-table">Title</th>
-        <th class="bid-table">Parent</th>
-        <th class="bid-table">Area</th>
-        <th class="bid-table">Location</th>
-        <th class="bid-table">Date/Time</th>
-        <th class="bid-table">Duration</th>
-        <th class="bid-table">Type</th>
-        <th class="bid-table">Current #</th>
-        <th class="bid-table">Max #</th>
-        <th class="bid-table">Action</th>
-      </tr>
-    </tfoot>
-    <tbody>
+{% endblock %}
+{% block tbody %}
     {% for occurrence in occurrences %}
-      <tr class="bid-table {% if occurrence.id in success_occurrences %}success{% endif %}">
-       <td class="bid-table">{{ occurrence.title}}</td>
-       <td class="bid-table">{% if occurrence.parent_title %}<a href="{{occurrence.parent_link}}" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a>{% endif %}</td>
-       <td class="bid-table">{% for area in occurrence.staff_areas %}
-        {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</td>
-       <td class="bid-table">{{ occurrence.location}}</td>
-       <td class="bid-table">{{ occurrence.start}}</td>
-       <td class="bid-table">{{ occurrence.duration }}</td>
-       <td class="bid-table">{{ occurrence.type }}</td>
-       <td class="bid-table{% if occurrence.approval_needed%} approval_needed{%endif%}">{% if occurrence.current_acts %}{{ occurrence.current_acts }} acts{% else %}{{ occurrence.current_volunteer }}{% endif %}</td>
-       <td class="bid-table{% if occurrence.approval_needed%} approval_needed{%endif%}">{% if occurrence.max_commitments %}{{ occurrence.max_commitments }} acts{% else %}{{ occurrence.max_volunteer }}{% endif %}</td>
-       <td class="bid-table"><div class="btn-group" role="group" aria-label="...">
-        <a href="{{ occurrence.detail_link }}" data-toggle="tooltip" title="View" class="btn btn-default btn-sm" id="action-button">
+      <tr class="gbe-table-row {% if toccurrence.id in success_occurrences %}gbe-table-success{% endif %}">
+       <td>{{ occurrence.title}}</td>
+       <td>{% if occurrence.parent_title %}<a href="{{occurrence.parent_link}}" class="gbe-table-link" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a>{% endif %}</td>
+       <td>{% for area in occurrence.staff_areas %}
+        {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}"  class="gbe-table-link" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</td>
+       <td>{{ occurrence.location}}</td>
+       <td>{{ occurrence.start}}</td>
+       <td>{{ occurrence.duration }}</td>
+       <td>{{ occurrence.type }}</td>
+       <td class="{% if occurrence.approval_needed%} approval_needed{%endif%}">{% if occurrence.current_acts %}{{ occurrence.current_acts }} acts{% else %}{{ occurrence.current_volunteer }}{% endif %}</td>
+       <td class="{% if occurrence.approval_needed%} approval_needed{%endif%}">{% if occurrence.max_commitments %}{{ occurrence.max_commitments }} acts{% else %}{{ occurrence.max_volunteer }}{% endif %}</td>
+       <td><div class="btn-group gbe-btn-group" role="group" aria-label="...">
+        <a href="{{ occurrence.detail_link }}" data-toggle="tooltip" title="View" class="btn gbe-btn-table btn-sm" id="action-button">
          <i class="fa fa-eye" aria-hidden="true"></i></a>
         {% if occurrence.edit_link %}
-        <a href="{{ occurrence.edit_link }}" data-toggle="tooltip" title="Edit" class="btn btn-default btn-sm" id="action-button">
+        <a href="{{ occurrence.edit_link }}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
          <i class="fa fa-pencil" aria-hidden="true"></i></a>{% endif %}
         {% if occurrence.copy_link %}
-        <a href="{{ occurrence.copy_link }}" data-toggle="tooltip" title="Copy" class="btn btn-default btn-sm" id="action-button">
+        <a href="{{ occurrence.copy_link }}" data-toggle="tooltip" title="Copy" class="btn gbe-btn-table btn-sm" id="action-button">
          <i class="fa fa-files-o" aria-hidden="true"></i></a>{% endif %}
-        <a href="{{ occurrence.delete_link }}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
+        <a href="{{ occurrence.delete_link }}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
          <i class="fa fa-trash-o" aria-hidden="true"></i></a>
        </div></td>
       </tr>
     {% endfor %}
-    </tbody>
-  </table>
-   </div></div>
-{% endif %}
+{% endblock %}
+{% block after_table %}
  </div>
 </div>
 </form>
-{% addtoblock "js" %}
-<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script>
-  $(document).ready(function() {
-    var table = $('#event_review').DataTable({
-         "paging": false,
-         "columnDefs": [{ "orderable": false, "targets": 7 }],
-         "order": [[ 7, "desc" ]]
-    });
-
-    $('a.toggle-vis').on( 'click', function (e) {
-        e.preventDefault();
-
-        // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
-
-        // Toggle the visibility
-        column.visible( ! column.visible() );
-    } );
-} );
-</script>
-{% endaddtoblock %}
 {% endblock %}
 
 

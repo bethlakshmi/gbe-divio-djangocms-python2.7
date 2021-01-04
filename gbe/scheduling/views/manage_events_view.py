@@ -187,6 +187,17 @@ class ManageEventsView(View):
             context['occurrences'] = self.get_filtered_occurrences(
                 request,
                 context['selection_form'])
+            context['columns'] = [
+                'Title',
+                'Parent',
+                'Area',
+                'Location',
+                'Date/Time',
+                'Duration',
+                'Type',
+                'Current Volunteer',
+                'Max Volunteer',
+                'Action']
         return render(request, self.template, context)
 
     @method_decorator(login_required)
