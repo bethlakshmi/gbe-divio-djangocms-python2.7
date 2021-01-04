@@ -241,6 +241,20 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(195, 230, 203, 1)')]},
     {
+            'selector': '.gbe-table-row.gbe-table-info>td',
+            'pseudo_class': '',
+            'description': 'Table row when it was just successfully updated',
+            'target_element': 'div',
+            'usage': 'Table',
+            'prop_val': [('background-color', 'rgba(217, 237, 247, 1)')]},
+    {
+            'selector': '.gbe-table-row.gbe-table-danger>td',
+            'pseudo_class': '',
+            'description': 'Table row when it was just successfully updated',
+            'target_element': 'div',
+            'usage': 'Table',
+            'prop_val': [('background-color', 'rgba(242, 222, 222, 1)')]},
+    {
             'selector': '.gbe-table-header>th',
             'pseudo_class': '',
             'description': 'Header and footer of tables',

@@ -49,15 +49,15 @@ class ReviewBidListView(View):
             'status': "",
         }
         if not bid.bidder_is_active:
-            bid_row['status'] = "danger"
+            bid_row['status'] = "gbe-table-danger"
         elif bid.id == self.changed_id:
-            bid_row['status'] = 'success'
+            bid_row['status'] = 'gbe-table-success'
         elif bid.ready_for_review:
             if not review_query.filter(
                         evaluator=self.reviewer,
                         bid=bid).exists():
                 bid_row['bid'][self.status_index] = "Needs Review"
-                bid_row['status'] = "info"
+                bid_row['status'] = "gbe-table-info"
         return bid_row
 
     def get_rows(self, bids, review_query):

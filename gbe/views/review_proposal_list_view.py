@@ -39,7 +39,7 @@ def ReviewProposalListView(request):
     conference_slugs = Conference.all_slugs()
     return render(request,
                   'gbe/bid_review_list.tmpl',
-                  {'header': header,
+                  {'columns': header,
                    'rows': rows,
                    'conference': conference,
                    'conference_slugs': conference_slugs})

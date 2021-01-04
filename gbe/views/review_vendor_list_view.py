@@ -10,7 +10,7 @@ class ReviewVendorListView(ReviewBidListView):
     bid_review_list_view_name = 'vendor_review_list'
 
     def get_context_dict(self):
-        return {'header': self.object_type().bid_review_header,
+        return {'columns': self.object_type().bid_review_header,
                 'rows': self.rows,
                 'return_link': reverse(self.bid_review_list_view_name,
                                        urlconf='gbe.urls'),
