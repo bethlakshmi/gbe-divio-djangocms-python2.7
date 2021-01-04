@@ -90,16 +90,16 @@ init_values = [
             'description': '''Small buttons to do actions on table rows''',
             'target_element': 'a',
             'usage': 'Table',
-            'prop_val': [('background-color', 'rgba(0, 0, 0, .25)'),
-                         ('border-color', 'rgba(0, 0, 0, .40)')]},
+            'prop_val': [('background-color', 'rgba(0, 0, 0, .05)'),
+                         ('border-color', 'rgba(0, 0, 0, .15)')]},
     {
             'selector': '.gbe-btn-table',
             'pseudo_class': 'hover',
             'description': '''Small buttons to do actions on table rows''',
             'target_element': 'a',
             'usage': 'Table',
-            'prop_val': [('background-color', 'rgba(0, 0, 0, .50)'),
-                         ('border-color', 'rgba(0, 0, 0, .65)')]},
+            'prop_val': [('background-color', 'rgba(0, 0, 0, .20)'),
+                         ('border-color', 'rgba(0, 0, 0, .30)')]},
     {
             'selector': '.gbe-table-link',
             'pseudo_class': '',
@@ -213,9 +213,10 @@ init_values = [
      {
             'selector': '.gbe-form-error',
             'pseudo_class': '',
-            'description': 'Text that informs user of a form error.',
+            'description': '''Text that informs user of a form error or a
+            table with problem data.''',
             'target_element': 'font',
-            'usage': 'Forms',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(255,0,0,1)')]},
     {
             'selector': '.gbe-form-required',
