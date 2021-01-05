@@ -34,8 +34,8 @@ from datetime import (
 
 class TestManageEventList(TestCase):
     view_name = 'manage_event_list'
-    conf_tab = '<li role="presentation" %s><a href="%s?" ' + \
-        'class="gbe-tab" >%s</a></li>'
+    conf_tab = ('<li role="presentation"><a href="%s?" class="gbe-tab%s">' +
+        '%s</a></li>')
 
     def setUp(self):
         self.client = Client()
@@ -118,21 +118,21 @@ class TestManageEventList(TestCase):
         self.assertContains(
             response,
             self.conf_tab % (
-                'class="active"',
                 reverse(self.view_name,
                         urlconf="gbe.scheduling.urls",
                         args=[self.day.conference.conference_slug]),
-                self.day.conference.conference_slug))
-        s = '<li role="presentation" >\n   <a href = "%s?" ' + \
-            'class="gbe-tab" >%s</a></li>'
+                '-active',
+                self.day.conference.conference_slug),
+            html=True)
         self.assertContains(
             response,
             self.conf_tab % (
-                '',
                 reverse(self.view_name,
                         urlconf="gbe.scheduling.urls",
                         args=[old_conf_day.conference.conference_slug]),
-                old_conf_day.conference.conference_slug))
+                '',
+                old_conf_day.conference.conference_slug),
+            html=True)
         self.assertContains(
             response,
             self.day.day.strftime(GBE_DATE_FORMAT))
@@ -178,17 +178,19 @@ class TestManageEventList(TestCase):
         self.assertContains(
             response,
             self.conf_tab % (
-                'class="active"',
                 url,
-                old_conf_day.conference.conference_slug))
+                '-active',
+                old_conf_day.conference.conference_slug),
+            html=True)
         self.assertContains(
             response,
             self.conf_tab % (
-                '',
                 reverse(self.view_name,
                         urlconf="gbe.scheduling.urls",
                         args=[self.day.conference.conference_slug]),
-                self.day.conference.conference_slug))
+                '',
+                self.day.conference.conference_slug),
+            html=True)
         self.assertContains(
             response,
             old_conf_day.day.strftime(GBE_DATE_FORMAT))
@@ -288,17 +290,20 @@ class TestManageEventList(TestCase):
         self.assertContains(response, self.class_context.bid.e_title)
         self.assertContains(response, self.show_context.show.e_title)
         self.assertContains(response, self.vol_opp.event.eventitem.e_title)
-        self.assertContains(response, '<td class="bid-table">Volunteer</td>')
+        self.assertContains(response, '<td>Volunteer</td>')
         self.assertContains(response,
                             self.volunteer_context.opportunity.e_title)
+        print(response.content)
         self.assertContains(
             response,
-            '<a href="%s" data-toggle="tooltip" title="Edit">%s</a>' % (
+            ('<a href="%s" class="gbe-table-link" data-toggle="tooltip" ' +
+             'title="Edit">%s</a>') % (
                 reverse('edit_event',
                         urlconf='gbe.scheduling.urls',
                         args=[self.day.conference.conference_slug,
                               self.volunteer_context.sched_event.pk]),
-                self.volunteer_context.event.e_title))
+                self.volunteer_context.event.e_title),
+             html=True)
         for value in range(0, 2):
             self.assert_visible_input_selected(
                 response,
@@ -374,11 +379,13 @@ class TestManageEventList(TestCase):
         self.assertContains(response, self.vol_opp.event.eventitem.e_title)
         self.assertContains(
             response,
-            '<a href="%s" data-toggle="tooltip" title="Edit">%s</a>' % (
+            ('<a href="%s" class="gbe-table-link" data-toggle="tooltip" ' +
+             'title="Edit">%s</a>') % (
                 reverse("edit_staff",
                         urlconf="gbe.scheduling.urls",
                         args=[self.staff_context.area.pk]),
-                self.staff_context.area.slug))
+                self.staff_context.area.slug),
+             html=True)
         index = 0
         for area in StaffArea.objects.filter(
                 conference=self.day.conference).order_by('title'):

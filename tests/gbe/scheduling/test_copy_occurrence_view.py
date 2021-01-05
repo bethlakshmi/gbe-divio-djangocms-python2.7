@@ -482,7 +482,7 @@ class TestCopyOccurrence(TestGBE):
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
-        self.assertNotContains(response, "bid-table approval_needed")
+        self.assertNotContains(response, "approval_needed")
 
     def test_copy_child_not_like_parent(self):
         another_day = ConferenceDayFactory()

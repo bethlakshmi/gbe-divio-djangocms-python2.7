@@ -80,7 +80,7 @@ class TestDeleteSchedule(TestCase):
                              redirect_to)
         self.assertNotContains(
             response,
-            '<td class="bid-table">%s</td>' % self.context.bid.e_title)
+            '<td>%s</td>' % self.context.bid.e_title)
         self.assertContains(response, "This event has been deleted.")
         check_class = Class.objects.get(pk=self.context.bid.pk)
         self.assertFalse(check_class.visible)
@@ -100,7 +100,7 @@ class TestDeleteSchedule(TestCase):
             follow=True)
         self.assertContains(
             response,
-            '<td class="bid-table">%s</td>' % self.context.bid.e_title)
+            '<td>%s</td>' % self.context.bid.e_title)
         self.assertContains(response, "This event has been deleted.")
         self.assertTrue(Event.objects.filter(pk=second_class.pk).exists())
         check_class = Class.objects.get(pk=self.context.bid.pk)

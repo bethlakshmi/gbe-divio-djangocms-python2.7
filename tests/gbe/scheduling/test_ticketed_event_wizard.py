@@ -200,8 +200,8 @@ class TestTicketedEventWizard(TestScheduling):
             )
         self.assertContains(
             response,
-            '<tr class="bid-table success">\n       ' +
-            '<td class="bid-table">%s</td>' % data['e_title'])
+            '<tr class="gbe-table-row gbe-table-success">\n       ' +
+            '<td>%s</td>' % data['e_title'])
 
     def test_create_master_w_staffing(self):
         login_as(self.privileged_user, self)
@@ -234,8 +234,8 @@ class TestTicketedEventWizard(TestScheduling):
             )
         self.assertContains(
             response,
-            '<tr class="bid-table success">\n       ' +
-            '<td class="bid-table">%s</td>' % data['e_title'])
+            '<tr class="gbe-table-row gbe-table-success">\n       ' +
+            '<td>%s</td>' % data['e_title'])
 
     def test_create_dropin_w_staffing(self):
         self.url = reverse(
@@ -278,8 +278,8 @@ class TestTicketedEventWizard(TestScheduling):
             )
         self.assertContains(
             response,
-            '<tr class="bid-table success">\n       ' +
-            '<td class="bid-table">%s</td>' % data['e_title'])
+            '<tr class="gbe-table-row gbe-table-success">\n       ' +
+            '<td>%s</td>' % data['e_title'])
 
     def test_create_show_w_staffing(self):
         self.url = reverse(
