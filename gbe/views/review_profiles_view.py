@@ -5,6 +5,7 @@ from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import Profile
 from gbe.functions import validate_perms
+from settings import GBE_TABLE_FORMAT
 
 
 @login_required
@@ -28,10 +29,14 @@ def ReviewProfilesView(request):
     rows = []
     for aprofile in profiles:
         bid_row = {}
+        last_login = "NEVER LOGGED IN"
+        if aprofile.user_object.last_login:
+            last_login = aprofile.user_object.last_login.strftime(
+                GBE_TABLE_FORMAT)
         bid_row['profile'] = (
             aprofile.display_name,
             aprofile.user_object.username,
-            aprofile.user_object.last_login)
+            last_login)
         bid_row['contact_info'] = {
             'contact_email': aprofile.user_object.email,
             'purchase_email': aprofile.purchase_email,
@@ -70,4 +75,4 @@ def ReviewProfilesView(request):
         rows.append(bid_row)
 
     return render(request, 'gbe/profile_review.tmpl',
-                  {'header': header, 'rows': rows})
+                  {'columns': header, 'rows': rows, 'order': 0})
