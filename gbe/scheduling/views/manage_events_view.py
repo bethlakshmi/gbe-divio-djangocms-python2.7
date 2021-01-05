@@ -99,8 +99,7 @@ class ManageEventsView(View):
                                     args=[occurrence.id])
             display_item = {
                 'id': occurrence.id,
-                'sort_start': occurrence.start_time,
-                'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
+                'start':  occurrence.start_time,
                 'title': occurrence.eventitem.event.e_title,
                 'location': occurrence.location,
                 'duration': occurrence.eventitem.event.duration.total_seconds(
@@ -141,10 +140,7 @@ class ManageEventsView(View):
             for area in StaffArea.objects.filter(slug__in=occurrence.labels,
                                                  conference=self.conference):
                 display_item['staff_areas'] += [area]
-
             display_list += [display_item]
-
-        display_list.sort(key=lambda k: k['sort_start'])
         return display_list
 
     def get_filtered_occurrences(self, request, select_form):
@@ -198,6 +194,7 @@ class ManageEventsView(View):
                 'Current Volunteer',
                 'Max Volunteer',
                 'Action']
+            context['order'] = 4
         return render(request, self.template, context)
 
     @method_decorator(login_required)

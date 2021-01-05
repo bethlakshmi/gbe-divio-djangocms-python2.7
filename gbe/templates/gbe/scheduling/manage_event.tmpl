@@ -66,7 +66,7 @@
        <td>{% for area in occurrence.staff_areas %}
         {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}"  class="gbe-table-link" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</td>
        <td>{{ occurrence.location}}</td>
-       <td>{{ occurrence.start}}</td>
+       <td>{{ occurrence.start|date:"M j, Y, g:i A" }}</td>
        <td>{{ occurrence.duration }}</td>
        <td>{{ occurrence.type }}</td>
        <td class="{% if occurrence.approval_needed%}approval_needed{%endif%}">{% if occurrence.current_acts %}{{ occurrence.current_acts }} acts{% else %}{{ occurrence.current_volunteer }}{% endif %}</td>

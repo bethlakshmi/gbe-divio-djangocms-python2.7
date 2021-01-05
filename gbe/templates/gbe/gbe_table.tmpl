@@ -55,8 +55,8 @@
     var table = $('#gbe-table').DataTable({
       "paging": false,
       "columnDefs": [
-        { "width": "5%", "targets": 0 }
-      ]
+        { "width": "5%", "targets": 0 }]{% if order %},
+      "order": [[ 3, "desc" ]]{% endif %}
     } );
     $('button.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
