@@ -22,16 +22,30 @@
     {% for column in columns %}
     <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ forloop.counter0 }}">{{column}}</button>
     {% endfor %}
+    {% for vertical_column in vertical_columns %}
+      {% if vertical_column|length > 15 %}
+        <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ columns|length|add:forloop.counter0 }}" title="{{ vertical_column }}">
+        {{ vertical_column|truncatechars:15 }}</button>
+      {% else %}
+        <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ columns|length|add:forloop.counter0 }}">{{ vertical_column }}</button>
+      {% endif %}
+    </button>
+    {% endfor %}
   </div>
   <br/>
   <table id="gbe-table" cellspacing="0" width="100%">
     <thead>
       <tr class="gbe-table-header">
     {% for column in columns %}
-          <th>{{column}}</th>{% endfor %}
+      <th>{{column}}</th>{% endfor %}
     {% for vertical_column in vertical_columns %}
       <th class="rotate-review"><div><span>
-      {{ vertical_column }}
+      {% if vertical_column|length > 15 %}
+      <a href="#" data-toggle="tooltip" title="{{ vertical_column }}">
+        {{ vertical_column|truncatechars:15 }}</a>
+      {% else %}
+        {{ vertical_column }}
+      {% endif %}
       </span></div></th>{% endfor %}
     {% for column in last_columns %}
           <th>{{column}}</th>{% endfor %}
@@ -43,7 +57,12 @@
           <th>{{column}}</th>{% endfor %}
     {% for vertical_column in vertical_columns %}
       <th class="rotate-review"><div><span>
-      {{ vertical_column }}
+      {% if vertical_column|length > 15 %}
+      <a href="#" data-toggle="tooltip" title="{{ vertical_column }}">
+        {{ vertical_column|truncatechars:15 }}</a>
+      {% else %}
+        {{ vertical_column }}
+      {% endif %}
       </span></div></th>{% endfor %}
     {% for column in last_columns %}
           <th>{{column}}</th>{% endfor %}

@@ -877,7 +877,7 @@ th.rotate {
 }
 th.rotate-review {
   /* Something you can count on */
-  height: 105px;
+  height: 115px;
   white-space: nowrap;
   padding: 5px;
 }
@@ -907,7 +907,7 @@ tr.gbe-table-header > th.rotate-review > div {
   width: 10px;
 }
 th.rotate-review > div > span > a {
-  color: rgb(51, 51, 51);
+  color: inherit;
   text-decoration: none;
 }
 

@@ -1,10 +1,9 @@
 {% extends 'gbe/gbe_table.tmpl' %}
-{% load static sekizai_tags %}
 {% block title %}
    Review Bids
 {% endblock %}
 {% block before_table %}
-  <h2 class="review-title">Bid Information for {{conference}}</h2>
+  <h2 class="gbe-title">Act Bid Information for {{conference}}</h2>
   <br/>
       {% include "conference_picker.tmpl" %}
   <br/>
@@ -27,9 +26,8 @@
       {% for value in row.bid %}<td>{{ value|linebreaks }}</td>{% endfor %}
     	{% for review in row.reviews %}<td>{{ review }}</td>{% endfor %}
 	    <td>{{ row.total_average }}</td>
-      <td><div class="btn-group" role="group" aria-label="...">
-    	  <a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm" >
-           Review</a></div></td>
+      <td><a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm">
+           Review</a></td>
     </tr>
   {% endfor %}
 {% endblock %}

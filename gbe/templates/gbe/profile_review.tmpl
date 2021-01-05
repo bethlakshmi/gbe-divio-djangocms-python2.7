@@ -20,10 +20,9 @@
 	  {{ row.contact_info.phone }}
   	</td>
     <td>
-  	  <div class="btn-group" role="group" aria-label="...">
+  	  <div class="btn-group gbe-btn-group" role="group" aria-label="...">
       {%for action in row.actions %}
-	      <a href="{{ action.url }}" data-toggle="tooltip" title="{{ action.text }}">
-            <button type="button" class="btn gbe-btn-table btn-sm">
+	      <a href="{{ action.url }}" data-toggle="tooltip" title="{{ action.text }}" class="btn gbe-btn-table btn-sm">
 	      {% if action.text == 'Update' %}
 	        <i class="fas fa-edit"></i>
 	      {% elif action.text == 'Welcome Letter' %}
@@ -35,7 +34,7 @@
 	      {% elif action.text == 'Email' %}
 	        <i class="far fa-envelope"></i>
 	      {% endif %}
-	      </button></a>
+        </a>
       {%endfor%}
       </div></td>
   </tr>

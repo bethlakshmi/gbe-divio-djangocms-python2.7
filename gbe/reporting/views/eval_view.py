@@ -51,14 +51,6 @@ def eval_view(request, occurrence_id=None):
 
     response = get_eval_summary(
         labels=[conference.conference_slug, "Conference"])
-    header = ['Class',
-              'Teacher(s)',
-              'Time',
-              '# Interested',
-              '# Evaluations']
-    for question in response.questions:
-        header += [question.question]
-    header += ['Actions']
 
     display_list = []
     summary_view_data = {}
@@ -103,7 +95,15 @@ def eval_view(request, occurrence_id=None):
             'description': eval_report_explain_msg})
     return render(request,
                   'gbe/report/evals.tmpl',
-                  {'header': header,
+                  {'columns': ['Class',
+                               'Teacher(s)',
+                               'Time',
+                               '# Interested',
+                               '# Evaluations'],
+                   'vertical_columns': response.questions.values_list(
+                        'question',
+                        flat=True),
+                   'last_columns': ['Actions'],
                    'classes': display_list,
                    'questions': response.questions,
                    'summaries': summary_view_data,
