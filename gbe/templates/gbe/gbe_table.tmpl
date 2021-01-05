@@ -29,11 +29,23 @@
       <tr class="gbe-table-header">
     {% for column in columns %}
           <th>{{column}}</th>{% endfor %}
+    {% for vertical_column in vertical_columns %}
+      <th class="rotate-review"><div><span>
+      {{ vertical_column }}
+      </span></div></th>{% endfor %}
+    {% for column in last_columns %}
+          <th>{{column}}</th>{% endfor %}
       </tr>
     </thead>
     <tfoot>
       <tr class="gbe-table-header">
     {% for column in columns %}
+          <th>{{column}}</th>{% endfor %}
+    {% for vertical_column in vertical_columns %}
+      <th class="rotate-review"><div><span>
+      {{ vertical_column }}
+      </span></div></th>{% endfor %}
+    {% for column in last_columns %}
           <th>{{column}}</th>{% endfor %}
       </tr>
     </tfoot>

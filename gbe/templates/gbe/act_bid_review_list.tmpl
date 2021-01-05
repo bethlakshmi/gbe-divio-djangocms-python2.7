@@ -1,18 +1,9 @@
-{% extends 'base.tmpl' %}
+{% extends 'gbe/gbe_table.tmpl' %}
 {% load static sekizai_tags %}
-
 {% block title %}
    Review Bids
 {% endblock %}
-
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
-{% endblock %}
-{% block content %}
-
-
-  <p class="vanilla">{{title}} </p>
+{% block before_table %}
   <h2 class="review-title">Bid Information for {{conference}}</h2>
   <br/>
       {% include "conference_picker.tmpl" %}
@@ -32,69 +23,16 @@
     {% endfor %}
   </div>
   <br/>
-  <table id="bid_review" class="order-column table table-bordered" cellspacing="0" width="100%">
-    <thead>
-      <tr class="bid-table">
-      {% for header_item in header %}
-        <th class="bid-table">{{ header_item }}</th>
-      {% endfor %}
-      {% for category in categories %}
-	<th class="bid-table rotate-review"><div class="act-header"><span>
-	{{ category.category }}
-	</span></div></th>{% endfor %}
-        <th class="bid-table rotate-review"><div class="act-header"><span>Average</span></div></th>
-        <th class="bid-table rotate-review"><div class="act-header"><span>Action</span></div></th>
-      </tr>
-    </thead>
-    <tfoot>
-      <tr class="bid-table">
-      {% for header_item in header %}
-        <th class="bid-table">{{ header_item }}</th>
-      {% endfor %}
-      {% for category in categories %}
-        <th class="bid-table rotate-review"><div><span>
-	{{ category.category }}
-	</span></div></th>
-      {% endfor %}
-        <th class="bid-table rotate-review"><div><span>Average</span></div></th>
-        <th class="bid-table rotate-review"><div><span>Action</span></div></th>
-      </tr>
-    </tfoot>
-    <tbody>
-    {% for row in rows %}
-      <tr class="bid-table {{ row.status }}">
-        {% for value in row.bid %}<td class="bid-table">
-          {{ value|linebreaks }}
-        </td>{% endfor %}
- 	{% for review in row.reviews %}
-          <td class="bid-table">{{ review }}</td>{% endfor %}
-	<td class="bid-table">{{ row.total_average }}</td>
-        <td class="bid-table">
-	 <div class="btn-group" role="group" aria-label="...">
-	  <a href="{{ row.review_url }}" role="button" class="btn btn-default">
+{% endblock %}
+{% block tbody %}
+  {% for row in rows %}
+    <tr class="gbe-table-row {{ row.status }}">
+      {% for value in row.bid %}<td>{{ value|linebreaks }}</td>{% endfor %}
+    	{% for review in row.reviews %}<td>{{ review }}</td>{% endfor %}
+	    <td>{{ row.total_average }}</td>
+      <td><div class="btn-group" role="group" aria-label="...">
+    	  <a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm" >
            Review</a></div></td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-{% addtoblock "js" %}
-<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-  <script>
-  $(document).ready(function() {
-    var table = $('#bid_review').DataTable({
-        "paging": false,
-        "columnDefs": [{"targets": [ 2 ], "visible": false },]});
-
-    $('a.toggle-vis').on( 'click', function (e) {
-        e.preventDefault();
-
-        // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
-
-        // Toggle the visibility
-        column.visible( ! column.visible() );
-    } );
-} );
-  </script>
-{% endaddtoblock %}
+    </tr>
+  {% endfor %}
 {% endblock %}

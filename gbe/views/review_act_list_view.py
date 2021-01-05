@@ -20,9 +20,12 @@ class ReviewActListView(ReviewBidListView):
     status_index = 3
 
     def get_context_dict(self):
-        return {'header': self.object_type().bid_review_header,
-                'categories': EvaluationCategory.objects.filter(
-                    visible=True).order_by('category'),
+        return {'columns': self.object_type().bid_review_header,
+                'vertical_columns': EvaluationCategory.objects.filter(
+                    visible=True).order_by('category').values_list(
+                    'category', flat=True),
+                'last_columns': ['Average', 'Action'],
+                'order': 0,
                 'rows': self.rows,
                 'return_link': reverse(self.bid_review_list_view_name,
                                        urlconf='gbe.urls'),

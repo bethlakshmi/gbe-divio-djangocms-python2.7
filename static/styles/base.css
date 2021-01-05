@@ -289,6 +289,9 @@ h3.readonlyform
     padding: 2px;
     vertical-align: top;
  }
+.gbe-table-header>th {
+  vertical-align: bottom;
+}
 #gbe-table-select{color:#b31900;text-decoration:underline}
 #sub-table
  {  border: 1px solid black;
@@ -888,15 +891,13 @@ tr > th.rotate-review > div {
     rotate(270deg);
   width: 10px;
 }
-tr > th.rotate-review > div.act-header {
+tr.gbe-table-header > th.rotate-review > div {
   transform: 
     /* Magic Numbers */
     translate(0px, 2px)
     /* 45 is really 360 - 45 */
     rotate(270deg);
   width: 10px;
-}
-th.rotate > div > span {
 }
 th.rotate-review > div > span > a {
   color: rgb(51, 51, 51);
