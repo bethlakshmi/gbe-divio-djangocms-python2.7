@@ -1,4 +1,5 @@
 import pytz
+from settings import GBE_TABLE_FORMAT
 from django.db.models import (
     BooleanField,
     CASCADE,
@@ -22,7 +23,6 @@ from gbe_forms_text import (
     vendor_featured_options,
 )
 from filer.fields.image import FilerImageField
-from django.utils.formats import date_format
 
 
 class Vendor(Biddable):
@@ -92,7 +92,7 @@ class Vendor(Biddable):
         return [self.profile.display_name,
                 self.b_title,
                 self.website,
-                date_format(self.updated_at, 'DATETIME_FORMAT'),
+                self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance]
 
     @property
