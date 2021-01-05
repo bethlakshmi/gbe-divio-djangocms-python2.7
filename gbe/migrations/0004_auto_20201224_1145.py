@@ -83,7 +83,7 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(71, 31, 31, 1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(71, 31, 31, 1)'),
-                         ('border-color', 'rgba(71, 31, 31, 1)'),]},
+                         ('border-color', 'rgba(71, 31, 31, 1)'), ]},
     {
             'selector': '.gbe-btn-table',
             'pseudo_class': '',
@@ -144,7 +144,7 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(71, 31, 31, 1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(71, 31, 31, 1)'),
-                         ('border-color', 'rgba(71, 31, 31, 1)'),]},
+                         ('border-color', 'rgba(71, 31, 31, 1)'), ]},
     {
             'selector': '.gbe-btn-secondary',
             'pseudo_class': 'hover',
@@ -181,7 +181,7 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(88,71,73,1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(149,120,123,1)'),
-                         ('border-color', 'rgba(88,71,73,1)'),]},
+                         ('border-color', 'rgba(88,71,73,1)'), ]},
     {
             'selector': 'input[type=search]',
             'pseudo_class': '',
@@ -191,7 +191,7 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(223,180,185,1)'),
                          ('color', 'rgba(0,0,0,1)'),
                          ('background-color', 'rgba(255,255,255,1)'),
-                         ('border-color', 'rgba(200,200,200,1)'),]},
+                         ('border-color', 'rgba(200,200,200,1)'), ]},
     {
             'selector': '.gbe-btn-light',
             'pseudo_class': 'hover',
@@ -210,7 +210,7 @@ init_values = [
             'prop_val': [('background-color', 'rgba(248, 249, 250, 1)'),
                          ('border-color', 'rgba(175,176,177,1)'),
                          ('color', 'rgba(33, 37, 41, 1)')]},
-     {
+    {
             'selector': '.gbe-form-error',
             'pseudo_class': '',
             'description': '''Text that informs user of a form error or a
@@ -408,7 +408,8 @@ init_values = [
     {
             'selector': '.active>#gbe_header_menu',
             'pseudo_class': '',
-            'description': 'Currenty active navbar menu item, matches panel of content.',
+            'description': '''Currenty active navbar menu item, matches panel
+            of content.''',
             'target_element': 'a',
             'usage': 'Navbar',
             'prop_val': [('background-color', 'rgba(235, 235, 235, 1)'),
@@ -438,7 +439,8 @@ init_values = [
     {
             'selector': '#gbe_dropdown',
             'pseudo_class': 'focus',
-            'description': 'Dropdown menu text, on focus (selected but not currently moused over)',
+            'description': '''Dropdown menu text, on focus (selected but not
+            currently moused over)''',
             'target_element': 'a',
             'usage': 'Navbar',
             'prop_val': [('color', 'rgba(233, 250, 163, 1)'),
@@ -446,18 +448,20 @@ init_values = [
     {
             'selector': '.gbe-panel',
             'pseudo_class': '',
-            'description': 'top level panel on every page, all content is inside',
+            'description': '''top level panel on every page, all content is
+            inside''',
             'target_element': 'div',
             'usage': 'General',
             'prop_val': [('background-color', 'rgba(235, 235, 235, 1)'),
                          ('border-color', 'rgba(221, 221, 221, 1)')]},
     {
-            'selector': '.gbe-tab-active, .gbe-tab-active:hover, .gbe-tab-area',
-            'pseudo_class': '',
-            'description': 'Background of the active tab and everything "on" it.',
-            'target_element': 'div',
-            'usage': 'Table',
-            'prop_val': [('background-color', 'rgba(221, 221, 221, 1)')]},
+        'selector': '.gbe-tab-active, .gbe-tab-active:hover, .gbe-tab-area',
+        'pseudo_class': '',
+        'description': '''Background of the active tab and everything
+        "on" it.''',
+        'target_element': 'div',
+        'usage': 'Table',
+        'prop_val': [('background-color', 'rgba(221, 221, 221, 1)')]},
     {
             'selector': '.gbe-tab-active, .gbe-tab-active:hover',
             'pseudo_class': '',

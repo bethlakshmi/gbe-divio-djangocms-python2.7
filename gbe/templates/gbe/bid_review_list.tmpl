@@ -29,25 +29,7 @@
           </td>
         {% endif %}
           <td><a href="{{ row.review_url }}" class="gbe-table-link">
-	        {% if row.action1 %}
-	          {{ row.action1 }}
-	        {% else %}
-	          Review
-	        {% endif %}</a>
-          {% if row.edit_url %}
-            <br><a href="{{ row.edit_url }}" class="gbe-table-link">
-		        {% if row.action2 %}{{ row.action2 }}{% else %}
-	  	      Edit{% endif %}</a>
-          {% endif %}
-          {% if row.delete_url %}
-            <br><a href="{{ row.delete_url }}" class="gbe-table-link">
-	        	{% if row.action3 %}{{ row.action3 }}{% else %}
-        		Delete{% endif %}</a>{% endif %}
-          {%if row.assign_url%}
-            <br><a href="{{ row.assign_url }}">
-            {% if row.action4 %}{{ row.action4 }}{% else %}
-           	Assign{% endif %}</a>{% endif %}
-          </td>
+	          Review</a></td>
       </tr>
     {% endfor %}
 {% endblock %}

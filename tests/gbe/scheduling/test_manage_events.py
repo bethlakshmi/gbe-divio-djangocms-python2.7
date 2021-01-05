@@ -34,8 +34,8 @@ from datetime import (
 
 class TestManageEventList(TestCase):
     view_name = 'manage_event_list'
-    conf_tab = ('<li role="presentation"><a href="%s?" class="gbe-tab%s">' +
-        '%s</a></li>')
+    conf_tab = (
+        '<li role="presentation"><a href="%s?" class="gbe-tab%s">%s</a></li>')
 
     def setUp(self):
         self.client = Client()
@@ -303,7 +303,7 @@ class TestManageEventList(TestCase):
                         args=[self.day.conference.conference_slug,
                               self.volunteer_context.sched_event.pk]),
                 self.volunteer_context.event.e_title),
-             html=True)
+            html=True)
         for value in range(0, 2):
             self.assert_visible_input_selected(
                 response,
@@ -385,7 +385,7 @@ class TestManageEventList(TestCase):
                         urlconf="gbe.scheduling.urls",
                         args=[self.staff_context.area.pk]),
                 self.staff_context.area.slug),
-             html=True)
+            html=True)
         index = 0
         for area in StaffArea.objects.filter(
                 conference=self.day.conference).order_by('title'):

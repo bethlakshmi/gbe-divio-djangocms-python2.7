@@ -16,9 +16,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StyleProperty',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True,
+                                        serialize=False,
+                                        verbose_name='ID')),
                 ('style_property', models.CharField(max_length=300)),
-                ('value_type', models.CharField(choices=[('color', 'color')], default='color', max_length=128)),
+                ('value_type', models.CharField(choices=[('color', 'color')],
+                                                default='color',
+                                                max_length=128)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
@@ -30,10 +35,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StyleSelector',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True,
+                                        serialize=False,
+                                        verbose_name='ID')),
                 ('selector', models.CharField(max_length=300)),
                 ('description', models.TextField(blank=True)),
-                ('pseudo_class', models.CharField(blank=True, max_length=128, null=True)),
+                ('pseudo_class', models.CharField(blank=True,
+                                                  max_length=128,
+                                                  null=True)),
                 ('target_element_usage', models.CharField(max_length=100)),
                 ('used_for', models.CharField(max_length=100)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
@@ -46,9 +56,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StyleVersion',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True,
+                                        serialize=False,
+                                        verbose_name='ID')),
                 ('name', models.CharField(max_length=128)),
-                ('number', models.DecimalField(decimal_places=3, max_digits=12, validators=[django.core.validators.MinValueValidator(Decimal('0.00'))])),
+                ('number', models.DecimalField(
+                    decimal_places=3,
+                    max_digits=12,
+                    validators=[django.core.validators.MinValueValidator(
+                        Decimal('0.00'))])),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('currently_live', models.BooleanField(default=False)),
@@ -62,10 +79,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StyleValue',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True,
+                                        serialize=False,
+                                        verbose_name='ID')),
                 ('value', models.CharField(max_length=200)),
-                ('style_property', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gbe.StyleProperty')),
-                ('style_version', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gbe.StyleVersion')),
+                ('style_property', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='gbe.StyleProperty')),
+                ('style_version', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='gbe.StyleVersion')),
             ],
             options={
                 'ordering': ['style_version', 'style_property'],
@@ -73,19 +97,27 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='styleselector',
-            constraint=models.UniqueConstraint(fields=('selector', 'pseudo_class'), name='unique_selector'),
+            constraint=models.UniqueConstraint(
+                fields=('selector', 'pseudo_class'),
+                name='unique_selector'),
         ),
         migrations.AddField(
             model_name='styleproperty',
             name='selector',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gbe.StyleSelector'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='gbe.StyleSelector'),
         ),
         migrations.AddConstraint(
             model_name='stylevalue',
-            constraint=models.UniqueConstraint(fields=('style_property', 'style_version'), name='unique_value'),
+            constraint=models.UniqueConstraint(
+                fields=('style_property', 'style_version'),
+                name='unique_value'),
         ),
         migrations.AddConstraint(
             model_name='styleproperty',
-            constraint=models.UniqueConstraint(fields=('selector', 'style_property'), name='unique_property'),
+            constraint=models.UniqueConstraint(
+                fields=('selector', 'style_property'),
+                name='unique_property'),
         ),
     ]

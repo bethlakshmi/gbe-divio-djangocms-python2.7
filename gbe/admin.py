@@ -185,6 +185,7 @@ class EvalCategoryAdmin(admin.ModelAdmin):
                     'help_text')
     list_filter = ['visible', ]
 
+
 class StyleSelectorAdmin(ImportExportActionModelAdmin):
     list_display = (
         'pk',

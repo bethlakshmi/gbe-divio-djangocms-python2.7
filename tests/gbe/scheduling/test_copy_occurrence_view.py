@@ -265,7 +265,11 @@ class TestCopyOccurrence(TestGBE):
         self.assertContains(
             response,
             '<option value="%d" selected>' % another_day.pk)
-        self.assert_hidden_value(response, "id_room", "room", self.context.room.pk)
+        self.assert_hidden_value(
+            response,
+            "id_room",
+            "room",
+            self.context.room.pk)
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
             show_context.opportunity.e_title,
