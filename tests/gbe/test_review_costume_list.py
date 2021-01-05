@@ -96,4 +96,4 @@ class TestReviewCostumeList(TestCase):
         response = self.client.get(
             url,
             data={'conf_slug': self.conference.conference_slug})
-        self.assertContains(response, 'bid-table danger')
+        self.assertContains(response, 'gbe-table-row gbe-table-danger')

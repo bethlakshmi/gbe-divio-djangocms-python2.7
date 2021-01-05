@@ -15,4 +15,5 @@ class ReviewClassListView(ReviewBidListView):
                 'return_link': reverse(self.bid_review_list_view_name,
                                        urlconf='gbe.urls'),
                 'conference_slugs': self.conference_slugs,
-                'conference': self.conference}
+                'conference': self.conference,
+                'order': 0}
