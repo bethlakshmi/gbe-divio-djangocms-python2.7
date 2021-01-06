@@ -27,11 +27,10 @@ from gbe.scheduling.views.functions import (
 def eval_view(request, occurrence_id=None):
     details = None
     reviewer = validate_perms(request, ('Class Coordinator', ))
+    conference = None
     if request.GET and request.GET.get('conf_slug'):
         conference = get_conference_by_slug(request.GET['conf_slug'])
-    else:
-        conference = get_current_conference()
-    if occurrence_id:
+    if occurrence_id and not conference:
         detail_response = get_eval_info(occurrence_id=int(occurrence_id))
         show_general_status(request, detail_response, "EvaluationDetailView")
         if detail_response.occurrences and len(
@@ -48,6 +47,12 @@ def eval_view(request, occurrence_id=None):
                 'questions': detail_response.questions,
                 'evaluations': detail_response.answers,
             }
+            if not conference:
+                conference = detail_response.occurrences[
+                    0].eventitem.event.e_conference
+    if not conference:
+        conference = get_current_conference()
+
 
     response = get_eval_summary(
         labels=[conference.conference_slug, "Conference"])
