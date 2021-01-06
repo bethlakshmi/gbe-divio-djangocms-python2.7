@@ -15,24 +15,6 @@ ul li {
    Button Style
    ========================================================================== */
 
-.btn {
-  padding: 10px 40px;
-  border-radius: 50px;
-  color: #fff;
-  font-size: 15px;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 400;
-  text-transform: uppercase;
-  -webkit-transition: all 0.3s linear;
-  -moz-transition: all 0.3s linear;
-  -o-transition: all 0.3s linear;
-  transition: all 0.3s linear;
-}
-.btn:focus {
-  color: #fff;
-  box-shadow: none;
-  outline: none;
-}
 .btn-common {
   color: #FFF;
   background: #ee0e0a;
@@ -54,16 +36,6 @@ ul li {
 }
 .btn-border:focus {
   color: #2d2d2d !important;
-}
-.btn-lg {
-  font-size: 15px;
-  padding: 14px 40px;
-  text-transform: uppercase;
-}
-.btn-small {
-  padding: 11px 25px;
-  font-size: 12px;
-  text-transform: uppercase;
 }
 .btn.disabled,
 .btn[disabled],

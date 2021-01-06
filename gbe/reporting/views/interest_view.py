@@ -51,8 +51,6 @@ def interest_view(request):
 
         display_item = {
             'id': occurrence.id,
-            'sort_start': occurrence.start_time,
-            'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
             'title': class_event.e_title,
             'location': occurrence.location,
             'teachers': teachers,
@@ -66,7 +64,6 @@ def interest_view(request):
                 args=[class_event.eventitem_id])}
         display_list += [display_item]
 
-    display_list.sort(key=lambda k: k['sort_start'])
     user_message = UserMessage.objects.get_or_create(
         view="InterestView",
         code="ABOUT_INTERESTED",
@@ -75,7 +72,7 @@ def interest_view(request):
             'description': interested_report_explain_msg})
     return render(request,
                   'gbe/report/interest.tmpl',
-                  {'header': header,
+                  {'columns': header,
                    'classes': display_list,
                    'conference_slugs': conference_slugs(),
                    'conference': conference,

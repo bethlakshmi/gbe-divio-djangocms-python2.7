@@ -2,10 +2,10 @@
 {% if details %}
   <div class="modal" id="{{details.occurrence.pk}}_eval_modal">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content gbe-modal-content">
         <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">{{details.title}} - Evaluations</h4>
+        <div class="modal-header gbe-modal-header">
+          <h4 class="gbe-title">{{details.title}} - Evaluations</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <!-- Modal body -->
@@ -66,8 +66,8 @@
     </tbody>
   </table></div></div>        
         <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <div class="modal-footer gbe-modal-header">
+          <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
         </div>
         
       </div>

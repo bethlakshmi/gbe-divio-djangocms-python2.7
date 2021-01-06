@@ -12,13 +12,14 @@ body {
 }
 .gbe-title {
   font-family: 'Vast Shadow', cursive;
-  font-size: 24px;
   letter-spacing: normal;
   font-weight: normal;
   text-transform: none;
   font-style: normal;
   vertical-align: middle;
 }
+h2.gbe-title {font-size: 24px;}
+h4.gbe-title {font-size: 18px;}
 
 /* Used in django CMS provided styles, do not delete */
 .gbe-subtitle, .subtitle{
@@ -1211,3 +1212,6 @@ div.hierarchy-1
   padding: 15px;
 }
 /* end tabs */
+.close{font-size:21px;color:inherit;}
+.close:focus,.close:hover{color:inherit;text-decoration:none;outline:none; ;}
+

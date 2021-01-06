@@ -507,7 +507,41 @@ init_values = [
             'usage': 'General',
             'prop_val': [('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(0,0,0,0)'),
-                         ('border-color', 'rgba(0,0,0,0)')]}]
+                         ('border-color', 'rgba(0,0,0,0)')]},
+        {
+            'selector': '.gbe-modal-content',
+            'pseudo_class': '',
+            'description': 'Background of modal panes.',
+            'target_element': 'div',
+            'usage': 'Modal',
+            'prop_val': [('color', 'rgba(0,0,0,1)'),
+                         ('background-color', 'rgba(235, 235, 235, 1)'),
+                         ('border-color', 'rgba(0,0,0,.2)')]},
+        {
+            'selector': '.gbe-modal-header',
+            'pseudo_class': '',
+            'description': 'Header and footer of modal.',
+            'target_element': 'div',
+            'usage': 'Modal',
+            'prop_val': [('color', 'rgba(0,0,0,1)'),
+                         ('background-color', 'rgba(216, 216, 216, 1)'),
+                         ('border-color', 'rgba(229, 229, 229, 1)')]},
+        {
+            'selector': '.gbe-link',
+            'pseudo_class': '',
+            'description': 'Links within modal panes.',
+            'target_element': 'a',
+            'usage': 'Modal',
+            'prop_val': [('color', 'rgba(51, 122, 183, 1)'),
+                         ('text-decoration-color', 'rgba(51, 122, 183, 1)')]},
+        {
+            'selector': '.gbe-link',
+            'pseudo_class': 'hover',
+            'description': 'Links within modal panes - on hover',
+            'target_element': 'a',
+            'usage': 'Modal',
+            'prop_val': [('color', 'rgba(35, 82, 124, 1)'),
+                         ('text-decoration-color', 'rgba(35, 82, 124, 1)')]},]
 
 
 def initialize_style(apps, schema_editor):
