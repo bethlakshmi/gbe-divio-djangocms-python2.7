@@ -364,10 +364,11 @@ class TestManageWorker(TestCase):
                         args=[self.context.conference.conference_slug,
                               self.volunteer_opp.pk]),
                 self.alloc.pk))
-        assert_option_state(response,
-                            str(self.volunteer.pk),
-                            str(self.volunteer),
-                            False)
+        self.assertNotContains(
+            response,
+            '<option value="%d" selected>%s</option>' % (
+                self.volunteer.pk,
+                str(self.volunteer)))
         self.assertNotContains(
             response,
             '<input type="hidden" name="alloc_id" value="' +

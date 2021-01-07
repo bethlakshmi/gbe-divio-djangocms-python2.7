@@ -52,7 +52,6 @@ class TestCreateTroupe(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, str(contact))
         self.assertNotContains(response, str(inactive))
 
 
