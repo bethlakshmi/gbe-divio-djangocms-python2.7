@@ -1061,16 +1061,8 @@ input#id_duration, input#id_new_opp-duration, input#id_new_slot-duration
   width: 70px
 }
 
-span.opps-errors > ul > li
-{
-  list-style-type: none;
-  color: red;
-}
-
-span.opps-errors > ul 
-{
-  padding: 0px;
-}
+span.opps-errors > ul > li{list-style-type: none;}
+span.opps-errors > ul {padding: 0px;}
 
 .calendar_table .cal_body TH
 {
