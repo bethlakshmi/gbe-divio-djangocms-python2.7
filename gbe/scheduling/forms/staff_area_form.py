@@ -10,6 +10,7 @@ from gbe.models import (
     StaffArea,
 )
 from gbe.forms.common_queries import visible_profiles
+from dal import autocomplete
 
 
 class StaffAreaForm(ModelForm):
@@ -21,7 +22,9 @@ class StaffAreaForm(ModelForm):
         widget=Textarea(attrs={'id': 'admin-tiny-mce'}))
     staff_lead = ModelChoiceField(
         queryset=visible_profiles,
-        required=False)
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='profile-autocomplete'))
 
     class Meta:
         model = StaffArea
