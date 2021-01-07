@@ -116,6 +116,13 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(254, 255, 185, 1)')]},
     {
+            'selector': '#sub-table>table>tbody>tr>td',
+            'pseudo_class': '',
+            'description': '''Sub table within a table''',
+            'target_element': 'td',
+            'usage': 'Table',
+            'prop_val': [('border-color', 'rgba(50,50,50,1)')]},
+    {
             'selector': '.paypal-button>form>input',
             'pseudo_class': 'hover',
             'description': 'Buttons do the main work flow.',

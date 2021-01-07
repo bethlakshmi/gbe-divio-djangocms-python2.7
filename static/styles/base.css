@@ -18,9 +18,12 @@ body {
   font-style: normal;
   vertical-align: middle;
 }
-h2.gbe-title {font-size: 24px;}
-h4.gbe-title {font-size: 18px;}
-
+h1.gbe-title{font-size:36px}
+h2.gbe-title{font-size:30px}
+h3.gbe-title{font-size:24px}
+h4.gbe-title{font-size:18px}
+h5.gbe-title{font-size:14px}
+h6.gbe-title{font-size:12px}
 /* Used in django CMS provided styles, do not delete */
 .gbe-subtitle, .subtitle{
   font-family: 'Vast Shadow', cursive;
@@ -301,11 +304,8 @@ h3.readonlyform
   vertical-align: bottom;
 }
 #gbe-table-select{color:#b31900;text-decoration:underline}
-#sub-table
- {  border: 1px solid black;
-    border-collapse:collapse;
-    padding: 0px;
-    vertical-align: top;}
+#sub-table{padding: 0px;}
+#sub-table>table>tbody>tr>td{border: 1px solid;}
 #clear-row {
   background-color: transparent;
 }

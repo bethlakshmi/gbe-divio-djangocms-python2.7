@@ -87,7 +87,7 @@
       "paging": false,
       "columnDefs": [
         { "width": "5%", "targets": 0 }]{% if order %},
-      "order": [[ 3, "desc" ]]{% endif %}
+      "order": [[ {{order}}, "desc" ]]{% endif %}
     } );
     $('button.toggle-vis').on( 'click', function (e) {
         e.preventDefault();

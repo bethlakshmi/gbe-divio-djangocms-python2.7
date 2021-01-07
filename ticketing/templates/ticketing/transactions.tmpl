@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
 {% endblock %}
 {% block content %}
-<div class="container card"><div class="row card-body">
+<div class="container card"><div class="row card-body gbe-bg-light">
 <div class="col-8">
 The ticketing system was last synchronized at {{sync_time|date:"D d M Y"}} {{sync_time|time:"H:i:s"}} {{sync_time|date:"T"}}.
 <br>
@@ -33,80 +33,74 @@ Results:  {{count}} new transactions were added to the system.
 <form method="POST" action="{% url 'ticketing:transactions' %}" enctype="multipart/form-data">
 {% csrf_token %}
     <input type="hidden" name="Sync" value="1">
-    <button type="submit" class="btn btn-primary">Synchronize with Brown Paper Tickets</button>
+    <button type="submit" class="btn gbe-btn-primary">Synchronize with Brown Paper Tickets</button>
 </form>
 </div></div></div><br><br>
 <div class="container review">
 {% include "conference_tabs.tmpl" %} 
- <div class="scheduling-area">
+ <div class="gbe-tab-area">
  	{{intro | safe}}
 <br><br>
-<div class="btn-group btn-group-toggle">
-    <a class="btn {% ifequal view_format "ticket" %}btn-secondary disabled{% else %}btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
-    <a class="btn {% ifequal view_format "user" %}btn-secondary disabled{% else %}btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
+<div class="btn-group gbe-btn-group btn-group-toggle">
+    <a class="btn {% ifequal view_format "ticket" %}gbe-btn-secondary disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
+    <a class="btn {% ifequal view_format "user" %}gbe-btn-secondary disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
 </div>
 {% ifequal view_format "ticket" %}
 {% for item in transactions %}
 {% ifchanged item.ticket_item.bpt_event %}
 {% if not forloop.first %}</tbody></table>{% endif %}
-<h3>{{item.ticket_item.bpt_event.title }} ({{item.ticket_item.bpt_event.bpt_event_id }})</h3>
+<br><br><h3 class="gbe-title">{{item.ticket_item.bpt_event.title }} ({{item.ticket_item.bpt_event.bpt_event_id }})</h3>
 {% include 'ticketing/event_details.tmpl' with event=item.ticket_item.bpt_event %}
-<table id="" class="order-column table table-bordered datatable" cellspacing="0" width="100%">
+<table id="" class="datatable" cellspacing="0" width="100%">
   <thead>
-  <tr class="bid-table">
-    <th class="bid-table">User</th>
-    <th class="bid-table">Purchase Email</th>
-    <th class="bid-table">Source</th>
-    <th class="bid-table">Ticket</th>
-    <th class="bid-table">Amount</th>
-    <th class="bid-table">Purchase Date</th>
-    <th class="bid-table">Invoice</th>
-    <th class="bid-table">Action</th>
+    <tr class="gbe-table-header">
+    <th>User</th>
+    <th>Purchase Email</th>
+    <th>Source</th>
+    <th>Ticket</th>
+    <th>Amount</th>
+    <th>Purchase Date</th>
+    <th>Invoice</th>
   </tr>
   </thead>
     <tfoot>
-  <tr class="bid-table">
-    <th class="bid-table">User</th>
-    <th class="bid-table">Purchase Email</th>
-    <th class="bid-table">Source</th>
-    <th class="bid-table">Ticket</th>
-    <th class="bid-table">Amount</th>
-    <th class="bid-table">Purchase Date</th>
-    <th class="bid-table">ID</th>
-    <th class="bid-table">Action</th>
+    <tr class="gbe-table-header">
+    <th>User</th>
+    <th>Purchase Email</th>
+    <th>Source</th>
+    <th>Ticket</th>
+    <th>Amount</th>
+    <th>Purchase Date</th>
+    <th>ID</th>
   </tr>
   </tfoot>
   <tbody>
  {% endifchanged %}
-<tr class="{% if item.id in updated_transactions %}success {% elif not item.purchaser.matched_to_user.profile %}info {% endif %}bid-table">
-  <td class="bid-table">{% include "ticketing/purchaser_name.tmpl" with user=item.purchaser.matched_to_user purchaser=item.purchaser %}</td>
-  <td class="bid-table">{% include "email_crop.tmpl" with email=item.purchaser.email %}</td>
-  <td class="bid-table">{{ item.payment_source }}</td>
-  <td class="bid-table">{{ item.ticket_item.title}}{% if item.ticket_item.bpt_event.vendor_submission_event %} - Vendor{% elif item.ticket_item.bpt_event.act_submission_event %} - Act{% endif %}</td>
-  <td class="bid-table">${{ item.amount }}</td>
-  <td class="bid-table">{{ item.import_date }}</td>
-  <td class="bid-table">
+<tr class="gbe-table-row {% if item.id in updated_transactions %}gbe-table-success {% elif not item.purchaser.matched_to_user.profile %}gbe-table-info {% endif %}">
+  <td>{% include "ticketing/purchaser_name.tmpl" with user=item.purchaser.matched_to_user purchaser=item.purchaser %}</td>
+  <td>{% include "email_crop.tmpl" with email=item.purchaser.email %}</td>
+  <td>{{ item.payment_source }}</td>
+  <td>{{ item.ticket_item.title}}{% if item.ticket_item.bpt_event.vendor_submission_event %} - Vendor{% elif item.ticket_item.bpt_event.act_submission_event %} - Act{% endif %}</td>
+  <td>${{ item.amount }}</td>
+  <td>{{ item.import_date|date:"M j, Y, g:i A" }}</td>
+  <td>
   {% if item.invoice %}{{ item.invoice }}{% elif item.reference %}{{ item.reference }}{% endif %}</td>
-  <td class="bid-table" id="ticket_action">
-    <div class="btn-group" role="group" aria-label="...">Actions</div></td>
 </tr>
 {% endfor %}</tbody></table>
 {% else %}
-<table id="" class="order-column table table-bordered datatable" cellspacing="0" width="100%">
+<table id="" class="datatable" cellspacing="0" width="100%">
   <thead>
-  <tr class="bid-table">
-    <th class="bid-table">Email<br>(Username)</th>
-    <th class="bid-table">Badge Name<br>(Last, First)</th>
-    <th class="bid-table">Tickets<br>Purchase Email | # | Ticket Id | Ticket | Date</th>
-    <th class="bid-table">Action</th>
+    <tr class="gbe-table-header">
+    <th>Email<br>(Username)</th>
+    <th>Badge Name<br>(Last, First)</th>
+    <th>Tickets<br>Purchase Email | # | Ticket Id | Ticket | Date</th>
   </tr>
   </thead>
     <tfoot>
-  <tr class="bid-table">
-    <th class="bid-table">Email<br>(Username)</th>
-    <th class="bid-table">Badge Name<br>(Last, First)</th>
-    <th class="bid-table">Tickets<br>Purchase Email | # | Ticket Id | Ticket | Date</th>
-    <th class="bid-table">Action</th>
+    <tr class="gbe-table-header">
+    <th>Email<br>(Username)</th>
+    <th>Badge Name<br>(Last, First)</th>
+    <th>Tickets<br>Purchase Email | # | Ticket Id | Ticket | Date</th>
   </tr>
   </tfoot>
   <tbody>
@@ -114,27 +108,29 @@ Results:  {{count}} new transactions were added to the system.
   {% if user.username == 'limbo' %}
 {% for purchaser in user.purchaser_set.all %}
   	{% if purchaser.transaction_set.all|length > 0 %}
-<tr class="info bid-table">
-  <td class="bid-table">{% include "email_crop.tmpl" with email=purchaser.email %}<br>(No user account)</td>
-  <td class="bid-table">N/A<br>({{purchaser.last_name}}, {{purchaser.first_name}})</td>
-  <td class="bid-table" id="sub-table"><table width=100%>{% include "ticketing/transaction_row.tmpl" %}</table></td>
-  <td class="bid-table">Action</td></tr>
+<tr class="gbe-table-row gbe-table-info">
+  <td>{% include "email_crop.tmpl" with email=purchaser.email %}<br>(No user account)</td>
+  <td>N/A<br>({{purchaser.last_name}}, {{purchaser.first_name}})</td>
+  <td id="sub-table"><table width=100%>{% include "ticketing/transaction_row.tmpl" %}</table></td>
+</tr>
 {% endif %}{% endfor %}{% else %}
-<tr class="{% if user.pk in updated_transactions %}success {% elif not user.profile.is_active %}red {% endif %}bid-table">
-  <td class="bid-table">{% include "email_crop.tmpl" with email=user.email %}<br>({% include "ticketing/purchaser_name.tmpl" with purchaser=user %})</td>
-  <td class="bid-table">{{user.profile.display_name}},<br>({{user.last_name}}, {{user.first_name}})</td>
-  <td class="bid-table" id="sub-table"><table width=100%>{% for purchaser in user.purchaser_set.all %}
+<tr class="gbe-table-row{% if user.pk in updated_transactions %} gbe-table-success{% elif not user.profile.is_active %} gbe-form-error{% endif %}">
+  <td>{% include "email_crop.tmpl" with email=user.email %}<br>({% include "ticketing/purchaser_name.tmpl" with purchaser=user %})</td>
+  <td>{{user.profile.display_name}},<br>({{user.last_name}}, {{user.first_name}})</td>
+  <td id="sub-table"><table width=100%>{% for purchaser in user.purchaser_set.all %}
   	{% if purchaser.transaction_set.all|length > 0 %}
       {% include "ticketing/transaction_row.tmpl" %}{% endif %}{% endfor %}</table>
   </td>
-  <td class="bid-table">Action</td>
 </tr>{% endif %}{% endfor %}</tbody></table>
 {% endifequal %}
 </div></div>
 {% addtoblock "js" %}
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
   <script>
   $(document).ready(function() {
+    $.fn.dataTable.moment( 'MMM D, YYYY, H:mm A' );
     var table = $('table.datatable').DataTable({
         "paging": false});
 } );
