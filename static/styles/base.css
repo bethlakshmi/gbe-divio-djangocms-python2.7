@@ -304,7 +304,7 @@ h3.readonlyform
   vertical-align: bottom;
 }
 #gbe-table-select{color:#b31900;text-decoration:underline}
-#sub-table{padding: 0px;}
+#sub-table{padding: 0px; border: 0px;}
 #sub-table>table>tbody>tr>td{border: 1px solid;}
 #clear-row {
   background-color: transparent;
@@ -1181,12 +1181,6 @@ div.hierarchy-1
 .gbe_accordion .btn-link:focus {
   text-decoration: none;
   outline: none;
-}
-.link-events-plus {
-  color: gainsboro;
-}
-.link-events-plus:hover {
-  color: black;
 }
 /* small display, tabs on landing page */
 .landing-tabs:before, .landing-tabs:after, .navbar:before, .navbar:after {

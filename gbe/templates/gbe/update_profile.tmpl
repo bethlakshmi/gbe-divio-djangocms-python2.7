@@ -26,7 +26,7 @@
 <div class="card card-body gbe-bg-light {% if email_focus %}shadow gbe-border-danger{% endif %}">
   <h3 class="gbe-subtitle">Email Options</h3>
   {% for field in email_form.visible_fields%}
-  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
+  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %}">
     <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
     <div class="col-lg-11 col-md-10 col-xs-10">
       {{ field.label }}{% if field.help_text %}

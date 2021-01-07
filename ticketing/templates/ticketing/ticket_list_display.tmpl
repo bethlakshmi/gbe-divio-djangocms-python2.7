@@ -1,36 +1,37 @@
 {% for event in events %}
-<div class="row"><div class="col-xs-7 col-sm-9 col-md-9{% if event.id in updated_events %} shadow-red{% endif %}">
-<h3>{{event.title}} - ({{event}})</h3>
+<div class="row"><div class="col-xs-7 col-sm-9 col-md-9{% if event.id in updated_events %} shadow-highlight{% endif %}"><br>
+<h3 class="gbe-subtitle">{{event.title}}</h3>
+({{event}})
 </div><div class="col-xs-5 col-sm-3 col-md-3 text-right">
-<div class="btn-group" role="group" aria-label="...">
-  <a href="{% url 'ticketing:ticket_item_edit' %}?bpt_event_id={{event.bpt_event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn btn-default btn-sm" id="action-button">
-    <i class="fa fa-plus text-muted" aria-hidden="true"></i><i class="fa fa-ticket text-muted" aria-hidden="true"></i></a>
-  <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn btn-default btn-sm" id="action-button">
-    <i class="fa fa-pencil text-muted" aria-hidden="true"></i></a>
-  <a href="{% url 'ticketing:bptevent_edit' event.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
-    <i class="fa fa-trash-o text-muted" aria-hidden="true"></i></a></div>
+<div class="btn-group gbe-btn-group" role="group" aria-label="...">
+  <a href="{% url 'ticketing:ticket_item_edit' %}?bpt_event_id={{event.bpt_event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn gbe-btn-secondary btn-sm" id="action-button">
+    <i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-ticket" aria-hidden="true"></i></a>
+  <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-secondary btn-sm" id="action-button">
+    <i class="fa fa-pencil" aria-hidden="true"></i></a>
+  <a href="{% url 'ticketing:bptevent_edit' event.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-secondary  btn-sm" id="action-button">
+    <i class="fa fa-trash-o" aria-hidden="true"></i></a></div>
 </div></div>
 {% include 'ticketing/event_details.tmpl' %}
 
-<table class="order-column table table-bordered" >
+<table class="order-column" >
   <thead>
-  <tr class="header ticketing">
-    <th class="ticketing">Ticket Item ID</th>
-    <th class="ticketing">Title</th>
-    <th class="ticketing">Visibility to Users</th>
-    <th class="ticketing">Payment Format</th>
-    <th class="ticketing">Cost</th>
-    <th class="ticketing">Source of Input</th>
-    <th class="ticketing">Last Modified Date</th>
-    <th class="ticketing">Action</th>
+  <tr class="gbe-table-header">
+    <th>Ticket Item ID</th>
+    <th>Title</th>
+    <th>Visibility to Users</th>
+    <th>Payment Format</th>
+    <th>Cost</th>
+    <th>Source of Input</th>
+    <th>Last Modified Date</th>
+    <th>Action</th>
   </tr>
   </thead>
   <tbody>
 {% for item in event.ticketitems.all %}
-<tr class="{% if item.active %}visible {% endif %}{% if item.id in updated_tickets %}success {% endif %}ticketing">    
-  <td class="ticket_item">{{item.ticket_id}}</td>
-  <td class="ticket_item">{{ item.title | safe }}</td>
-  <td class="ticket_item">{% if item.start_time and item.end_time %}
+<tr class="{% if item.active %}visible {% endif %}{% if item.id in updated_tickets %}gbe-table-success {% endif %}gbe-table-row">    
+  <td>{{item.ticket_id}}</td>
+  <td>{{ item.title | safe }}</td>
+  <td>{% if item.start_time and item.end_time %}
     Valid: <br>{{ item.start_time | date:'m/d/Y' }} - <br>
     {{ item.end_time | date:'m/d/Y'}}
   {% elif item.start_time %}Valid After: <br>{{ item.start_time | date:'m/d/Y'}}
@@ -38,17 +39,17 @@
   {% elif item.has_coupon %}Requires Coupon
   {% elif item.live %}Visible{% else %}Hidden
   {% endif %}</td>
-  <td class="ticket_item">{% if item.is_minimum %}Minimum Donation
+  <td>{% if item.is_minimum %}Minimum Donation
     {% elif item.add_on %}Optional Add-On{% else %}Regular Fee{% endif %}</td>
-  <td class="ticket_item">${{ item.cost }}</td>
-  <td class="ticket_item">{{ item.modified_by }}</td>
-  <td class="ticket_item">{{ item.datestamp }}</td>
-  <td class="ticket_item" id="ticket_action">
-    <div class="btn-group" role="group" aria-label="...">
-      <a href="{% url 'ticketing:ticket_item_edit' item.id %}" data-toggle="tooltip" title="Edit" class="btn btn-default btn-sm" id="action-button">
-        <i class="fa fa-pencil text-muted" aria-hidden="true" id="ticket_button"></i></a>
-      <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn btn-default btn-sm" id="action-button">
-        <i class="fa fa-trash-o text-muted" aria-hidden="true" id="ticket_button"></i></a></div></td>
+  <td>${{ item.cost }}</td>
+  <td>{{ item.modified_by }}</td>
+  <td>{{ item.datestamp }}</td>
+  <td id="ticket_action">
+    <div class="btn-group gbe-btn-group" role="group" aria-label="...">
+      <a href="{% url 'ticketing:ticket_item_edit' item.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
+        <i class="fa fa-pencil gbe-text-muted" aria-hidden="true" id="ticket_button"></i></a>
+      <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
+        <i class="fa fa-trash-o gbe-text-muted" aria-hidden="true" id="ticket_button"></i></a></div></td>
 </tr>
 {% endfor %}
 </tbody></table>

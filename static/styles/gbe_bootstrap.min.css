@@ -738,7 +738,6 @@ td.visible-print,th.visible-print{display:table-cell!important}
 }
 ul#id_to{margin-left:0px;position: relative;}
 #filter-button{margin-bottom:8px;}
-.shadow-red{text-shadow: 0px 0px 8px #F03;}
 .btn{padding:6px 12px;font-size:14px;line-height:1.42857143;}
 .dropdown-menu{font-size:14px;}
 .btn-group-sm>.btn,.btn-sm{padding:5px 10px;font-size:12px;line-height:1.5;border-radius:3px}

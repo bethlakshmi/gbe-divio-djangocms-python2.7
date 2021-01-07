@@ -25,7 +25,7 @@
     {{ hidden }}
   {% endfor %}
   {% for field in email_form.visible_fields%}
-  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
+  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %}">
     <div class="col-lg-2 col-md-2 col-xs-2 text-right">{% if field.label == "" %}<br>{% endif %}
     {{ field }}</div>
     <div class="col-lg-10 col-md-9 col-xs-9">

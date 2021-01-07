@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 
-<h2 class="subtitle">{{title}}</h2>
+<h2 class="gbe-title">{{title}}</h2>
 <p>{{intro}}</p>
 <br>
 {% if is_ticket %}
@@ -15,13 +15,13 @@ Note:  Ticket Item Id must be unique.  Changing it will create a new Ticket Item
 <form action="" method="post">
 {% include "form_table_wrapper.tmpl" %}
 <br>
+
+<div class="col-12 text-right">
 {% if can_delete %}
-<input type="submit" value="Delete" name="delete_item" class="btn btn-secondary">
-{% endif %}
-<div class="float-right">
-<a href="{{cancel_url}}"><input type="button" name="cancel" value="Cancel" class="btn btn-secondary"></a>
-<input type="submit" value="{{button_text}}" name="submit_done" class="btn btn-primary">
-<input type="submit" value="{{another_button_text}} >" name="submit_another" class="btn btn-primary">
+<input type="submit" value="Delete" name="delete_item" class="btn gbe-btn-secondary">
+{% endif %}<a href="{{cancel_url}}"><input type="button" name="cancel" value="Cancel" class="btn gbe-btn-light"></a>
+<input type="submit" value="{{button_text}}" name="submit_done" class="btn gbe-btn-primary">
+<input type="submit" value="{{another_button_text}} >" name="submit_another" class="btn gbe-btn-primary">
 </div>
 </form>
 

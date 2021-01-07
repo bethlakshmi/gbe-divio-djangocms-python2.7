@@ -303,6 +303,52 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('color', 'rgba(108, 117, 125,1)')]},
     {
+            'selector': '.gbe-text-secondary',
+            'pseudo_class': '',
+            'description': '''Text that should recede a bit, because it's secondary.''',
+            'target_element': 'i',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(108, 117, 125,1)')]},
+    {
+            'selector': '.gbe-text-warning',
+            'pseudo_class': '',
+            'description': '''Text that indicates warning, but not complete failure.''',
+            'target_element': 'i',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(255, 193, 7,1)')]},
+    {
+            'selector': '.gbe-text-danger',
+            'pseudo_class': '',
+            'description': '''Text that means danger - not exactly an error,
+            but something permanent, like reject/delete.''',
+            'target_element': 'i',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(220, 53, 69, 1)')]},
+    {
+            'selector': '.gbe-text-info',
+            'pseudo_class': '',
+            'description': '''Text that is highlighted because it gives useful
+            information.''',
+            'target_element': 'i',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(23, 162, 184,1)')]},
+    {
+            'selector': '.link-events-plus',
+            'pseudo_class': '',
+            'description': '''Used for a plus sign that is an active link
+            information.''',
+            'target_element': 'i',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(220, 220, 220,1)')]},
+    {
+            'selector': '.link-events-plus',
+            'pseudo_class': 'hover',
+            'description': '''Plus sign as active link when hovered on.
+            information.''',
+            'target_element': 'i',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(0,0,0,1)')]},
+    {
             'selector': '.gbe-draft',
             'pseudo_class': '',
             'description': 'The * on required form fields',
@@ -421,6 +467,13 @@ init_values = [
             'usage': 'Navbar',
             'prop_val': [('background-color', 'rgba(235, 235, 235, 1)'),
                          ('text-shadow', '0px 0px 8px rgba(255, 0, 51, 1)')]},
+    {
+            'selector': '.shadow-highlight',
+            'pseudo_class': '',
+            'description': 'Used to highlight text that was/is being updated.',
+            'target_element': 'span',
+            'usage': 'Navbar',
+            'prop_val': [('text-shadow', '0px 0px 8px rgba(255, 0, 51, 1)')]},
     {
             'selector': '.gbe-dropdown-menu',
             'pseudo_class': '',
