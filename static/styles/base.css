@@ -702,20 +702,9 @@ tr.event_edit_row
   vertical-align: top;
 } 
 
-tr.event_opp_row
-{
-  vertical-align: top;
-} 
-
-table.event_opps  tr.event_opp_row:nth-child(even)
-{
-  background-color: #CCC;
-} 
-
-table.event_opps  tr.event_opp_row:nth-child(odd)
-{
-  background-color: #EEE;
-} 
+tr.striped_table_row{vertical-align: top;} 
+tr.striped_table_row > td{padding: 3px;vertical-align: middle;}
+tr.striped_table_row > td > select{padding: 4px 0 4px 0;}
 
 tr.changed
 {
@@ -728,12 +717,6 @@ tr.blank_row
   background-color: #D0D0D0 ;
 }
 
-tr.event_opp_row > td
-{
-  padding: 3px;
-  vertical-align: middle;
-}
-
 tr.changed > td
 {
   padding: 3px;
@@ -741,11 +724,6 @@ tr.changed > td
 }
 
 tr.changed > td > select
-{
-  padding: 4px 0 4px 0;
-}
-
-tr.event_opp_row > td > select
 {
   padding: 4px 0 4px 0;
 }

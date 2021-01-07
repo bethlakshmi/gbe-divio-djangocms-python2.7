@@ -287,6 +287,20 @@ init_values = [
                          ('border-color', 'rgba(50,50,50,1)'),
                          ('color', 'rgba(0,0,0,1)')]},
     {
+            'selector': 'table.striped_table  tr.striped_table_row:nth-child(even)',
+            'pseudo_class': '',
+            'description': 'Alternately striped table rows',
+            'target_element': 'tr',
+            'usage': 'Table',
+            'prop_val': [('background-color', 'rgba(204, 204, 204, 1)')]},
+    {
+            'selector': 'table.striped_table  tr.striped_table_row:nth-child(odd)',
+            'pseudo_class': '',
+            'description': 'Alternately striped table rows (the other half_',
+            'target_element': 'tr',
+            'usage': 'Table',
+            'prop_val': [('background-color', 'rgba(238, 238, 238, 1)')]},
+    {
             'selector': '.gbe-text-success',
             'pseudo_class': '',
             'description': '''Text that means to show success, like icons for

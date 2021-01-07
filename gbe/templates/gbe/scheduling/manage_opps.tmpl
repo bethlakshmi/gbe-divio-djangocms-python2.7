@@ -12,7 +12,7 @@
   <i class="fa fa-times" aria-hidden="true"></i> - Delete &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-plus" aria-hidden="true"></i> - Create
   <br><br>
-  <table class="event_opps">
+  <table class="striped_table">
     <tr> 
     {% for header in actionheaders %}
       <th class="vol_header">{{ header }}</th>
@@ -20,7 +20,7 @@
       <th>Action</th>
     </tr>
     {% for form in actionform %}
-    <tr class="{% if changed_id == form.opp_sched_id.value %}changed{% else %}event_opp_row{% endif %}">
+    <tr class="{% if changed_id == form.opp_sched_id.value %}changed{% else %}striped_table_row{% endif %}">
       <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
       	    enctype="multipart/form-data">
         {% csrf_token %}
@@ -63,7 +63,7 @@
       </form>	      
     </tr>
     {% endfor %}
-    <tr class="event_opp_row">
+    <tr class="striped_table_row">
       <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
       	    enctype="multipart/form-data">
 	{% csrf_token %}

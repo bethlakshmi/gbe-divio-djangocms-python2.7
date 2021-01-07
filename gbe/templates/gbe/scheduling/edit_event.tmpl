@@ -27,12 +27,12 @@
   <form action="{{edit_url}}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {% include "gbe/scheduling/event_booking.tmpl" with form=event_form %}
-    <div class="form-row pull-right">
+    <div class="col-12 text-right">
       {% if createform or worker_alloc_forms %}
-      <input type="submit" class="event_wizard_button" name="edit_event" value="Save and Continue">
-      <input type="submit" class="event_wizard_button" name="edit_event" value="Save and Exit">
+      <input type="submit" class="btn gbe-btn-primary" name="edit_event" value="Save and Continue">
+      <input type="submit" class="btn gbe-btn-secondary" name="edit_event" value="Save and Exit">
     {% else %}
-      <input type="submit" class="event_wizard_button" name="edit_event" value="Finish">
+      <input type="submit" class="btn gbe-btn-primary" name="edit_event" value="Finish">
     {% endif %}
     </div>
   </form>
