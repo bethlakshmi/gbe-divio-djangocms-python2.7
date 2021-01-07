@@ -697,11 +697,6 @@ table.events-table td
     border:1px solid;
 }
 
-tr.event_edit_row
-{
-  vertical-align: top;
-} 
-
 tr.striped_table_row{vertical-align: top;} 
 tr.striped_table_row > td{padding: 3px;vertical-align: middle;}
 tr.striped_table_row > td > select{padding: 4px 0 4px 0;}

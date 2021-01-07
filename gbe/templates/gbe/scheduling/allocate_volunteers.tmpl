@@ -1,3 +1,4 @@
+{% load sekizai_tags %}
 {% comment %}
 
 included in event edit flow. Show WorkerAllocationForms
@@ -18,7 +19,7 @@ included in event edit flow. Show WorkerAllocationForms
       <th>Action</th>
     </tr>
     {% for role_commit, form in worker_alloc_forms %}
-    <tr class="{% if changed_id == form.alloc_id.value %}changed{% else %}striped_table_row{% endif %}">
+    <tr class="{% if changed_id == form.alloc_id.value %}gbe-table-success {% endif %}striped_table_row">
       <form method="POST" action="{{manage_worker_url}}" 
       	    enctype="multipart/form-data">
         {% csrf_token %}
@@ -38,26 +39,17 @@ included in event edit flow. Show WorkerAllocationForms
 	  {% if form.alloc_id.value > 0 and form.alloc_id.value != "-1" %}
 	  <td>
 	    <div class="btn-group gbe-btn-group" role="group" aria-label="...">
-	      <a href="#" data-toggle="tooltip" title="Edit">
-                <button class="btn gbe-btn-light btn-sm" type="submit" name="edit" value="Edit">
-	          <i class="fa fa-pencil" aria-hidden="true"></i>
-	        </button>
-	      </a>
-	      <a href="#" data-toggle="tooltip" title="Delete">
-	        <button class="btn gbe-btn-light btn-sm" type="submit" name="delete" value="Delete">
-                  <i class="fa fa-times" aria-hidden="true"></i>
-                </button>
-	      </a>
+        <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Edit" type="submit" name="edit" value="Edit">
+	         <i class="fa fa-pencil" aria-hidden="true"></i></button>
+	      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Delete" type="submit" name="delete" value="Delete">
+           <i class="fa fa-times" aria-hidden="true"></i></button>
 	    </div>
 	  </td>
 	  {% else %}
 	  <td>
 	  <div class="btn-group" role="group" aria-label="...">
-	    <a href="#" data-toggle="tooltip" title="Create New">
-              <button class="btn gbe-btn-light btn-sm" type="submit" name="create" value="Create">
-	        <i class="fa fa-plus" aria-hidden="true"></i>
-	      </button>
-	    </a>
+      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Create New" type="submit" name="create" value="Create">
+	        <i class="fa fa-plus" aria-hidden="true"></i></button>
 	  </div>
 	  </td>
 	  {% endif %}
