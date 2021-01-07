@@ -49,11 +49,6 @@ h6.gbe-title{font-size:12px}
 }
 /* END: Used in django CMS provided styles, do not delete */
 
-.table-bordered {border-color: black;}
-.table-bordered > thead > tr > th {border-color: black;}
-.table-bordered > tfoot > tr > th {border-color: black;}
-.table-bordered > tbody > tr > td {border-color: black;}
-
 div.container {
     top:0;
 }
@@ -303,7 +298,6 @@ h3.readonlyform
 .gbe-table-header>th {
   vertical-align: bottom;
 }
-#gbe-table-select{color:#b31900;text-decoration:underline}
 #sub-table{padding: 0px; border: 0px;}
 #sub-table>table>tbody>tr>td{border: 1px solid;}
 #clear-row {
@@ -1073,13 +1067,6 @@ div.hierarchy-1
 {
   padding-left: 20px;
 }
-.scheduling-area {
-  background-color: rgb(221, 221, 221);
-  padding: 15px;
-}
-.scheduling-area > .form-row > .form-group {
-  min-height: 26px;
-}
 .gbe-filter {
   margin-left: 10px;
 }
@@ -1131,9 +1118,7 @@ div.hierarchy-1
   margin-top: 20px;
   margin-bottom: 10px;
 }
-#ticket_button {
-    font-size: 12px;
-}
+#ticket_button {font-size: 12px;}
 #ticket_action {
   width: 70px;
   padding: 0px;
