@@ -53,7 +53,6 @@ def eval_view(request, occurrence_id=None):
     if not conference:
         conference = get_current_conference()
 
-
     response = get_eval_summary(
         labels=[conference.conference_slug, "Conference"])
 

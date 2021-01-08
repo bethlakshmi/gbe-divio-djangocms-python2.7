@@ -266,7 +266,7 @@ init_values = [
             'selector': '.gbe-striped-table-danger td',
             'pseudo_class': '',
             'description': '''Table row with a concern on a striped table,
-            it's darker to make it stick out better, should match 
+            it's darker to make it stick out better, should match
             "gbe-form-error"''',
             'target_element': 'div',
             'usage': 'Table',
@@ -313,19 +313,20 @@ init_values = [
                          ('border-color', 'rgba(50,50,50,1)'),
                          ('color', 'rgba(0,0,0,1)')]},
     {
-            'selector': 'table.striped_table  tr.striped_table_row:nth-child(even)',
-            'pseudo_class': '',
-            'description': 'Alternately striped table rows',
-            'target_element': 'tr',
-            'usage': 'Table',
-            'prop_val': [('background-color', 'rgba(204, 204, 204, 1)')]},
+        'selector':
+        'table.striped_table  tr.striped_table_row:nth-child(even)',
+        'pseudo_class': '',
+        'description': 'Alternately striped table rows',
+        'target_element': 'tr',
+        'usage': 'Table',
+        'prop_val': [('background-color', 'rgba(204, 204, 204, 1)')]},
     {
-            'selector': 'table.striped_table  tr.striped_table_row:nth-child(odd)',
-            'pseudo_class': '',
-            'description': 'Alternately striped table rows (the other half_',
-            'target_element': 'tr',
-            'usage': 'Table',
-            'prop_val': [('background-color', 'rgba(238, 238, 238, 1)')]},
+        'selector': 'table.striped_table  tr.striped_table_row:nth-child(odd)',
+        'pseudo_class': '',
+        'description': 'Alternately striped table rows (the other half_',
+        'target_element': 'tr',
+        'usage': 'Table',
+        'prop_val': [('background-color', 'rgba(238, 238, 238, 1)')]},
     {
             'selector': '.border-table tbody tr td, .border-table tbody tr th',
             'pseudo_class': '',
@@ -350,19 +351,21 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('color', 'rgba(108, 117, 125,1)')]},
     {
-            'selector': '.gbe-text-secondary',
-            'pseudo_class': '',
-            'description': '''Text that should recede a bit, because it's secondary.''',
-            'target_element': 'i',
-            'usage': 'Table',
-            'prop_val': [('color', 'rgba(108, 117, 125,1)')]},
+        'selector': '.gbe-text-secondary',
+        'pseudo_class': '',
+        'description': '''Text that should recede a bit, because it's
+        secondary.''',
+        'target_element': 'i',
+        'usage': 'Table',
+        'prop_val': [('color', 'rgba(108, 117, 125,1)')]},
     {
-            'selector': '.gbe-text-warning',
-            'pseudo_class': '',
-            'description': '''Text that indicates warning, but not complete failure.''',
-            'target_element': 'i',
-            'usage': 'Table',
-            'prop_val': [('color', 'rgba(255, 193, 7,1)')]},
+        'selector': '.gbe-text-warning',
+        'pseudo_class': '',
+        'description': '''Text that indicates warning, but not complete
+        failure.''',
+        'target_element': 'i',
+        'usage': 'Table',
+        'prop_val': [('color', 'rgba(255, 193, 7,1)')]},
     {
             'selector': '.gbe-text-danger',
             'pseudo_class': '',
@@ -615,7 +618,7 @@ init_values = [
             'prop_val': [('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(0,0,0,0)'),
                          ('border-color', 'rgba(0,0,0,0)')]},
-        {
+    {
             'selector': '.gbe-modal-content',
             'pseudo_class': '',
             'description': 'Background of modal panes.',
@@ -624,7 +627,7 @@ init_values = [
             'prop_val': [('color', 'rgba(0,0,0,1)'),
                          ('background-color', 'rgba(235, 235, 235, 1)'),
                          ('border-color', 'rgba(0,0,0,.2)')]},
-        {
+    {
             'selector': '.gbe-modal-header',
             'pseudo_class': '',
             'description': 'Header and footer of modal.',
@@ -633,7 +636,7 @@ init_values = [
             'prop_val': [('color', 'rgba(0,0,0,1)'),
                          ('background-color', 'rgba(216, 216, 216, 1)'),
                          ('border-color', 'rgba(229, 229, 229, 1)')]},
-        {
+    {
             'selector': '.gbe-link',
             'pseudo_class': '',
             'description': 'Links within modal panes.',
@@ -641,14 +644,15 @@ init_values = [
             'usage': 'General',
             'prop_val': [('color', 'rgba(51, 122, 183, 1)'),
                          ('text-decoration-color', 'rgba(51, 122, 183, 1)')]},
-        {
+    {
             'selector': '.gbe-link',
             'pseudo_class': 'hover',
             'description': 'Links within modal panes - on hover',
             'target_element': 'a',
             'usage': 'General',
             'prop_val': [('color', 'rgba(35, 82, 124, 1)'),
-                         ('text-decoration-color', 'rgba(35, 82, 124, 1)')]},]
+                         ('text-decoration-color', 'rgba(35, 82, 124, 1)')]},
+]
 
 
 def initialize_style(apps, schema_editor):
