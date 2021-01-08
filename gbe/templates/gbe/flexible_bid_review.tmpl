@@ -5,23 +5,23 @@
   <h2 class="gbe-title">Review Information</h2>
     <form action="" method="post">
       {% csrf_token %}
-<table class="flex_review">
-  <tr class="flex_review_row"><th>&nbsp;</th><th class="horizontal-input"><ul>
+<table class="striped_table">
+  <tr class="striped_table_row"><th>&nbsp;</th><th class="horizontal-input"><ul>
     <li>N/A</li><li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul></th>
   </tr>
   {% if notes_form.non_field_errors %}
-  <tr class="flex_review_row"><td>
+  <tr class="striped_table_row"><td>
   <font class="gbe-form-error">{{ notes_form.non_field_errors }}</font>
   </td></tr>
   {% endif %}
   {% for flex_eval_form in form %}
     {% if form.non_field_errors %}
-  <tr class="flex_review_row"><td>
+  <tr class="striped_table_row"><td>
   <font class="gbe-form-error">{{ form.non_field_errors }}</font>
   </td></tr>
     {% endif %}
     {% for field in flex_eval_form.visible_fields %}
-    <tr class="flex_review_row"><td><label for="{{ field.name }}" class="control-label">	      
+    <tr class="striped_table_row"><td><label for="{{ field.name }}" class="control-label">	      
             {% if field.errors %}
               <font class="gbe-form-error">!&nbsp;&nbsp;
             {% endif %}
@@ -44,7 +44,7 @@
     {% endfor %}
     </tr>
       {% if field.errors %}
-    <tr class="flex_review_row">
+    <tr class="striped_table_row">
  	    <label for="{{field.name}}">	      
               <font class="gbe-form-error">{{ field.errors }}</font>
             </label>
@@ -52,7 +52,7 @@
     {% endif %}
   {% endfor %}{% endfor %}
   {% for field in notes_form.visible_fields %}
-    <tr class="flex_review_row"><td><label for="{{ field.name }}" class="control-label">	      
+    <tr class="striped_table_row"><td><label for="{{ field.name }}" class="control-label">	      
       {% if field.errors %}
       <font class="gbe-form-error">!&nbsp;&nbsp;
       {% endif %}
@@ -70,7 +70,7 @@
     <tr><td colspan="8">{{ field }}</td></tr>
     </tr>
       {% if field.errors %}
-    <tr class="flex_review_row">
+    <tr class="striped_table_row">
  	    <label for="{{field.name}}">	      
               <font class="gbe-form-error">{{ field.errors }}</font>
             </label>
@@ -88,8 +88,8 @@
 {% block review_results %}{% if review_results %}
 <div class="col-lg-3 col-md-4 col-sm-12">
   <h2  class="gbe-title">Detailed Reviews</h2>
-  <table class="flex_review" border="1">
-    <tr class="flex_review_row">
+  <table class="striped_table border-table">
+    <tr class="striped_table_row">
         <th>&nbsp;</th>
       {% for reviewer in reviewers %}
         <th class="rotate"><div><span>{{reviewer}}</span></div></th>
@@ -97,7 +97,7 @@
         <th class="rotate"><div><span>Average</span></div></th>
     </tr>
   {% for category, evaluations in review_results.items %}
-    <tr class="flex_review_row">
+    <tr class="striped_table_row">
       <td><b>{{ category.category }}</b>{% if category.help_text %}
         <span class="dropt" title="Help">
           <img src= "{% static "img/question.png" %}" alt="?"/>

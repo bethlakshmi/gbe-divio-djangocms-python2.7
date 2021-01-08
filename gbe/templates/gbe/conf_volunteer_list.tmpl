@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<h2 class="subtitle">{{ view_title }}</h2>
+<h2 class="gbe-title">{{ view_title }}</h2>
 {% if rows and rows|length > 0 %}
 
 
@@ -19,7 +19,7 @@
       
 {% ifchanged row.conf_item.2 %}
 {% if not forloop.first %}</table>{% endif %}
-<h3 class="font_large">{{row.conf_item.2}}</h3>
+<h3 class="gbe-subtitle">{{row.conf_item.2}}</h3>
 
 <p>
 {% if row.conf_item.2 == "Class" %}
@@ -38,7 +38,7 @@ participate eloquently in a focused discussion.</P>
 interest you, what role you'd like to commit to, and any qualifications or
 personal connection you have to that particular panel.</P>
 <P>If you would like to <em>suggest an idea for a panel</em>, please do that
-<a href="{% url 'gbe:class_propose' %}">here</a>.
+<a href="{% url 'gbe:class_propose' %}" class="gbe-link">here</a>.
 {% elif row.conf_item.2 == "Either" %}
     The following opportunities may be provided as a Class or a Panel.  The
     Great Burlesque Exposition is open to both interested teachers and panelists
@@ -46,33 +46,33 @@ personal connection you have to that particular panel.</P>
     expertise of it's volunteers.
   {% endif %}
 </p>
-  <table class="bid-table">
-     <tr class="bid-table">
+  <table>
+     <tr class="gbe-table-header">
       {% for header_item in header %}
-        <th class="bid-table">{{ header_item }}</th>
+        <th>{{ header_item }}</th>
       {% endfor %}
      </tr>
 {% endifchanged %}
       
       
-      <tr class="bid-table">
+      <tr class="gbe-table-row">
           {# Skip the type - it's shown as a header #}
-	  <td class="title">      
+	  <td>      
               {{ row.conf_item.0 }}
           </td>	
-	  <td class="describe">      
+	  <td>      
               {{ row.conf_item.1 }}
           </td>
           {# Include the visible fields #}
           {% for field in row.form.visible_fields %}
-	  <td class="bid-form">
+	  <td>
               {% if field.errors %}
-              <font color="red">!</font>&nbsp;&nbsp;
+              <font color="gbe-form-error">!</font>&nbsp;&nbsp;
               {% endif %}
               {{ field }}
               {% if field.errors %}
               <br>
-              <font color="red">{{ field.errors }}</font>
+              <font color="gbe-form-error">{{ field.errors }}</font>
               {% endif %}
           </td>
         {% endfor %}
@@ -85,16 +85,16 @@ personal connection you have to that particular panel.</P>
     {% endfor %}
   </table>
   <br/>
-  <input type="submit" value="Submit"> 
+  <input type="submit" value="Submit" class="btn gbe-btn-primary"> 
   </form>
   {% else %}
     There are no conference presentation opportunities at this time.
     <br/><br/>
     If you have a class you would like to teach - please propose it on our
-    <a href='{% url 'gbe:class_create' %}'>class proposal form</a>.
+    <a href='{% url 'gbe:class_create' %}' class="gbe-link">class proposal form</a>.
     <br/>
     If you have an idea for a panel, please
-    <a href='{% url 'gbe:class_propose' %}'>let us know</a>.
+    <a href='{% url 'gbe:class_propose' %}' class="gbe-link">let us know</a>.
   <br><br>
 
   {% endif %}

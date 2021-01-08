@@ -38,7 +38,7 @@ deactivated users.<br>
       <td>{% if act.order %}{{ act.order }}{% endif %}</td>
 	    <td>{{ act.act.b_title }}</td>
 	    <td>{% if not act.act.performer.contact.user_object.is_active  %}
-        <span class="gbe-form-error gbe-inactive" class="bid-table">
+        <span class="gbe-form-error gbe-inactive">
         {% endif %}{{ act.act.performer }}
         {% if not act.act.performer.contact.user_object.is_active  %}- INACTIVE</span>
         {% endif %}<br>

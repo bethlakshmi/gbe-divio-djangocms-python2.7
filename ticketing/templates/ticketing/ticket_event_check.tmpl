@@ -6,7 +6,7 @@
 {% block content %}
   <h3 class="gbe-subtitle">Check Ticket to Event Assignments - {{conference.conference_slug}}</h3>
 <br>  <p>{{ check_intro }}</p>
-  <table id="bid_review" class="order-column" cellspacing="0" width="100%">
+  <table id="ticket_check" class="order-column" cellspacing="0" width="100%">
     <thead>
       <tr class="gbe-table-header">
         <th>&nbsp;</th>
@@ -32,7 +32,7 @@
       <tr class="gbe-table-row">
         <td><a href="{% url 'scheduling:detail_view' gbe_event.eventitem_id  %}" class="gbe-table-link">{{gbe_event.e_title}}</a></td>
       {% for bpt_event in events %}
-        <td class="bid-table text-center">
+        <td class="text-center">
           {% if gbe_event in bpt_event.linked_events.all %}
           <a href="{% url 'ticketing:set_ticket_to_event' bpt_event.bpt_event_id 'off' gbe_event.eventitem_id %}" data-toggle="tooltip" title="Remove Event from Ticket">
             <i class="fas fa-check gbe-text-success active-check"></i></a>
@@ -45,7 +45,7 @@
       <tr class="gbe-table-row">
         <td><i>All Conference Classes</i></td>
         {% for bpt_event in events %}
-        <td class="bid-table text-center">
+        <td class="text-center">
           {% if bpt_event.include_conference or bpt_event.include_most %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most' or 'Includes Conference'"></i>{% else %}&nbsp;{% endif %}
         </td>
       {% endfor %}
@@ -56,7 +56,7 @@
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script>
   $(document).ready(function() {
-    var table = $('#bid_review').DataTable({
+    var table = $('#ticket_check').DataTable({
         "paging": false,
         "columnDefs": [{"targets": [ 2 ], "visible": false },]});
 

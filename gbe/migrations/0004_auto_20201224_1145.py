@@ -109,21 +109,21 @@ init_values = [
             'prop_val': [('color', 'rgba(0, 123, 255, 1)'),
                          ('text-decoration-color', 'rgba(0, 123, 255, 1)')]},
     {
-            'selector': '.gbe-table-row>.approval_needed',
+            'selector': '.gbe-table-row .approval_needed',
             'pseudo_class': 'hover',
             'description': '''Cells where special handling is needed.''',
             'target_element': 'a',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(254, 255, 185, 1)')]},
     {
-            'selector': '#sub-table>table>tbody>tr>td',
+            'selector': '#sub-table table tbody tr td',
             'pseudo_class': '',
             'description': '''Sub table within a table''',
             'target_element': 'td',
             'usage': 'Table',
             'prop_val': [('border-color', 'rgba(50,50,50,1)')]},
     {
-            'selector': '.paypal-button>form>input',
+            'selector': '.paypal-button form input',
             'pseudo_class': 'hover',
             'description': 'Buttons do the main work flow.',
             'target_element': 'input',
@@ -132,7 +132,7 @@ init_values = [
                          ('border-color', 'rgba(71, 31, 31, 1)'),
                          ('color', 'rgba(255,255,255,1)')]},
     {
-            'selector': '.paypal-button>form>input',
+            'selector': '.paypal-button form input',
             'pseudo_class': '',
             'description': '''The paypal button on act/vendor payment is
             unusual - it's mostly an image, but what settings we can control
@@ -143,7 +143,7 @@ init_values = [
                          ('border-color', 'rgba(71, 31, 31, 1)'),
                          ('color', 'rgba(255,255,255,1)')]},
     {
-            'selector': '.paypal-button>form>input',
+            'selector': '.paypal-button form input',
             'pseudo_class': 'focus',
             'description': 'Buttons do the main work flow.',
             'target_element': 'input',
@@ -241,44 +241,70 @@ init_values = [
             'prop_val': [('color', 'rgba(128,128,128,1)')]},
 
     {
-            'selector': '.gbe-table-success>td',
+            'selector': '.gbe-table-success td',
             'pseudo_class': '',
             'description': 'Table row when it was just successfully updated',
             'target_element': 'div',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(195, 230, 203, 1)')]},
     {
-            'selector': '.gbe-table-row.gbe-table-info>td',
+            'selector': '.gbe-table-row.gbe-table-info td',
             'pseudo_class': '',
-            'description': 'Table row when it was just successfully updated',
+            'description': '''Table row when it's highlighted for important
+            information''',
             'target_element': 'div',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(217, 237, 247, 1)')]},
     {
-            'selector': '.gbe-table-row.gbe-table-danger>td',
+            'selector': '.gbe-table-row.gbe-table-danger td',
             'pseudo_class': '',
-            'description': 'Table row when it was just successfully updated',
+            'description': 'Table row with a concern, like an inactive user.',
             'target_element': 'div',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(242, 222, 222, 1)')]},
     {
-            'selector': '.gbe-table-header>th',
+            'selector': '.gbe-striped-table-danger td',
             'pseudo_class': '',
-            'description': 'Header and footer of tables',
+            'description': '''Table row with a concern on a striped table,
+            it's darker to make it stick out better, should match 
+            "gbe-form-error"''',
+            'target_element': 'div',
+            'usage': 'Table',
+            'prop_val': [('background-color', 'rgba(255, 0, 0, 1)')]},
+    {
+            'selector': 'table thead tr.gbe-table-header th',
+            'pseudo_class': '',
+            'description': 'Header of tables',
             'target_element': 'tr',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(200,200,200,1)'),
                          ('border-color', 'rgba(50,50,50,1)'),
                          ('color', 'rgba(0,0,0,1)')]},
     {
-            'selector': '.gbe-table-header>th',
+            'selector': 'table thead tr.gbe-table-header th',
             'pseudo_class': 'hover',
-            'description': 'Header and footer of tables, when moused over',
+            'description': 'Header of tables, when moused over',
             'target_element': 'tr',
             'usage': 'Table',
-            'prop_val': [('background-color', 'rgba(0,0,0,0.25)')]},
+            'prop_val': [('background-color', 'rgba(200,200,200,1)')]},
     {
-            'selector': '.gbe-table-row>td',
+            'selector': 'table tfoot tr.gbe-table-header th',
+            'pseudo_class': '',
+            'description': 'Footer of tables',
+            'target_element': 'tr',
+            'usage': 'Table',
+            'prop_val': [('background-color', 'rgba(200,200,200,1)'),
+                         ('border-color', 'rgba(50,50,50,1)'),
+                         ('color', 'rgba(0,0,0,1)')]},
+    {
+            'selector': 'table tfoot tr.gbe-table-header th',
+            'pseudo_class': 'hover',
+            'description': 'Footer of tables, when moused over',
+            'target_element': 'tr',
+            'usage': 'Table',
+            'prop_val': [('background-color', 'rgba(200,200,200,1)')]},
+    {
+            'selector': '.gbe-table-row td',
             'pseudo_class': '',
             'description': 'Non-header/footer rows',
             'target_element': 'tr',
@@ -300,6 +326,13 @@ init_values = [
             'target_element': 'tr',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(238, 238, 238, 1)')]},
+    {
+            'selector': '.border-table tbody tr td, .border-table tbody tr th',
+            'pseudo_class': '',
+            'description': 'border around striped table(s)',
+            'target_element': 'table',
+            'usage': 'Table',
+            'prop_val': [('border-color', 'rgba(0, 0, 0, 1)')]},
     {
             'selector': '.gbe-text-success',
             'pseudo_class': '',
@@ -473,7 +506,7 @@ init_values = [
             'usage': 'Navbar',
             'prop_val': [('color', 'rgba(0, 0, 0, 1)')]},
     {
-            'selector': '.active>#gbe_header_menu',
+            'selector': '.active #gbe_header_menu',
             'pseudo_class': '',
             'description': '''Currenty active navbar menu item, matches panel
             of content.''',
@@ -605,7 +638,7 @@ init_values = [
             'pseudo_class': '',
             'description': 'Links within modal panes.',
             'target_element': 'a',
-            'usage': 'Modal',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(51, 122, 183, 1)'),
                          ('text-decoration-color', 'rgba(51, 122, 183, 1)')]},
         {
@@ -613,7 +646,7 @@ init_values = [
             'pseudo_class': 'hover',
             'description': 'Links within modal panes - on hover',
             'target_element': 'a',
-            'usage': 'Modal',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(35, 82, 124, 1)'),
                          ('text-decoration-color', 'rgba(35, 82, 124, 1)')]},]
 
