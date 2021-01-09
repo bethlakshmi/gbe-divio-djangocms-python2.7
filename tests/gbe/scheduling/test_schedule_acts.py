@@ -160,7 +160,7 @@ class TestScheduleActs(TestCase):
         self.context.book_act(act=inactive_act)
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
-        self.assertIn(b'bgcolor="red"', response.content)
+        self.assertContains(response, b'gbe-striped-table-danger')
 
     def test_good_user_get_two_shows_same_title(self):
         ShowFactory(e_title=self.context.show.e_title)

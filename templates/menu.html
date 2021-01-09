@@ -3,7 +3,7 @@
 {% for child in children %}
     <li class="nav-item {% if child.children and dropdown %}dropdown icon-dropdown{% endif %}{% if child.selected or child.ancestor %} active{% endif %}">
         <a id="gbe_header_menu" class="nav-link{% if child.children and dropdown %} dropdown-toggle{% endif %}"
-{% if child.children and dropdown %}data-toggle="dropdown" href="#" {% else %}
+ {% if child.children and dropdown %}data-toggle="dropdown" href="#" {% else %}
 href="{{ child.attr.redirect_url|default:child.get_absolute_url }}"{% endif %}>
             {{ child.get_menu_title }}
         </a>
