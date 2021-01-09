@@ -51,7 +51,7 @@ class TestStaffArea(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<tr style="color:red;">')
+            '<tr class="gbe-form-error">')
 
     def test_staff_area_path_fail(self):
         '''staff_area view should fail for non-authenticated users
@@ -103,7 +103,7 @@ class TestStaffArea(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<tr style="color:red;">')
+            '<tr class="gbe-form-error">')
 
     def test_staff_area_default_display(self):
         '''staff_area view should load only the actually assigned volunteer
