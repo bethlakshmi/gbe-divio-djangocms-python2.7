@@ -47,6 +47,10 @@ class TestThemesList(TestCase):
             response,
             '<i class="gbe-text-success fas fa-check-circle"',
             2)
+        self.assertContains(response, reverse(
+            "clone_theme",
+            urlconf="gbe.themes.urls",
+            args=[self.version.pk]))
 
     def test_list_all_the_things(self):
         boring_version = StyleVersionFactory()
@@ -64,6 +68,14 @@ class TestThemesList(TestCase):
             args=[self.version.pk]))
         self.assertContains(response, reverse(
             "manage_theme",
+            urlconf="gbe.themes.urls",
+            args=[boring_version.pk]))
+        self.assertContains(response, reverse(
+            "clone_theme",
+            urlconf="gbe.themes.urls",
+            args=[self.version.pk]))
+        self.assertContains(response, reverse(
+            "clone_theme",
             urlconf="gbe.themes.urls",
             args=[boring_version.pk]))
 

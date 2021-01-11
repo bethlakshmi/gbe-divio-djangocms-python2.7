@@ -20,8 +20,8 @@
   <div class="btn-group">
     <a class="gbe-detail" href="{% url 'themes:manage_theme' theme.id %}" title="Edit">
       <i class="fas fa-edit"></i></a>&nbsp;&nbsp;
-    <a class="gbe-detail" title="Clone - not yet available">
-      <i class="fas fa-clone"></i></a></div>
+    <a class="gbe-detail" href="{% url 'themes:clone_theme' theme.id %}" title="Clone">
+      <i class="fas fa-clone"></i></a>
 	      </td>
     </tr>
   {% endfor %}

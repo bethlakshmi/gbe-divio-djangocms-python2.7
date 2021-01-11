@@ -8,54 +8,37 @@ from django.shortcuts import (
     get_object_or_404,
     render,
 )
+from gbe.themes.views import ManageTheme
 from gbe.models import (
     StyleValue,
     StyleVersion,
     UserMessage,
 )
-from gbe.themes.forms import ColorStyleValueForm
+from gbe.themes.forms import (
+    ColorStyleValueForm,
+    ThemeVersionForm,
+)
 from django.contrib import messages
 from gbetext import user_messages
-from datetime import datetime
-from gbe.functions import validate_perms
 
 
-class ManageTheme(View):
-    object_type = StyleVersion
-    template = 'gbe/themes/manage_theme.tmpl'
-    page_title = 'Manage Style Settings'
-    style_version = None
-    permissions = ('Theme Editor',)
-    title_format = "Manage Styles Settings for {}, version {:.1f}"
-    instruction_code = "THEME_INSTRUCTIONS"
+class CloneTheme(ManageTheme):
+    page_title = 'Clone Style Settings'
+    title_format = "Clone Styles Settings for {}, version {:.1f}"
+    instruction_code = "CLONE_INSTRUCTIONS"
 
-    def groundwork(self, request, args, kwargs):
-        self.profile = validate_perms(request, self.permissions)
-        self.style_version = None
-        version_id = kwargs.get("version_id")
-        self.style_version = get_object_or_404(StyleVersion, id=version_id)
-
-    def make_context(self, forms):
-        msg = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code=self.instruction_code,
-            defaults={
-                'summary': user_messages[self.instruction_code]['summary'],
-                'description': user_messages[self.instruction_code][
-                    'description']})
-        title = self.title_format.format(self.style_version.name,
-                                         self.style_version.number)
-        context = {
-            'instructions': msg[0].description,
-            'page_title': self.page_title,
-            'title': title,
-            'forms': forms,
-            'version': self.style_version,
-        }
+    def make_context(self, version_form, forms):
+        context = super(CloneTheme, self).make_context(forms)
+        context['version_form'] = version_form
         return context
 
     def setup_forms(self, request=None):
         forms = []
+        if request:
+            version_form = ThemeVersionForm(request.POST)
+        else:
+            version_form = ThemeVersionForm()
+
         for value in StyleValue.objects.filter(
                 style_version=self.style_version).order_by(
                 'style_property__selector__used_for',
@@ -64,24 +47,21 @@ class ManageTheme(View):
                 'style_property__style_property'):
             if request:
                 form = ColorStyleValueForm(request.POST,
-                                           instance=value,
                                            prefix=str(value.pk))
             else:
                 form = ColorStyleValueForm(instance=value,
                                            prefix=str(value.pk))
             form['value'].label = str(value.style_property.style_property)
             forms += [(value, form)]
-        return forms
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ManageTheme, self).dispatch(*args, **kwargs)
+        return (version_form, forms)
 
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
-        forms = self.setup_forms()
-        return render(request, self.template, self.make_context(forms))
+        (version_form, forms) = self.setup_forms()
+        return render(request,
+                      self.template,
+                      self.make_context(version_form, forms))
 
     @never_cache
     @method_decorator(login_required)
@@ -91,24 +71,35 @@ class ManageTheme(View):
             return HttpResponseRedirect(reverse('themes_list',
                                                 urlconf='gbe.themes.urls'))
         self.groundwork(request, args, kwargs)
-        forms = self.setup_forms(request)
-        all_valid = True
+        (version_form, forms) = self.setup_forms(request)
+        all_valid = version_form.is_valid()
         for value, form in forms:
             if not form.is_valid():
                 all_valid = False
         if all_valid:
+            new_version = version_form.save()
             for value, form in forms:
-                form.save()
-            self.style_version.updated_at = datetime.now()
-            self.style_version.save()
-            messages.success(request, "Updated %s" % self.style_version)
-            if 'finish' in list(request.POST.keys()):
+                instance = form.save(commit=False)
+                instance.style_version = new_version
+                instance.save()
+            messages.success(request, "Cloned %s from %s" % (
+                new_version,
+                self.style_version))
+            if 'finish' in list(request.POST.keys()) or 'clone' in list(
+                    request.POST.keys()):
                 return HttpResponseRedirect("%s?changed_id=%d" % (
                     reverse('themes_list', urlconf='gbe.themes.urls'),
-                    self.style_version.pk))
+                    new_version.pk))
+            if 'update' in list(request.POST.keys()):
+                return HttpResponseRedirect(
+                    reverse('manage_theme',
+                            urlconf='gbe.themes.urls',
+                            args=[new_version.pk]))
         else:
             messages.error(
                 request,
                 "Something was wrong, correct the errors below and try again.")
 
-        return render(request, self.template, self.make_context(forms))
+        return render(request,
+                      self.template,
+                      self.make_context(version_form, forms))

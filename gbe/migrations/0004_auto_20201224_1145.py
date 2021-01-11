@@ -462,9 +462,10 @@ init_values = [
             'usage': 'General',
             'prop_val': [('color', 'rgba(211, 211, 211, 1)')]},
     {
-            'selector': '#login-dp',
+            'selector': '#login-dp, .gbe-form-dropdown',
             'pseudo_class': '',
-            'description': 'The drop down for login, upper right under menu.',
+            'description': '''Dropdowns with forms in them like login and
+            theme cloning''',
             'target_element': 'div',
             'usage': 'General',
             'prop_val': [('background-color', 'rgba(180, 80, 80)'),

@@ -1,8 +1,8 @@
 from django.forms import (
     CharField,
     HiddenInput,
-    ModelForm,
     ModelChoiceField,
+    ModelForm,
     TextInput,
 )
 from gbe.models import (
@@ -15,7 +15,9 @@ class ColorStyleValueForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
     value = CharField(widget=TextInput(attrs={'data-jscolor': ''}))
+    style_property = ModelChoiceField(widget=HiddenInput(),
+                                      queryset=StyleProperty.objects.all())
 
     class Meta:
         model = StyleValue
-        fields = ['value']
+        fields = ['value', 'style_property']

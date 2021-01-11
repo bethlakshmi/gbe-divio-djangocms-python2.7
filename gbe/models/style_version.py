@@ -19,6 +19,9 @@ class StyleVersion(Model):
     currently_live = BooleanField(default=False)
     currently_test = BooleanField(default=False)
 
+    def next_version(self):
+        return self.number + Decimal(0.1)
+
     def __str__(self):
         return ("{} - version {:.1f}".format(self.name, self.number))
 

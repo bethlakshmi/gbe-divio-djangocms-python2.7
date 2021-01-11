@@ -690,4 +690,10 @@ user_messages = {
         theme being edited.  Update it to get an update to this page's
         style.'''
     },
+    "CLONE_INSTRUCTIONS": {
+        'summary':  "Instructions at top of theme clone page",
+        'description': '''Enter the name, version number and settings to make,
+        a new version.  Current style settings are a copy of the theme being
+        cloned.'''
+    },
 }

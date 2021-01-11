@@ -11,14 +11,33 @@
 <p>{{ instructions | safe }}</p>
 
 <form action="" method="post" enctype="multipart/form-data">
-
+    {% if version_form %}
+    <h4 class="gbe-subtitle">New Theme Settings</h4>
+    {% include "form_table.tmpl" with form=version_form %}
+    {% endif %}
     {% for value, form in forms %}
     {% ifchanged value.style_property.selector.used_for %}<h3 class="gbe-subtitle">{{ value.style_property.selector.used_for }}</h3>{% endifchanged %}
     {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
     {% include "form_table.tmpl" %}
     {% endfor %}
 <div class="row">
-  <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7">
+  <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7 dropdown">
+    {% if not version_form %}
+    <button type="submit" id="dropdownMenuButton" class="btn gbe-btn-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Clone Version</button>
+    <div class="dropdown-menu px-4 py-3 gbe-form-dropdown" aria-labelledby="dropdownMenuButton">
+        <div class="form-group">
+            <label for="id_name"><font class="gbe-form-required">*</font>Version Name:</label>
+            <input class="form-control" type="text" name="name" value="{{version.name}}" maxlength="128" id="id_name">
+        </div>
+        <div class="form-group">
+            <label for="id_number"><font class="gbe-form-required">*</font> Version Number:</label>
+            <input class="form-control" type="number" name="number" value="{{version.next_version|floatformat:1}}" min="0.1" step="any" id="id_number">
+        </div>
+        <div class="form-group">
+          <input type="submit" name="clone" value="Clone" class="btn gbe-btn-primary" formaction="{% url 'themes:clone_theme' version.pk %}">
+        </div>
+    </div>
+    {% endif %}
     <input type="submit" name="update" value="Update" class="btn gbe-btn-primary" >
     <input type="submit" name="finish" value="Finish" class="btn gbe-btn-primary" >
     <input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" >
