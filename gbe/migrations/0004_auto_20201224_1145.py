@@ -4,6 +4,15 @@ from django.db import migrations
 
 init_values = [
     {
+            'selector': '.gbe-header-band',
+            'pseudo_class': '',
+            'description': '''Boldly colored header bands with contrasting 
+            text, such as above performer grids''',
+            'target_element': 'div',
+            'usage': 'General',
+            'prop_val': [('background-color', 'rgba(150, 3, 32, 1)'),
+                         ('color', 'rgba(255, 255, 255, 1)')]},
+    {
             'selector': 'body.gbe-body',
             'pseudo_class': '',
             'description': 'Body of the page, except printable pages',
@@ -406,6 +415,30 @@ init_values = [
             'usage': 'Forms',
             'prop_val': [('color', 'rgba(0,0,0,1)')]},
     {
+            'selector': '.sched_label',
+            'pseudo_class': '',
+            'description': 'labels for event details',
+            'target_element': 'font',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(0,0,0,1)')]},
+    {
+            'selector': '.gallery-item .icons i',
+            'pseudo_class': '',
+            'description': '''icons that show when one hovers over a
+            performer image''',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(255, 255, 255,1)')]},
+    {
+            'selector': '.gallery-item .icons i',
+            'pseudo_class': 'hover',
+            'description': ''''icons that show when one hovers over a
+            performer image and also hovers over the icon''',
+            'target_element': 'i',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(233, 30, 99, 1)'),
+                         ('border-color', 'rgba(233, 30, 99, 1)')]},
+    {
             'selector': 'span.dropt:hover span',
             'pseudo_class': 'hover',
             'description': 'The help text when it is triggerd by hover',
@@ -433,7 +466,7 @@ init_values = [
             'selector': '.gbe-bg-dark',
             'pseudo_class': '',
             'description': '''darker colored panels - sub panels within
-            site, including act tech info.''',
+            site, including act tech info, and event time/date details.''',
             'target_element': 'div',
             'usage': 'Forms',
             'prop_val': [('background-color', 'rgba(195, 189, 191,1)'),

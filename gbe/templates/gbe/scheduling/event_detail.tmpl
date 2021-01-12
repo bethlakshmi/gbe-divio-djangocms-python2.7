@@ -4,32 +4,24 @@
 {% block title %}
   Great Burlesque Exposition: {{eventitem.event.e_title}}
 {% endblock %}
-
 {% block head %}
       {% include "gray_grids_css.tmpl" %}
 {% endblock head %}
-
 {% block content %}
 {% if tickets %}
-  <div class="sched_block font_regular">
-  {% include "ticket_link.tmpl" %}
-  </div>
-{% endif %}  
-    <H1 class="sched_detail_title">{{eventitem.event.e_title}}</H1>
-    <div class="sched_block font_regular">
-      <div class="sched_desc">
-	{{eventitem.event.e_description |safe}}
-        <div class="sched_details">
-        <label class="sched_detail">Type:</label>
-	{{eventitem.event.type}}<br>
-	{% if eventitem.event.fee %}
-          <label class="sched_detail">Materials Fee:</label>
-  	  ${{eventitem.event.fee}}<br>
+<div class="col-12">{% include "ticket_link.tmpl" %}</div>
+{% endif %}
+<br>
+  <h2 class="gbe-title">{{eventitem.event.e_title}}</h2>
+    <div class="sched_block col-12">
+      {{eventitem.event.e_description |safe}}
+        <label class="sched_label">Type:</label>&nbsp;&nbsp;{{eventitem.event.type}}<br>
+	      {% if eventitem.event.fee %}
+          <label class="sched_label">Materials Fee:</label>&nbsp;&nbsp;${{eventitem.event.fee}}<br>
         {% endif %}
       </div>
-    </div>
       {% if eventitem.scheduled_events %}
-      <div class="sched_times container-fluid">
+      <div class="sched_times gbe-bg-dark container">
 	{% for sched_event in schedule_items %}
 	<div class="col-12 sched-sub-box">
 	  <div class="col-1 col-xs-2 col-md-1 col-lg-1 sched-sub-box">
@@ -39,12 +31,12 @@
 	  </div>
 	  <div class="col-11 col-xs-10 col-md-5 col-lg-6">
       <div class="row">
-        <div class="col-3"><label class="sched_detail">Time:</label></div>
+        <div class="col-3"><label class="sched_label">Time:</label></div>
         <div class="col-8">{{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
         {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT")}}</div>
       </div>
       <div class="row">
-	      <div class="col-3"><label class="sched_detail">Location:</label></div>
+	      <div class="col-3"><label class="sched_label">Location:</label></div>
         <div class="col-8">{{ sched_event.occurrence.location }}
           {% if sched_event.occurrence.location.as_subtype.address %}
             <br>{{sched_event.occurrence.location.as_subtype.address | safe}}<br><br>
@@ -53,7 +45,7 @@
 	    </div>
     </div>
     {% if sched_event.occurrence.location.as_subtype.map_embed %}
-    <div class="col-12 col-md-4 col-lg-5 sched-sub-box">
+    <div class="col-12 col-md-4 col-lg-5 text-center sched-sub-box">
       {{sched_event.occurrence.location.as_subtype.map_embed | safe}}
     </div>
     {% endif %}
@@ -61,8 +53,6 @@
 	{% endfor %}
       </div>
       {% endif %}
-
-    </div>
     {% if eventitem.featured_grid_list %}
       {% include "featured_people.tmpl" with featured_items=eventitem.featured_grid_list%}
     {% endif %}
@@ -71,21 +61,21 @@
       {% include "people_gallery.tmpl" with grid_items=eventitem.bio_grid_list%}
 
     {% elif eventitem.people %}
-    <div class="bio_block font_regular container">
+    <div class="bio_block container">
       {% for worker in eventitem.people %}
-      <div class="row bio_row">
-        <div class="col-lg-7 col-md-5 col-12">
+      <div class="row">
+        <div class="col-lg-7 col-md-6 col-12">
 	{%if worker.role == "Staff Lead"%}
-	  <h2 class="bio_name subtitle">{{worker.role}} - {{worker.person.display_name}}</h2>
+	  <h2 class="bio_name gbe-subtitle">{{worker.role}} - {{worker.person.display_name}}</h2>
         {%else%}
-          <h2 class="subtitle">About the {{worker.role}} - {{worker.person.name}}</h2>
+          <h2 class="gbe-subtitle">About the {{worker.role}} - {{worker.person.name}}</h2>
           {{worker.person.bio |safe}}
 	{%endif%}
         <br><br>
         </div>
         {% if worker.person.img %}
-          <div class="col-md-3 col-12">
-          <img src="{% thumbnail worker.person.img 300x300 crop upscale subject_location=worker.person.img.subject_location %}" class="sched_bio_image">
+          <div class="col-lg-5 col-md-6 col-12">
+          <img src="{% thumbnail worker.person.img 300x300 crop upscale subject_location=worker.person.img.subject_location %}">
           </div>
         {% endif %}
       </div>

@@ -8,7 +8,6 @@ ul li {
   list-style: none;
   padding: 0;
   margin: 0;
-  color: #777777;
 }
 
 /* ==========================================================================
@@ -86,7 +85,6 @@ fieldset[disabled] .btn {
   width: 100%;
 }
 .gallery-item .icons i {
-  color: #fff;
   border: 2px solid #fff;
   padding: 12px;
   margin: -42px;
@@ -99,27 +97,21 @@ fieldset[disabled] .btn {
   -o-transition: all 0.2s linear;
   transition: all 0.2s linear;
 }
-.gallery-item .icons i:hover {
-  color: #e91e63;
-  border-color: #e91e63;  
-}
-.gallery-item .icons .preview {
+.gallery-item .icons a {
   text-decoration: none;
   position: absolute;
+}
+.gallery-item .icons .preview {
   left: 40%;
   top: 45%;
-  color: #fff;
   -webkit-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -moz-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -o-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
 }
 .gallery-item .icons .below {
-  text-decoration: none;
-  position: absolute;
   left: 45%;
   top: 70%;
-  color: #fff;
   -webkit-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -moz-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -o-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
@@ -130,12 +122,9 @@ fieldset[disabled] .btn {
   margin-left: 42px;
 }
 .gallery-item .icons .link {
-  text-decoration: none;
-  position: absolute;
   left: 55%;
   margin-left: 42px;
   top: 45%;
-  color: #fff;
   -webkit-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -moz-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -o-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
@@ -284,6 +273,8 @@ a.more-link:hover{
 #team .single-member:hover {
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.14);
 }
+
+
 .featured-vendor-img {
   height: 250px;
   line-height: 250px;
