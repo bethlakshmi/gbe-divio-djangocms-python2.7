@@ -26,7 +26,7 @@ class ManageTheme(View):
     page_title = 'Manage Style Settings'
     style_version = None
     permissions = ('Theme Editor',)
-    title_format = "Manage Styles Settings for {}, version {:.1f}"
+    title_format = "Manage {}, version {:.1f}"
     instruction_code = "THEME_INSTRUCTIONS"
 
     def groundwork(self, request, args, kwargs):

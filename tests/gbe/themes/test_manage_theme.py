@@ -29,7 +29,7 @@ class TestManageTheme(TestCase):
             self.view_name,
             urlconf="gbe.themes.urls",
             args=[self.value.style_version.pk])
-        self.title = "Manage Styles Settings for {}, version {:.1f}".format(
+        self.title = "Manage {}, version {:.1f}".format(
             self.value.style_version.name,
             self.value.style_version.number)
         self.style_url = reverse(
