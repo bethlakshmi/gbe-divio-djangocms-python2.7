@@ -74,9 +74,7 @@ class TestManageTheme(TestCase):
             args=[empty.pk]))
         self.assertContains(
             response,
-            "Manage Styles Settings for %s, version %d" % (
-                empty.name,
-                empty.number))
+            "Manage {}, version {:.1f}".format(empty.name, empty.number))
         self.assertContains(response, reverse(
             "theme_style",
             urlconf="gbe.themes.urls",

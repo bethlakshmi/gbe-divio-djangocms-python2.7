@@ -89,7 +89,6 @@ class TestCloneTheme(TestCase):
         data['finish'] = 'Finish'
         response = self.client.post(self.url, data=data, follow=True)
         new_version = StyleVersion.objects.latest('pk')
-        print(response.content)
         self.assertContains(
             response,
             "Cloned %s from %s" % (new_version,
@@ -104,10 +103,9 @@ class TestCloneTheme(TestCase):
         data['update'] = 'Update'
         response = self.client.post(self.url, data=data, follow=True)
         new_version = StyleVersion.objects.latest('pk')
-        print(response.content)
         self.assertContains(
             response,
-            "Manage Styles Settings for {}, version {:.1f}".format(
+            "Manage {}, version {:.1f}".format(
                 new_version.name,
                 new_version.number))
         self.assertContains(
