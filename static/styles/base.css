@@ -974,8 +974,6 @@ td.form_field.long_choice ul li
 .event-booking-cell {
   min-height: 32px;
 }
-
-
 input#id_max_volunteer, input#id_new_opp-max_volunteer, input#id_new_slot-max_volunteer
 {
   width: 40px

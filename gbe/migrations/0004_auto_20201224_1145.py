@@ -432,12 +432,49 @@ init_values = [
     {
             'selector': '.gallery-item .icons i',
             'pseudo_class': 'hover',
-            'description': ''''icons that show when one hovers over a
+            'description': '''icons that show when one hovers over a
             performer image and also hovers over the icon''',
             'target_element': 'i',
             'usage': 'Event Display',
             'prop_val': [('color', 'rgba(233, 30, 99, 1)'),
                          ('border-color', 'rgba(233, 30, 99, 1)')]},
+    {
+            'selector': '#team .single-member',
+            'pseudo_class': 'hover',
+            'description': '''Block to put focus to featured items on a page,
+            see it on fashion faire and shows with special guests.  On hover, 
+            the shadow gets a bit deeper, throwing more focus.''',
+            'target_element': 'div',
+            'usage': 'Event Display',
+            'prop_val': [('box-shadow', '0px 6px 15px rgba(0, 0, 0, 0.14)')]},
+    {
+            'selector': '#team .single-member',
+            'pseudo_class': '',
+            'description': '''Block to put focus to featured items on a page,
+            see it on fashion faire and shows with special guests.''',
+            'target_element': 'div',
+            'usage': 'Event Display',
+            'prop_val': [('box-shadow', '0 1px 3px 0 rgba(0, 0, 0, 0.2)'),
+                         ('background', 'rgba(255,255,255,1)')]},
+    {
+            'selector': '#team .team-img',
+            'pseudo_class': 'before',
+            'description': '''Shaded color that comes over the image of a 
+            featured block when the buttons show up.  Used in both vendors, 
+            and shows.''',
+            'target_element': 'div',
+            'usage': 'Event Display',
+            'prop_val': [('background', 'rgba(233, 30, 99, 0.7)')]},
+    {
+            'selector': '.social-icon .social i',
+            'pseudo_class': '',
+            'description': '''Buttons on top of featured item images.  Appear
+            on hover.''',
+            'target_element': 'div',
+            'usage': 'Event Display',
+            'prop_val': [('box-shadow', '0px 2px 4px rgba(0, 0, 0, 0.2)'),
+                         ('color', 'rgba(119,119,119,1)'),
+                         ('background', 'rgba(255,255,255,1)')]},
     {
             'selector': 'span.dropt:hover span',
             'pseudo_class': 'hover',
