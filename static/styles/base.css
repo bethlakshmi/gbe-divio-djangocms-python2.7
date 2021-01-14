@@ -170,7 +170,6 @@ div#middle {
     overflow: hidden;
     padding: 10px 3px 10px 20px;
 }
-
 .special_functions
 {
     width:27%;
@@ -430,14 +429,6 @@ td.describe
   padding-left: 20px;
 }
 
-
-.listheader
-{
-  font-family: 'Vast Shadow', cursive;
-  font-size: 30px;
-  color: #333333;
-}
-
 .gbe-head
 {
   font-family: 'Vast Shadow', cursive;
@@ -525,7 +516,6 @@ td.describe
   border-width: 1px;
   margin: 3px;
 }
-.detail_link, .detail_link:visited {color: black;}
 .sched-sub-box   .detail_link,  .sched-sub-box   .detail_link-detail_disable {
     text-align: center;
     display: inline-block;
@@ -535,12 +525,6 @@ td.describe
 }
 .volunteer-detail_link-disabled, .volunteer-detail_link-disabled:hover, .volunteer-detail_link-disabled:active, .volunteer-detail_link-disabled:visited {
   color: #807d7d;
-}
-.detail_link:hover, .detail_link:active {
-    color: #6E6E6E;
-}
-.detail_link-disabled, .detail_link-disabled:hover, .detail_link-disabled:active, .detail_link-disabled:visited {
-  color: #C3BDBF;
 }
 .detail_link-detail_disable, .detail_link-detail_disable:hover, .detail_link-detail_disable:active, .detail_link-detail_disable:visited
 {color: #6E6E6E;}
@@ -1091,4 +1075,3 @@ div.hierarchy-1
 /* end tabs */
 .close{font-size:21px;color:inherit;}
 .close:focus,.close:hover{color:inherit;text-decoration:none;outline:none; ;}
-

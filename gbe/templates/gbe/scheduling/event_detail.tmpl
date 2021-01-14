@@ -8,11 +8,13 @@
       {% include "gray_grids_css.tmpl" %}
 {% endblock head %}
 {% block content %}
+<div class="container"><div class="row">
 {% if tickets %}
 <div class="col-12">{% include "ticket_link.tmpl" %}</div>
 {% endif %}
-<br>
-  <h2 class="gbe-title">{{eventitem.event.e_title}}</h2>
+
+<div class="mt-5 col-12">
+  <h2 class="gbe-title">{{eventitem.event.e_title}}</h2></div>
     <div class="sched_block col-12">
       {{eventitem.event.e_description |safe}}
         <label class="sched_label">Type:</label>&nbsp;&nbsp;{{eventitem.event.type}}<br>
@@ -21,15 +23,15 @@
         {% endif %}
       </div>
       {% if eventitem.scheduled_events %}
-      <div class="sched_times gbe-bg-dark container">
+<div class="m-3 sched_times gbe-bg-dark container">
 	{% for sched_event in schedule_items %}
-	<div class="col-12 sched-sub-box">
-	  <div class="col-1 col-xs-2 col-md-1 col-lg-1 sched-sub-box">
+	<div class="row px-4">
+	  <div class="col-1 col-sm-2 col-lg-1 pt-3 pr-3">
       {% include "gbe/scheduling/favorite_star.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable"%}
       {% include "gbe/scheduling/volunteer_link_display.tmpl" with size="fa-2x" icon_class="volunteer-icon-large" disable_style="detail_link-detail_disable" %}
       {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
-	  <div class="col-11 col-xs-10 col-md-5 col-lg-6">
+	  <div class="col-11 col-sm-10 col-lg-5">
       <div class="row">
         <div class="col-3"><label class="sched_label">Time:</label></div>
         <div class="col-8">{{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
@@ -45,13 +47,13 @@
 	    </div>
     </div>
     {% if sched_event.occurrence.location.as_subtype.map_embed %}
-    <div class="col-12 col-md-4 col-lg-5 text-center sched-sub-box">
+    <div class="col-12 col-md-9 col-lg-6 text-center sched-sub-box">
       {{sched_event.occurrence.location.as_subtype.map_embed | safe}}
     </div>
     {% endif %}
 	</div>
 	{% endfor %}
-      </div>
+</div>
       {% endif %}
     {% if eventitem.featured_grid_list %}
       {% include "featured_people.tmpl" with featured_items=eventitem.featured_grid_list%}
@@ -85,4 +87,5 @@
 
 
   <div style="height: 300px">&nbsp;</div>
+</div></div>
 {% endblock %}

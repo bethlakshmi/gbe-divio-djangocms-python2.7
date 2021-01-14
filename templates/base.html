@@ -46,8 +46,8 @@
 	    {% endif %}
         </div>
     </nav>
-     <div class="panel panel-default gbe-panel">
-        <div class="panel-body">
+     <div class="card gbe-panel">
+        <div class="card-body">
         {% if messages %}
 	{% for message in messages %}
 	{% if message.tags == "error" %}<div class="alert gbe-alert-danger">{% else %}<div class="alert gbe-alert-{{message.tags}}">{% endif %}

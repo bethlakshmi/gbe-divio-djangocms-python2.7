@@ -494,7 +494,7 @@ init_values = [
             'pseudo_class': '',
             'description': '''lighter colored panels - sub panels within
             site, including update profile email options, review bids,
-            view bids, and others.''',
+            view bids, event lists, and others.''',
             'target_element': 'div',
             'usage': 'Forms',
             'prop_val': [('background-color', 'rgba(248, 249, 250, 1)'),
@@ -508,6 +508,24 @@ init_values = [
             'usage': 'Forms',
             'prop_val': [('background-color', 'rgba(195, 189, 191,1)'),
                          ('border-color', 'rgba(50, 50, 50, 1)')]},
+    {
+            'selector': '.gbe-panel-list',
+            'pseudo_class': '',
+            'description': '''when the dark panels is used on a heading
+            within a long list, the border gets very interruptive, so it's
+            currently set to blend with the gbe-bg-dark backgroun.  If changed,
+            look at class description list and bio list.''',
+            'target_element': 'div',
+            'usage': 'Forms',
+            'prop_val': [('border-color', 'rgba(195, 189, 191,1)'),
+                         ('background-color', 'rgba(0,0,0,0)')]},
+    {
+            'selector': '.gbe-panel-list div.card-header',
+            'pseudo_class': '',
+            'description': '''blend the bottom of the panel header''',
+            'target_element': 'div',
+            'usage': 'Forms',
+            'prop_val': [('border-color', 'rgba(195, 189, 191,1)')]},
     {
             'selector': '.gbe-border-danger',
             'pseudo_class': '',
@@ -715,6 +733,62 @@ init_values = [
             'usage': 'General',
             'prop_val': [('color', 'rgba(51, 122, 183, 1)'),
                          ('text-decoration-color', 'rgba(51, 122, 183, 1)')]},
+    {
+            'selector': '.gbe-panel-link',
+            'pseudo_class': '',
+            'description': 'Links as headers of panels',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(51, 51, 51, 1)'),
+                         ('text-decoration-color', 'rgba(0, 0, 0, 1)')]},
+    {
+            'selector': '.gbe-panel-link',
+            'pseudo_class': 'hover',
+            'description': 'Links as headers of panels',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(51, 51, 51, 1)'),
+                         ('text-decoration-color', 'rgba(51, 51, 51, 1)')]},
+    {
+            'selector': '.detail_link',
+            'pseudo_class': '',
+            'description': 'Icon for more information on events page',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(0, 0, 0, 1)')]},
+    {
+            'selector': '.detail_link',
+            'pseudo_class': 'hover',
+            'description': 'Icon for more information on events page',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(110, 110, 110, 1)')]},
+    {
+            'selector': '.detail_link',
+            'pseudo_class': 'active',
+            'description': 'Icon for more information on events page',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(110, 110, 110, 1)')]},
+    {
+            'selector': ('.detail_link-disabled, .detail_link-disabled:hover,' +
+                ' .detail_link-disabled:active, .detail_link-disabled:visited'),
+            'pseudo_class': '',
+            'description': '''Detail link on events list that is disabled 
+            because this user is not eligible''',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(195, 189, 191, 1)')]},
+    {
+            'selector': ('.detail_link-detail_disable, .detail_link-detail_' +
+                'disable:hover, .detail_link-detail_disable:active, ' +
+                '.detail_link-detail_disable:visited'),
+            'pseudo_class': '',
+            'description': '''Detail link on event detail pages that is 
+            disabled because user is not eligible.  Darker for dark panel.''',
+            'target_element': 'a',
+            'usage': 'Event Display',
+            'prop_val': [('color', 'rgba(140, 140, 140, 1)')]},
     {
             'selector': '.gbe-link',
             'pseudo_class': 'hover',

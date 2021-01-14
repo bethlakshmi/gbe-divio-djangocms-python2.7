@@ -6,26 +6,28 @@
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
 {% endblock %}
 {% block content %}
-   
-   <H1 class="listheader">{{title}}</H1>
+<div class="container"> <div class="row">
+<div class="col-12">  
+   <H1 class="gbe-title">{{title}}</H1>
    <div>
      {{view_header_text | safe}}
    </div>
    {% include "conference_list.tmpl" %}<br><br>
+</div></div>
+<div class="row"><div class="col-12">
    {% for event in events %}
-
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h2 class="panel-title listsubheader">
-      <a href='{{event.detail}}'>{{ event.eventitem.e_title }}</a>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      <a href='{{event.detail}}' class="gbe-panel-link">{{ event.eventitem.e_title }}</a>
       <div class="pull-right">
 	<a href='{{event.detail}}' class="detail_link" title="More information">
           <i class="fa fa-info-circle fa-lg" aria-hidden="true"></i>
       </a></div>
     </h2>
   </div>
-  <div class="panel-body">
-    <div class="well">
+  <div class="card-body">
+    <div class="card card-body rounded gbe-bg-light">
 	{% if event.presenters|length > 0%}
 	<div class="row">
 	<div class="col-xs-12 col-sm-2">
@@ -59,11 +61,12 @@
           ${{event.eventitem.fee}}</div></div>
 	{% endif %}
     </div>
+    <br>
     {{event.eventitem.e_description | safe}}
   </div>
 </div>
    {% empty %}
      <div><b>Stay tuned! Updates coming soon!</b></div>
    {% endfor %} 
-
+</div></div></div>
 {% endblock %}

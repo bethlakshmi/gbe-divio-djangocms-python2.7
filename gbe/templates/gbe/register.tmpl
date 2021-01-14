@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-<H3>Create an Account</H3>
+<H3 class="gbe-title">Create an Account</H3>
 
 In order to do most other things at The Expo, we need you to register
 for a free account.  If you're planning on applying to perform, want to
@@ -20,14 +20,14 @@ buying tickets.
 
 
   {% if form.errors %}
-    <p style= "color:red"> We've experienced an error, please try again, or contact our support team. </p>
+    <p class="gbe-form-error"> We've experienced an error, please try again, or contact our support team. </p>
 
   {% endif %}
-   <p class="vanilla">Register for an account </p>
+   <p>Register for an account </p>
    <form action="" method="post">
 
    {% include "form_table.tmpl" %}
-   <input type="submit" value="Register"> 
+   <input type="submit" value="Register" class="gbe-btn-primary btn"> 
    </form>
 
 {% endblock %}
