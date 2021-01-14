@@ -487,15 +487,6 @@ td.describe
 }
 
 /*Schedule detail view*/
-.sched_block{margin: 10px;}
-.sched_desc
-{
-  padding-top: 10px;
-  align:left;
-  width:70%;
-  display: inline-block;
-  vertical-align: top;
-}
 .sched_sidebar
 {
   width:27%;
@@ -530,7 +521,7 @@ td.describe
 {color: #6E6E6E;}
 .bio_block
 {
-    border: 1px solid black;
+    border: 1px solid;
     margin: 10px;
     padding: 10px;
 }
@@ -556,13 +547,6 @@ td.describe
   min-height: 25px;
 }
 .top-buffer { margin-top:20px; }
-
-.sched_detail_title
-{
-  color: #333333;
-  font-family: 'Vast Shadow', cursive;
-  font-size: 30px;
-}
 .sched_label
 {
  font-weight: bold;

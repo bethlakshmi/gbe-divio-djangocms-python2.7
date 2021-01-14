@@ -734,6 +734,13 @@ init_values = [
             'prop_val': [('color', 'rgba(51, 122, 183, 1)'),
                          ('text-decoration-color', 'rgba(51, 122, 183, 1)')]},
     {
+            'selector': '.bio_block',
+            'pseudo_class': '',
+            'description': 'box around bios on classes',
+            'target_element': 'div',
+            'usage': 'Event Display',
+            'prop_val': [('border-color', 'rgba(0, 0, 0, 1)')]},
+    {
             'selector': '.gbe-panel-link',
             'pseudo_class': '',
             'description': 'Links as headers of panels',
