@@ -1,9 +1,9 @@
 {% if form.errors %}
-<p style= "color:red"> There is an error on the form.</p>
+<p class="gbe-form-error"> There is an error on the form.</p>
 {% endif %}
 {% if errors %}
   {% for error in errors %}
-    <p style= "color:red">{{error}}</p>
+    <p class="gbe-form-error">{{error}}</p>
   {% endfor %}
 {% endif %}
 
@@ -11,11 +11,6 @@
 
 {% include "form_table_wrapper.tmpl" %}
 
-{% if nodraft %}
-<input type="submit" name="submit" value="{{nodraft}}">
-{% else %}
-<input type="submit" name="draft" value="Save Draft">
-<input type="submit" name="submit" value="Submit For Approval">
-{% endif %}
+<input type="submit" name="submit" value="{{nodraft}}" class="btn gbe-btn-primary">
 
 </form>
