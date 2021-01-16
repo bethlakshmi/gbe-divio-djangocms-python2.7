@@ -263,7 +263,7 @@ class TestEventDetailView(TestCase):
         response = self.client.get(url)
         self.assertContains(
             response,
-            'detail_link-disabled cal-favorite detail_link-detail_disable')
+            'cal-favorite detail_link-detail_disable')
 
     def test_interest_not_shown(self):
         context = ShowContext(

@@ -405,8 +405,9 @@ class TestCalendarView(TestCase):
                       args=['Conference'])
         data = {'day': "02-06-2016"}
         response = self.client.get(url, data=data)
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
+        self.assertContains(
+            response,
+            '<a href="#" class="cal-favorite detail_link-disabled')
         self.assertContains(
             response,
             '<div class="col-lg-12 col-md-12 col-sm-12 col-12 teacher">')
@@ -420,8 +421,9 @@ class TestCalendarView(TestCase):
                       args=['General'])
         data = {'day': "02-06-2016"}
         response = self.client.get(url, data=data)
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
+        self.assertContains(
+            response,
+            '<a href="#" class="cal-favorite detail_link-disabled')
         self.assertContains(
             response,
             '<div class="col-lg-12 col-md-12 col-sm-12 col-12 performer">')
