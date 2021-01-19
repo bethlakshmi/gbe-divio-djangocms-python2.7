@@ -1,0 +1,39 @@
+  {% load static %}
+  {# Include the hidden fields #}
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+<div class="form-group"><div class="container"> <div class="row">
+{% for field in form.visible_fields %}
+	<div class="col-3 text-right">
+  {{ field }}
+	<label for="{{field.name}}" class="control-label">
+    {% if field.errors %}<font class="inventory-form-error">!</font>&nbsp;&nbsp;
+	  {% elif field.css_classes == 'required' %}
+      <font class="inventory-form-required">*</font>{% endif %} 
+    {% if field.errors %}<font class="inventory-form-error">{% endif %}
+	  {{ field.label }}
+    {% if field.errors %}</font>{% endif %} 
+    {% if field.help_text %}
+      <span class="dropt" title="Help">
+      <img src= "{% static "img/question.png" %}" alt="?"/>
+        <span style="width:200px;float:right;text-align:left;">
+          {{ field.help_text }}
+        </span></span>
+    {% endif %}
+	</label>
+	</div>
+{% endfor %}
+</div>
+<div class="row">
+{% for field in form.visible_fields %}
+  <div class="col-3 text-right">
+  {% if field.errors %}
+ 	    <label for="{{field.name}}">	      
+        <font class="inventory-form-error">{{ field.errors }}</font>
+      </label>
+  {% else %}&nbsp;
+  {% endif %}
+	</div>
+{% endfor %}
+</div></div></div>

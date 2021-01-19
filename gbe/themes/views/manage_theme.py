@@ -13,7 +13,7 @@ from gbe.models import (
     StyleVersion,
     UserMessage,
 )
-from gbe.themes.forms import ColorStyleValueForm
+from gbe.themes.forms import StyleValueForm
 from django.contrib import messages
 from gbetext import user_messages
 from datetime import datetime
@@ -54,7 +54,7 @@ class ManageTheme(View):
         }
         return context
 
-    def setup_forms(self, request=None):
+    def setup_forms(self, request):
         forms = []
         for value in StyleValue.objects.filter(
                 style_version=self.style_version).order_by(
@@ -62,15 +62,17 @@ class ManageTheme(View):
                 'style_property__selector__selector',
                 'style_property__selector__pseudo_class',
                 'style_property__style_property'):
-            if request:
-                form = ColorStyleValueForm(request.POST,
-                                           instance=value,
-                                           prefix=str(value.pk))
-            else:
-                form = ColorStyleValueForm(instance=value,
-                                           prefix=str(value.pk))
-            form['value'].label = str(value.style_property.style_property)
-            forms += [(value, form)]
+            try:
+                if request.POST:
+                    form = StyleValueForm(request.POST,
+                                          instance=value,
+                                          prefix=str(value.pk))
+                else:
+                    form = StyleValueForm(instance=value,
+                                          prefix=str(value.pk))
+                forms += [(value, form)]
+            except Exception as e:
+                messages.error(request, e)
         return forms
 
     @method_decorator(login_required)
@@ -80,7 +82,7 @@ class ManageTheme(View):
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
-        forms = self.setup_forms()
+        forms = self.setup_forms(request)
         return render(request, self.template, self.make_context(forms))
 
     @never_cache
@@ -93,6 +95,8 @@ class ManageTheme(View):
         self.groundwork(request, args, kwargs)
         forms = self.setup_forms(request)
         all_valid = True
+        if len(messages.get_messages(request)) > 0:
+            all_valid = False
         for value, form in forms:
             if not form.is_valid():
                 all_valid = False

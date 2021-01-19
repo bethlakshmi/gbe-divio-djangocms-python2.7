@@ -1018,3 +1018,19 @@ costume_proposal_labels = {
 
 valid_model_error = '''Select a valid choice. That choice is not one of the \
     available choices.'''
+
+theme_help = {
+    'no_args': '''This form requires either an instance of a StyleValue or a
+    StyleProperty from which to create the StyleValue so that the value type
+    can be determined.''',
+    'mismatch': '''The template of the property does not match the value.
+    This suggests that something has changed since the value was last saved.'''
+}
+style_value_help = {
+    'text-shadow-0': '''The position of the horizontal shadow.
+    Negative values are allowed''',
+    'text-shadow-1': '''The position of the vertical shadow.
+    Negative values are allowed''',
+    'text-shadow-2': '''The blur radius. Default value is 0''',
+    'text-shadow-3': '''The color of the shadow.''',
+}

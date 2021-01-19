@@ -12,10 +12,7 @@ from gbe.models import StyleSelector
 class StyleProperty(Model):
     selector = ForeignKey(StyleSelector, on_delete=CASCADE)
     style_property = CharField(max_length=300)
-    value_type = CharField(
-        max_length=128,
-        choices=[('color', 'color')],
-        default='color')
+    value_type = CharField(max_length=128)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 

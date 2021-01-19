@@ -11,6 +11,7 @@
 <p>{{ instructions | safe }}</p>
 
 <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     {% if version_form %}
     <h4 class="gbe-subtitle">New Theme Settings</h4>
     {% include "form_table.tmpl" with form=version_form %}
@@ -18,7 +19,8 @@
     {% for value, form in forms %}
     {% ifchanged value.style_property.selector.used_for %}<h3 class="gbe-subtitle">{{ value.style_property.selector.used_for }}</h3>{% endifchanged %}
     {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
-    {% include "form_table.tmpl" %}
+    <h6 class="inventory-subtitle"><em>{{ value.style_property.style_property }}</em></h6>
+    {% include "form_horizontal.tmpl" %}
     {% endfor %}
 <div class="row">
   <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7 dropdown">

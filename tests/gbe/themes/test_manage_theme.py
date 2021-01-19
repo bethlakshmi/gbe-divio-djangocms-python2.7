@@ -18,6 +18,8 @@ from datetime import (
 
 class TestManageTheme(TestCase):
     view_name = "manage_theme"
+    px_input = ('<input type="number" name="%d-value_%d" value="%d" required' +
+                ' id="id_%d-value_%d">')
 
     def setUp(self):
         self.client = Client()
@@ -91,7 +93,7 @@ class TestManageTheme(TestCase):
     def test_post_finish(self):
         login_as(self.user, self)
         response = self.client.post(self.url, data={
-            '%s-value' % self.value.pk: "rgba(255, 255, 255, 0)",
+            '%s-value_0' % self.value.pk: "rgba(255,255,255,0)",
             '%s-style_property' % self.value.pk: self.value.style_property.pk,
             'finish': "Finish",
             }, follow=True)
@@ -105,7 +107,7 @@ class TestManageTheme(TestCase):
     def test_post_update(self):
         login_as(self.user, self)
         response = self.client.post(self.url, data={
-            '%s-value' % self.value.pk: "rgba(255, 255, 255, 0)",
+            '%s-value_0' % self.value.pk: "rgba(255,255,255,0)",
             '%s-style_property' % self.value.pk: self.value.style_property.pk,
             'update': "Update",
             }, follow=True)
@@ -113,7 +115,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             "Updated %s" % self.value.style_version)
-        self.assertContains(response, 'rgba(255, 255, 255, 0)')
+        self.assertContains(response, 'rgba(255,255,255,0)')
         self.assertContains(response,
                             self.value.style_property.selector)
         self.assertContains(response,
@@ -132,11 +134,128 @@ class TestManageTheme(TestCase):
         self.assertRedirects(response,
                              reverse("themes_list", urlconf="gbe.themes.urls"))
 
-    def test_post_basics_bad_data(self):
+    def test_post_bad_data(self):
         login_as(self.user, self)
         response = self.client.post(self.url, data={
             'finish': "Finish",
             }, follow=True)
         self.assertContains(response, self.title)
-        self.assertContains(response, "There is an error on the form.")
+        self.assertContains(
+            response,
+            "Something was wrong, correct the errors below and try again.")
+        self.assertContains(response, "This field is required.")
         self.assertContains(response, self.style_url)
+
+    def test_get_complicated_property(self):
+        from gbe_forms_text import style_value_help
+        complex_value = StyleValueFactory(
+            value="5px 4px 3px rgba(10,10,10,1)",
+            style_property__style_property="text-shadow",
+            style_property__value_type="px px px rgba",
+            style_property__selector=self.value.style_property.selector,
+            style_version=self.value.style_version)
+        login_as(self.user, self)
+        response = self.client.get(self.url)
+        self.assertContains(
+            response,
+            self.px_input % (complex_value.pk, 0, 5, complex_value.pk, 0),
+            html=True)
+        self.assertContains(
+            response,
+            self.px_input % (complex_value.pk, 1, 4, complex_value.pk, 1),
+            html=True)
+        self.assertContains(
+            response,
+            self.px_input % (complex_value.pk, 2, 3, complex_value.pk, 2),
+            html=True)
+        self.assertContains(response,
+                            complex_value.style_property.selector)
+        self.assertContains(response,
+                            complex_value.style_property.style_property)
+        self.assertContains(response, reverse(
+            "clone_theme",
+            urlconf="gbe.themes.urls",
+            args=[self.value.style_version.pk]))
+        self.assertContains(response, style_value_help["text-shadow-0"])
+        self.assertContains(response, style_value_help["text-shadow-1"])
+        self.assertContains(response, style_value_help["text-shadow-2"])
+        self.assertContains(response, style_value_help["text-shadow-3"])
+
+    def test_get_complicated_messed_up_property(self):
+        from gbe_forms_text import theme_help
+        complex_value = StyleValueFactory(
+            value="5px 4px rgba(10,10,10,1)",
+            style_property__value_type="px px px rgba",
+            style_property__selector=self.value.style_property.selector,
+            style_version=self.value.style_version)
+        login_as(self.user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, "%s, VALUES: %s" % (
+            theme_help['mismatch'],
+            "[\'5px\', \'4px\', \'rgba(10,10,10,1)\']"))
+
+    def test_post_complicated_property(self):
+        complex_value = StyleValueFactory(
+            value="5px 4px 3px rgba(10,10,10,1)",
+            style_property__value_type="px px px rgba",
+            style_property__selector=self.value.style_property.selector,
+            style_version=self.value.style_version)
+        login_as(self.user, self)
+        response = self.client.post(self.url, data={
+            '%s-value_0' % self.value.pk: "rgba(255,255,255,0)",
+            '%s-style_property' % self.value.pk: self.value.style_property.pk,
+            '%s-value_0' % complex_value.pk: "0",
+            '%s-style_property' % (
+                complex_value.pk): complex_value.style_property.pk,
+            '%s-value_1' % complex_value.pk: "10",
+            '%s-value_2' % complex_value.pk: "15",
+            '%s-value_3' % complex_value.pk: "rgba(50,50,50,0.5)",
+            'update': "Update",
+            }, follow=True)
+        self.assertContains(
+            response,
+            self.px_input % (complex_value.pk, 0, 0, complex_value.pk, 0),
+            html=True)
+        self.assertContains(
+            response,
+            self.px_input % (complex_value.pk, 1, 10, complex_value.pk, 1),
+            html=True)
+        self.assertContains(
+            response,
+            self.px_input % (complex_value.pk, 2, 15, complex_value.pk, 2),
+            html=True)
+        self.assertContains(response, "rgba(50,50,50,0.5)")
+        self.assertContains(response,
+                            complex_value.style_property.selector)
+        self.assertContains(response,
+                            complex_value.style_property.style_property)
+        self.assertContains(response, reverse(
+            "clone_theme",
+            urlconf="gbe.themes.urls",
+            args=[self.value.style_version.pk]))
+
+    def test_post_complicated_messed_up_property(self):
+        from gbe_forms_text import theme_help
+        complex_value = StyleValueFactory(
+            value="5px 4px 3px",
+            style_property__value_type="px px px rgba",
+            style_property__selector=self.value.style_property.selector,
+            style_version=self.value.style_version)
+        login_as(self.user, self)
+        response = self.client.post(self.url, data={
+            '%s-value_0' % self.value.pk: "rgba(255,255,255,0)",
+            '%s-style_property' % self.value.pk: self.value.style_property.pk,
+            '%s-value_0' % complex_value.pk: "0",
+            '%s-style_property' % (
+                complex_value.pk): complex_value.style_property.pk,
+            '%s-value_1' % complex_value.pk: "10",
+            '%s-value_2' % complex_value.pk: "15",
+            '%s-value_3' % complex_value.pk: "rgba(50,50,50,0.5)",
+            'update': "Update",
+            }, follow=True)
+        self.assertContains(response, "%s, VALUES: %s" % (
+            theme_help['mismatch'],
+            "[\'5px\', \'4px\', \'3px\']"))
+        self.assertContains(
+            response,
+            "Something was wrong, correct the errors below and try again.")
