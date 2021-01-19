@@ -5,13 +5,13 @@
     {% endfor %}
 <div class="form-group"><div class="container"> <div class="row">
 {% for field in form.visible_fields %}
-	<div class="col-3 text-right">
+	<div class="col-md-{%if field.label == 'color' %}4{%else%}2{%endif%} col-sm-12 text-right">
   {{ field }}
 	<label for="{{field.name}}" class="control-label">
-    {% if field.errors %}<font class="inventory-form-error">!</font>&nbsp;&nbsp;
+    {% if field.errors %}<font class="gbe-form-error">!</font>&nbsp;&nbsp;
 	  {% elif field.css_classes == 'required' %}
-      <font class="inventory-form-required">*</font>{% endif %} 
-    {% if field.errors %}<font class="inventory-form-error">{% endif %}
+      <font class="gbe-form-required">*</font>{% endif %} 
+    {% if field.errors %}<font class="gbe-form-error">{% endif %}
 	  {{ field.label }}
     {% if field.errors %}</font>{% endif %} 
     {% if field.help_text %}
@@ -30,7 +30,7 @@
   <div class="col-3 text-right">
   {% if field.errors %}
  	    <label for="{{field.name}}">	      
-        <font class="inventory-form-error">{{ field.errors }}</font>
+        <font class="gbe-form-error">{{ field.errors }}</font>
       </label>
   {% else %}&nbsp;
   {% endif %}

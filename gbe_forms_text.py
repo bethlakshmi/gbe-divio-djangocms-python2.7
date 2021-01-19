@@ -1033,4 +1033,15 @@ style_value_help = {
     Negative values are allowed''',
     'text-shadow-2': '''The blur radius. Default value is 0''',
     'text-shadow-3': '''The color of the shadow.''',
-}
+    'box-shadow-0': '''The horizontal offset of the shadow. A positive value
+    puts the shadow on the right side of the box, a negative value puts the
+    shadow on the left side of the box''',
+    'box-shadow-1': '''The vertical offset of the shadow. A positive value
+    puts the shadow below the box, a negative value puts the shadow above
+    the box''',
+    'box-shadow-2': '''The blur radius. The higher the number, the more
+    blurred the shadow will be''',
+    'box-shadow-3': '''The spread radius. A positive value increases the size
+    of the shadow, a negative value decreases the size of the shadow''',
+    'box-shadow-4': '''The color of the shadow. The default value is the text
+    color.''',}

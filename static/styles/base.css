@@ -869,6 +869,7 @@ th.horizontal-input ul li {
 td.horizontal-input ul li {
   width: 25px;
 }
+.pixel-input {width: 50px;}
 .long_choice ul 
 {
   border-top: 1px solid black;

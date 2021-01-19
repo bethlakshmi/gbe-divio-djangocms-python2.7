@@ -19,7 +19,7 @@
     {% for value, form in forms %}
     {% ifchanged value.style_property.selector.used_for %}<h3 class="gbe-subtitle">{{ value.style_property.selector.used_for }}</h3>{% endifchanged %}
     {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
-    <h6 class="inventory-subtitle"><em>{{ value.style_property.style_property }}</em></h6>
+    <div class="gbe-text-muted"><em>{{ value.style_property.style_property }}</em></div>
     {% include "form_horizontal.tmpl" %}
     {% endfor %}
 <div class="row">

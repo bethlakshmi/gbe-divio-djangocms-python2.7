@@ -18,8 +18,8 @@ from datetime import (
 
 class TestManageTheme(TestCase):
     view_name = "manage_theme"
-    px_input = ('<input type="number" name="%d-value_%d" value="%d" required' +
-                ' id="id_%d-value_%d">')
+    px_input = ('<input type="number" name="%d-value_%d" value="%d" ' +
+                'class="pixel-input" required id="id_%d-value_%d">')
 
     def setUp(self):
         self.client = Client()

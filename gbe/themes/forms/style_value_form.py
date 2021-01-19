@@ -4,6 +4,7 @@ from django.forms import (
     HiddenInput,
     ModelChoiceField,
     ModelForm,
+    NumberInput,
     TextInput,
 )
 from gbe.models import (
@@ -76,7 +77,8 @@ class StyleValueForm(ModelForm):
                 self.fields['value_%d' % i] = IntegerField(
                     initial=initial,
                     label="pixels",
-                    help_text=help_text)
+                    help_text=help_text,
+                    widget=NumberInput(attrs={'class': 'pixel-input'}))
             i = i + 1
 
     def save(self, commit=True):
