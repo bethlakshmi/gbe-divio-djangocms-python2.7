@@ -19,7 +19,7 @@ init_values = [
             'target_element': 'div',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(255,255,255,1)'),
-                         ('color', 'rgba(0,0,0,1)')]},
+                         ('color', 'rgba(51,51,51,1)')]},
     {
             'selector': 'body.gbe-printable',
             'pseudo_class': '',
@@ -118,8 +118,8 @@ init_values = [
             'prop_val': [('color', 'rgba(0,123,255,1)'),
                          ('text-decoration-color', 'rgba(0,123,255,1)')]},
     {
-            'selector': '.gbe-table-row .approval_needed',
-            'pseudo_class': 'hover',
+            'selector': '.gbe-table-row td.approval_needed',
+            'pseudo_class': '',
             'description': '''Cells where special handling is needed.''',
             'target_element': 'a',
             'usage': 'Table',
@@ -318,7 +318,7 @@ init_values = [
             'description': 'Non-header/footer rows',
             'target_element': 'tr',
             'usage': 'Table',
-            'prop_val': [('background-color', 'rgba(248,249,250,1)'),
+            'prop_val': [('background-color', 'rgba(255,255,255,1)'),
                          ('border-color', 'rgba(50,50,50,1)'),
                          ('color', 'rgba(0,0,0,1)')]},
     {

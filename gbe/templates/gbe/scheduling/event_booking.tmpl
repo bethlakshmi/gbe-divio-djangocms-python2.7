@@ -4,16 +4,16 @@
     {% for hidden in form.hidden_fields %}
     {{ hidden }}
     {% endfor %}
-  <font color=red>*</font> indicates a required field
+  <font class="gbe-form-required">*</font> indicates a required field
   {% if form.errors or scheduling_form.errors or tickets.errors %}
-    <p style= "color:red"> There is an error on the form.</p>
+    <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
-  <font color="red">
+  <font class="gbe-form-error">
   {{ form.non_field_errors }}
   {{ scheduling_form.non_field_errors }}
   {{ tickets.non_field_errors }}</font>
 <div class="event_booking">
-<h4>Event Details</h4>
+<h3 class="gbe-title">Event Details</h3>
 The following fields are common to all scheduled items for this event.
 Changing fields in this section will change them in all calendar items.
 {# Include the visible fields #}
@@ -22,9 +22,9 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-3 col-xs-12">
 	<label for="{{field.name}}" class="control-label">	      
           {% if field.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
 	  {% elif field.css_classes == 'required' %}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %} 
           {{ field.label_tag }}
           {% if field.errors %}</font>{% endif %} 
@@ -42,7 +42,7 @@ Changing fields in this section will change them in all calendar items.
     <div class="row"><div class="col-md-3 col-12">&nbsp;</div>
       <div class="col-md-9 col-12">
  	<label>
-	  <font color="red">{{ field.errors }}</font>
+	  <font class="gbe-form-error">{{ field.errors }}</font>
         </label>{% endif %}
       </div>
     </div></div>
@@ -51,7 +51,7 @@ Changing fields in this section will change them in all calendar items.
   <div class="row d-block">
   {% if scheduling_form %}
     <div class="{% if scheduling_info %}col-md-7 col-sm-6 {% endif %}col-12">
-      <h4>Booking Details</h4>
+      <h4 class="gbe-subtitle">Booking Details</h4>
       Set the time and place for this occurence of this event.<br><br>
       {% for hidden in scheduling_form.hidden_fields %}
         {{ hidden }}
@@ -72,9 +72,9 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-1 col-md-2 col-sm-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.day.name}}" class="control-label">	      
           {% if scheduling_form.day.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
 	  {% elif scheduling_form.day.css_classes == 'required' %}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %} 
           {{ scheduling_form.day.label_tag }}
           {% if scheduling_form.day.errors %}</font>{% endif %} 
@@ -83,7 +83,7 @@ Changing fields in this section will change them in all calendar items.
 	{{ scheduling_form.day }}
         {% if scheduling_form.day.errors %}
  	<br><label>
-	  <font color="red">{{ scheduling_form.day.errors }}</font>
+	  <font class="gbe-form-error">{{ scheduling_form.day.errors }}</font>
         </label>{% endif %}
       </div>
       {% endif %}
@@ -91,9 +91,9 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-2 col-md-2 col-sm-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.time.name}}" class="control-label">	      
           {% if scheduling_form.time.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
 	  {% elif scheduling_form.time.css_classes == 'required' %}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %} 
           {{ scheduling_form.time.label_tag }}
           {% if scheduling_form.time.errors %}</font>{% endif %} 
@@ -102,7 +102,7 @@ Changing fields in this section will change them in all calendar items.
 	{{ scheduling_form.time }}
         {% if scheduling_form.time.errors %}
  	<br><label>
-	  <font color="red">{{ scheduling_form.time.errors }}</font>
+	  <font class="gbe-form-error">{{ scheduling_form.time.errors }}</font>
         </label>{% endif %}
       </div>
       {% endif %}
@@ -110,9 +110,9 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-3 col-md-3 col-sm-5 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.duration.name}}" class="control-label">	      
           {% if scheduling_form.duration.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
 	  {% elif scheduling_form.duration.css_classes == 'required' %}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %} 
           {{ scheduling_form.duration.label_tag }}
           {% if scheduling_form.duration.errors %}</font>{% endif %} 
@@ -121,7 +121,7 @@ Changing fields in this section will change them in all calendar items.
 	{{ scheduling_form.duration }}
         {% if scheduling_form.duration.errors %}
  	<br><label>
-	  <font color="red">{{ scheduling_form.duration.errors }}</font>
+	  <font class="gbe-form-error">{{ scheduling_form.duration.errors }}</font>
         </label>{% endif %}
       </div>
       {% endif %}
@@ -130,9 +130,9 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-2 col-md-3 col-sm-5 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.max_volunteer.name}}" class="control-label">	      
           {% if scheduling_form.max_volunteer.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
 	  {% elif scheduling_form.max_volunteer.css_classes == 'required' %}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %} 
           {{ scheduling_form.max_volunteer.label_tag }}
           {% if scheduling_form.max_volunteer.errors %}</font>{% endif %} 
@@ -141,7 +141,7 @@ Changing fields in this section will change them in all calendar items.
 	{{ scheduling_form.max_volunteer }}
         {% if scheduling_form.max_volunteer.errors %}
  	<label>
-	  <font color="red">{{ scheduling_form.max_volunteer.errors }}</font>
+	  <font class="gbe-form-error">{{ scheduling_form.max_volunteer.errors }}</font>
         </label>{% endif %}
       </div>
       {% endif %}
@@ -150,7 +150,7 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-2 col-md-3 col-sm-2 col-xs-5 event-booking-cell">
   <label for="{{scheduling_form.approval.name}}" class="control-label">        
           {% if scheduling_form.approval.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
           {% endif %} 
           {{ scheduling_form.approval.label_tag }}
           {% if scheduling_form.approval.errors %}</font>{% endif %} 
@@ -159,7 +159,7 @@ Changing fields in this section will change them in all calendar items.
   {{ scheduling_form.approval }}
         {% if scheduling_form.approval.errors %}
   <label>
-    <font color="red">{{ scheduling_form.approval.errors }}</font>
+    <font class="gbe-form-error">{{ scheduling_form.approval.errors }}</font>
         </label>{% endif %}
       </div>
       {% endif %}
@@ -167,9 +167,9 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-lg-2 col-md-3 col-sm-5 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.location.name}}" class="control-label">	      
           {% if scheduling_form.location.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
 	  {% elif scheduling_form.location.css_classes == 'required' %}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %} 
           {{ scheduling_form.location.label_tag }}
           {% if scheduling_form.location.errors %}</font>{% endif %} 
@@ -178,7 +178,7 @@ Changing fields in this section will change them in all calendar items.
 	{{ scheduling_form.location }}
         {% if scheduling_form.location.errors %}
  	<br><label>
-	  <font color="red">{{ scheduling_form.location.errors }}</font>
+	  <font class="gbe-form-error">{{ scheduling_form.location.errors }}</font>
         </label>{% endif %}
       </div>
     </div>
@@ -224,20 +224,20 @@ Changing fields in this section will change them in all calendar items.
       <div class="col-12 event-booking-cell checkbox-ticketing">
 	<label for="{{tickets.bpt_events.name}}" class="control-label">	      
           {% if tickets.bpt_events.errors %}
-            <font color="red">!&nbsp;&nbsp;{% endif %}
+            <font class="gbe-form-error">!&nbsp;&nbsp;{% endif %}
           {{ tickets.bpt_events.label_tag }}
           {% if tickets.bpt_events.errors %}</font>{% endif %} 
         </label>
 	{{ tickets.bpt_events }}
         {% if tickets.bpt_events.errors %}
  	<br><label>
-	  <font color="red">{{ tickets.bpt_events.errors }}</font>
+	  <font class="gbe-form-error">{{ tickets.bpt_events.errors }}</font>
         </label>{% endif %}
       </div>
       <div class="col-md-2 col-sm-3 col-12 event-booking-cell">
 	<label for="{{tickets.bpt_event_id.name}}" class="control-label">	      
           {% if tickets.bpt_event_id.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
           {% endif %} 
           {{ tickets.bpt_event_id.label_tag }}
           {% if tickets.bpt_event_id.errors %}</font>{% endif %} 
@@ -246,13 +246,13 @@ Changing fields in this section will change them in all calendar items.
 	{{ tickets.bpt_event_id }}
         {% if tickets.bpt_event_id.errors %}
  	<br><label>
-	  <font color="red">{{ tickets.bpt_event_id.errors }}</font>
+	  <font class="gbe-form-error">{{ tickets.bpt_event_id.errors }}</font>
         </label>{% endif %}
       </div>
       <div class="col-md-2 col-sm-3 col-12 event-booking-cell">
 	<label for="{{tickets.display_icon.name}}" class="control-label">	      
           {% if tickets.display_icon.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
           {% endif %} 
           {{ tickets.display_icon.label_tag }}
           {% if tickets.display_icon.errors %}</font>{% endif %} 
@@ -267,7 +267,7 @@ Changing fields in this section will change them in all calendar items.
 	{{ tickets.display_icon }}
         {% if tickets.display_icon.errors %}
  	<br><label>
-	  <font color="red">{{ tickets.display_icon.errors }}</font>
+	  <font class="gbe-form-error">{{ tickets.display_icon.errors }}</font>
         </label>{% endif %}
       </div>
   </div>

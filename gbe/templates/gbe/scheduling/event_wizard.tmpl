@@ -12,18 +12,18 @@
 
 {% block first_form %}
   {% if selection_form %}
-    {% if selection_form.errors %}<p style= "color:red"> There is an error on the form.</p>{% endif %}
-    <font color="red">{{ selection_form.non_field_errors }}</font>
+    {% if selection_form.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
+    <font class="gbe-form-error">{{ selection_form.non_field_errors }}</font>
     <form action="{% url 'scheduling:create_event_wizard' conference_slug %}" method="get" enctype="multipart/form-data">
       <div class="form-row"><div class="form-group">
         {{ selection_form.event_type }}
         {% if selection_form.event_type.errors %}
-          <font color="red">{{ selection_form.event_type.errors }}</font>
+          <font class="gbe-form-error">{{ selection_form.event_type.errors }}</font>
         {% endif %}
       </div></div>
   {% endif %}
-  <div class="form-row pull-right">
-    <input type="submit" class="event_wizard_button" name="pick_event" value="Next">
+  <div class="form-row justify-content-end">
+    <input type="submit" class="btn gbe-btn-primary" name="pick_event" value="Next">
   </div>
 </form>
 {% endblock %}

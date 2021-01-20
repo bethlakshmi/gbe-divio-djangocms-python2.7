@@ -9,19 +9,19 @@
 <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {% if second_form.errors %}
-    <p style= "color:red"> There is an error on the form.</p>
+    <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
-  <font color="red">{{ second_form.non_field_errors }}</font>
-    <div class="form-group single-radio">
+  <font class="gbe-form-error">{{ second_form.non_field_errors }}</font>
+    <div class="form-group">
       <h4>Add the volunteer opportunity to a Show, Special Event, or Staff Area, or make
       a standalone volunteer slot:</h4>
       {{ second_form.volunteer_topic }}
         {% if second_form.volunteer_topic.errors %}
-          <font color="red">{{ second_form.volunteer_topic.errors }}</font>
+          <font class="gbe-form-error">{{ second_form.volunteer_topic.errors }}</font>
         {% endif %}
     </div>
-  <div class="form-row pull-right">
-    <input type="submit" class="next" name="pick_topic" value="Next">
+  <div class="form-row justify-content-end">
+    <input type="submit" class="btn gbe-btn-primary" name="pick_topic" value="Next">
   </div>
 </form>
 {% endblock %}
@@ -31,8 +31,8 @@
   {% csrf_token %}
       {% include "gbe/scheduling/event_booking.tmpl" with form=third_form %}
 
-  <div class="form-row pull-right">
-    <input type="submit" class="next" name="set_opp" value="Finish">
+  <div class="form-row justify-content-end">
+    <input type="submit" class="btn gbe-btn-primary" name="set_opp" value="Finish">
   </div>
 </form>
 {% endblock %}

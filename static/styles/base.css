@@ -911,11 +911,6 @@ td.form_field.long_choice ul li
 {
   list-style-type: none;
 }
-.single-radio ul li label
-{
-  font-size: smaller;
-  font-weight: normal;
-}
 .checkbox-ticketing ul li label
 {
   font-weight: normal;
@@ -964,7 +959,9 @@ div.hierarchy-1
 }
 .gbe-filter {
   margin-left: 10px;
+  padding-left: 20px;
 }
+.staff-checkbox-label{position:relative;display:inline-block;padding-left:0px;padding-top:5px;margin-bottom:0;margin-left:3px;vertical-align:middle;font-weight:400;cursor:pointer}
 .checkbox-box {
     border-radius: 15px;
     border: 1px solid grey;

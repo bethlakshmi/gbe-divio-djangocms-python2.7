@@ -18,14 +18,14 @@
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
    <div class="form-row">
    <div class="form-group col-md-2 col-12">
-    <label class="form-check-label horizontal-label" id="{{ selection_form.staff_area.name }}">
+    <label class="form-check-label horizontal-label" id="{{ selection_form.staff_area.name }}"><b>
      {% if selection_form.staff_area.errors %}
       <font color="red">!&nbsp;&nbsp;
      {% endif %}
      {{ selection_form.staff_area.label }}:&nbsp;&nbsp;
      {% if selection_form.staff_area.errors %}
       </font>
-     {% endif %}</label>
+     {% endif %}</b></label>
    </div>
    <div class="form-group col-md-10 col-12">
      {% for checkbox in selection_form.staff_area %}
