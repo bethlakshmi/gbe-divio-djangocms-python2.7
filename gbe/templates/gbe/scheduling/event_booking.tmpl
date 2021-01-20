@@ -4,7 +4,11 @@
     {% for hidden in form.hidden_fields %}
     {{ hidden }}
     {% endfor %}
-  <font class="gbe-form-required">*</font> indicates a required field
+<div class="form-row"><div class="col-12">
+<h3 class="gbe-title">Event Details</h3>
+</div>
+<div class="col-12">
+  <font class="gbe-form-required">*</font> indicates a required field<br><br>
   {% if form.errors or scheduling_form.errors or tickets.errors %}
     <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
@@ -12,10 +16,10 @@
   {{ form.non_field_errors }}
   {{ scheduling_form.non_field_errors }}
   {{ tickets.non_field_errors }}</font>
-<div class="event_booking">
-<h3 class="gbe-title">Event Details</h3>
+<p>
 The following fields are common to all scheduled items for this event.
-Changing fields in this section will change them in all calendar items.
+Changing fields in this section will change them in all calendar items.</p>
+</div>
 {# Include the visible fields #}
   {% for field in form.visible_fields %}
     <div class="form-group"><div class="row">
@@ -47,8 +51,7 @@ Changing fields in this section will change them in all calendar items.
       </div>
     </div></div>
     {% endfor %}</div>
-<div class="event_booking">
-  <div class="row d-block">
+  <div class="form-row">
   {% if scheduling_form %}
     <div class="{% if scheduling_info %}col-md-7 col-sm-6 {% endif %}col-12">
       <h4 class="gbe-subtitle">Booking Details</h4>
@@ -67,7 +70,7 @@ Changing fields in this section will change them in all calendar items.
 	  <a href="{{ scheduling_info.reference }}">More information</a>
       </div>
     {% endif %}
-    <div class="form-group">
+    <div class="form-row">
       {% if scheduling_form.day %}
       <div class="col-lg-1 col-md-2 col-sm-3 col-xs-5 event-booking-cell">
 	<label for="{{scheduling_form.day.name}}" class="control-label">	      
@@ -189,16 +192,14 @@ Changing fields in this section will change them in all calendar items.
      fields above this section.  If you hate it, then fix it, but make sure 
      all fields can be clicked on and edited in the 2-3 most common browsers -->
 </div>
-<div class="event_booking">
 {% if worker_formset %}
-<div class="row">
+<div class="form-row">
     <div class="{% if scheduling_info %}col-md-7 col-sm-6 {% endif %}col-12">
-      <h4>Staffing</h4>
+      <h4 class="gbe-subtitle">Staffing</h4>
       Assign people to this booking.<br><br>
     </div>
-   <div class="clearfix visible-sm"></div>
  {% for worker_form in worker_formset %}
-  <div class="form-group {% if scheduling_info %}col-md-7 col-sm-6 col-12{% endif %}">
+  <div class="{% if scheduling_info %}col-md-7 col-sm-6{% endif %}col-12">
     <div class="col-lg-4 col-md-3 col-sm-3 col-6">
     {{ worker_form.role }}
     </div>
@@ -211,16 +212,15 @@ Changing fields in this section will change them in all calendar items.
   </div>
 {% endfor %}</div>
 {% endif %} <!-- if scheduling_form -->
-</div>
 
-<div class="row">
+<div class="form-row">
 {% if tickets %}
-   <div class="event_booking col-12">
+   <div class="col-12">
       <h4>Set Tickets for Event</h4>
       Choose from any number of existing BPT event tickets, and/or create a new one.
       You can do any or all of these options, or skip it and set the tickets later.<br><br>
     </div>
-  <div class="form-group">
+  <div class="form-row">
       <div class="col-12 event-booking-cell checkbox-ticketing">
 	<label for="{{tickets.bpt_events.name}}" class="control-label">	      
           {% if tickets.bpt_events.errors %}
@@ -272,7 +272,7 @@ Changing fields in this section will change them in all calendar items.
       </div>
   </div>
 {% endif %}
-</div></div>
+</div>
 {% addtoblock "js" %}
 {{ worker_formset.0.media }}
 {{ form.media }}
