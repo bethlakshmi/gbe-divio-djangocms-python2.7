@@ -11,16 +11,16 @@
     <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 {% block content %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse1">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      <a data-toggle="collapse" href="#collapse1" class="gbe-panel-link">
         {{ edit_title }} Details
       </a>
-    </h3>
+    </h2>
   </div>
-  <div id="collapse1" class="panel-collapse collapse {% if start_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse1" class="panel-collapse collapse {% if start_open %}show{% endif %}">
+  <div class="card-body">
   {% if report_url %}
     <a href="{{report_url}}" role="button" class="btn gbe-btn-primary float-right">Display Staff</a>{% endif %}
   <form action="{{edit_url}}" method="post" enctype="multipart/form-data">
@@ -38,41 +38,41 @@
   </div></div>
 </div>
 {% if createform %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse2">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      <a data-toggle="collapse" href="#collapse2" class="gbe-panel-link">
       Manage Volunteer Opportunities</a>
-    </h3>
+    </h2>
   </div>
-  <div id="collapse2" class="panel-collapse collapse {% if volunteer_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse2" class="panel-collapse collapse {% if volunteer_open %}show{% endif %}">
+  <div class="card-body">
     {% include "gbe/scheduling/manage_opps.tmpl" %}
   </div></div>
 </div>
 {% endif %}
 {% if createslotform %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse3">
-      Manage Rehearsal Slots</a></h3>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      <a data-toggle="collapse" href="#collapse3" class="gbe-panel-link">
+      Manage Rehearsal Slots</a></h2>
   </div>
-  <div id="collapse3" class="panel-collapse collapse {% if rehearsal_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse3" class="panel-collapse collapse {% if rehearsal_open %}show{% endif %}">
+  <div class="card-body">
     {% include "gbe/scheduling/manage_slots.tmpl" %}
   </div></div>
 </div>
 {% endif %}
 {% if worker_alloc_forms %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse4">
-      Manage Volunteers</a></h3>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      <a data-toggle="collapse" href="#collapse4" class="gbe-panel-link">
+      Manage Volunteers</a></h2>
   </div>
-  <div id="collapse4" class="panel-collapse collapse {% if worker_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse4" class="panel-collapse collapse {% if worker_open %}show{% endif %}">
+  <div class="card-body">
     {% include "gbe/scheduling/allocate_volunteers.tmpl" %}
   </div></div>
 </div>
