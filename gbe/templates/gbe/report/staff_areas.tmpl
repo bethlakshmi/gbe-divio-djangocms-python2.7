@@ -9,9 +9,10 @@
 
 {% include "conference_picker.tmpl" %}
 <br><br>
-<div class="panel panel-primary">
-  <div class="panel-heading"><h2 class="gbe-title">Staff Areas</h2></div>
-  <table class="table">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">Staff Areas</h2></div>
+  <table class="table gbe-panel-table">
     <tr>
       {% for header_item in header %}
       <th>{{ header_item }}</th>
@@ -32,9 +33,10 @@
   </table>
 </div>
 
-<div class="panel panel-primary">
-  <div class="panel-heading"><h2 class="gbe-title">Shows</h2></div>
-  <table class="table">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">Shows</h2></div>
+  <table class="table gbe-panel-table">
     <tr>
       {% for header_item in header %}
       <th>{{ header_item }}</th>

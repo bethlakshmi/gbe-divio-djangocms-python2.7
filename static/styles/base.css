@@ -1041,3 +1041,4 @@ div.hierarchy-1
 /* end tabs */
 .close{font-size:21px;color:inherit;}
 .close:focus,.close:hover{color:inherit;text-decoration:none;outline:none; ;}
+.gbe-panel-table, .gbe-panel-table td, .gbe-panel-table th{border-top: 1px solid;}

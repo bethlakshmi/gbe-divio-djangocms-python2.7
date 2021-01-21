@@ -767,6 +767,14 @@ init_values = [
             'usage': 'Event Display',
             'prop_val': [('color', 'rgba(51,51,51,1)'),
                          ('text-decoration-color', 'rgba(51,51,51,1)')]},
+    {'selector': '.gbe-panel-table, .gbe-panel-table td, .gbe-panel-table th',
+     'pseudo_class': '',
+     'description': '''Tables embedded within panels - used in
+     reporting.  Covers header, rows and border and is fairly subtle''',
+     'target_element': 'table',
+     'usage': 'Reporting',
+     'prop_val': [('color', 'rgba(51,51,51,1)'),
+                  ('border-top-color', 'rgba(221, 221, 221, 1)')]},
     {
             'selector': '.detail_link',
             'pseudo_class': '',
