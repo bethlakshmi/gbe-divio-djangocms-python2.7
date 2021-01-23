@@ -18,7 +18,7 @@
 <ul>
     {% if area.staff_lead %}<li>Staff Lead - {{area.staff_lead}}</li>{% else %}
         {% for worker in area.people %}
-        <li>{{worker.role}} - {{worker.user.profile}}</li>
+        <li {% if not worker.user.profile.is_active %}class="gbe-form-error"{% endif %}>{{worker.role}} - {{worker.user.profile}}</li>
         {% endfor %}
     {% endif %}
 </ul>

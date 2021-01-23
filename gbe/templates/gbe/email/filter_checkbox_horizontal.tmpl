@@ -1,9 +1,9 @@
       <div class="form-group col-md-2 col-12">
-        <label class="form-check-label horizontal-label" id="{{ field.name }}">
+        <label class="form-check-label horizontal-label gbe-draft" id="{{ field.name }}">
           {% if field.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
           {% elif field.css_classes == 'required'%}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %}
           {{ field.label }}:&nbsp;&nbsp;
           {% if field.errors %}</font>{% endif %}
@@ -11,8 +11,8 @@
       </div>
       <div class="form-group col-md-9 col-12">
       {% for checkbox in field %}
-        <div class="form-check-inline">
-        <label class="form-check-label checkbox-label" id="{{ checkbox.id_for_label }}">
+        <div class="form-check-inline px-3">
+        <label class="form-check-label checkbox-label ml-2" id="{{ checkbox.id_for_label }}">
           {{ checkbox.tag }}{{ checkbox.choice_label }}
         </label></div>{% endfor %}
         {% if field.errors %}
