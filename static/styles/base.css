@@ -139,23 +139,6 @@ button.login-button {
   color: light grey;
 }
 
-.email-button {
-  padding-top: 7px;
-  padding-bottom: 7px;
-  color: white;
-  background-color:rgb(107, 46, 46);
-  border-color:#471f1f;
-  margin-top: 3px;
-  margin-right: 3px;
-  font-size: 16px;
-}
-.email-button:hover  {
-  color: light grey;
-}
-
-.email-margin-left {
-  margin-left: 10px;
-}
 #action-button {
   padding: 3px 8px 3px 8px;
 }
@@ -211,7 +194,6 @@ div.side_box {
 }
 .email-select{padding:0px;}
 #id_email-select-conference{width:250px}
-.email-submit{text-align:center}
 
 .form-inline label.horizontal-label{justify-content: flex-start;}
 
