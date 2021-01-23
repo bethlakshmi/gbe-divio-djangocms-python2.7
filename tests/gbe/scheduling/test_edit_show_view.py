@@ -84,7 +84,10 @@ class TestEditShowWizard(TestCase):
         self.assertContains(response, "Edit Show Details")
         self.assertContains(response, "Manage Volunteer Opportunities")
         self.assertContains(response, "Manage Rehearsal Slots")
-        self.assertContains(response, 'class="panel-collapse collapse in"', 3)
+        self.assertContains(
+            response,
+            'class="panel-collapse collapse show"',
+            3)
 
     def test_good_user_get_rehearsal_w_acts(self):
         act_techinfo_context = ActTechInfoContext(
@@ -142,7 +145,7 @@ class TestEditShowWizard(TestCase):
             follow=True)
         self.assertContains(
             response,
-            '<div id="collapse3" class="panel-collapse collapse in">')
+            '<div id="collapse3" class="panel-collapse collapse show">')
         slots = EventContainer.objects.filter(
             parent_event=self.context.sched_event)
         self.assertTrue(slots.exists())
@@ -182,7 +185,7 @@ class TestEditShowWizard(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<div id="collapse3" class="panel-collapse collapse in">')
+            '<div id="collapse3" class="panel-collapse collapse show">')
         slots = EventContainer.objects.filter(
             parent_event=self.context.sched_event).count()
         self.assertEqual(slots, 0)
@@ -200,7 +203,7 @@ class TestEditShowWizard(TestCase):
             follow=True)
         self.assertContains(
             response,
-            '<div id="collapse3" class="panel-collapse collapse in">')
+            '<div id="collapse3" class="panel-collapse collapse show">')
         slots = EventContainer.objects.filter(
             parent_event=self.context.sched_event)
         self.assertTrue(len(slots), 1)

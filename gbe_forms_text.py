@@ -12,7 +12,6 @@ participant_labels = {
     'offsite_preferred': ('Offsite phone'),
     'how_heard': "How did you hear about The Expo?",
     'purchase_email': ('BPT Purchase Email'),
-
 }
 
 profile_preferences_help_texts = {
@@ -1044,4 +1043,4 @@ style_value_help = {
     'box-shadow-3': '''The spread radius. A positive value increases the size
     of the shadow, a negative value decreases the size of the shadow''',
     'box-shadow-4': '''The color of the shadow. The default value is the text
-    color.''',}
+    color.'''}

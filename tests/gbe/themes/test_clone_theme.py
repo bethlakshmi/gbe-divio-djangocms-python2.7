@@ -182,7 +182,7 @@ class TestCloneTheme(TestCase):
             "Cloned %s from %s" % (new_version,
                                    self.value.style_version))
         self.assertRedirects(response, reverse(
-            "manage_theme", 
+            "manage_theme",
             urlconf="gbe.themes.urls",
             args=[new_version.pk]))
         self.assertContains(response, 'rgba(255,255,255,0)')

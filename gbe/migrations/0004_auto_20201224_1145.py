@@ -6,7 +6,7 @@ init_values = [
     {
             'selector': '.gbe-header-band',
             'pseudo_class': '',
-            'description': '''Boldly colored header bands with contrasting 
+            'description': '''Boldly colored header bands with contrasting
             text, such as above performer grids''',
             'target_element': 'div',
             'usage': 'General',
@@ -92,7 +92,7 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(71,31,31,1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(71,31,31,1)'),
-                         ('border-color', 'rgba(71,31,31,1)'),]},
+                         ('border-color', 'rgba(71,31,31,1)')]},
     {
             'selector': '.gbe-btn-table',
             'pseudo_class': '',
@@ -160,7 +160,7 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(71,31,31,1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(71,31,31,1)'),
-                         ('border-color', 'rgba(71,31,31,1)'),]},
+                         ('border-color', 'rgba(71,31,31,1)')]},
     {
             'selector': '.gbe-btn-secondary',
             'pseudo_class': 'hover',
@@ -481,7 +481,7 @@ init_values = [
     {
             'selector': '#team .team-img',
             'pseudo_class': 'before',
-            'description': '''Shaded color that comes over the image of a 
+            'description': '''Shaded color that comes over the image of a
             featured block when the buttons show up.  Used in both vendors,
             and shows.''',
             'target_element': 'div',
@@ -815,24 +815,26 @@ init_values = [
             'usage': 'Event Display',
             'prop_val': [('color', 'rgba(110,110,110,1)')]},
     {
-            'selector': ('.detail_link-disabled,.detail_link-disabled:hover, ' +
-                ' .detail_link-disabled:active,.detail_link-disabled:visited'),
-            'pseudo_class': '',
-            'description': '''Detail link on events list that is disabled 
-            because this user is not eligible''',
-            'target_element': 'a',
-            'usage': 'Event Display',
-            'prop_val': [('color', 'rgba(195,189,191,1)')]},
+        'selector': (
+            '.detail_link-disabled,.detail_link-disabled:hover,' +
+            ' .detail_link-disabled:active,.detail_link-disabled:visited'),
+        'pseudo_class': '',
+        'description': '''Detail link on events list that is disabled
+        because this user is not eligible''',
+        'target_element': 'a',
+        'usage': 'Event Display',
+        'prop_val': [('color', 'rgba(195,189,191,1)')]},
     {
-            'selector': ('.detail_link-detail_disable,.detail_link-detail_' +
-                'disable:hover,.detail_link-detail_disable:active, ' +
-                '.detail_link-detail_disable:visited'),
-            'pseudo_class': '',
-            'description': '''Detail link on event detail pages that is 
-            disabled because user is not eligible.  Darker for dark panel.''',
-            'target_element': 'a',
-            'usage': 'Event Display',
-            'prop_val': [('color', 'rgba(140,140,140,1)')]},
+        'selector': (
+            '.detail_link-detail_disable,.detail_link-detail_' +
+            'disable:hover,.detail_link-detail_disable:active, ' +
+            '.detail_link-detail_disable:visited'),
+        'pseudo_class': '',
+        'description': '''Detail link on event detail pages that is
+        disabled because user is not eligible.  Darker for dark panel.''',
+        'target_element': 'a',
+        'usage': 'Event Display',
+        'prop_val': [('color', 'rgba(140,140,140,1)')]},
     {
             'selector': '.gbe-link',
             'pseudo_class': 'hover',
