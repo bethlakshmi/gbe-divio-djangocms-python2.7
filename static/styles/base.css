@@ -247,16 +247,6 @@ h3.readonlyform
 }
 @media (min-width:1200px){.email_list{width:1000px}
 }
-.email-list-even
-{
-  background-color: #CCC;
-} 
-
-.email-list-odd
-{
-  background-color: #EEE;
-}
-
 .sched-table
 {
     border: 1px solid black;

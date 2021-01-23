@@ -11,14 +11,14 @@
 
 {% block content %}
 
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Send Email</h3>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3>Send Email</h3>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
     <form action="" method="post" enctype="multipart/form-data"> 
       {% include "form_table.tmpl" with form=email_form %}
-      <input type="submit" class="email-submit" name="send" value="Send">
+      <input type="submit" class="btn gbe-btn-primary float-right" name="send" value="Send">
     </form>
   </div>
 </div>

@@ -8,12 +8,12 @@
     <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 {% block content %}
-<h2 class="subtitle">{{view_title}}</h2>
+<h2 class="gbe-title">{{view_title}}</h2>
 <h3>Template:  {{ name|title }}</h3>
 
 
 {% if errors %}{% for error in errors %}
-  <p style= "color:red">{{error}}</p>
+  <p class="gbe-form-error">{{error}}</p>
 {% endfor %}{% endif %}
 <p>
 HTML entered in this form will be transformed into plain text for email
@@ -21,9 +21,9 @@ systems which require text-only messages.  Any links will be removed, so be
 sure give readers some context for any links.
 </p>
 {% if description %}
-<div class="panel panel-primary">
-  <div class="panel-heading">Using this Template</div>
-  <div class="panel-body">{{ description |linebreaks }}</div>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">Using this Template</div>
+  <div class="card-body">{{ description |linebreaks }}</div>
 </div>
 {% endif %}
 <br>
@@ -32,10 +32,10 @@ sure give readers some context for any links.
    {% include "form_table_wrapper.tmpl" %}
 
    {% if nodraft %}
-    <input type="submit" name="submit" value="{{nodraft}}">
+    <input type="submit" class="btn gbe-btn-primary float-right" name="submit" value="{{nodraft}}">
    {% else %}
-   <input type="submit" name="draft" value="Save Draft">
-   <input type="submit" name="submit" value="Submit For Approval">
+   <input type="submit" class="btn gbe-btn-secondary float-right" name="draft" value="Save Draft">
+   <input type="submit" class="btn gbe-btn-primary float-right" name="submit" value="Submit For Approval">
    {% endif %}
    </form>
 

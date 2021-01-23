@@ -337,6 +337,24 @@ init_values = [
         'usage': 'Table',
         'prop_val': [('background-color', 'rgba(238,238,238,1)')]},
     {
+        'selector':
+        '.gbe-list-even',
+        'pseudo_class': '',
+        'description': '''Alternately striped rows, done via divs for
+        moble friendliness''',
+        'target_element': 'tr',
+        'usage': 'Table',
+        'prop_val': [('background-color', 'rgba(204,204,204,1)')]},
+    {
+        'selector': '.gbe-list-odd',
+        'pseudo_class': '',
+        'description': '''Alternately striped rows, done via divs for
+        moble friendliness''',
+        'target_element': 'tr',
+        'usage': 'Table',
+        'prop_val': [('background-color', 'rgba(238,238,238,1)')]},
+
+    {
             'selector': '.border-table tbody tr td,.border-table tbody tr th',
             'pseudo_class': '',
             'description': 'border around striped table(s)',
