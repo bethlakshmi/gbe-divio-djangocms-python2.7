@@ -1043,4 +1043,9 @@ style_value_help = {
     'box-shadow-3': '''The spread radius. A positive value increases the size
     of the shadow, a negative value decreases the size of the shadow''',
     'box-shadow-4': '''The color of the shadow. The default value is the text
-    color.'''}
+    color.''',
+    'change_images': '''Selecting or Uploading images will not remove images
+    from the system.  Only images uploaded through this form are shown.''',
+    'add_image': '''Uploading an image takes precedence over any selected
+    image.''',
+}

@@ -27,6 +27,7 @@ from django.conf import settings
 from django.core.files import File
 from django.contrib.auth.models import User
 from filer.models.imagemodels import Image
+from filer.models.foldermodels import Folder
 from settings import DEFAULT_FROM_EMAIL
 
 
@@ -278,16 +279,26 @@ def bad_id_for(cls):
     return 1
 
 
-def set_image(item):
-    superuser = User.objects.create_superuser(
-        'superuser_for_%d' % item.pk,
-        'admin@importimage.com',
-        'secret')
+def set_image(item=None, folder_name=None):
+    folder = None
+    if User.objects.filter(username='superuser_for_test').exists():
+        superuser = User.objects.get(username='superuser_for_test')
+    else:
+        superuser = User.objects.create_superuser(
+            'superuser_for_test',
+            'admin@importimage.com',
+            'secret')
+    if folder_name:
+        folder, created = Folder.objects.get_or_create(
+            name=folder_name)
     path = "tests/gbe/gbe_pagebanner.png"
     current_img = Image.objects.create(
+        folder=folder,
         owner=superuser,
         original_filename="gbe_pagebanner.png",
         file=File(open(path, 'rb')))
     current_img.save()
-    item.img_id = current_img.pk
-    item.save()
+    if item:
+        item.img_id = current_img.pk
+        item.save()
+    return current_img

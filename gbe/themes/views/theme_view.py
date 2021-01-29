@@ -36,10 +36,17 @@ class ThemeView(View):
 
         for value in current_values:
             selector = value.style_property.selector.__str__()
-            if selector not in context['selectors'].keys():
-                context['selectors'][selector] = {}
-            context['selectors'][selector][
-                value.style_property.style_property] = value.value
+            if len(value.value) > 0:
+                if selector not in context['selectors'].keys():
+                    context['selectors'][selector] = {}
+                context['selectors'][selector][
+                    value.style_property.style_property] = value.value
+            elif value.style_property.value_type == "image" and value.image:
+                if selector not in context['selectors'].keys():
+                    context['selectors'][selector] = {}
+                context['selectors'][selector][
+                    value.style_property.style_property] = "url(%s)" % (
+                        value.image.url)
         t = loader.get_template(self.template)
         response.write(t.render(context))
         return response

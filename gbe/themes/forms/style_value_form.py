@@ -30,8 +30,8 @@ class StyleValueForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         style_property = None
-        if 'style_property' in kwargs:
-            style_property = kwargs.pop('style_property')
+        if 'initial' in kwargs and 'style_property' in kwargs.get('initial'):
+            style_property = kwargs.get('initial')['style_property']
 
         super(StyleValueForm, self).__init__(*args, **kwargs)
         value_format = []

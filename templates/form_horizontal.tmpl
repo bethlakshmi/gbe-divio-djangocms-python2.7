@@ -1,4 +1,3 @@
-  {% load static %}
   {# Include the hidden fields #}
     {% for hidden in form.hidden_fields %}
     {{ hidden }}
@@ -7,21 +6,7 @@
 {% for field in form.visible_fields %}
 	<div class="col-md-{%if field.label == 'color' %}4{%else%}2{%endif%} col-sm-12 text-right">
   {{ field }}
-	<label for="{{field.name}}" class="control-label">
-    {% if field.errors %}<font class="gbe-form-error">!</font>&nbsp;&nbsp;
-	  {% elif field.css_classes == 'required' %}
-      <font class="gbe-form-required">*</font>{% endif %} 
-    {% if field.errors %}<font class="gbe-form-error">{% endif %}
-	  {{ field.label }}
-    {% if field.errors %}</font>{% endif %} 
-    {% if field.help_text %}
-      <span class="dropt" title="Help">
-      <img src= "{% static "img/question.png" %}" alt="?"/>
-        <span style="width:200px;float:right;text-align:left;">
-          {{ field.help_text }}
-        </span></span>
-    {% endif %}
-	</label>
+  {% include "label_horizontal.tmpl" %}
 	</div>
 {% endfor %}
 </div>

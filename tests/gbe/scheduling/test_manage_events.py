@@ -293,7 +293,6 @@ class TestManageEventList(TestCase):
         self.assertContains(response, '<td>Volunteer</td>')
         self.assertContains(response,
                             self.volunteer_context.opportunity.e_title)
-        print(response.content)
         self.assertContains(
             response,
             ('<a href="%s" class="gbe-table-link" data-toggle="tooltip" ' +

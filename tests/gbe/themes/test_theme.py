@@ -4,8 +4,11 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     StyleVersionFactory,
     StyleValueFactory,
+    StyleValueImageFactory,
 )
 from django.test.utils import override_settings
+from filer.models.imagemodels import Image
+from tests.functions.gbe_functions import set_image
 
 
 class TestTheme(TestCase):
@@ -17,7 +20,6 @@ class TestTheme(TestCase):
 
     def test_migrations(self):
         response = self.client.get(self.url)
-        print(response.content)
         self.assertContains(
             response,
             ".gbe-alert-success {")
@@ -129,3 +131,21 @@ class TestTheme(TestCase):
             str(value.style_property),
             "%s - %s" % (value.style_property.selector,
                          value.style_property.style_property))
+
+    def test_image_style(self):
+        version = StyleVersionFactory()
+        version.currently_live = True
+        version.save()
+        Image.objects.all().delete()
+        value = StyleValueImageFactory(
+            style_version=version,
+            image=set_image(folder_name='Backgrounds'))
+        response = self.client.get(self.url)
+        self.assertContains(
+            response,
+            "%s {" % value.style_property.selector)
+        self.assertContains(
+            response,
+            "    %s: %s" % (value.style_property.style_property,
+                            value.value))
+        self.assertContains(response, "url(%s)" % value.image.url)

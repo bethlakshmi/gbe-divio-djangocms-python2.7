@@ -4,13 +4,17 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
     StyleValueFactory,
+    StyleValueImageFactory,
     StyleVersionFactory,
+    UserFactory,
 )
+from filer.models.imagemodels import Image
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
+    set_image
 )
-from decimal import Decimal
+from easy_thumbnails.files import get_thumbnailer
 from gbe.models import (
     StyleValue,
     StyleVersion,
@@ -67,6 +71,32 @@ class TestCloneTheme(TestCase):
             '<input type="number" name="number" value="1.0" min="0.1" ' +
             'step="any" required id="id_number">',
             html=True)
+
+    def test_get_image(self):
+        Image.objects.all().delete()
+        other_image = set_image()
+        image_style = StyleValueImageFactory(
+            style_version=self.value.style_version,
+            image=set_image(folder_name='Backgrounds'))
+
+        login_as(self.user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response,
+                            image_style.style_property.selector)
+        self.assertContains(response,
+                            image_style.style_property.style_property)
+        self.assertContains(
+            response,
+            '''<input type="radio" name="%s-image" value="%s"
+            id="id_%s-image_1" checked>''' % (
+                image_style.pk,
+                image_style.image.pk,
+                image_style.pk),
+            html=True)
+        self.assertNotContains(
+            response,
+            get_thumbnailer(other_image).get_thumbnail(
+                {'size': (100, 100), 'crop': False}).url)
 
     def test_get_complicated_messed_up_property(self):
         from gbe_forms_text import theme_help
@@ -192,6 +222,86 @@ class TestCloneTheme(TestCase):
                             self.value.style_property.selector.used_for)
         self.assertContains(response,
                             self.value.style_property.style_property)
+
+    def test_post_update_change_image(self):
+        Image.objects.all().delete()
+        other_image = set_image(folder_name='Backgrounds')
+        image_style = StyleValueImageFactory(
+            style_version=self.value.style_version,
+            image=set_image(folder_name='Backgrounds'))
+        login_as(self.user, self)
+        data = self.get_post()
+        data['update'] = 'Update'
+        data['%s-style_property' % image_style.pk] = \
+            image_style.style_property.pk
+        data["%s-image" % image_style.pk] = other_image.pk
+        data["%s-add_image" % image_style.pk] = ""
+
+        response = self.client.post(self.url, data=data, follow=True)
+        new_version = StyleVersion.objects.latest('pk')
+        new_style_image = StyleValue.objects.get(
+            style_version=new_version,
+            style_property=image_style.style_property)
+        self.assertContains(
+            response,
+            "Cloned %s from %s" % (new_version,
+                                   self.value.style_version))
+        self.assertRedirects(response, reverse(
+            "manage_theme",
+            urlconf="gbe.themes.urls",
+            args=[new_version.pk]))
+        self.assertContains(response,
+                            image_style.style_property.selector)
+        self.assertContains(response,
+                            image_style.style_property.style_property)
+        self.assertContains(
+            response,
+            '''<input type="radio" name="%s-image" value="%s"
+            id="id_%s-image_2" checked>''' % (
+                new_style_image.pk,
+                other_image.pk,
+                new_style_image.pk),
+            html=True)
+
+    def test_post_update_upload_image(self):
+        Image.objects.all().delete()
+        UserFactory(username='admin_img')
+        image_style = StyleValueImageFactory(
+            style_version=self.value.style_version,
+            image=set_image(folder_name='Backgrounds'))
+        file1 = open("tests/gbe/gbe_pagebanner.png", 'rb')
+        login_as(self.user, self)
+        data = self.get_post()
+        data['update'] = 'Update'
+        data['%s-style_property' % image_style.pk] = \
+            image_style.style_property.pk
+        data["%s-image" % image_style.pk] = image_style.image.pk
+        data["%s-add_image" % image_style.pk] = file1
+        response = self.client.post(self.url, data=data, follow=True)
+        new_version = StyleVersion.objects.latest('pk')
+        new_style_image = StyleValue.objects.get(
+            style_version=new_version,
+            style_property=image_style.style_property)
+        self.assertContains(
+            response,
+            "Cloned %s from %s" % (new_version,
+                                   self.value.style_version))
+        self.assertRedirects(response, reverse(
+            "manage_theme",
+            urlconf="gbe.themes.urls",
+            args=[new_version.pk]))
+        self.assertContains(response,
+                            image_style.style_property.selector)
+        self.assertContains(response,
+                            image_style.style_property.style_property)
+        self.assertContains(
+            response,
+            '''<input type="radio" name="%s-image" value="%s"
+            id="id_%s-image_1" checked>''' % (
+                new_style_image.pk,
+                image_style.image.pk + 1,
+                new_style_image.pk),
+            html=True)
 
     def test_cancel(self):
         login_as(self.user, self)

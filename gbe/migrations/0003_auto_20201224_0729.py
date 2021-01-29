@@ -4,11 +4,14 @@ from decimal import Decimal
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
+from django.conf import settings
+import filer.fields.image
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
+        migrations.swappable_dependency(settings.FILER_IMAGE_MODEL),
         ('gbe', '0002_auto_20200912_1446'),
     ]
 
@@ -82,6 +85,10 @@ class Migration(migrations.Migration):
                                         serialize=False,
                                         verbose_name='ID')),
                 ('value', models.CharField(max_length=200)),
+                ('image', filer.fields.image.FilerImageField(
+                    null=True,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.FILER_IMAGE_MODEL)),
                 ('style_property', models.ForeignKey(
                     on_delete=django.db.models.deletion.CASCADE,
                     to='gbe.StyleProperty')),

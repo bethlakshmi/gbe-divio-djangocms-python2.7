@@ -20,7 +20,47 @@
     {% ifchanged value.style_property.selector.used_for %}<h3 class="gbe-subtitle">{{ value.style_property.selector.used_for }}</h3>{% endifchanged %}
     {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
     <div class="gbe-text-muted"><em>{{ value.style_property.style_property }}</em></div>
+    {% if value.style_property.value_type == "image" %}
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+    <div class="row">
+      <div class="form-group col-12 col-md-3">
+        <font class="gbe-form-error">{% if form.errors %}
+          <p class="gbe-form-error"> There is an error on the form.</p>
+          {% endif %}
+          {{ form.non_field_errors }}</font>
+        {% include "label_horizontal.tmpl" with field=form.image %}
+      </div>
+      <div class="form-group col-12">
+      {% for radio in form.image %}
+        <div class="form-check-inline image_select_list text-center">
+        <label class="form-check-label radio-label" id="{{ radio.id_for_label }}">
+          {{ radio.choice_label }}<br>{{ radio.tag }}
+        </label></div>{% endfor %}
+      </div>
+      <div class="form-group col-12">
+        {% if form.image.errors %}
+        <label for="{{form.image.name}}">          
+        <font class="gbe-form-error">{{ form.image.errors }}</font>
+        </label>
+      {% else %}&nbsp;{% endif %}
+      </div>
+    </div>
+    <div class="row"><div class="form-group col-12 col-md-3">
+        {% include "label_horizontal.tmpl" with field=form.add_image %}
+      </div>
+      <div class="form-group col-md-9 col-12">
+        {{form.add_image}}
+    {% if form.add_image.errors %}
+      <label for="{{form.add_image.name}}">          
+        <font class="gbe-form-error">{{ form.add_image.errors }}</font>
+      </label>
+    {% else %}&nbsp;{% endif %}
+    </div></div>
+    {% else %}
     {% include "form_horizontal.tmpl" %}
+    {% endif %}
     {% endfor %}
 <div class="row">
   <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7 dropdown">

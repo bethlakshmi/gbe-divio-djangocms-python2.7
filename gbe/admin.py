@@ -220,7 +220,8 @@ class StyleValueAdmin(ImportExportActionModelAdmin):
         'pk',
         'style_version',
         'style_property',
-        'value')
+        'value',
+        'image')
     list_editable = ('value', )
     list_filter = [
         'style_version__name',

@@ -13,7 +13,10 @@ from gbe.models import (
     StyleVersion,
     UserMessage,
 )
-from gbe.themes.forms import StyleValueForm
+from gbe.themes.forms import (
+    StyleValueForm,
+    StyleValueImageForm,
+)
 from django.contrib import messages
 from gbetext import user_messages
 from datetime import datetime
@@ -62,14 +65,18 @@ class ManageTheme(View):
                 'style_property__selector__selector',
                 'style_property__selector__pseudo_class',
                 'style_property__style_property'):
+            form_type = StyleValueForm
+            if value.style_property.value_type == "image":
+                form_type = StyleValueImageForm
             try:
                 if request.POST:
-                    form = StyleValueForm(request.POST,
-                                          instance=value,
-                                          prefix=str(value.pk))
+                    form = form_type(request.POST,
+                                     request.FILES,
+                                     instance=value,
+                                     prefix=str(value.pk))
                 else:
-                    form = StyleValueForm(instance=value,
-                                          prefix=str(value.pk))
+                    form = form_type(instance=value,
+                                     prefix=str(value.pk))
                 forms += [(value, form)]
             except Exception as e:
                 messages.error(request, e)
@@ -110,6 +117,11 @@ class ManageTheme(View):
                 return HttpResponseRedirect("%s?changed_id=%d" % (
                     reverse('themes_list', urlconf='gbe.themes.urls'),
                     self.style_version.pk))
+            elif 'update' in list(request.POST.keys()):
+                return HttpResponseRedirect(reverse(
+                    'manage_theme',
+                    urlconf='gbe.themes.urls',
+                    args=[self.style_version.pk]))
         else:
             messages.error(
                 request,

@@ -19,7 +19,8 @@ init_values = [
             'target_element': 'div',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(255,255,255,1)'),
-                         ('color', 'rgba(51,51,51,1)')]},
+                         ('color', 'rgba(51,51,51,1)'),
+                         ('background-image', 'image', '')]},
     {
             'selector': 'body.gbe-printable',
             'pseudo_class': '',
@@ -792,7 +793,7 @@ init_values = [
      'target_element': 'table',
      'usage': 'Reporting',
      'prop_val': [('color', 'rgba(51,51,51,1)'),
-                  ('border-top-color', 'rgba(221, 221, 221, 1)')]},
+                  ('border-top-color', 'rgba(221,221,221,1)')]},
     {
             'selector': '.detail_link',
             'pseudo_class': '',

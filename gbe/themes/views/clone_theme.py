@@ -16,6 +16,7 @@ from gbe.models import (
 )
 from gbe.themes.forms import (
     StyleValueForm,
+    StyleValueImageForm,
     ThemeVersionForm,
 )
 from django.contrib import messages
@@ -45,15 +46,21 @@ class CloneTheme(ManageTheme):
                 'style_property__selector__selector',
                 'style_property__selector__pseudo_class',
                 'style_property__style_property'):
+            form_type = StyleValueForm
+            if value.style_property.value_type == "image":
+                form_type = StyleValueImageForm
             try:
                 if request.POST:
-                    form = StyleValueForm(request.POST,
-                                          style_property=value.style_property,
-                                          initial={'value': value.value},
-                                          prefix=str(value.pk))
+                    form = form_type(
+                        request.POST,
+                        request.FILES,
+                        initial={'value': value.value,
+                                 'image': value.image,
+                                 'style_property': value.style_property},
+                        prefix=str(value.pk))
                 else:
-                    form = StyleValueForm(instance=value,
-                                          prefix=str(value.pk))
+                    form = form_type(instance=value,
+                                     prefix=str(value.pk))
                 forms += [(value, form)]
             except Exception as e:
                 messages.error(request, e)
