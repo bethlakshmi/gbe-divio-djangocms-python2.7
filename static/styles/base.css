@@ -126,9 +126,8 @@ div.login_text{
 button.login-button {
   padding-top: 7px;
   padding-bottom: 7px;
-  margin-top: 3px;
   margin-right: 3px;
-  margin-bottom: 7px;
+  margin-bottom: -1px;
   border-radius: 4px;
   font-family: 'Vast Shadow', cursive;
   font-size: 18px;
