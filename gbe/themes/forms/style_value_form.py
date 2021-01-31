@@ -57,8 +57,10 @@ class StyleValueForm(ModelForm):
                 defaults={
                     'summary': "Property Template Does Not Match Value",
                     'description': theme_help['mismatch']})
-            raise Exception("%s, VALUES: %s" % (user_msg[0].description,
-                                                values))
+            raise Exception("%s, VALUES: %s, TEMPLATE: %s" % (
+                user_msg[0].description,
+                values,
+                value_templates))
         for template, value in zip(value_templates, values):
             help_text = None
             help_key = "%s-%d" % (style_property.style_property, i)

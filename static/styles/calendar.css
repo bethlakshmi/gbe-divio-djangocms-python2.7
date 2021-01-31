@@ -6,75 +6,33 @@
 }
 
 .time-row {
-    background-color: rgb(150, 3, 32);
     text-align: center;
-    color: white;
     padding: 5px;
     font-size: larger;
-    border:  #6E6E6E solid 1px;
+    border-style:  solid;
 }
-.event-row {
-    background-color: #C4C4C4;
-    border:  #6E6E6E solid 1px;
-}
-
-.event-row > div {
-    border:  #6E6E6E solid 1px;
-    color:  #6E6E6E solid 1px;
-    background-color: #E4BDC5;
-}
+.event-row {border-style:solid;}
+.event-row > div {border-style:solid;}
 div.shadow_event {
     background-color: #e6e6e6;
 }
-div.interested {
-    background-color: #f3e1e5;
-}
-
-div.teacher, div.performer, div.volunteer, div.panelist, div.moderator, #volunteer {
-    background-color: #f3e1e5;
-}
-div.pending-volunteer {
-    background-color: #d9edf7;
-}
-.calendar-container {
-    border:  #6E6E6E solid 1px;
-}
-.backward {
-    text-align: left;
-    padding: 0px;
-}
-.backward > a > button {
-    background-color: #B5B5B5;
-    border:  0px;
-}
-.forward > a > button {
-    background-color: #B5B5B5;
-    border:  0px;
-}
-.forward {
-    text-align: right;
-    padding: 0px;
-}
+.backward {text-align: left; padding: 0px;}
+.forward {text-align: right; padding: 0px;}
+.calendar-container {border-style:  solid;}
 .header1 {
     text-align: center;
     font-family: 'Vast Shadow', cursive;
     font-size: 20px;
-    border:  #6E6E6E solid 1px;
-    background-color: #D0D0D0;
+    border-style:  solid;
 }
 .header2 {
     text-align: center;
     font-family: 'Vast Shadow', cursive;
     font-size: 25px;
-    border:  #6E6E6E solid 1px;
-    background-color: #B5B5B5;
+    border-style:  solid;
 }
-.cal-favorite {
-  float: right;
-}
-.vol_shift_div {
-    padding: 0px;
-}
+.cal-favorite {float: right;}
+.vol_shift_div {padding: 0px;}
 .vol_shift_table {
     border:  0px;
     background-color: #e4e0e0;
