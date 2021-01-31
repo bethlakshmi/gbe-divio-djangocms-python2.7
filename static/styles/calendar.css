@@ -5,12 +5,7 @@
 @media (min-width:1200px){.calendar-container{width:1080px}
 }
 
-.time-row {
-    text-align: center;
-    padding: 5px;
-    font-size: larger;
-    border-style:  solid;
-}
+.time-row {text-align: center;padding: 5px;font-size: larger;border-style:  solid;}
 .event-row {border-style:solid;}
 .event-row > div {border-style:solid;}
 div.shadow_event {
@@ -19,44 +14,10 @@ div.shadow_event {
 .backward {text-align: left; padding: 0px;}
 .forward {text-align: right; padding: 0px;}
 .calendar-container {border-style:  solid;}
-.header1 {
-    text-align: center;
-    font-family: 'Vast Shadow', cursive;
-    font-size: 20px;
-    border-style:  solid;
-}
-.header2 {
-    text-align: center;
-    font-family: 'Vast Shadow', cursive;
-    font-size: 25px;
-    border-style:  solid;
-}
+.header1 {text-align: center;font-family: 'Vast Shadow', cursive;font-size: 20px;border-style:  solid;}
+.header2 {text-align: center;font-family: 'Vast Shadow', cursive;font-size: 25px;border-style:  solid;}
 .cal-favorite {float: right;}
 .vol_shift_div {padding: 0px;}
-.vol_shift_table {
-    border:  0px;
-    background-color: #e4e0e0;
-}
-.vol_shift_header {
-    border:  #6E6E6E solid 2px;
-    font-size: 12px;
-    background-color: #E4BDC5;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-.vol_shift_hour {
-    border-left:  #6E6E6E solid 2px;
-    border-top: 0px;
-    border-bottom: 0px;
-    border-right: #adadad solid 1px;
-}
-.vol_shift_mid {
-    border-left: #adadad solid 1px;
-    border-top: 0px;
-    border-bottom: 0px;
-    border-right: #adadad solid 1px;
-}
-.vol_shift_event {
-    border: black solid 2px;
-    background-color: #E4BDC5;
-}
+.vol_shift_header {border-style:solid;font-size: 12px;padding-left: 2px;padding-right: 2px;}
+.vol_shift_hour, .vol_shift_mid {border-right-style: solid; border-left-style: solid;}
+.vol_shift_event {border-style: solid;}
