@@ -516,6 +516,16 @@ init_values = [
             'usage': 'Forms',
             'prop_val': [('border-color', 'rgba(0,0,0,1)')]},
     {
+            'selector': '.gbe-box-shadow',
+            'pseudo_class': '',
+            'description': '''Shadow beneath panels to add focus - includig
+            update email''',
+            'target_element': 'div',
+            'usage': 'Forms',
+            'prop_val': [('box-shadow',
+                          'px px px px rgba',
+                          '0px 8px 16px 0px rgba(0,0,0,.15)')]},
+    {
             'selector': '.gbe-bg-light',
             'pseudo_class': '',
             'description': '''lighter colored panels - sub panels within
