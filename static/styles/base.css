@@ -184,14 +184,7 @@ div.side_box {
     border: 1px solid black;
     padding: 0 10px 0 10px;
 }
-
-@media (min-width:768px){.email-select{width:640px}
-}
-@media (min-width:992px){.email-select{width:860px}
-}
-@media (min-width:1200px){.email-select{width:1050px}
-}
-.email-select{padding:0px;}
+.email-select{padding:0px;width:100%;}
 #id_email-select-conference{width:250px}
 
 .form-inline label.horizontal-label{justify-content: flex-start;}
