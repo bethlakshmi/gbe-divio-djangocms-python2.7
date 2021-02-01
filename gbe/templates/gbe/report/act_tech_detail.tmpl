@@ -16,7 +16,7 @@ Act state is {{ state }}</span>
  <div class="col-xs-12 col-md-6 col-lg-4">
   <h2 class="gbe-title">Performer: {{act.performer}}</H2>
   <h3 class="gbe-subtitle">Act Name: {{act.b_title}}</h3>
-  {% if not act.tech.is_complete %}<font color="red">Act Tech is NOT complete</font>{% endif %}
+  {% if not act.tech.is_complete %}<font class="gbe-form-error">Act Tech is NOT complete</font>{% endif %}
   <b>Email:</b>  <a href='mailto:{{act.act.performer.contact.user_object.email}}'>
     {{act.performer.contact.user_object.email}}</a><br>
   <b>Phone:</b>  {{act.performer.contact.phone}}<br>
@@ -26,9 +26,9 @@ Act state is {{ state }}</span>
   <br><br>
  {% else %}&nbsp;{% endif %}</div>
  <div class="col-xs-12 col-md-6 col-lg-4">
-<h4>Show:  {% for show in shows %}{{show}}, {% empty %}<font color="red">No Show</font>{% endfor %}</h4>
+<h4>Show:  {% for show in shows %}{{show}}, {% empty %}<font class="gbe-form-error">No Show</font>{% endfor %}</h4>
 <h4>Rehearsal: {% for rehearsal in rehearsals %}{{ rehearsal.start_time }}
-{% empty %}<font color="red">No Rehearsal</font>{% endfor %}</h4>
+{% empty %}<font class="gbe-form-error">No Rehearsal</font>{% endfor %}</h4>
 {% if order >= 0 %}
 <div class="act_tech_box gbe-bg-light" style="text-align:center;"><br><span style="font-size: 3em;">
   {{ order }}<br></span><br>Show Order</div>{% endif %}
@@ -91,7 +91,7 @@ Act state is {{ state }}</span>
       <b>No Music Needed</b>
     {% elif act.tech.track %}
       <b>Filename:</b> <a href="{{act.tech.track.url}}">{{act.tech.track}}</a>{% if not act.tech.track %}
-        <font color="red">Music not yet provided</font>{% endif %}<br>
+        <font class="gbe-form-error">Music not yet provided</font>{% endif %}<br>
     {% endif %}<br>
       <b>Mic Options:</b> {{act.tech.mic_choice}}<br><br>
 </div>

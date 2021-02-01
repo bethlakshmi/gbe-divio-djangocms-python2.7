@@ -1,6 +1,6 @@
    <div class="form-row"><div class="form-group col-md-2 col-12">
     <label class="form-check-label horizontal-label" id="{{ field.name }}"><b>
-     {% if field.errors %}<font color="red">!&nbsp;&nbsp;{% endif %}
+     {% if field.errors %}<font class="gbe-form-error">!&nbsp;&nbsp;{% endif %}
      {{ field.label }}:&nbsp;&nbsp;
      {% if field.errors %}</font>{% endif %}</b></label>
    </div>
@@ -11,5 +11,5 @@
       {{ checkbox.tag }}{{ checkbox.label_tag }}{{ checkbox.choice_label }}
       </label>
       </div>{% endfor %}
-      {% if field.errors %}<font color="red">{{ field.errors }}</font>{% endif %}
+      {% if field.errors %}<font class="gbe-form-error">{{ field.errors }}</font>{% endif %}
    </div></div>

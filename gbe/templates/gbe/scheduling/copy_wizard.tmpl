@@ -15,13 +15,13 @@
     <p>
       Choose the target day of the conference and an event at the same time will be made.
       If the room has changed between the previous conference and the new conference, please update the room.  Rooms from previous conferences will not be available here.</p>
-      {% if pick_day.errors %}<p style= "color:red"> There is an error on the form.</p>{% endif %}
+      {% if pick_day.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
     <div class="row">
     {% for field in pick_day %}
       <div class="col-lg-2 col-md-2 col-sm-6 col-xs-5">
         <label for="{{field.name}}" class="control-label">        
-          {% if field.errors %}<font color="red">!
-          {% elif field.css_classes == 'required' %}<font color="red">*</font>
+          {% if field.errors %}<font class="gbe-form-error">!
+          {% elif field.css_classes == 'required' %}<font class="gbe-form-required">*</font>
           {% endif %} 
           {{ field.label_tag }}
           {% if field.errors %}</font>{% endif %} 
@@ -29,13 +29,13 @@
       <div class="col-lg-3 col-md-4 col-sm-6 col-xs-7">
         {{ field }}
         {% if field.errors %}<br/><label>
-        <font color="red">{{ field.errors }}</font></label>{% endif %}
+        <font class="gbe-form-error">{{ field.errors }}</font></label>{% endif %}
       </div>
     {% endfor %}
   </div>
   {% elif copy_mode %}
-    {% if copy_mode.errors %}<p style= "color:red"> There is an error on the form.</p>{% endif %}
-    <font color="red">{{ copy_mode.non_field_errors }}</font>
+    {% if copy_mode.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
+    <font class="gbe-form-error">{{ copy_mode.non_field_errors }}</font>
       <div class="form-row"><div class="form-group"><div class="col-12">
 	<label for="{{copy_mode.copy_mode.name}}" class="control-label">   
           {{ copy_mode.copy_mode.label_tag }}
@@ -44,14 +44,14 @@
           {{ copy_mode.copy_mode.0.tag }}
           {{ copy_mode.copy_mode.0.choice_label }} {{ copy_mode.target_event }}
         {% if copy_mode.target_event.errors %}
-          <font color="red"><ul>{{ copy_mode.target_event.errors }}</ul></font>
+          <font class="gbe-form-error"><ul>{{ copy_mode.target_event.errors }}</ul></font>
         {% endif %}
         <br>
           {{ copy_mode.copy_mode.1.tag }}
           {{ copy_mode.copy_mode.1.choice_label }} {{ copy_mode.copy_to_day }}
         <br>
           {% if copy_mode.copy_to_day.errors or copy_mode.copy_mode.errors %}
-            <font color="red"><ul>
+            <font class="gbe-form-error"><ul>
             {{ copy_mode.copy_to_day.errors }}
             {{ copy_mode.copy_mode.errors }}
             </ul></font>
@@ -59,14 +59,14 @@
       </div>
       <div class="col-12"><label for="{{field.name}}" class="control-label">
         <br>
-          {% if copy_mode.room.errors %}<font color="red">!
-          {% elif copy_mode.room.css_classes == 'required' %}<font color="red">*</font>
+          {% if copy_mode.room.errors %}<font class="gbe-form-error">!
+          {% elif copy_mode.room.css_classes == 'required' %}<font class="gbe-form-required">*</font>
           {% endif %} 
           {{ copy_mode.room.label_tag }}&nbsp;&nbsp;
           {% if copy_mode.room.errors %}</font>{% endif %} 
       </label>{{ copy_mode.room }}
       {% if copy_mode.room.errors or copy_mode.room.errors %}
-            <br/><font color="red"><ul>
+            <br/><font class="gbe-form-error"><ul>
             {{ copy_mode.room.errors }}
             </ul></font>
           {% endif %}
@@ -76,7 +76,7 @@
     </div></div></div>
     {% endif %}
     <div class="form-row pull-right">
-      <input type="submit" class="event_wizard_button" name="pick_mode" value="Next">
+      <input type="submit" class="btn gbe-btn-primary" name="pick_mode" value="Next">
     </div>
   </form>
 {% endblock %}
@@ -84,7 +84,7 @@
 <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {% if second_form.errors %}
-    <p style= "color:red"> There is an error on the form.</p>
+    <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
     <div class="form-group single-radio">
       <h4>Choose Sub-Events to be copied</h4>
@@ -95,7 +95,7 @@
       {{ second_form}}
     </div>
   <div class="form-row pull-right">
-    <input type="submit" class="next" name="pick_event" value="Finish">
+    <input type="submit" class="btn gbe-btn-primary" name="pick_event" value="Finish">
   </div>
 </form>
 {% endblock %}

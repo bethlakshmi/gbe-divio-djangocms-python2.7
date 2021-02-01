@@ -82,7 +82,7 @@ class TestCreateVendor(TestCase):
         response, data = self.post_unpaid_vendor_draft()
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Profile View')
+        self.assertContains(response, 'Welcome to GBE')
         draft_string = (
             '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
             ) % data['thebiz-b_title']
@@ -130,7 +130,7 @@ class TestCreateVendor(TestCase):
     def test_create_vendor_post_with_vendor_app_paid(self):
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Profile View")
+        self.assertContains(response, "Welcome to GBE")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 
@@ -138,7 +138,7 @@ class TestCreateVendor(TestCase):
         VendorFactory(b_conference=self.conference, submitted=True)
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Profile View")
+        self.assertContains(response, "Welcome to GBE")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 
@@ -150,7 +150,7 @@ class TestCreateVendor(TestCase):
         )
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Profile View")
+        self.assertContains(response, "Welcome to GBE")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 
@@ -163,7 +163,7 @@ class TestCreateVendor(TestCase):
         make_vendor_app_purchase(self.conference, self.profile.user_object)
         response, data = self.post_paid_vendor_submission()
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Profile View")
+        self.assertContains(response, "Welcome to GBE")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['thebiz-b_title'])
 

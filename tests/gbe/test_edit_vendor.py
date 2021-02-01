@@ -115,7 +115,7 @@ class TestEditVendor(TestCase):
     def test_vendor_edit_post_form_valid(self):
         response = self.post_edit_paid_vendor_draft()
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Profile View")
+        self.assertContains(response, "Welcome to GBE")
         assert_alert_exists(
             response, 'success', 'Success', default_vendor_draft_msg)
 

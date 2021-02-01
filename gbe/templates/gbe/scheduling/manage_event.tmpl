@@ -20,7 +20,7 @@
    <div class="form-group col-md-2 col-12">
     <label class="form-check-label horizontal-label" id="{{ selection_form.staff_area.name }}"><b>
      {% if selection_form.staff_area.errors %}
-      <font color="red">!&nbsp;&nbsp;
+      <font class="gbe-form-error">!&nbsp;&nbsp;
      {% endif %}
      {{ selection_form.staff_area.label }}:&nbsp;&nbsp;
      {% if selection_form.staff_area.errors %}
@@ -46,7 +46,7 @@
      </div>
      {% endfor %}
       {% if selection_form.staff_area.errors %}
-        <font color="red">{{ selection_form.staff_area.errors }}</font>
+        <font class="gbe-form-error">{{ selection_form.staff_area.errors }}</font>
       {% endif %}
    </div></div>
    <div class="form-row">

@@ -1,6 +1,5 @@
 {% extends 'base.tmpl' %}
 {% load static %}
-
 {% block title %}
    Review Bids
 {% endblock %}
@@ -9,10 +8,10 @@
 {% endblock %}
 {% block content %}
   {% if form.errors %}
-    <p style= "color:red"> There is an error on the form.  </p>
+    <p class="gbe-form-error"> There is an error on the form.  </p>
   {% endif %}
     {% if error %}
-    <p style= "color:red"> {{ error }}  </p>
+    <p class="gbe-form-error"> {{ error }}  </p>
     {% endif %}
 {% if not_submit_message %}
 <div class="review-pane gbe-bg-light">

@@ -12,7 +12,7 @@
 <form method="POST" action="" enctype="multipart/form-data">
   {% for form in left_forms %}
     {% if form.errors %}
-      <p style= "color:red"> There is an error on the form.  </p>
+      <p class="gbe-form-error"> There is an error on the form.  </p>
     {% endif %}
   {% endfor %}
 <div class="container">
