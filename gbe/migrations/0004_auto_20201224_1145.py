@@ -1002,6 +1002,37 @@ init_values = [
         'prop_val': [('color', 'rgba(51,51,51,1)'),
                      ('background-color', 'rgba(228,189,197,1)'),
                      ('border', 'rgba px', 'rgba(0,0,0,1) 2px')]},
+    {
+        'selector': '.gbe-badge',
+        'pseudo_class': '',
+        'description': '''Interest badge for teachers on landing page.''',
+        'target_element': 'span',
+        'usage': 'Landing Page',
+        'prop_val': [('color', 'rgba(255,255,255,1)'),
+                     ('background-color', 'rgba(119,119,119,1)')]},
+    {
+        'selector': '.performer_section',
+        'pseudo_class': '',
+        'description': '''Block of performer items, currently coded to match
+        background, but can be made to pop more.''',
+        'target_element': 'div',
+        'usage': 'Landing Page',
+        'prop_val': [('color', 'rgba(51,51,51,1)'),
+                     ('background-color', 'rgba(235,235,235,1) ')]},
+    {
+        'selector': '.landing_box',
+        'pseudo_class': '',
+        'description': '''Border around boxes on the landing page''',
+        'target_element': 'div',
+        'usage': 'Landing Page',
+        'prop_val': [('border-color', 'rgba', 'rgba(0,0,0,1)')]},
+    {
+        'selector': '.gbe_thumb_button',
+        'pseudo_class': '',
+        'description': '''Border around thumbnails''',
+        'target_element': 'button',
+        'usage': 'Landing Page',
+        'prop_val': [('border-color', 'rgba', 'rgba(51,51,51,1)')]},
 ]
 
 

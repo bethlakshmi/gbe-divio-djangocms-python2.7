@@ -514,52 +514,15 @@ td.describe
 {
  font-weight: bold;
 }
-
-
-.ticket
-{
-  margin-left: 10px;
-  font-weight: normal;
-}
-.conf_tickets
-{
-  font-weight: bold;
-}
-
 .ticket_list_item
 {
   margin-left: 15px;
 }
 
-div.performer
-{
-}
-.gbe_no_pic
-{
-  width: 50px;
-  height: 20px;
-  display: inline-block;
-  margin: 2px;
-}
-.gbe_thumb_block
-{
-  width: 50px;
-  max-height: 75px;
-  display: inline-block;
-  margin: 2px;
-}
-.gbe_thumbnail
-{
-  width: 100%;
-  height: auto;
-}
-.performer_text
-{
-  display: inline-block;
-  width: 190px;
-  vertical-align: middle;
-  word-wrap:break-word;
-}
+.gbe_no_pic{width: 50px;height: 20px;display: inline-block;margin: 2px;}
+.gbe_thumb_block{width: 50px; max-height: 75px; display: inline-block; margin: 2px;}
+.gbe_thumbnail{width: 100%;height: auto;}
+.performer_text{display: inline-block;width: 190px;vertical-align: middle;word-wrap:break-word;}
 
 .bio_name
 {
@@ -662,20 +625,7 @@ div.gbe-alert
 /* --------------- / Responsive Fixes --------------- */
 
 
-.landing_box{
-	border: 1px solid black;
-        padding: 10px;
-}
-
-/* Landing page, center blocks */
-
-div.landing_box div.schedule_section div.event {
-  /* set line-height here */
-}
-
-div.landing_box div.ticket_section div.ticket {
-  /* set line-height here */
-}
+.landing_box{border: solid 1px; padding: 10px;}
 
 /* Landing page, right-column blocks */
 div.sidebar div.sidebar-text {
@@ -737,20 +687,17 @@ th.rotate-review div span a {
   color: inherit;
   text-decoration: none;
 }
-
+.performer_section {
+    padding-left:5px;
+    padding-top:5px;
+    margin-top: 10px;
+}
 div.sidebar div.class_section {
     margin-top: 10px;
     background-color:#E3DDDF;
     padding-left:5px;
     padding-top:5px;
 }
-
-div.sidebar div.performer_section {
-    background-color:#E3DDDF;
-    padding-left:5px;
-    padding-top:5px;
-}
-
 
 div.sidebar div.show_section {
     margin-top: 10px;
@@ -1006,3 +953,4 @@ div.hierarchy-1
 .close{font-size:21px;color:inherit;}
 .close:focus,.close:hover{color:inherit;text-decoration:none;outline:none; ;}
 .gbe-panel-table, .gbe-panel-table td, .gbe-panel-table th{border-top: 1px solid;}
+.gbe_thumb_button{border: solid 2px;}

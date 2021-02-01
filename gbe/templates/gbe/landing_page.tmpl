@@ -1,6 +1,6 @@
 {% extends "base.tmpl" %}
 {% block title %}
-   Profile View
+   Welcome to GBE
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
@@ -26,16 +26,11 @@
 	    {% include 'gbe/incl_lp_left.tmpl' %}
 	    </div>
       <div role="tabpanel" class="tab-pane col-12 col-sm-12 col-md-4" id="on_site" style="padding: 4px">
-	    {% if profile %}
-             <div class='landing_box'>
-               {% include 'gbe/incl_schedule.tmpl' %}
-             </div>
-  	     &nbsp;
-  	  {% endif %}
-          {% if profile and tickets %}
-            <div class='landing_box'>
-               {% include 'gbe/incl_tickets.tmpl' %}
-    	      </div>
+	     {% if profile %}<div class='landing_box'>
+          {% include 'gbe/incl_schedule.tmpl' %}</div>&nbsp;
+  	   {% endif %}
+          {% if profile and tickets %}<div class='landing_box'>
+            {% include 'gbe/incl_tickets.tmpl' %}</div>
     	    {% endif %}
           {% include 'gbe/profile/incl_performer.tmpl' %}
       </div>
