@@ -557,7 +557,7 @@ init_values = [
             'pseudo_class': '',
             'description': '''when the dark panels is used on a heading
             within a long list, the border gets very interruptive, so it's
-            currently set to blend with the gbe-bg-dark backgroun.  If changed,
+            currently set to blend with the gbe-bg-dark background.  If changed,
             look at class description list and bio list.''',
             'target_element': 'div',
             'usage': 'Forms',
@@ -1061,8 +1061,16 @@ init_values = [
         'pseudo_class': '',
         'description': '''Alternating bid sections''',
         'target_element': 'div',
-        'usage': '',
+        'usage': 'Landing Page',
         'prop_val': [('background-color', 'rgba(227,221,223,1)')]},
+    {
+        'selector': ('.gbe_accordion .card, ' +
+            '.gbe_accordion .card:last-child .card-header'),
+        'pseudo_class': '',
+        'description': '''Border around accordion on ticket management.''',
+        'target_element': 'div',
+        'usage': 'General',
+        'prop_val': [('border-color', 'rgba(88,88,88,1)')]},
 ]
 
 
