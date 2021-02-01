@@ -537,12 +537,6 @@ tr.changed
   background-color: #BA8E70;
   vertical-align: top;
 }
-
-tr.blank_row
-{
-  background-color: #D0D0D0 ;
-}
-
 tr.changed td
 {
   padding: 3px;
@@ -557,10 +551,6 @@ tr.changed td select
 tr.changed td
 {
   padding: 3px;
-}
-div.gbe-alert 
-{
-    background-color: rgba(241, 221, 91, 01);
 }
 
 
@@ -626,27 +616,8 @@ div.gbe-alert
 
 
 .landing_box{border: solid 1px; padding: 10px;}
+.sidebar-text {border-style: solid;padding: 18px;margin-bottom: 10px;}
 
-/* Landing page, right-column blocks */
-div.sidebar div.sidebar-text {
-    border: solid;
-    border-color: #C3BDBF;
-    padding: 18px;
-    margin-bottom: 10px;
-}
-
-div.sidebar div.act_section {
-    background-color:#C3BDBF;
-    padding-left:5px;
-    padding-top:5px;
-}
-
-div.bid_review_section{
-    margin-top: 10px;
-    background-color:#C3BDBF;
-    padding-left:5px;
-    padding-top:5px;
-}
 th.rotate {
   /* Something you can count on */
   height: 140px;
@@ -706,28 +677,12 @@ div.sidebar div.show_section {
     padding-top:5px;
 }
 
-
-div.sidebar div.volunteer_section {
-    margin-top: 10px;
-    background-color:#C3BDBF;
-    padding-left:5px;
-    padding-top:5px;
-}
-
 div.sidebar div.costume_section {
     margin-top: 10px;
     background-color:#E3DDDF;
     padding-left:5px;
     padding-top:5px;
 }
-
-div.sidebar div.vendor_section {
-    margin-top: 10px;
-    background-color:#C3BDBF;
-    padding-left:5px;
-    padding-top:5px;
-}
-
 .filer_image.right {
   float: right;
 }
@@ -844,7 +799,7 @@ input#id_duration, input#id_new_opp-duration, input#id_new_slot-duration
 {
   width: 70px
 }
-
+div.gbe-no-border{border-width: 0px;padding-left:5px;padding-top:5px;margin-top:10px;}
 span.opps-errors ul li{list-style-type: none;}
 span.opps-errors ul {padding: 0px;}
 

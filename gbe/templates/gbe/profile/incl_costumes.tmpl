@@ -1,13 +1,10 @@
   {% if costumes %}
-   <div class='costume_section'>
-    <span class='heading costumes'>
-      <b>Costume Display Proposals</b>
-    </span><br>
+   <div class='gbe-medium-light gbe-no-border'>
+    <span class='sched_detail'>Costume Display Proposals</span><br>
     {% for costume in costumes %}
-
-      <div class='vendor'>
+      <div>
         {% if costume.submitted or historical %}
-          <a href = '{% url 'gbe:costume_view' costume.id%}'> 
+          <a class="gbe-link" href='{% url 'gbe:costume_view' costume.id%}'> 
             {{ costume }}
           </a>(Click to view)
           {% for value, state in acceptance_states %}
@@ -17,14 +14,14 @@
           {% endfor %}
           <br>
         {% else %}
-          <a href = '{% url 'gbe:costume_edit' costume.id %}'> 
+          <a class="gbe-link" href='{% url 'gbe:costume_edit' costume.id %}'> 
             {{ costume }} 
           </a>(Click to edit)
           <br>
       {% endif %}
       </div> 
       {% for alert in costume.alerts %}
-        <span class='alert'> {{ alert|safe}}</span> <br>	      	 
+        <span class='gbe-alert'> {{ alert|safe}}</span> <br>	      	 
       {% endfor %}
 
     {% endfor %}
@@ -32,7 +29,7 @@
 <div class="container">
   <div class="row">
     <div class="col text-center">
-        <a class="btn btn-dark" role="button" href='{% url 'gbe:costume_create' %}'>Propose Costume Display</a></li>
+        <a class="btn gbe-btn-primary" role="button" href="{% url 'gbe:costume_create' %}">Propose Costume Display</a></li>
     </div>
   </div>
 </div><br>

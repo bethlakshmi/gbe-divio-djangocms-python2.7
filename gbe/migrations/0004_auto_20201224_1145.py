@@ -403,6 +403,14 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('color', 'rgba(220,53,69,1)')]},
     {
+            'selector': '.gbe-text-danger',
+            'pseudo_class': 'hover',
+            'description': '''Text that means danger - not exactly an error,
+            but something permanent,like reject/delete.''',
+            'target_element': 'i',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(167,29,42,1)')]},
+    {
             'selector': '.gbe-text-info',
             'pseudo_class': '',
             'description': '''Text that is highlighted because it gives useful
@@ -1033,6 +1041,28 @@ init_values = [
         'target_element': 'button',
         'usage': 'Landing Page',
         'prop_val': [('border-color', 'rgba', 'rgba(51,51,51,1)')]},
+    {
+        'selector': '.gbe-alert',
+        'pseudo_class': '',
+        'description': '''Alerts on the landing page.''',
+        'target_element': 'div',
+        'usage': '',
+        'prop_val': [('background-color', 'rgba(241,221,91,1)')]},
+    {
+        'selector': '.sidebar-text',
+        'pseudo_class': '',
+        'description': '''Text on the right of the sidebar''',
+        'target_element': 'div',
+        'usage': 'Landing Page',
+        'prop_val': [('border-color', 'rgba', 'rgba(195,189,191,1)'),
+                     ('border-width', 'px', '3px')]},
+    {
+        'selector': '.gbe-medium-light',
+        'pseudo_class': '',
+        'description': '''Alternating bid sections''',
+        'target_element': 'div',
+        'usage': '',
+        'prop_val': [('background-color', 'rgba(227,221,223,1)')]},
 ]
 
 
