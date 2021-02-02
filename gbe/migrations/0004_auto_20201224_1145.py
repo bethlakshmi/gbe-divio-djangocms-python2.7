@@ -1035,6 +1035,20 @@ init_values = [
         'usage': 'Landing Page',
         'prop_val': [('border-color', 'rgba', 'rgba(0,0,0,1)')]},
     {
+        'selector': '.device-small li a.active',
+        'pseudo_class': '',
+        'description': '''Bottom of tabs when landing page is on mobile''',
+        'target_element': 'div',
+        'usage': 'Landing Page',
+        'prop_val': [('border-color', 'rgba', 'rgba(142,14,10,1)')]},
+    {
+        'selector': '.device-small li a',
+        'pseudo_class': '',
+        'description': '''Tabs when landing page is on mobile''',
+        'target_element': 'div',
+        'usage': 'Landing Page',
+        'prop_val': [('color', 'rgba', 'rgba(0,0,0,1)')]},
+    {
         'selector': '.gbe_thumb_button',
         'pseudo_class': '',
         'description': '''Border around thumbnails''',

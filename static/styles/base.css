@@ -184,7 +184,6 @@ div.side_box {
 #id_email-select-conference{width:250px}
 
 .form-inline label.horizontal-label{justify-content: flex-start;}
-
 @media (min-width:768px){.bid_review{width:680px}
 }
 @media (min-width:992px){.bid_review{width:900px}
@@ -563,50 +562,19 @@ tr.changed td
 
 /* small device */
 @media (max-width: 767px) {
-  .device-big {
-    display: none;
-  }
-  .device-small {
-    display: block;
-  }
+  .device-big {display: none;}
+  .device-small {display: block;}
 }
-
-.device-small li:hover {
-  border-bottom: 4px solid #C78785;
-}
-
-.device-small li a.active {
-  border-bottom: 4px solid #8e0e0a;;
-  position: relative;
-}
-
-.device-small li a {
-  color: black;
-}
-  
-.device-small li.active a {
-  background-color: inherit;
-}
-
-.device-small li.active a:hover {
-  background-color: inherit;
-}
-
-.device-small li.active a li:hover {
-  background-color: inherit;
-}
+.device-small li a.active {border-bottom: 4px solid;position: relative;} 
+.device-small li.active a {background-color: inherit;}
+.device-small li.active a:hover {background-color: inherit;}
+.device-small li.active a li:hover {background-color: inherit;}
 
 /* big device */
 @media only screen and (min-width : 768px) {
-  .device-big, .tab-content .tab-pane {
-    display: block;
-  }
-  .device-small {
-    display: none;
-  }
-  .tab-content .tab-pane {
-    display: block;
-  }
+  .device-big, .tab-content .tab-pane {display: block;}
+  .device-small {display: none;}
+  .tab-content .tab-pane {display: block;}
 }
 /* --------------- / Responsive Fixes --------------- */
 
@@ -805,21 +773,16 @@ div.hierarchy-1
 .gbe_accordion button.btn {width: 100%;font-weight: bold;padding: 0;}
 .gbe_accordion a.btn {font-size: 18px;margin-top: 20px;margin-bottom: 10px;}
 #ticket_button {font-size: 12px;}
-#ticket_action {
-  width: 70px;
-  padding: 0px;
-  text-align: center;
-}
-#ticket_action div a {
-  margin: 2px 0px 2px 0px;
-}
+#ticket_action {width: 70px;padding: 0px;text-align: center;}
+#ticket_action div a {margin: 2px 0px 2px 0px;}
+.navbar-default {font-family: 'Vast Shadow', cursive;font-size:17px;padding:0px;}
 
 /* small display, tabs on landing page */
-.landing-tabs:before, .landing-tabs:after, .navbar:before, .navbar:after {
+.landing-tabs:before, .landing-tabs:after{
   content: " ";
   display: table;
 }
-.landing-tabs:after, .navbar:after {clear: both;}
+.landing-tabs:after{clear: both;}
 /* tab alignment - forms and landing */
 .nav-tabs li{float:left;margin-bottom:-3px; height: 30px;}
 /* tabs on forms */
