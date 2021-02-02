@@ -31,7 +31,7 @@
 	{% if event.presenters|length > 0%}
 	<div class="row">
 	<div class="col-xs-12 col-sm-2">
-	  <label class="listlabel">Presented by:</label></div>
+	  <label class="sched_detail">Presented by:</label></div>
  	  <div class="col-xs-12 col-sm-10">
  	  {% for person in event.presenters %}
 	    {{ person.name }},
@@ -41,7 +41,7 @@
 	{% if event.scheduled_events|length > 0%}
 	<div class="row">
 	<div class="col-xs-12 col-sm-2">
-	  <label class="listlabel">Time(s):</label></div>
+	  <label class="sched_detail">Time(s):</label></div>
  	  <div class="col-xs-12 col-sm-10">
 	  {% for sched_event in event.scheduled_events %}
       {% include "gbe/scheduling/favorite_star.tmpl"%}
@@ -56,7 +56,7 @@
 	{% if event.eventitem.fee %}
 	<div class="row">
 	<div class="col-xs-12 col-sm-2">
-	  <label class="listlabel">Materials Fee:</label></div>
+	  <label class="sched_detail">Materials Fee:</label></div>
  	<div class="col-xs-12 col-sm-10">
           ${{event.eventitem.fee}}</div></div>
 	{% endif %}

@@ -243,14 +243,6 @@ init_values = [
             'usage': 'Forms',
             'prop_val': [('color', 'rgba(255,0,0,1)')]},
     {
-            'selector': '.helptext',
-            'pseudo_class': '',
-            'description': 'The * on required form fields',
-            'target_element': 'font',
-            'usage': 'Forms',
-            'prop_val': [('color', 'rgba(128,128,128,1)')]},
-
-    {
             'selector': '.gbe-table-success td',
             'pseudo_class': '',
             'description': 'Table row when it was just successfully updated',
