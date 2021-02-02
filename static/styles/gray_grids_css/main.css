@@ -14,14 +14,6 @@ ul li {
    Button Style
    ========================================================================== */
 
-.btn-common {
-  color: #FFF;
-  background: #ee0e0a;
-}
-.btn-common:hover {
-  color: #fff;
-  box-shadow: 0 14px 26px -12px rgba(233, 30, 99, 0.42), 0 4px 23px 0px rgba(233, 30, 99, 0.5), 0 8px 10px -5px rgba(233, 30, 99, 0.02);
-}
 .btn-border {
   color: #777777;
   background: #fff;
@@ -366,14 +358,12 @@ a.more-link:hover{
 .pricing-table {
   position: relative;
   text-align: center;
-  box-shadow: 0px 1px 9px rgba(0, 0, 0, 0.08);
   margin: 60px 15px;
   padding: 15px 0px 0px;
   -webkit-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -moz-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   -o-transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
   transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1) 0s;
-  background-color: white;
    min-height: 440px;
 }
 .pricing-table .table-icon {
@@ -385,7 +375,6 @@ a.more-link:hover{
   height: 70px;
   padding: 20px 60px 20px 60px;
   border-radius: 50%;
-  color: #be0e0a;
 }
 .pricing-table .edit-icon {
   padding: 0 30px;
@@ -393,7 +382,6 @@ a.more-link:hover{
 }
 .pricing-table .edit-icon i {
   font-size: 20px;
-  color: #be0e0a;
 }
 .pricing-table .edit-icon a:hover,  .pricing-table .edit-icon a:active{
   text-decoration: none;

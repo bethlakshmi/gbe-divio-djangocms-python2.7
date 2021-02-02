@@ -557,8 +557,8 @@ init_values = [
             'pseudo_class': '',
             'description': '''when the dark panels is used on a heading
             within a long list, the border gets very interruptive, so it's
-            currently set to blend with the gbe-bg-dark background.  If changed,
-            look at class description list and bio list.''',
+            currently set to blend with the gbe-bg-dark background.  If
+            changed, look at class description list and bio list.''',
             'target_element': 'div',
             'usage': 'Forms',
             'prop_val': [('border-color', 'rgba(195,189,191,1)'),
@@ -954,7 +954,8 @@ init_values = [
                      ('background-color', 'rgba(181,181,181,1)'),
                      ('border', 'rgba px', 'rgba(110,110,110,1) 0px')]},
     {
-        'selector': '.backward > a > button:hover, .forward > a > button:hover',
+        'selector': ('.backward > a > button:hover, ' +
+                     '.forward > a > button:hover'),
         'pseudo_class': '',
         'description': '''Backward/forward buttons on the calendar page, on
         hover.''',
@@ -1079,12 +1080,49 @@ init_values = [
         'prop_val': [('background-color', 'rgba(227,221,223,1)')]},
     {
         'selector': ('.gbe_accordion .card, ' +
-            '.gbe_accordion .card:last-child .card-header'),
+                     '.gbe_accordion .card:last-child .card-header'),
         'pseudo_class': '',
         'description': '''Border around accordion on ticket management.''',
         'target_element': 'div',
         'usage': 'General',
         'prop_val': [('border-color', 'rgba(88,88,88,1)')]},
+    {
+        'selector': '.pricing-table',
+        'pseudo_class': '',
+        'description': '''Boxes with prices of tickets on ticket display.''',
+        'target_element': 'div',
+        'usage': 'Ticket List',
+        'prop_val': [('color', 'rgba(51,51,51,1)'),
+                     ('background-color', 'rgba(255,255,255,1)'),
+                     ('box-shadow',
+                      'rgba px px px px',
+                      'rgba(0,0,0,0.08) 0px 1px 9px 0px')]},
+    {
+        'selector': ('.pricing-table .edit-icon i, ' +
+                     '.pricing-table .table-icon i'),
+        'pseudo_class': '',
+        'description': '''Icons on ticket list''',
+        'target_element': 'span',
+        'usage': 'Ticket List',
+        'prop_val': [('color', 'rgba(190,14,10,1)')]},
+    {
+        'selector': '.gbe-btn-common',
+        'pseudo_class': '',
+        'description': '''Buttons to buy tickets - they pop intentionally.''',
+        'target_element': 'a',
+        'usage': 'Ticket List',
+        'prop_val': [('color', 'rgba(255,255,255,1)'),
+                     ('background-color', 'rgba(238,14,10,1)')]},
+    {
+        'selector': '.gbe-btn-common',
+        'pseudo_class': 'hover',
+        'description': '''Buttons to buy tickets - they pop intentionally.''',
+        'target_element': 'a',
+        'usage': 'Ticket List',
+        'prop_val': [('color', 'rgba(255,255,255,1)'),
+                     ('box-shadow',
+                      'px px px px rgba',
+                      '0px 4px 23px 0px rgba(233,30,99,0.5)')]},
 ]
 
 
@@ -1124,7 +1162,8 @@ def initialize_style(apps, schema_editor):
                     value_type=prop_val[1])
                 val = prop_val[2]
             else:
-                raise Exception("there should be 2 or 3 values here")
+                raise Exception(
+                    "there should be 2 or 3 values here" + str(select_val))
             style_prop.save()
             value = StyleValue(style_property=style_prop,
                                style_version=version,

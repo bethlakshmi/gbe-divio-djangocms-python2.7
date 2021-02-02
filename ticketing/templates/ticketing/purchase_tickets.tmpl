@@ -15,9 +15,9 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12">
-            <h2 class="section-title wow fadeInUp" data-wow-delay="0s">
+            <h2 class="gbe-title">
                 Ticket Purchase Options for {{ site_name }}</h2>
-            <p class="section-subcontent wow fadeInUp" data-wow-delay="0.2s">Welcome!
+            <p>Welcome!
             <br>
             Thanks for your interest in the Great Burlesque Expo.
             Below are the ticket options available for purchase.
@@ -30,7 +30,7 @@
         {% if not forloop.first %}</div>{% endif %}
         <div class="row">
           <div class="col-md-12">
-            <h2 class="section-title wow fadeInUp" data-wow-delay="0s">
+            <h2 class="gbe-subtitle">
                 {{ item.conference }}</h2>
           </div>
         </div>
@@ -38,7 +38,7 @@
     {% endifchanged %}
     {% if item.visible %}
           <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="pricing-table wow fadeInLeft" data-wow-delay="0.3s">
+            <div class="pricing-table">
               {% if request.user.is_superuser %}<div class="edit-icon">
                 <a href="/admin/ticketing/brownpaperevents/{{item.pk}}" target="_blank">
                     <i class="icon-pencil"></i>
@@ -53,7 +53,7 @@
                 {% endfor %}
               </ul>
               <div class="button-area">
-                <a href="http://www.brownpapertickets.com/event/ID-{{ user_id }}/{{ item.bpt_event_id }}/" target="_blank" class="btn btn-common">
+                <a href="http://www.brownpapertickets.com/event/ID-{{ user_id }}/{{ item.bpt_event_id }}/" target="_blank" class="btn gbe-btn-common">
                     ${{ item.min_price|floatformat:2 }}
                 {% if item.min_price < item.max_price%}
                 - ${{ item.max_price|floatformat:2 }}{% endif %}</a>
