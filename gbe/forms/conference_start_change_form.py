@@ -6,6 +6,7 @@ from django.forms import (
 )
 from tempus_dominus.widgets import DatePicker
 from gbe.models import ConferenceDay
+from datetime import datetime
 
 
 class ConferenceStartChangeForm(ModelForm):
@@ -17,6 +18,7 @@ class ConferenceStartChangeForm(ModelForm):
             'icon_toggle': True,
             },
         options={
+            'minDate': datetime.today().strftime("%Y-%m-%d"),
             'format': "M/D/YYYY",
         }))
 
