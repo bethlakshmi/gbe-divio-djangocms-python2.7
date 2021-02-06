@@ -55,3 +55,5 @@ from .volunteer_interest_form import VolunteerInterestForm
 from .advanced_act_tech_form import AdvancedActTechForm
 from .basic_act_tech_form import BasicActTechForm
 from .basic_rehearsal_form import BasicRehearsalForm
+
+from .conference_start_change_form import ConferenceStartChangeForm
