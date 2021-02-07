@@ -4,7 +4,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import (
+    get_object_or_404,
+    render,
+)
 from django.urls import reverse
 from gbe_logging import log_func
 from gbe.forms import ConferenceStartChangeForm
@@ -19,6 +22,7 @@ from gbetext import (
     change_day_note,
 )
 from django.core.exceptions import PermissionDenied
+from django.http import Http404
 
 
 class ManageConferenceView(View):
@@ -41,15 +45,6 @@ class ManageConferenceView(View):
                 'summary': "Change Conference Day Instructions",
                 'description': change_day_note})
         return message[0].description
-
-    def get_user_success_message(self):
-        user_message = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code="UPDATE_PROFILE",
-            defaults={
-                'summary': "Update Profile Success",
-                'description': default_update_profile_msg})
-        return user_message[0].description
 
     @never_cache
     @log_func
@@ -74,39 +69,34 @@ class ManageConferenceView(View):
     @log_func
     def post(self, request, *args, **kwargs):
         intro_message = self.groundwork(request, args, kwargs)
-        form = self.profile_form(
-            request.POST,
-            instance=self.profile,
-            initial={'email': self.profile.user_object.email})
-        prefs_form = ProfilePreferencesForm(request.POST,
-                                            instance=self.profile.preferences,
-                                            prefix='prefs')
-        email_form = EmailPreferencesForm(request.POST,
-                                          instance=self.profile.preferences,
-                                          prefix='email_pref')
-        if form.is_valid() and prefs_form.is_valid() and email_form.is_valid():
-            form.save(commit=True)
-            if self.profile.purchase_email.strip() == '':
-                self.profile.purchase_email = \
-                    self.profile.user_object.email.strip()
-            prefs_form.save(commit=True)
-            email_form.save(commit=True)
-
-            form.save()
-            messages.success(request, self.get_user_success_message())
-            if request.GET.get('next', None):
-                redirect_to = request.GET['next']
-            else:
-                redirect_to = reverse('home', urlconf='gbe.urls')
-            return HttpResponseRedirect(redirect_to)
+        if "day_id" in kwargs:
+            day = get_object_or_404(ConferenceDay, pk=kwargs.get("day_id"))
         else:
+            raise Http404
+        form = ConferenceStartChangeForm(request.POST)
+        if not form.is_valid():
+            # return error
             return render(
                 request,
-                'gbe/update_profile.tmpl',
-                {'left_forms': [form],
-                 'right_forms': [prefs_form],
-                 'email_form': email_form,
-                 'email_note': intro_message[0].description,
+                'gbe/manage_conference.tmpl',
+                {'forms': [form],
+                 'intro': intro_message,
                  'title': self.title,
                  'button': self.button,
                  'header': self.header})
+        conf_change = form.cleaned_data['day'] - day.day
+        for each_day in day.conference.conferenceday_set.all():
+            each_day.day = each_day.day + conf_change
+            each_day.save()
+        messages.success(
+            request,
+            "Moved Conference %s by %d days, change %d conference days" % (
+                day.conference.conference_slug,
+                conf_change.days,
+                day.conference.conferenceday_set.count()))
+        return render(request, 'gbe/manage_conference.tmpl',
+                      {'forms': [],
+                       'intro': intro_message,
+                       'title': self.title,
+                       'button': self.button,
+                       'header': self.header})

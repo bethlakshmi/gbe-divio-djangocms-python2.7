@@ -22,10 +22,10 @@
 <p>
 {{intro}}
 </p>
-{% csrf_token %}
   <table>
     {% for day, form in forms %}
 <form method="POST" action="{% url 'gbe:schedule_conference' day.pk %}" enctype="multipart/form-data">
+{% csrf_token %}
   <tr><td colspan=3><h4>{{day.conference.conference_slug}}</h4></td>
   <tr>
     <td style="padding: 3px"><b>Current Start Day:</b> {{day.day}}</td>
