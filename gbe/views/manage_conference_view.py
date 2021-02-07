@@ -23,6 +23,10 @@ from gbetext import (
 )
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
+from scheduler.idd import (
+    get_occurrences,
+    update_occurrence)
+from gbe.scheduling.views.functions import show_general_status
 
 
 class ManageConferenceView(View):
@@ -85,6 +89,8 @@ class ManageConferenceView(View):
                  'button': self.button,
                  'header': self.header})
         conf_change = form.cleaned_data['day'] - day.day
+
+        # update each conference day so form selection offers right choices
         for each_day in day.conference.conferenceday_set.all():
             each_day.day = each_day.day + conf_change
             each_day.save()
@@ -94,6 +100,24 @@ class ManageConferenceView(View):
                 day.conference.conference_slug,
                 conf_change.days,
                 day.conference.conferenceday_set.count()))
+
+        # update all scheduled events
+        event_count = 0
+        response = get_occurrences(
+            labels=[day.conference.conference_slug])
+        for occurrence in response.occurrences:
+            occ_response = update_occurrence(
+                occurrence.pk,
+                start_time=occurrence.starttime + conf_change)
+            show_general_status(request, occ_response, self.__class__.__name__)
+            if occ_response and occ_response.occurrence:
+                event_count = event_count + 1
+        messages.success(
+            request,
+            "Moved %d scheduled events by %d days" % (
+                event_count,
+                conf_change.days))
+
         return render(request, 'gbe/manage_conference.tmpl',
                       {'forms': [],
                        'intro': intro_message,
