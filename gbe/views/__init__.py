@@ -72,7 +72,6 @@ from .review_proposal_list_view import ReviewProposalListView
 from .conference_volunteer_view import ConferenceVolunteerView
 from .act_tech_wizard_view import ActTechWizardView
 from .handle_user_contact_email_view import HandleUserContactEmailView
-from .manage_conference_view import ManageConferenceView
 
 # public views
 from .bios_teachers_view import BiosTeachersView

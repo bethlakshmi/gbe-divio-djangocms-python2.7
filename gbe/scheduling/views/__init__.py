@@ -20,6 +20,7 @@ from .schedule_act_view import ScheduleAct
 
 from .manage_events_view import ManageEventsView
 from .delete_event_view import DeleteEventView
+from .manage_conference_view import ManageConferenceView
 
 # Public features
 from .show_calendar_view import ShowCalendarView

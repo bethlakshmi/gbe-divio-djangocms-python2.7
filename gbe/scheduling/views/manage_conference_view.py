@@ -10,15 +10,14 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from gbe_logging import log_func
-from gbe.forms import ConferenceStartChangeForm
+from gbe.scheduling.forms import ConferenceStartChangeForm
 from gbe.models import (
     Conference,
     ConferenceDay,
     UserMessage
 )
-from gbe.functions import validate_profile
+from gbe.functions import validate_perms
 from gbetext import (
-    default_update_profile_msg,
     change_day_note,
 )
 from django.core.exceptions import PermissionDenied
@@ -27,6 +26,7 @@ from scheduler.idd import (
     get_occurrences,
     update_occurrence)
 from gbe.scheduling.views.functions import show_general_status
+from settings import URL_DATE
 
 
 class ManageConferenceView(View):
@@ -39,7 +39,7 @@ class ManageConferenceView(View):
         return super(ManageConferenceView, self).dispatch(*args, **kwargs)
 
     def groundwork(self, request, args, kwargs):
-        self.profile = validate_profile(request, require=False)
+        self.profile = validate_perms(request, ("Scheduling Mavens", ))
         if not self.profile.user_object.is_superuser:
             raise PermissionDenied
         message = UserMessage.objects.get_or_create(
@@ -117,10 +117,45 @@ class ManageConferenceView(View):
             "Moved %d scheduled events by %d days" % (
                 event_count,
                 conf_change.days))
+        general_calendar_links = ""
+        class_calendar_links = ""
+        volunteer_calendar_links = ""
+        for each_day in day.conference.conferenceday_set.filter(
+                open_to_public=True).order_by('day'):
+            general_calendar_links = "%s<li>%s - %s?day=%s" % (
+                general_calendar_links,
+                each_day.day.strftime("%A"),
+                reverse("calendar",
+                        urlconf='gbe.scheduling.urls',
+                        args=['General']),
+                each_day.day.strftime(URL_DATE))
+            class_calendar_links = "%s<li>%s - %s?day=%s" % (
+                class_calendar_links,
+                each_day.day.strftime("%A"),
+                reverse("calendar",
+                        urlconf='gbe.scheduling.urls',
+                        args=['Conference']),
+                each_day.day.strftime(URL_DATE))
+            volunteer_calendar_links = "%s<li>%s - %s?day=%s" % (
+                volunteer_calendar_links,
+                each_day.day.strftime("%A"),
+                reverse("calendar",
+                        urlconf='gbe.scheduling.urls',
+                        args=['Volunteer']),
+                each_day.day.strftime(URL_DATE))
+        messages.warning(
+            request,
+            ("REMINDER: Don't forget to change the calendar links: <ul>" +
+             "<li>Special Events</li><ul>%s</ul><li>Conference Events</li>" +
+             "<ul>%s</ul><li>Volunteer Events</li><ul>%s</ul></ul>") % (
+                general_calendar_links,
+                class_calendar_links,
+                volunteer_calendar_links))        
 
-        return render(request, 'gbe/manage_conference.tmpl',
-                      {'forms': [],
-                       'intro': intro_message,
-                       'title': self.title,
-                       'button': self.button,
-                       'header': self.header})
+        return HttpResponseRedirect(
+            ("%s?%s-calendar_type=0&%s-calendar_type=1&%s-calendar_type=2" +
+             "&filter=Filter") % (
+            reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
+            day.conference.conference_slug,
+            day.conference.conference_slug,
+            day.conference.conference_slug))

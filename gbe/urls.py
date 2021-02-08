@@ -30,7 +30,6 @@ from gbe.views import (
     MakeVendorView,
     MakeVolunteerView,
     MakeSummerActView,
-    ManageConferenceView,
     ProposeClassView,
     PublishProposalView,
     RegisterView,
@@ -144,12 +143,6 @@ urlpatterns = [
     url(r'^conference/volunteer/?$',
         ConferenceVolunteerView,
         name='conference_volunteer'),
-    url(r'^conference/manage/?$',
-        ManageConferenceView.as_view(),
-        name='manage_conference'),
-    url(r'^conference/schedule/(?P<day_id>\d+)/?$',
-        ManageConferenceView.as_view(),
-        name='schedule_conference'),
 
     #  personae
     url(r'^performer/create/?$',
