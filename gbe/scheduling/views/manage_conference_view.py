@@ -59,8 +59,9 @@ class ManageConferenceView(View):
                 status__in=('upcoming', 'ongoing')):
             first_day = ConferenceDay.objects.filter(
                 conference=conference).order_by('day').first()
-            forms += [(first_day,
-                       ConferenceStartChangeForm(instance=first_day))]
+            if first_day is not None:
+                forms += [(first_day,
+                           ConferenceStartChangeForm(instance=first_day))]
 
         return render(request, 'gbe/manage_conference.tmpl',
                       {'forms': forms,

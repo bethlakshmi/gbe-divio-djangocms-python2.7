@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'aldryn_django_cms',
     'menus',
     'sekizai',
+    'tempus_dominus',
     'treebeard',
     'parler',
     'aldryn_boilerplates',
