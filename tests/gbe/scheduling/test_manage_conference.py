@@ -134,10 +134,10 @@ class TestManageConference(TestCase):
             response,
             ("%s?%s-calendar_type=0&%s-calendar_type=1&%s-calendar_type=2" +
              "&filter=Filter") % (
-            reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
-            self.day.conference.conference_slug,
-            self.day.conference.conference_slug,
-            self.day.conference.conference_slug))
+             reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
+             self.day.conference.conference_slug,
+             self.day.conference.conference_slug,
+             self.day.conference.conference_slug))
         self.assertContains(
             response,
             "Moved Conference %s by %d days, change %d conference days" % (
@@ -164,10 +164,10 @@ class TestManageConference(TestCase):
             response,
             ("%s?%s-calendar_type=0&%s-calendar_type=1&%s-calendar_type=2" +
              "&filter=Filter") % (
-            reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
-            self.day.conference.conference_slug,
-            self.day.conference.conference_slug,
-            self.day.conference.conference_slug))
+             reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
+             self.day.conference.conference_slug,
+             self.day.conference.conference_slug,
+             self.day.conference.conference_slug))
         self.assertContains(
             response,
             "Moved Conference %s by %d days, change %d conference days" % (

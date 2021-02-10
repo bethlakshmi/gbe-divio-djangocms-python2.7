@@ -180,6 +180,6 @@ class ManageConferenceView(View):
             ("%s?%s-calendar_type=0&%s-calendar_type=1&%s-calendar_type=2" +
              "&filter=Filter") % (
              reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
-                     day.conference.conference_slug,
-                     day.conference.conference_slug,
-                     day.conference.conference_slug))
+             day.conference.conference_slug,
+             day.conference.conference_slug,
+             day.conference.conference_slug))

@@ -684,5 +684,5 @@ rehearsal_delete_msg = '''This rehearsal slot was deleted.  If any acts were \
 booked for this slot, they will be warned on their account page to fine a new \
 slot.'''
 change_day_note = '''Change the day on any current/upcoming conference.  Pick
-the new start day and all conference days will be moved and all events will be 
+the new start day and all conference days will be moved and all events will be
 updated.  This assumes that the conference is the same number of days long.'''
