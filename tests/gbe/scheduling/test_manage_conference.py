@@ -16,6 +16,7 @@ from tests.functions.gbe_functions import (
 from gbe.models import (
     ConferenceDay,
 )
+from tests.contexts import VolunteerContext
 
 
 class TestManageConference(TestCase):
@@ -59,9 +60,10 @@ class TestManageConference(TestCase):
         self.assertContains(response, self.day.conference.conference_slug)
         self.assertContains(
             response,
-            '<input type="text" name="day" id="id_day" class="form-control ' +
-            ' datetimepicker-input" data-toggle="datetimepicker" ' +
-            'data-target="#id_day">',
+            ('<input type="text" name="%d-day" id="id_%d_day" ' +
+             'class="form-control  datetimepicker-input" ' +
+             'data-toggle="datetimepicker" data-target="#id_%d_day">') % (
+             self.day.pk, self.day.pk, self.day.pk),
             html=True)
 
     def test_get_conf_no_days(self):
@@ -73,9 +75,10 @@ class TestManageConference(TestCase):
         self.assertNotContains(response, no_days.conference_slug)
         self.assertContains(
             response,
-            '<input type="text" name="day" id="id_day" class="form-control ' +
-            ' datetimepicker-input" data-toggle="datetimepicker" ' +
-            'data-target="#id_day">',
+            ('<input type="text" name="%d-day" id="id_%d_day" ' +
+             'class="form-control  datetimepicker-input" ' +
+             'data-toggle="datetimepicker" data-target="#id_%d_day">') % (
+             self.day.pk, self.day.pk, self.day.pk),
             html=True)
 
     def test_post_bad_day(self):
@@ -84,9 +87,39 @@ class TestManageConference(TestCase):
             reverse("schedule_conference",
                     urlconf="gbe.scheduling.urls",
                     args=[self.day.pk+1]),
-            data={'day': self.day.day+timedelta(days=30)},
+            data={'%d-day' % self.day.pk: self.day.day+timedelta(days=30)},
             follow=True)
         self.assertEqual(response.status_code, 404)
+
+    def test_post_no_day(self):
+        login_as(self.profile, self)
+        response = self.client.post(
+            self.url,
+            data={'%d-day' % self.day.pk: self.day.day+timedelta(days=30)},
+            follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_invalid_form(self):
+        login_as(self.profile, self)
+        response = self.client.post(
+            reverse("schedule_conference",
+                    urlconf="gbe.scheduling.urls",
+                    args=[self.day.pk]),
+            data={'%d-day' % self.day.pk: "bad day"},
+            follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Enter a valid date.")
+
+    def test_post_missing_day(self):
+        login_as(self.profile, self)
+        response = self.client.post(
+            reverse("schedule_conference",
+                    urlconf="gbe.scheduling.urls",
+                    args=[self.day.pk]),
+            data={'day': self.day.day+timedelta(days=30)},
+            follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "This field is required.")
 
     def test_post(self):
         login_as(self.profile, self)
@@ -94,7 +127,7 @@ class TestManageConference(TestCase):
             reverse("schedule_conference",
                     urlconf="gbe.scheduling.urls",
                     args=[self.day.pk]),
-            data={'day': self.day.day+timedelta(days=30)},
+            data={'%d-day' % self.day.pk: self.day.day+timedelta(days=30)},
             follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(
@@ -111,3 +144,38 @@ class TestManageConference(TestCase):
                 self.day.conference.conference_slug,
                 30,
                 1))
+        self.assertContains(
+            response,
+            "Moved %d scheduled events by %d days" % (
+                0,
+                30))
+
+    def test_post_event_change(self):
+        VolunteerContext(conference=self.day.conference)
+        login_as(self.profile, self)
+        response = self.client.post(
+            reverse("schedule_conference",
+                    urlconf="gbe.scheduling.urls",
+                    args=[self.day.pk]),
+            data={'%d-day' % self.day.pk: self.day.day+timedelta(days=30)},
+            follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response,
+            ("%s?%s-calendar_type=0&%s-calendar_type=1&%s-calendar_type=2" +
+             "&filter=Filter") % (
+            reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
+            self.day.conference.conference_slug,
+            self.day.conference.conference_slug,
+            self.day.conference.conference_slug))
+        self.assertContains(
+            response,
+            "Moved Conference %s by %d days, change %d conference days" % (
+                self.day.conference.conference_slug,
+                30,
+                1))
+        self.assertContains(
+            response,
+            "Moved %d scheduled events by %d days" % (
+                2,
+                30))

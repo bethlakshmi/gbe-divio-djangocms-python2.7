@@ -61,7 +61,8 @@ class ManageConferenceView(View):
                 conference=conference).order_by('day').first()
             if first_day is not None:
                 forms += [(first_day,
-                           ConferenceStartChangeForm(instance=first_day))]
+                           ConferenceStartChangeForm(instance=first_day,
+                                                     prefix=first_day.pk))]
 
         return render(request, 'gbe/manage_conference.tmpl',
                       {'forms': forms,
@@ -78,18 +79,40 @@ class ManageConferenceView(View):
             day = get_object_or_404(ConferenceDay, pk=kwargs.get("day_id"))
         else:
             raise Http404
-        form = ConferenceStartChangeForm(request.POST)
-        if not form.is_valid():
+        all_valid = True
+        forms = []
+        the_form = None
+        for conference in Conference.objects.filter(
+                status__in=('upcoming', 'ongoing')):
+            first_day = ConferenceDay.objects.filter(
+                conference=conference).order_by('day').first()
+            if first_day is not None:
+                form = ConferenceStartChangeForm(request.POST,
+                                                 instance=first_day,
+                                                 prefix=first_day.pk)
+                if first_day == day:
+                    form.fields['day'].required = True
+                    the_form = form
+                all_valid = all_valid and form.is_valid()
+                forms += [(first_day, form)]
+        if the_form is None:
+            messages.error(request, UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="NO_DATE_CHANGE_FOUND",
+                defaults={
+                    'summary': "Form Corrupted, no change for posted date",
+                    'description': no_date_change})[0].description)
+        if not all_valid or the_form is None:
             # return error
             return render(
                 request,
                 'gbe/manage_conference.tmpl',
-                {'forms': [form],
+                {'forms': forms,
                  'intro': intro_message,
                  'title': self.title,
                  'button': self.button,
                  'header': self.header})
-        conf_change = form.cleaned_data['day'] - day.day
+        conf_change = the_form.cleaned_data['day'] - day.day
 
         # update each conference day so form selection offers right choices
         for each_day in day.conference.conferenceday_set.all():
@@ -151,12 +174,12 @@ class ManageConferenceView(View):
              "<ul>%s</ul><li>Volunteer Events</li><ul>%s</ul></ul>") % (
                 general_calendar_links,
                 class_calendar_links,
-                volunteer_calendar_links))        
+                volunteer_calendar_links))
 
         return HttpResponseRedirect(
             ("%s?%s-calendar_type=0&%s-calendar_type=1&%s-calendar_type=2" +
              "&filter=Filter") % (
-            reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
-            day.conference.conference_slug,
-            day.conference.conference_slug,
-            day.conference.conference_slug))
+             reverse('manage_event_list', urlconf='gbe.scheduling.urls'),
+                     day.conference.conference_slug,
+                     day.conference.conference_slug,
+                     day.conference.conference_slug))
