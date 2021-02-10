@@ -95,13 +95,7 @@ class ManageConferenceView(View):
                     the_form = form
                 all_valid = all_valid and form.is_valid()
                 forms += [(first_day, form)]
-        if the_form is None:
-            messages.error(request, UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="NO_DATE_CHANGE_FOUND",
-                defaults={
-                    'summary': "Form Corrupted, no change for posted date",
-                    'description': no_date_change})[0].description)
+
         if not all_valid or the_form is None:
             # return error
             return render(
