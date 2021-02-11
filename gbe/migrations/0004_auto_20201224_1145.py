@@ -629,10 +629,25 @@ init_values = [
     {
             'selector': '#gbe_header_menu',
             'pseudo_class': '',
-            'description': 'Non-active text in navbar, on hoever.',
+            'description': 'Non-active text in navbar, on hover.',
             'target_element': 'font',
             'usage': 'Navbar',
             'prop_val': [('color', 'rgba(0,0,0,1)')]},
+    {
+            'selector': 'button.navbar-toggler',
+            'pseudo_class': 'focus',
+            'description': 'Navbar button while it is clicked.',
+            'target_element': 'button',
+            'usage': 'Navbar',
+            'prop_val': [('outline-color', 'rgba(0,0,0,1)')]},
+    {
+            'selector': '.navbar-light .navbar-toggler',
+            'pseudo_class': '',
+            'description': 'Navbar button when screen is mobile/tablet sized.',
+            'target_element': 'button',
+            'usage': 'Navbar',
+            'prop_val': [('color', 'rgba(0,0,0,.5)'),
+                         ('border-color', 'rgba(0,0,0,.1)')]},
     {
             'selector': '.active #gbe_header_menu',
             'pseudo_class': '',
@@ -692,7 +707,8 @@ init_values = [
             'target_element': 'div',
             'usage': 'General',
             'prop_val': [('background-color', 'rgba(235,235,235,1)'),
-                         ('border-color', 'rgba(221,221,221,1)')]},
+                         ('border-color', 'rgba(221,221,221,1)'),
+                         ('border-top-color', 'rgba(235,235,235,0)')]},
     {
         'selector': '.gbe-tab-active,.gbe-tab-active:hover,.gbe-tab-area',
         'pseudo_class': '',

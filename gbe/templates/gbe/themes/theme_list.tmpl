@@ -2,7 +2,7 @@
 {% load static sekizai_tags %}
 {% block tbody %}
   {% for theme in themes %}
-    <tr class="gbe-table-row {% if theme.pk == changed_id %}gbe-table-success{% endif %}">
+    <tr class="gbe-table-row {% if theme.pk == changed_id %}gbe-table-success{%elif theme.pk == error_id %}gbe-table-error{% endif %}">
         <td>{{ theme.pk }}</td>
         <td>{{ theme.name }}</td>
         <td>{{ theme.number|floatformat:1 }}</td>
