@@ -2,6 +2,7 @@ from django.conf.urls import url
 from gbe.themes.views import (
     ActivateTheme,
     CloneTheme,
+    DeleteTheme,
     ManageTheme,
     ThemeView,
     ThemesListView,
@@ -23,6 +24,9 @@ urlpatterns = [
     url(r'^themes/activate/(?P<version_id>\d+)/(?P<target_system>[-\w]+)/?',
         ActivateTheme.as_view(),
         name='activate_theme'),
+    url(r'^inventory/style_delete/(?P<version_id>\d+)/?',
+        DeleteTheme.as_view(),
+        name='delete_theme'),
     url(r'^themes/style_clone/(?P<version_id>\d+)/?',
         CloneTheme.as_view(),
         name='clone_theme')]

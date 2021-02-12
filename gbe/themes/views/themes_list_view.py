@@ -34,10 +34,11 @@ class ThemesListView(View):
                 "name",
                 "number"),
             'details_off': True,
-            'changed_id': self.changed_id}
-
+            'changed_id': self.changed_id,
+            'error_id': self.error_id}
     @never_cache
     def get(self, request, *args, **kwargs):
         self.profile = validate_perms(request, self.permissions)
         self.changed_id = int(request.GET.get('changed_id', default=-1))
+        self.error_id = int(request.GET.get('error_id', default=-1))
         return render(request, self.template, self.get_context_dict())

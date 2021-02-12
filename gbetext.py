@@ -696,4 +696,15 @@ user_messages = {
         a new version.  Current style settings are a copy of the theme being
         cloned.'''
     },
+    "LAST_THEME": {
+        'summary':  "Can't Delete Last Theme",
+        'description': '''This is the last theme in the system.  It cannot be
+        deleted until another theme is created.'''
+    },
+    "CURRENTLY_ACTIVE": {
+        'summary':  "Can't Delete Active Theme",
+        'description': '''This theme is currently active on live, test or both.
+        Before deleting the theme, you must activate a different theme for
+        both environments.'''
+    },
 }

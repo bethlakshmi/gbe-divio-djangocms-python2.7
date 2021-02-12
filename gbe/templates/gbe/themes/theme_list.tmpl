@@ -2,8 +2,7 @@
 {% load static sekizai_tags %}
 {% block tbody %}
   {% for theme in themes %}
-    <tr class="gbe-table-row {% if theme.pk == changed_id %}gbe-table-success{%elif theme.pk == error_id %}gbe-table-error{% endif %}">
-        <td>{{ theme.pk }}</td>
+    <tr class="gbe-table-row {% if theme.pk == changed_id %}gbe-table-success{%elif theme.pk == error_id %}gbe-table-error{% endif %}"><td>{{ theme.pk }}</td>
         <td>{{ theme.name }}</td>
         <td>{{ theme.number|floatformat:1 }}</td>
         <td>{{ theme.created_at|date:"M j, Y, g:i A" }}</td>
@@ -21,7 +20,8 @@
     <a class="gbe-detail" href="{% url 'themes:manage_theme' theme.id %}" title="Edit">
       <i class="fas fa-edit"></i></a>&nbsp;&nbsp;
     <a class="gbe-detail" href="{% url 'themes:clone_theme' theme.id %}" title="Clone">
-      <i class="fas fa-clone"></i></a>
+      <i class="fas fa-clone"></i></a>&nbsp;&nbsp;
+    <a class="gbe-detail" href="{% url 'themes:delete_theme' theme.id %}" title="Delete"><i class="far fa-trash-alt"></i></a>
 	      </td>
     </tr>
   {% endfor %}

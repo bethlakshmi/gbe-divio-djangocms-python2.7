@@ -90,3 +90,13 @@ class TestThemesList(TestCase):
         response = self.client.get(
             "%s?changed_id=%d" % (self.url, self.version.pk))
         self.assertContains(response, "gbe-table-success")
+
+    def test_show_error(self):
+        login_as(self.user, self)
+        response = self.client.get(
+            "%s?error_id=%d" % (self.url, self.version.pk))
+        print(response.content)
+        self.assertContains(
+            response,
+            '<tr class="gbe-table-row gbe-table-error"><td>%d</td>' % (
+                self.version.pk))
