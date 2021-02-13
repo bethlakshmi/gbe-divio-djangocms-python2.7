@@ -36,6 +36,7 @@ class ThemesListView(View):
             'details_off': True,
             'changed_id': self.changed_id,
             'error_id': self.error_id}
+
     @never_cache
     def get(self, request, *args, **kwargs):
         self.profile = validate_perms(request, self.permissions)
