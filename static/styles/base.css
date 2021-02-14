@@ -199,16 +199,8 @@ h3.readonlyform
 }
 @media (min-width:1200px){.email_list{width:1000px}
 }
-.sched-table
-{
-    border: 1px solid black;
-    border-collapse:collapse;
-    padding: 2px;
-    vertical-align: top;
- }
-.interested-sched {
-  color: grey;
-}
+.printable-table {border: 1px solid;border-collapse:collapse;padding: 2px;vertical-align: top;}
+.printable-header {border: 1px solid;border-collapse:collapse;padding: 2px;vertical-align: top;}
 .dedicated-sched {
   font-weight: bold;
 }
@@ -216,15 +208,6 @@ h3.readonlyform
 {
   padding: 0px;
 }
-.sched-header
-{
-    border: 1px solid black;
-    border-collapse:collapse;
-    color: white;
-    background-color: maroon;
-    padding: 2px;
-    vertical-align: top;
- }
 .gbe-table-header th, .gbe-table-row td
 {
     border: 1px solid black;
