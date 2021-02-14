@@ -220,9 +220,7 @@ h3.readonlyform
 }
 #sub-table{padding: 0px; border: 0px;}
 #sub-table table tbody tr td{border: 1px solid;}
-#clear-row {
-  background-color: transparent;
-}
+#clear-row {background-color: transparent;}
 .bid-form
 {
     border: 1px solid black;
@@ -252,61 +250,6 @@ span.dropt:hover span {left: 30%; margin: 0px 0 0 0px; z-index:6;}
     padding: 4px;
 }
 
-.header
-{
-    background-color: #B28E8E;
-    color: white;
-    font-size: larger;
-    font-weight: bold;
-}
-
-/* Used for the hover on the performer grid */
-span.perfhover
-{
-  border-bottom: background: white;
-  z-index: 1;
-  position: relative;
-}
-span.perfhover:hover
-{
-  text-decoration: none;
-  background: #ffffff;
-  z-index: 6;
-}
-span.perfhover span
-{
-  position: absolute;
-  left: -99999px;
-  margin: 20px 0 0 0px;
-  padding: 3px 3px 3px 3px;
-  border-style:solid;
-  border-color:black;
-  border-width:1px;
-  z-index: 6;
-}
-/*
-span.perfhover span
-{
-  position: absolute;
-  left: -9999px;
-  margin: 4px 0 0 0px;
-  padding: 3px 3px 3px 3px; 
-  border-style:solid;
-  border-color:black;
-  border-width:1px;
-}
-*/
-span.perfhover:hover span
-{
-  left: -200px;
-  top: 20px;
-  width: 500px;
-  margin: 20px 0 0 170px;
-  background: #ffffff;
-  z-index:6;
-} 
-
-
 td.title
 {
   border: solid 1px black; 
@@ -331,13 +274,7 @@ td.describe
   align: right;
   display: inline-block;
 }
-.sched_times{
-  border-style: double;
-  background: #C3BDBF;
-  border-radius: 8px;
-  padding: 8px;
-  margin-bottom: 8px;
-}
+.sched_times{border-style: double;border-radius: 8px;padding: 8px;margin-bottom: 8px;}
 .sched_detail{font-weight: bold;}
 .act_tech_box {
   border-style: solid;
@@ -399,35 +336,11 @@ td.describe
 .gbe_thumbnail{width: 100%;height: auto;}
 .performer_text{display: inline-block;width: 190px;vertical-align: middle;word-wrap:break-word;}
 
-.bio_name
-{
-  margin: 10px 0px;
-}
+.bio_name{margin: 10px 0px;}
 tr.striped_table_row{vertical-align: top;} 
 tr.striped_table_row td{padding: 3px;vertical-align: middle;}
 tr.striped_table_row td select{padding: 4px 0 4px 0;}
 .border-table tbody tr td, .border-table tbody tr th{border: 1px solid;}
-tr.changed
-{
-  background-color: #BA8E70;
-  vertical-align: top;
-}
-tr.changed td
-{
-  padding: 3px;
-  vertical-align: middle;
-}
-
-tr.changed td select
-{
-  padding: 4px 0 4px 0;
-}
-
-tr.changed td
-{
-  padding: 3px;
-}
-
 
 /* can remove above when we get rid of all 3 column templates in the old way, below is a nicer
  * boostrap way that lets us revert to tabs when the screen size is small */
@@ -635,18 +548,8 @@ div.hierarchy-1
   padding-left: 20px;
 }
 .staff-checkbox-label{position:relative;display:inline-block;padding-left:0px;padding-top:5px;margin-bottom:0;margin-left:3px;vertical-align:middle;font-weight:400;cursor:pointer}
-.checkbox-box {
-    border-radius: 15px;
-    border: 1px solid grey;
-    padding-bottom: 3px;
-}
-.checkbox-box-success {
-    border-radius: 15px;
-    border: 1px solid grey;
-    margin: 5px;
-    padding: 0px 2px 5px 2px;
-    background-color: rgb(223, 240, 216);
-}
+.checkbox-box{border-radius: 15px;border: 1px solid grey;padding-bottom: 3px;}
+.checkbox-box-success{margin-top: 5px;padding: 0px 2px 5px 2px;}
 .vol_header {padding: 0 3px 0 3px;}
 
 .gbe_accordion .fa-stack {font-size: 14px;}

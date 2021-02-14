@@ -6,9 +6,8 @@
   {% recaptcha_init %}
 {% endblock %}
 {% block content %}
-<p class="vanilla">
-<span class='header'><h3>{{ header }}</h3></span><br>
-
+<h3 class="gbe-title">{{ header }}</h3>
+<p>
 {{ email_note }}
 </p>
  
@@ -17,7 +16,7 @@
 <div class="row">
 <div class="col-md-12 col-lg-6">
 <div class="card card-body gbe-bg-light {% if email_focus %}gbe-box-shadow gbe-border-danger{% endif %}">
-  {% if view_title %}<h3>{{view_title}}</h3>{% endif %}
+  {% if view_title %}<h3 class="gbe-subtitle">{{view_title}}</h3>{% endif %}
   {% if email_form.errors %}
     <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
@@ -44,6 +43,6 @@
 </div>
 </div>
 </div>
-<br><input type="submit" value="{{button}}"> 
+<br><input type="submit" value="{{button}}" class="btn gbe-btn-primary"> 
 </form>
 {% endblock %}

@@ -16,6 +16,6 @@
           {{ checkbox.tag }}{{ checkbox.choice_label }}
         </label></div>{% endfor %}
         {% if field.errors %}
-          {{ field.errors }}
+          <div class="col-12"><font class="gbe-form-error">{{ field.errors }}</font></div>
         {% endif %}
       </div>

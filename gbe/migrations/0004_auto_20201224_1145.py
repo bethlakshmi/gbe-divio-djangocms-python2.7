@@ -852,6 +852,14 @@ init_values = [
             'usage': 'Event Display',
             'prop_val': [('color', 'rgba(0,0,0,1)')]},
     {
+            'selector': '.checkbox-box-success',
+            'pseudo_class': '',
+            'description': 'Shows a newly made staff area',
+            'target_element': 'div',
+            'usage': 'Event Display',
+            'prop_val': [('background-color', 'rgba(212,237,218,1)'),
+                         ('color', 'rgba(21,87,36,1)')]},
+    {
             'selector': '.detail_link',
             'pseudo_class': 'hover',
             'description': 'Icon for more information on events page',
