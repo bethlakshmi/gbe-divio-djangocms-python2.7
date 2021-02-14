@@ -558,7 +558,7 @@ init_values = [
             'target_element': 'div',
             'usage': 'Forms',
             'prop_val': [('background-color', 'rgba(248,249,250,1)'),
-                         ('border-color', 'rgba(50,50,50,1)')]},
+                         ('border', 'px rgba', '1px rgba(50,50,50,1)')]},
     {
             'selector': '.gbe-bg-dark',
             'pseudo_class': '',
@@ -859,6 +859,13 @@ init_values = [
             'usage': 'Event Display',
             'prop_val': [('background-color', 'rgba(212,237,218,1)'),
                          ('color', 'rgba(21,87,36,1)')]},
+    {
+            'selector': '.checkbox-box',
+            'pseudo_class': '',
+            'description': 'Rounded box around staff area',
+            'target_element': 'div',
+            'usage': 'Event Display',
+            'prop_val': [('border-color', 'rgba(128,128,128,1)')]},
     {
             'selector': '.detail_link',
             'pseudo_class': 'hover',

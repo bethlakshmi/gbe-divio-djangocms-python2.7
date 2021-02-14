@@ -1,15 +1,7 @@
 /* Base CSS styling for burlexpo */
-body {
-  margin: 0px;
-  border: 0px;
-  padding: 0px;
-}
-.gbe-draft, .gbe-inactive {
-  font-weight: bold;
-}
-.gbe-form-required {
-  font-weight: bold;
-}
+body {margin: 0px;border: 0px;padding: 0px;}
+.gbe-draft, .gbe-inactive {font-weight: bold;}
+.gbe-form-required {font-weight: bold;}
 .gbe-title {
   font-family: 'Vast Shadow', cursive;
   letter-spacing: normal;
@@ -25,7 +17,7 @@ h4.gbe-title{font-size:18px}
 h5.gbe-title{font-size:14px}
 h6.gbe-title{font-size:12px}
 /* Used in django CMS provided styles, do not delete */
-.gbe-subtitle, .subtitle{
+.subtitle{
   font-family: 'Vast Shadow', cursive;
   font-size: 20px;
   color: #000;
@@ -48,10 +40,7 @@ h6.gbe-title{font-size:12px}
 	
 }
 /* END: Used in django CMS provided styles, do not delete */
-
-div.container {
-    top:0;
-}
+div.container {top:0;}
 .gbe-btn-group {display: inline-block;}
 .gbe-btn-xs
 {
@@ -91,10 +80,7 @@ div.footer{
   letter-spacing: normal;
 }
 
-div.login_text{
-  padding: 5px;
-}
-
+div.login_text{padding: 5px;}
 #login-dp{
     min-width: 250px;
     padding: 14px 14px 0;
@@ -102,23 +88,15 @@ div.login_text{
     font-family: Lucida Grande,Tahoma,Verdana,sans-serif;
     font-size: 14px;
 }
-#login-dp .help-block{
-    font-size:12px    
-}
+#login-dp .help-block{font-size:12px    }
 #login-dp .bottom{
     clear:both;
     padding:14px;
     width: 100%;
 }
-#login-dp .social-buttons{
-    margin:12px 0    
-}
-#login-dp .social-buttons a{
-    width: 49%;
-}
-#login-dp .form-group {
-    margin-bottom: 10px;
-}
+#login-dp .social-buttons{margin:12px 0;}
+#login-dp .social-buttons a{width: 49%;}
+#login-dp .form-group {margin-bottom: 10px;}
 
 @media(max-width:768px){
     #login-dp .bottom{
@@ -136,13 +114,7 @@ button.login-button {
   padding-left: 16px;
   padding-right: 16px;
 }
-#action-button {
-  padding: 3px 8px 3px 8px;
-}
-
-p.error {
-  color: red;
-}
+#action-button {padding: 3px 8px 3px 8px;}
 div#middle {
     /* The menu scrolls are ugly and driving me crazy.  Change back if you want guys. -MDB */
     
@@ -162,7 +134,7 @@ div.right_col {
     float:right;
     bottom: 10%;
 }
-div.side_box {border: 1px solid black;padding: 0 10px 0 10px;}
+div.border_box{border-style: solid;}
 .email-select{padding:0px;width:100%;}
 #id_email-select-conference{width:250px}
 
@@ -175,59 +147,25 @@ div.side_box {border: 1px solid black;padding: 0 10px 0 10px;}
 }
 
 /* used in bid review and readonly forms */
-div.review-pane {
-    border: 1px solid;
-    margin: 10px;
-    padding: 10px;
-}
+div.review-pane {margin: 10px;padding: 10px;}
+h2.review-title{margin: 0px;padding: 0px;}
+h3.readonlyform{margin: 0px;padding: 0px;}
 
-h2.review-title
-{
-    margin: 0px;
-    padding: 0px;
-}
-
-h3.readonlyform
-{
-    margin: 0px;
-    padding: 0px;
-}
-
-@media (min-width:768px){.email_list{width:660px}
-}
-@media (min-width:992px){.email_list{width:900px}
-}
-@media (min-width:1200px){.email_list{width:1000px}
-}
+@media (min-width:768px){.email_list{width:660px}}
+@media (min-width:992px){.email_list{width:900px}}
+@media (min-width:1200px){.email_list{width:1000px}}
 .printable-table {border: 1px solid;border-collapse:collapse;padding: 2px;vertical-align: top;}
 .printable-header {border: 1px solid;border-collapse:collapse;padding: 2px;vertical-align: top;}
-.dedicated-sched {
-  font-weight: bold;
-}
-.sched-sub-box
-{
-  padding: 0px;
-}
-.gbe-table-header th, .gbe-table-row td
-{
-    border: 1px solid black;
-    border-collapse:collapse;
-    padding: 2px;
-    vertical-align: top;
- }
-.gbe-table-header th {
-  vertical-align: bottom;
-}
+.dedicated-sched {font-weight: bold;}
+.sched-sub-box{padding: 0px;}
+table thead tr.gbe-table-header th, .gbe-table-row td{
+  border-width: 1px; border-style: solid;border-collapse:collapse;
+  padding: 2px;
+  vertical-align: top;}
+.gbe-table-header th {vertical-align: bottom;}
 #sub-table{padding: 0px; border: 0px;}
 #sub-table table tbody tr td{border: 1px solid;}
 #clear-row {background-color: transparent;}
-.bid-form
-{
-    border: 1px solid black;
-    border-collapse:collapse;
-    padding: 2px;
-    text-align: center;
- }
 .volunteer-icon {height: 16px;}
 .volunteer-icon-large {float: right;width: 32px;}
 
@@ -238,31 +176,6 @@ span.dropt span {position: absolute; left: -9999px; z-index: 6;
   margin: 4px 0 0 0px; padding: 3px 3px 3px 3px; 
   border-style:solid; border-width:1px;}
 span.dropt:hover span {left: 30%; margin: 0px 0 0 0px; z-index:6;} 
-
-.ticketing
-{
-    border: 2px solid black;
-    padding: 2px;
-}
-
-.ticket_item
-{
-    padding: 4px;
-}
-
-td.title
-{
-  border: solid 1px black; 
-  width: 20%;
-  padding: 2px;
-}
-
-td.describe
-{
-  border:solid 1px black; 
-  width: 40%;
-  padding: 2px;
-}
 
 .gbe-head{font-family: 'Vast Shadow', cursive;font-size: 30px;}
 .gbe-header-band{margin-top: 10px;padding-top: 10px;}
@@ -289,29 +202,16 @@ td.describe
     padding-top: 10px;
     padding-bottom: 10px;
 }
-.volunteer-detail_link-disabled, .volunteer-detail_link-disabled:hover, .volunteer-detail_link-disabled:active, .volunteer-detail_link-disabled:visited {
-  color: #807d7d;
-}
-.detail_link-detail_disable, .detail_link-detail_disable:hover, .detail_link-detail_disable:active, .detail_link-detail_disable:visited
-{color: #6E6E6E;}
-.bio_block
-{
-    border: 1px solid;
-    margin: 10px;
-    padding: 10px;
-}
+.bio_block{border: 1px solid;margin: 10px;padding: 10px;}
 @media (min-width: 400px){.bio_block{width:440px}}
 @media (min-width: 576px){.bio_block{width:480px}}
 @media (min-width:768px){.bio_block{width:665px}}
 @media (min-width:992px){.bio_block{width:900}}
 @media (min-width:1200px){.bio_block{width:1080px}}
 
-@media (min-width:768px){.review{width:650px}
-}
-@media (min-width:992px){.review{width:870px}
-}
-@media (min-width:1200px){.review{width:1070px}
-}
+@media (min-width:768px){.review{width:650px}}
+@media (min-width:992px){.review{width:870px}}
+@media (min-width:1200px){.review{width:1070px}}
 .read-only-label
 {
   font-weight: bold;
@@ -411,43 +311,17 @@ tr.gbe-table-header th.rotate-review div {
     rotate(270deg);
   width: 10px;
 }
-th.rotate-review div span a {
-  color: inherit;
-  text-decoration: none;
-}
+th.rotate-review div span a {color: inherit;text-decoration: none;}
 .performer_section {padding-left:5px;padding-top:5px;margin-top: 10px;}
-.filer_image.right {
-  float: right;
-}
-.filer_image.left {
-  float: left;
-}
+.filer_image.right {float: right;}
+.filer_image.left {float: left;}
 
-table.gbe_table {
-  width: 100%;
-}
-
-td.form_label {
-  width: 30%;
-}
-
-.form-group  div div div label label {
-  font-weight: normal;
-}
-
-.form-group  div div div ul {
-  padding: 0;
-}
-
-td.form_field {
-  width: 60%;
-  padding: 5px;
-}
-
-.form-horizontal .control-label {
-  text-align: left;
-}
-
+table.gbe_table {width: 100%;}
+td.form_label {width: 30%;}
+.form-group  div div div label label {font-weight: normal;}
+.form-group  div div div ul {padding: 0;}
+td.form_field {width: 60%;padding: 5px;}
+.form-horizontal .control-label {text-align: left;}
 .horizontal-input ul {
   list-style-type: none;
   margin: 0;
@@ -459,12 +333,8 @@ td.form_field {
     padding-right: 8px;
 }
 
-th.horizontal-input ul li {
-  width: 25px;
-}
-td.horizontal-input ul li {
-  width: 25px;
-}
+th.horizontal-input ul li {width: 25px;}
+td.horizontal-input ul li {width: 25px;}
 .pixel-input {width: 50px;}
 .long_choice ul 
 {
@@ -482,73 +352,28 @@ ul.long_choice
   column-count: 2;
 }
 
-td.form_field ul 
-{
-  padding: 5px 0px;
-}
-
-td.form_field.long_choice ul li
-{
-  width: 250px;
-  height: 20px;
-}
-
-.form-group div div div ul li
-{
-  list-style-type: none;
-}
+td.form_field ul {padding: 5px 0px;}
+td.form_field.long_choice ul li{width: 250px;height: 20px;}
+.form-group div div div ul li{list-style-type: none;}
 .gbe-choice-list ul li{list-style-type: none;font-size: larger;font-weight: bold;}
 .gbe-choice-list ul li ul li{list-style-type: none;font-size: smaller;font-weight: normal;}
 .gbe-flat-list ul li{list-style-type: none;}
-.form-group div ul li
-{
-  list-style-type: none;
-}
-.checkbox-ticketing ul li label
-{
-  font-weight: normal;
-}
-.checkbox-ticketing ul {
-  padding-left: 20px;
-}
-.event_booking > .form-group > .row > div {
-  min-height: 32px;
-}
-.event-booking-cell {
-  min-height: 32px;
-}
+.form-group div ul li{list-style-type: none;}
+.checkbox-ticketing ul li label{font-weight: normal;}
+.checkbox-ticketing ul {padding-left: 20px;}
+.event_booking > .form-group > .row > div {min-height: 32px;}
+.event-booking-cell {min-height: 32px;}
 input#id_max_volunteer, input#id_new_opp-max_volunteer, input#id_new_slot-max_volunteer
-{
-  width: 40px
-}
-input#id_current_acts, input#id_new_slot-current_acts
-{
-  width: 40px
-}
-
-input#id_duration, input#id_new_opp-duration, input#id_new_slot-duration
-{
-  width: 70px
-}
+{width: 40px}
+input#id_current_acts, input#id_new_slot-current_acts{width: 40px}
+input#id_duration, input#id_new_opp-duration, input#id_new_slot-duration{width: 70px}
 div.gbe-no-border{border-width: 0px;padding-left:5px;padding-top:5px;margin-top:10px;}
 span.opps-errors ul li{list-style-type: none;}
 span.opps-errors ul {padding: 0px;}
 
-.calendar_table .cal_body TH
-{
-  width: 80px;
-}
-
-div.hierarchy-1
-{
-  padding-left: 20px;
-}
-.gbe-filter {
-  margin-left: 10px;
-  padding-left: 20px;
-}
+.gbe-filter {margin-left: 10px;padding-left: 20px;}
 .staff-checkbox-label{position:relative;display:inline-block;padding-left:0px;padding-top:5px;margin-bottom:0;margin-left:3px;vertical-align:middle;font-weight:400;cursor:pointer}
-.checkbox-box{border-radius: 15px;border: 1px solid grey;padding-bottom: 3px;}
+.checkbox-box{border-radius: 15px;border-style: solid; border-width: 1px;padding-bottom: 3px;}
 .checkbox-box-success{margin-top: 5px;padding: 0px 2px 5px 2px;}
 .vol_header {padding: 0 3px 0 3px;}
 
@@ -583,15 +408,9 @@ div.hierarchy-1
   height: 30px;
   text-decoration-line: none;
 }
-.gbe-tab {
-  padding:10px 15px;
-}
-.gbe-tab:hover {
-  text-decoration-line: none;
-}
-.gbe-tab-area {
-  padding: 15px;
-}
+.gbe-tab {padding:10px 15px;}
+.gbe-tab:hover {text-decoration-line: none;}
+.gbe-tab-area {padding: 15px;}
 .errorlist{padding: 0;font-weight: normal;}
 
 /* end tabs */
