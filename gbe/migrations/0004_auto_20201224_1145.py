@@ -120,7 +120,7 @@ init_values = [
                          ('border-color', 'rgba(71,31,31,1)'),
                          ('box-shadow',
                           'px px px px rgba',
-                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
+                          '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
     {
             'selector': '.gbe-btn-table',
             'pseudo_class': '',
@@ -147,7 +147,7 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('box-shadow',
                           'px px px px rgba',
-                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
+                          '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
     {
             'selector': '.gbe-table-link',
             'pseudo_class': '',
@@ -201,7 +201,7 @@ init_values = [
                          ('background-color', 'rgba(71,31,31,1)'),
                          ('border-color', 'rgba(71,31,31,1)')]},
     {
-            'selector': '.gbe-btn-secondary',
+            'selector': '.input-group-text:hover, .gbe-btn-secondary',
             'pseudo_class': 'hover',
             'description': 'Buttons that do not do the main work flow.',
             'target_element': 'input',
@@ -219,7 +219,7 @@ init_values = [
                          ('border-color', 'rgba(88,71,73,1)'),
                          ('color', 'rgba(255,255,255,1)')]},
     {
-            'selector': '.gbe-btn-secondary',
+            'selector': '.input-group-text, .gbe-btn-secondary',
             'pseudo_class': '',
             'description': 'Buttons that do not do the main work flow.',
             'target_element': 'input',
@@ -228,7 +228,7 @@ init_values = [
                          ('border-color', 'rgba(149,120,123,1)'),
                          ('color', 'rgba(65,65,65,1)')]},
     {
-            'selector': '.gbe-btn-secondary',
+            'selector': '.input-group-text:focus, .gbe-btn-secondary',
             'pseudo_class': 'focus',
             'description': 'Buttons that do not do the main work flow.',
             'target_element': 'input',
@@ -239,7 +239,7 @@ init_values = [
                          ('border-color', 'rgba(88,71,73,1)'),
                          ('box-shadow',
                           'px px px px rgba',
-                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
+                          '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
     {
             'selector': 'input[type=search]',
             'pseudo_class': '',
@@ -282,7 +282,7 @@ init_values = [
                          ('color', 'rgba(33,37,41,1)'),
                          ('box-shadow',
                           'px px px px rgba',
-                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
+                          '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
     {
         'selector': '.gbe-btn-secondary-disabled, .gbe-btn-secondary-disabled',
         'pseudo_class': 'hover',
@@ -1216,7 +1216,7 @@ init_values = [
         'description': '''Panel showing how payment will look.''',
         'target_element': 'div',
         'usage': 'Ticket List',
-        'prop_val': [('border-color', 'rgba(221, 221, 221,1)')]},
+        'prop_val': [('border-color', 'rgba(221,221,221,1)')]},
     {
         'selector': '.gbe-btn-common',
         'pseudo_class': 'hover',
