@@ -40,7 +40,7 @@ Act Fees
     <div id="collapseOne" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
       <div class="card-body gbe-bg-light">
 <h4>Preview</h4>
-<div class="panel panel-default">
+<div class="panel gbe-panel-default">
   <br>
 {% include "form_table.tmpl" with form=act_pay_form %}
 </div>
@@ -63,7 +63,7 @@ Vendor Fees
     <div id="collapseTwo" class="collapse{% if open_panel == "vendor" %} show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordion">
       <div class="card-body">
 <h4>Preview</h4>
-<div class="panel panel-default">
+<div class="panel gbe-panel-default">
   <br>
 {% include "form_table.tmpl" with form=vendor_pay_form %}
 </div>

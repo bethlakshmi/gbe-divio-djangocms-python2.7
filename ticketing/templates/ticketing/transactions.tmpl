@@ -41,9 +41,9 @@ Results:  {{count}} new transactions were added to the system.
  <div class="gbe-tab-area">
  	{{intro | safe}}
 <br><br>
-<div class="btn-group gbe-btn-group btn-group-toggle">
-    <a class="btn {% ifequal view_format "ticket" %}gbe-btn-secondary disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
-    <a class="btn {% ifequal view_format "user" %}gbe-btn-secondary disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
+<div class="btn-group btn-group-toggle">
+    <a class="btn {% ifequal view_format "ticket" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
+    <a class="btn {% ifequal view_format "user" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
 </div>
 {% ifequal view_format "ticket" %}
 {% for item in transactions %}
@@ -71,7 +71,7 @@ Results:  {{count}} new transactions were added to the system.
     <th>Ticket</th>
     <th>Amount</th>
     <th>Purchase Date</th>
-    <th>ID</th>
+    <th>Invoice</th>
   </tr>
   </tfoot>
   <tbody>

@@ -117,7 +117,10 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(71,31,31,1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(71,31,31,1)'),
-                         ('border-color', 'rgba(71,31,31,1)')]},
+                         ('border-color', 'rgba(71,31,31,1)'),
+                         ('box-shadow',
+                          'px px px px rgba',
+                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
     {
             'selector': '.gbe-btn-table',
             'pseudo_class': '',
@@ -125,7 +128,9 @@ init_values = [
             'target_element': 'a',
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(0,0,0,.05)'),
-                         ('border-color', 'rgba(0,0,0,.15)')]},
+                         ('border-color', 'rgba(0,0,0,.15)'),
+                         ('color', 'rgba(51,51,51,1)'),
+                         ('font-size', 'px', '12px')]},
     {
             'selector': '.gbe-btn-table',
             'pseudo_class': 'hover',
@@ -134,6 +139,15 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(0,0,0,.20)'),
                          ('border-color', 'rgba(0,0,0,.30)')]},
+    {
+            'selector': '.gbe-btn-table',
+            'pseudo_class': 'focus',
+            'description': '''Small buttons to do actions on table rows''',
+            'target_element': 'a',
+            'usage': 'Table',
+            'prop_val': [('box-shadow',
+                          'px px px px rgba',
+                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
     {
             'selector': '.gbe-table-link',
             'pseudo_class': '',
@@ -222,7 +236,10 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(88,71,73,1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(149,120,123,1)'),
-                         ('border-color', 'rgba(88,71,73,1)')]},
+                         ('border-color', 'rgba(88,71,73,1)'),
+                         ('box-shadow',
+                          'px px px px rgba',
+                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
     {
             'selector': 'input[type=search]',
             'pseudo_class': '',
@@ -236,7 +253,8 @@ init_values = [
     {
             'selector': '.gbe-btn-light',
             'pseudo_class': 'hover',
-            'description': 'Hover for buttons that terminate the work',
+            'description': '''Hover for buttons that terminate the work, or
+            on transactions, the slider button that is active.''',
             'target_element': 'input',
             'usage': 'Forms',
             'prop_val': [('background-color', 'rgba(226,230,234,1)'),
@@ -245,12 +263,35 @@ init_values = [
     {
             'selector': '.gbe-btn-light',
             'pseudo_class': '',
-            'description': 'Buttons like cancel that interrupt work.',
+            'description': '''Buttons like cancel that interrupt work, or the
+            slider on the transactions page.''',
             'target_element': 'input',
             'usage': 'Forms',
             'prop_val': [('background-color', 'rgba(248,249,250,1)'),
                          ('border-color', 'rgba(175,176,177,1)'),
                          ('color', 'rgba(33,37,41,1)')]},
+    {
+            'selector': '.gbe-btn-light',
+            'pseudo_class': 'focus',
+            'description': '''Focus for buttons that terminate the work, or
+            on transactions''',
+            'target_element': 'input',
+            'usage': 'Forms',
+            'prop_val': [('background-color', 'rgba(248,249,250,1)'),
+                         ('border-color', 'rgba(175,176,177,1)'),
+                         ('color', 'rgba(33,37,41,1)'),
+                         ('box-shadow',
+                          'px px px px rgba',
+                          '0px 0px 0px 3.2px rgba(0,0,0,0.14)')]},
+    {
+        'selector': '.gbe-btn-secondary-disabled, .gbe-btn-secondary-disabled',
+        'pseudo_class': 'hover',
+        'description': '''Dark and disabled button''',
+        'target_element': 'input',
+        'usage': 'Forms',
+        'prop_val': [('background-color', 'rgba(108,117,125,1)'),
+                     ('border-color', 'rgba(108,117,125,1)'),
+                     ('color', 'rgba(255,255,255,1)')]},
     {
             'selector': '.gbe-form-error',
             'pseudo_class': '',
@@ -836,6 +877,15 @@ init_values = [
             'usage': 'Event Display',
             'prop_val': [('color', 'rgba(51,51,51,1)'),
                          ('text-decoration-color', 'rgba(51,51,51,1)')]},
+    {
+        'selector': '.gbe-panel-link',
+        'pseudo_class': 'focus',
+        'description': 'Links as headers of panels',
+        'target_element': 'a',
+        'usage': 'Event Display',
+        'prop_val': [('box-shadow',
+                      'rgba px px px px',
+                      'rgba(0,0,0,0) 0px 0px 0px 0px')]},
     {'selector': '.gbe-panel-table, .gbe-panel-table td, .gbe-panel-table th',
      'pseudo_class': '',
      'description': '''Tables embedded within panels - used in
@@ -1160,6 +1210,13 @@ init_values = [
         'usage': 'Ticket List',
         'prop_val': [('color', 'rgba(255,255,255,1)'),
                      ('background-color', 'rgba(238,14,10,1)')]},
+    {
+        'selector': '.gbe-panel-default',
+        'pseudo_class': '',
+        'description': '''Panel showing how payment will look.''',
+        'target_element': 'div',
+        'usage': 'Ticket List',
+        'prop_val': [('border-color', 'rgba(221, 221, 221,1)')]},
     {
         'selector': '.gbe-btn-common',
         'pseudo_class': 'hover',

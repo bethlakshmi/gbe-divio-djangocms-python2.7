@@ -40,7 +40,7 @@
       {% endfor %}</td>
             <td>{{row.state}}{% if row.label %}<br>
               <b>Notes:</b> {{row.label}}{% endif %}</td>
-            <td><div class="btn-group gbe-btn-group" role="group" aria-label="...">
+            <td><div class="btn-group" role="group" aria-label="...">
               <a href="{{row.action_links.approve}}" class="btn gbe-btn-table gbe-btn-xs"data-toggle="tooltip" title="Approve">
               <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
               <a href="{{row.action_links.waitlist}}" class="btn gbe-btn-table gbe-btn-xs{% if not row.action_links.waitlist %} disabled{% endif %}" data-toggle="tooltip" title="Waitlist">

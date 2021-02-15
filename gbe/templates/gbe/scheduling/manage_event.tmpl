@@ -53,7 +53,7 @@
    <div class="form-group col-12" id="filter-button"><br>
       <input type="submit" class="btn gbe-btn-primary" name="filter" value="Filter">
    {% if conference.status != "completed" %}
-      <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn gbe-btn-primary">Create</a>
+      &nbsp;<a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn gbe-btn-primary">Create</a>
    {% endif %}</div></div>
    Yellow = volunteers must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>
@@ -71,7 +71,7 @@
        <td>{{ occurrence.type }}</td>
        <td class="{% if occurrence.approval_needed%}approval_needed{%endif%}">{% if occurrence.current_acts %}{{ occurrence.current_acts }} acts{% else %}{{ occurrence.current_volunteer }}{% endif %}</td>
        <td class="{% if occurrence.approval_needed%}approval_needed{%endif%}">{% if occurrence.max_commitments %}{{ occurrence.max_commitments }} acts{% else %}{{ occurrence.max_volunteer }}{% endif %}</td>
-       <td><div class="btn-group gbe-btn-group" role="group" aria-label="...">
+       <td><div class="btn-group" role="group" aria-label="...">
         <a href="{{ occurrence.detail_link }}" data-toggle="tooltip" title="View" class="btn gbe-btn-table btn-sm" id="action-button">
          <i class="fa fa-eye" aria-hidden="true"></i></a>
         {% if occurrence.edit_link %}

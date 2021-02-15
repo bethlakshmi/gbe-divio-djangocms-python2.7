@@ -22,7 +22,7 @@ Changing fields in this section will change them in all calendar items.</p>
 </div>
 {# Include the visible fields #}
   {% for field in form.visible_fields %}
-    <div class="form-group"><div class="row">
+    <div class="form-group col-12"><div class="row">
       <div class="col-lg-3 col-xs-12">
 	<label for="{{field.name}}" class="control-label">	      
           {% if field.errors %}

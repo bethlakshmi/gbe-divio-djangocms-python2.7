@@ -191,8 +191,8 @@ class ManageEventsView(View):
                 'Date/Time',
                 'Duration',
                 'Type',
-                'Current Volunteer',
-                'Max Volunteer',
+                'Current #',
+                'Max #',
                 'Action']
             context['order'] = 4
         return render(request, self.template, context)
