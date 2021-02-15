@@ -13,6 +13,7 @@ from gbe.scheduling.views import (
     EventDetailView,
     EventWizardView,
     ListEventsView,
+    ManageConferenceView,
     ManageEventsView,
     ManageVolWizardView,
     RehearsalWizardView,
@@ -34,6 +35,13 @@ from gbe.scheduling.views import (
 app_name = "scheduling"
 
 urlpatterns = [
+    url(r'^conference/manage/(?P<day_id>\d+)/?$',
+        ManageConferenceView.as_view(),
+        name='schedule_conference'),
+    url(r'^conference/manage/?$',
+        ManageConferenceView.as_view(),
+        name='manage_conference'),
+
     url(r'^scheduling/manage/?$',
         ManageEventsView.as_view(), name='manage_event_list'),
     url(r'^scheduling/manage/(?P<conference_slug>[-\w]+)/?$',

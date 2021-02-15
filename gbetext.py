@@ -708,3 +708,8 @@ user_messages = {
         both environments.'''
     },
 }
+change_day_note = '''Change the day on any current/upcoming conference.  Pick
+the new start day and all conference days will be moved and all events will be
+updated.  This assumes that the conference is the same number of days long.'''
+missing_day_form_note = '''Could not load the form for the identified day.
+  This may be because the day is for a past conference.'''

@@ -24,7 +24,6 @@ from gbe.scheduling.views.functions import (
     setup_event_management_form,
     show_scheduling_occurrence_status,
     shared_groundwork,
-    update_event,
 )
 
 
