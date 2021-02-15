@@ -17,46 +17,47 @@ argparse==1.4.0           # via djeese-fs
 asgiref==3.3.1            # via django
 attrs==20.3.0             # via pytest
 boto==2.49.0
-certifi==2020.11.8        # via djeese-fs, requests, sentry-sdk
-chardet==3.0.4            # via djeese-fs, requests
+certifi==2020.12.5        # via djeese-fs, requests, sentry-sdk
+chardet==4.0.0            # via djeese-fs, requests
 click==7.1.2              # via aldryn-client
 configparser==5.0.1
-coverage==5.3
+coverage==5.4
 defusedxml==0.6.0         # via odfpy
 diff-match-patch==20200713  # via django-import-export
 dj-database-url==0.5.0
-dj-email-url==1.0.1
+dj-email-url==1.0.2
 dj-redis-url==0.1.4
 django-appconf==1.0.4
 django-autocomplete-light==3.8.1
-django-cache-url==3.1.2
+django-cache-url==3.2.2
 django-classy-tags==2.0.0  # via django-cms, django-sekizai
 django-cms==3.7.4         # via djangocms-attributes-field
 django-compressor==2.4
 https://control.divio.com/api/v1/apps/serve/django-filer/2.0.2/437dbe66-4a2c-402d-9ad9-cd104a901316/django-filer-2.0.2.tar.gz#egg=django-filer==2.0.2
 django-formtools==2.2
 django-getenv==1.3.2
-django-import-export==2.4.0
+django-import-export==2.5.0
 django-js-asset==1.2.2    # via django-mptt
-django-model-utils==4.0.0
+django-model-utils==4.1.1
 django-mptt==0.11.0
 django-nose==1.4.7
 django-parler==2.2
 django-paypal==1.0.0
 django-polymorphic==3.0.0
-django-post-office==3.5.2
+django-post-office==3.5.3
 django-ranged-response==0.2.0  # via django-simple-captcha
 django-recaptcha2==1.4.1
 django-robots==4.0
 django-sekizai==2.0.0     # via django-cms
-django-select2==7.4.2
+django-select2==7.6.1
 django-simple-captcha==0.5.13
 django-simple-sso==0.14.1
 django-sortedm2m==3.0.2
 django-storages==1.8
-django-treebeard==4.3.1   # via django-cms
-django==3.0.11            # via aldryn-boilerplates, aldryn-sites, django-appconf, django-classy-tags, django-cms, django-formtools, django-import-export, django-model-utils, django-mptt, django-paypal, django-polymorphic, django-post-office, django-ranged-response, django-sekizai, django-select2, django-simple-captcha, django-simple-sso, django-storages, django-treebeard, easy-thumbnails, jsonfield, webservices
-djangocms-admin-style==2.0.1  # via django-cms
+django-tempus-dominus==5.1.2.13
+django-treebeard==4.4     # via django-cms
+django==3.0.11            # via aldryn-boilerplates, aldryn-sites, django-appconf, django-classy-tags, django-cms, django-formtools, django-import-export, django-model-utils, django-mptt, django-paypal, django-polymorphic, django-post-office, django-ranged-response, django-sekizai, django-select2, django-simple-captcha, django-simple-sso, django-storages, django-tempus-dominus, django-treebeard, easy-thumbnails, jsonfield, webservices
+djangocms-admin-style==2.0.2  # via django-cms
 djangocms-attributes-field==2.0.0
 https://control.divio.com/api/v1/apps/serve/djangocms-bootstrap4/2.0.0/21ac21c0-bccc-429c-bc91-8bb9e0834f45/djangocms-bootstrap4-2.0.0.tar.gz#egg=djangocms-bootstrap4==2.0.0
 https://control.divio.com/api/v1/apps/serve/djangocms-file/3.0.0/3d2621db-220e-4e62-a731-f651d6c81fc6/djangocms-file-3.0.0.tar.gz#egg=djangocms-file==3.0.0
@@ -69,56 +70,56 @@ https://control.divio.com/api/v1/apps/serve/djangocms-style/3.0.0/7f83861c-9e68-
 https://control.divio.com/api/v1/apps/serve/djangocms-text-ckeditor/3.9.0/b69a0a27-5e76-4db2-86b6-c4931f16688f/djangocms-text-ckeditor-3.9.0.tar.gz#egg=djangocms-text-ckeditor==3.9.0
 https://control.divio.com/api/v1/apps/serve/djangocms-video/3.0.0/a36bdd84-5189-4d20-9ad9-eab9e64d9e25/djangocms-video-3.0.0.tar.gz#egg=djangocms-video==3.0.0
 djeese-fs==0.1.21
-easy-thumbnails==2.7
+easy-thumbnails==2.7.1
 et-xmlfile==1.0.1         # via openpyxl
-factory-boy==3.1.0
-faker==4.14.2
+factory-boy==3.2.0
+faker==6.0.0
 furl==2.1.0
 html5lib==1.1
 idna==2.10                # via requests
-importlib-metadata==2.0.0
+importlib-metadata==3.4.0
 iniconfig==1.0.0          # via pytest
 itsdangerous==1.1.0       # via django-simple-sso, webservices
 jdcal==1.4.1              # via openpyxl
 jsonfield==3.1.0
-lxml==4.6.1
+lxml==4.6.2
 markuppy==1.14            # via tablib
-mock==4.0.2
-more-itertools==8.6.0     # via pytest
+mock==4.0.3
 nose==1.3.7               # via django-nose
 odfpy==1.4.1              # via tablib
-openpyxl==3.0.5
+openpyxl==3.0.6
 orderedmultidict==1.0.1   # via furl
-packaging==20.4           # via pytest
+packaging==20.9           # via pytest
 pep8==1.7.1
-pillow==8.0.1
+pillow==8.1.0
 pluggy==0.13.1            # via pytest
 psycopg2==2.7.7
-py==1.9.0                 # via pytest
+py==1.10.0                # via pytest
 pyparsing==2.4.7          # via packaging
-pytest-cov==2.10.1
+pytest-cov==2.11.1
 pytest-django==4.1.0
-pytest==6.0.2
+pytest==6.2.2
 python-dateutil==2.8.1    # via faker
-pytz==2020.4
-pyyaml==5.3.1             # via tablib
+pytz==2021.1
+pyyaml==5.4.1             # via tablib
 rcssmin==1.0.6            # via django-compressor
-reportlab==3.5.55
-requests==2.25.0          # via aldryn-client, django-paypal, django-recaptcha2, webservices
+reportlab==3.5.59
+requests==2.25.1          # via aldryn-client, django-paypal, django-recaptcha2, webservices
 rjsmin==1.1.0             # via django-compressor
-sentry-sdk==0.19.3
-six==1.15.0               # via aldryn-client, django-cms, django-compressor, django-paypal, django-simple-captcha, furl, html5lib, orderedmultidict, packaging, python-dateutil
+sentry-sdk==0.19.5
+six==1.15.0               # via aldryn-client, django-autocomplete-light, django-cms, django-compressor, django-paypal, django-simple-captcha, furl, html5lib, orderedmultidict, python-dateutil
 sqlparse==0.4.1           # via django
-tablib[html,ods,xls,xlsx,yaml]==2.0.0
+tablib[html,ods,xls,xlsx,yaml]==3.0.0
 tabulate==0.8.7           # via aldryn-client
 text-unidecode==1.3       # via faker
 toml==0.10.2              # via pytest
-unidecode==1.1.1
-urllib3==1.26.2           # via requests, sentry-sdk
+typing-extensions==3.7.4.3  # via importlib-metadata
+unidecode==1.1.2
+urllib3==1.26.3           # via requests, sentry-sdk
 uwsgi==2.0.19.1
 webencodings==0.5.1       # via html5lib
 webservices[django]==0.7  # via django-simple-sso
-xlrd==1.2.0               # via tablib
+xlrd==2.0.1               # via tablib
 xlwt==1.3.0               # via tablib
 yurl==1.0.0               # via aldryn-boilerplates, aldryn-sites
 zipp==3.4.0
