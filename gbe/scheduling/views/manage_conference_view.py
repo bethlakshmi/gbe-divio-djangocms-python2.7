@@ -19,6 +19,7 @@ from gbe.models import (
 from gbe.functions import validate_perms
 from gbetext import (
     change_day_note,
+    missing_day_form_note,
 )
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
@@ -96,8 +97,16 @@ class ManageConferenceView(View):
                 all_valid = all_valid and form.is_valid()
                 forms += [(first_day, form)]
 
-        if not all_valid or the_form is None:
-            # return error
+        if the_form is None:
+            messages.error(request, UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="NO_CONF_DAY_FORM",
+                defaults={
+                   'summary': "Conference Day Form Not Loaded",
+                   'description': missing_day_form_note})[0].description)
+            all_valid = False
+
+        if not all_valid:
             return render(
                 request,
                 'gbe/manage_conference.tmpl',

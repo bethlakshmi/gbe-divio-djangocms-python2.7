@@ -17,6 +17,10 @@ from gbe.models import (
     ConferenceDay,
 )
 from tests.contexts import VolunteerContext
+from gbetext import (
+    change_day_note,
+    missing_day_form_note,
+)
 
 
 class TestManageConference(TestCase):
@@ -179,3 +183,20 @@ class TestManageConference(TestCase):
             "Moved %d scheduled events by %d days" % (
                 2,
                 30))
+
+    def test_post_no_form_for_day(self):
+        login_as(self.profile, self)
+        self.day.conference.status = 'completed'
+        self.day.conference.save()
+        response = self.client.post(
+            reverse("schedule_conference",
+                    urlconf="gbe.scheduling.urls",
+                    args=[self.day.pk]),
+            data={'%d-day' % self.day.pk: self.day.day+timedelta(days=30)})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            change_day_note)
+        self.assertContains(
+            response,
+            missing_day_form_note)
