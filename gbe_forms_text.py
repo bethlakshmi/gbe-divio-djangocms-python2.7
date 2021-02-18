@@ -1023,7 +1023,8 @@ theme_help = {
     StyleProperty from which to create the StyleValue so that the value type
     can be determined.''',
     'mismatch': '''The template of the property does not match the value.
-    This suggests that something has changed since the value was last saved.'''
+    This suggests something has changed since the value was last saved.''',
+    'bad_elem': '''The format of this style includes an unrecognized value.'''
 }
 style_value_help = {
     'text-shadow-0': '''The position of the horizontal shadow.

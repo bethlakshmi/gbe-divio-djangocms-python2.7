@@ -4,6 +4,7 @@ from gbe.themes.views import (
     CloneTheme,
     DeleteTheme,
     ManageTheme,
+    PreviewTheme,
     ThemeView,
     ThemesListView,
 )
@@ -29,4 +30,11 @@ urlpatterns = [
         name='delete_theme'),
     url(r'^themes/style_clone/(?P<version_id>\d+)/?',
         CloneTheme.as_view(),
-        name='clone_theme')]
+        name='clone_theme'),
+    url(r'^inventory/preview/(?P<version_id>\d+)/?',
+        PreviewTheme.as_view(),
+        name='preview_theme'),
+    url(r'^inventory/preview/?',
+        PreviewTheme.as_view(),
+        name='preview_off'),
+    ]

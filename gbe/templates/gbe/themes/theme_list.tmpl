@@ -21,6 +21,7 @@
       <i class="fas fa-edit"></i></a>&nbsp;&nbsp;
     <a class="gbe-detail" href="{% url 'themes:clone_theme' theme.id %}" title="Clone">
       <i class="fas fa-clone"></i></a>&nbsp;&nbsp;
+    {% if theme == preview %}<a class="gbe-detail" href="{% url 'themes:preview_off' %}" title="Turn off Preview"><i class="far fa-eye-slash"></i></a>{% else %}<a class="gbe-detail" href="{% url 'themes:preview_theme' theme.id %}" title="Preview"><i class="fas fa-eye"></i></a>{% endif %}&nbsp;&nbsp;
     <a class="gbe-detail" href="{% url 'themes:delete_theme' theme.id %}" title="Delete"><i class="far fa-trash-alt"></i></a>
 	      </td>
     </tr>

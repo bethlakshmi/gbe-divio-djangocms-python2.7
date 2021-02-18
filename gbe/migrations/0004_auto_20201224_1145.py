@@ -117,10 +117,7 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(71,31,31,1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(71,31,31,1)'),
-                         ('border-color', 'rgba(71,31,31,1)'),
-                         ('box-shadow',
-                          'px px px px rgba',
-                          '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
+                         ('border-color', 'rgba(71,31,31,1)')]},
     {
             'selector': '.gbe-btn-table',
             'pseudo_class': '',
@@ -139,15 +136,6 @@ init_values = [
             'usage': 'Table',
             'prop_val': [('background-color', 'rgba(0,0,0,.20)'),
                          ('border-color', 'rgba(0,0,0,.30)')]},
-    {
-            'selector': '.gbe-btn-table',
-            'pseudo_class': 'focus',
-            'description': '''Small buttons to do actions on table rows''',
-            'target_element': 'a',
-            'usage': 'Table',
-            'prop_val': [('box-shadow',
-                          'px px px px rgba',
-                          '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
     {
             'selector': '.gbe-table-link',
             'pseudo_class': '',
@@ -236,8 +224,14 @@ init_values = [
             'prop_val': [('outline-color', 'rgba(88,71,73,1)'),
                          ('color', 'rgba(255,255,255,1)'),
                          ('background-color', 'rgba(149,120,123,1)'),
-                         ('border-color', 'rgba(88,71,73,1)'),
-                         ('box-shadow',
+                         ('border-color', 'rgba(88,71,73,1)')]},
+    {
+            'selector': '.form-control:focus, .btn.focus, .btn:focus',
+            'pseudo_class': '',
+            'description': 'Right now - the buttons above the table.',
+            'target_element': 'button',
+            'usage': 'Big Table',
+            'prop_val': [('box-shadow',
                           'px px px px rgba',
                           '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
     {
@@ -279,10 +273,7 @@ init_values = [
             'usage': 'Forms',
             'prop_val': [('background-color', 'rgba(248,249,250,1)'),
                          ('border-color', 'rgba(175,176,177,1)'),
-                         ('color', 'rgba(33,37,41,1)'),
-                         ('box-shadow',
-                          'px px px px rgba',
-                          '0px 0px 0px 3px rgba(0,0,0,0.14)')]},
+                         ('color', 'rgba(33,37,41,1)')]},
     {
         'selector': '.gbe-btn-secondary-disabled, .gbe-btn-secondary-disabled',
         'pseudo_class': 'hover',
@@ -1249,7 +1240,6 @@ def initialize_style(apps, schema_editor):
             selector=select_val['selector'],
             description=select_val['description'],
             pseudo_class=select_val['pseudo_class'],
-            target_element_usage=select_val['target_element'],
             used_for=select_val['usage'])
         selector.save()
         for prop_val in select_val['prop_val']:

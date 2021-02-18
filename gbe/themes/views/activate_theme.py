@@ -37,7 +37,7 @@ class ActivateTheme(View):
             current = StyleVersion.objects.get(currently_live=True)
             current.currently_live = False
             self.style_version.currently_live = True
-        elif self.target == "test":
+        else:
             current = StyleVersion.objects.get(currently_live=True)
             current.currently_test = False
             self.style_version.currently_test = True

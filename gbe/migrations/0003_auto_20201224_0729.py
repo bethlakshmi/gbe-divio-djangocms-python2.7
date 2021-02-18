@@ -45,7 +45,6 @@ class Migration(migrations.Migration):
                 ('pseudo_class', models.CharField(blank=True,
                                                   max_length=128,
                                                   null=True)),
-                ('target_element_usage', models.CharField(max_length=100)),
                 ('used_for', models.CharField(max_length=100)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),

@@ -74,13 +74,21 @@ class StyleValueForm(ModelForm):
                     help_text=help_text)
             elif template == "px":
                 initial = None
-                if len(value) > 0:
-                    initial = int(''.join(filter(str.isdigit, value)))
+                initial = int(''.join(filter(str.isdigit, value)))
                 self.fields['value_%d' % i] = IntegerField(
                     initial=initial,
                     label="pixels",
                     help_text=help_text,
                     widget=NumberInput(attrs={'class': 'pixel-input'}))
+            else:
+                user_msg = UserMessage.objects.get_or_create(
+                    view="StyleValueForm",
+                    code="UNKNOWN_TEMPLATE_ELEMENT",
+                    defaults={
+                        'summary': "Parse Template Error",
+                        'description': theme_help['bad_elem']})
+                raise Exception("%s, VALUES: %s" % (user_msg[0].description,
+                                                    style_property.value_type))
             i = i + 1
 
     def save(self, commit=True):

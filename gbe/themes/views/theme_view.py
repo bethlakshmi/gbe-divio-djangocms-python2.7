@@ -26,12 +26,16 @@ class ThemeView(View):
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type='text/css')
         context = {'selectors': {}}
-        version = get_object_or_404(StyleVersion, currently_live=True)
-        if settings.DEBUG:
-            version = get_object_or_404(StyleVersion, currently_test=True)
-        if "version_id" in kwargs:
+        if request.user.is_authenticated and hasattr(request.user,
+                                                     'userstylepreview'):
+            version = request.user.userstylepreview.version
+        elif "version_id" in kwargs:
             version_id = kwargs.get("version_id")
             version = get_object_or_404(StyleVersion, id=version_id)
+        elif settings.DEBUG:
+            version = get_object_or_404(StyleVersion, currently_test=True)
+        else:
+            version = get_object_or_404(StyleVersion, currently_live=True)
         current_values = StyleValue.objects.filter(style_version=version)
 
         for value in current_values:

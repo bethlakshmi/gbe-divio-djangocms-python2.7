@@ -98,16 +98,15 @@ class CloneTheme(ManageTheme):
             messages.success(request, "Cloned %s from %s" % (
                 new_version,
                 self.style_version))
-            if 'finish' in list(request.POST.keys()) or 'clone' in list(
-                    request.POST.keys()):
-                return HttpResponseRedirect("%s?changed_id=%d" % (
-                    reverse('themes_list', urlconf='gbe.themes.urls'),
-                    new_version.pk))
             if 'update' in list(request.POST.keys()):
                 return HttpResponseRedirect(
                     reverse('manage_theme',
                             urlconf='gbe.themes.urls',
                             args=[new_version.pk]))
+            else:
+                return HttpResponseRedirect("%s?changed_id=%d" % (
+                    reverse('themes_list', urlconf='gbe.themes.urls'),
+                    new_version.pk))
         else:
             messages.error(
                 request,

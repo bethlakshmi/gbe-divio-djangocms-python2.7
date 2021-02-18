@@ -17,7 +17,10 @@ class ThemesListView(View):
     def dispatch(self, *args, **kwargs):
         return super(ThemesListView, self).dispatch(*args, **kwargs)
 
-    def get_context_dict(self):
+    def get_context_dict(self, request):
+        preview_version = None
+        if hasattr(request.user, 'userstylepreview'):
+            preview_version = request.user.userstylepreview.version
         return {
             'columns': [
                 'ID',
@@ -35,11 +38,12 @@ class ThemesListView(View):
                 "number"),
             'details_off': True,
             'changed_id': self.changed_id,
-            'error_id': self.error_id}
+            'error_id': self.error_id,
+            'preview': preview_version}
 
     @never_cache
     def get(self, request, *args, **kwargs):
         self.profile = validate_perms(request, self.permissions)
         self.changed_id = int(request.GET.get('changed_id', default=-1))
         self.error_id = int(request.GET.get('error_id', default=-1))
-        return render(request, self.template, self.get_context_dict())
+        return render(request, self.template, self.get_context_dict(request))

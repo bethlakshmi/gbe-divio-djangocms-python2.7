@@ -11,7 +11,6 @@ class StyleSelector(Model):
     selector = CharField(max_length=300)
     description = TextField(blank=True)
     pseudo_class = CharField(max_length=128, blank=True, null=True)
-    target_element_usage = CharField(max_length=100)
     used_for = CharField(max_length=100)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)

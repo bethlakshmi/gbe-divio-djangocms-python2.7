@@ -4,6 +4,7 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
     StyleVersionFactory,
+    UserStylePreviewFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -47,6 +48,10 @@ class TestThemesList(TestCase):
             response,
             '<i class="gbe-text-success fas fa-check-circle"',
             2)
+        self.assertContains(response, reverse(
+            "preview_theme",
+            urlconf="gbe.themes.urls",
+            args=[self.version.pk]))
         self.assertContains(response, reverse(
             "clone_theme",
             urlconf="gbe.themes.urls",
@@ -100,3 +105,19 @@ class TestThemesList(TestCase):
             response,
             '<tr class="gbe-table-row gbe-table-error"><td>%d</td>' % (
                 self.version.pk))
+
+    def test_user_has_preview(self):
+        UserStylePreviewFactory(version=self.version, previewer=self.user)
+        login_as(self.user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, self.version.name)
+        self.assertNotContains(response, reverse(
+            "preview_theme",
+            urlconf="gbe.themes.urls",
+            args=[self.version.pk]))
+        self.assertContains(
+            response,
+            'href="%s"' % reverse(
+                "preview_off",
+                urlconf="gbe.themes.urls"),
+            count=1)
