@@ -24,7 +24,7 @@ class TestReviewTroupes(TestCase):
         self.client = Client()
         self.profile = ProfilePreferencesFactory(
             profile__purchase_email='test@test.com').profile
-        self.troupe =  TroupeFactory(contact=self.profile)
+        self.troupe = TroupeFactory(contact=self.profile)
         self.member = PersonaFactory()
         self.troupe.membership.add(self.member)
         self.privileged_user = ProfileFactory().user_object
@@ -54,7 +54,7 @@ class TestReviewTroupes(TestCase):
         self.assertContains(response, self.member)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s">' + 
+            ('<a href="%s" data-toggle="tooltip" title="%s">' +
              '<button type="button" class="btn btn-default btn-sm">' +
              '<i class="icon-eye"></i></button></a>') % (
              reverse('admin_landing_page',
@@ -64,7 +64,7 @@ class TestReviewTroupes(TestCase):
             html=True)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s">' + 
+            ('<a href="%s" data-toggle="tooltip" title="%s">' +
              '<button type="button" class="btn btn-default btn-sm">' +
              '<i class="icon-envelope"></i></button></a>') % (
              reverse('mail_to_individual',

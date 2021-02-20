@@ -4,6 +4,7 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfilePreferencesFactory,
     ProfileFactory,
+    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -47,12 +48,6 @@ class TestReviewProfiles(TestCase):
         self.assertRedirects(response, redirect_url)
         self.assertTrue(is_login_page(response))
 
-    def test_all_well(self):
-        login_as(self.privileged_user, self)
-        response = self.client.get(self.url)
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, "Manage Users")
-
     def test_staff_lead(self):
         context = StaffAreaContext()
         login_as(context.staff_lead, self)
@@ -66,6 +61,12 @@ class TestReviewProfiles(TestCase):
         self.assertContains(response, self.profile.purchase_email)
         self.assertContains(response, self.profile.user_object.email)
         self.assertContains(response, self.profile.phone)
+
+    def test_with_troupe(self):
+        troupe = TroupeFactory(contact=self.profile)
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, troupe.name)
 
     def test_special_registrar(self):
         login_as(self.privileged_user, self)
