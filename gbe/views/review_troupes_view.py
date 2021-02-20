@@ -23,6 +23,7 @@ class ReviewTroupesView(View):
                             'Ticketing - Admin',
                             'Staff Lead')
     header = ['Troupe', 'Contact', 'Members', 'Action']
+    title = "Manage Troupes"
 
     @never_cache
     @log_func
@@ -59,29 +60,18 @@ class ReviewTroupesView(View):
                     'admin_landing_page',
                     urlconf='gbe.urls',
                     args=[troupe.contact.resourceitem_id]),
-                 'text': "View Landing Page"},
+                 'text': "View Contact Landing Page"},
                 {'url': reverse(
                     'mail_to_individual',
                     urlconf='gbe.email.urls',
                     args=[troupe.contact.resourceitem_id]),
-                 'text': "Email"}
+                 'text': "Email Contact"}
             ]
-            if 'Registrar' in request.user.profile.privilege_groups:
-                bid_row['actions'] += [
-                    {'url': "%s?next=%s" % (reverse(
-                        'admin_profile',
-                        urlconf='gbe.urls',
-                        args=[troupe.contact.resourceitem_id]), request.path),
-                     'text': "Update"}]
-                bid_row['actions'] += [
-                    {'url': reverse('delete_profile',
-                                    urlconf='gbe.urls',
-                                    args=[troupe.contact.resourceitem_id]),
-                     'text': "Delete"}]
             rows.append(bid_row)
 
         return render(request, 'gbe/profile_review.tmpl', {
             'title': "Manage Troupes",
             'intro': intro[0].description,
             'header': self.header,
-            'rows': rows})
+            'rows': rows,
+            'title': self.title})
