@@ -259,11 +259,16 @@ special_menu_tree = [
      'parent_id': 40,
      'id': 43,
      'groups': ['Scheduling Mavens']},
-
     {'title': 'Acts',
      'url': reverse('schedule_acts', urlconf='gbe.scheduling.urls'),
      'parent_id': 40,
      'id': 41,
      'groups': ['Act Coordinator',
                 'Scheduling Mavens']},
+    {'title': 'Conferences',
+     'url': reverse('manage_conference',
+                    urlconf='gbe.scheduling.urls'),
+     'parent_id': 40,
+     'id': 60,
+     'groups': ['Scheduling Mavens']},
 ]

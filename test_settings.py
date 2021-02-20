@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'aldryn_django_cms',
     'menus',
     'sekizai',
+    'tempus_dominus',
     'treebeard',
     'parler',
     'aldryn_boilerplates',
@@ -93,7 +94,9 @@ INSTALLED_APPS = [
     'gbe',
     'post_office',
     'import_export',
-    'snowpenguin.django.recaptcha2'
+    'snowpenguin.django.recaptcha2',
+    'dal',
+    'dal_select2',
 ]
 
 PASSWORD_HASHERS = (

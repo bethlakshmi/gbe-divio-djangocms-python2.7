@@ -74,8 +74,6 @@ def get_act_casting():
     cast_list = []
     for casting in castings:
         value = casting.casting
-        if not casting.show_as_special:
-            value = ''
         cast_list += [(value, casting.casting)]
 
     return cast_list

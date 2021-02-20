@@ -29,6 +29,7 @@ Thumbs.db
 *.pot
 .coverage/
 .coverage
+.coverage.*
 htmlcov/
 .eggs/
 .idea/

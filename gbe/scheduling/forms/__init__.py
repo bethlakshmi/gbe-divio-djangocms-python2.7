@@ -28,3 +28,4 @@ from .select_event_form import (
 )
 from .event_evaluation_form import EventEvaluationForm
 from .act_schedule_form import ActScheduleForm
+from .conference_start_change_form import ConferenceStartChangeForm

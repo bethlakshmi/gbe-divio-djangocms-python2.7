@@ -68,7 +68,7 @@
     {% endif %}
 
     {% if eventitem.bio_grid_list %}
-      {% include "people_gallery.tmpl" with heading="Check out our fabulous Performers!" grid_items=eventitem.bio_grid_list%}
+      {% include "people_gallery.tmpl" with grid_items=eventitem.bio_grid_list%}
 
     {% elif eventitem.people %}
     <div class="bio_block font_regular container">
