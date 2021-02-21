@@ -1,9 +1,13 @@
 from django.views.decorators.cache import never_cache
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import (
     render,
     get_object_or_404,
 )
-from gbe.functions import validate_perms
+from gbe.functions import (
+    validate_perms,
+    validate_profile,
+)
 from gbe.models import (
     Act,
     GenericEvent,
@@ -17,20 +21,23 @@ from gbetext import acceptance_states
 @never_cache
 def act_techinfo_detail(request, act_id):
     '''
-    Show the list of act tech info for all acts in a given show
+    Show the info for a specific act
     '''
-    validate_perms(
-        request,
-        ('Scheduling Mavens', 'Tech Crew', 'Technical Director', 'Producer'))
-    # using try not get_or_404 to cover the case where the show is there
-    # but does not have any scheduled events.
-    # I can still show a list of shows this way.
     shows = []
     rehearsals = []
     act = None
     order = -1
 
     act = get_object_or_404(Act, pk=act_id)
+    if not validate_perms(request, (
+            'Scheduling Mavens',
+            'Tech Crew',
+            'Technical Director',
+            'Producer'), require=False):
+        profile = validate_profile(request)
+        if profile not in act.performer.get_profiles():
+            raise PermissionDenied
+
     if act.accepted == 3:
         response = get_schedule(labels=[act.b_conference.conference_slug],
                                 commitment=act)

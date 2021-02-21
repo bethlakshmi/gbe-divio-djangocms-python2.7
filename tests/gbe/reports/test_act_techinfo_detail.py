@@ -4,7 +4,9 @@ from django.test import TestCase, Client
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (
     ActFactory,
+    PersonaFactory,
     ProfileFactory,
+    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -147,3 +149,19 @@ class TestReviewActTechInfo(TestCase):
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertContains(response, "3<br></span><br>Show Order</div>")
+
+    def test_review_act_techinfo_troupe_member(self):
+        '''review_act_techinfo view should load for Tech Crew
+           and fail for others
+        '''
+        troupe = TroupeFactory()
+        member = PersonaFactory(contact=self.profile)
+        troupe.membership.add(member)
+        self.context.act.performer = troupe
+        self.context.act.save()
+        self.set_the_basics()
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, self.context.act.b_title)
+        self.assertContains(response, str(self.context.act.performer))
+        self.assertContains(response, str(self.context.show))
