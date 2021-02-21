@@ -72,3 +72,13 @@ class TestReviewTroupes(TestCase):
                      args=[self.troupe.contact.resourceitem_id]),
              "Email Contact"),
             html=True)
+        self.assertContains(
+            response,
+            ('<a href="%s" data-toggle="tooltip" title="%s">' +
+             '<button type="button" class="btn btn-default btn-sm">' +
+             '<i class="far fa-eye"></i></button></a>') % (
+             reverse('troupe_view',
+                     urlconf='gbe.urls',
+                     args=[self.troupe.resourceitem_id]),
+             "View Troupe"),
+            html=True)

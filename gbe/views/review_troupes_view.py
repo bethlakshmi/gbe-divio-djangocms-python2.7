@@ -57,6 +57,11 @@ class ReviewTroupesView(View):
             bid_row['id'] = troupe.resourceitem_id
             bid_row['actions'] = [
                 {'url': reverse(
+                    'troupe_view',
+                    urlconf='gbe.urls',
+                    args=[troupe.resourceitem_id]),
+                 'text': "View Troupe"},
+                {'url': reverse(
                     'admin_landing_page',
                     urlconf='gbe.urls',
                     args=[troupe.contact.resourceitem_id]),

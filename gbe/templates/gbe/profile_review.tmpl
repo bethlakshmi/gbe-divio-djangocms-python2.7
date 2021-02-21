@@ -62,8 +62,10 @@
 	        <i class="icon-list"></i>
 	      {% elif action.text == 'Delete' %}
 	        <i class="icon-trash"></i>
-	      {% elif action.text == 'View Landing Page' or action.text == 'View Contact Landing Page' %}
-	        <i class="icon-eye"></i>
+        {% elif action.text == 'View Landing Page' or action.text == 'View Contact Landing Page' %}
+          <i class="icon-eye"></i>
+        {% elif action.text == 'View Troupe' %}
+          <i class="far fa-eye"></i>
 	      {% elif action.text == 'Email' or action.text == 'Email Contact' %}
 	        <i class="icon-envelope"></i>
 	      {% endif %}
