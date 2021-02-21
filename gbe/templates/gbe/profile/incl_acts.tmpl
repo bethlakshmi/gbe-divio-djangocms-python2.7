@@ -12,11 +12,14 @@
             <li> 
               <a href = '{% url 'gbe:act_view' act.id %}'>View</a> act
             </li>
-            {% if act.get_accepted_display == 'Accepted' and not historical %} 
-	    <li> <a href = '{% url 'gbe:act_tech_wizard' act.id %}'>View/edit</a> 
-		      Act Tech Info and rehearsal schedule
-            </li>
-            {% endif %}
+    {% if act.get_accepted_display == 'Accepted' and not historical %}
+    <li>{% if act.performer.contact == profile %}
+	     <a href = '{% url 'gbe:act_tech_wizard' act.id %}'>View/edit</a> 
+       {% else %}
+       <a href = '{% url 'reporting:act_techinfo_detail' act.pk %}'>View</a> 
+       {% endif %}
+        Act Tech Info and rehearsal schedule     
+    </li>{% endif %}
         {% elif act.performer.contact == profile %}
 	  <span class="text-danger"><i class="fas fa-arrow-alt-circle-right"></i> 
       <b>{{ act }}</b></span> - {% if act_paid %}Fee has been paid, submit NOW!
