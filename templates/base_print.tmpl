@@ -5,7 +5,9 @@
     <title>{% block title %} {% endblock %}</title>
     <link rel="shortcut icon" href= {% static "img/favicon.ico" %} type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href= {% static "styles/base.css" %} media="all"/>
+    {% block theme %}
     <link href="{% url 'themes:theme_style' %}" rel="stylesheet">
+    {% endblock theme %}
   </head>
   <body class="gbe-printable"> 
       <div id="middle">{% block content %}
