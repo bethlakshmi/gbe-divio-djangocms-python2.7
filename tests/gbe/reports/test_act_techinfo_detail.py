@@ -155,13 +155,14 @@ class TestReviewActTechInfo(TestCase):
            and fail for others
         '''
         troupe = TroupeFactory()
-        member = PersonaFactory(contact=self.profile)
+        member = PersonaFactory()
         troupe.membership.add(member)
         self.context.act.performer = troupe
         self.context.act.save()
         self.set_the_basics()
-        login_as(self.profile, self)
+        login_as(member.performer_profile, self)
         response = self.client.get(self.url)
         self.assertContains(response, self.context.act.b_title)
         self.assertContains(response, str(self.context.act.performer))
         self.assertContains(response, str(self.context.show))
+        self.assertContains(response, self.context.act.tech.introduction_text)

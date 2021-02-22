@@ -29,6 +29,8 @@ def act_techinfo_detail(request, act_id):
     order = -1
 
     act = get_object_or_404(Act, pk=act_id)
+    # if this isn't a privileged user, it had better be a member of the
+    # troupe or the performer.
     if not validate_perms(request, (
             'Scheduling Mavens',
             'Tech Crew',
