@@ -416,7 +416,7 @@ init_values = [
             'description': '''Text that means to show success, like icons for
             something that is live.''',
             'target_element': 'i',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(35,145,60,1)')]},
     {
             'selector': '.gbe-text-muted',
@@ -424,7 +424,7 @@ init_values = [
             'description': '''Text that is possibly active, but muted to
             defer tp something else.''',
             'target_element': 'i',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(108,117,125,1)')]},
     {
         'selector': '.gbe-text-secondary',
@@ -432,7 +432,7 @@ init_values = [
         'description': '''Text that should recede a bit, because it's
         secondary.''',
         'target_element': 'i',
-        'usage': 'Table',
+        'usage': 'General',
         'prop_val': [('color', 'rgba(108,117,125,1)')]},
     {
         'selector': '.gbe-text-warning',
@@ -440,7 +440,7 @@ init_values = [
         'description': '''Text that indicates warning, but not complete
         failure.''',
         'target_element': 'i',
-        'usage': 'Table',
+        'usage': 'General',
         'prop_val': [('color', 'rgba(255,193,7,1)')]},
     {
             'selector': '.gbe-text-danger',
@@ -448,7 +448,7 @@ init_values = [
             'description': '''Text that means danger - not exactly an error,
             but something permanent,like reject/delete.''',
             'target_element': 'i',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(220,53,69,1)')]},
     {
             'selector': '.gbe-text-danger',
@@ -456,7 +456,7 @@ init_values = [
             'description': '''Text that means danger - not exactly an error,
             but something permanent,like reject/delete.''',
             'target_element': 'i',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(167,29,42,1)')]},
     {
             'selector': '.gbe-text-info',
@@ -464,7 +464,7 @@ init_values = [
             'description': '''Text that is highlighted because it gives useful
             information.''',
             'target_element': 'i',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(23,162,184,1)')]},
     {
             'selector': '.link-events-plus',
@@ -769,23 +769,23 @@ init_values = [
         'selector': '.gbe-tab-active,.gbe-tab-active:hover,.gbe-tab-area',
         'pseudo_class': '',
         'description': '''Background of the active tab and everything
-        "on" it.''',
+        "on" it.  Conference navigation, also landing page on small screens''',
         'target_element': 'div',
-        'usage': 'Table',
+        'usage': 'General',
         'prop_val': [('background-color', 'rgba(221,221,221,1)')]},
     {
             'selector': '.gbe-tab-active,.gbe-tab-active:hover',
             'pseudo_class': '',
             'description': 'Text of the active tab',
             'target_element': 'div',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(180,80,80,1)')]},
     {
             'selector': '.gbe-tab',
             'pseudo_class': '',
             'description': 'Text of the inactive tabs',
             'target_element': 'div',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(150,150,150,1)')]},
     {
             'selector': '.gbe-tab:hover',
