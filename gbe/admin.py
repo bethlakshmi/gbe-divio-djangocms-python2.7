@@ -55,7 +55,7 @@ class ActAdmin(admin.ModelAdmin):
 
 
 class PerformerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'contact')
+    list_display = ('name', 'contact', 'label')
     search_fields = ['name']
 
 

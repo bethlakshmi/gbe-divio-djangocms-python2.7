@@ -64,7 +64,10 @@ class Performer (WorkerItem):
         return self.name
 
     def __str__(self):
-        return self.name
+        perf_string = self.name
+        if self.label and len(self.label) > 0:
+            perf_string = "%s - %s" % (self.name, self.label)
+        return perf_string
 
     class Meta:
         ordering = ['name']
