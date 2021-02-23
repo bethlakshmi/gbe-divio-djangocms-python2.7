@@ -14,14 +14,7 @@ from gbetext import troupe_intro_msg
 
 
 class ReviewTroupesView(View):
-    reviewer_permissions = ('Registrar',
-                            'Volunteer Coordinator',
-                            'Vendor Coordinator',
-                            'Scheduling Mavens',
-                            'Act Coordinator',
-                            'Class Coordinator',
-                            'Ticketing - Admin',
-                            'Staff Lead')
+    reviewer_permissions = ('Act Coordinator', 'Registrar',)
     header = ['Troupe', 'Contact', 'Members', 'Action']
     title = "Manage Troupes"
 
