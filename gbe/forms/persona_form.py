@@ -68,6 +68,7 @@ class PersonaForm (ModelForm):
     class Meta:
         model = Persona
         fields = ['name',
+                  'label',
                   'homepage',
                   'bio',
                   'experience',

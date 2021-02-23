@@ -18,6 +18,7 @@ class TroupeForm(PersonaForm):
         model = Troupe
         fields = ['contact',
                   'name',
+                  'label',
                   'homepage',
                   'bio',
                   'experience',

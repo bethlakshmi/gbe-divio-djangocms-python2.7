@@ -486,6 +486,8 @@ persona_labels = {'name': ('Stage Name'),
 
 persona_help_texts = {
     'name': 'This is the name you will be listed under when performing.',
+    'label': '''Reminder for when you use this bio.  Helps to manage multiple
+    bios.''',
     'contact': ('The person GBE should contact about Expo  performances. \
         Usually, this will be you.'),
     'homepage': 'This will be listed on your performer page.',
