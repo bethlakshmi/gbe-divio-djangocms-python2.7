@@ -54,9 +54,8 @@ class TestReviewTroupes(TestCase):
         self.assertContains(response, self.member)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s">' +
-             '<button type="button" class="btn btn-default btn-sm">' +
-             '<i class="icon-eye"></i></button></a>') % (
+            ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
+             'gbe-btn-table btn-sm"><i class="far fa-eye"></i></a>') % (
              reverse('admin_landing_page',
                      urlconf='gbe.urls',
                      args=[self.troupe.contact.resourceitem_id]),
@@ -64,9 +63,8 @@ class TestReviewTroupes(TestCase):
             html=True)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s">' +
-             '<button type="button" class="btn btn-default btn-sm">' +
-             '<i class="icon-envelope"></i></button></a>') % (
+            ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
+             'gbe-btn-table btn-sm"><i class="far fa-envelope"></i></a>') % (
              reverse('mail_to_individual',
                      urlconf='gbe.email.urls',
                      args=[self.troupe.contact.resourceitem_id]),
@@ -74,9 +72,8 @@ class TestReviewTroupes(TestCase):
             html=True)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s">' +
-             '<button type="button" class="btn btn-default btn-sm">' +
-             '<i class="far fa-eye"></i></button></a>') % (
+            ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
+             'gbe-btn-table btn-sm"><i class="fas fa-eye"></i></a>') % (
              reverse('troupe_view',
                      urlconf='gbe.urls',
                      args=[self.troupe.resourceitem_id]),
