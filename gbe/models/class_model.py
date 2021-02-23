@@ -5,7 +5,6 @@ from django.db.models import (
     CharField,
     ForeignKey,
     IntegerField,
-    ManyToManyField,
     Q,
     TextField,
 )

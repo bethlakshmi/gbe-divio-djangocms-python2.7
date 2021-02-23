@@ -708,6 +708,14 @@ user_messages = {
         both environments.'''
     },
 }
+troupe_intro_msg = '''This list includes only Troupes with active contacts \
+(i.e. the person who entered this troupe in our system is an active user). \
+Contact an administrator if a troupe you are looking for is not visible.  \
+Inactive troupe members are also filtered from the membership list.'''
+profile_intro_msg = '''This list includes only active users.  Inactive users \
+can be viewed only in the administration pages.  To reactivate a missing \
+user, contact an admin.  Troupes owned by a user are shown in parenthesis \
+under the user's name.'''
 change_day_note = '''Change the day on any current/upcoming conference.  Pick
 the new start day and all conference days will be moved and all events will be
 updated.  This assumes that the conference is the same number of days long.'''

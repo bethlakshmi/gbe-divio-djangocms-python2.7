@@ -1,24 +1,26 @@
 {% extends 'gbe/gbe_table.tmpl' %}
 {% block title %}
-   Manage Users
+{% if title %}{{title}}{% else %}Manage Users{% endif %}{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
 {% endblock %}
 {% block before_table %}
-  <h2 class="gbe-title">Manage Users</h2>
-
-  <p>This list includes only active users.  Inactive users can be viewed only
-  in the administration pages.  To reactivate a missing user, contact an
-  admin.</p>
+  <h2 class="gbe-title">{% if title %}{{title}}{% else %}Manage Users{% endif %}</h2>
+  <p>{{intro}}</p>
 {% endblock %}
 {% block tbody %}
   {% for row in rows %}
   <tr class="gbe-table-row">
     {% for value in row.profile %}
-      <td>{{ value }}</td>{% endfor %}
+      <td>{{ value | safe }}</td>{% endfor %}
+  {% if row.contact_info %}
   	<td>
 	  {{ row.contact_info.contact_email }}<br/>
 	  ({{ row.contact_info.purchase_email}})<br/>
 	  {{ row.contact_info.phone }}
   	</td>
+  {% endif %}
     <td>
   	  <div class="btn-group" role="group" aria-label="...">
       {%for action in row.actions %}
@@ -29,9 +31,11 @@
 	        <i class="fas fa-list"></i>
 	      {% elif action.text == 'Delete' %}
 	        <i class="fas fa-trash"></i>
-	      {% elif action.text == 'View Landing Page' %}
-	        <i class="far fa-eye"></i>
-	      {% elif action.text == 'Email' %}
+        {% elif action.text == 'View Landing Page' or action.text == 'View Contact Landing Page' %}
+          <i class="far fa-eye"></i>
+        {% elif action.text == 'View Troupe' %}
+          <i class="fas fa-eye"></i>
+	      {% elif action.text == 'Email' or action.text == 'Email Contact' %}
 	        <i class="far fa-envelope"></i>
 	      {% endif %}
         </a>
