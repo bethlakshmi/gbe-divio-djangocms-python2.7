@@ -470,14 +470,15 @@ init_values = [
             'selector': '.link-events-plus',
             'pseudo_class': '',
             'description': '''Used for a plus sign that is an active link
-            information.''',
+            information.  Right now only on ticket manage page.''',
             'target_element': 'i',
             'usage': 'General',
             'prop_val': [('color', 'rgba(220,220,220,1)')]},
     {
             'selector': '.link-events-plus',
             'pseudo_class': 'hover',
-            'description': '''Plus sign as active link when hovered on.''',
+            'description': '''Plus sign as active link when hovered on.
+            Right now only on ticket manage page.''',
             'target_element': 'i',
             'usage': 'General',
             'prop_val': [('color', 'rgba(0,0,0,1)')]},
@@ -557,6 +558,14 @@ init_values = [
                  '0px 2px 4px 0px rgba(0,0,0,0.2)'),
                 ('color', 'rgba(119,119,119,1)'),
                 ('background', 'rgba(255,255,255,1)')]},
+    {
+            'selector': 'code',
+            'pseudo_class': '',
+            'description': '''Any text displaying code, right now that is 
+            theme editor''',
+            'target_element': 'code',
+            'usage': 'Forms',
+            'prop_val': [('color', 'rgba(220,53,69,1)')]},
     {
             'selector': 'span.dropt:hover span',
             'pseudo_class': 'hover',
