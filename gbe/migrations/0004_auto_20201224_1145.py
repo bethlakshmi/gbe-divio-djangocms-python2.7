@@ -472,14 +472,14 @@ init_values = [
             'description': '''Used for a plus sign that is an active link
             information.''',
             'target_element': 'i',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(220,220,220,1)')]},
     {
             'selector': '.link-events-plus',
             'pseudo_class': 'hover',
             'description': '''Plus sign as active link when hovered on.''',
             'target_element': 'i',
-            'usage': 'Table',
+            'usage': 'General',
             'prop_val': [('color', 'rgba(0,0,0,1)')]},
     {
             'selector': '.gbe-draft',
