@@ -9,7 +9,6 @@
 {% endblock %}
 {% block content %}
 <h2 class="subtitle">{{view_title}}</h2>
-<h3>{{conference.conference_name}}</h3>
 <p>{{view_header_text | safe}}</p>
 
   {% if errors %}
@@ -22,20 +21,11 @@
    <div class="alert alert-info">{{popup_text |safe }}</div>
    {% endif %}
    <form action="" method="post" enctype="multipart/form-data">
-
-   {% include "form_table_wrapper.tmpl" %}
-
-   {% if nodraft %}
-    <input type="submit" name="submit" value="{{nodraft}}">
-   {% else %}
-   <input type="submit" name="draft" formnovalidate value="Save Draft">
-     {% if fee_paid %}
-     <input type="submit" name="submit" value="Submit For Approval">
-     {% else %}
-     <input type="submit" name="submit" formnovalidate value="Proceed to Payment">
-     {% endif %}
-   {% endif %}
-   </form>
+  {{ instructions | safe }}
+  <p><font color=red>*</font> indicates a required field</p>
+    {% include "form_table.tmpl" %}
+  <input type="submit" name="submit" value="Save">
+  </form>
 {% addtoblock "js" %}
 {% for form in forms %}
  {{ form.media }}

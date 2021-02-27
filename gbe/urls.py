@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.urls import path
 from django.contrib.auth.views import (
     LoginView,
     PasswordResetCompleteView,
@@ -30,6 +31,8 @@ from gbe.views import (
     MakeVendorView,
     MakeVolunteerView,
     MakeSummerActView,
+    PerformerCreate,
+    PerformerUpdate,
     ProposeClassView,
     PublishProposalView,
     RegisterView,
@@ -156,6 +159,11 @@ urlpatterns = [
         EditTroupeView, name='troupe_edit'),
     url(r'^troupe/view/(\d+)/?$',
         ViewTroupeView, name='troupe_view'),
+    path('performer/add/',PerformerCreate.as_view(), name='performer-add'),
+    path('performer/<int:pk>/',
+         PerformerUpdate.as_view(),
+         name='performer-update'),
+
 
     #  volunteers
     url(r'^volunteer/view/(?P<bid_id>\d+)/?$',

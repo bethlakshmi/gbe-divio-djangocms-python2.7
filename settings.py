@@ -42,6 +42,7 @@ INSTALLED_APPS.extend([
     'snowpenguin.django.recaptcha2',
     'dal',
     'dal_select2',
+    'django_addanother',
 ])
 
 EMAIL_BACKEND = 'post_office.EmailBackend'

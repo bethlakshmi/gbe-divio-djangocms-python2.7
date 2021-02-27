@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'snowpenguin.django.recaptcha2',
     'dal',
     'dal_select2',
+    'django_addanother',
 ]
 
 PASSWORD_HASHERS = (

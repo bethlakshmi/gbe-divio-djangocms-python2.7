@@ -5,11 +5,14 @@ from django.forms import (
     HiddenInput,
     ModelForm,
     MultipleChoiceField,
+    Select,
     Textarea,
     TextInput,
     URLField,
     URLInput,
 )
+from django_addanother.widgets import AddAnotherWidgetWrapper
+from django.urls import reverse_lazy
 from gbe.models import Act
 from gbe_forms_text import (
     act_help_texts,
@@ -73,7 +76,12 @@ class ActEditDraftForm(ModelForm):
             'track_title']
         labels = act_bid_labels
         help_texts = act_help_texts
-        widgets = {'b_conference': HiddenInput()}
+        widgets = {
+            'b_conference': HiddenInput(),
+            'performer': AddAnotherWidgetWrapper(
+                Select,
+                reverse_lazy('performer-add', urlconf='gbe.urls')),
+            }
 
     def __init__(self, *args, **kwargs):
         super(ActEditDraftForm, self).__init__(*args, **kwargs)

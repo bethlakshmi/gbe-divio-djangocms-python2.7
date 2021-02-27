@@ -10,6 +10,7 @@ from django.db.models import (
 from gbe.models import Profile
 from scheduler.models import WorkerItem
 from filer.fields.image import FilerImageField
+from django.urls import reverse
 
 
 class Performer (WorkerItem):
@@ -39,6 +40,10 @@ class Performer (WorkerItem):
         null=True,
         related_name="image_performer")
     festivals = TextField(blank=True)     # placeholder only
+
+    # used by CreateView and UpdateView
+    def get_absolute_url(self):
+        return reverse('home', urlconf="gbe.urls")
 
     def get_profiles(self):
         '''
