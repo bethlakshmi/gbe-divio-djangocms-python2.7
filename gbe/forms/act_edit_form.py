@@ -12,6 +12,7 @@ from django.forms import (
     URLInput,
 )
 from django_addanother.widgets import AddAnotherWidgetWrapper
+from dal import autocomplete
 from django.urls import reverse_lazy
 from gbe.models import Act
 from gbe_forms_text import (
@@ -79,7 +80,7 @@ class ActEditDraftForm(ModelForm):
         widgets = {
             'b_conference': HiddenInput(),
             'performer': AddAnotherWidgetWrapper(
-                Select,
+                autocomplete.ModelSelect2(url='persona-autocomplete'),
                 reverse_lazy('performer-add', urlconf='gbe.urls')),
             }
 
