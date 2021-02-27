@@ -80,7 +80,7 @@ class ActEditDraftForm(ModelForm):
         widgets = {
             'b_conference': HiddenInput(),
             'performer': AddAnotherWidgetWrapper(
-                autocomplete.ModelSelect2(url='persona-autocomplete'),
+                autocomplete.ModelSelect2(url='limited-performer-autocomplete'),
                 reverse_lazy('performer-add', urlconf='gbe.urls')),
             }
 

@@ -12,6 +12,7 @@ from .review_bid_list_view import ReviewBidListView
 from .clone_bid_view import CloneBidView
 
 # personas
+from .limited_performer_autocomplete import LimitedPerformerAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
 from .view_troupe_view import ViewTroupeView
 from .edit_troupe_view import EditTroupeView
