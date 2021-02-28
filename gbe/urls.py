@@ -50,6 +50,8 @@ from gbe.views import (
     ReviewVolunteerView,
     ReviewVolunteerListView,
     SubmitActView,
+    TroupeCreate,
+    TroupeUpdate,
     VendorChangeStateView,
     ViewActView,
     ViewClassView,
@@ -158,11 +160,12 @@ urlpatterns = [
         EditTroupeView, name='troupe_edit'),
     url(r'^troupe/view/(\d+)/?$',
         ViewTroupeView, name='troupe_view'),
-    url(r'^performer/add/$',PerformerCreate.as_view(), name='performer-add'),
+    url(r'^performer/add/$', PerformerCreate.as_view(), name='performer-add'),
     url(r'^performer/(?P<pk>.*)/$',
         PerformerUpdate.as_view(),
         name='performer-update'),
-
+    url(r'^troupe/add/$', TroupeCreate.as_view(), name='troupe-add'),
+    url(r'^troupe/(?P<pk>.*)/$', TroupeUpdate.as_view(), name='troupe-update'),
 
     #  volunteers
     url(r'^volunteer/view/(?P<bid_id>\d+)/?$',

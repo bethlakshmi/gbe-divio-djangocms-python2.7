@@ -8,6 +8,7 @@
     <title>{{page_title}}</title>
 
     <!-- Bootstrap -->
+     {{ form.media.css }}
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
 
     {% render_block "css" %}
@@ -28,8 +29,8 @@
     <div class="container">
       &nbsp;<br><br>
  <ul class="nav nav-tabs" id="inner">
-  <li role="presentation"><a href="{% url 'gbe:performer-add' %}" class="{% if mode == 'performer' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Bio</a></li>
-  <li role="presentation"><a href="" class="{% if mode == 'troupe' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Troupe</a></li>
+  <li role="presentation"><a href="{% url 'gbe:performer-add' %}" class="{% if mode == 'performer' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Performer Bio</a></li>
+  <li role="presentation"><a href="{% url 'gbe:troupe-add' %}" class="{% if mode == 'troupe' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Troupe</a></li>
  </ul>
 <div class="gbe-tab-area">
   <h3 class="gbe-title">{{view_title}}</h3>
@@ -44,10 +45,8 @@
   </form>
 </div>
 &nbsp;<br>
-{% for form in forms %}
- {{ form.media }}
-{% endfor %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ {{ form.media.js }}
 <script>
 (function($) {
     $('#add-form').click(function() {
