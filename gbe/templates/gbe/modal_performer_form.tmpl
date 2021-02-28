@@ -9,7 +9,6 @@
 {% endblock %}
 {% block content %}
 <h2 class="subtitle">{{view_title}}</h2>
-<p>{{view_header_text | safe}}</p>
 
   {% if errors %}
     {% for error in errors %}
@@ -17,12 +16,8 @@
     {% endfor %}
   {% endif %}
 
-   {% if popup_text %}
-   <div class="alert alert-info">{{popup_text |safe }}</div>
-   {% endif %}
    <form action="" method="post" enctype="multipart/form-data">
-  {{ instructions | safe }}
-  <p><font color=red>*</font> indicates a required field</p>
+   <p><font color=red>*</font> indicates a required field</p>
     {% include "form_table.tmpl" %}
   <input type="submit" name="submit" value="Save">
   </form>
