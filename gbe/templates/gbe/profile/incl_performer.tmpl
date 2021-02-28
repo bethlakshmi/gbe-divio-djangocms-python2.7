@@ -17,8 +17,7 @@
   {% else %}
     {{ profile.display_name }} has no stage personae listed.<br>
   {% endif %}
-  <ul class="rightsidebar">
-    <li><a class="gbe-link" href='{% url 'gbe:persona_create' %}'>New Bio</a><br></li>
-    <li><a class="gbe-link" href='{% url 'gbe:troupe_create' %}'>New Troupe</a><br></li>
-  </ul>
+  <br>
+  <a href='{% url 'gbe:persona_create' %}' class="btn gbe-btn-secondary btn-sm">New Bio</a>
+  <a href='{% url 'gbe:troupe_create' %}' class="btn gbe-btn-secondary btn-sm">New Troupe</a>
 </div>

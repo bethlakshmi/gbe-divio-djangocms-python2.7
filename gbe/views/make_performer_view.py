@@ -1,11 +1,18 @@
-from django.views.generic.edit import CreateView, UpdateView
-from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
+from django.views.generic.edit import (
+    CreateView,
+    UpdateView,
+)
+from django.contrib.auth.mixins import (
+    AccessMixin,
+    PermissionRequiredMixin,
+)
+from django_addanother.views import CreatePopupMixin
 from gbe.models import Performer
 from gbe.forms import PersonaForm
 from django.urls import reverse_lazy
 
 
-class PerformerCreate(PermissionRequiredMixin, AccessMixin, CreateView):
+class PerformerCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
     model = Performer
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
@@ -26,6 +33,7 @@ class PerformerCreate(PermissionRequiredMixin, AccessMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['page_title'] = self.page_title
         context['view_title'] = self.view_title
+        context['mode'] = "performer"
         return context
 
 class PerformerUpdate(PermissionRequiredMixin, UpdateView):
