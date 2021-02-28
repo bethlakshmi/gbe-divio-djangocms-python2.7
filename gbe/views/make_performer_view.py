@@ -7,13 +7,13 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django_addanother.views import CreatePopupMixin
-from gbe.models import Performer
+from gbe.models import Persona
 from gbe.forms import PersonaForm
 from django.urls import reverse_lazy
 
 
 class PerformerCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
-    model = Performer
+    model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
@@ -36,8 +36,8 @@ class PerformerCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
         context['mode'] = "performer"
         return context
 
-class PerformerUpdate(PermissionRequiredMixin, UpdateView):
-    model = Performer
+class PerformerUpdate(CreatePopupMixin, PermissionRequiredMixin, UpdateView):
+    model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
