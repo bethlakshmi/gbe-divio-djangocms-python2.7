@@ -74,11 +74,8 @@ def EditTroupeView(request, troupe_id=None):
             messages.success(request, user_message[0].description)
             return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
         else:
-            q = Profile.objects.filter(resourceitem_id=profile.resourceitem_id)
-            form.fields['contact'] = ModelChoiceField(
-                queryset=q,
-                empty_label=None,
-                label=persona_labels['contact'])
+            form.fields['contact'].queryset = Profile.objects.filter(
+                resourceitem_id=profile.resourceitem_id)
             return render(request,
                           'gbe/bid.tmpl',
                           {'forms': [form],
@@ -88,11 +85,8 @@ def EditTroupeView(request, troupe_id=None):
                            'view_header_text': troupe_header_text})
     else:
         form = TroupeForm(instance=troupe, initial={'contact': profile})
-        q = Profile.objects.filter(resourceitem_id=profile.resourceitem_id)
-        form.fields['contact'] = ModelChoiceField(
-            queryset=q,
-            empty_label=None,
-            label=persona_labels['contact'])
+        form.fields['contact'].queryset = Profile.objects.filter(
+            resourceitem_id=profile.resourceitem_id)
         return render(request, 'gbe/bid.tmpl',
                       {'forms': [form],
                        'nodraft': submit_button,

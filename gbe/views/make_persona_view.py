@@ -12,7 +12,7 @@ from gbe.forms import PersonaForm
 from django.urls import reverse_lazy
 
 
-class PerformerCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
+class PersonaCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
     model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
@@ -36,7 +36,7 @@ class PerformerCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
         context['mode'] = "performer"
         return context
 
-class PerformerUpdate(CreatePopupMixin, PermissionRequiredMixin, UpdateView):
+class PersonaUpdate(CreatePopupMixin, PermissionRequiredMixin, UpdateView):
     model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'

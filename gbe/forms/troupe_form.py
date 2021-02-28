@@ -1,7 +1,11 @@
 from django.forms import (
+    ModelChoiceField,
     ModelMultipleChoiceField,
 )
-from gbe.models import Troupe
+from gbe.models import (
+    Profile,
+    Troupe,
+)
 from gbe_forms_text import (
     persona_help_texts,
     persona_labels,
@@ -13,6 +17,10 @@ from dal import autocomplete
 class TroupeForm(PersonaForm):
     required_css_class = 'required'
     error_css_class = 'error'
+    contact = ModelChoiceField(
+        queryset=Profile.objects.all(),
+        empty_label=None,
+        label=persona_labels['contact'])
 
     class Meta:
         model = Troupe

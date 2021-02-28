@@ -36,7 +36,6 @@ from gbe.ticketing_idd_interface import (
 class MakeBidView(View):
     form = None
     fee_link = None
-    popup_text = None
     has_draft = True
     instructions = ''
     payment_form = None
