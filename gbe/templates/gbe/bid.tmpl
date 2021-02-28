@@ -4,6 +4,9 @@
    {{page_title}}
 {% endblock %}
 {% block head %}
+{% for form in forms %}
+ {{ form.media.css }}
+{% endfor %}
     <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
     <script>{% include "tiny-mce-user-settings.tmpl" %}</script>
 {% endblock %}
@@ -39,7 +42,7 @@
    </form>
 {% addtoblock "js" %}
 {% for form in forms %}
- {{ form.media }}
+ {{ form.media.js }}
 {% endfor %}
 <script>
 (function($) {
