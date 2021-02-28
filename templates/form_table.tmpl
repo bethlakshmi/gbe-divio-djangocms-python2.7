@@ -52,11 +52,8 @@
             {% endif %}
 	</label>
 	</div>
-  {% if two_col %}<div class="col-md-7{% if field.field.choices|length > 7 %} long_choice{%endif%}">
-	{% else %}<div class="col-md-8{% if field.field.choices|length > 7 %} long_choice{%endif%}">
-  {% endif %}
-            {{ field }}
-	</div>
+  <div class="{% if two_col %}col-md-7{% else %}col-md-8{% endif %}"> 
+{{ field }}</div>
 	</div>
 	</div>
         </div>
