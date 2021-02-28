@@ -1,10 +1,6 @@
 {% load cms_tags %}
 <p>
 {% if admin_message %}
-    <font color=red>{{admin_message}}</font><br><br>
-{% elif user.is_authenticated %}
-{% static_placeholder 'user_welcome_auth' %}
-{% else %}
-{% static_placeholder 'user_welcome_unauth' %}
+    <font class="gbe-form-error">{{admin_message}}</font><br><br>
 {% endif %}
 </p>

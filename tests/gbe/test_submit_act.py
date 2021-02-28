@@ -24,7 +24,7 @@ class TestSubmitAct(TestCase):
         login_as(act.performer.performer_profile, self)
         response = self.client.get(url, follow=True)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-        self.assertContains(response, "Profile View")
+        self.assertContains(response, "Welcome to GBE")
         self.assertEqual(response.status_code, 200)
 
     def test_submit_act_does_not_exist(self):

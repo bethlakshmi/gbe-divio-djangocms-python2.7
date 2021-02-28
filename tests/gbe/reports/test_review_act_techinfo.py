@@ -62,11 +62,11 @@ class TestReviewActTechInfo(TestCase):
                     args=[self.context.show.eventitem_id]))
         self.assertContains(
             response,
-            "var table = $('#bid_review').DataTable({",
+            "var table = $('#gbe-table').DataTable({",
             msg_prefix="Can't find script for table")
         self.assertContains(
             response,
-            '<table id="bid_review" class="order-column"',
+            '<table id="gbe-table"',
             msg_prefix="Can't find table header")
         self.assertNotContains(response, 'Schedule Acts for this Show')
         self.assertContains(response, self.context.act.b_title)
@@ -167,4 +167,4 @@ class TestReviewActTechInfo(TestCase):
                     urlconf='gbe.reporting.urls',
                     args=[self.context.show.eventitem_id]),
             data={'conf_slug': self.context.conference.conference_slug})
-        self.assertContains(response, '<td class="bid-table">3</td>')
+        self.assertContains(response, '<td>3</td>', html=True)

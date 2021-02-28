@@ -113,7 +113,7 @@ class TestCalendarView(TestCase):
                       urlconf="gbe.scheduling.urls",
                       args=['Conference'])
         response = self.client.get(url)
-        self.assertContains(response, "btn btn-default disabled", 2)
+        self.assertContains(response, "btn disabled", 2)
         self.assertContains(response, "Feb. 6, 2016", 1)
 
     def test_calendar_volunteer_w_default_conf_public_days(self):
@@ -130,7 +130,7 @@ class TestCalendarView(TestCase):
                       args=['Volunteer'])
         data = {'day': "02-06-2016"}
         response = self.client.get(url, data=data)
-        self.assertNotContains(response, "btn btn-default disabled")
+        self.assertNotContains(response, "btn disabled")
 
     def test_calendar_shows_requested_conference(self):
         url = reverse('calendar',
@@ -200,7 +200,7 @@ class TestCalendarView(TestCase):
                       args=['Conference'])
         data = {'day': "02-06-2016"}
         response = self.client.get(url, data=data)
-        self.assertContains(response, "btn btn-default disabled", 2)
+        self.assertContains(response, "btn disabled", 2)
 
     def test_day_before(self):
         '''
@@ -405,8 +405,9 @@ class TestCalendarView(TestCase):
                       args=['Conference'])
         data = {'day': "02-06-2016"}
         response = self.client.get(url, data=data)
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
+        self.assertContains(
+            response,
+            '<a href="#" class="cal-favorite detail_link-disabled')
         self.assertContains(
             response,
             '<div class="col-lg-12 col-md-12 col-sm-12 col-12 teacher">')
@@ -420,8 +421,9 @@ class TestCalendarView(TestCase):
                       args=['General'])
         data = {'day': "02-06-2016"}
         response = self.client.get(url, data=data)
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
+        self.assertContains(
+            response,
+            '<a href="#" class="cal-favorite detail_link-disabled')
         self.assertContains(
             response,
             '<div class="col-lg-12 col-md-12 col-sm-12 col-12 performer">')

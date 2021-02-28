@@ -125,6 +125,7 @@ class ShowCalendarView(View):
                 'title': event.e_title,
                 'location': occurrence.location,
                 'hour': hour,
+                'approval_needed': occurrence.approval_needed,
                 'detail_link': reverse('detail_view',
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.eventitem.pk]),

@@ -19,8 +19,6 @@ from gbe.functions import (
     get_conference_by_slug,
     validate_perms,
 )
-from settings import GBE_DATETIME_FORMAT
-from django.utils.formats import date_format
 
 
 def list_reports(request):

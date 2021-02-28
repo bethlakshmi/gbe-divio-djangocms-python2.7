@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static sekizai_tags %}
+{% block title %}
+   {{page_title}}
+{% endblock %}
+{% block theme %}
+    <link href="{% url 'themes:theme_style' version.pk %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<h2 class="gbe-title">{{title}}</h2>
+<p>{{ instructions | safe }}</p>
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if version_form %}
+    <h4 class="gbe-subtitle">New Theme Settings</h4>
+    {% include "form_table.tmpl" with form=version_form %}
+    {% endif %}
+    {% for value, form in forms %}
+    {% ifchanged value.style_property.selector.used_for %}<h3 class="gbe-subtitle">{{ value.style_property.selector.used_for }}</h3>{% endifchanged %}
+    {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
+    <div class="gbe-text-muted"><em>{{ value.style_property.style_property }}</em></div>
+    {% if value.style_property.value_type == "image" %}
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+    <div class="row">
+      <div class="form-group col-12 col-md-3">
+        <font class="gbe-form-error">{% if form.errors %}
+          <p class="gbe-form-error"> There is an error on the form.</p>
+          {% endif %}
+          {{ form.non_field_errors }}</font>
+        {% include "label_horizontal.tmpl" with field=form.image %}
+      </div>
+      <div class="form-group col-12">
+      {% for radio in form.image %}
+        <div class="form-check-inline image_select_list text-center">
+        <label class="form-check-label radio-label" id="{{ radio.id_for_label }}">
+          {{ radio.choice_label }}<br>{{ radio.tag }}
+        </label></div>{% endfor %}
+      </div>
+      <div class="form-group col-12">
+        {% if form.image.errors %}
+        <label for="{{form.image.name}}">          
+        <font class="gbe-form-error">{{ form.image.errors }}</font>
+        </label>
+      {% else %}&nbsp;{% endif %}
+      </div>
+    </div>
+    <div class="row"><div class="form-group col-12 col-md-3">
+        {% include "label_horizontal.tmpl" with field=form.add_image %}
+      </div>
+      <div class="form-group col-md-9 col-12">
+        {{form.add_image}}
+    {% if form.add_image.errors %}
+      <label for="{{form.add_image.name}}">          
+        <font class="gbe-form-error">{{ form.add_image.errors }}</font>
+      </label>
+    {% else %}&nbsp;{% endif %}
+    </div></div>
+    {% else %}
+    {% include "form_horizontal.tmpl" %}
+    {% endif %}
+    {% endfor %}
+<div class="row">
+  <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7 dropdown">
+    {% if not version_form %}
+    <button type="submit" id="dropdownMenuButton" class="btn gbe-btn-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Clone Version</button>
+    <div class="dropdown-menu px-4 py-3 gbe-form-dropdown" aria-labelledby="dropdownMenuButton">
+        <div class="form-group">
+            <label for="id_name"><font class="gbe-form-required">*</font>Version Name:</label>
+            <input class="form-control" type="text" name="name" value="{{version.name}}" maxlength="128" id="id_name">
+        </div>
+        <div class="form-group">
+            <label for="id_number"><font class="gbe-form-required">*</font> Version Number:</label>
+            <input class="form-control" type="number" name="number" value="{{version.next_version|floatformat:1}}" min="0.1" step="any" id="id_number">
+        </div>
+        <div class="form-group">
+          <input type="submit" name="clone" value="Clone" class="btn gbe-btn-primary" formaction="{% url 'themes:clone_theme' version.pk %}">
+        </div>
+    </div>
+    {% endif %}
+    <input type="submit" name="update" value="Update" class="btn gbe-btn-primary" >
+    <input type="submit" name="finish" value="Finish" class="btn gbe-btn-primary" >
+    <input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" >
+  </div>
+</div>
+</form>
+{% addtoblock "js" %}
+<script src="/static/js/jscolor.js"></script>
+{% endaddtoblock %}
+{% endblock %}

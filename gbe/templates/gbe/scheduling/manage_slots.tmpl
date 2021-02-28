@@ -1,12 +1,11 @@
-<div class=side_box>
-  <h2>Rehearsal Slot Management</h2>
+  <h2 class="gbe-subtitle">Rehearsal Slot Management</h2>
   <p># = Number of Acts Allowed in Slot</p>
   <i class="fa fa-pencil" aria-hidden="true"></i> - Edit &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-clone" aria-hidden="true"></i> - Copy &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-times" aria-hidden="true"></i> - Delete &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-plus" aria-hidden="true"></i> - Create
   <br><br>
-  <table class="event_opps">
+  <table class="striped_table">
     <tr> 
     {% for header in slotactionheaders %}
       <th>{{ header }}</th>
@@ -14,7 +13,7 @@
       <th>Action</th>
     </tr>
     {% for form in slotactionform %}
-    <tr class="{% if changed_id == form.opp_sched_id.value %}changed{% else %}event_opp_row{% endif %}">
+    <tr class="{% if changed_id == form.opp_sched_id.value %}gbe-table-success {% endif %}striped_table_row">
       <form method="POST" action="{{ manage_slot_url }}" enctype="multipart/form-data">
         {% csrf_token %}
 	{% for field in form.visible_fields %}
@@ -32,27 +31,18 @@
 	{% endfor %}
 	  <td>
 	    <div class="btn-group" role="group" aria-label="...">
-	      <a href="#" data-toggle="tooltip" title="Edit">
-                <button class="btn btn-default btn-xs" type="submit" name="edit_slot" value="Edit">
-	          <i class="fa fa-pencil" aria-hidden="true"></i>
-	        </button>
-	      </a>
-	      <a href="#" data-toggle="tooltip" title="Copy">
-  	        <button class="btn btn-default btn-xs" type="submit" name="duplicate_slot" value="Copy">
-	          <i class="fa fa-clone" aria-hidden="true"></i>
-                </button>
-	      </a>
-	      <a href="#" data-toggle="tooltip" title="Delete">
-	        <button class="btn btn-default btn-xs" type="submit" name="delete_slot" value="Delete">
-                  <i class="fa fa-times" aria-hidden="true"></i>
-                </button>
-	      </a>
+          <button data-toggle="tooltip" title="Edit" class="btn gbe-btn-light gbe-btn-xs" type="submit" name="edit_slot" value="Edit">
+	          <i class="fa fa-pencil" aria-hidden="true"></i></button>
+  	      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Copy" type="submit" name="duplicate_slot" value="Copy">
+	          <i class="fa fa-clone" aria-hidden="true"></i></button>
+	      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Delete" type="submit" name="delete_slot" value="Delete">
+              <i class="fa fa-times" aria-hidden="true"></i></button>
 	    </div>
 	  </td>
       </form>	      
     </tr>
     {% endfor %}
-    <tr class="event_opp_row">
+    <tr class="striped_table_row">
       <form method="POST" action="{{ manage_slot_url }}" 
       	    enctype="multipart/form-data">
 	{% csrf_token %}
@@ -60,7 +50,7 @@
 	  <td>
 	    {{ field }}
 	    {% if field.errors %}
-	      <span class="opps-errors">
+	      <span class="opps-errors gbe-form-error">
 		{{ field.errors }}
 	      </span>
 	    {% endif %}
@@ -71,11 +61,8 @@
 	{% endfor %}
  	<td>
 	  <div class="btn-group" role="group" aria-label="...">
-	    <a href="#" data-toggle="tooltip" title="Create New">
-              <button class="btn btn-default btn-xs" type="submit" name="create_slot" value="Create">
-	        <i class="fa fa-plus" aria-hidden="true"></i>
-	      </button>
-	    </a>
+        <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Create New" type="submit" name="create_slot" value="Create">
+	     <i class="fa fa-plus" aria-hidden="true"></i></button>
 	  </div>
 	</td>
 
@@ -83,4 +70,3 @@
     </tr>
   </table>
   <br><br>
-</div>

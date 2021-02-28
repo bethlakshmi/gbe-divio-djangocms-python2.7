@@ -1,12 +1,9 @@
-
 <form action="{% url 'gbe:handle_user_contact_email' %}" 
       method="POST" 
       enctype="multipart/form-data">
     {% csrf_token %}
     <table>
         {{ contact_form }}    
-    </table>
-    <input type="submit" name="submit" value="Submit">
+    </table><br>
+    <input type="submit" name="submit" value="Submit" class="btn gbe-btn-secondary">
 </form>
-
-

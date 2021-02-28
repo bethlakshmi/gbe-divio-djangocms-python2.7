@@ -1,33 +1,35 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}
    Review Staffing for {{area}}
 {% endblock %}
-
 {% block content %}
-
-
-  <h2 class="review-title">Staff Schedules for {{area}}
-    <a href="?filter={{other_option}}" role="button" class="btn btn-primary float-right">Display {{other_option}} Staff</a>{% if edit_link %}
-    <a href="{{edit_link}}" style="margin-right: 4px; "role="button" class="btn btn-primary float-right">Edit</a>{% endif %}</h2>
+<div class="row">
+<div class="col-8 col-xs-12"><h2 class="gbe-title">Staff Schedules for {{area}}</h2></div>
+<div class="col-4 col-xs-12 text-right"><a href="?filter={{other_option}}" role="button" class="btn gbe-btn-primary float-right">Display {{other_option}} Staff</a>{% if edit_link %}
+    <a href="{{edit_link}}" style="margin-right: 4px; "role="button" class="btn gbe-btn-primary float-right">Edit</a>{% endif %}</div>
+</div>
+<div class="row">
+<div class="col-12">
 <p>
-<font color="red">Red text</font> shows a user that has deactivated their account.
+<font class="gbe-form-error">Red text</font> shows a user that has deactivated their account.
 </p>
 <ul>
     {% if area.staff_lead %}<li>Staff Lead - {{area.staff_lead}}</li>{% else %}
         {% for worker in area.people %}
-        <li>{{worker.role}} - {{worker.user.profile}}</li>
+        <li {% if not worker.user.profile.is_active %}class="gbe-form-error"{% endif %}>{{worker.role}} - {{worker.user.profile}}</li>
         {% endfor %}
     {% endif %}
 </ul>
-
+</div></div>
 {% for opp in opps%}
-<div class="panel panel-primary">
-  <div class="panel-heading"><h3>{{ opp.starttime}} - {{ opp.eventitem.event.e_title}}
-    {% if conference.status != "completed" %}<a href="{% url 'scheduling:edit_event' conference.conference_slug opp.pk %}" role="button" class="btn btn-primary float-right">Edit</a>{% endif %}</h3></div>
-  <div class="panel-body"><b>Location:</b>  {{opp.location}}<br>{% if opp.role_count %}{{opp.role_count}}{% endif %}</div>
-  <table class="table">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">{{ opp.starttime}} - {{ opp.eventitem.event.e_title}}
+    {% if conference.status != "completed" %}<a href="{% url 'scheduling:edit_event' conference.conference_slug opp.pk %}" role="button" class="btn gbe-btn-primary float-right">Edit</a>{% endif %}</h2></div>
+  <div class="card-body"><b>Location:</b>  {{opp.location}}<br>{% if opp.role_count %}Max people: {{opp.role_count}}{% endif %}</div>
+  <table class="table gbe-panel-table">
     <tr>
       <th>&nbsp;</th>
       <th>Name</th>
@@ -37,7 +39,7 @@
     </tr>
     {% for contact in opp.people%}
     {% if contact.role in visible_roles %}
-    <tr {% if not contact.user.profile.is_active %}style="color:red;"{% endif %}>
+    <tr {% if not contact.user.profile.is_active %}class="gbe-form-error"{% endif %}>
       <td>{% for role, commit in role_commit_map.items %}{% if role == contact.role %}
         &nbsp;<i class="{{commit.1}}">
           {% endif %}{% endfor %}</td>

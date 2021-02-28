@@ -79,7 +79,7 @@ class TestEditEmail(TestCase):
             ' id="id_send_schedule_change_notifications" />',
             html=True)
         self.assertContains(
-            response, "shadow-red")
+            response, "shadow-highlight")
 
     def test_update_email_missing_preferences(self):
         profile = ProfileFactory()

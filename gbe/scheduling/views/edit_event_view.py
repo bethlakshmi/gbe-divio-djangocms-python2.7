@@ -19,7 +19,6 @@ from gbe_forms_text import (
     role_map,
     event_settings,
 )
-from scheduler.idd import get_occurrence
 from gbe.scheduling.views.functions import (
     process_post_response,
     setup_event_management_form,

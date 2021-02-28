@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 
 {% block head %}
     <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
@@ -7,29 +7,29 @@
 
 {% block content %}
 {% if request.user.is_superuser %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
     <div class="row email-select justify-content-end">
         <form class="form-inline" action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <button class="btn btn-lg email-button" type="submit" name="everyone" value="Everyone">
+        <button class="btn gbe-btn-primary" type="submit" name="everyone" value="Everyone">
         <i class="fas fa-envelope"></i>&nbsp;&nbsp;Email Everyone</button>
         </form>
     </div>
   </div>
 </div>
 {% endif %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      {% if everyone %}<a data-toggle="collapse" href="#collapse1">Select Recipients</a>
-      {% else %}Select Recipients{% endif %}</h3>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      {% if everyone %}<a data-toggle="collapse" href="#collapse1"  class="gbe-panel-link">Select Recipients</a>
+      {% else %}Select Recipients{% endif %}</h2>
   </div>
   {% if everyone %}<div id="collapse1" class="panel-collapse collapse">{% endif %}
-  <div class="panel-body">
-  <font color="red">
+  <div class="card-body">
+  <font class="gbe-form-error">
   {% if selection_form.errors %}
-    <p style= "color:red"> There is an error on the selection form.</p>
+    <p class="gbe-form-error"> There is an error on the selection form.</p>
   {% endif %}
   {{ selection_form.non_field_errors }}</font>
   {% block select_recipent_form %}{% endblock %}
@@ -38,11 +38,11 @@
 </div>
 {% if email_form %}
 <form action="" method="post" enctype="multipart/form-data"> 
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Send Email</h3>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">Send Email</h2>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
     {% if group_filter_note %}
     {{ group_filter_note | safe }}<br/><br/>{% endif %}
       {% include "form_table_wrapper.tmpl" with forms=recipient_info %}
@@ -50,19 +50,17 @@
         {% csrf_token %}
         <input id="id_everyone" name="everyone" type="hidden" value="Everyone" />
       {% endif %}
-      <div class="panel-group">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">
-              <a data-toggle="collapse" href="#to_list">Recipients ({{email_form.to|length}}{% if excluded_count is not None %}, Excluded:  {{excluded_count}}{% endif %})...</a>
+      <div class="card round gbe-panel-list mx-2 my-4">
+        <div class="card-header gbe-bg-light">
+            <h4 class="card-title">
+              <a data-toggle="collapse" href="#to_list" class="gbe-panel-link">Recipients ({{email_form.to|length}}{% if excluded_count is not None %}, Excluded:  {{excluded_count}}{% endif %})...</a>
             </h4>
           </div>
           <div id="to_list" class="panel-collapse collapse">
-            <div class="panel-body">
+            <div class="card-body">
               {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=email_form.to %}
             </div>
           </div>
-        </div>
       </div><!-- end panel group -->
      {% if email_form.sender in email_form.visible_fields %}
        {% include "form_field.tmpl" with field=email_form.sender %}
@@ -74,7 +72,7 @@
      <!-- end subject -->
      {% include "form_field.tmpl" with field=email_form.html_message %}
      <!-- end message -->
-      <input type="submit" class="email-submit" name="send" value="Send">
+      <input type="submit" class="btn gbe-btn-primary float-right" name="send" value="Send">
   </div><!-- end panel body -->
 </div><!-- end panel primary -->
 </form>

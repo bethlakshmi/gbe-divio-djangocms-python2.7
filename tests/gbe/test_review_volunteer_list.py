@@ -223,4 +223,4 @@ class TestReviewVolunteerList(TestCase):
         response = self.client.get(
             self.url,
             {'conf_slug': inactive.b_conference.conference_slug})
-        self.assertContains(response, 'bid-table danger')
+        self.assertContains(response, 'gbe-table-row gbe-table-danger')

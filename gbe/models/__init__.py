@@ -34,3 +34,10 @@ from .act_bid_evaluation import ActBidEvaluation
 from .email_template_sender import EmailTemplateSender
 from .act_casting_option import ActCastingOption
 from .flexible_evaluation import FlexibleEvaluation
+
+# Style stuff
+from .style_version import StyleVersion
+from .style_selector import StyleSelector
+from .style_property import StyleProperty
+from .style_value import StyleValue
+from .user_style_preview import UserStylePreview

@@ -1,13 +1,11 @@
-<div class = 'show_section'>	
+<div class='gbe-medium-light gbe-no-border'>
   {% if shows %}
-    <span class='heading shows'>
-      <b>Shows {{ profile.display_name }} is appearing in:</b>
-    </span><br>
+  <span class='sched_detail'>Shows {{ profile.display_name }} is appearing in:</span><br>
     {% for show, act in shows %}
       {% if show.is_current %}{% ifchanged show %}
         {% if not forloop.first %}</ul></div>{% endif %}
-        <div class='show'> 
-           <a href="{% url 'scheduling:detail_view' show.eventitem_id%}">
+        <div> 
+           <a class="gbe-link" href="{% url 'scheduling:detail_view' show.eventitem_id%}">
             {{ show }}</a>
            <ul>{% endifchanged %}
         <li>{{ act }}</li>

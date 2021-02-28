@@ -1,4 +1,4 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% load static %}
 {% load thumbnail %}
 
@@ -7,35 +7,33 @@
 {% endblock %}
 
 {% block content %} 
-    <H1 class="sched_detail_title">{{event.e_title}}</H1>
-    <div class="sched_block font_regular">
-      <div class="sched_desc">
+<div class="col-12">
+  <H1 class="gbe-title">{{event.e_title}}</H1>
   {{event.e_description |safe}}<br><br>
-      </div>
-      <div class="sched_times container">
+  <div class="sched_times gbe-bg-dark container">
   <div class="col-12 sched-sub-box">
     <div class="col-11 ">
-        <label class="sched_detail">Time:</label>
+      <label>Time:</label>
       {{ occurrence.start_time|date:_("DATETIME_FORMAT")}} -
       {{ occurrence.end_time|date:_("TIME_FORMAT")}}
     </div>
-    <div class="col-11 ">
-      {% for presenter in presenters %}
-        <label class="sched_detail">{{ presenter.role }}:</label>
-        {{ presenter.presenter.name }}<br>
-      {% endfor %}
-</div></div></div></div>
-<div class="event_booking">
-<h4>Please Give Us Your Feedback</h4>
+    <div class="col-11 ">{% for presenter in presenters %}
+      <label>{{ presenter.role }}:</label>
+      {{ presenter.presenter.name }}<br>{% endfor %}
+    </div></div></div></div>
+    <br>
+<div class="col-12 m-3">
+<h3>Please Give Us Your Feedback</h3>
 <p>{{ intro }}</p>
+<br>
 <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-  <font color=red>*</font> indicates a required field
+  <font class="gbe-form-required">*</font> indicates a required field
   {% if form.errors or scheduling_form.errors or tickets.errors %}
-    <p style= "color:red"> There is an error on the form.</p>
+    <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
-  <font color="red">{{ form.non_field_errors }}</font>
+  <font class="gbe-form-error">{{ form.non_field_errors }}</font>
 
 {# Include the visible fields #}
   {% for field in form.visible_fields %}
@@ -43,9 +41,9 @@
       <div class="col-md-6 col-12"> 
   <label for="{{field.name}}" class="control-label">
           {% if field.errors %}
-            <font color="red">!&nbsp;&nbsp;
+            <font class="gbe-form-error">!&nbsp;&nbsp;
     {% elif field.css_classes == 'required' %}
-            <font color="red">*</font>
+            <font class="gbe-form-required">*</font>
           {% endif %} 
           {{ field.label_tag }}
           {% if field.errors %}</font>{% endif %} 
@@ -63,13 +61,14 @@
     <div class="row"><div class="col-md-3 col-12">&nbsp;</div>
       <div class="col-md-9 col-12">
   <label>
-    <font color="red">{{ field.errors }}</font>
+    <font class="gbe-form-error">{{ field.errors }}</font>
         </label>{% endif %}
       </div>
     </div></div>
     {% endfor %}
   <div class="form-row pull-right">
-    <input type="submit" class="next" name="submit" value="Send Evaluation">
+    <input type="submit" name="submit" value="Send Evaluation" class="btn gbe-btn-primary">
   </div>
 </form>
+</div>
 {% endblock %}

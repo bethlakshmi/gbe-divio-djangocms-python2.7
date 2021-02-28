@@ -1,31 +1,31 @@
 
-<div class='act_section'>
+<div class='gbe-bg-dark gbe-no-border'>
 {% if acts %}
-    <span class='heading acts'>
+    <span class='sched_detail'>
       <b>Act Bids</b>
     </span><br>
     {% for act in acts %}
-      <div class='act'>
+      <div>
         {% if act.submitted %}
-	        <i class="fas fa-check-circle text-success"></i> {{ act }} - {{act.get_accepted_display}} 
+	        <i class="fas fa-check-circle gbe-text-success"></i> {{ act }} - {{act.get_accepted_display}} 
           <ul>
             <li> 
-              <a href = '{% url 'gbe:act_view' act.id %}'>View</a> act
+              <a class="gbe-link" href='{% url 'gbe:act_view' act.id %}'>View</a> act
             </li>
             {% if act.get_accepted_display == 'Accepted' and not historical %} 
-	    <li> <a href = '{% url 'gbe:act_tech_wizard' act.id %}'>View/edit</a> 
+	    <li> <a class="gbe-link" href='{% url 'gbe:act_tech_wizard' act.id %}'>View/edit</a> 
 		      Act Tech Info and rehearsal schedule
             </li>
             {% endif %}
         {% elif act.performer.contact == profile %}
-	  <span class="text-danger"><i class="fas fa-arrow-alt-circle-right"></i> 
+	  <span class="gbe-text-danger"><i class="fas fa-arrow-alt-circle-right"></i> 
       <b>{{ act }}</b></span> - {% if act_paid %}Fee has been paid, submit NOW!
       {% else %}Not submitted{% endif %}
 	<ul>
-	    <li><a href = '{% url 'gbe:act_edit' act.id %}'> View/edit </a>
+	    <li><a class="gbe-link" href='{% url 'gbe:act_edit' act.id %}'> View/edit </a>
 	       this act bid</li>{% endif %}
 	  {% if historical and act.performer.contact == profile %}
-      <li><a href='{% url 'gbe:clone_bid' bid_type='Act' bid_id=act.id %}'>Clone this act</a></li>
+      <li><a class="gbe-link" href='{% url 'gbe:clone_bid' bid_type='Act' bid_id=act.id %}'>Clone this act</a></li>
     {% endif %}
 	  </ul></div>
     {% endfor %}
@@ -35,7 +35,7 @@
 <div class="container">
   <div class="row">
     <div class="col text-center">
-      <a class="btn btn-dark" role="button" href='{% url 'gbe:act_create' %}'>Propose Act</a>
+      <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:act_create' %}'>Propose Act</a>
     </div>
   </div>
 </div><br>

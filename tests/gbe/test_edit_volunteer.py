@@ -214,6 +214,7 @@ class TestEditVolunteer(TestGBE):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<font color="red"><ul class="errorlist">' +
+            '<font class="gbe-form-error"><ul class="errorlist">' +
             '<li>Select a valid choice. bad_data is not one of ' +
-            'the available choices.</li></ul></font>')
+            'the available choices.</li></ul></font>',
+            html=True)

@@ -1,4 +1,4 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% block title %}
   Great Burlesque Exposition: Fashion Fair
 {% endblock %}
@@ -9,16 +9,14 @@
 
 {% block content %}
 
-   <H1 class="subtitle">Shop 'til You Drop!</H1>
-   <div class="body font_regular">
+   <h1 class="gbe-subtitle">Shop 'til You Drop!</h1>
       {{ user_message.description|safe}}
-   </div>
 {% if featured_vendors %}
     <section id="team" class="section">
       <div class="container">
         <div class="row">
-          <div class="col-md-12 perf-div">
-            <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Featured Vendors</h2>
+          <div class="col-md-12 gbe-header-band">
+            <h2 class="gbe-head fadeInUp" data-wow-delay="0s">Featured Vendors</h2>
           </div></div>
     {% include "gbe/vendor_box.tmpl" with vendors=featured_vendors featured=1%}
       </div>
@@ -27,8 +25,8 @@
     <section id="team" class="section">
       <div class="container">
         <div class="row">
-          <div class="col-md-12 perf-div">
-            <h2 class="section-title perf-head fadeInUp" data-wow-delay="0s">Vendors</h2>
+          <div class="col-md-12 gbe-header-band">
+            <h2 class="gbe-head fadeInUp" data-wow-delay="0s">Vendors</h2>
           </div></div>
 {% include "gbe/vendor_box.tmpl" with featured=0%}
       </div>

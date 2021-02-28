@@ -265,7 +265,11 @@ class TestCopyOccurrence(TestGBE):
         self.assertContains(
             response,
             '<option value="%d" selected>' % another_day.pk)
-        self.assert_hidden_value(response, "id_room", "room", self.context.room.pk)
+        self.assert_hidden_value(
+            response,
+            "id_room",
+            "room",
+            self.context.room.pk)
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
             show_context.opportunity.e_title,
@@ -482,7 +486,7 @@ class TestCopyOccurrence(TestGBE):
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
-        self.assertNotContains(response, "bid-table approval_needed")
+        self.assertNotContains(response, "approval_needed")
 
     def test_copy_child_not_like_parent(self):
         another_day = ConferenceDayFactory()

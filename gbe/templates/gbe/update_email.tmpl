@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
 {% load recaptcha2 %}
 {% block title %}{{ title }}{% endblock %}
@@ -6,9 +6,8 @@
   {% recaptcha_init %}
 {% endblock %}
 {% block content %}
-<p class="vanilla">
-<span class='header'><h3>{{ header }}</h3></span><br>
-
+<h3 class="gbe-title">{{ header }}</h3>
+<p>
 {{ email_note }}
 </p>
  
@@ -16,16 +15,16 @@
 <div class="container">
 <div class="row">
 <div class="col-md-12 col-lg-6">
-<div class="card card-body bg-light {% if email_focus %}shadow border-danger{% endif %}">
-  {% if view_title %}<h3>{{view_title}}</h3>{% endif %}
+<div class="card card-body gbe-bg-light {% if email_focus %}gbe-box-shadow gbe-border-danger{% endif %}">
+  {% if view_title %}<h3 class="gbe-subtitle">{{view_title}}</h3>{% endif %}
   {% if email_form.errors %}
-    <p style= "color:red"> There is an error on the form.</p>
+    <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
   {% for hidden in email_form.hidden_fields %}
     {{ hidden }}
   {% endfor %}
   {% for field in email_form.visible_fields%}
-  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
+  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %}">
     <div class="col-lg-2 col-md-2 col-xs-2 text-right">{% if field.label == "" %}<br>{% endif %}
     {{ field }}</div>
     <div class="col-lg-10 col-md-9 col-xs-9">
@@ -36,7 +35,7 @@
           {{ field.help_text }}
           </span></span>{% endif %}
       {% if field.errors %}<br>
-      <font color="red">{{ field.errors }}</font>{% endif %}</div>
+      <font class="gbe-form-error">{{ field.errors }}</font>{% endif %}</div>
   </div>
   {% endfor %}
   {% include "form_table.tmpl" %}
@@ -44,6 +43,6 @@
 </div>
 </div>
 </div>
-<br><input type="submit" value="{{button}}"> 
+<br><input type="submit" value="{{button}}" class="btn gbe-btn-primary"> 
 </form>
 {% endblock %}

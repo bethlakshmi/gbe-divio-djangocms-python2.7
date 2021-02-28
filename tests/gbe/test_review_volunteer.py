@@ -68,10 +68,12 @@ class TestReviewVolunteer(TestCase):
             url,
             data={'conf_slug': volunteer.b_conference.id})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
         self.assertContains(response, 'Review Information')
-        self.assertContains(response, '<h3> %s </h3>' %
-                            volunteer.b_conference.conference_name)
+        self.assertContains(
+            response,
+            '<h2 class="review-title gbe-title">Bid Information - %s</h2>' % (
+                volunteer.b_conference.conference_name),
+            html=True)
 
     def test_review_volunteer_coordinator(self):
         volunteer = VolunteerFactory()
@@ -109,7 +111,7 @@ class TestReviewVolunteer(TestCase):
         data = self.get_form(volunteer, self.coordinator)
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
-        html_tag = '<h2 class="review-title">%s</h2>'
+        html_tag = '<h2 class="gbe-title">%s</h2>'
         title_string = ("Bid Information for %s" %
                         volunteer.b_conference.conference_name)
         html_title = html_tag % title_string

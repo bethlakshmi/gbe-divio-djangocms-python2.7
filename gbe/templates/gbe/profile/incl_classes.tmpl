@@ -1,12 +1,10 @@
-<div class = 'class_section'>
+<div class='gbe-medium-light gbe-no-border'>
   {% if proposed_classes %} 
-  <span class='heading classes'> 
-    <b>Class Bids</b>
-  </span><br>
+  <span class='sched_detail'>Class Bids</span><br>
     {% for class in proposed_classes %}
-      <div class='class'>
+      <div>
         {% if class.submitted %}
-          <a href = '{% url 'gbe:class_view' class.id%}'> {{ class }} </a>
+          <a class="gbe-link" href='{% url 'gbe:class_view' class.id%}'> {{ class }} </a>
           (Click to view) 
           {% for value, state in acceptance_states %}
             {% if value == class.accepted %}
@@ -15,17 +13,17 @@
           {% endfor %}
           <br>
         {% else %}
-       	  <a href='{% url 'gbe:class_edit' class.id %}'>{{ class }} </a>
+       	  <a class="gbe-link" href='{% url 'gbe:class_edit' class.id %}'>{{ class }} </a>
 	  (Click to edit)<br>
         {% endif %}
       </div>          
       {% for alert in class.alerts %}
-        <span class='alert'>{{alert | safe }}</a>
+        <span class='gbe-alert'>{{alert | safe }}</a>
       {% endfor %}
 
     {% if historical %}
     <ul>
-      <li><a href='{% url 'gbe:clone_bid' bid_type='Class' bid_id=class.id %}'>Clone this class</a></li>
+      <li><a class="gbe-link" href='{% url 'gbe:clone_bid' bid_type='Class' bid_id=class.id %}'>Clone this class</a></li>
     </ul>
     {% endif %}
   {% endfor %}
@@ -36,7 +34,7 @@
 <div class="container">
   <div class="row">
     <div class="col text-center">
-      <a class="btn btn-dark" role="button" href='{% url 'gbe:class_create' %}'>Propose Class</a>
+      <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:class_create' %}'>Propose Class</a>
     </div>
   </div>
 </div><br>

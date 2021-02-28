@@ -47,7 +47,8 @@ class TestScheduling(TestGBE):
             x += 1
         self.assertContains(
             response,
-            '<a data-toggle="collapse" href="#collapse1">')
+            '<a data-toggle="collapse" href="#collapse1" ' +
+            'class="gbe-panel-link">')
         self.assertContains(response, checked_button, html=True)
 
     def assert_role_choice(self, response, role_type):

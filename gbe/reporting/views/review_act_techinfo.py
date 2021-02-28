@@ -34,9 +34,16 @@ def review_act_techinfo(request, show_id=None):
     # I can still show a list of shows this way.
     show = None
     acts = []
+    columns = None
     scheduling_link = ''
 
     if show_id:
+        columns = ['Order',
+                   'Act',
+                   'Performer',
+                   'Rehearsal',
+                   'Music',
+                   'Action']
         show = get_object_or_404(Show, eventitem_id=show_id)
         response = get_people(foreign_event_ids=[show.eventitem_id],
                               roles=["Performer"])
@@ -78,6 +85,7 @@ def review_act_techinfo(request, show_id=None):
                   'gbe/report/act_tech_review.tmpl',
                   {'this_show': show,
                    'acts': acts,
+                   'columns': columns,
                    'all_shows': Show.objects.filter(e_conference=conference),
                    'conference_slugs': conference_slugs(),
                    'conference': conference,

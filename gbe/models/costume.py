@@ -1,4 +1,5 @@
 import pytz
+from settings import GBE_TABLE_FORMAT
 from django.db.models import (
     ForeignKey,
     CASCADE,
@@ -12,7 +13,6 @@ from django.core.validators import (
     MinValueValidator,
     MaxValueValidator
 )
-from django.utils.formats import date_format
 from gbe.models import (
     Biddable,
     Persona,
@@ -81,7 +81,7 @@ class Costume(Biddable):
         return [name,
                 self.b_title,
                 self.act_title,
-                date_format(self.updated_at, 'DATETIME_FORMAT'),
+                self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance_states[self.accepted][1]]
 
     @property

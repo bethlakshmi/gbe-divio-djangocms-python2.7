@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User
 from post_office.models import EmailTemplate
 from factory import (
+    LazyAttribute,
+    RelatedFactory,
+    SelfAttribute,
     Sequence,
     SubFactory,
-    RelatedFactory,
-    LazyAttribute,
-    SelfAttribute
 )
 from factory.django import (
     DjangoModelFactory,
@@ -394,3 +394,48 @@ class StaffAreaFactory(DjangoModelFactory):
 
     class Meta:
         model = conf.StaffArea
+
+
+class StyleVersionFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleVersion
+    name = Sequence(lambda n: 'Style Version %d' % n)
+    number = 1.0
+
+
+class StyleSelectorFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleSelector
+    selector = Sequence(lambda n: 'style_selector_%d' % n)
+    used_for = "General"
+
+
+class StylePropertyFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleProperty
+    selector = SubFactory(StyleSelectorFactory)
+    style_property = Sequence(lambda n: 'style_property_%d' % n)
+    value_type = "rgba"
+
+
+class StyleValueFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleValue
+    style_property = SubFactory(StylePropertyFactory)
+    style_version = SubFactory(StyleVersionFactory)
+    value = "rgba(1,1,1,0)"
+
+
+class StyleValueImageFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleValue
+    style_property = SubFactory(StylePropertyFactory, value_type="image")
+    style_version = SubFactory(StyleVersionFactory)
+    value = ""
+
+
+class UserStylePreviewFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.UserStylePreview
+    version = SubFactory(StyleVersionFactory)
+    previewer = SubFactory(UserFactory)

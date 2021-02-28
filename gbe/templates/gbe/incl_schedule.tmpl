@@ -1,12 +1,9 @@
 <div class = "schedule_section">
-  <h3>{% if not historical %}
-     <a href="{% url 'scheduling:volunteer_signup' %}" style="padding:1px 5px;" class="btn btn-primary btn-sm float-right">Volunteer</a>{%endif%}
-    {% if profile.display_name %}
+  {% if not historical %}
+     <a href="{% url 'scheduling:volunteer_signup' %}" style="padding:1px 5px;" class="btn gbe-btn-primary btn-sm float-right">Volunteer</a>{%endif%}
+  <h3 class="gbe-title">{% if profile.display_name %}
       {{ profile.display_name }}'s
-    {% else %}
-       Your
-     {% endif %} 
-       Schedule
+    {% else %}Your{% endif %} Schedule
   </h3>	
     {% for booking in bookings %}
       {% with cs=booking.conference.status %}
@@ -25,13 +22,12 @@
             <i class="fa fa-star" aria-hidden="true"></i></a>
 	    {% endif %}
             {{booking.starttime}}, 
-            <a href="{% url 'scheduling:detail_view' booking.eventitem_id%}">
-            {{ booking.title }}
-	    </a>
+          <a href="{% url 'scheduling:detail_view' booking.eventitem_id%}" class="gbe-link">
+            {{ booking.title }}</a>
 	    {% if not historical %}
 	      {% if booking.role == "Teacher" or booking.role == "Moderator" %}
-              <a class="bid-button" href="#" data-toggle="modal" data-target="#Modal{{booking.eventitem_id}}" data-backdrop="true" title="View Attendee Contact Info">
-		<span class="badge">{{ booking.interested|length }}</span>
+              <a href="#" data-toggle="modal" data-target="#Modal{{booking.eventitem_id}}" data-backdrop="true" title="View Attendee Contact Info">
+		<span class="badge gbe-badge">{{ booking.interested|length }}</span>
 	      </a>
               {% include "gbe/interest_list.tmpl" with class=booking %}
 	    {% endif %}{% endif %}

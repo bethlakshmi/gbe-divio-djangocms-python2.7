@@ -1,21 +1,10 @@
-{% extends 'base.tmpl' %}
+{% extends 'gbe/gbe_table.tmpl' %}
 {% load gbe_tags %}
-{% load static sekizai_tags %}
-
 {% block title %}
    Act Tech Report
 {% endblock %}
-
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
-{% endblock %}
-{% block content %}
-
-
-  <p class="vanilla">{{title}} </p>
-  
-  <h2 class="review-title">{% if this_show %}Act Tech Info for {{this_show}}
+{% block before_table %}
+  <h2 class="review-title gbe-title">{% if this_show %}Act Tech Info for {{this_show}}
   {% else %}Pick the Show{% endif %}</h2>
   <br/>
       {% include "conference_picker.tmpl" %}
@@ -33,8 +22,8 @@
     <a href="{{scheduling_link}}">Schedule Acts for this Show</a>
   {% endif %}
 <br><br>
-<span class="error_row">Highlighted text</span> reflects incomplete acts.<br>
-<span class="error_row"><b>Bold and red names</b></span> reflects acts with
+<span class="gbe-form-error">Highlighted text</span> reflects incomplete acts.<br>
+<span class="gbe-form-error gbe-inactive">Bold and red names</span> reflects acts with
 deactivated users.<br>
 
   {% if messages %}
@@ -42,99 +31,44 @@ deactivated users.<br>
     alert("{% for message in messages %}{{message.tags|capfirst}}: {{message}}\n{% endfor %}");
       </script>
   {% endif %}
-
-  {% if acts %}
-  <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
-  press "Shift" to sort a secondary column.</div>
-  <br/>
-  <div>
-    Toggle column(s):
-    <a class="toggle-vis" data-column="0">
-	# (Order)</a> -
-    <a class="toggle-vis" data-column="1">
-	Act</a> -
-      <a class="toggle-vis" data-column="2">
-	Performer</a> -
-      <a class="toggle-vis" data-column="3">
-	Contact Email</a> -
-      <a class="toggle-vis" data-column="4">
-	Rehearsal</a> -
-      <a class="toggle-vis" data-column="5">
-	Music</a> -
-      <a class="toggle-vis" data-column="6">
-	Action</a>
-  </div>
-  <br/>
-  <table id="bid_review" class="order-column" cellspacing="0" width="100%">
-    <thead>
-      <tr class="bid-table">
-        <th class="bid-table" >#</th>
-        <th class="bid-table" >Act</th>
-        <th class="bid-table" >Performer</th>
-        <th class="bid-table" >Rehearsal</th>
-        <th class="bid-table" >Music</th>
-        <th class="bid-table" >Action</th>
-      </tr>
-    </thead>
-    <tfoot>
-      <tr class="bid-table">
-        <th class="bid-table" >#</th>
-        <th class="bid-table" >Act</th>
-        <th class="bid-table" >Performer</th>
-        <th class="bid-table" >Rehearsal</th>
-        <th class="bid-table" >Music</th>
-        <th class="bid-table" >Action</th>
-      </tr>
-    </tfoot>
-    <tbody>
+  {% endblock %}
+  {% block tbody %}
     {% for act in acts %}
-      <tr  {% if not act.act.tech.is_complete  %}class="error_row"{%else%} class="bid-table"{% endif %} >
-          <td class="bid-table">{% if act.order %}{{ act.order }}{% endif %}</td>
-	  <td class="bid-table">{{ act.act.b_title }}</td>
-	  <td class="bid-table">
-	    {% if not act.act.performer.contact.user_object.is_active  %}
-	      <span class="error_row" class="bid-table"><b>
-	    {% endif %}
-	      {{ act.act.performer }}
-	    {% if not act.act.performer.contact.user_object.is_active  %}
-	      - INACTIVE</b></span>
-	    {% endif %}<br>
-      <a href='mailto:{{act.act.performer.contact.user_object.email}}'>
-            {{act.act.performer.contact.user_object.email}}</a></td>
-	  <td class="bid-table">{% for rehearsal in act.rehearsals %}
-            {{rehearsal.start_time}}<br>
-            {%endfor%}
-          </td>
-
-	  <td class="bid-table">
-            {% if act.act.tech.track %}
-            <a href="{{act.act.tech.track.url}}">{{act.act.tech.track.name | display_track_title:20 }}</a>
-            {% elif act.act.tech.confirm_no_music %}
+    <tr  class="gbe-table-row {% if not act.act.tech.is_complete  %}gbe-form-error{% endif %}" >
+      <td>{% if act.order %}{{ act.order }}{% endif %}</td>
+	    <td>{{ act.act.b_title }}</td>
+	    <td>{% if not act.act.performer.contact.user_object.is_active  %}
+        <span class="gbe-form-error gbe-inactive">
+        {% endif %}{{ act.act.performer }}
+        {% if not act.act.performer.contact.user_object.is_active  %}- INACTIVE</span>
+        {% endif %}<br>
+        <a href='mailto:{{act.act.performer.contact.user_object.email}}' class="gbe-table-link">{{act.act.performer.contact.user_object.email}}</a></td>
+	    <td>{% for rehearsal in act.rehearsals %}{{rehearsal.start_time}}<br>{%endfor%}</td>
+      <td>{% if act.act.tech.track %}
+            <a href="{{act.act.tech.track.url}}" class="gbe-table-link" >{{act.act.tech.track.name | display_track_title:20 }}</a>
+          {% elif act.act.tech.confirm_no_music %}
             No audio track needed
-            {% else %}
-            <span class="error_row">No track provided</span>
-            {% endif %}
+          {% else %}
+            <span class="gbe-form-error">No track provided</span>
+          {% endif %}
           </td>
-          <td class="bid-table">
-  <div class="btn-group">
-    <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" title="View Tech Info" class="btn btn-default btn-sm">
-        <i class="fa fa-eye"></i></a>
+      <td><div class="btn-group">
+    <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" title="View Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-eye"></i></a>
   {% if act.act.video_link and act.act.video_choice != "1" %}
-    <a href="{{ act.act.video_link }}" title="Watch Act Video" class="btn btn-default btn-sm"><i class="fas fa-video"></i></a>{% endif %}
-	  {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}" title="Edit Act Tech Info" class="btn btn-default btn-sm"><i class="icon-pencil"></i></a>
+    <a href="{{ act.act.video_link }}" title="Watch Act Video" class="btn gbe-btn-table btn-sm"><i class="fas fa-video"></i></a>{% endif %}
+	  {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}" title="Edit Act Tech Info" class="btn gbe-btn-table btn-sm"><i class="icon-pencil"></i></a>
     <form action="{% url 'gbe:act_changestate' act.act.id%}" method="post">
       {% csrf_token %}
       <input type="hidden" id="id_accepted" name="accepted" value="4">
       <input type="hidden" id="id_next" name="next" value="{{ request.get_full_path }}">
-    <button title="Remove Act from Show" type="submit" class="btn btn-default btn-sm">
+    <button title="Remove Act from Show" type="submit" class="btn gbe-btn-table btn-sm">
         <i class="icon-trash"></i></button></form>{% endif %}</div>
 	  </td>
       </tr>
-
-    {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
+  {% endfor %}
+{% endblock %}
+{% block after_table %}
+  {% if not acts %}
     <br>
     There are no available acts.  That may mean that:
     <ul>
@@ -142,28 +76,4 @@ deactivated users.<br>
     <li>There are no acts in the show - check bid review for acts</li>
     <li>The show identified does not exist - please pick from the list above...</li>
     </ul>
-{% endif %}
-{% addtoblock "js" %}
-  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-  <script>
-  $(document).ready(function() {
-    var table = $('#bid_review').DataTable({
-      "paging": false,
-      "columnDefs": [
-        { "width": "5%", "targets": 0 }
-      ]
-    } );
- 
-    $('a.toggle-vis').on( 'click', function (e) {
-        e.preventDefault();
- 
-        // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
- 
-        // Toggle the visibility
-        column.visible( ! column.visible() );
-    } );
-  } );
-  </script>
-{% endaddtoblock %}
-{% endblock %}
+{% endif %}{% endblock %}

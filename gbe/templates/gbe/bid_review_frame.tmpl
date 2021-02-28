@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}
@@ -8,14 +8,13 @@
 {% block content %}
   
   {% if form.errors %}
-    <p style= "color:red"> There is an error on the form.  </p>
+    <p class="gbe-form-error"> There is an error on the form.  </p>
   {% endif %}
   <p class="vanilla">{{title}} </p>
-  <div class="review-pane">
-    <h2 class="review-title">Bid Information</h2>
-    <h3> {{ conference.conference_name }} </h3> 
+  <div class="border_box review-pane gbe-bg-light">
+    <h2 class="review-title gbe-title">Bid Information - {{ conference.conference_name }}</h2>
     {% if old_bid %}
-    <h3> This bid is for a conference which has already happened </h3>
+    <h3 class="gbe-subtitle"> This bid is for a conference which has already happened </h3>
     {% endif %}
 <div class="review container">
   {% if readonlyform %}
@@ -35,10 +34,10 @@
     {% if actionURL %}
     {% block review_results %}
     {% endblock %}
-    <div class="side_box col-lg-5 col-md-4 col-sm-12">
-      <h2>Bid Control for Coordinator</h2>
+    <div class="border_box gbe-bg-light col-lg-4 col-md-5 col-sm-12">
+      <h2 class="gbe-title">Bid Control for Coordinator</h2>
         {% if actionform.errors %}
-        <p style= "color:red"> There is an error on the form.  </p>
+        <p class="gbe-form-error"> There is an error on the form.  </p>
           {% for field in actionform.visible_fields %}
             <ul>
               {% if field.errors %}
@@ -53,7 +52,7 @@
           {{ actionform.as_table }}
         </table>
         <br><br>
-        <input type="submit" value="Submit Form"><br><br>
+        <input type="submit" value="Submit Form" class="gbe-btn-primary"><br><br>
         </form>
     </div>
     {% endif %}

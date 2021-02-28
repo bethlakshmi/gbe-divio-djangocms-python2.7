@@ -1,18 +1,17 @@
-{% load static sekizai_tags %}
+{% load sekizai_tags %}
 {% comment %}
 
 included in event edit flow. Show WorkerAllocationForms
 
 {% endcomment %}
 
-<div class=side_box>
-  <h2>Volunteer Allocation </h2>
+  <h2 class="gbe-subtitle">Volunteer Allocation </h2>
   <p>Note that removing the worker name will remove the original worker from the volunteer assignments.</p>
   <i class="fa fa-pencil" aria-hidden="true"></i> - Edit &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-times" aria-hidden="true"></i> - Delete &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-plus" aria-hidden="true"></i> - Create
   <br><br>
-  <table class="event_opps">
+  <table class="striped_table">
     <tr> 
     {% for header in worker_alloc_headers %}
       <th> {{ header }} </th>
@@ -20,7 +19,7 @@ included in event edit flow. Show WorkerAllocationForms
       <th>Action</th>
     </tr>
     {% for role_commit, form in worker_alloc_forms %}
-    <tr class="{% if changed_id == form.alloc_id.value %}changed{% else %}event_opp_row{% endif %}">
+    <tr class="{% if changed_id == form.alloc_id.value %}gbe-table-success {% endif %}striped_table_row">
       <form method="POST" action="{{manage_worker_url}}" 
       	    enctype="multipart/form-data">
         {% csrf_token %}
@@ -30,7 +29,7 @@ included in event edit flow. Show WorkerAllocationForms
             {{ field }}
           {% if field.errors %}
             <br>
-            <font color="red">{{ field.errors }}</font>
+            <font class="gbe-form-error">{{ field.errors }}</font>
           {% endif %}
 	  </td>
 	{% endfor %}	    	
@@ -40,57 +39,27 @@ included in event edit flow. Show WorkerAllocationForms
 	  {% if form.alloc_id.value > 0 and form.alloc_id.value != "-1" %}
 	  <td>
 	    <div class="btn-group" role="group" aria-label="...">
-	      <a href="#" data-toggle="tooltip" title="Edit">
-                <button class="btn btn-default" type="submit" name="edit" value="Edit">
-	          <i class="fa fa-pencil" aria-hidden="true"></i>
-	        </button>
-	      </a>
-	      <a href="#" data-toggle="tooltip" title="Delete">
-	        <button class="btn btn-default" type="submit" name="delete" value="Delete">
-                  <i class="fa fa-times" aria-hidden="true"></i>
-                </button>
-	      </a>
+        <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Edit" type="submit" name="edit" value="Edit">
+	         <i class="fa fa-pencil" aria-hidden="true"></i></button>
+	      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Delete" type="submit" name="delete" value="Delete">
+           <i class="fa fa-times" aria-hidden="true"></i></button>
 	    </div>
 	  </td>
 	  {% else %}
 	  <td>
 	  <div class="btn-group" role="group" aria-label="...">
-	    <a href="#" data-toggle="tooltip" title="Create New">
-              <button class="btn btn-default" type="submit" name="create" value="Create">
-	        <i class="fa fa-plus" aria-hidden="true"></i>
-	      </button>
-	    </a>
+      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Create New" type="submit" name="create" value="Create">
+	        <i class="fa fa-plus" aria-hidden="true"></i></button>
 	  </div>
 	  </td>
 	  {% endif %}
       </form>	      
     </tr>
   {% endfor %}
-
   </table>
-  <hr>
-</div>
+  <br>
+
 {% addtoblock "js" %}
-  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-  <script>
-  $(document).ready(function() {
-    var table = $('#volunteer_info').DataTable( {
-        "order": [[ 3, "desc" ],
-		  [ 1, "desc" ],
-		  [ 2, "asc" ]]
-    } );
-
-    $('a.toggle-vis').on( 'click', function (e) {
-        e.preventDefault();
-
-        // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
-
-        // Toggle the visibility
-        column.visible( ! column.visible() );
-    } );
-} );
-  </script>
 {{ worker_alloc_forms.0.1.media }}
 <script>
 (function($) {

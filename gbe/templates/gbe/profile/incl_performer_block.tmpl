@@ -1,34 +1,24 @@
 {% load thumbnail %}
-<div class='performer'>
+<div>
   {% if performer.img %}
     <div class="gbe_thumb_block">
-    <button role="button"
-    data-toggle="modal"
-    data-target="#performer-promo-image-{{performer.pk}}">
+    <button role="button" class="gbe_thumb_button" data-toggle="modal" 
+     data-target="#performer-promo-image-{{performer.pk}}">
       <img src="{% thumbnail performer.img 20x20 crop upscale subject_location=item.img.subject_location %}"
        class="gbe_thumbnail">
       </button>
     </div>
-     <div class="modal fade"
-       id="performer-promo-image-{{performer.pk}}"
-       tabindex="-1"
-       role="dialog">
-       <div class="modal-dialog" role="document"        style="width:550px">
-         <div class="modal-content">
-           <div class="modal-header">
-             <button type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close">
-                <span aria-hidden="true">
-                  &times;
-      	        </span>
+     <div class="modal" id="performer-promo-image-{{performer.pk}}" tabindex="-1" role="dialog">
+       <div class="modal-dialog modal-dialog-centered" role="document">
+         <div class="modal-content gbe-modal-content">
+           <div class="modal-header gbe-modal-header">
+            <h3 class="gbe-title">{{ performer }}</h3>
+             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
              </button>
            </div>
-           <div class="modal-body">
-	   <img src="{{performer.img.url}}"
-		class="profile-modal"
-		style="width:500px;max-width:500px;">
+           <div class="modal-body mx-auto">
+	   <img src="{% thumbnail performer.img 450x450 crop upscale subject_location=item.img.subject_location %}">
            </div>
          </div>
        </div>
@@ -38,17 +28,17 @@
   {% endif %}
   <div class="performer_text">
     {% if performer.contact == profile %}
-      <a href='{% url edit_view_name performer.resourceitem_id %}'>
+      <a class="gbe-link" href='{% url edit_view_name performer.resourceitem_id %}'>
         {{ performer }}
       </a><br>
     (Click to edit)
     {% else %}
-      <a href='{% url view_name performer.resourceitem_id %}'>
+      <a class="gbe-link" href='{% url view_name performer.resourceitem_id %}'>
         {{ performer }}
       </a><br>
     {% endif %}
   </div>
 </div>
 {% for alert in performer.alerts %}
-  <span class='alert'>{{alert | safe}} </span><br>
+  <span class='gbe-alert'>{{alert | safe}} </span><br>
 {% endfor %}

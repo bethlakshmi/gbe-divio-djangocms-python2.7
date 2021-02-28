@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}
@@ -8,12 +8,13 @@
 {% block content %}
 {{ dynamic_message | safe }}<br><br>
 <div class="container"><div class="row"><div class="col-lg-8"><table class="table">
-	<thead class="thead-dark"><tr><th>Item</th><th>Price</th></tr></thead>
+	<thead><tr class="gbe-table-header"><th>Item</th><th>Price</th></tr></thead>
 	<tbody>{% for item in cart_items %}
- 	    <tr><td>{{item.0}}</td><td>${{item.1}}</td></tr>{% endfor %}
+ 	    <tr class="gbe-table-row"><td>{{item.0}}</td><td>${{item.1}}</td></tr>{% endfor %}
  	</tbody>
 	<tfoot><tr><th>Total:</th><th>${{total}} (USD)</th></tr></tfoot>
 </table></div></div></div>
-
+<span class="paypal-button">
 {{paypal_button.render}}
+</span>
 {% endblock %}

@@ -1,19 +1,18 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<p class="vanilla">
-<span class='header'><h3>{{ header }}</h3></span><br>
-
+<h3 class="gbe-title">{{ header }}</h3><br>
+<p>
 {{ email_note }}
 </p>
  
 <form method="POST" action="" enctype="multipart/form-data">
   {% for form in left_forms %}
     {% if form.errors %}
-      <p style= "color:red"> There is an error on the form.  </p>
+      <p class="gbe-form-error"> There is an error on the form.  </p>
     {% endif %}
   {% endfor %}
 <div class="container">
@@ -24,10 +23,10 @@
   {% endfor %}
 </div>
 <div class="col-md-6">
-<div class="card card-body bg-light {% if email_focus %}shadow border-danger{% endif %}">
-  <h3>Email Options</h3>
+<div class="card card-body gbe-bg-light">
+  <h3 class="gbe-subtitle">Email Options</h3>
   {% for field in email_form.visible_fields%}
-  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-red{% endif %}">
+  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %}">
     <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
     <div class="col-lg-11 col-md-10 col-xs-10">
       {{ field.label }}{% if field.help_text %}
@@ -46,7 +45,7 @@
 </div>
 </div>
 </div>
-  <input type="submit" value="{{button}}"> 
+  <input type="submit" value="{{button}}" class="btn gbe-btn-primary"> 
 
 </form>
 

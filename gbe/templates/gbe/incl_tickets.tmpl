@@ -1,6 +1,6 @@
 
 <div class = 'ticket_section'>
-  <h3>
+  <h3 class="gbe-title">
     {% if profile.display_name %}
       {{ profile.display_name }}'s
     {% else %}
@@ -9,12 +9,10 @@
   </h3>	
   {% if tickets %}
     {% for conf in tickets %}
-      <div class='conf_tickets'>
-      {{conf.conference}}:<br>
+      <div><span class='sched_detail'>
+      {{conf.conference}}:</span><br>
       {% for ticket in conf.tickets %}
-        <div class='ticket'>
-	{{ticket.title}} - {{ticket.number_of_tickets}} 
-        </div> 
+    	&nbsp;&nbsp;&nbsp;{{ticket.title}} - {{ticket.number_of_tickets}} 
       {% endfor %}
       </div>
     {% endfor %}

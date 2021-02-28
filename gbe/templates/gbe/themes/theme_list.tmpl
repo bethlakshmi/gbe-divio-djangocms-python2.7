@@ -1,0 +1,29 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% load static sekizai_tags %}
+{% block tbody %}
+  {% for theme in themes %}
+    <tr class="gbe-table-row {% if theme.pk == changed_id %}gbe-table-success{%elif theme.pk == error_id %}gbe-table-error{% endif %}"><td>{{ theme.pk }}</td>
+        <td>{{ theme.name }}</td>
+        <td>{{ theme.number|floatformat:1 }}</td>
+        <td>{{ theme.created_at|date:"M j, Y, g:i A" }}</td>
+        <td>{{ theme.updated_at|date:"M j, Y, g:i A" }}</td>
+        <td>{% if theme.currently_live %}
+          <i class="gbe-text-success fas fa-check-circle" title="This version is currently publicly visible on the live site"></i>{% else %}
+          <a href="{% url 'themes:activate_theme' theme.pk 'live' %}"><i class="fas fa-upload gbe-text-muted" title="Activate this version on the live site"></i></a>
+          {% endif %}</td>
+        <td>{% if theme.currently_test %}
+          <i class="gbe-text-success fas fa-check-circle" title="This version is currently visible on all test sites (anything with DEBUG on)"></i>
+          {% else %}<a href="{% url 'themes:activate_theme' theme.pk 'test' %}"><i class="fas fa-upload gbe-text-muted" title="Activate this version on all test sites"></i></a>
+          {% endif %}</td>
+        <td>
+  <div class="btn-group">
+    <a class="gbe-detail" href="{% url 'themes:manage_theme' theme.id %}" title="Edit">
+      <i class="fas fa-edit"></i></a>&nbsp;&nbsp;
+    <a class="gbe-detail" href="{% url 'themes:clone_theme' theme.id %}" title="Clone">
+      <i class="fas fa-clone"></i></a>&nbsp;&nbsp;
+    {% if theme == preview %}<a class="gbe-detail" href="{% url 'themes:preview_off' %}" title="Turn off Preview"><i class="far fa-eye-slash"></i></a>{% else %}<a class="gbe-detail" href="{% url 'themes:preview_theme' theme.id %}" title="Preview"><i class="fas fa-eye"></i></a>{% endif %}&nbsp;&nbsp;
+    <a class="gbe-detail" href="{% url 'themes:delete_theme' theme.id %}" title="Delete"><i class="far fa-trash-alt"></i></a>
+	      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}

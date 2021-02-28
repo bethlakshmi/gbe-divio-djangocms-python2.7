@@ -1,4 +1,3 @@
-from .down_view import DownView
 from .landing_page_view import LandingPageView
 
 # parent bid classes

@@ -5,7 +5,7 @@
        <i class="fa {%if sched_event.highlight == "interested" %}fa-star{% else %}fa-star-o{% endif %} {{size}}" aria-hidden="true"></i></a>
       </a>
      {% elif sched_event.favorite_link %}
-      <a href="#" class="detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"
+      <a href="#" class="cal-favorite {% if disable_style %}{{ disable_style }}{% else %}detail_link-disabled{% endif %}" data-toggle="tooltip"
          title="You are a {{ sched_event.highlight }} - contact the coordinator to change your schedule">
        <i class="fa fa-star {{size}}" aria-hidden="true"></i></a>
      {% endif %}

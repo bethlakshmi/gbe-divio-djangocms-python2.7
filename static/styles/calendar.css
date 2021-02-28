@@ -5,100 +5,19 @@
 @media (min-width:1200px){.calendar-container{width:1080px}
 }
 
-.time-row {
-    background-color: rgb(150, 3, 32);
-    text-align: center;
-    color: white;
-    padding: 5px;
-    font-size: larger;
-    border:  #6E6E6E solid 1px;
-}
-.event-row {
-    background-color: #C4C4C4;
-    border:  #6E6E6E solid 1px;
-}
-
-.event-row > div {
-    border:  #6E6E6E solid 1px;
-    color:  #6E6E6E solid 1px;
-    background-color: #E4BDC5;
-}
+.time-row {text-align: center;padding: 5px;font-size: larger;border-style:  solid;}
+.event-row {border-style:solid;}
+.event-row > div {border-style:solid;}
 div.shadow_event {
     background-color: #e6e6e6;
 }
-div.interested {
-    background-color: #f3e1e5;
-}
-
-div.teacher, div.performer, div.volunteer, div.panelist, div.moderator, #volunteer {
-    background-color: #f3e1e5;
-}
-div.pending-volunteer {
-    background-color: #d9edf7;
-}
-.calendar-container {
-    border:  #6E6E6E solid 1px;
-}
-.backward {
-    text-align: left;
-    padding: 0px;
-}
-.backward > a > button {
-    background-color: #B5B5B5;
-    border:  0px;
-}
-.forward > a > button {
-    background-color: #B5B5B5;
-    border:  0px;
-}
-.forward {
-    text-align: right;
-    padding: 0px;
-}
-.header1 {
-    text-align: center;
-    font-family: 'Vast Shadow', cursive;
-    font-size: 20px;
-    border:  #6E6E6E solid 1px;
-    background-color: #D0D0D0;
-}
-.header2 {
-    text-align: center;
-    font-family: 'Vast Shadow', cursive;
-    font-size: 25px;
-    border:  #6E6E6E solid 1px;
-    background-color: #B5B5B5;
-}
-.cal-favorite {
-  float: right;
-}
-.vol_shift_div {
-    padding: 0px;
-}
-.vol_shift_table {
-    border:  0px;
-    background-color: #e4e0e0;
-}
-.vol_shift_header {
-    border:  #6E6E6E solid 2px;
-    font-size: 12px;
-    background-color: #E4BDC5;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-.vol_shift_hour {
-    border-left:  #6E6E6E solid 2px;
-    border-top: 0px;
-    border-bottom: 0px;
-    border-right: #adadad solid 1px;
-}
-.vol_shift_mid {
-    border-left: #adadad solid 1px;
-    border-top: 0px;
-    border-bottom: 0px;
-    border-right: #adadad solid 1px;
-}
-.vol_shift_event {
-    border: black solid 2px;
-    background-color: #E4BDC5;
-}
+.backward {text-align: left; padding: 0px;}
+.forward {text-align: right; padding: 0px;}
+.calendar-container {border-style:  solid;}
+.header1 {text-align: center;font-family: 'Vast Shadow', cursive;font-size: 20px;border-style:  solid;}
+.header2 {text-align: center;font-family: 'Vast Shadow', cursive;font-size: 25px;border-style:  solid;}
+.cal-favorite {float: right;}
+.vol_shift_div {padding: 0px;}
+.vol_shift_header {border-style:solid;font-size: 12px;padding-left: 2px;padding-right: 2px;}
+.vol_shift_hour, .vol_shift_mid {border-right-style: solid; border-left-style: solid;}
+.vol_shift_event {border-style: solid;}

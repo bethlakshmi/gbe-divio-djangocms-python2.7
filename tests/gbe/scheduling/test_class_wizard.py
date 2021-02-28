@@ -230,8 +230,8 @@ class TestClassWizard(TestScheduling):
             )
         self.assertContains(
             response,
-            '<tr class="bid-table success">\n       ' +
-            '<td class="bid-table">%s</td>' % data['e_title'])
+            '<tr class="gbe-table-row gbe-table-success">\n       ' +
+            '<td>%s</td>' % data['e_title'])
 
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)
@@ -264,8 +264,8 @@ class TestClassWizard(TestScheduling):
             )
         self.assertContains(
             response,
-            '<tr class="bid-table success">\n       ' +
-            '<td class="bid-table">%s</td>' % data['e_title'])
+            '<tr class="gbe-table-row gbe-table-success">\n       ' +
+            '<td>%s</td>' % data['e_title'])
 
     def test_auth_user_create_class_no_teacher(self):
         login_as(self.privileged_user, self)

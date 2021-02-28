@@ -1,31 +1,31 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% load static %}
 {% block title %}
     {{title}}
 {% endblock %}
 
 {% block content %}
-<h2>{{title}}</h2>
-<p><font color="red">RED</font> highlighting means that the owner of this act has deactivated their account.</p>
+<h2 class="gbe-title">{{title}}</h2>
+<p><font class="gbe-form-error">RED</font> highlighting means that the owner of this act has deactivated their account.</p>
 <form method="POST" action="" enctype="multipart/form-data">
 {% csrf_token %}
-  <table>
-   <tr>
+  <table class="striped_table"><thead>
+   <tr class="striped_table_row">
     <th>Performer</th>
     <th>Act Title</th>
     <th>Show</th>
     <th>Order</th>
    </tr>   
-
+</thead><tbody>
     {% for form, state in forms %}
-      <tr {% if not state %}bgcolor="red"{% endif %}>
+      <tr class="striped_table_row{% if not state %} gbe-striped-table-danger{% endif %}">
       	{% for field in form.visible_fields %}<td>{{ field }}
-      		{% if field.errors %}<br><font color="red">{{ field.errors }}</font>
+      		{% if field.errors %}<br><font class="gbe-form-error">{{ field.errors }}</font>
         {% endif %}</td>{% endfor %}
-      </tr>
       {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+      </tr>
     {% endfor %}
-   </table> 
-  <input type = "submit" name="submit" value="Submit">
+   </tbody></table> 
+  <input type = "submit" name="submit" value="Submit" class="btn gbe-btn-primary">
  </form>
 {% endblock %}

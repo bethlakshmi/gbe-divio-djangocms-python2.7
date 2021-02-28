@@ -12,7 +12,6 @@ participant_labels = {
     'offsite_preferred': ('Offsite phone'),
     'how_heard': "How did you hear about The Expo?",
     'purchase_email': ('BPT Purchase Email'),
-
 }
 
 profile_preferences_help_texts = {
@@ -916,9 +915,9 @@ list_text = {
         Master Classes.  These are intensive, double-length classes \
         taught by world-renowned experts in burlesque.  If you want to take \
         your performance to the next level, this is how to do it. </p> <font \
-        color="red">Please note:</font><br><br><ul><li>It is strongly \
-        suggested you sign up for Master Classes in advance.  Space is
-        limited and we expect them to sell out.</li>\
+        class="gbe-form-error">Please note:</font><br><br><ul><li>It is \
+        strongly suggested you sign up for Master Classes in advance.  Space
+        is limited and we expect them to sell out.</li>\
         <li>You do not need to be registered for any other portion of The \
         Great Burlesque Exposition to attend a Master Class.</li>\
         <li>Master Classes are not included in the Whole Shebang package.  \
@@ -1020,3 +1019,36 @@ costume_proposal_labels = {
 
 valid_model_error = '''Select a valid choice. That choice is not one of the \
     available choices.'''
+
+theme_help = {
+    'no_args': '''This form requires either an instance of a StyleValue or a
+    StyleProperty from which to create the StyleValue so that the value type
+    can be determined.''',
+    'mismatch': '''The template of the property does not match the value.
+    This suggests something has changed since the value was last saved.''',
+    'bad_elem': '''The format of this style includes an unrecognized value.'''
+}
+style_value_help = {
+    'text-shadow-0': '''The position of the horizontal shadow.
+    Negative values are allowed''',
+    'text-shadow-1': '''The position of the vertical shadow.
+    Negative values are allowed''',
+    'text-shadow-2': '''The blur radius. Default value is 0''',
+    'text-shadow-3': '''The color of the shadow.''',
+    'box-shadow-0': '''The horizontal offset of the shadow. A positive value
+    puts the shadow on the right side of the box, a negative value puts the
+    shadow on the left side of the box''',
+    'box-shadow-1': '''The vertical offset of the shadow. A positive value
+    puts the shadow below the box, a negative value puts the shadow above
+    the box''',
+    'box-shadow-2': '''The blur radius. The higher the number, the more
+    blurred the shadow will be''',
+    'box-shadow-3': '''The spread radius. A positive value increases the size
+    of the shadow, a negative value decreases the size of the shadow''',
+    'box-shadow-4': '''The color of the shadow. The default value is the text
+    color.''',
+    'change_images': '''Selecting or Uploading images will not remove images
+    from the system.  Only images uploaded through this form are shown.''',
+    'add_image': '''Uploading an image takes precedence over any selected
+    image.''',
+}
