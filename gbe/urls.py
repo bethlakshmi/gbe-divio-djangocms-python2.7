@@ -1,5 +1,4 @@
 from django.conf.urls import url
-from django.urls import path
 from django.contrib.auth.views import (
     LoginView,
     PasswordResetCompleteView,
@@ -159,10 +158,10 @@ urlpatterns = [
         EditTroupeView, name='troupe_edit'),
     url(r'^troupe/view/(\d+)/?$',
         ViewTroupeView, name='troupe_view'),
-    path('performer/add/',PerformerCreate.as_view(), name='performer-add'),
-    path('performer/<int:pk>/',
-         PerformerUpdate.as_view(),
-         name='performer-update'),
+    url(r'^performer/add/$',PerformerCreate.as_view(), name='performer-add'),
+    url(r'^performer/(?P<pk>.*)/$',
+        PerformerUpdate.as_view(),
+        name='performer-update'),
 
 
     #  volunteers

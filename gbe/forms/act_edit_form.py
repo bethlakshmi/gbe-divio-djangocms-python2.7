@@ -11,7 +11,7 @@ from django.forms import (
     URLField,
     URLInput,
 )
-from django_addanother.widgets import AddAnotherWidgetWrapper
+from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
 from dal import autocomplete
 from django.urls import reverse_lazy
 from gbe.models import Act
@@ -79,9 +79,12 @@ class ActEditDraftForm(ModelForm):
         help_texts = act_help_texts
         widgets = {
             'b_conference': HiddenInput(),
-            'performer': AddAnotherWidgetWrapper(
+            'performer': AddAnotherEditSelectedWidgetWrapper(
                 autocomplete.ModelSelect2(url='limited-performer-autocomplete'),
-                reverse_lazy('performer-add', urlconf='gbe.urls')),
+                reverse_lazy('performer-add', urlconf='gbe.urls'),
+                reverse_lazy('performer-update',
+                             urlconf='gbe.urls',
+                             args=['__fk__'])),
             }
 
     def __init__(self, *args, **kwargs):
