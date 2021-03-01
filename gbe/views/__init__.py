@@ -19,6 +19,7 @@ from .register_persona_view import RegisterPersonaView
 from .edit_persona_view import EditPersonaView
 from .make_persona_view import PersonaCreate, PersonaUpdate
 from .make_troupe_view import TroupeCreate, TroupeUpdate
+from .update_performer_view import PerformerUpdate
 
 # profiles
 from .edit_email_view import EditEmailView

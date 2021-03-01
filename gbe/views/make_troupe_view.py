@@ -2,10 +2,7 @@ from django.views.generic.edit import (
     CreateView,
     UpdateView,
 )
-from django.contrib.auth.mixins import (
-    AccessMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_addanother.views import CreatePopupMixin
 from gbe.models import (
     Profile,
