@@ -8,7 +8,7 @@ from gbe.models import (
 )
 from gbe_forms_text import (
     persona_help_texts,
-    persona_labels,
+    troupe_labels,
 )
 from gbe.forms import PersonaForm
 from dal import autocomplete
@@ -20,7 +20,7 @@ class TroupeForm(PersonaForm):
     contact = ModelChoiceField(
         queryset=Profile.objects.all(),
         empty_label=None,
-        label=persona_labels['contact'])
+        label=troupe_labels['contact'])
 
     class Meta:
         model = Troupe
@@ -36,7 +36,7 @@ class TroupeForm(PersonaForm):
                   'festivals',
                   ]
         help_texts = persona_help_texts
-        labels = persona_labels
+        labels = troupe_labels
         widgets = {
             'membership': autocomplete.ModelSelect2Multiple(
                 url='persona-autocomplete')}

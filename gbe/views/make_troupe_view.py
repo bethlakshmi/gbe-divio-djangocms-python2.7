@@ -33,9 +33,13 @@ class TroupeCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
         context['page_title'] = self.page_title
         context['view_title'] = self.view_title
         context['mode'] = "troupe"
-        context['form'].fields['contact'].queryset = Profile.objects.filter(
-            resourceitem_id=self.request.user.profile.resourceitem_id)
         return context
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['contact'].queryset = Profile.objects.filter(
+            resourceitem_id=self.request.user.profile.resourceitem_id)
+        return form
 
 
 class TroupeUpdate(CreatePopupMixin, PermissionRequiredMixin, UpdateView):
@@ -53,10 +57,14 @@ class TroupeUpdate(CreatePopupMixin, PermissionRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['page_title'] = self.page_title
         context['view_title'] = self.view_title
-        context['mode'] = "troupe"
-        context['form'].fields['contact'].queryset = Profile.objects.filter(
-            resourceitem_id=self.request.user.profile.resourceitem_id)
+        context['mode'] = "update"
         return context
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['contact'].queryset = Profile.objects.filter(
+            resourceitem_id=self.request.user.profile.resourceitem_id)
+        return form
 
     def get_queryset(self):
         return self.model.objects.filter(

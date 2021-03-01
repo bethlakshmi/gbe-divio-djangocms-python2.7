@@ -48,7 +48,7 @@ class PersonaUpdate(CreatePopupMixin, PermissionRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['page_title'] = self.page_title
         context['view_title'] = self.view_title
-        context['mode'] = "performer"
+        context['mode'] = "update"
         return context
 
     def get_queryset(self):

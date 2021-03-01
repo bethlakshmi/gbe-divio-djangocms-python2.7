@@ -482,6 +482,9 @@ persona_labels = {'name': ('Stage Name'),
                   'festivals': ('Festival Appearances and Honors'),
                   }
 
+troupe_labels = persona_labels.copy()
+troupe_labels['name'] = ('Troupe Name')
+troupe_labels['experience'] = ('Troupe Experience')
 
 persona_help_texts = {
     'name': 'This is the name you will be listed under when performing.',

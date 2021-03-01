@@ -29,8 +29,9 @@
     <div class="container">
       &nbsp;<br><br>
  <ul class="nav nav-tabs" id="inner">
-  <li role="presentation"><a href="{% url 'gbe:persona-add' %}" class="{% if mode == 'performer' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Performer Bio</a></li>
-  <li role="presentation"><a href="{% url 'gbe:troupe-add' %}" class="{% if mode == 'troupe' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Troupe</a></li>
+  <li role="presentation"><a href="{% url 'gbe:persona-add' %}" class="{% if mode == 'performer' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Bio</a></li>
+  <li role="presentation"><a href="{% url 'gbe:troupe-add' %}" class="{% if mode == 'troupe' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Troupe</a></li>
+  {% if mode == 'update' %}<li role="presentation"><a href="" class="gbe-tab-active">Update Performer</a></li>{% endif %}
  </ul>
 <div class="gbe-tab-area">
   <h3 class="gbe-title">{{view_title}}</h3>
