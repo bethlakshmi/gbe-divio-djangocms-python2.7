@@ -2,17 +2,18 @@ from django.views.generic.edit import (
     CreateView,
     UpdateView,
 )
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_addanother.views import CreatePopupMixin
+from django.urls import reverse_lazy
+from django.contrib import messages
+from gbe.views import ProfileRequiredMixin
 from gbe.models import (
     Profile,
     Troupe,
 )
 from gbe.forms import TroupeForm
-from django.urls import reverse_lazy
 
 
-class TroupeCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
+class TroupeCreate(CreatePopupMixin, ProfileRequiredMixin, CreateView):
     model = Troupe
     form_class = TroupeForm
     template_name = 'gbe/modal_performer_form.tmpl'
@@ -24,9 +25,6 @@ class TroupeCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
         initial = super().get_initial()
         initial['contact'] = self.request.user.profile
         return initial
-
-    def has_permission(self):
-        return hasattr(self.request.user, 'profile')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,16 +40,13 @@ class TroupeCreate(CreatePopupMixin, PermissionRequiredMixin, CreateView):
         return form
 
 
-class TroupeUpdate(CreatePopupMixin, PermissionRequiredMixin, UpdateView):
+class TroupeUpdate(CreatePopupMixin, ProfileRequiredMixin, UpdateView):
     model = Troupe
     form_class = TroupeForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
     page_title = 'Manage Troupe'
     view_title = 'Tell Us About Your Troupe'
-
-    def has_permission(self):
-        return hasattr(self.request.user, 'profile')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

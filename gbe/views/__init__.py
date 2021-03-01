@@ -1,4 +1,5 @@
 from .landing_page_view import LandingPageView
+from .profile_required_mixin import ProfileRequiredMixin
 
 # parent bid classes
 from .make_bid_view import MakeBidView
