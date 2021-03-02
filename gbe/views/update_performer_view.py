@@ -11,7 +11,7 @@ class PerformerUpdate(UpdatePopupMixin, PermissionRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         redirect = reverse('persona-update',
                            urlconf="gbe.urls",
-                           args=[kwargs['pk']])
+                           args=[kwargs['pk'], 1])
         performer = Performer.objects.get_subclass(
             pk=kwargs['pk'],
             contact__user_object=self.request.user)

@@ -5,6 +5,9 @@ from django.forms import (
     MultipleChoiceField,
     Textarea,
 )
+from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
+from dal import autocomplete
+from django.urls import reverse_lazy
 from gbe.models import Class
 from gbe_forms_text import (
     available_time_conflict,
@@ -51,6 +54,14 @@ class ClassBidDraftForm(ModelForm):
                   'space_needs']
         help_texts = classbid_help_texts
         labels = classbid_labels
+        widgets = {
+            'teacher': AddAnotherEditSelectedWidgetWrapper(
+                autocomplete.ModelSelect2(url='limited-persona-autocomplete'),
+                reverse_lazy('persona-add', urlconf='gbe.urls', args=[0]),
+                reverse_lazy('persona-update',
+                             urlconf='gbe.urls',
+                             args=['__fk__', 0])),
+            }
 
     def __init__(self, *args, **kwargs):
         super(ClassBidDraftForm, self).__init__(*args, **kwargs)

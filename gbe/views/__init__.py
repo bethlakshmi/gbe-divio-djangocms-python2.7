@@ -14,6 +14,7 @@ from .clone_bid_view import CloneBidView
 
 # personas
 from .limited_performer_autocomplete import LimitedPerformerAutocomplete
+from .limited_persona_autocomplete import LimitedPersonaAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
 from .view_troupe_view import ViewTroupeView
 from .edit_troupe_view import EditTroupeView

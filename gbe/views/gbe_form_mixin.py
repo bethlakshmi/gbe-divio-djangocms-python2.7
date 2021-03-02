@@ -11,6 +11,8 @@ class GbeFormMixin(ModelFormMixin):
         if hasattr(self, 'intro_text'):
             context['intro_text'] = self.intro_text
         context['mode'] = self.mode
+        context['include_troupe'] = int(self.kwargs.get("include_troupe", 1))
+
         return context
 
     def form_valid(self, form):
