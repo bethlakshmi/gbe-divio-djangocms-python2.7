@@ -1,4 +1,5 @@
 from .landing_page_view import LandingPageView
+from .gbe_form_mixin import GbeFormMixin
 from .profile_required_mixin import ProfileRequiredMixin
 
 # parent bid classes
