@@ -2,7 +2,7 @@ from django.views.generic.edit import (
     CreateView,
     UpdateView,
 )
-from django_addanother.views import CreatePopupMixin
+from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
@@ -65,7 +65,7 @@ class TroupeCreate(CreatePopupMixin,
             return super().get(request, *args, **kwargs)
 
 
-class TroupeUpdate(CreatePopupMixin,
+class TroupeUpdate(UpdatePopupMixin,
                    GbeFormMixin,
                    ProfileRequiredMixin,
                    UpdateView):

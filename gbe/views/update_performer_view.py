@@ -1,15 +1,15 @@
 from django.views.generic.base import RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django_addanother.views import CreatePopupMixin
+from django_addanother.views import UpdatePopupMixin
 from gbe.models import Performer
 from django.urls import reverse
 
-class PerformerUpdate(CreatePopupMixin, PermissionRequiredMixin, RedirectView):
+class PerformerUpdate(UpdatePopupMixin, PermissionRequiredMixin, RedirectView):
     def has_permission(self):
         return hasattr(self.request.user, 'profile')
 
     def get_redirect_url(self, *args, **kwargs):
-        redirect = reverse('performer-update',
+        redirect = reverse('persona-update',
                            urlconf="gbe.urls",
                            args=[kwargs['pk']])
         performer = Performer.objects.get_subclass(
@@ -19,4 +19,6 @@ class PerformerUpdate(CreatePopupMixin, PermissionRequiredMixin, RedirectView):
             redirect = reverse('troupe-update',
                                urlconf="gbe.urls",
                                args=[kwargs['pk']])
+        if self.is_popup():
+          redirect = redirect + "?_popup=1"
         return redirect

@@ -6,7 +6,7 @@ from gbe.views import (
     GbeFormMixin,
     ProfileRequiredMixin,
 )
-from django_addanother.views import CreatePopupMixin
+from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from gbe.models import Persona
 from gbe.forms import PersonaForm
 from django.urls import reverse_lazy
@@ -35,7 +35,7 @@ class PersonaCreate(CreatePopupMixin,
     def get_success_url(self):
         return self.request.GET.get('next', self.success_url)
 
-class PersonaUpdate(CreatePopupMixin,
+class PersonaUpdate(UpdatePopupMixin,
                     GbeFormMixin,
                     ProfileRequiredMixin,
                     UpdateView):
