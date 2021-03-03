@@ -1,7 +1,6 @@
 from gbe.views import MakeBidView
 from django.http import Http404
 from django.urls import reverse
-from django.forms import ModelChoiceField
 from django.shortcuts import render
 from gbe.forms import (
     CostumeBidDraftForm,

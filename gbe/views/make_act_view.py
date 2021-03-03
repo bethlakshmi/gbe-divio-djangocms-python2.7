@@ -89,8 +89,8 @@ class MakeActView(MakeBidView):
         return initial
 
     def set_up_form(self):
-        q = Performer.objects.filter(contact=self.owner)
-        self.form.fields['performer'].queryset = q
+        self.form.fields['performer'].queryset = Performer.objects.filter(
+            contact=self.owner)
 
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):
