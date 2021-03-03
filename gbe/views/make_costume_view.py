@@ -111,12 +111,8 @@ class MakeCostumeView(MakeBidView):
         )
 
     def set_up_form(self):
-        q = Persona.objects.filter(
+        self.form.fields['performer'].queryset = Persona.objects.filter(
             performer_profile_id=self.owner.resourceitem_id)
-        self.form.fields['performer'] = ModelChoiceField(
-            queryset=q,
-            label=costume_proposal_labels['performer'],
-            required=False)
 
     def make_context(self, request):
         context = super(MakeCostumeView, self).make_context(request)

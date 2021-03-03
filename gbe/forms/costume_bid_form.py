@@ -5,6 +5,9 @@ from django.forms import (
     TypedChoiceField,
     TextInput,
 )
+from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
+from dal import autocomplete
+from django.urls import reverse_lazy
 from gbe.models import Costume
 from gbe_forms_text import (
     costume_proposal_help_texts,
@@ -38,7 +41,14 @@ class CostumeBidDraftForm(ModelForm):
                   'active_use']
         help_texts = costume_proposal_help_texts
         labels = costume_proposal_labels
-
+        widgets = {
+            'performer': AddAnotherEditSelectedWidgetWrapper(
+                autocomplete.ModelSelect2(url='limited-persona-autocomplete'),
+                reverse_lazy('persona-add', urlconf='gbe.urls', args=[0]),
+                reverse_lazy('persona-update',
+                             urlconf='gbe.urls',
+                             args=['__fk__', 0])),
+            }
 
 class CostumeBidSubmitForm(CostumeBidDraftForm):
     active_use = TypedChoiceField(
