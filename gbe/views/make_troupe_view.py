@@ -58,7 +58,7 @@ class TroupeCreate(CreatePopupMixin,
                     'description': no_persona_msg})
             messages.warning(self.request, msg[0].description)
             return redirect_to_login(
-                self.request.build_absolute_uri(),
+                self.request.path,
                 reverse('persona-add', urlconf="gbe.urls"),
                 self.get_redirect_field_name())
         else:

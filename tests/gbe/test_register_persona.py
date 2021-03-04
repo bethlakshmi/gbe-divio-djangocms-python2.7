@@ -107,7 +107,7 @@ class TestRegisterPersona(TestCase):
             follow=True)
         assert response.status_code == 200
         self.assertRedirects(response,
-                             reverse('troupe_create', urlconf='gbe.urls'))
+                             reverse('troupe-add', urlconf='gbe.urls'))
         self.assertContains(response, "Tell Us About Your Troupe")
         self.assertNotContains(response, '<div class="alert alert-success">')
 

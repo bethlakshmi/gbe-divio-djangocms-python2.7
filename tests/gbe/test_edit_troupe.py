@@ -21,21 +21,22 @@ from gbe.models import UserMessage
 class TestCreateTroupe(TestCase):
     '''Tests for edit_troupe view'''
 
-    view_name = 'troupe_create'
+    view_name = 'troupe-add'
 
     def setUp(self):
         self.client = Client()
         self.troupe_string = 'Tell Us About Your Troupe'
 
-    def test_create_troupe_no_performer(self):
+    def test_create_troupe_no_profile(self):
         '''edit_troupe view, create flow
         '''
         login_as(UserFactory(), self)
         url = reverse(self.view_name, urlconf='gbe.urls')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-        expected_loc = '/update_profile?next=/troupe/create'
-        self.assertEqual(location(response), expected_loc)
+        response = self.client.get(url, follow=True)
+        expected_loc = '%s?next=%s' % (
+            reverse("profile_update", urlconf="gbe.urls"),
+            url)
+        self.assertRedirects(response, expected_loc)
 
     def test_create_troupe_performer_exists(self):
         contact = PersonaFactory()

@@ -24,6 +24,6 @@ class ProfileRequiredMixin(PermissionRequiredMixin):
                         'description': no_profile_msg})
             messages.warning(self.request, msg[0].description)
             return redirect_to_login(
-                self.request.build_absolute_uri(),
+                self.request.path,
                 reverse('profile_update', urlconf="gbe.urls"),
                 self.get_redirect_field_name())
