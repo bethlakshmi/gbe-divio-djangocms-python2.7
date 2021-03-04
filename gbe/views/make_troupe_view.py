@@ -59,7 +59,7 @@ class TroupeCreate(CreatePopupMixin,
             messages.warning(self.request, msg[0].description)
             return redirect_to_login(
                 self.request.path,
-                reverse('persona-add', urlconf="gbe.urls"),
+                reverse('persona-add', urlconf="gbe.urls", args=[1]),
                 self.get_redirect_field_name())
         else:
             return super().get(request, *args, **kwargs)

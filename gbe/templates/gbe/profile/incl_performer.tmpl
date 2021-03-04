@@ -4,12 +4,12 @@
   <br>
     {% if personae or troupes %}
       {% for performer in personae %}
-        {% with edit_view_name='gbe:persona_edit' view_name='gbe:persona_edit' %}
+        {% with is_troupe=0 %}
           {% include 'gbe/profile/incl_performer_block.tmpl' %}
 	      {% endwith %}
       {% endfor %}
       {% for performer in troupes %}
-        {% with edit_view_name='gbe:troupe_edit' view_name='gbe:troupe_view' %}
+        {% with is_troupe=1 %}
           {% include 'gbe/profile/incl_performer_block.tmpl' %}
 	      {% endwith %}
       {% endfor %}

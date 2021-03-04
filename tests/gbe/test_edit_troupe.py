@@ -14,7 +14,12 @@ from tests.functions.gbe_functions import (
     login_as,
     location
 )
-from gbetext import default_edit_troupe_msg
+from gbetext import (
+    default_edit_troupe_msg,
+    no_persona_msg,
+    no_profile_msg,
+    troupe_header_text,
+)
 from gbe.models import UserMessage
 
 
@@ -27,16 +32,18 @@ class TestCreateTroupe(TestCase):
         self.client = Client()
         self.troupe_string = 'Tell Us About Your Troupe'
 
-    def test_create_troupe_no_profile(self):
+    def test_create_troupe_no_persona(self):
         '''edit_troupe view, create flow
         '''
-        login_as(UserFactory(), self)
+        user = ProfileFactory()
+        login_as(user.user_object, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url, follow=True)
         expected_loc = '%s?next=%s' % (
-            reverse("profile_update", urlconf="gbe.urls"),
+            reverse('persona-add', urlconf="gbe.urls", args=[1]),
             url)
         self.assertRedirects(response, expected_loc)
+        self.assertContains(response, no_persona_msg)
 
     def test_create_troupe_performer_exists(self):
         contact = PersonaFactory()
@@ -45,6 +52,7 @@ class TestCreateTroupe(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.troupe_string)
+        self.assertContains(response, troupe_header_text)
 
     def test_create_troupe_no_inactive_users(self):
         contact = PersonaFactory()
@@ -57,7 +65,7 @@ class TestCreateTroupe(TestCase):
 
 
 class TestEditTroupe(TestCase):
-    view_name = 'troupe_edit'
+    view_name = 'troupe-update'
 
     def setUp(self):
         UserMessage.objects.all().delete()
@@ -113,37 +121,19 @@ class TestEditTroupe(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
-    def test_edit_as_member(self):
-        '''edit_troupe view, edit flow success
-        '''
-        persona = PersonaFactory()
-        troupe = TroupeFactory()
-        troupe.membership.add(persona)
-        troupe.save()
-        url = reverse(self.view_name,
-                      args=[troupe.pk],
-                      urlconf='gbe.urls')
-        login_as(persona.performer_profile.profile, self)
-        response = self.client.get(url)
-        self.assertRedirects(
-            response,
-            reverse(
-                'troupe_view',
-                urlconf='gbe.urls',
-                args=[str(troupe.pk)]))
-
-    def test_no_persona(self):
-        profile = ProfileFactory()
+    def test_no_profile(self):
         troupe = TroupeFactory()
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
         request = self.factory.get('/troupe/edit/%d' % troupe.pk)
-        login_as(profile, self)
-        response = self.client.get(url)
-        expected_loc = '/performer/create?next=/troupe/create'
-        self.assertEqual(expected_loc, location(response))
-        self.assertEqual(response.status_code, 302)
+        login_as(UserFactory(), self)
+        response = self.client.get(url, follow=True)
+        expected_loc = '%s?next=%s' % (
+            reverse('profile_update', urlconf="gbe.urls"),
+            url)
+        self.assertRedirects(response, expected_loc)
+        self.assertContains(response, no_profile_msg)
 
     def test_edit_troupe(self):
         '''edit_troupe view, edit flow success
@@ -187,8 +177,8 @@ class TestEditTroupe(TestCase):
 
     def test_update_profile_has_message(self):
         msg = UserMessageFactory(
-            view='EditTroupeView',
-            code='UPDATE_TROUPE')
+            view='TroupeUpdate',
+            code='SUCCESS')
         response, data = self.submit_troupe()
         assert_alert_exists(
             response, 'success', 'Success', msg.description)
