@@ -46,11 +46,9 @@ def ConferenceVolunteerView(request):
         return render(request, 'gbe/conf_volunteer_list.tmpl',
                       {'view_title': view_title, 'page_title': page_title})
     if len(presenters) == 0:
-        return HttpResponseRedirect(reverse('persona_create',
-                                            urlconf='gbe.urls') +
-                                    '?next=' +
-                                    reverse('conference_volunteer',
-                                            urlconf='gbe.urls'))
+        return HttpResponseRedirect(
+            reverse('persona-add', urlconf='gbe.urls', args=[0]) +
+            '?next=' + reverse('conference_volunteer', urlconf='gbe.urls'))
     header = ClassProposal().presenter_bid_header
     header += ConferenceVolunteer().presenter_bid_header
 

@@ -64,7 +64,7 @@ class MakeActView(MakeBidView):
         self.personae = self.owner.personae.all()
         if len(self.personae) == 0:
             return '%s?next=%s' % (
-                reverse('persona_create', urlconf='gbe.urls'),
+                reverse('persona-add', urlconf='gbe.urls', args=[1]),
                 reverse('act_create', urlconf='gbe.urls'))
 
         if self.bid_object and (

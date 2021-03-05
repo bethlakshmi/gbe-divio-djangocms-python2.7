@@ -42,7 +42,7 @@ class MakeClassView(MakeBidView):
         self.teachers = self.owner.personae.all()
         if len(self.teachers) == 0:
             return '%s?next=%s' % (
-                reverse('persona_create', urlconf='gbe.urls'),
+                reverse('persona-add', urlconf='gbe.urls', args=[0]),
                 reverse('class_create', urlconf='gbe.urls'))
 
         if self.bid_object and (

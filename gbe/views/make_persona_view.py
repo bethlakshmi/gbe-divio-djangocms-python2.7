@@ -10,7 +10,10 @@ from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from gbe.models import Persona
 from gbe.forms import PersonaForm
 from django.urls import reverse_lazy
-from gbetext import default_edit_persona_msg
+from gbetext import (
+    default_create_persona_msg,
+    default_edit_persona_msg,
+)
 
 
 class PersonaCreate(CreatePopupMixin,
@@ -24,7 +27,7 @@ class PersonaCreate(CreatePopupMixin,
     page_title = 'Stage Persona'
     view_title = 'Tell Us About Your Stage Persona'
     mode = "performer"
-    valid_message = default_edit_persona_msg
+    valid_message = default_create_persona_msg
 
     def get_initial(self):
         initial = super().get_initial()
@@ -34,6 +37,7 @@ class PersonaCreate(CreatePopupMixin,
 
     def get_success_url(self):
         return self.request.GET.get('next', self.success_url)
+
 
 class PersonaUpdate(UpdatePopupMixin,
                     GbeFormMixin,

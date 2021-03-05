@@ -151,10 +151,6 @@ urlpatterns = [
         name='conference_volunteer'),
 
     #  personae
-    url(r'^performer/create/?$',
-        RegisterPersonaView, name='persona_create'),
-    url(r'^persona/edit/(\d+)/?$',
-        EditPersonaView, name='persona_edit'),
     url(r'^troupe/view/(\d+)/?$',
         ViewTroupeView, name='troupe_view'),
     url(r'^persona/add/(?P<include_troupe>\d+)/$',

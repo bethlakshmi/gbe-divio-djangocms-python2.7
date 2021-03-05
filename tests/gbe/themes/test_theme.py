@@ -182,7 +182,6 @@ class TestTheme(TestCase):
                             another_value.value))
         self.assertContains(response, "url(%s)" % value.image.url)
 
-
     def test_preview_persistence(self):
         version = StyleVersionFactory()
         version.currently_live = True

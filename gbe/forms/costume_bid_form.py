@@ -50,6 +50,7 @@ class CostumeBidDraftForm(ModelForm):
                              args=['__fk__', 0])),
             }
 
+
 class CostumeBidSubmitForm(CostumeBidDraftForm):
     active_use = TypedChoiceField(
         widget=RadioSelect,

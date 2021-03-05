@@ -119,6 +119,7 @@ class TestConferenceVolunteer(TestCase):
         response = self.client.get(url, follow=True)
         self.assertRedirects(
             response,
-            reverse("persona_create",
-                    urlconf='gbe.urls') + "?next=/conference/volunteer")
+            reverse("persona-add",
+                    urlconf='gbe.urls',
+                    args=[0]) + "?next=/conference/volunteer")
         self.assertEqual(response.status_code, 200)

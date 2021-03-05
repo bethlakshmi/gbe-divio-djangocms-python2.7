@@ -561,7 +561,7 @@ init_values = [
     {
             'selector': 'code',
             'pseudo_class': '',
-            'description': '''Any text displaying code, right now that is 
+            'description': '''Any text displaying code, right now that is
             theme editor''',
             'target_element': 'code',
             'usage': 'Forms',

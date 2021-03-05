@@ -127,12 +127,6 @@ class TestCreateCostume(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Displaying a Costume')
-        self.assertNotContains(response, other_performer.name)
-        current_user_selection = '<option value="%d">%s</option>'
-        persona_id = self.performer.pk
-        selection_string = current_user_selection % (persona_id,
-                                                     self.performer.name)
-        self.assertContains(response, selection_string)
 
     def test_costume_submit_make_message(self):
         response, data = self.post_costume_submission()

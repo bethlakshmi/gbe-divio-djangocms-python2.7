@@ -36,7 +36,7 @@ def ReviewProfilesView(request):
         code="INTRODUCTION",
         defaults={
             'summary': "Top of Page Instructions",
-            'description': profile_intro_msg}) 
+            'description': profile_intro_msg})
     rows = []
     for aprofile in profiles:
         bid_row = {}
@@ -88,7 +88,7 @@ def ReviewProfilesView(request):
 
         rows.append(bid_row)
 
-    return render(request, 'gbe/profile_review.tmpl',{
+    return render(request, 'gbe/profile_review.tmpl', {
       'columns': header,
       'rows': rows,
       'order': 0,

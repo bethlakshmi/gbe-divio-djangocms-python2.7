@@ -32,7 +32,7 @@ def ViewTroupeView(request, troupe_id=None):
         return HttpResponseRedirect(reverse('profile_update',
                                             urlconf='gbe.urls') +
                                     '?next=' +
-                                    reverse('troupe_create',
+                                    reverse('troupe-add',
                                             urlconf='gbe.urls'))
 
     troupe = get_object_or_404(Troupe, resourceitem_id=troupe_id)

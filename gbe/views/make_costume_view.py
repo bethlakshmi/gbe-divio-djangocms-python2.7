@@ -55,7 +55,7 @@ class MakeCostumeView(MakeBidView):
         self.performers = self.owner.personae.all()
         if len(self.performers) == 0:
             return '%s?next=%s' % (
-                reverse('persona_create', urlconf='gbe.urls'),
+                reverse('persona-add', urlconf='gbe.urls', args=[0]),
                 reverse('costume_create', urlconf='gbe.urls'))
 
         if self.bid_object and ((self.bid_object.profile != self.owner) or (

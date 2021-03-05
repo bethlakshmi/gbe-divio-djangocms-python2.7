@@ -42,7 +42,7 @@ def EditTroupeView(request, troupe_id=None):
                                             urlconf='gbe.urls'))
     personae = profile.personae.all()
     if len(personae) == 0:
-        return HttpResponseRedirect(reverse('persona_create',
+        return HttpResponseRedirect(reverse('persona-add',
                                             urlconf='gbe.urls') +
                                     '?next=' +
                                     reverse('troupe_create',

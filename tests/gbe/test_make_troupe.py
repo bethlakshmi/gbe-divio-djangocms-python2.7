@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.test.client import RequestFactory
 from django.test import Client
 from tests.factories.gbe_factories import (
     PersonaFactory,
@@ -23,7 +22,7 @@ from gbetext import (
 from gbe.models import UserMessage
 
 
-class TestCreateTroupe(TestCase):
+class TestTroupeCreate(TestCase):
     '''Tests for edit_troupe view'''
 
     view_name = 'troupe-add'
@@ -64,12 +63,11 @@ class TestCreateTroupe(TestCase):
         self.assertNotContains(response, str(inactive))
 
 
-class TestEditTroupe(TestCase):
+class TestTroupeEdit(TestCase):
     view_name = 'troupe-update'
 
     def setUp(self):
         UserMessage.objects.all().delete()
-        self.factory = RequestFactory()
         self.client = Client()
 
     def submit_troupe(self):
