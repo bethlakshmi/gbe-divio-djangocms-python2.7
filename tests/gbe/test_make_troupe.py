@@ -124,7 +124,6 @@ class TestTroupeEdit(TestCase):
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        request = self.factory.get('/troupe/edit/%d' % troupe.pk)
         login_as(UserFactory(), self)
         response = self.client.get(url, follow=True)
         expected_loc = '%s?next=%s' % (

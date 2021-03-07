@@ -17,9 +17,6 @@ from .limited_performer_autocomplete import LimitedPerformerAutocomplete
 from .limited_persona_autocomplete import LimitedPersonaAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
 from .view_troupe_view import ViewTroupeView
-from .edit_troupe_view import EditTroupeView
-from .register_persona_view import RegisterPersonaView
-from .edit_persona_view import EditPersonaView
 from .make_persona_view import PersonaCreate, PersonaUpdate
 from .make_troupe_view import TroupeCreate, TroupeUpdate
 from .update_performer_view import PerformerUpdate
