@@ -20,6 +20,7 @@ import pytz
 from gbe.models import (
     ConferenceDay,
     Event,
+    Performer,
 )
 from gbe.functions import (
     get_current_conference,
@@ -28,6 +29,7 @@ from gbe.functions import (
     conference_slugs,
 )
 from scheduler.idd import (
+    get_bookings,
     get_eval_info,
     get_occurrences,
     get_schedule,
@@ -130,6 +132,11 @@ class ShowCalendarView(View):
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.eventitem.pk]),
             }
+            occurrence_detail['teachers'] = []
+            for person in get_bookings([occurrence.pk],
+                                        roles=["Teacher"]).people:
+                presenter = Performer.objects.get(pk=person.public_id)
+                occurrence_detail['teachers'] += [presenter]
             (occurrence_detail['favorite_link'],
              occurrence_detail['volunteer_link'],
              occurrence_detail['evaluate'],

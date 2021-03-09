@@ -54,7 +54,9 @@
       {% include "gbe/scheduling/volunteer_link_display.tmpl" with sched_event=occurrence icon_class="volunteer-icon" %}
      {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=occurrence.evaluate %}
      {{ occurrence.start }}-{{ occurrence.end }}<br>
-     <a href="{{occurrence.detail_link}}" class="detail_link">{{ occurrence.title}}</a><br>
+     <b><a href="{{occurrence.detail_link}}" class="detail_link">{{ occurrence.title}}</a></b><br>
+     {% for teacher in occurrence.teachers %}{{ teacher }}
+     {% if not forloop.last %}, {% endif %}{% endfor %}<br>
      <i>{{ occurrence.location }}</i>
     </div>
 {% endfor %}
