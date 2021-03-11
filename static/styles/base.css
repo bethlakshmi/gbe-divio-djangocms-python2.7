@@ -208,9 +208,6 @@ span.dropt:hover span {left: 30%; margin: 0px 0 0 0px; z-index:6;}
 @media (min-width:992px){.bio_block{width:900}}
 @media (min-width:1200px){.bio_block{width:1080px}}
 
-@media (min-width:768px){.review{width:650px}}
-@media (min-width:992px){.review{width:870px}}
-@media (min-width:1200px){.review{width:1070px}}
 .read-only-label
 {
   font-weight: bold;
