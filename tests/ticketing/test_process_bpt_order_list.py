@@ -16,7 +16,6 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     UserFactory
 )
-from tests.functions.gbe_functions import location
 from mock import patch, Mock
 import urllib
 from django.shortcuts import get_object_or_404

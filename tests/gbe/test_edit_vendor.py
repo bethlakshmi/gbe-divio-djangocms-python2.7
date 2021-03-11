@@ -12,7 +12,6 @@ from tests.factories.gbe_factories import (
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
-    location,
     make_vendor_app_purchase,
     make_vendor_app_ticket,
     set_image,

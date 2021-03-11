@@ -14,6 +14,7 @@ class LimitedPersonaAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(
-                Q(name__icontains=self.q))
+                Q(name__icontains=self.q) |
+                Q(label__icontains=self.q))
 
         return qs

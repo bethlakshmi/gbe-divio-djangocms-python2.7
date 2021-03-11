@@ -67,7 +67,8 @@ class TestIndex(TestCase):
         # User/Human setup
         self.profile = ProfileFactory()
         self.performer = PersonaFactory(performer_profile=self.profile,
-                                        contact=self.profile)
+                                        contact=self.profile,
+                                        label="Test Index Label")
         # Bid types previous and current
         self.current_act = ActFactory(performer=self.performer,
                                       submitted=True,
@@ -316,6 +317,7 @@ class TestIndex(TestCase):
         set_image(self.performer)
         response = self.get_landing_page()
         self.assertContains(response, self.performer.name)
+        self.assertContains(response, self.performer.label)
         self.assertContains(response, self.performer.img.url)
 
     def test_cannot_edit_troupe_if_not_contact(self):

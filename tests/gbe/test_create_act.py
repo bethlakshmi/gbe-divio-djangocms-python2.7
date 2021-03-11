@@ -10,7 +10,6 @@ from tests.factories.gbe_factories import (
     UserMessageFactory,
 )
 from tests.functions.gbe_functions import (
-    location,
     login_as,
     current_conference,
     assert_alert_exists,

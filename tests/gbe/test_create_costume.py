@@ -11,7 +11,6 @@ from tests.factories.gbe_factories import(
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     current_conference,
-    location,
     login_as,
 )
 from gbetext import (
