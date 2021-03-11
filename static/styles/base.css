@@ -598,12 +598,6 @@ td.describe
 @media (min-width:1200px){.bios{width:1100px}
 }
 
-@media (min-width:768px){.review{width:650px}
-}
-@media (min-width:992px){.review{width:870px}
-}
-@media (min-width:1200px){.review{width:1070px}
-}
 .read-only-label
 {
   font-weight: bold;
