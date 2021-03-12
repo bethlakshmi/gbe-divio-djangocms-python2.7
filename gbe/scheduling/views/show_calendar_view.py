@@ -134,7 +134,7 @@ class ShowCalendarView(View):
             }
             occurrence_detail['teachers'] = []
             for person in get_bookings([occurrence.pk],
-                                        roles=["Teacher", "Moderator"]).people:
+                                       roles=["Teacher", "Moderator"]).people:
                 presenter = Performer.objects.get(pk=person.public_id)
                 occurrence_detail['teachers'] += [(person.role, presenter)]
             (occurrence_detail['favorite_link'],
