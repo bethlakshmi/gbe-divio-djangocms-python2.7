@@ -44,7 +44,11 @@ from gbetext import (
     unlink_event_to_ticket_success_msg,
 )
 import pytz
-from django.db.models import Q
+from django.db.models import (
+    Max,
+    Min,
+    Q,
+)
 from gbe.ticketing_idd_interface import get_ticket_form
 from django.contrib import messages
 from ticketing.functions import import_ticket_items
@@ -55,12 +59,22 @@ def index(request):
     Represents the view for the main screen.  This will eventually be the
     equivalent of cost.php from the old site.
     '''
-
+    ''' Query means - get upcoming/current conference BPT events, annotate
+      with a max and min price but only for the public tickets (not comps,
+      not discounts), then sort by conference and descending highest price.
+      The first thing on the list should be the whole weekend ticket, for the
+      soonest conference.'''
     events = BrownPaperEvents.objects.exclude(
         Q(conference__status='completed') | Q(
             act_submission_event=True) | Q(
-            vendor_submission_event=True)).order_by(
-        'conference__conference_slug')
+            vendor_submission_event=True)).annotate(
+            max_price=Max('ticketitems__cost',
+                          filter=Q(ticketitems__live=True,
+                                   ticketitems__has_coupon=False))).annotate(
+            min_price=Min('ticketitems__cost',
+                          filter=Q(ticketitems__live=True,
+                                   ticketitems__has_coupon=False))).order_by(
+        'conference__conference_slug', '-max_price', '-min_price')
 
     context = {'events': events,
                'user_id': request.user.id,

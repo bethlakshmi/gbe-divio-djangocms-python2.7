@@ -1,10 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from gbetext import role_options
-from django.db.models import (
-    Max,
-    Min,
-)
 from datetime import datetime
 
 
@@ -80,20 +76,6 @@ class BrownPaperEvents(models.Model):
             bpt_event=self,
             live=True,
             has_coupon=False).count()
-
-    @property
-    def min_price(self):
-        return TicketItem.objects.filter(
-            bpt_event=self,
-            live=True,
-            has_coupon=False).aggregate(Min('cost'))['cost__min']
-
-    @property
-    def max_price(self):
-        return TicketItem.objects.filter(
-            bpt_event=self,
-            live=True,
-            has_coupon=False).aggregate(Max('cost'))['cost__max']
 
     class Meta:
         verbose_name_plural = 'Brown Paper Events'
