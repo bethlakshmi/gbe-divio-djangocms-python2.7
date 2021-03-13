@@ -41,6 +41,8 @@ class TestReviewVendor(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Bid Information')
+        self.assertContains(response, vendor.b_title)
+        self.assertContains(response, vendor.physical_address)
 
     def test_review_vendor_past_conference(self):
         conference = ConferenceFactory(status='completed')
