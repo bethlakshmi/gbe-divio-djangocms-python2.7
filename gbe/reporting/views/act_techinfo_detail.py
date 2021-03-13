@@ -25,7 +25,6 @@ def act_techinfo_detail(request, act_id):
     '''
     shows = []
     rehearsals = []
-    act = None
     order = -1
 
     act = get_object_or_404(Act, pk=act_id)
