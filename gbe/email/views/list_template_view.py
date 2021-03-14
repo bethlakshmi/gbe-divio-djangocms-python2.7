@@ -6,10 +6,7 @@ from django.shortcuts import (
     get_object_or_404,
     render,
 )
-from django.http import (
-    Http404,
-    HttpResponseRedirect,
-)
+from django.http import HttpResponseRedirect
 from gbe.functions import validate_perms
 from gbe.email.functions import get_user_email_templates
 
