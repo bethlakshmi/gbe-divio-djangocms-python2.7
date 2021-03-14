@@ -340,6 +340,39 @@ class TestIndex(TestCase):
         response = self.client.get(url)
         self.assertContains(response, act.b_title)
 
+    def test_act_tech_troupe_member_view(self):
+        troupe = TroupeFactory()
+        member = PersonaFactory()
+        troupe.membership.add(member)
+        act = ActFactory(performer=troupe,
+                         submitted=True,
+                         b_conference=self.current_conf,
+                         accepted=3)
+        current_act_context = ActTechInfoContext(
+            performer=troupe,
+            act=act,
+            conference=self.current_conf,
+            schedule_rehearsal=True)
+        act.tech = TechInfoFactory(
+            track_artist="",
+            track=SimpleUploadedFile("file.mp3", b"file_content"),
+            prop_setup="text",
+            starting_position="Onstage",
+            primary_color="text",
+            feel_of_act="text",
+            pronouns="text",
+            introduction_text="text")
+        act.tech.save()
+        bpt_event_id = make_act_app_ticket(self.current_conf)
+        login_as(member.performer_profile, self)
+        url = reverse("home", urlconf="gbe.urls")
+        response = self.client.get(url)
+        self.assertContains(
+            response,
+            reverse("act_techinfo_detail",
+                    urlconf="gbe.reporting.urls",
+                    args=[act.pk]))
+
     def test_two_acts_one_show(self):
         '''Basic test of landing_page view
         '''

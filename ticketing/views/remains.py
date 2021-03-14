@@ -7,7 +7,7 @@
 from gbe_logging import logger
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import never_cache
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from ticketing.models import (
