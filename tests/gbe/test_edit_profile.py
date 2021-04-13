@@ -164,7 +164,7 @@ class TestEditProfile(TestCase):
         context = VolunteerContext()
         context.conference.accepting_bids = True
         context.conference.save()
-        redirect = reverse('volunteer_create', urlconf='gbe.scheduling.urls')
+        redirect = reverse('volunteer_signup', urlconf='gbe.scheduling.urls')
         response = self.post_profile(redirect=redirect)
         self.assertRedirects(response, redirect)
 
