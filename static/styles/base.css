@@ -159,8 +159,8 @@ h3.readonlyform{margin: 0px;padding: 0px;}
 .sched-sub-box{padding: 0px;}
 table thead tr.gbe-table-header th, table tfoot tr.gbe-table-header th, .gbe-table-row td{
   border-width: 1px; border-style: solid;border-collapse:collapse;
-  padding: 2px;
-  vertical-align: top;}
+  padding: 2px;}
+.gbe-table-row td{vertical-align: top;}
 .gbe-table-header th {vertical-align: bottom;}
 #sub-table{padding: 0px; border: 0px;}
 #sub-table table tbody tr td{border: 1px solid;}
@@ -208,9 +208,6 @@ span.dropt:hover span {left: 30%; margin: 0px 0 0 0px; z-index:6;}
 @media (min-width:992px){.bio_block{width:900}}
 @media (min-width:1200px){.bio_block{width:1080px}}
 
-@media (min-width:768px){.review{width:650px}}
-@media (min-width:992px){.review{width:870px}}
-@media (min-width:1200px){.review{width:1070px}}
 .read-only-label
 {
   font-weight: bold;
@@ -281,7 +278,7 @@ th.rotate {
 }
 th.rotate-review {
   /* Something you can count on */
-  height: 115px;
+  height: 120px;
   white-space: nowrap;
   padding: 5px;
 }
@@ -418,3 +415,5 @@ span.opps-errors ul {padding: 0px;}
 .gbe-panel-table, .gbe-panel-table td, .gbe-panel-table th{border-top: 1px solid;}
 .gbe-panel-default{border-style: solid; border-width: 1px;}
 .gbe_thumb_button{border: solid 2px;}
+.gbe-panel h3.card-title {font-size: 20px; margin:0px;}
+.gbe-panel h3.card-subtitle {font-size: 20px; margin:0px;}
