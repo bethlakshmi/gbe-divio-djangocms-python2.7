@@ -24,7 +24,7 @@
     <p> There is an error on this here form.  {{ form.errors }}</p>
   {% endif %}
     {% include "form_table.tmpl" %}
-  <input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">
+  {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn lakshmi-btn-light">Cancel</a>{% endif %}
   <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary" >
   </form>
 </div>
