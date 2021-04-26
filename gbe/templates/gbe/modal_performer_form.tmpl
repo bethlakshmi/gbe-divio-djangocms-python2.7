@@ -20,9 +20,6 @@
   {% if intro_text != "&nbsp;" %}<p>{{intro_text | safe}}</p>{% endif %}
   <form action="" method="post" enctype="multipart/form-data" name="perf_form">
    <p><font class="gbe-form-error">*</font> indicates a required field</p>
-  {% if form.errors %}
-    <p> There is an error on this here form.  {{ form.errors }}</p>
-  {% endif %}
     {% include "form_table.tmpl" %}
   {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn lakshmi-btn-light">Cancel</a>{% endif %}
   <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary" >

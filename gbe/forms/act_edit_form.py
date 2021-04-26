@@ -5,9 +5,7 @@ from django.forms import (
     HiddenInput,
     ModelForm,
     MultipleChoiceField,
-    Select,
     Textarea,
-    TextInput,
     URLField,
     URLInput,
 )
