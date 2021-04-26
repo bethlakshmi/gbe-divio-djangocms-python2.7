@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static sekizai_tags %}
+
+{% block title %}
+   {{page_title}}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
+{% endblock %}
+{% block content %}
+{% block before_table %}
+  <h2 class="review-title gbe-title">{{ title }}</h2>
+{% endblock %}
+{% if columns %}
+  <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
+  press "Shift" to sort a secondary column.</div>
+  <br/>
+  <div>
+    Toggle column(s):
+    {% for column in columns %}
+    <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ forloop.counter0 }}">{{column}}</button>
+    {% endfor %}
+    {% for vertical_column in vertical_columns %}
+      {% if vertical_column|length > 15 %}
+        <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ columns|length|add:forloop.counter0 }}" title="{{ vertical_column }}">
+        {{ vertical_column|truncatechars:15 }}</button>
+      {% else %}
+        <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ columns|length|add:forloop.counter0 }}">{{ vertical_column }}</button>
+      {% endif %}
+    </button>
+    {% endfor %}
+  </div>
+  <br/>
+  <table id="gbe-table">
+    <thead>
+      <tr class="gbe-table-header">
+    {% for column in columns %}
+      <th>{{column}}</th>{% endfor %}
+    {% for vertical_column in vertical_columns %}
+      <th class="rotate-review"><div><span>
+      {% if vertical_column|length > 15 %}
+      <a href="#" data-toggle="tooltip" title="{{ vertical_column }}">
+        {{ vertical_column|truncatechars:15 }}</a>
+      {% else %}
+        {{ vertical_column }}
+      {% endif %}
+      </span></div></th>{% endfor %}
+    {% for column in last_columns %}
+          <th>{{column}}</th>{% endfor %}
+      </tr>
+    </thead>
+    <tfoot>
+      <tr class="gbe-table-header">
+    {% for column in columns %}
+          <th>{{column}}</th>{% endfor %}
+    {% for vertical_column in vertical_columns %}
+      <th class="rotate-review"><div><span>
+      {% if vertical_column|length > 15 %}
+      <a href="#" data-toggle="tooltip" title="{{ vertical_column }}">
+        {{ vertical_column|truncatechars:15 }}</a>
+      {% else %}
+        {{ vertical_column }}
+      {% endif %}
+      </span></div></th>{% endfor %}
+    {% for column in last_columns %}
+          <th>{{column}}</th>{% endfor %}
+      </tr>
+    </tfoot>
+    <tbody>
+    {% block tbody %}
+    {% endblock %}
+    </tbody>
+  </table>
+{% endif %}
+{% block after_table %}
+{% endblock %}
+{% addtoblock "js" %}
+  <script charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+  <script>
+  $(document).ready(function() {
+    $.fn.dataTable.moment( 'MMM D, YYYY, H:mm A' );
+    var table = $('#gbe-table').DataTable({
+      "paging": false,
+      "columnDefs": [
+        { "width": "5%", "targets": 0 }]{% if order %},
+      "order": [[ {{order}}, "desc" ]]{% endif %}
+    } );
+    $('button.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+ 
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+ 
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+  } );
+  </script>
+{% endaddtoblock %}
+{% endblock %}

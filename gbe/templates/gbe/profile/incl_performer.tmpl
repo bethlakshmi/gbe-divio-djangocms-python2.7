@@ -1,8 +1,6 @@
 <div class='performer_section'>
   {% if personae or troupes %}
-    <span class='heading performers'>
-      <b>Performer Items</b>
-    </span>
+    <span class='sched_detail'>Performer Items</span>
   <br>
     {% if personae or troupes %}
       {% for performer in personae %}
@@ -20,7 +18,7 @@
     {{ profile.display_name }} has no stage personae listed.<br>
   {% endif %}
   <ul class="rightsidebar">
-    <li><a href='{% url 'gbe:persona_create' %}'>Create a new stage persona</a><br></li>
-    <li><a href='{% url 'gbe:troupe_create' %}'>Create a troupe</a><br></li>
+    <li><a class="gbe-link" href='{% url 'gbe:persona_create' %}'>Create a new stage persona</a><br></li>
+    <li><a class="gbe-link" href='{% url 'gbe:troupe_create' %}'>Create a troupe</a><br></li>
   </ul>
 </div>

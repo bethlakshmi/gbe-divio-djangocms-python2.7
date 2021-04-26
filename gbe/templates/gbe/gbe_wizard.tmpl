@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 
 {% block title %}
 {{page_title}}
@@ -7,10 +7,10 @@
 {% block content %}
 {% block intro %}
 {% endblock %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      {% if second_form and not hide_first %}<a data-toggle="collapse" href="#collapse1">{% endif %}
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3 class="card-title">
+      {% if second_form and not hide_first %}<a data-toggle="collapse" href="#collapse1" class="gbe-panel-link">{% endif %}
       {% block first_title %}
         {{ first_title }}
       {% endblock %}
@@ -18,33 +18,33 @@
     </h3>
   </div>
   {% if second_form and not show_first %}<div id="collapse1" class="panel-collapse collapse">{% endif %}
-  <div class="panel-body">
+  <div class="card-body">
   {% block first_form %}
   {% endblock %}
   </div>{% if second_form and not show_first %}</div>{% endif %}
 </div>
 {% if second_form %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      {% if third_form %}<a data-toggle="collapse" href="#collapse2">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3 class="card-title">
+      {% if third_form %}<a data-toggle="collapse" href="#collapse2" class="gbe-panel-link">
       {{ second_title }}</a>
       {% else %}{{ second_title }}{% endif %}
     </h3>
   </div>
   {% if third_form %}<div id="collapse2" class="panel-collapse collapse">{% endif %}
-  <div class="panel-body">
+  <div class="card-body">
     {% block second_form %}
     {% endblock %}
   </div>{% if third_form %}</div>{% endif %}
 </div>
 {% endif %}
 {% if third_form %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">{{ third_title }}</h3>
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3 class="card-title">{{ third_title }}</h3>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
     {% block third_form %}
     {% endblock %}
   </div>

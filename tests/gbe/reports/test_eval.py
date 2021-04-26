@@ -64,8 +64,8 @@ class TestEval(TestCase):
         login_as(self.priv_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<td class="bid-table">3</td>')
-        self.assertContains(response, '<td class="bid-table">0</td>')
+        self.assertContains(response, '<td>3</td>')
+        self.assertContains(response, '<td>0</td>')
         self.assertNotContains(response, reverse(
             'evaluation_detail',
             urlconf='gbe.reporting.urls',
@@ -94,13 +94,13 @@ class TestEval(TestCase):
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<td class="bid-table">0</td>')
-        self.assertContains(response, '<td class="bid-table">2</td>')
+        self.assertContains(response, '<td>0</td>')
+        self.assertContains(response, '<td>2</td>')
         self.assertContains(response, grade1.question.question)
         self.assertNotContains(response, bool1.question.question)
         self.assertNotContains(response, text1.question.question)
-        self.assertContains(response, '<td class="bid-table">3.5</td>')
-        self.assertNotContains(response, '<td class="bid-table">0.5</td>')
+        self.assertContains(response, '<td>3.5</td>')
+        self.assertNotContains(response, '<td>0.5</td>')
         self.assertContains(response, reverse(
             'evaluation_detail',
             urlconf='gbe.reporting.urls',
@@ -137,8 +137,8 @@ class TestEval(TestCase):
         self.assertContains(response, text1.question.question, 2)
         self.assertContains(response, grade1.profile.profile.display_name)
         self.assertContains(response, grade2.profile.profile.display_name)
-        self.assertContains(response, '<td class="bid-table">4</td>')
-        self.assertContains(response, '<td class="bid-table">3</td>')
+        self.assertContains(response, '<td>4</td>')
+        self.assertContains(response, '<td>3</td>')
         self.assertContains(response, self.context.bid.e_description)
 
     def test_bad_details(self):

@@ -9,18 +9,18 @@
 <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {% if second_form.errors %}
-    <p style= "color:red"> There is an error on the form.</p>
+    <p class="gbe-form-error"> There is an error on the form.</p>
   {% endif %}
-  <font color="red">{{ second_form.non_field_errors }}</font>
-    <div class="form-group single-radio">
+  <font class="gbe-form-error">{{ second_form.non_field_errors }}</font>
+    <div class="form-group gbe-flat-list">
       <h4>Pick an accepted class or create a new one below:</h4>
       {{ second_form.accepted_class }}
         {% if second_form.accepted_class.errors %}
-          <font color="red">{{ second_form.accepted_class.errors }}</font>
+          <font class="gbe-form-error">{{ second_form.accepted_class.errors }}</font>
         {% endif %}
     </div>
-  <div class="form-row pull-right">
-    <input type="submit" class="next" name="pick_class" value="Next">
+  <div class="form-row justify-content-end">
+    <input type="submit" class="btn gbe-btn-primary" name="pick_class" value="Next">
   </div>
 </form>
 {% endblock %}
@@ -30,8 +30,8 @@
   {% csrf_token %}
       {% include "gbe/scheduling/event_booking.tmpl" with form=third_form %}
 
-  <div class="form-row pull-right">
-    <input type="submit" class="next" name="set_class" value="Finish">
+  <div class="form-row justify-content-end">
+    <input type="submit" class="btn gbe-btn-primary" name="set_class" value="Finish">
   </div>
 </form>
 {% endblock %}

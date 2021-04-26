@@ -96,8 +96,6 @@ urlpatterns = [
 
     url(r'^scheduling/volunteer_signup/?$',
         VolunteerSignupView.as_view(), name='volunteer_signup'),
-    url(r'^volunteer/create/?$',
-        VolunteerSignupView.as_view(), name='volunteer_create'),
     url(r'^volunteer/review_pending/?$',
         ApproveVolunteerView.as_view(), name='review_pending'),
     url(r'^volunteer/(?P<action>approve|waitlist|reject)/' +

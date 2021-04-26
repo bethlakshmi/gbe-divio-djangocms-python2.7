@@ -1,4 +1,4 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% load static %}
 {% block title %}
   Calendar
@@ -20,9 +20,9 @@
   {% if this_day %}
    <div class="col-1 backward">
     {% if prev_date %}<a href="?day={{ prev_date }}" data-toggle="tooltip" title="{{ prev_date }}">
-      <button class="btn btn-default" type="submit" name="{{ prev_date }}" value="{{ prev_date }}">
+      <button class="btn" type="submit" name="{{ prev_date }}" value="{{ prev_date }}">
     {% else %}<a href="#">
-      <button class="btn btn-default disabled">
+      <button class="btn disabled">
     {% endif %}
         <i class="fa fa-step-backward" aria-hidden="true"></i>
       </button>
@@ -30,9 +30,9 @@
     <div class="col-10">{{ this_day.day | date:"l" }} - {{ this_day }}</div>
     <div class="col-1 forward">
      {% if next_date %}<a href="?day={{ next_date }}" data-toggle="tooltip" title="{{ next_date }}">
-      <button class="btn btn-default" type="submit" name="{{ next_date }}" value="{{ next_date }}">
+      <button class="btn" type="submit" name="{{ next_date }}" value="{{ next_date }}">
     {% else %}<a href="#">
-      <button class="btn btn-default disabled">
+      <button class="btn disabled">
     {% endif %}
         <i class="fa fa-step-forward" aria-hidden="true"></i>
       </button>

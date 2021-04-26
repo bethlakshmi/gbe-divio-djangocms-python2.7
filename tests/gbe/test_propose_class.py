@@ -57,7 +57,7 @@ class TestProposeClass(TestCase):
     def test_propose_valid_class(self):
         response = self.post_class_proposal()
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Profile View")
+        self.assertContains(response, "Welcome to GBE")
 
     def test_propose_class_get(self):
         url = reverse(self.view_name, urlconf="gbe.urls")

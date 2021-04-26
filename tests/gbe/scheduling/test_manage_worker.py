@@ -339,15 +339,15 @@ class TestManageWorker(TestCase):
             '<li>This field is required.</li>')
         self.assertContains(
             response,
-            '<a href="#" data-toggle="tooltip" title="Delete">',
+            'title="Delete" type="submit" name="delete" value="Delete">',
             count=1)
         self.assertContains(
             response,
-            '<a href="#" data-toggle="tooltip" title="Edit">',
+            'title="Edit" type="submit" name="edit" value="Edit">',
             count=1)
         self.assertContains(
             response,
-            '<a href="#" data-toggle="tooltip" title="Create New">',
+            'title="Create New" type="submit" name="create" value="Create">',
             count=1)
         self.assertContains(response, role_commit_map['Error'][1])
 

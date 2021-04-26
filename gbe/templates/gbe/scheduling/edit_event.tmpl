@@ -1,79 +1,78 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 
 {% block title %}
 {{ edit_title }}
 {% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
     <!-- Fonts -->
     <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
     <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
     <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
 {% endblock %}
 {% block content %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse1">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3 class="card-title">
+      <a data-toggle="collapse" href="#collapse1" class="gbe-panel-link">
         {{ edit_title }} Details
       </a>
     </h3>
   </div>
-  <div id="collapse1" class="panel-collapse collapse {% if start_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse1" class="panel-collapse collapse {% if start_open %}show{% endif %}">
+  <div class="card-body">
   {% if report_url %}
-    <a href="{{report_url}}" role="button" class="btn btn-primary float-right">Display Staff</a>{% endif %}
+    <a href="{{report_url}}" role="button" class="btn gbe-btn-primary float-right">Display Staff</a>{% endif %}
   <form action="{{edit_url}}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {% include "gbe/scheduling/event_booking.tmpl" with form=event_form %}
-    <div class="form-row pull-right">
+    <div class="col-12 text-right">
       {% if createform or worker_alloc_forms %}
-      <input type="submit" class="event_wizard_button" name="edit_event" value="Save and Continue">
-      <input type="submit" class="event_wizard_button" name="edit_event" value="Save and Exit">
+      <input type="submit" class="btn gbe-btn-primary" name="edit_event" value="Save and Continue">
+      <input type="submit" class="btn gbe-btn-secondary" name="edit_event" value="Save and Exit">
     {% else %}
-      <input type="submit" class="event_wizard_button" name="edit_event" value="Finish">
+      <input type="submit" class="btn gbe-btn-primary" name="edit_event" value="Finish">
     {% endif %}
     </div>
   </form>
   </div></div>
 </div>
 {% if createform %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse2">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3 class="card-title">
+      <a data-toggle="collapse" href="#collapse2" class="gbe-panel-link">
       Manage Volunteer Opportunities</a>
     </h3>
   </div>
-  <div id="collapse2" class="panel-collapse collapse {% if volunteer_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse2" class="panel-collapse collapse {% if volunteer_open %}show{% endif %}">
+  <div class="card-body">
     {% include "gbe/scheduling/manage_opps.tmpl" %}
   </div></div>
 </div>
 {% endif %}
 {% if createslotform %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse3">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3 class="card-title">
+      <a data-toggle="collapse" href="#collapse3" class="gbe-panel-link">
       Manage Rehearsal Slots</a></h3>
   </div>
-  <div id="collapse3" class="panel-collapse collapse {% if rehearsal_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse3" class="panel-collapse collapse {% if rehearsal_open %}show{% endif %}">
+  <div class="card-body">
     {% include "gbe/scheduling/manage_slots.tmpl" %}
   </div></div>
 </div>
 {% endif %}
 {% if worker_alloc_forms %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a data-toggle="collapse" href="#collapse4">
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h3 class="card-title">
+      <a data-toggle="collapse" href="#collapse4" class="gbe-panel-link">
       Manage Volunteers</a></h3>
   </div>
-  <div id="collapse4" class="panel-collapse collapse {% if worker_open %}in{% endif %}">
-  <div class="panel-body">
+  <div id="collapse4" class="panel-collapse collapse {% if worker_open %}show{% endif %}">
+  <div class="card-body">
     {% include "gbe/scheduling/allocate_volunteers.tmpl" %}
   </div></div>
 </div>

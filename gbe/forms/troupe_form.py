@@ -18,13 +18,13 @@ class TroupeForm(PersonaForm):
         model = Troupe
         fields = ['contact',
                   'name',
+                  'membership',
                   'homepage',
                   'bio',
                   'experience',
                   'awards',
                   'upload_img',
                   'festivals',
-                  'membership',
                   ]
         help_texts = persona_help_texts
         labels = persona_labels

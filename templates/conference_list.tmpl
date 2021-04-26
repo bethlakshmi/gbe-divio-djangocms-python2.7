@@ -1,6 +1,6 @@
    {% for slug in conference_slugs %}
      {% if conf_slug == slug %}<font style="font-weight: bold">
      {% else %}<font style="font-weight: normal">{% endif %}
-     <a href = "?conference={{ slug }}">
+     <a href = "?conference={{ slug }}" class="gbe-link">
      {{slug}}</a></font>&nbsp;|&nbsp;
    {% endfor %}

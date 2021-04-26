@@ -92,7 +92,6 @@ class EditProfileView(View):
                                             instance=self.profile.preferences,
                                             initial={'inform_about':
                                                      inform_initial})
-        email_focus = None
         email_form = EmailPreferencesForm(prefix='email_pref',
                                           instance=self.profile.preferences)
         return render(request, 'gbe/update_profile.tmpl',
@@ -100,7 +99,6 @@ class EditProfileView(View):
                        'right_forms': [prefs_form],
                        'email_form': email_form,
                        'email_note': intro_message[0].description,
-                       'email_focus': email_focus,
                        'title': self.title,
                        'button': self.button,
                        'header': self.header})

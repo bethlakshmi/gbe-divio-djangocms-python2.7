@@ -13,22 +13,22 @@
 
   <h3>Schedule for {{ entry.room }} - {{entry.date}}</h3>
  
-  <table class="sched-table">
-    <tr class="sched-header">
-      <th class="sched-header">Name</th>
-      <th class="sched-header">Presenter</th>
-      <th class="sched-header">Start</th>
-      <th class="sched-header">End</th>
+  <table class="printable-table">
+    <tr class="printable-header">
+      <th class="printable-header">Name</th>
+      <th class="printable-header">Presenter</th>
+      <th class="printable-header">Start</th>
+      <th class="printable-header">End</th>
     </tr>
     {% for booking in entry.bookings%}
-    <tr class="sched-table">
-      <td class="sched-table">{{booking}}</td>
-      <td class="sched-table">{% for role in booking.eventitem.roles%}
+    <tr class="printable-table">
+      <td class="printable-table">{{booking}}</td>
+      <td class="printable-table">{% for role in booking.eventitem.roles%}
         {{role.role}}:  {{role.workeritem}}<br>
       {%endfor%}
       </td>
-      <td class="sched-table">{{booking.start_time}}</td>
-      <td class="sched-table">{{booking.end_time}}</td>
+      <td class="printable-table">{{booking.start_time}}</td>
+      <td class="printable-table">{{booking.end_time}}</td>
     </tr>
     {% endfor %}
   </table>

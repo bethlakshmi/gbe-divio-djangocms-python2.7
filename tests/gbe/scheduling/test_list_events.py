@@ -146,8 +146,9 @@ class TestViewList(TestCase):
                       args=['Class'])
         login_as(context.teacher.performer_profile, self)
         response = self.client.get(url)
-        self.assertContains(response,
-                            '<a href="#" class="detail_link-disabled')
+        self.assertContains(
+          response,
+          '<a href="#" class="cal-favorite detail_link-disabled')
         self.assertNotContains(response, "fa-tachometer")
 
     def test_booked_teacher_over_bid_teacher(self):

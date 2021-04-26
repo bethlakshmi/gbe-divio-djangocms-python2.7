@@ -16,7 +16,6 @@ from gbe.models import (
     Profile,
     visible_bid_query,
 )
-from django.utils.formats import date_format
 from gbetext import (
     acceptance_states,
     class_length_options,
@@ -25,6 +24,7 @@ from gbetext import (
     yesno_options,
 )
 from ticketing.functions import get_tickets
+from settings import GBE_TABLE_FORMAT
 
 
 class Class(Biddable, Event):
@@ -121,7 +121,7 @@ class Class(Biddable, Event):
         return [self.b_title,
                 self.teacher,
                 self.type,
-                date_format(self.updated_at, 'DATETIME_FORMAT'),
+                self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance_states[self.accepted][1]]
 
     @property

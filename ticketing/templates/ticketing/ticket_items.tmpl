@@ -1,4 +1,4 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% load static sekizai_tags %}
 {% block title %}
   Review Tickets
@@ -9,38 +9,38 @@
 {% block content %}
 <div class="container review">
 {% include "conference_tabs.tmpl" %} 
- <div class="scheduling-area">
+ <div class="gbe-tab-area">
 <div class="row">
 <div class="col-8">
-<h2 class="subtitle">Edit Ticket Items</h2>
+<h2 class="gbe-title">Edit Ticket Items</h2>
 
 <p>{{ intro }}</p>
 <br>
-<span class="visible">Items that look like this</span> are currently visible under lists for
+<span class="sched_detail">Items that look like this</span> are currently visible under lists for
 tickets on the site.
 
 </div>
 <div class="col-4 text-right">
-  <a href="{% url 'ticketing:bptevent_edit' %}" role="button" class="btn btn-primary">Create Event</a></div>
+  <a href="{% url 'ticketing:bptevent_edit' %}" role="button" class="btn gbe-btn-primary">Create Event</a></div>
 </div>
 
-<div id="accordion" class="gbe_accordion">
-  <div class="card">
-    <div class="card-header" id="headingOne">
+<div id="accordion" class="gbe_accordion my-3">
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingOne">
       <h2 class="mb-0">
-        <button class="d-flex align-items-center justify-content-between btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 Act Fees
           <span class="fa-stack fa-sm">
             <i class="fas fa-circle fa-stack-2x"></i>
-            <i class="fas fa-plus fa-stack-1x text-muted"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
           </span>
         </button>
       </h2>
     </div>
     <div id="collapseOne" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
+      <div class="card-body gbe-bg-light">
 <h4>Preview</h4>
-<div class="panel panel-default">
+<div class="panel gbe-panel-default">
   <br>
 {% include "form_table.tmpl" with form=act_pay_form %}
 </div>
@@ -48,14 +48,14 @@ Act Fees
      </div>
     </div>
   </div>
-  <div class="card">
-    <div class="card-header" id="headingTwo">
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingTwo">
       <h2 class="mb-0">
-        <button class="d-flex align-items-center justify-content-between btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
 Vendor Fees
           <span class="fa-stack fa-2x">
             <i class="fas fa-circle fa-stack-2x"></i>
-            <i class="fas fa-plus fa-stack-1x text-muted"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
           </span>
         </button>
       </h2>
@@ -63,7 +63,7 @@ Vendor Fees
     <div id="collapseTwo" class="collapse{% if open_panel == "vendor" %} show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordion">
       <div class="card-body">
 <h4>Preview</h4>
-<div class="panel panel-default">
+<div class="panel gbe-panel-default">
   <br>
 {% include "form_table.tmpl" with form=vendor_pay_form %}
 </div>
@@ -71,19 +71,19 @@ Vendor Fees
       </div>
     </div>
   </div>
-  <div class="card">
-    <div class="card-header" id="headingThree">
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingThree">
       <h2 class="mb-0">
-        <button class="d-flex align-items-center justify-content-between btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
           Tickets
           <span class="fa-stack fa-2x">
             <i class="fas fa-circle fa-stack-2x"></i>
-            <i class="fas fa-plus fa-stack-1x text-muted"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
           </span>
         </button>
       </h2>
     </div>
-    <div id="collapseThree" class="collapse{% if open_panel == "ticket" %} show{% endif %}" aria-labelledby="headingThree" data-parent="#accordion">
+    <div id="collapseThree" class="collapse{% if open_panel == 'ticket' %} show{% endif %}" aria-labelledby="headingThree" data-parent="#accordion">
       <div class="card-body">
 {% if events|length > 0 %}
   {% include "ticketing/ticket_event_check.tmpl" %}
@@ -94,10 +94,10 @@ Vendor Fees
 </div></div></div>
 </div>
 <br>
-<form method="POST" action={% url 'ticketing:ticket_items' %} enctype="multipart/form-data">
+<form method="POST" action="{% url 'ticketing:ticket_items' %}" enctype="multipart/form-data">
 {% csrf_token %}
     <input type="hidden" name="Import" value="1">
-    <input type="submit" value="Synchronize with Brown Paper Tickets"> 
+    <input type="submit" class="btn gbe-btn-primary" value="Synchronize with Brown Paper Tickets"> 
 </form>
 </div></div>
 {% addtoblock "js" %}

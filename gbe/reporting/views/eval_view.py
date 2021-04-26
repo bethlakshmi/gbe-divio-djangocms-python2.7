@@ -16,7 +16,7 @@ from gbe.models import (
     Performer,
     UserMessage,
 )
-from settings import GBE_DATETIME_FORMAT
+from settings import GBE_TABLE_FORMAT
 from gbetext import eval_report_explain_msg
 from gbe.scheduling.views.functions import (
     show_general_status,
@@ -27,11 +27,10 @@ from gbe.scheduling.views.functions import (
 def eval_view(request, occurrence_id=None):
     details = None
     reviewer = validate_perms(request, ('Class Coordinator', ))
+    conference = None
     if request.GET and request.GET.get('conf_slug'):
         conference = get_conference_by_slug(request.GET['conf_slug'])
-    else:
-        conference = get_current_conference()
-    if occurrence_id:
+    if occurrence_id and not conference:
         detail_response = get_eval_info(occurrence_id=int(occurrence_id))
         show_general_status(request, detail_response, "EvaluationDetailView")
         if detail_response.occurrences and len(
@@ -48,17 +47,14 @@ def eval_view(request, occurrence_id=None):
                 'questions': detail_response.questions,
                 'evaluations': detail_response.answers,
             }
+            if not conference:
+                conference = detail_response.occurrences[
+                    0].eventitem.event.e_conference
+    if not conference:
+        conference = get_current_conference()
 
     response = get_eval_summary(
         labels=[conference.conference_slug, "Conference"])
-    header = ['Class',
-              'Teacher(s)',
-              'Time',
-              '# Interested',
-              '# Evaluations']
-    for question in response.questions:
-        header += [question.question]
-    header += ['Actions']
 
     display_list = []
     summary_view_data = {}
@@ -77,8 +73,7 @@ def eval_view(request, occurrence_id=None):
         display_item = {
             'id': occurrence.id,
             'eventitem_id': class_event.eventitem_id,
-            'sort_start': occurrence.start_time,
-            'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
+            'start':  occurrence.start_time.strftime(GBE_TABLE_FORMAT),
             'title': class_event.e_title,
             'teachers': teachers,
             'interested': len(interested),
@@ -94,7 +89,6 @@ def eval_view(request, occurrence_id=None):
             summary_view_data[int(item['event'])][int(question.pk)] = item[
                 'summary']
 
-    display_list.sort(key=lambda k: k['sort_start'])
     user_message = UserMessage.objects.get_or_create(
         view="InterestView",
         code="ABOUT_EVAL_REPORT",
@@ -103,7 +97,15 @@ def eval_view(request, occurrence_id=None):
             'description': eval_report_explain_msg})
     return render(request,
                   'gbe/report/evals.tmpl',
-                  {'header': header,
+                  {'columns': ['Class',
+                               'Teacher(s)',
+                               'Time',
+                               '# Interested',
+                               '# Evaluations'],
+                   'vertical_columns': response.questions.values_list(
+                        'question',
+                        flat=True),
+                   'last_columns': ['Actions'],
                    'classes': display_list,
                    'questions': response.questions,
                    'summaries': summary_view_data,

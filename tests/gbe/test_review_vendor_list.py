@@ -81,4 +81,4 @@ class TestReviewVendorList(TestCase):
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-        self.assertContains(response, 'bid-table danger')
+        self.assertContains(response, 'gbe-table-row gbe-table-danger')

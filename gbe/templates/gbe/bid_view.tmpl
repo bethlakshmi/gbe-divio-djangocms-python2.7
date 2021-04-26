@@ -1,6 +1,5 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
-
 {% block title %}
    Review Bids
 {% endblock %}
@@ -9,17 +8,17 @@
 {% endblock %}
 {% block content %}
   {% if form.errors %}
-    <p style= "color:red"> There is an error on the form.  </p>
+    <p class="gbe-form-error"> There is an error on the form.  </p>
   {% endif %}
     {% if error %}
-    <p style= "color:red"> {{ error }}  </p>
+    <p class="gbe-form-error"> {{ error }}  </p>
     {% endif %}
 {% if not_submit_message %}
-<div class="review-pane">
+<div class="review-pane gbe-bg-light">
   {{ not_submit_message | safe }}<br><br>
   {% if edit_url %}
   <div class="text-center">
-  <a href="{{edit_url}}" role="button" class="btn btn-default btn-primary">
+  <a href="{{edit_url}}" role="button" class="btn btn-default gbe-btn-primary">
   Edit & Submit</a></div>
   {% endif %}
 </div>
@@ -27,10 +26,10 @@
 {% if submit_message %}
 <p class="lead text-center">{{ submit_message | safe }}</p>
 {% endif %}
-  <div class="review-pane">
-    <h2 class="review-title">Bid Information</h2>
+  <div class="review-pane gbe-bg-light">
+    <h2 class="gbe-title">Bid Information</h2>
      Submitted proposals cannot be modified, please contact the expo for any issues or concerns.  We'll be in contact during or after our review process.
-<div class="review container">
+<div class="container">
   {% if readonlyform %}
     {% include "readonly_form_table.tmpl" %}
   {% endif %}

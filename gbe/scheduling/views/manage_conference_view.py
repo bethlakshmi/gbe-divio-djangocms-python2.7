@@ -65,7 +65,7 @@ class ManageConferenceView(View):
                            ConferenceStartChangeForm(instance=first_day,
                                                      prefix=first_day.pk))]
 
-        return render(request, 'gbe/manage_conference.tmpl',
+        return render(request, 'gbe/scheduling/manage_conference.tmpl',
                       {'forms': forms,
                        'intro': intro_message,
                        'title': self.title,
@@ -109,7 +109,7 @@ class ManageConferenceView(View):
         if not all_valid:
             return render(
                 request,
-                'gbe/manage_conference.tmpl',
+                'gbe/scheduling/manage_conference.tmpl',
                 {'forms': forms,
                  'intro': intro_message,
                  'title': self.title,

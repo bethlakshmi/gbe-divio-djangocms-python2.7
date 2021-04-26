@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^', include('gbe.email.urls')),
     url(r'^', include('gbe.reporting.urls')),
     url(r'^', include('gbe.scheduling.urls')),
+    url(r'^', include('gbe.themes.urls')),
     url(r'^paypal/', include('paypal.standard.ipn.urls')),
 ] + aldryn_addons.urls.patterns() + i18n_patterns(
     # add your own i18n patterns here

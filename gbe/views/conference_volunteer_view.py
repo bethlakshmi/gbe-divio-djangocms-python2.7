@@ -38,8 +38,10 @@ def ConferenceVolunteerView(request):
         return HttpResponseRedirect(reverse('profile_update',
                                             urlconf='gbe.urls'))
     presenters = owner.personae.all()
-    classes = ClassProposal.objects.filter(display=True).order_by('type',
-                                                                  'title')
+    classes = ClassProposal.objects.filter(
+        display=True,
+        conference__status="upcoming").order_by('type', 'title')
+
     # if there's no classes to work with, save the user the bother, and
     # just let them know
     if len(classes) == 0:

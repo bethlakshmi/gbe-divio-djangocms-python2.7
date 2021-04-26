@@ -1,4 +1,5 @@
 import pytz
+from settings import GBE_TABLE_FORMAT
 from django.db.models import(
     CASCADE,
     CharField,
@@ -24,7 +25,6 @@ from gbetext import (
     video_options,
 )
 from scheduler.idd import get_schedule
-from django.utils.formats import date_format
 
 
 class Act (Biddable):
@@ -108,7 +108,7 @@ class Act (Biddable):
 
         return [self.performer.name,
                 self.b_title,
-                date_format(self.updated_at, 'DATETIME_FORMAT'),
+                self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance_states[self.accepted][1],
                 castings]
 

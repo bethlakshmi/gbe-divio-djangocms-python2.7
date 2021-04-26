@@ -1,4 +1,4 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% load static cms_tags %}
 {% load thumbnail %}
 
@@ -8,26 +8,26 @@
 
 {% block content %}
    
-   <H1 class="listheader">{{title}}</H1>
+   <H1 class="gbe-title">{{title}}</H1>
    <div class=body>
      {{view_header_text | safe}}
  
    </div>
    <div>
    {% for conf in conferences %}
-     <a href = "{{ bio_url }}?conference={{ conf.conference_slug }}">
+     <a href = "{{ bio_url }}?conference={{ conf.conference_slug }}" class="gbe-link">
      {{conf.conference_slug}}</a>&nbsp;|&nbsp;
    {% endfor %}
-   </div>
+   </div><br>
    <div class="bios container">        
    {% for teacher in bios %}
-     <div class="row">
+     <div class="row mb-2">
       <div class="col-md-7 col-12">
-        <h2>About {{teacher.bio.name}}</h2>
+        <h1>About {{teacher.bio.name}}</h1>
 	{% for class in teacher.classes %}
 	  <b>{{ class.role }}</b> -
 	  {% if class.detail_id %}
-	  <a href='{% url 'scheduling:detail_view' class.detail_id  %}'>
+	  <a href='{% url 'scheduling:detail_view' class.detail_id  %}' class="gbe-link">
 	  {{ class.event }}</a><br>
 	{% else %}
 	  {{ class.event }}<br>
@@ -42,7 +42,6 @@
         <img src="{% thumbnail teacher.bio.img 350x350 crop=scale subject_location=teacher.bio.img.subject_location %}" class="sched_bio_image">
         {% else %}
         {% static_placeholder "default_performer" %}
-
         {% endif %}
       </div>
      </div>

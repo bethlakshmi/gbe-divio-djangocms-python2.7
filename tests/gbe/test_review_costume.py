@@ -86,7 +86,7 @@ class TestReviewCostume(TestCase):
         data = self.get_form(bid, self.coordinator)
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
-        html_tag = '<h2 class="review-title">%s</h2>'
+        html_tag = '<h2 class="gbe-title">%s</h2>'
         title_string = ("Bid Information for %s" %
                         bid.b_conference.conference_name)
         html_title = html_tag % title_string

@@ -1,44 +1,48 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static sekizai_tags %}
 {% block title %}
    {{page_title}}
 {% endblock %}
 {% block head %}
+{% for form in forms %}
+ {{ form.media.css }}
+{% endfor %}
     <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
     <script>{% include "tiny-mce-user-settings.tmpl" %}</script>
 {% endblock %}
 {% block content %}
-<h2 class="subtitle">{{view_title}}</h2>
-<h3>{{conference.conference_name}}</h3>
-<p>{{view_header_text | safe}}
-
+<h2 class="gbe-title">{{view_title}}</h2>
+<h3 class="gbe-subtitle">{{conference.conference_name}}</h3>
+{% if view_header_text != "&nbsp;" %}
+<p>{{view_header_text | safe}}</p>
+{% endif %}
   {% if errors %}
     {% for error in errors %}
-    <p style= "color:red">{{error}}</p>
+    <p class="gbe-form-error">{{error}}</p>
     {% endfor %}
   {% endif %}
 
    {% if popup_text %}
-   <div class="alert alert-info">{{popup_text |safe }}</div>
+   <div class="alert gbe-alert-info">{{popup_text |safe }}</div>
    {% endif %}
    <form action="" method="post" enctype="multipart/form-data">
 
    {% include "form_table_wrapper.tmpl" %}
 
    {% if nodraft %}
-    <input type="submit" name="submit" value="{{nodraft}}">
+    <input type="submit" name="submit" value="{{nodraft}}" class="btn gbe-btn-primary">
    {% else %}
-   <input type="submit" name="draft" formnovalidate value="Save Draft">
+   <input type="submit" name="draft" formnovalidate value="Save Draft" class="btn gbe-btn-secondary">
      {% if fee_paid %}
-     <input type="submit" name="submit" value="Submit For Approval">
+     <input type="submit" name="submit" value="Submit For Approval" class="btn gbe-btn-primary">
      {% else %}
-     <input type="submit" name="submit" formnovalidate value="Proceed to Payment">
+     <input type="submit" name="submit" formnovalidate value="Proceed to Payment" class="btn gbe-btn-primary">
      {% endif %}
    {% endif %}
    </form>
 {% addtoblock "js" %}
 {% for form in forms %}
- {{ form.media }}
+ {{ form.media.js }}
 {% endfor %}
 <script>
 (function($) {

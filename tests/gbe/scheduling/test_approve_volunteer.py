@@ -25,7 +25,10 @@ from gbe.models import (
     Profile,
 )
 from scheduler.models import ResourceAllocation
-from settings import GBE_DATETIME_FORMAT
+from settings import (
+    GBE_DATETIME_FORMAT,
+    GBE_TABLE_FORMAT,
+)
 from gbetext import (
     set_volunteer_role_msg,
     volunteer_allocate_email_fail_msg,
@@ -55,16 +58,17 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response, str(booking.event))
         self.assertContains(
             response,
-            date_format(booking.event.start_time, "SHORT_DATETIME_FORMAT"))
+            booking.event.start_time.strftime(GBE_TABLE_FORMAT))
         self.assertContains(
             response,
-            date_format(booking.event.end_time, "SHORT_DATETIME_FORMAT"))
+            booking.event.end_time.strftime(GBE_TABLE_FORMAT))
         for action in ['approve', 'reject', 'waitlist']:
             if action == disabled_action:
                 self.assertContains(
                     response,
-                    '<a href="None" class="btn btn-default btn-xs disabled" ' +
-                    'data-toggle="tooltip" title="%s">' % action.capitalize())
+                    '<a href="None" class="btn gbe-btn-table gbe-btn-xs ' +
+                    'disabled" data-toggle="tooltip" title="%s">' % (
+                        action.capitalize()))
             else:
                 self.assertContains(response, reverse(
                     self.approve_name,
@@ -122,7 +126,8 @@ class TestApproveVolunteer(TestCase):
         response = self.client.get(self.url)
         self.assert_volunteer_state(response, self.context.allocation)
         self.assertContains(response, str(self.context.sched_event))
-        self.assertContains(response, '<tr class="bid-table info">')
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-info">')
         self.assertContains(response, label.text)
 
     def test_get_staff_area(self):
@@ -144,7 +149,8 @@ class TestApproveVolunteer(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assert_volunteer_state(response, self.context.allocation)
-        self.assertContains(response, '<tr class="bid-table danger">')
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-danger">')
 
     def test_event_full(self):
         self.context.worker.role = "Pending Volunteer"
@@ -155,7 +161,8 @@ class TestApproveVolunteer(TestCase):
         response = self.client.get(self.url)
         self.assert_volunteer_state(response, self.context.allocation)
         self.assertContains(response, str(self.context.sched_event))
-        self.assertContains(response, '<tr class="bid-table warning">')
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-warning">')
 
     def test_set_waitlist(self):
         self.context.worker.role = "Pending Volunteer"
@@ -171,7 +178,8 @@ class TestApproveVolunteer(TestCase):
             response,
             self.context.allocation,
             "waitlist")
-        self.assertContains(response, '<tr class="bid-table success">')
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Waitlisted"
         full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
                 alert_msg,
@@ -202,7 +210,8 @@ class TestApproveVolunteer(TestCase):
             response,
             self.context.allocation,
             "reject")
-        self.assertContains(response, '<tr class="bid-table success">')
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Rejected"
         full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
                 alert_msg,
@@ -231,7 +240,8 @@ class TestApproveVolunteer(TestCase):
                   self.context.allocation.pk])
         response = self.client.get(approve_url)
         self.assertNotContains(response, approve_url)
-        self.assertNotContains(response, '<tr class="bid-table success">')
+        self.assertNotContains(response,
+                               '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Volunteer"
         full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
                 alert_msg,
@@ -280,7 +290,8 @@ class TestApproveVolunteer(TestCase):
                   self.context.allocation.pk])
         response = self.client.get(approve_url)
         self.assertNotContains(response, approve_url)
-        self.assertNotContains(response, '<tr class="bid-table success">')
+        self.assertNotContains(response,
+                               '<tr gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Volunteer"
         full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
                 alert_msg,

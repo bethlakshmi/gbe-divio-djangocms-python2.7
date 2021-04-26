@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 
 {% block title %}
   Login to GBE
@@ -28,11 +28,11 @@
           You may have ended up here if you tried to do something which requires
           a login (like submit an act or a class).
           If you have a login, please enter it at left, or
-          <a href='{% url 'gbe:register' %}' tabindex=3>
+          <a href='{% url 'gbe:register' %}' tabindex=3 class="gbe-link">
 	    register
 	  </a> 
 	  to create a login.<br><br>
-          <a href='{% url 'gbe:password_reset' %}' tabindex=4>
+          <a href='{% url 'gbe:password_reset' %}' tabindex=4 class="gbe-link">
 	    Help!
 	  </a> I forgot my username or password!
 	</div>
@@ -50,12 +50,12 @@
       </td>
     </tr>
     <tr>
-      <td colspan=2 align=center><input type="submit" value="Login"/></td>
+      <td colspan=2 align=center class="text-right"><input type="submit" value="Login" class="btn gbe-btn-primary"/></td>
     </tr>
     </table>
     <input type="hidden" name="next" value = "{{next | escape}}" />
   </form>
    {% if form.errors %}
-    <p class="error">This site does not recognize your username or password.</p>
+    <p class="gbe-form-error">This site does not recognize your username or password.</p>
   {% endif %} 
 {% endblock %}

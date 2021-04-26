@@ -1,4 +1,4 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% load static sekizai_tags %}
 {% block title %}
   Volunteer Sign-Up
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<h2>Volunteer for {{ conference }}</h2>
+<h2 class="gbe-title">Volunteer for {{ conference }}</h2>
 <div>{{ view_header_text | safe }}</div><br>
 <div class="container calendar-container">
  <div class="row header1">
@@ -60,7 +60,7 @@
   {% for is_hour, hour, time, wrap in grid_list %}
     {% if time == occurrence.object.start_time.time %}
     <td class="vol_shift_event" id="{{occurrence.highlight|slugify}}" colspan="{{occurrence.colspan}}">
-      <a class="more-link" href="#" data-toggle="modal" data-target="#Modal{{occurrence.eventitem.pk}}" data-backdrop="true" >
+      <a class="gbe-link" href="#" data-toggle="modal" data-target="#Modal{{occurrence.eventitem.pk}}" data-backdrop="true" >
     {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon" %}
     {{ occurrence.start }}-{{ occurrence.end }} <b>{{ occurrence.title}}</b></a>
     {% include "gbe/scheduling/event_modal.tmpl"%}

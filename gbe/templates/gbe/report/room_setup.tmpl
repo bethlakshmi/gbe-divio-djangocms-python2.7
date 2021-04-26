@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}
@@ -9,29 +9,28 @@
 
   {% include "conference_picker.tmpl" %}
 
-  <h2 class="review-title">Room Schedules</h2>
+  <h2 class="gbe-title">Room Schedules</h2>
 
 {% for entry in room_date%}
   <h3>Schedule for {{ entry.room }} - {{entry.date}}</h3>
  
-  <table class="bid-table">
-    <tr class="bid-table">
-      <th class="bid-table">Name</th>
-      <th class="bid-table">Start</th>
-      <th class="bid-table">End</th>
-      <th class="bid-table">Type</th>
-      <th class="bid-table">Space Needs</th>
-    </tr>
+  <table><thead><tr  class="gbe-table-header">
+      <th>Name</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Type</th>
+      <th>Space Needs</th>
+    </tr></thead><tbody>
     {% for booking in entry.bookings%}
-    <tr class="bid-table">
-      <td class="bid-table">{{booking.event}}</td>
-      <td class="bid-table">{{booking.event.start_time}}</td>
-      <td class="bid-table">{{booking.event.end_time}}</td>
-      <td class="bid-table">{{booking.class.type}}</td>
-      <td class="bid-table">{{booking.class.get_space_needs}}</td>
+    <tr  class="gbe-table-row">
+      <td>{{booking.event}}</td>
+      <td>{{booking.event.start_time}}</td>
+      <td>{{booking.event.end_time}}</td>
+      <td>{{booking.class.type}}</td>
+      <td>{{booking.class.get_space_needs}}</td>
     </tr>
     {% endfor %}
-  </table>
+  </tbody></table><br>
 {% endfor %}
 {% endblock %}
 

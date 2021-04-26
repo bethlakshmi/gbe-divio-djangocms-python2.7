@@ -1,127 +1,32 @@
-{% extends 'base.tmpl' %}
-{% load static sekizai_tags %}
-
+{% extends 'gbe/gbe_table.tmpl' %}
 {% block title %}
    Review Bids
 {% endblock %}
-
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
-{% endblock %}
-
-{% block content %}
-  <p class="vanilla">{{title}} </p>
-  <h2 class="review-title">Bid Information for {{conference}}</h2>
+{% block before_table %}
+  <h2 class="gbe-title">Bid Information for {{conference}}</h2>
   <br/>
       {% include "conference_picker.tmpl" %}
   <br/>
   <div>Red background indicates a user that has become inactive.</div>
   <div>Blue background indicates bids that are awaitng your review.
   Search for "Needs Review" to find them easily.</div>
-  <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
-  press "Shift" to sort a secondary column.</div>
-  <br/>
-  <div>
-    Toggle column(s):
-    {% for header_item in header %}
-      <a class="toggle-vis" id="gbe-table-select" data-column="{{ forloop.counter0 }}">
-	{{ header_item }}</a>{% if not forloop.last %} - {% endif %}
-    {% endfor %}
-  </div>
-  <br/>
-  <table id="bid_review" class="order-column table table-bordered" cellspacing="0" width="100%">
-    <thead>
-      <tr class="bid-table">
-      {% for header_item in header %}
-        <th class="bid-table">{{ header_item }}</th>
-      {% endfor %}
-      </tr>
-    </thead>
-    <tfoot>
-      <tr class="bid-table">
-      {% for header_item in header %}
-        <th class="bid-table">{{ header_item }}</th>
-      {% endfor %}
-      </tr>
-    </tfoot>
-    <tbody>
+{% endblock %}
+{% block tbody %}
     {% for row in rows %}
-      <tr class="bid-table {{ row.status }}">
-              {% for value in row.bid %}
-	        <td class="bid-table">
-                  {{ value|linebreaks }}
-          	</td>
-	      {% endfor %}
-          {% if "Reviews" in header %}
-          <td class="bid-table">
- 	  {% for review in row.reviews %}
-               {% if not forloop.first %}<hr/>{% endif %}
-                <b>Reviewer:</b> {{ review.evaluator.display_name }}<br>
-                <b>Recommendation:</b> {{ review.get_vote_display }}<br>
-                <b>Comment:</b> {{ review.notes }}<br>
- 	  {% endfor %}
+      <tr class="gbe-table-row {{ row.status }}">
+        {% for value in row.bid %}
+	        <td>{{ value|linebreaks }}</td>{% endfor %}
+        {% if "Reviews" in columns %}
+          <td>{% for review in row.reviews %}
+          {% if not forloop.first %}<hr/>{% endif %}
+          <b>Reviewer:</b> {{ review.evaluator.display_name }}<br>
+          <b>Recommendation:</b> {{ review.get_vote_display }}<br>
+          <b>Comment:</b> {{ review.notes }}<br>
+          {% endfor %}
           </td>
-          {% endif %}
-          <td class="bid-table">
-              <a href="{{ row.review_url }}">
-	        {% if row.action1 %}
-	          {{ row.action1 }}
-	        {% else %}
-	          Review
-	        {% endif %}
-	      </a>
-              {% if row.edit_url %}
-                <br>
-                  <a href="{{ row.edit_url }}">
-		    {% if row.action2 %}
-		      {{ row.action2 }}
-		    {% else %}
-		      Edit
-		    {% endif %}
-		  </a>
-              {% endif %}
-              {% if row.delete_url %}
-                <br>
-                <a href="{{ row.delete_url }}">
-		{% if row.action3 %}
-		{{ row.action3 }}
-		{% else %}
-		Delete
-		{% endif %}
-		</a>
-              {% endif %}
-              {%if row.assign_url%}
-                <br>
-                <a href="{{ row.assign_url }}">
-		{% if row.action4 %}
-		{{ row.action4 }}
-		{% else %}
-		Assign
-		{% endif %}
-		</a>
-              {% endif %}
-          </td>
+        {% endif %}
+          <td><a href="{{ row.review_url }}" class="gbe-table-link">
+	          Review</a></td>
       </tr>
     {% endfor %}
-    </tbody>
-  </table>
-{% addtoblock "js" %}
-  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-  <script>
-  $(document).ready(function() {
-    var table = $('#bid_review').DataTable({
-        "paging": false});
-
-    $('a.toggle-vis').on( 'click', function (e) {
-        e.preventDefault();
-
-        // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
-
-        // Toggle the visibility
-        column.visible( ! column.visible() );
-    } );
-} );
-  </script>
-{% endaddtoblock %}
 {% endblock %}

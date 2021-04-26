@@ -2,25 +2,25 @@
 {% if details %}
   <div class="modal" id="{{details.occurrence.pk}}_eval_modal">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content gbe-modal-content">
         <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">{{details.title}} - Evaluations</h4>
+        <div class="modal-header gbe-modal-header">
+          <h4 class="gbe-title">{{details.title}} - Evaluations</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <!-- Modal body -->
         <div class="modal-body">
   <div class="row"><div class="col-12">
-    <h2>Description</h2>
+    <h2 class="gbe-title">Description</h2>
     {{ details.description |safe }}<br><br>
-  <table id="eval_detail" class="order-column" cellspacing="0" width="100%">
+  <table id="eval_detail">
     <thead>
-    <tr class="bid-table">
-      <th class="bid-table rotate-review">
+    <tr class="gbe-table-header">
+      <th>
   Responder
       </th>
       {% for question in details.questions %}
-      <th class="bid-table rotate-review">
+      <th class="rotate-review">
   <div><span>
     {% if question.question|length > 15 %}
       <a href="#" data-toggle="tooltip" title="{{ question.question }}">
@@ -33,12 +33,12 @@
     </tr>
     </thead>
     <tfoot>
-    <tr class="bid-table">
-      <th class="bid-table rotate-review">
+    <tr class="gbe-table-header">
+      <th>
   Responder
       </th>
       {% for question in details.questions %}
-      <th class="bid-table rotate-review">
+      <th class="rotate-review">
   <div><span>
     {% if question.question|length > 15 %}
       <a href="#" data-toggle="tooltip" title="{{ question.question }}">
@@ -51,23 +51,23 @@
     </tr>
     </tfoot>
     <tbody>
-      <tr class="bid-table">
+      <tr class="gbe-table-row">
     {% for eval in details.evaluations %}
       {% ifchanged eval.profile %}
       {% if not forloop.first %}
       </tr>
-      <tr class="bid-table">
+      <tr class="gbe-table-row">
       {% endif %}
-        <td class="bid-table">{{ eval.profile }}</td>
+        <td>{{ eval.profile }}</td>
       {% endifchanged %}
-        <td class="bid-table">{{ eval.answer }}</td>
+        <td>{{ eval.answer }}</td>
     {% endfor %}
       </tr>
     </tbody>
   </table></div></div>        
         <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <div class="modal-footer gbe-modal-header">
+          <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
         </div>
         
       </div>
@@ -79,6 +79,21 @@
 $(document).ready(function(){
   $('#{{details.occurrence.pk}}_eval_modal').modal('show');
 });
+</script>
+<script>
+    $(document).ready(function() {
+    var table = $('#eval_detail').DataTable();
+
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+  } );
 </script>
 {% endaddtoblock %}
 {% endif %}

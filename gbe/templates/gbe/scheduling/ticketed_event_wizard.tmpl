@@ -8,12 +8,12 @@
   {% csrf_token %}
       {% include "gbe/scheduling/event_booking.tmpl" with form=second_form %}
 
-  <div class="form-row pull-right">
+  <div class="form-row float-right">
   {% if volunteer_scheduling %}
-    <input type="submit" class="next" name="set_event" value="Save and Return to List">
-    <input type="submit" class="next" name="set_event" value="More...">
+    <input type="submit" class="btn gbe-btn-secondary" name="set_event" value="Save and Return to List">&nbsp;
+    <input type="submit" class="btn gbe-btn-primary" name="set_event" value="More...">
   {% else %}
-    <input type="submit" class="next" name="set_event" value="Finish">
+    <input type="submit" class="btn gbe-btn-primary" name="set_event" value="Finish">
   {% endif %}
   </div>
 </form>

@@ -100,8 +100,8 @@ class TestCreateClass(TestCase):
             response,
             reverse("persona_create",
                     urlconf='gbe.urls') + "?next=/class/create")
-        title = '<h2 class="subtitle">Tell Us About Your Stage Persona</h2>'
-        self.assertContains(response, title)
+        title = '<h2 class="gbe-title">Tell Us About Your Stage Persona</h2>'
+        self.assertContains(response, title, html=True)
         assert response.status_code == 200
 
     def test_class_bid_post_with_submit(self):
@@ -132,7 +132,7 @@ class TestCreateClass(TestCase):
         should redirect to home'''
         response, data = self.post_bid(submit=False)
         self.assertEqual(200, response.status_code)
-        self.assertContains(response, 'Profile View')
+        self.assertContains(response, 'Welcome to GBE')
         self.assertContains(response, data['theclass-b_title'])
 
     def test_class_bid_post_invalid_form_no_submit(self):

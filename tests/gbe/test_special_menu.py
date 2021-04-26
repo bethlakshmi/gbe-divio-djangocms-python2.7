@@ -26,6 +26,7 @@ class TestSpecialMenu(TestCase):
         'Vendor Coordinator',
         'Scheduling Mavens',
         'Tech Crew',
+        'Theme Editor',
         'Ticketing - Admin',
         'Ticketing - Transactions',
         'Registrar'

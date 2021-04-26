@@ -1,9 +1,8 @@
-
-
-<div class=side_box>
-  <h2>Volunteer Management
+<div class="row">
+  <div class="col-md-6"><h2 class="gbe-subtitle">Volunteer Management</h2></div>
     {% if report_url %}
-    <a href="{{report_url}}" role="button" class="btn btn-primary float-right">Display Staff</a>{% endif %}</h2>
+      <div class="col-md-6 text-right"><a href="{{report_url}}" role="button" class="btn gbe-btn-primary">Display Staff</a></div>{% endif %}
+</div>
   <p># = Number of Volunteers Needed<br>
      Approve = Approval Needed for Volunteering</p>
   <i class="fa fa-pencil" aria-hidden="true"></i> - Edit &nbsp;&nbsp;||&nbsp;&nbsp;
@@ -12,7 +11,7 @@
   <i class="fa fa-times" aria-hidden="true"></i> - Delete &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fa fa-plus" aria-hidden="true"></i> - Create
   <br><br>
-  <table class="event_opps">
+  <table class="striped_table">
     <tr> 
     {% for header in actionheaders %}
       <th class="vol_header">{{ header }}</th>
@@ -20,7 +19,7 @@
       <th>Action</th>
     </tr>
     {% for form in actionform %}
-    <tr class="{% if changed_id == form.opp_sched_id.value %}changed{% else %}event_opp_row{% endif %}">
+    <tr class="{% if changed_id == form.opp_sched_id.value %}gbe-table-success {% endif %}striped_table_row">
       <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
       	    enctype="multipart/form-data">
         {% csrf_token %}
@@ -28,7 +27,7 @@
 	  <td>
           {{ field }}
           {% if field.errors %}
-	    <span class="opps-errors">
+	    <span class="opps-errors gbe-form-error">
               {{ field.errors }}
 	    </span>
           {% endif %}
@@ -38,32 +37,20 @@
 	{% endfor %}
 	  <td>
 	    <div class="btn-group" role="group" aria-label="...">
-	      <a href="#" data-toggle="tooltip" title="Edit">
-                <button class="btn btn-default btn-xs" type="submit" name="edit" value="Edit">
-	          <i class="fa fa-pencil" aria-hidden="true"></i>
-	        </button>
-	      </a>
-	      <a href="#" data-toggle="tooltip" title="Copy">
-  	        <button class="btn btn-default btn-xs" type="submit" name="duplicate" value="Copy">
-	          <i class="fa fa-clone" aria-hidden="true"></i>
-                </button>
-	      </a>
-	      <a href="#" data-toggle="tooltip" title="Setup Staff">
-                <button class="btn btn-default btn-xs" type="submit" name="allocate" value="Staff">
-         	    <i class="fa fa-users" aria-hidden="true"></i>
-                </button>
-	      </a>
-	      <a href="#" data-toggle="tooltip" title="Delete">
-	        <button class="btn btn-default btn-xs" type="submit" name="delete" value="Delete">
-                  <i class="fa fa-times" aria-hidden="true"></i>
-                </button>
-	      </a>
+        <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Edit" type="submit" name="edit" value="Edit">
+	          <i class="fa fa-pencil" aria-hidden="true"></i></button>
+  	    <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Copy" type="submit" name="duplicate" value="Copy">
+	          <i class="fa fa-clone" aria-hidden="true"></i></button>
+	      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Setup Staff" type="submit" name="allocate" value="Staff">
+         	  <i class="fa fa-users" aria-hidden="true"></i></button>
+	      <button class="btn gbe-btn-light gbe-btn-xs" data-toggle="tooltip" title="Delete" type="submit" name="delete" value="Delete">
+            <i class="fa fa-times" aria-hidden="true"></i></button>
 	    </div>
 	  </td>
       </form>	      
     </tr>
     {% endfor %}
-    <tr class="event_opp_row">
+    <tr class="striped_table_row">
       <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
       	    enctype="multipart/form-data">
 	{% csrf_token %}
@@ -83,7 +70,7 @@
  	<td>
 	  <div class="btn-group" role="group" aria-label="...">
 	    <a href="#" data-toggle="tooltip" title="Create New">
-              <button class="btn btn-default btn-xs" type="submit" name="create" value="Create">
+              <button class="btn gbe-btn-light gbe-btn-xs" type="submit" name="create" value="Create">
 	        <i class="fa fa-plus" aria-hidden="true"></i>
 	      </button>
 	    </a>
@@ -94,4 +81,3 @@
     </tr>
   </table>
   <br><br>
-</div>

@@ -199,8 +199,8 @@ class TestVolunteerWizard(TestScheduling):
                     GBE_DATE_FORMAT)))
         self.assertContains(
             response,
-            '<tr class="bid-table success">\n       ' +
-            '<td class="bid-table">%s</td>' % data['e_title'])
+            '<tr class="gbe-table-row gbe-table-success">\n       ' +
+            '<td>%s</td>' % data['e_title'])
         self.assertTrue(occurrence.approval_needed)
 
     def test_auth_user_bad_user_assign(self):

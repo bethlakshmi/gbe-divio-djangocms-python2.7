@@ -340,7 +340,7 @@ class TestCopyOccurrence(TestGBE):
                     another_day.day,
                     self.vol_opp.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
-        self.assertContains(response, "bid-table approval_needed", 2)
+        self.assertContains(response, "approval_needed", 2)
 
     def test_copy_child_parent_events_same_conf(self):
         data = {
@@ -382,7 +382,7 @@ class TestCopyOccurrence(TestGBE):
                     self.context.conf_day.day,
                     self.vol_opp.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
-        self.assertNotContains(response, "bid-table approval_needed")
+        self.assertNotContains(response, "approval_needed")
 
     def test_copy_child_parent_events_keep_room(self):
         new_room = self.context.get_room()

@@ -1,4 +1,4 @@
-{% extends 'base.tmpl' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}
@@ -6,9 +6,7 @@
 {% endblock %}
 
 {% block content %}
-
-
-  <h2 class="review-title">Reports</h2>
+  <h2 class="gbe-title">Reports</h2>
 
   Warning:  This area is a work in progress... if you click a link and get a 404 error, please do the following:
    <ul>
@@ -18,53 +16,54 @@
 
   {% include "conference_picker.tmpl" %}
 
-
-  <table class="bid-table">
-    <tr class="bid-table">
-      <th class="bid-table">Report</th>
-      <th class="bid-table">Description</th>
-      <th class="bid-table">Link</th>
+<br><br>
+  <table>
+    <thead>
+    <tr class="gbe-table-header">
+      <th>Report</th>
+      <th>Description</th>
+      <th>Link</th>
     </tr>
-    <tr class="bid-table">
-        <td class="bid-table"><b>Staffing Report by Area</b></td>
+    </thead>
+    <tr class="gbe-table-row">
+        <td><b>Staffing Report by Area</b></td>
         <td>
  	  <i>Heads of Staff</i> this is for you! Whether you're running a
 	  staff area or a show, go here to see:
 	  <ul><li>List of scheduled shifts</li>
 	      <li>Volunteers for each shift</li>
 	      <li>Volunter contact info</li></ul>
-	  <font color="red">NEW! - Volunteer Types!</font>
         </td>
-        <td class="bid-table">
-          <a href="{%url 'reporting:staff_area' %}">Staff Area</a>
+        <td>
+          <a href="{%url 'reporting:staff_area' %}" class="gbe-table-link">Staff Area</a>
         </td>
       </tr>
-    <tr class="bid-table">
-        <td class="bid-table"><b>Room Schedules</b></td>
+    <tr class="gbe-table-row">
+        <td><b>Room Schedules</b></td>
         <td>
  	  <i>Class coordinator & Heads of Staff</i> this is for you!  Go here to see a printable report of:
 	  <ul><li>Room Schedules for every room</li>
 	  <li>Day by day</li>
 	  <li>Schedule items and presenters</li></ul>
-        <td class="bid-table">
-          <a href="{%url 'reporting:room_schedule' %}">Room Schedules</a>
+        <td>
+          <a href="{%url 'reporting:room_schedule' %}" class="gbe-table-link">Room Schedules</a>
         </td>
       </tr>  
-    <tr class="bid-table">
-        <td class="bid-table"><b>Room Setup</b></td>
+    <tr class="gbe-table-row">
+        <td><b>Room Setup</b></td>
         <td>
  	  <i>Class coordinator</i> this is for you!  This is great for working with the hotel.
 	  <ul><li>Room Schedules - every class room, every day</li>
 	  <li>Class with type</li>
 	  <li>Room setup requests</li></ul>
-        <td class="bid-table">
-          <a href="{%url 'reporting:room_setup' %}">Room Setup</a><br>
+        <td>
+          <a href="{%url 'reporting:room_setup' %}" class="gbe-table-link">Room Setup</a><br>
 	  <i>copy to word, replace -----BREAK----- <br>
 	  with a line break and make landscape.</i>
         </td>
       </tr>    
-     <tr class="bid-table">
-        <td class="bid-table"><b>Personal Schedules Print Run</b></td>
+     <tr class="gbe-table-row">
+        <td><b>Personal Schedules Print Run</b></td>
         <td>
  	  <i>Registration</i> this is for you! 
 	  <ul><li>Schedules for everyone</li>
@@ -73,15 +72,15 @@
 	  info, too.  If you need something different, look at individual schedules
 	  </li>
 	  </ul>
-        <td class="bid-table">
-          <a href="{%url 'reporting:welcome_letter' %}">Schedule of Everyone</a><br>
+        <td>
+          <a href="{%url 'reporting:welcome_letter' %}" class="gbe-table-link">Schedule of Everyone</a><br>
 	  <i>copy to word, replace -----BREAK----- <br>
 	  with a line break and you're good to go.</i><br>
-	  <a href="{%url 'gbe:manage_users' %}">Per User View</a>
+	  <a href="{%url 'gbe:manage_users' %}" class="gbe-table-link">Per User View</a>
         </td>
       </tr>
-    <tr class="bid-table">
-        <td class="bid-table"><b>Envelope Stuffing Made Easy</b></td>
+    <tr class="gbe-table-row">
+        <td><b>Envelope Stuffing Made Easy</b></td>
         <td>
  	  <i>Registration</i> this is for you!  Everything you need to get envelopes stuffed.
 	  <ul><li>Person by person</li>
@@ -92,17 +91,17 @@
 	  <li>Volunteer?</li>
 	  <li>Head of Staff?</li>
 	  </ul>
-        <td class="bid-table">
+        <td>
 	  {% if conference %}
-            <a href="{%url 'reporting:env_stuff' conference.conference_slug %}">Big List of Everything</a><br>
+            <a href="{%url 'reporting:env_stuff' conference.conference_slug %}" class="gbe-table-link">Big List of Everything</a><br>
 	  {%else%}
-            <a href="{%url 'reporting:env_stuff' %}">Big List of Everything</a><br>
+            <a href="{%url 'reporting:env_stuff' %}" class="gbe-table-link">Big List of Everything</a><br>
           {%endif%}
 	  <i>downloads a CSV</i>
         </td>
       </tr>    
-    <tr class="bid-table">
-        <td class="bid-table"><b>Badge Printing</b></td>
+    <tr class="gbe-table-row">
+        <td><b>Badge Printing</b></td>
         <td>
  	  <i>Registration</i> this is for you!  Print runs for the Expo.
 	  <ul><li>Badge name auto-computed</li>
@@ -110,11 +109,11 @@
 	  <li>Ticket for badge printing only</li>
 	  <li>One row per ticket</li>
 	  </ul>
-        <td class="bid-table">
+        <td>
 	  {% if conference %}
-            <a href="{%url 'reporting:badge_report' conference.conference_slug%}">
+            <a href="{%url 'reporting:badge_report' conference.conference_slug%}" class="gbe-table-link">
 	  {%else%}
-            <a href="{%url 'reporting:badge_report' %}">
+            <a href="{%url 'reporting:badge_report' %}" class="gbe-table-link">
 	  {%endif%}  
 	    Badge Print Run</a><br>
 	  <i>downloads a CSV</i>

@@ -1,4 +1,4 @@
-{% extends "base.tmpl" %}
+{% extends "base.html" %}
 {% load thumbnail %}
 
 {% block title %}
@@ -14,9 +14,9 @@ Act state is {{ state }}</span>
 </div>{% endif %}
 <div class="row">
  <div class="col-xs-12 col-md-6 col-lg-4">
-  <H2>Performer: {{act.performer}}</H2>
-  <h3>Act Name: {{act.b_title}}</h3>
-  {% if not act.tech.is_complete %}<font color="red">Act Tech is NOT complete</font>{% endif %}
+  <h2 class="gbe-title">Performer: {{act.performer}}</H2>
+  <h3 class="gbe-subtitle">Act Name: {{act.b_title}}</h3>
+  {% if not act.tech.is_complete %}<font class="gbe-form-error">Act Tech is NOT complete</font>{% endif %}
   <b>Email:</b>  <a href='mailto:{{act.act.performer.contact.user_object.email}}'>
     {{act.performer.contact.user_object.email}}</a><br>
   <b>Phone:</b>  {{act.performer.contact.phone}}<br>
@@ -26,15 +26,15 @@ Act state is {{ state }}</span>
   <br><br>
  {% else %}&nbsp;{% endif %}</div>
  <div class="col-xs-12 col-md-6 col-lg-4">
-<h4>Show:  {% for show in shows %}{{show}}, {% empty %}<font color="red">No Show</font>{% endfor %}</h4>
+<h4>Show:  {% for show in shows %}{{show}}, {% empty %}<font class="gbe-form-error">No Show</font>{% endfor %}</h4>
 <h4>Rehearsal: {% for rehearsal in rehearsals %}{{ rehearsal.start_time }}
-{% empty %}<font color="red">No Rehearsal</font>{% endfor %}</h4>
+{% empty %}<font class="gbe-form-error">No Rehearsal</font>{% endfor %}</h4>
 {% if order >= 0 %}
-<div class="act_tech_box" style="text-align:center;"><br><span style="font-size: 3em;">
+<div class="act_tech_box gbe-bg-light" style="text-align:center;"><br><span style="font-size: 3em;">
   {{ order }}<br></span><br>Show Order</div>{% endif %}
  </div></div>
 <div class="row">
-<div class="col-11 sched_times">
+<div class="col-11 sched_times gbe-bg-dark">
     <b>Duration</b>(hh:mm:ss): {{act.tech.duration}}<br>
     <b>Description:</b> {{act.b_description | linebreaks}}<br>
     <b>Feel of Act:</b> {{act.tech.feel_of_act | linebreaks}}<br>
@@ -42,24 +42,24 @@ Act state is {{ state }}</span>
 </div>
 
 <div class="row">
-  <div class="col-xs-12 col-md-6 act_tech_box">
-  <h3>Stage Crew Info:</h3>
+  <div class="col-xs-12 col-md-6 act_tech_box gbe-bg-light">
+  <h3 class="gbe-subtitle">Stage Crew Info:</h3>
   <b>Prop Setup:</b><br>
   <ul>
   {% for item in act.tech.prop_setup_list %}<li>{{item}}</li>{% endfor %}
   </ul>
   {{ act.tech.crew_instruct | linebreaks }}<br>
 </div>
-  <div class="col-xs-12 col-md-5 act_tech_box">
-  <h3>MC Info:</h3>
+  <div class="col-xs-12 col-md-5 act_tech_box gbe-bg-light">
+  <h3 class="gbe-subtitle">MC Info:</h3>
   <b>Preferred Pronouns:</b> {{act.tech.pronouns}}<br>
   {% if act.tech.read_exact %}<b>Read this exacty</b><br>{% endif %}
   {{ act.tech.introduction_text | linebreaks}}<br><br>
 </div>
 </div>
 <div class="row">
-  <div class="col-xs-12 col-md-6 act_tech_box">
-  <h3>Lighting Info:</h3>
+  <div class="col-xs-12 col-md-6 act_tech_box gbe-bg-light">
+  <h3 class="gbe-subtitle">Lighting Info:</h3>
     <span style="font-variant: small-caps;">Costume Colors</span><br>
       &nbsp;&nbsp;<b>Primary:</b> {{act.tech.primary_color}}<br>
       &nbsp;&nbsp;<b>Secondary :</b> {{act.tech.secondary_color}}<br>
@@ -80,8 +80,8 @@ Act state is {{ state }}</span>
       <b>Special Lighting Cue:</b> {{act.tech.special_lighting_cue}}<br>{% endif %}
       <br><b>Lighting at End:</b> {% if act.tech.end_blackout %}Blackout{% else %}
       Lights On{% endif %}<br></div>
-  <div class="col-xs-12 col-md-5 act_tech_box">
-  <h3>Audio Info:</h3>
+  <div class="col-xs-12 col-md-5 act_tech_box gbe-bg-light">
+  <h3 class="gbe-subtitle">Audio Info:</h3>
     <b>Starting Position:</b> {{act.tech.starting_position}}<br>
     {% if act.tech.track_title %}
       <b>Track Title:</b> {{act.tech.track_title}}<br>{% endif %}
@@ -91,7 +91,7 @@ Act state is {{ state }}</span>
       <b>No Music Needed</b>
     {% elif act.tech.track %}
       <b>Filename:</b> <a href="{{act.tech.track.url}}">{{act.tech.track}}</a>{% if not act.tech.track %}
-        <font color="red">Music not yet provided</font>{% endif %}<br>
+        <font class="gbe-form-error">Music not yet provided</font>{% endif %}<br>
     {% endif %}<br>
       <b>Mic Options:</b> {{act.tech.mic_choice}}<br><br>
 </div>

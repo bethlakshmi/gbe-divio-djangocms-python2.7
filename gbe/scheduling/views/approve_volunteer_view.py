@@ -85,19 +85,28 @@ class ApproveVolunteerView(View):
                 container = pending_person.occurrence.container_event
                 row['parent_event'] = container.parent_event
             if pending_person.booking_id == self.changed_id:
-                row['status'] = 'success'
+                row['status'] = 'gbe-table-success'
             elif not row['volunteer'].is_active:
-                row['status'] = "danger"
+                row['status'] = "gbe-table-danger"
             elif pending_person.occurrence.role_count("Volunteer") >= (
                     pending_person.occurrence.max_volunteer):
-                row['status'] = "warning"
+                row['status'] = "gbe-table-warning"
             elif pending_person.role == "Pending Volunteer":
-                row['status'] = "info"
+                row['status'] = "gbe-table-info"
             rows.append(row)
         return rows
 
     def make_context(self, rows):
         return {
+            'columns': ['Volunteer',
+                        'Event',
+                        'Start',
+                        'End',
+                        '#',
+                        'Max',
+                        'Parent/Area',
+                        'State',
+                        'Action'],
             'rows': rows,
             'conference_slugs': self.conference_slugs,
             'conference': self.conference}

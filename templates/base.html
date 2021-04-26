@@ -12,45 +12,42 @@
 
     {% render_block "css" %}
     {{ ALDRYN_SNAKE.render_head }}
-    <link rel="stylesheet" type="text/css" href='{% static "styles/gbe_bootstrap.min.css" %}' media="all"/>
     <link rel="stylesheet" type="text/css" href='{% static "styles/base.css" %}' media="all"/>
     <link rel="stylesheet" type="text/css" href='{% static "styles/menus.css" %}' media="all"/>
     <link rel="stylesheet" type="text/css" href='{% static "styles/gallery.css" %}' media="all"/>
     <link rel="shortcut icon" href='{% static "img/favicon.ico" %}' type="image/x-icon"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Vast+Shadow&display=swap" rel="stylesheet">
-
+    {% block theme %}
+    <link href="{% url 'themes:theme_style' %}" rel="stylesheet">
+    {% endblock theme %}
   {% block head %}
   {% endblock head %}
   </head>
-  <body style="background-image: url({% static "img/curtains.jpeg" %})">
+  <body class="gbe-body">
     <div class="container">
     {% cms_toolbar %}
     <div class='banner'>{% static_placeholder 'banner' %}
     </div>
-    <nav class="navbar navbar-expand-lg navbar-light navbar-default">
-      <div class="navbar-header"><!--
-        <a class="navbar-brand" href="#"><i class="fas fa-home"></i></a>-->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-       </div>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                {% with dropdown=True %}
-                    {% show_menu 0 100 100 100 "includes/menu.html" %}
-                {% endwith %}
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-light navbar-default gbe-navbar-default">
+      <!--<a class="navbar-brand" href="#"><i class="fas fa-home"></i></a>-->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          {% with dropdown=True %}{% show_menu 0 100 100 100 "menu.html" %}{% endwith %}
+        </ul>
 	    {% if not user.is_authenticated %}
 	    {% include "registration/login_popover.tmpl" %}
 	    {% endif %}
-        </div>
+      </div>
     </nav>
-     <div class="panel panel-default">
-        <div class="panel-body">
+    <div class="card gbe-panel">
+        <div class="card-body">
         {% if messages %}
 	{% for message in messages %}
-	{% if message.tags == "error" %}<div class="alert alert-danger">{% else %}<div class="alert alert-{{message.tags}}">{% endif %}
+	{% if message.tags == "error" %}<div class="alert gbe-alert-danger">{% else %}<div class="alert gbe-alert-{{message.tags}}">{% endif %}
           <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
           <strong>{{message.tags|capfirst}}:</strong> {{message|safe}}
 	</div>
@@ -61,13 +58,13 @@
         {% endblock content %}
 	</div>
       </div> <!-- panel for main content -->
-      <div class='container footer'>{% static_placeholder 'footer'%}</div>
+      <div class='container gbe-footer footer'>{% static_placeholder 'footer'%}</div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script>
         (function($){
     $('.dropdown-menu a.dropdown-toggle').on('click', function(e) {

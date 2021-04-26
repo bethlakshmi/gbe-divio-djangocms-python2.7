@@ -220,8 +220,8 @@ class TestEditEventView(TestScheduling):
             )
         self.assertContains(
             response,
-            '<tr class="bid-table success">\n       ' +
-            '<td class="bid-table">%s</td>' % data['e_title'])
+            '<tr class="gbe-table-row gbe-table-success">\n       ' +
+            '<td>%s</td>' % data['e_title'])
 
     def test_edit_event_and_continue(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')

@@ -7,8 +7,8 @@
 {% block select_recipent_form %}
   <form class="form-inline" action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <ul class="list-group list-group-flush"><li class="list-group-item">
-      <h4 class="card-subtitle mb-2 text-muted">Include</h4><br>
+    <ul class="list-group list-group-flush"><li class="list-group-item gbe-bg-light">
+      <h3 class="card-subtitle mb-2 gbe-text-muted">Include</h3><br>
     <div class="row email-select">
     {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.conference %}
     </div>
@@ -17,8 +17,8 @@
     </div>
     <div class="row email-select">
     {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.state %}
-    </div></li><li class="list-group-item">
-      <h4 class="card-subtitle mb-2 text-muted">Exclude</h4><br>
+    </div></li><li class="list-group-item gbe-bg-light">
+      <h3 class="card-subtitle mb-2 gbe-text-muted">Exclude</h3><br>
     <div class="row email-select">
     {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.x_conference %}
     </div>
@@ -27,8 +27,8 @@
     </div>
     <div class="row email-select">
     {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.x_state %}</div></li></ul>
-    <div class="row email-select justify-content-end">
-      <button class="btn btn-lg email-button" type="submit" name="filter" value="Filter">Filter</button>
+    <div class="row email-select justify-content-end mt-3">
+      <button class="btn gbe-btn-primary" type="submit" name="filter" value="Filter">Filter</button>
     </div>
     </form>
 {% endblock %}
