@@ -10,7 +10,6 @@ from tests.factories.gbe_factories import (
     UserMessageFactory,
 )
 from tests.functions.gbe_functions import (
-    location,
     login_as,
     current_conference,
     assert_alert_exists,
@@ -82,11 +81,13 @@ class TestCreateAct(TestCase):
 
     def test_bid_act_no_personae(self):
         '''act_bid, when profile has no personae,
-        should redirect to persona_create'''
+        should redirect to persona-add'''
         profile = ProfileFactory()
         login_as(profile, self)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, "%s?next=%s" % (
+            reverse('persona-add', urlconf="gbe.urls", args=[1]),
+            self.url))
 
     def test_bid_act_get_with_persona(self):
         '''act_bid, when profile has a personae'''
@@ -98,11 +99,14 @@ class TestCreateAct(TestCase):
         self.assertContains(response, expected_string)
 
     def test_act_bid_post_no_performer(self):
-        '''act_bid, user has no performer, should redirect to persona_create'''
+        '''act_bid, user has no performer, should redirect to persona-add'''
         profile = ProfileFactory()
         login_as(profile, self)
         response = self.client.post(self.url, data=self.get_act_form())
-        self.assertEqual(response.status_code, 302)
+        expected_loc = '%s?next=%s' % (
+            reverse('persona-add', urlconf="gbe.urls", args=[1]),
+            self.url)
+        self.assertRedirects(response, expected_loc)
 
     def test_act_bid_post_form_not_valid(self):
         login_as(self.performer.performer_profile, self)
@@ -266,3 +270,15 @@ class TestCreateAct(TestCase):
         response, data = self.post_paid_act_submission(form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This field is required.")
+
+    def test_act_draft_hacked_performer(self):
+        make_act_app_purchase(self.current_conference,
+                              self.performer.performer_profile.user_object)
+        response, data = self.post_unpaid_act_draft()
+        other_performer = PersonaFactory()
+        other_profile = other_performer.performer_profile
+        data['theact-performer'] = other_performer.pk
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, ' - Fee has been paid, submit NOW!')
+        assert_alert_exists(
+            response, 'success', 'Success', default_act_draft_msg)

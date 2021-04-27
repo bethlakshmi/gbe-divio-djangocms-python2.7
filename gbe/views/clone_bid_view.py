@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
-
 from gbe.views import LandingPageView
 from gbe.models import (
     Act,

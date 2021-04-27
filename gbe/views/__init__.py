@@ -1,4 +1,6 @@
 from .landing_page_view import LandingPageView
+from .gbe_form_mixin import GbeFormMixin
+from .profile_required_mixin import ProfileRequiredMixin
 
 # parent bid classes
 from .make_bid_view import MakeBidView
@@ -11,11 +13,13 @@ from .review_bid_list_view import ReviewBidListView
 from .clone_bid_view import CloneBidView
 
 # personas
+from .limited_performer_autocomplete import LimitedPerformerAutocomplete
+from .limited_persona_autocomplete import LimitedPersonaAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
 from .view_troupe_view import ViewTroupeView
-from .edit_troupe_view import EditTroupeView
-from .register_persona_view import RegisterPersonaView
-from .edit_persona_view import EditPersonaView
+from .make_persona_view import PersonaCreate, PersonaUpdate
+from .make_troupe_view import TroupeCreate, TroupeUpdate
+from .update_performer_view import PerformerUpdate
 
 # profiles
 from .edit_email_view import EditEmailView

@@ -10,7 +10,6 @@ from tests.factories.gbe_factories import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    location,
     login_as,
 )
 from gbetext import (
@@ -88,7 +87,7 @@ class TestCreateClass(TestCase):
 
     def test_bid_class_no_personae(self):
         '''class_bid, when profile has no personae,
-        should redirect to persona_create'''
+        should redirect to persona-add'''
         profile = ProfileFactory()
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
@@ -98,11 +97,11 @@ class TestCreateClass(TestCase):
             follow=True)
         self.assertRedirects(
             response,
-            reverse("persona_create",
-                    urlconf='gbe.urls') + "?next=/class/create")
-        title = '<h2 class="gbe-title">Tell Us About Your Stage Persona</h2>'
+            reverse("persona-add", urlconf='gbe.urls', args=[0]) +
+            "?next=/class/create")
+        title = '<h3 class="gbe-title">Tell Us About Your Stage Persona</h3>'
         self.assertContains(response, title, html=True)
-        assert response.status_code == 200
+        self.assertNotContains(response, "Create Troupe")
 
     def test_class_bid_post_with_submit(self):
         '''class_bid, not submitting and no other problems,
@@ -146,12 +145,10 @@ class TestCreateClass(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Submit a Class')
-        self.assertNotContains(response, other_performer.name)
-        current_user_selection = '<option value="%d">%s</option>'
-        persona_id = self.performer.pk
-        selection_string = current_user_selection % (persona_id,
-                                                     self.performer.name)
-        self.assertContains(response, selection_string)
+        self.assertContains(
+            response,
+            'Select a valid choice. That choice is not one of the available' +
+            ' choices.')
 
     def test_class_bid_verify_info_popup_text(self):
         url = reverse(self.view_name,

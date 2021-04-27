@@ -4,12 +4,12 @@
   <br>
     {% if personae or troupes %}
       {% for performer in personae %}
-        {% with edit_view_name='gbe:persona_edit' view_name='gbe:persona_edit' %}
+        {% with is_troupe=0 %}
           {% include 'gbe/profile/incl_performer_block.tmpl' %}
 	      {% endwith %}
       {% endfor %}
       {% for performer in troupes %}
-        {% with edit_view_name='gbe:troupe_edit' view_name='gbe:troupe_view' %}
+        {% with is_troupe=1 %}
           {% include 'gbe/profile/incl_performer_block.tmpl' %}
 	      {% endwith %}
       {% endfor %}
@@ -17,8 +17,7 @@
   {% else %}
     {{ profile.display_name }} has no stage personae listed.<br>
   {% endif %}
-  <ul class="rightsidebar">
-    <li><a class="gbe-link" href='{% url 'gbe:persona_create' %}'>Create a new stage persona</a><br></li>
-    <li><a class="gbe-link" href='{% url 'gbe:troupe_create' %}'>Create a troupe</a><br></li>
-  </ul>
+  <br>
+  <a href='{% url 'gbe:persona-add' 1 %}' class="btn gbe-btn-secondary btn-sm">New Bio</a>
+  <a href='{% url 'gbe:troupe-add' %}' class="btn gbe-btn-secondary btn-sm">New Troupe</a>
 </div>

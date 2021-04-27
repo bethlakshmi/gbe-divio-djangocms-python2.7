@@ -36,7 +36,6 @@ from gbe.ticketing_idd_interface import (
 class MakeBidView(View):
     form = None
     fee_link = None
-    popup_text = None
     has_draft = True
     instructions = ''
     payment_form = None
@@ -77,6 +76,7 @@ class MakeBidView(View):
                 request.POST,
                 initial=self.get_initial(),
                 prefix=self.prefix)
+        self.set_up_form()
 
     def set_up_post(self, request):
         the_form = None

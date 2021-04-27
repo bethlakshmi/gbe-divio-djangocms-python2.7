@@ -1,7 +1,6 @@
 from gbe.views import MakeBidView
 from django.http import Http404
 from django.urls import reverse
-from django.forms import ModelChoiceField
 from django.shortcuts import render
 from gbe.forms import (
     CostumeBidDraftForm,
@@ -56,7 +55,7 @@ class MakeCostumeView(MakeBidView):
         self.performers = self.owner.personae.all()
         if len(self.performers) == 0:
             return '%s?next=%s' % (
-                reverse('persona_create', urlconf='gbe.urls'),
+                reverse('persona-add', urlconf='gbe.urls', args=[0]),
                 reverse('costume_create', urlconf='gbe.urls'))
 
         if self.bid_object and ((self.bid_object.profile != self.owner) or (
@@ -111,12 +110,8 @@ class MakeCostumeView(MakeBidView):
         )
 
     def set_up_form(self):
-        q = Persona.objects.filter(
+        self.form.fields['performer'].queryset = Persona.objects.filter(
             performer_profile_id=self.owner.resourceitem_id)
-        self.form.fields['performer'] = ModelChoiceField(
-            queryset=q,
-            label=costume_proposal_labels['performer'],
-            required=False)
 
     def make_context(self, request):
         context = super(MakeCostumeView, self).make_context(request)

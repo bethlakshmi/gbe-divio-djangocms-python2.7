@@ -32,7 +32,7 @@ class PersonaForm (ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
-        if 'instance' in kwargs:
+        if 'instance' in kwargs and kwargs.get('instance') is not None:
             self.fields['upload_img'] = ImageField(
                 help_text=persona_help_texts['promo_image'],
                 label=persona_labels['promo_image'],
@@ -68,6 +68,7 @@ class PersonaForm (ModelForm):
     class Meta:
         model = Persona
         fields = ['name',
+                  'label',
                   'homepage',
                   'bio',
                   'experience',

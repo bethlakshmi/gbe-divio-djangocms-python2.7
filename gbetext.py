@@ -496,6 +496,8 @@ emailed to you on this page'''
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+troupe_header_text = '''More than 1 person, who will be performing on stage \
+together.'''
 default_advanced_acttech_instruct = '''The following information is optional.\
   If your act does not need this information, there is no need to complete \
 this form.'''
@@ -519,6 +521,9 @@ no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."
 act_status_no_change_msg = "Act status has not been changed."
+no_persona_msg = '''A troupe must have at least one member, please enter your
+ stage name and performer bio.  Troupe activities will be shown on your
+ schedule and the schedule of any other member.'''
 no_profile_msg = '''Your profile is not complete, you must provide a first \
 and last name, a name we can use on your badge, and a phone number we can \
 use to notify you of changes to the schedule at run time.'''

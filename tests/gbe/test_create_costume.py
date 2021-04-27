@@ -11,7 +11,6 @@ from tests.factories.gbe_factories import(
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     current_conference,
-    location,
     login_as,
 )
 from gbetext import (
@@ -120,19 +119,11 @@ class TestCreateCostume(TestCase):
     def test_costume_bid_post_invalid_form_no_submit(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        other_performer = PersonaFactory()
-        other_profile = other_performer.performer_profile
         login_as(self.performer.performer_profile, self)
         data = self.get_costume_form(submit=False, invalid=True)
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Displaying a Costume')
-        self.assertNotContains(response, other_performer.name)
-        current_user_selection = '<option value="%d">%s</option>'
-        persona_id = self.performer.pk
-        selection_string = current_user_selection % (persona_id,
-                                                     self.performer.name)
-        self.assertContains(response, selection_string)
 
     def test_costume_submit_make_message(self):
         response, data = self.post_costume_submission()

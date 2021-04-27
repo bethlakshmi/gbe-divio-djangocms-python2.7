@@ -3,6 +3,8 @@ from django.conf.urls import url, include
 from aldryn_django.utils import i18n_patterns
 import aldryn_addons.urls
 from gbe.views import (
+    LimitedPerformerAutocomplete,
+    LimitedPersonaAutocomplete,
     PersonaAutocomplete,
     ProfileAutocomplete,
 )
@@ -10,6 +12,16 @@ from gbe.views import (
 
 urlpatterns = [
     # add your own patterns here
+    url(
+        r'^limited-performer-autocomplete/$',
+        LimitedPerformerAutocomplete.as_view(),
+        name='limited-performer-autocomplete',
+    ),
+    url(
+        r'^limited-persona-autocomplete/$',
+        LimitedPersonaAutocomplete.as_view(),
+        name='limited-persona-autocomplete',
+    ),
     url(
         r'^persona-autocomplete/$',
         PersonaAutocomplete.as_view(),

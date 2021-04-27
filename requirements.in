@@ -47,4 +47,4 @@ configparser
 django-appconf
 django-paypal
 django-autocomplete-light
-
+django-addanother

@@ -6,10 +6,12 @@ from django.forms import (
     ModelForm,
     MultipleChoiceField,
     Textarea,
-    TextInput,
     URLField,
     URLInput,
 )
+from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
+from dal import autocomplete
+from django.urls import reverse_lazy
 from gbe.models import Act
 from gbe_forms_text import (
     act_help_texts,
@@ -73,7 +75,16 @@ class ActEditDraftForm(ModelForm):
             'track_title']
         labels = act_bid_labels
         help_texts = act_help_texts
-        widgets = {'b_conference': HiddenInput()}
+        widgets = {
+            'b_conference': HiddenInput(),
+            'performer': AddAnotherEditSelectedWidgetWrapper(
+                autocomplete.ModelSelect2(
+                    url='limited-performer-autocomplete'),
+                reverse_lazy('persona-add', urlconf='gbe.urls', args=[1]),
+                reverse_lazy('performer-update',
+                             urlconf='gbe.urls',
+                             args=['__fk__'])),
+            }
 
     def __init__(self, *args, **kwargs):
         super(ActEditDraftForm, self).__init__(*args, **kwargs)

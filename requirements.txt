@@ -27,8 +27,9 @@ diff-match-patch==20200713  # via django-import-export
 dj-database-url==0.5.0
 dj-email-url==1.0.2
 dj-redis-url==0.1.4
+django-addanother==2.0.2
 django-appconf==1.0.4
-django-autocomplete-light==3.8.1
+django-autocomplete-light==3.8.2
 django-cache-url==3.2.3
 django-classy-tags==2.0.0  # via django-cms, django-sekizai
 django-cms==3.7.4         # via djangocms-attributes-field
@@ -55,7 +56,7 @@ django-simple-sso==0.14.1
 django-sortedm2m==3.0.2
 django-storages==1.8
 django-tempus-dominus==5.1.2.13
-django-treebeard==4.4     # via django-cms
+django-treebeard==4.5.1   # via django-cms
 django==3.0.12            # via aldryn-boilerplates, aldryn-sites, django-appconf, django-classy-tags, django-cms, django-formtools, django-import-export, django-model-utils, django-mptt, django-paypal, django-polymorphic, django-post-office, django-ranged-response, django-sekizai, django-select2, django-simple-captcha, django-simple-sso, django-storages, django-tempus-dominus, django-treebeard, easy-thumbnails, jsonfield, webservices
 djangocms-admin-style==2.0.2  # via django-cms
 djangocms-attributes-field==2.0.0
@@ -73,11 +74,11 @@ djeese-fs==0.1.21
 easy-thumbnails==2.7.1
 et-xmlfile==1.0.1         # via openpyxl
 factory-boy==3.2.0
-faker==6.1.1
+faker==6.4.1
 furl==2.1.0
 html5lib==1.1
 idna==2.10                # via requests
-importlib-metadata==3.4.0
+importlib-metadata==3.6.0
 iniconfig==1.0.0          # via pytest
 itsdangerous==1.1.0       # via django-simple-sso, webservices
 jdcal==1.4.1              # via openpyxl
@@ -106,11 +107,11 @@ rcssmin==1.0.6            # via django-compressor
 reportlab==3.5.59
 requests==2.25.1          # via aldryn-client, django-paypal, django-recaptcha2, webservices
 rjsmin==1.1.0             # via django-compressor
-sentry-sdk==0.20.2
+sentry-sdk==0.20.3
 six==1.15.0               # via aldryn-client, django-autocomplete-light, django-cms, django-compressor, django-paypal, django-simple-captcha, furl, html5lib, orderedmultidict, python-dateutil
 sqlparse==0.4.1           # via django
 tablib[html,ods,xls,xlsx,yaml]==3.0.0
-tabulate==0.8.7           # via aldryn-client
+tabulate==0.8.9           # via aldryn-client
 text-unidecode==1.3       # via faker
 toml==0.10.2              # via pytest
 typing-extensions==3.7.4.3  # via importlib-metadata

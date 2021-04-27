@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static sekizai_tags %}
+{% block title %}
+   {{page_title}}
+{% endblock %}
+{% block head %}
+    {{ form.media.css }}
+    <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
+    <script>{% include "tiny-mce-user-settings.tmpl" %}</script>
+{% endblock %}
+{% block content %}
+ <ul class="nav nav-tabs" id="inner">
+  <li role="presentation"><a href="{% url 'gbe:persona-add' include_troupe %}{% if view.is_popup %}?_popup=1{% endif %}" class="{% if mode == 'performer' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Bio</a></li>
+  {% if include_troupe > 0 %}
+  <li role="presentation"><a href="{% url 'gbe:troupe-add' %}{% if view.is_popup %}?_popup=1{% endif %}" class="{% if mode == 'troupe' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Troupe</a></li>{% endif %}
+  {% if mode == 'update' %}<li role="presentation"><a href="{% if view.is_popup %}?_popup=1{% endif %}" class="gbe-tab-active">Update</a></li>{% endif %}
+ </ul>
+<div class="gbe-tab-area">
+  <h3 class="gbe-title">{{view_title}}</h3>
+  {% if intro_text != "&nbsp;" %}<p>{{intro_text | safe}}</p>{% endif %}
+  <form action="" method="post" enctype="multipart/form-data" name="perf_form">
+   <p><font class="gbe-form-error">*</font> indicates a required field</p>
+    {% include "form_table.tmpl" %}
+  {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn lakshmi-btn-light">Cancel</a>{% endif %}
+  <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary" >
+  </form>
+</div>
+&nbsp;<br>
+{% addtoblock "js" %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ {{ form.media.js }}
+<script>
+(function($) {
+    $('#add-form').click(function() {
+        var index = $('#id_inline_test_models-TOTAL_FORMS').val()
+        var newTable = $('#id_inline_test_models-__prefix__-DELETE').parents('table').clone()
+        newTable.find(':input').each(function() {
+            for (attr of ['name', 'id'])
+                $(this).attr(
+                    attr,
+                    $(this).attr(attr).replace('__prefix__', index)
+                )
+        })
+        newTable.insertBefore($(this))
+        $('#id_inline_test_models-TOTAL_FORMS').val(
+            parseInt($('#id_inline_test_models-TOTAL_FORMS').val()) + 1
+        )
+        newTable.slideDown()
+    })
+})($)
+</script>
+{% endaddtoblock %}
+{% endblock content %}

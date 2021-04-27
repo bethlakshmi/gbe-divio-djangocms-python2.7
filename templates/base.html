@@ -24,11 +24,11 @@
   {% block head %}
   {% endblock head %}
   </head>
-  <body class="gbe-body">
-    <div class="container">
+  <body class="{% if not view.is_popup %}gbe-body{% else %}gbe-bg-light{% endif %}">
     {% cms_toolbar %}
-    <div class='banner'>{% static_placeholder 'banner' %}
-    </div>
+  {% if not view.is_popup %}
+    <div class="container">
+    <div class='banner'>{% static_placeholder 'banner' %}</div>
     <nav class="navbar navbar-expand-lg navbar-light navbar-default gbe-navbar-default">
       <!--<a class="navbar-brand" href="#"><i class="fas fa-home"></i></a>-->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,7 @@
 	    {% endif %}
       </div>
     </nav>
+  {% endif %}
     <div class="card gbe-panel">
         <div class="card-body">
         {% if messages %}
@@ -58,8 +59,10 @@
         {% endblock content %}
 	</div>
       </div> <!-- panel for main content -->
+  {% if not view.is_popup %}
       <div class='container gbe-footer footer'>{% static_placeholder 'footer'%}</div>
     </div>
+  {% endif %}
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

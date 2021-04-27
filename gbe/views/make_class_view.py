@@ -2,7 +2,6 @@ from gbe.views import MakeBidView
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
-from django.forms import ModelChoiceField
 from gbe.models import (
     Class,
     Persona,
@@ -43,7 +42,7 @@ class MakeClassView(MakeBidView):
         self.teachers = self.owner.personae.all()
         if len(self.teachers) == 0:
             return '%s?next=%s' % (
-                reverse('persona_create', urlconf='gbe.urls'),
+                reverse('persona-add', urlconf='gbe.urls', args=[0]),
                 reverse('class_create', urlconf='gbe.urls'))
 
         if self.bid_object and (
@@ -60,7 +59,7 @@ class MakeClassView(MakeBidView):
     def set_up_form(self):
         q = Persona.objects.filter(
             performer_profile_id=self.owner.resourceitem_id)
-        self.form.fields['teacher'] = ModelChoiceField(queryset=q)
+        self.form.fields['teacher'].queryset = q
 
     def make_context(self, request):
         context = super(MakeClassView, self).make_context(request)

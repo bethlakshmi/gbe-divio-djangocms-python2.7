@@ -65,11 +65,6 @@ def is_login_page(response):
     return b'I forgot my username or password!' in response.content
 
 
-def location(response):
-    response_dict = dict(list(response.items()))
-    return response_dict['Location']
-
-
 def current_conference():
     current_confs = Conference.objects.filter(
         status__in=('upcoming', 'ongoing'),

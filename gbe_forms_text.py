@@ -482,9 +482,14 @@ persona_labels = {'name': ('Stage Name'),
                   'festivals': ('Festival Appearances and Honors'),
                   }
 
+troupe_labels = persona_labels.copy()
+troupe_labels['name'] = ('Troupe Name')
+troupe_labels['experience'] = ('Troupe Experience')
 
 persona_help_texts = {
     'name': 'This is the name you will be listed under when performing.',
+    'label': '''Reminder for when you use this bio.  Helps to manage multiple
+    bios.''',
     'contact': ('The person GBE should contact about Expo  performances. \
         Usually, this will be you.'),
     'homepage': 'This will be listed on your performer page.',

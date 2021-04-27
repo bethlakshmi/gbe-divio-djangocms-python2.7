@@ -227,16 +227,25 @@ class TestReports(TestCase):
         '''
         Conference.objects.all().delete()
         context = ClassContext()
+        one_day = timedelta(1)
+        ConferenceDayFactory(conference=context.conference,
+                             day=context.sched_event.starttime.date())
+        ConferenceDayFactory(
+            conference=context.conference,
+            day=context.sched_event.starttime.date()+one_day)
+        context.schedule_instance(
+            starttime=context.sched_event.starttime + one_day)
+        current_conference = context.conference
         ConferenceDayFactory(conference=context.conference,
                              day=context.sched_event.starttime.date())
         current_conference = ConferenceFactory()
         grant_privilege(self.profile, 'Act Reviewers')
         login_as(self.profile, self)
         response = self.client.get(
-            reverse('room_setup',
-                    urlconf='gbe.reporting.urls'),
+            reverse('room_setup', urlconf='gbe.reporting.urls'),
             data={'conf_slug': context.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, context.bid.e_title, 2)
 
     def test_export_badge_report_fail(self):
         '''export_badge_report view should fail for users w/out

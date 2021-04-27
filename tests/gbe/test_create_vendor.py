@@ -11,7 +11,6 @@ from tests.functions.ticketing_functions import setup_fees
 from tests.functions.gbe_functions import (
     current_conference,
     login_as,
-    location,
     assert_alert_exists,
     make_vendor_app_purchase,
     make_vendor_app_ticket
