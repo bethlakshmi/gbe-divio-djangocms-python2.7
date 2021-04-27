@@ -147,7 +147,8 @@ class TestCreateClass(TestCase):
         self.assertContains(response, 'Submit a Class')
         self.assertContains(
             response,
-            'Select a valid choice. That choice is not one of the available choices.')
+            'Select a valid choice. That choice is not one of the available' +
+            ' choices.')
 
     def test_class_bid_verify_info_popup_text(self):
         url = reverse(self.view_name,
