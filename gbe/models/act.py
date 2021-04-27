@@ -124,6 +124,8 @@ class Act (Biddable):
         # conference, title and performer contact should all be unique before
         # the act is saved.
         super(Act, self).validate_unique(*args, **kwargs)
+        if self.performer is None or not self.performer.contact:
+            raise ValidationError({'performer': "Performer is not valid"})
         if Act.objects.filter(
                 b_conference=self.b_conference,
                 b_title=self.b_title,

@@ -12,7 +12,7 @@ class GbeFormMixin(ModelFormMixin):
             context['intro_text'] = self.intro_text
         context['mode'] = self.mode
         context['include_troupe'] = int(self.kwargs.get("include_troupe", 1))
-
+        context['return_url'] = self.success_url
         return context
 
     def form_valid(self, form):

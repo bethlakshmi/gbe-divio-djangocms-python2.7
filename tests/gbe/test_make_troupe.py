@@ -11,7 +11,6 @@ from tests.factories.gbe_factories import (
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
-    location
 )
 from gbetext import (
     default_edit_troupe_msg,

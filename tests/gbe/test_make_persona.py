@@ -127,7 +127,7 @@ class TestPersonaCreate(TestCase):
         self.assertContains(response, "Tell Us About Your Stage Persona")
         self.assertNotContains(response, "Create Troupe")
         self.assertNotContains(response,
-                            reverse("troupe-add", urlconf="gbe.urls"))
+                               reverse("troupe-add", urlconf="gbe.urls"))
 
     def test_create_persona_make_message(self):
         response, persona_count = self.submit_persona()
@@ -141,6 +141,7 @@ class TestPersonaCreate(TestCase):
         response, persona_count = self.submit_persona()
         assert_alert_exists(
             response, 'success', 'Success', msg.description)
+
 
 class TestPersonaEdit(TestCase):
     view_name = 'persona-update'

@@ -12,7 +12,6 @@ from tests.factories.gbe_factories import (
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
-    location,
 )
 from gbetext import (
     default_costume_submit_msg,

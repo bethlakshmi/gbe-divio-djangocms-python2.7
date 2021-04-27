@@ -7,7 +7,6 @@ from django.forms import (
     MultipleChoiceField,
     Select,
     Textarea,
-    TextInput,
     URLField,
     URLInput,
 )

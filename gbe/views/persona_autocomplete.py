@@ -15,6 +15,7 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(
                 Q(name__icontains=self.q) |
-                Q(performer_profile__display_name__icontains=self.q))
+                Q(performer_profile__display_name__icontains=self.q) |
+                Q(label__icontains=self.q))
 
         return qs
