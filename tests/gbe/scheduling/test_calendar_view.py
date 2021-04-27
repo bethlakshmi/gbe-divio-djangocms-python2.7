@@ -84,6 +84,8 @@ class TestCalendarView(TestCase):
         self.assertNotContains(response, self.showcontext.show.e_title)
         self.assertNotContains(response, self.other_show.show.e_title)
         self.assertContains(response, self.classcontext.bid.e_title)
+        self.assertContains(response, "Teacher:  %s" % (
+            self.classcontext.bid.teacher.name))
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
 
     def test_calendar_volunteer_w_default_conf(self):
