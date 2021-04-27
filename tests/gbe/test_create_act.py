@@ -270,3 +270,15 @@ class TestCreateAct(TestCase):
         response, data = self.post_paid_act_submission(form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This field is required.")
+
+    def test_act_draft_hacked_performer(self):
+        make_act_app_purchase(self.current_conference,
+                              self.performer.performer_profile.user_object)
+        response, data = self.post_unpaid_act_draft()
+        other_performer = PersonaFactory()
+        other_profile = other_performer.performer_profile
+        data['theact-performer'] = other_performer.pk
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, ' - Fee has been paid, submit NOW!')
+        assert_alert_exists(
+            response, 'success', 'Success', default_act_draft_msg)

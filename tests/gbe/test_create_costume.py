@@ -119,8 +119,6 @@ class TestCreateCostume(TestCase):
     def test_costume_bid_post_invalid_form_no_submit(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        other_performer = PersonaFactory()
-        other_profile = other_performer.performer_profile
         login_as(self.performer.performer_profile, self)
         data = self.get_costume_form(submit=False, invalid=True)
         response = self.client.post(url, data=data, follow=True)

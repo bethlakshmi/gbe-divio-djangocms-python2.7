@@ -71,9 +71,9 @@ class TestSummerAct(TestCase):
                       args=[act.pk],
                       urlconf="gbe.urls")
         login_as(act.performer.contact, self)
-        response = self.client.post(url,
-                                    self.get_act_form(),
-                                    follow=True)
+        data = self.get_act_form()
+        data['theact-performer'] = act.performer.pk
+        response = self.client.post(url, data, follow=True)
         return response
 
     def test_bid_act_get_with_persona(self):

@@ -53,6 +53,7 @@ class TestEditClass(TestCase):
                       urlconf='gbe.urls')
         login_as(klass.teacher.performer_profile, self)
         data = self.get_form()
+        data['theclass-teacher'] = klass.teacher.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
@@ -63,6 +64,7 @@ class TestEditClass(TestCase):
                       urlconf='gbe.urls')
         login_as(klass.teacher.performer_profile, self)
         data = self.get_form(submit=False)
+        data['theclass-teacher'] = klass.teacher.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
 

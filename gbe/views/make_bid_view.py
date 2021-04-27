@@ -76,6 +76,7 @@ class MakeBidView(View):
                 request.POST,
                 initial=self.get_initial(),
                 prefix=self.prefix)
+        self.set_up_form()
 
     def set_up_post(self, request):
         the_form = None
