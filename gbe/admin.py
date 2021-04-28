@@ -1,6 +1,8 @@
 from django.contrib import admin
 from gbe.models import *
 from import_export.admin import ImportExportActionModelAdmin
+from django.urls import reverse
+from django.utils.html import format_html
 
 
 class ConferenceAdmin(admin.ModelAdmin):
@@ -242,6 +244,21 @@ class UserStylePreviewAdmin(admin.ModelAdmin):
         'version',
         'previewer')
 
+class VendorAdmin(BidAdmin):
+    list_display = (
+        'pk',
+        'link_to_biz',
+        'submitted',
+        'accepted',
+        'created_at',
+        'updated_at')
+
+    def link_to_biz(self, obj):
+        link=reverse("admin:gbe_business_change",
+                     args=[obj.business.id])
+        return format_html('<a href="{}">{}</a>', link, obj.business.name)
+    link_to_biz.short_description = 'Business'
+
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
 admin.site.register(AvailableInterest, AvailableInterestAdmin)
@@ -265,9 +282,10 @@ admin.site.register(Show, ShowAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)
+admin.site.register(Business)
 admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(UserMessage, MessageAdmin)
-admin.site.register(Vendor, BidAdmin)
+admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Volunteer, BidAdmin)
 admin.site.register(VolunteerInterest, VolunteerInterestAdmin)
 admin.site.register(StyleValue, StyleValueAdmin)

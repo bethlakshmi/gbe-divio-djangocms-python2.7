@@ -23,21 +23,11 @@ class VendorBidForm(ModelForm):
     use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
-    b_description = CharField(
-        required=True,
-        widget=Textarea(attrs={'id': 'user-tiny-mce'}),
-        help_text=vendor_help_texts['description'],
-        label=vendor_labels['description'])
     help_times = MultipleChoiceField(
         widget=CheckboxSelectMultiple,
         choices=vendor_schedule_options,
         required=False,
         label=vendor_labels['help_times'])
-    upload_img = ImageField(
-        help_text=vendor_help_texts['upload_img'],
-        label=vendor_labels['upload_img'],
-        required=False,
-    )
 
     def __init__(self, *args, **kwargs):
         super(VendorBidForm, self).__init__(*args, **kwargs)
@@ -49,38 +39,9 @@ class VendorBidForm(ModelForm):
                 required=False,
             )
 
-    def save(self, commit=True):
-        vendor = super(VendorBidForm, self).save(commit=False)
-        if commit and self['upload_img'] and (
-                self['upload_img'].value() != vendor.img):
-            if self['upload_img'].value():
-                superuser = User.objects.get(username='admin_img')
-                folder, created = Folder.objects.get_or_create(
-                    name='Vendors')
-                img, created = Image.objects.get_or_create(
-                    owner=superuser,
-                    original_filename=self['upload_img'].value().name,
-                    file=self['upload_img'].value(),
-                    folder=folder,
-                    author="%s" % str(vendor.profile),
-                )
-                img.save()
-                vendor.img_id = img.pk
-            else:
-                vendor.img = None
-        if commit:
-            vendor.save()
-
-        return vendor
-
     class Meta:
         model = Vendor
-        fields = ['b_title',
-                  'b_description',
-                  'profile',
-                  'website',
-                  'physical_address',
-                  'publish_physical_address',
+        fields = ['business',
                   'want_help',
                   'help_description',
                   'help_times',
@@ -89,6 +50,4 @@ class VendorBidForm(ModelForm):
         labels = vendor_labels
         widgets = {'accepted': HiddenInput(),
                    'submitted': HiddenInput(),
-                   'profile': HiddenInput(),
-                   'website': FriendlyURLInput,
                    }
