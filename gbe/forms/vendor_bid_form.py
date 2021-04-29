@@ -1,11 +1,8 @@
 from django.forms import (
-    CharField,
     CheckboxSelectMultiple,
     HiddenInput,
-    ImageField,
     ModelForm,
     MultipleChoiceField,
-    Textarea,
 )
 from gbe.models import Vendor
 from gbe_forms_text import (
@@ -14,9 +11,9 @@ from gbe_forms_text import (
     vendor_schedule_options,
 )
 from gbe.expoformfields import FriendlyURLInput
-from filer.models.imagemodels import Image
-from filer.models.foldermodels import Folder
-from django.contrib.auth.models import User
+from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
+from dal import autocomplete
+from django.urls import reverse_lazy
 
 
 class VendorBidForm(ModelForm):
@@ -31,13 +28,6 @@ class VendorBidForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(VendorBidForm, self).__init__(*args, **kwargs)
-        if 'instance' in kwargs:
-            self.fields['upload_img'] = ImageField(
-                help_text=vendor_help_texts['upload_img'],
-                label=vendor_labels['upload_img'],
-                initial=kwargs.get('instance').img,
-                required=False,
-            )
 
     class Meta:
         model = Vendor
@@ -48,6 +38,13 @@ class VendorBidForm(ModelForm):
                   ]
         help_texts = vendor_help_texts
         labels = vendor_labels
-        widgets = {'accepted': HiddenInput(),
-                   'submitted': HiddenInput(),
-                   }
+        widgets = {
+            'accepted': HiddenInput(),
+            'submitted': HiddenInput(),
+            'business': AddAnotherEditSelectedWidgetWrapper(
+                autocomplete.ModelSelect2(url='limited-business-autocomplete'),
+                reverse_lazy('business-add', urlconf='gbe.urls'),
+                reverse_lazy('business-update',
+                             urlconf='gbe.urls',
+                             args=['__fk__'])),
+        }

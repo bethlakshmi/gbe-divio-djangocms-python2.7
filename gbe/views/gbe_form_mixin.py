@@ -11,7 +11,11 @@ class GbeFormMixin(ModelFormMixin):
         if hasattr(self, 'intro_text'):
             context['intro_text'] = self.intro_text
         context['mode'] = self.mode
-        context['include_troupe'] = int(self.kwargs.get("include_troupe", 1))
+        if hasattr(self, 'no_tabs'):
+            context['no_tabs'] = self.no_tabs
+        else:
+            context['include_troupe'] = int(
+                self.kwargs.get("include_troupe", 1))
         context['return_url'] = self.success_url
         return context
 

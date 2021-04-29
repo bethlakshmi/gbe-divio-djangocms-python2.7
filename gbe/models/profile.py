@@ -309,7 +309,7 @@ class Profile(WorkerItem):
 
     def vendors(self, historical=False):
         from gbe.models import Vendor  # late import, circularity
-        vendors = Vendor.objects.filter(profile=self)
+        vendors = Vendor.objects.filter(business__owners=self)
         if historical:
             def f(v): return not v.is_current
         else:

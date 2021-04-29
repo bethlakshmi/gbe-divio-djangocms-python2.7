@@ -34,3 +34,4 @@ class Business(Model):
     class Meta:
         app_label = "gbe"
         unique_together = [['name', 'website']]
+        verbose_name_plural = 'businesses'

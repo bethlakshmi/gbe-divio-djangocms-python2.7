@@ -44,7 +44,8 @@ class Vendor(Biddable):
                       default='')
 
     def __str__(self):
-        return self.b_title  # "title" here is company name
+        return "%s - %s" % (self.business.name,
+                            self.b_conference.conference_slug)
 
     def clone(self):
         vendor = Vendor(business=self.business,
