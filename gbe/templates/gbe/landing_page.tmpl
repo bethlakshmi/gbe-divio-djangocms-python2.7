@@ -33,6 +33,7 @@
             {% include 'gbe/incl_tickets.tmpl' %}</div>
     	    {% endif %}
           {% include 'gbe/profile/incl_performer.tmpl' %}
+          {% if businesses %}{% include 'gbe/profile/incl_business.tmpl' %}{% endif %}
       </div>
       <div role="tabpanel" class="tab-pane col-12 col-sm-12 col-md-4" id="to-do" style="padding: 4px">
   	  {% if profile %}

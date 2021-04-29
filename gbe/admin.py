@@ -31,7 +31,7 @@ class BidAdmin(ImportExportActionModelAdmin):
                     'accepted',
                     'created_at',
                     'updated_at')
-    list_filter = ['submitted', 'accepted', 'b_conference']
+    list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
 
 
 class ClassAdmin(BidAdmin):
@@ -41,18 +41,16 @@ class ClassAdmin(BidAdmin):
                     'accepted',
                     'created_at',
                     'updated_at')
-    list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
     search_fields = ['e_title', 'teacher__name']
 
 
-class ActAdmin(admin.ModelAdmin):
+class ActAdmin(BidAdmin):
     list_display = ('performer',
                     'b_title',
                     'submitted',
                     'accepted',
                     'created_at',
                     'updated_at')
-    list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
     search_fields = ['b_title', 'performer__name']
 
 
@@ -248,6 +246,7 @@ class VendorAdmin(BidAdmin):
     list_display = (
         'pk',
         'link_to_biz',
+        'owners',
         'submitted',
         'accepted',
         'created_at',
@@ -258,6 +257,24 @@ class VendorAdmin(BidAdmin):
                      args=[obj.business.id])
         return format_html('<a href="{}">{}</a>', link, obj.business.name)
     link_to_biz.short_description = 'Business'
+
+    def owners(self, obj):
+        owners = ""
+        for owner in obj.business.owners.all():
+           owners = "%s, %s" % (owner, owners)
+        return owners.strip()[:-1]
+
+class BusinessAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name',
+        'show_owners')
+
+    def show_owners(self, obj):
+        owners = ""
+        for owner in obj.owners.all():
+           owners = "%s, %s" % (owner, owners)
+        return owners.strip()[:-1]
 
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
@@ -282,7 +299,7 @@ admin.site.register(Show, ShowAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)
-admin.site.register(Business)
+admin.site.register(Business, BusinessAdmin)
 admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(UserMessage, MessageAdmin)
 admin.site.register(Vendor, VendorAdmin)

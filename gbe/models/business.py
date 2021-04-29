@@ -26,6 +26,7 @@ class Business(Model):
     img = FilerImageField(
         on_delete=CASCADE,
         null=True,
+        blank=True,
         related_name="image_business")
 
     def __str__(self):
@@ -35,3 +36,4 @@ class Business(Model):
         app_label = "gbe"
         unique_together = [['name', 'website']]
         verbose_name_plural = 'businesses'
+        ordering = ["name", ]
