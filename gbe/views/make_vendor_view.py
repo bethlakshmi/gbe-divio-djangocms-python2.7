@@ -1,5 +1,6 @@
 from gbe.views import MakeBidView
 from django.http import Http404
+from django.urls import reverse
 from gbe.forms import VendorBidForm
 from gbe.models import (
     Business,
@@ -37,6 +38,12 @@ class MakeVendorView(MakeBidView):
         if redirect:
             return redirect
 
+        self.businesses = self.owner.business_set.all()
+        if self.businesses.count() == 0:
+            return '%s?next=%s' % (
+                reverse('business-add', urlconf='gbe.urls'),
+                reverse('vendor_create', urlconf='gbe.urls'))
+
         if self.bid_object and (
                 self.owner not in self.bid_object.business.owners.all()):
             raise Http404
@@ -51,6 +58,7 @@ class MakeVendorView(MakeBidView):
             initial = {'help_times': help_times_initial}
         else:
             initial = {'profile': self.owner,
+                       'business': self.businesses[0],
                        'physical_address': self.owner.address}
         return initial
 
