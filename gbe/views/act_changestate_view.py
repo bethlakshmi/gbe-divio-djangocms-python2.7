@@ -42,9 +42,6 @@ class ActChangeStateView(BidChangeStateView):
     new_show = None
     show_booked_states = (3, 2)
 
-    def get_bidder(self):
-        self.bidder = self.object.performer.contact
-
     def act_accepted(self, request):
         return ('show' in request.POST) and (
                 int(request.POST['accepted']) in self.show_booked_states)

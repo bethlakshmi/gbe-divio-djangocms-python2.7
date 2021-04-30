@@ -8,6 +8,3 @@ class VendorChangeStateView(BidChangeStateView):
     coordinator_permissions = ('Vendor Coordinator', )
     redirectURL = 'vendor_review_list'
     bid_state_change_form = VendorStateChangeForm
-
-    def get_bidder(self):
-        self.bidder = self.object.profile
