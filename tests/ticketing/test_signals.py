@@ -78,6 +78,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
             privileged_profile.user_object,
             'Vendor Reviewers')
         vendor = VendorFactory()
+        profile = vendor.business.owners.all().first()
         tickets = setup_fees(vendor.b_conference, is_vendor=True)
         vendor_params = IPN_POST_PARAMS
         vendor_params["receiver_email"] = PayPalSettings.objects.first(
@@ -85,7 +86,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         vendor_params["custom"] = "%s-%d-User-%d" % (
             "Vendor",
             vendor.pk,
-            vendor.profile.user_object.pk)
+            profile.user_object.pk)
         cost = 0
         for ticket in tickets:
             cost = cost + ticket.cost
@@ -95,9 +96,9 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         ipn_obj = self.assertGotSignal(valid_ipn_received,
                                        params=vendor_params)
         self.assertTrue(Purchaser.objects.filter(
-            matched_to_user=vendor.profile.user_object).exists())
+            matched_to_user=profile.user_object).exists())
         purchaser = Purchaser.objects.get(
-            matched_to_user=vendor.profile.user_object)
+            matched_to_user=profile.user_object)
         self.assertEqual(purchaser.first_name, ipn_obj.first_name)
         transactions = Transaction.objects.filter(purchaser=purchaser)
         for ticket in tickets:
@@ -225,6 +226,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
             privileged_profile.user_object,
             'Vendor Reviewers')
         vendor = VendorFactory()
+        profile = vendor.business.owners.all().first()
         tickets = setup_fees(vendor.b_conference, is_vendor=True)
         vendor_params = IPN_POST_PARAMS
         vendor_params["receiver_email"] = PayPalSettings.objects.first(
@@ -232,7 +234,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         vendor_params["custom"] = "%s-%d-User-%d" % (
             "Vendor",
             vendor.pk,
-            vendor.profile.user_object.pk)
+            profile.user_object.pk)
         cost = 0
         for ticket in tickets:
             cost = cost + ticket.cost
@@ -257,6 +259,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
             privileged_profile.user_object,
             'Vendor Reviewers')
         vendor = VendorFactory()
+        profile = vendor.business.owners.all().first()
         tickets = setup_fees(vendor.b_conference, is_vendor=True)
         vendor_params = IPN_POST_PARAMS
         vendor_params["receiver_email"] = PayPalSettings.objects.first(
@@ -264,7 +267,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         vendor_params["custom"] = "%s-%d-User-%d" % (
             "Vendor",
             vendor.pk,
-            vendor.profile.user_object.pk)
+            profile.user_object.pk)
         cost = 0
         for ticket in tickets:
             cost = cost + ticket.cost
@@ -289,6 +292,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
             privileged_profile.user_object,
             'Vendor Reviewers')
         vendor = VendorFactory()
+        profile = vendor.business.owners.all().first()
         tickets = setup_fees(vendor.b_conference, is_vendor=True)
         vendor_params = IPN_POST_PARAMS
         vendor_params["receiver_email"] = PayPalSettings.objects.first(
@@ -296,7 +300,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         vendor_params["custom"] = "%s-%d-User-%d" % (
             "Vendor",
             vendor.pk,
-            vendor.profile.user_object.pk)
+            profile.user_object.pk)
         cost = 0
         for ticket in tickets:
             cost = cost + ticket.cost
@@ -321,6 +325,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
             privileged_profile.user_object,
             'Vendor Reviewers')
         vendor = VendorFactory(submitted=True)
+        profile = vendor.business.owners.all().first()
         tickets = setup_fees(vendor.b_conference, is_vendor=True)
         vendor_params = IPN_POST_PARAMS
         vendor_params["receiver_email"] = PayPalSettings.objects.first(
@@ -328,7 +333,7 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         vendor_params["custom"] = "%s-%d-User-%d" % (
             "Vendor",
             vendor.pk,
-            vendor.profile.user_object.pk)
+            profile.user_object.pk)
         cost = 0
         for ticket in tickets:
             cost = cost + ticket.cost
@@ -338,9 +343,9 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         ipn_obj = self.assertGotSignal(valid_ipn_received,
                                        params=vendor_params)
         self.assertEqual(Purchaser.objects.filter(
-            matched_to_user=vendor.profile.user_object).count(), 1)
+            matched_to_user=profile.user_object).count(), 1)
         self.assertEqual(Transaction.objects.filter(
-            purchaser__matched_to_user=vendor.profile.user_object).count(), 1)
+            purchaser__matched_to_user=profile.user_object).count(), 1)
         msg = assert_right_mail_right_addresses(
             0,
             2,
