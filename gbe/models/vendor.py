@@ -4,15 +4,12 @@ from django.db.models import (
     BooleanField,
     CASCADE,
     CharField,
-    FileField,
     ForeignKey,
     TextField,
-    URLField,
 )
 from gbe.models import (
     Biddable,
     Business,
-    Profile,
     visible_bid_query
 )
 from gbetext import (
@@ -23,7 +20,6 @@ from gbe_forms_text import (
     vendor_schedule_options,
     vendor_featured_options,
 )
-from filer.fields.image import FilerImageField
 
 
 class Vendor(Biddable):
@@ -46,6 +42,10 @@ class Vendor(Biddable):
     def __str__(self):
         return "%s - %s" % (self.business.name,
                             self.b_conference.conference_slug)
+
+    @property
+    def profiles(self):
+        return self.business.owners.all()
 
     def clone(self):
         vendor = Vendor(business=self.business,

@@ -26,7 +26,7 @@ class StaffAreaAdmin(admin.ModelAdmin):
 
 class BidAdmin(ImportExportActionModelAdmin):
     list_display = ('b_title',
-                    'profile',
+                    'profiles',
                     'submitted',
                     'accepted',
                     'created_at',
@@ -89,7 +89,8 @@ class ProfilePreferencesAdmin(admin.ModelAdmin):
                     'inform_about',
                     'show_hotel_infobox')
     list_filter = ['in_hotel', 'inform_about']
-
+    search_fields = ['profile__display_name',
+                     'profile__user_object__email']
 
 class RoomAdmin(admin.ModelAdmin):
     list_display = ('name', 'capacity', 'overbook_size')
