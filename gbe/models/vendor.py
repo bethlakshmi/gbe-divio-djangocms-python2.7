@@ -62,11 +62,8 @@ class Vendor(Biddable):
 
     @property
     def bidder_is_active(self):
-        active = False
-        for owner in self.business.owners:
-            if owner.user_object.is_active:
-                active = True
-        return active
+        return self.business.owners.filter(
+            user_object__is_active=True).count() > 0
 
     @property
     def bid_review_header(self):
@@ -84,8 +81,8 @@ class Vendor(Biddable):
         if self.level:
             acceptance = "%s, %s" % (acceptance_states[self.accepted][1],
                                      self.level)
-        return [self.business.owners.filter(
-                    user_object__is_active=True).display_name,
+
+        return [self.business.show_owners(),
                 self.business.name,
                 self.business.website,
                 self.updated_at.strftime(GBE_TABLE_FORMAT),

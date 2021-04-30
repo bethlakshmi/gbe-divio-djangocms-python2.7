@@ -29,6 +29,15 @@ class Business(Model):
         blank=True,
         related_name="image_business")
 
+    def show_owners(self, active_only=True):
+        owners = ""
+        for owner in self.owners.filter(user_object__is_active=True):
+           owners = "%s, %s" % (owner, owners)
+        if not active_only:
+            for owner in self.owners.filter(user_object__is_active=False):
+               owners = "%s (inactive), %s" % (owner, owners)
+        return owners.strip()[:-1]
+
     def __str__(self):
         return self.name  # "title" here is company name
 

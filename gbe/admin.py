@@ -259,10 +259,7 @@ class VendorAdmin(BidAdmin):
     link_to_biz.short_description = 'Business'
 
     def owners(self, obj):
-        owners = ""
-        for owner in obj.business.owners.all():
-           owners = "%s, %s" % (owner, owners)
-        return owners.strip()[:-1]
+        return obj.business.show_owners(False)
 
 class BusinessAdmin(admin.ModelAdmin):
     list_display = (
@@ -271,10 +268,7 @@ class BusinessAdmin(admin.ModelAdmin):
         'show_owners')
 
     def show_owners(self, obj):
-        owners = ""
-        for owner in obj.owners.all():
-           owners = "%s, %s" % (owner, owners)
-        return owners.strip()[:-1]
+        return obj.show_owners(False)
 
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
