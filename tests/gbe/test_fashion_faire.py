@@ -23,7 +23,7 @@ class TestFashionFaireView(TestCase):
                       urlconf="gbe.urls")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, proposal.b_title)
+        self.assertContains(response, proposal.business.name)
 
     def test_filter_by_conference(self):
         conference = ConferenceFactory(status='upcoming')
@@ -37,7 +37,7 @@ class TestFashionFaireView(TestCase):
         response = self.client.get(url,
                                    data={'conference': conference})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, proposal.b_title)
+        self.assertContains(response, proposal.business.name)
         self.assertContains(
             response,
             '<div class="col-lg-4 col-md-6 col-sm-12 col-12">')
@@ -53,7 +53,7 @@ class TestFashionFaireView(TestCase):
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, proposal.b_title)
+        self.assertContains(response, proposal.business.name)
 
     def test_featured_vendor(self):
         conference = ConferenceFactory(status='upcoming')
@@ -66,7 +66,7 @@ class TestFashionFaireView(TestCase):
         response = self.client.get(url,
                                    data={'conference': conference})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, proposal.b_title)
+        self.assertContains(response, proposal.business.name)
         self.assertContains(
             response,
             '<div class="col-lg-6 col-sm-12 col-12">')
