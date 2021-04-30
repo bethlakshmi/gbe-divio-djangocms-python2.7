@@ -28,10 +28,11 @@ class TestViewVendor(TestCase):
 
     def test_view_vendor_all_well(self):
         vendor = VendorFactory(submitted=True)
+        profile = vendor.business.owners.all().first()
         url = reverse(self.view_name,
                       args=[vendor.pk],
                       urlconf='gbe.urls')
-        login_as(vendor.profile, self)
+        login_as(profile, self)
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)
@@ -68,10 +69,11 @@ class TestViewVendor(TestCase):
 
     def test_view_vendor_not_paid(self):
         vendor = VendorFactory(submitted=False)
+        profile = vendor.business.owners.all().first()
         url = reverse(self.view_name,
                       args=[vendor.pk],
                       urlconf='gbe.urls')
-        login_as(vendor.profile, self)
+        login_as(profile, self)
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)
@@ -80,12 +82,13 @@ class TestViewVendor(TestCase):
 
     def test_view_vendor_not_submitted(self):
         vendor = VendorFactory(submitted=False)
+        profile = vendor.business.owners.all().first()
         make_vendor_app_purchase(vendor.b_conference,
-                                 vendor.profile.user_object)
+                                 profile.user_object)
         url = reverse(self.view_name,
                       args=[vendor.pk],
                       urlconf='gbe.urls')
-        login_as(vendor.profile, self)
+        login_as(profile, self)
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)

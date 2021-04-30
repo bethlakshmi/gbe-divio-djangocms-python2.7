@@ -41,14 +41,14 @@ class ViewBidView(View):
                 "%s_edit" % self.bid.__class__.__name__.lower(),
                 urlconf='gbe.urls',
                 args=[self.bid.pk])
-            fee_paid = False
+            is_fee_paid = False
             for profile in self.bid.profiles:
                 if fee_paid(self.bid.__class__.__name__,
                             profile.user_object.username,
                             self.bid.b_conference):
-                    fee_paid = True
+                    is_fee_paid = True
                     break
-            if fee_paid:
+            if is_fee_paid:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="UNSUBMITTED_PAID_BID",
