@@ -16,11 +16,18 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='business',
-            options={'ordering': ['name'], 'verbose_name_plural': 'businesses'},
+            options={
+                'ordering': ['name'],
+                'verbose_name_plural': 'businesses'},
         ),
         migrations.AlterField(
             model_name='business',
             name='img',
-            field=filer.fields.image.FilerImageField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='image_business', to=settings.FILER_IMAGE_MODEL),
+            field=filer.fields.image.FilerImageField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='image_business',
+                to=settings.FILER_IMAGE_MODEL),
         ),
     ]

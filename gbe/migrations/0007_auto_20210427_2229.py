@@ -26,8 +26,13 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True)),
                 ('website', models.URLField(blank=True)),
                 ('physical_address', models.TextField()),
-                ('publish_physical_address', models.BooleanField(default=False)),
-                ('img', filer.fields.image.FilerImageField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='image_business', to=settings.FILER_IMAGE_MODEL)),
+                ('publish_physical_address',
+                 models.BooleanField(default=False)),
+                ('img', filer.fields.image.FilerImageField(
+                    null=True,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='image_business',
+                    to=settings.FILER_IMAGE_MODEL)),
                 ('owners', models.ManyToManyField(to='gbe.Profile')),
             ],
             options={
@@ -37,6 +42,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='vendor',
             name='business',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='gbe.Business'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='gbe.Business'),
         ),
     ]

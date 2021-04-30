@@ -69,18 +69,3 @@ class MakeVendorView(MakeBidView):
     def set_valid_form(self, request):
         self.bid_object.b_conference = self.conference
         self.bid_object = self.form.save()
-
-    def make_post_forms(self, request, the_form):
-        if self.bid_object:
-            self.form = the_form(
-                request.POST,
-                request.FILES,
-                instance=self.bid_object,
-                initial=self.get_initial(),
-                prefix=self.prefix)
-        else:
-            self.form = the_form(
-                request.POST,
-                request.FILES,
-                initial=self.get_initial(),
-                prefix=self.prefix)

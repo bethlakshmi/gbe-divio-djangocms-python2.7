@@ -34,6 +34,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vendor',
             name='business',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gbe.Business'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='gbe.Business'),
         ),
     ]

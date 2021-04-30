@@ -98,7 +98,7 @@ class MailToBiddersView(MailToFilterView):
                         if bidder not in exclude_list:
                             any_list += [bidder]
                         elif bidder not in already_excluded:
-                             already_excluded += [bidder]
+                            already_excluded += [bidder]
             if draft:
                 for bid in eval(bid_type).objects.filter(draft_query):
                     for profile in bid.profiles:

@@ -92,6 +92,7 @@ class ProfilePreferencesAdmin(admin.ModelAdmin):
     search_fields = ['profile__display_name',
                      'profile__user_object__email']
 
+
 class RoomAdmin(admin.ModelAdmin):
     list_display = ('name', 'capacity', 'overbook_size')
     list_filter = ['conferences']
@@ -243,6 +244,7 @@ class UserStylePreviewAdmin(admin.ModelAdmin):
         'version',
         'previewer')
 
+
 class VendorAdmin(BidAdmin):
     list_display = (
         'pk',
@@ -254,13 +256,14 @@ class VendorAdmin(BidAdmin):
         'updated_at')
 
     def link_to_biz(self, obj):
-        link=reverse("admin:gbe_business_change",
-                     args=[obj.business.id])
+        link = reverse("admin:gbe_business_change",
+                       args=[obj.business.id])
         return format_html('<a href="{}">{}</a>', link, obj.business.name)
     link_to_biz.short_description = 'Business'
 
     def owners(self, obj):
         return obj.business.show_owners(False)
+
 
 class BusinessAdmin(admin.ModelAdmin):
     list_display = (
