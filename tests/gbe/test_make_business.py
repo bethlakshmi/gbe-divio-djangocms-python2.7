@@ -212,7 +212,7 @@ class TestBusinessEdit(TestCase):
             data={'name': new_name,
                   'website': 'foo.bar.com/~quux',
                   'physical_address': "the place where you live",
-                  'publish_physical_address': True,}
+                  'publish_physical_address': True}
         )
         self.assertContains(response, self.expected_string)
         business_reloaded = Business.objects.get(pk=self.business.pk)
