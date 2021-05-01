@@ -7,12 +7,14 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     ConferenceFactory,
     ProfileFactory,
-    UserMessageFactory
+    UserMessageFactory,
+    VendorFactory,
 )
 from gbe.models import (
     Act,
     Class,
-    UserMessage
+    UserMessage,
+    Vendor,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -50,6 +52,21 @@ class TestCloneBid(TestCase):
         response = self.client.get(url)
         return response, bid
 
+    def clone_vendor(self):
+        bid = VendorFactory(b_conference=self.old_conference)
+        profile = bid.business.owners.all().first()
+        Vendor.objects.filter(business=bid.business,
+                              b_conference=self.current_conference).delete()
+
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls",
+                      kwargs={'bid_type': 'Vendor',
+                              'bid_id': bid.id})
+        login_as(profile, self)
+
+        response = self.client.get(url)
+        return response, bid
+
     def clone_class(self):
         bid = ClassFactory(b_conference=self.old_conference,
                            e_conference=self.old_conference)
@@ -71,6 +88,12 @@ class TestCloneBid(TestCase):
         response, bid = self.clone_act()
         self.assertTrue(Act.objects.filter(
             b_title=bid.b_title,
+            b_conference=self.current_conference).exists())
+
+    def test_clone_vendor_succeed(self):
+        response, bid = self.clone_vendor()
+        self.assertTrue(Vendor.objects.filter(
+            business__name=bid.business.name,
             b_conference=self.current_conference).exists())
 
     # following test fails, not sure why.

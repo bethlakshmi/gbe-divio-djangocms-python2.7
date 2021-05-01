@@ -10,6 +10,7 @@ from django.db.models import (
 from gbe.models import (
     Biddable,
     Business,
+    Conference,
     visible_bid_query
 )
 from gbetext import (
