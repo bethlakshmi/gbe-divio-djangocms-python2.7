@@ -219,11 +219,14 @@ class StyleValueAdmin(ImportExportActionModelAdmin):
         'style_version',
         'style_property',
         'value',
+        'meta_color',
+        'opacity',
         'image')
-    list_editable = ('value', )
+    list_editable = ('value', 'meta_color', 'opacity')
     list_filter = [
         'style_version__name',
         'style_version__number',
+        'meta_color',
         'style_property__selector__selector',
         'style_property__selector__pseudo_class',
         'style_property__style_property']
@@ -235,6 +238,15 @@ class StyleVersionAdmin(ImportExportActionModelAdmin):
         'number',
         'currently_live',
         'currently_test')
+
+
+class MetaColorAdmin(ImportExportActionModelAdmin):
+    list_display = (
+        'name',
+        'style_version',
+        'value')
+    list_filter = [
+        'style_version']
 
 
 class UserStylePreviewAdmin(admin.ModelAdmin):
@@ -271,6 +283,7 @@ admin.site.register(Vendor, BidAdmin)
 admin.site.register(Volunteer, BidAdmin)
 admin.site.register(VolunteerInterest, VolunteerInterestAdmin)
 admin.site.register(StyleValue, StyleValueAdmin)
+admin.site.register(MetaColor, MetaColorAdmin)
 admin.site.register(StyleProperty, StylePropertyAdmin)
 admin.site.register(StyleSelector, StyleSelectorAdmin)
 admin.site.register(StyleVersion, StyleVersionAdmin)

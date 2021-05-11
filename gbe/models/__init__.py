@@ -37,6 +37,7 @@ from .flexible_evaluation import FlexibleEvaluation
 
 # Style stuff
 from .style_version import StyleVersion
+from .meta_color import MetaColor
 from .style_selector import StyleSelector
 from .style_property import StyleProperty
 from .style_value import StyleValue
