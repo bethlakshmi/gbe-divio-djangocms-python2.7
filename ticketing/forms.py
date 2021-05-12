@@ -22,6 +22,7 @@ from gbe_forms_text import (
     ticket_item_help_text,
 )
 from django.forms.widgets import CheckboxSelectMultiple
+from tempus_dominus.widgets import DatePicker
 
 
 class TicketItemForm(forms.ModelForm):
@@ -40,11 +41,21 @@ class TicketItemForm(forms.ModelForm):
     start_time = forms.DateField(
         help_text=ticket_item_help_text['start_time'],
         required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'MM/DD/YYYY'}))
+        widget=DatePicker(
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True},
+            options={
+                'format': "M/D/YYYY"}))
     end_time = forms.DateField(
         help_text=ticket_item_help_text['end_time'],
         required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'MM/DD/YYYY'}))
+        widget=DatePicker(
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True},
+            options={
+                'format': "M/D/YYYY"}))
 
     class Meta:
         model = TicketItem

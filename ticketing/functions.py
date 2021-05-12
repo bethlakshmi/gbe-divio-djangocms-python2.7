@@ -54,7 +54,7 @@ def get_fee_list(bid_type, conference):
     ticket_items = []
     ticket_items = TicketItem.objects.filter(
         bpt_event__conference=conference, live=True, has_coupon=False).exclude(
-        start_time__lt=datetime.now(), end_time__gt=datetime.now())
+        start_time__gt=datetime.now()).exclude(end_time__lt=datetime.now())
     if bid_type == "Vendor":
         ticket_items = ticket_items.filter(
             bpt_event__vendor_submission_event=True)
