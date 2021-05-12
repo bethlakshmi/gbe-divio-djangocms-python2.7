@@ -28,6 +28,10 @@ from gbe.models import (
     UserMessage,
 )
 from tests.functions.ticketing_functions import setup_fees
+from datetime import (
+    datetime,
+    timedelta,
+)
 
 
 class TestCreateAct(TestCase):
@@ -147,6 +151,38 @@ class TestCreateAct(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
         self.assertContains(response, "Fee (pay what you will)")
+
+    def test_act_bid_not_paid_w_fee_within_date_limit(self):
+        '''act_bid, not post, show the ticket price in active range'''
+        tickets = setup_fees(self.current_conference,
+                             is_act=True)
+        tickets[0].start_time = datetime.now() - timedelta(days=5)
+        tickets[0].end_time = datetime.now() + timedelta(days=5)
+        tickets[0].save()
+        login_as(self.performer.performer_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Propose an Act')
+        self.assertContains(response, "Fee (pay what you will)")
+        self.assertContains(response, 'value="%5.2f"' % tickets[0].cost)
+
+    def test_act_bid_not_paid_w_fee_outside_date_limit(self):
+        '''act_bid, several viable tickets are before and after current day'''
+        tickets_shown = setup_fees(self.current_conference, is_act=True)
+        ticket_later = setup_fees(self.current_conference, is_act=True)
+        ticket_sooner = setup_fees(self.current_conference, is_act=True)
+        ticket_later[0].start_time = datetime.now() + timedelta(days=3)
+        ticket_later[0].cost = tickets_shown[0].cost - 1
+        ticket_sooner[0].end_time = datetime.now() - timedelta(days=3)
+        ticket_later[0].cost = tickets_shown[0].cost - 2
+        ticket_later[0].save()
+        ticket_sooner[0].save()
+        login_as(self.performer.performer_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Propose an Act')
+        self.assertContains(response, "Fee (pay what you will)")
+        self.assertContains(response, 'value="%5.2f"' % tickets_shown[0].cost)
 
     def test_act_bid_not_post(self):
         '''act_bid, not post, not paid should take us to bid process'''
