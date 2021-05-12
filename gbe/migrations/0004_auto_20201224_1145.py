@@ -145,6 +145,14 @@ init_values = [
             'prop_val': [('color', 'rgba(0,123,255,1)'),
                          ('text-decoration-color', 'rgba(0,123,255,1)')]},
     {
+            'selector': '.gbe-table-link',
+            'pseudo_class': 'hover',
+            'description': '''Links in tables - on hover''',
+            'target_element': 'a',
+            'usage': 'Table',
+            'prop_val': [('color', 'rgba(0,86,179,1)'),
+                         ('text-decoration-color', 'rgba(0,86,179,1)')]},
+    {
             'selector': '.gbe-table-row td.approval_needed',
             'pseudo_class': '',
             'description': '''Cells where special handling is needed.''',
@@ -657,7 +665,7 @@ init_values = [
             theme cloning''',
             'target_element': 'div',
             'usage': 'General',
-            'prop_val': [('background-color', 'rgba(180,80,80)'),
+            'prop_val': [('background-color', 'rgba(180,80,80,1)'),
                          ('color', 'rgba(33,37,41,1)')]},
     {
             'selector': '#login-dp a',
@@ -672,8 +680,7 @@ init_values = [
             'description': 'Bottom of the login box - box for new users',
             'target_element': 'div',
             'usage': 'General',
-            'prop_val': [('background-color', 'rgba(180,80,80)'),
-                         ('border-top-color', 'rgba(221,221,221,1)'),
+            'prop_val': [('background-color', 'rgba(180,80,80,1)'),
                          ('color', 'rgba(255,255,255,1)')]},
     {
             'selector': '.gbe-navbar-default',
@@ -802,9 +809,7 @@ init_values = [
             'description': 'Inactive tabs on hover',
             'target_element': 'div',
             'usage': 'General',
-            'prop_val': [('color', 'rgba(150,150,150,1)'),
-                         ('background-color', 'rgba(238,238,238,1)'),
-                         ('border-color', 'rgba(238,238,238,1)')]},
+            'prop_val': [('color', 'rgba(150,150,150,1)')]},
     {
             'selector': '.gbe-title',
             'pseudo_class': '',
@@ -1158,7 +1163,7 @@ init_values = [
         'pseudo_class': '',
         'description': '''Alerts on the landing page.''',
         'target_element': 'div',
-        'usage': '',
+        'usage': 'Landing Page',
         'prop_val': [('background-color', 'rgba(241,221,91,1)')]},
     {
         'selector': '.sidebar-text',
