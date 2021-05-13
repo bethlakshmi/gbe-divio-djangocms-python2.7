@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def fix_volunteer_or_act(apps, schema_editor):
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
