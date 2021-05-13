@@ -124,6 +124,7 @@ def LandingPageView(request, profile_id=None, historical=False):
             'standard_context': standard_context,
             'personae': viewer_profile.get_personae(),
             'troupes': viewer_profile.get_troupes(),
+            'businesses': viewer_profile.business_set.all(),
             'acts': viewer_profile.get_acts(historical),
             'shows': viewer_profile.get_shows(),
             'classes': viewer_profile.is_teaching(historical),

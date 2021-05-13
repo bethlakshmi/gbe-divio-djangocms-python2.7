@@ -90,24 +90,26 @@ class MailToBiddersView(MailToFilterView):
 
         for bid_type in bid_types:
             for bid in eval(bid_type).objects.filter(query):
-                bidder = (bid.profile.user_object.email,
-                          bid.profile.display_name)
-                if bid.profile.email_allowed(self.email_type) and (
-                        bidder not in any_list):
-                    if bidder not in exclude_list:
-                        any_list += [bidder]
-                    elif bidder not in already_excluded:
-                        already_excluded += [bidder]
-            if draft:
-                for bid in eval(bid_type).objects.filter(draft_query):
-                    bidder = (bid.profile.user_object.email,
-                              bid.profile.display_name)
-                    if bid.profile.email_allowed(self.email_type) and (
+                for profile in bid.profiles:
+                    bidder = (profile.user_object.email,
+                              profile.display_name)
+                    if profile.email_allowed(self.email_type) and (
                             bidder not in any_list):
                         if bidder not in exclude_list:
                             any_list += [bidder]
                         elif bidder not in already_excluded:
                             already_excluded += [bidder]
+            if draft:
+                for bid in eval(bid_type).objects.filter(draft_query):
+                    for profile in bid.profiles:
+                        bidder = (profile.user_object.email,
+                                  profile.display_name)
+                        if profile.email_allowed(self.email_type) and (
+                                bidder not in any_list):
+                            if bidder not in exclude_list:
+                                any_list += [bidder]
+                            elif bidder not in already_excluded:
+                                already_excluded += [bidder]
         self.excluded_count = len(already_excluded)
         return any_list
 

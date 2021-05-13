@@ -31,9 +31,6 @@ class ViewActView(ViewBidView):
                 args=[self.bid.pk])
         return None
 
-    def get_owner_profile(self):
-        return self.bid.performer.contact
-
     def get_display_forms(self):
         actform = get_act_form(
             self.bid,

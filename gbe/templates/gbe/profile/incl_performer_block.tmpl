@@ -4,7 +4,7 @@
     <div class="gbe_thumb_block">
     <button role="button" class="gbe_thumb_button" data-toggle="modal" 
      data-target="#performer-promo-image-{{performer.pk}}">
-      <img src="{% thumbnail performer.img 20x20 crop upscale subject_location=item.img.subject_location %}"
+      <img src="{% thumbnail performer.img 20x20 crop upscale subject_location=performer.img.subject_location %}"
        class="gbe_thumbnail">
       </button>
     </div>
@@ -18,7 +18,7 @@
              </button>
            </div>
            <div class="modal-body mx-auto">
-	   <img src="{% thumbnail performer.img 450x450 crop upscale subject_location=item.img.subject_location %}">
+	   <img src="{% thumbnail performer.img 450x450 crop upscale subject_location=performer.img.subject_location %}">
            </div>
          </div>
        </div>

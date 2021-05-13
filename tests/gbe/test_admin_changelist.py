@@ -9,9 +9,12 @@ from gbe.models import (
 )
 from tests.factories.gbe_factories import(
     ActFactory,
+    BusinessFactory,
     EventFactory,
     GenericEventFactory,
+    ProfileFactory,
     TechInfoFactory,
+    VendorFactory,
     VolunteerInterestFactory,
 )
 from django.contrib.admin.sites import AdminSite
@@ -53,3 +56,16 @@ class GBEAdminChangeListTests(TestCase):
         tech = TechInfoFactory()
         response = self.client.get('/admin/gbe/techinfo/', follow=True)
         self.assertContains(response, "Techinfo: (deleted act)")
+
+    def test_get_vendor(self):
+        inactive = ProfileFactory(user_object__is_active=False)
+        vendor = VendorFactory(business__owners=[inactive])
+        response = self.client.get('/admin/gbe/vendor/', follow=True)
+        self.assertContains(response, str(inactive))
+        self.assertContains(response, vendor.business.name)
+
+    def test_get_business(self):
+        inactive = ProfileFactory(user_object__is_active=False)
+        business = BusinessFactory(owners=[inactive])
+        response = self.client.get('/admin/gbe/business/', follow=True)
+        self.assertContains(response, str(inactive))

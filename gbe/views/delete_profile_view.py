@@ -8,6 +8,7 @@ from gbe_logging import log_func
 from gbe.models import (
     Profile,
     UserMessage,
+    Vendor,
 )
 from scheduler.models import ResourceAllocation
 from gbe.functions import validate_perms
@@ -30,12 +31,13 @@ def DeleteProfileView(request, profile_id):
 
     bookings = ResourceAllocation.objects.filter(
         resource__worker___item=user_profile).count()
+    vendor_bids = Vendor.objects.filter(business__owners=user_profile)
     if (bookings >= 1) or (
             user_profile.personae.count() >= 1) or (
             user_profile.contact.count() >= 1) or (
             user_profile.volunteering.count() >= 1) or (
             user_profile.costumes.count() >= 1) or (
-            user_profile.vendor_set.count() >= 1) or (
+            vendor_bids.count() >= 1) or (
             user_profile.bidevaluation_set.count() >= 1) or (
             user_profile.actbidevaluation_set.count() >= 1) or (
             user_profile.user_object.purchaser_set.count() >= 1):

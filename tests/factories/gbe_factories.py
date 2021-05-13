@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from post_office.models import EmailTemplate
 from factory import (
+    post_generation,
     LazyAttribute,
     RelatedFactory,
     SelfAttribute,
@@ -254,20 +255,38 @@ class VolunteerInterestFactory(DjangoModelFactory):
     rank = 4
 
 
-class VendorFactory(DjangoModelFactory):
+class BusinessFactory(DjangoModelFactory):
     class Meta:
-        model = conf.Vendor
+        model = conf.Business
 
-    b_title = Sequence(lambda x: "Vendor # %d" % x)
-    profile = SubFactory(ProfileFactory)
+    name = Sequence(lambda x: "Business # %d" % x)
     website = "http://www.foo.com"
     physical_address = "123 Main Street"
     publish_physical_address = False
-    #    logo = models.FileField(upload_to="uploads/images", blank=True)
+    description = Sequence(lambda x: "Business Description # %d" % x)
+
+    @post_generation
+    def owners(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            # A list of groups were passed in, use them
+            for owner in extracted:
+                self.owners.add(owner)
+        else:
+            self.owners.add(ProfileFactory())
+
+
+class VendorFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.Vendor
+    business = SubFactory(BusinessFactory)
+    b_title = "DON'T USE"
     want_help = False
     help_description = LazyAttribute(
-        lambda a: "Help description for Test Volunteer #%s" %
-        a.profile.display_name)
+        lambda a: "Help description for Test Business #%s" %
+        a.business.name)
     help_times = "[u'VSH0', u'VSH2']"
 
     b_conference = SubFactory(ConferenceFactory)
