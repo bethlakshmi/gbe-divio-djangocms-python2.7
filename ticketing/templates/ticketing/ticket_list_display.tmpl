@@ -28,7 +28,7 @@
   </thead>
   <tbody>
 {% for item in event.ticketitems.all %}
-<tr class="{% if item.active %}visible {% endif %}{% if item.id in updated_tickets %}gbe-table-success {% endif %}gbe-table-row">    
+<tr class="{% if item.active %}dedicated-sched {% endif %}{% if item.id in updated_tickets %}gbe-table-success {% endif %}gbe-table-row">    
   <td>{{item.ticket_id}}</td>
   <td>{{ item.title | safe }}</td>
   <td>{% if item.start_time and item.end_time %}
