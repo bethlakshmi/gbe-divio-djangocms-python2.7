@@ -11,6 +11,8 @@ from gbe.views import (
     ActTechWizardView,
     AdminProfileView,
     BiosTeachersView,
+    BusinessCreate,
+    BusinessUpdate,
     ClassChangeStateView,
     CloneBidView,
     ConferenceVolunteerView,
@@ -147,7 +149,7 @@ urlpatterns = [
         ConferenceVolunteerView,
         name='conference_volunteer'),
 
-    #  personae
+    #  personae & businesses
     url(r'^troupe/view/(\d+)/?$',
         ViewTroupeView, name='troupe_view'),
     url(r'^persona/add/(?P<include_troupe>\d+)/$',
@@ -161,6 +163,10 @@ urlpatterns = [
         name='performer-update'),
     url(r'^troupe/add/$', TroupeCreate.as_view(), name='troupe-add'),
     url(r'^troupe/(?P<pk>.*)/$', TroupeUpdate.as_view(), name='troupe-update'),
+    url(r'^business/add/$', BusinessCreate.as_view(), name='business-add'),
+    url(r'^business/(?P<pk>.*)/$',
+        BusinessUpdate.as_view(),
+        name='business-update'),
 
     #  volunteers
     url(r'^volunteer/view/(?P<bid_id>\d+)/?$',

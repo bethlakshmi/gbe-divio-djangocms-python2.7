@@ -17,6 +17,7 @@ from .show import Show
 from .staff_area import StaffArea
 from .class_model import Class
 from .costume import Costume
+from .business import Business
 from .vendor import Vendor
 from .volunteer import Volunteer
 from .class_proposal import ClassProposal

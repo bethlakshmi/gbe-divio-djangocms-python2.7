@@ -103,12 +103,13 @@ class TestAdminProfile(TestCase):
 
     def test_deactivate_if_vendor(self):
         vendor = VendorFactory()
+        profile = vendor.business.owners.all().first()
         url = reverse(self.view_name,
-                      args=[vendor.profile.pk],
+                      args=[profile.pk],
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)
-        self.assert_deactivated(response, vendor.profile)
+        self.assert_deactivated(response, profile)
 
     def test_deactivate_if_bideval(self):
         bid_eval = BidEvaluationFactory()

@@ -17,7 +17,7 @@ Showing Historical Bids
 These bids are not currently available for consideration. Click the "clone"
 button to re-submit an act, class, or vendor bid in the current conference.
 </p>
-<a href="{% url 'gbe:home' %}" class="gbe-link">View current bids</a>
+<a href="{{request.path}}" class="gbe-link">View current bids</a>
 </div>
 {% else %}
 
@@ -26,7 +26,7 @@ button to re-submit an act, class, or vendor bid in the current conference.
 We are only showing bids for the current conference. If you have proposed
 acts, classes, or vendors in previous years.
 </p>
-<a href="{% url 'gbe:home' %}?historical=1" class="gbe-link">View older bids</a>
+<a href="{{request.path}}?historical=1" class="gbe-link">View older bids</a>
 </div>
 {% endif %}
 

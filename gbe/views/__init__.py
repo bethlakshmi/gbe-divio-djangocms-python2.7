@@ -12,14 +12,16 @@ from .review_bid_list_view import ReviewBidListView
 # general bid classes
 from .clone_bid_view import CloneBidView
 
-# personas
+# personas & business
 from .limited_performer_autocomplete import LimitedPerformerAutocomplete
 from .limited_persona_autocomplete import LimitedPersonaAutocomplete
+from .limited_business_autocomplete import LimitedBusinessAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
 from .view_troupe_view import ViewTroupeView
 from .make_persona_view import PersonaCreate, PersonaUpdate
 from .make_troupe_view import TroupeCreate, TroupeUpdate
 from .update_performer_view import PerformerUpdate
+from .make_business_view import BusinessCreate, BusinessUpdate
 
 # profiles
 from .edit_email_view import EditEmailView

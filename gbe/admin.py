@@ -1,6 +1,8 @@
 from django.contrib import admin
 from gbe.models import *
 from import_export.admin import ImportExportActionModelAdmin
+from django.urls import reverse
+from django.utils.html import format_html
 
 
 class ConferenceAdmin(admin.ModelAdmin):
@@ -24,12 +26,12 @@ class StaffAreaAdmin(admin.ModelAdmin):
 
 class BidAdmin(ImportExportActionModelAdmin):
     list_display = ('b_title',
-                    'profile',
+                    'profiles',
                     'submitted',
                     'accepted',
                     'created_at',
                     'updated_at')
-    list_filter = ['submitted', 'accepted', 'b_conference']
+    list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
 
 
 class ClassAdmin(BidAdmin):
@@ -39,18 +41,16 @@ class ClassAdmin(BidAdmin):
                     'accepted',
                     'created_at',
                     'updated_at')
-    list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
     search_fields = ['e_title', 'teacher__name']
 
 
-class ActAdmin(admin.ModelAdmin):
+class ActAdmin(BidAdmin):
     list_display = ('performer',
                     'b_title',
                     'submitted',
                     'accepted',
                     'created_at',
                     'updated_at')
-    list_filter = ['submitted', 'accepted', 'b_conference__conference_slug']
     search_fields = ['b_title', 'performer__name']
 
 
@@ -89,6 +89,8 @@ class ProfilePreferencesAdmin(admin.ModelAdmin):
                     'inform_about',
                     'show_hotel_infobox')
     list_filter = ['in_hotel', 'inform_about']
+    search_fields = ['profile__display_name',
+                     'profile__user_object__email']
 
 
 class RoomAdmin(admin.ModelAdmin):
@@ -254,6 +256,36 @@ class UserStylePreviewAdmin(admin.ModelAdmin):
         'version',
         'previewer')
 
+
+class VendorAdmin(BidAdmin):
+    list_display = (
+        'pk',
+        'link_to_biz',
+        'owners',
+        'submitted',
+        'accepted',
+        'created_at',
+        'updated_at')
+
+    def link_to_biz(self, obj):
+        link = reverse("admin:gbe_business_change",
+                       args=[obj.business.id])
+        return format_html('<a href="{}">{}</a>', link, obj.business.name)
+    link_to_biz.short_description = 'Business'
+
+    def owners(self, obj):
+        return obj.business.show_owners(False)
+
+
+class BusinessAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name',
+        'show_owners')
+
+    def show_owners(self, obj):
+        return obj.show_owners(False)
+
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
 admin.site.register(AvailableInterest, AvailableInterestAdmin)
@@ -277,9 +309,10 @@ admin.site.register(Show, ShowAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)
+admin.site.register(Business, BusinessAdmin)
 admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(UserMessage, MessageAdmin)
-admin.site.register(Vendor, BidAdmin)
+admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Volunteer, BidAdmin)
 admin.site.register(VolunteerInterest, VolunteerInterestAdmin)
 admin.site.register(StyleValue, StyleValueAdmin)

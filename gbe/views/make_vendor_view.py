@@ -1,7 +1,9 @@
 from gbe.views import MakeBidView
 from django.http import Http404
+from django.urls import reverse
 from gbe.forms import VendorBidForm
 from gbe.models import (
+    Business,
     Conference,
     Vendor,
     UserMessage
@@ -36,7 +38,14 @@ class MakeVendorView(MakeBidView):
         if redirect:
             return redirect
 
-        if self.bid_object and (self.bid_object.profile != self.owner):
+        self.businesses = self.owner.business_set.all()
+        if self.businesses.count() == 0:
+            return '%s?next=%s' % (
+                reverse('business-add', urlconf='gbe.urls'),
+                reverse('vendor_create', urlconf='gbe.urls'))
+
+        if self.bid_object and (
+                self.owner not in self.bid_object.business.owners.all()):
             raise Http404
 
     def get_initial(self):
@@ -49,24 +58,14 @@ class MakeVendorView(MakeBidView):
             initial = {'help_times': help_times_initial}
         else:
             initial = {'profile': self.owner,
+                       'business': self.businesses[0],
                        'physical_address': self.owner.address}
         return initial
+
+    def set_up_form(self):
+        self.form.fields['business'].queryset = Business.objects.filter(
+            owners=self.owner)
 
     def set_valid_form(self, request):
         self.bid_object.b_conference = self.conference
         self.bid_object = self.form.save()
-
-    def make_post_forms(self, request, the_form):
-        if self.bid_object:
-            self.form = the_form(
-                request.POST,
-                request.FILES,
-                instance=self.bid_object,
-                initial=self.get_initial(),
-                prefix=self.prefix)
-        else:
-            self.form = the_form(
-                request.POST,
-                request.FILES,
-                initial=self.get_initial(),
-                prefix=self.prefix)
