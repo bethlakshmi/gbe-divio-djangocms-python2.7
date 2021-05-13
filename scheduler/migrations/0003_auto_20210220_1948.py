@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def fix_volunteer_or_act(apps, schema_editor):
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
@@ -12,17 +13,15 @@ def fix_volunteer_or_act(apps, schema_editor):
     volunteer_opps = 0
     for event in Event.objects.all():
         if event.max_volunteer == event.max_commitments and (
-        	        event.max_volunteer > 0):
+                    event.max_volunteer > 0):
             if rehearsals.filter(eventitem_id=event.eventitem_id).exists():
-            	event.max_volunteer = 0
-            	rehearsal_count = rehearsal_count + 1
+                event.max_volunteer = 0
+                rehearsal_count = rehearsal_count + 1
             else:
-            	event.max_commitments = 0
-            	volunteer_opps = volunteer_opps + 1
+                event.max_commitments = 0
+                volunteer_opps = volunteer_opps + 1
             event.save()
-    print("Updated %d rehearsals and %d volunteer slots" % (
-    	rehearsal_count,
-    	volunteer_opps))
+
 
 class Migration(migrations.Migration):
 

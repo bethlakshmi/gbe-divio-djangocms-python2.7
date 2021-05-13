@@ -9,12 +9,14 @@
     <script>{% include "tiny-mce-user-settings.tmpl" %}</script>
 {% endblock %}
 {% block content %}
+{% if not no_tabs %}
  <ul class="nav nav-tabs" id="inner">
   <li role="presentation"><a href="{% url 'gbe:persona-add' include_troupe %}{% if view.is_popup %}?_popup=1{% endif %}" class="{% if mode == 'performer' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Bio</a></li>
   {% if include_troupe > 0 %}
   <li role="presentation"><a href="{% url 'gbe:troupe-add' %}{% if view.is_popup %}?_popup=1{% endif %}" class="{% if mode == 'troupe' %}gbe-tab-active{% else %}gbe-tab{% endif %}">Create Troupe</a></li>{% endif %}
   {% if mode == 'update' %}<li role="presentation"><a href="{% if view.is_popup %}?_popup=1{% endif %}" class="gbe-tab-active">Update</a></li>{% endif %}
  </ul>
+{% endif %}
 <div class="gbe-tab-area">
   <h3 class="gbe-title">{{view_title}}</h3>
   {% if intro_text != "&nbsp;" %}<p>{{intro_text | safe}}</p>{% endif %}

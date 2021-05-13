@@ -4,14 +4,13 @@ from django.db.models import (
     BooleanField,
     CASCADE,
     CharField,
-    FileField,
     ForeignKey,
     TextField,
-    URLField,
 )
 from gbe.models import (
     Biddable,
-    Profile,
+    Business,
+    Conference,
     visible_bid_query
 )
 from gbetext import (
@@ -22,7 +21,6 @@ from gbe_forms_text import (
     vendor_schedule_options,
     vendor_featured_options,
 )
-from filer.fields.image import FilerImageField
 
 
 class Vendor(Biddable):
@@ -31,14 +29,7 @@ class Vendor(Biddable):
     Note that company name is stored in the title field inherited
     from Biddable, and description is also inherited
     '''
-    profile = ForeignKey(Profile, on_delete=CASCADE)
-    website = URLField(blank=True)
-    physical_address = TextField()
-    publish_physical_address = BooleanField(default=False)
-    img = FilerImageField(
-        on_delete=CASCADE,
-        null=True,
-        related_name="image_vendor")
+    business = ForeignKey(Business, on_delete=CASCADE)
     want_help = BooleanField(choices=boolean_options,
                              blank=True,
                              default=False)
@@ -50,14 +41,15 @@ class Vendor(Biddable):
                       default='')
 
     def __str__(self):
-        return self.b_title  # "title" here is company name
+        return "%s - %s" % (self.business.name,
+                            self.b_conference.conference_slug)
+
+    @property
+    def profiles(self):
+        return self.business.owners.all()
 
     def clone(self):
-        vendor = Vendor(profile=self.profile,
-                        website=self.website,
-                        physical_address=self.physical_address,
-                        publish_physical_address=self.publish_physical_address,
-                        logo=self.logo,
+        vendor = Vendor(business=self.business,
                         want_help=self.want_help,
                         help_description=self.help_description,
                         help_times=self.help_times,
@@ -71,7 +63,8 @@ class Vendor(Biddable):
 
     @property
     def bidder_is_active(self):
-        return self.profile.user_object.is_active
+        return self.business.owners.filter(
+            user_object__is_active=True).count() > 0
 
     @property
     def bid_review_header(self):
@@ -89,9 +82,10 @@ class Vendor(Biddable):
         if self.level:
             acceptance = "%s, %s" % (acceptance_states[self.accepted][1],
                                      self.level)
-        return [self.profile.display_name,
-                self.b_title,
-                self.website,
+
+        return [self.business.show_owners(),
+                self.business.name,
+                self.business.website,
                 self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance]
 

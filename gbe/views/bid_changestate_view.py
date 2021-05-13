@@ -44,18 +44,18 @@ class BidChangeStateView(View):
     def prep_bid(self, request, args, kwargs):
         object_id = kwargs['object_id']
         self.get_object(request, object_id)
-        self.get_bidder()
         self.reviewer = validate_perms(request, self.coordinator_permissions)
 
     def notify_bidder(self, request):
         if str(self.object.accepted) != request.POST['accepted']:
-            email_status = send_bid_state_change_mail(
-                str(self.object_type.__name__).lower(),
-                self.bidder.contact_email,
-                self.bidder.get_badge_name(),
-                self.object,
-                int(request.POST['accepted']))
-            self.check_email_status(request, email_status)
+            for bidder in self.object.profiles:
+                email_status = send_bid_state_change_mail(
+                    str(self.object_type.__name__).lower(),
+                    bidder.contact_email,
+                    bidder.get_badge_name(),
+                    self.object,
+                    int(request.POST['accepted']))
+                self.check_email_status(request, email_status)
 
     def check_email_status(self, request, email_status):
         if email_status:

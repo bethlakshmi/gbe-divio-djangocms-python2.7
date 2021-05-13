@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from datetime import datetime
 import pytz
@@ -88,11 +87,11 @@ class TestIndex(TestCase):
                                            e_conference=self.previous_conf)
 
         self.current_vendor = VendorFactory(
-            profile=self.profile,
+            business__owners=[self.profile],
             submitted=True,
             b_conference=self.current_conf)
         self.previous_vendor = VendorFactory(
-            profile=self.profile,
+            business__owners=[self.profile],
             submitted=True,
             b_conference=self.previous_conf)
 
@@ -190,12 +189,16 @@ class TestIndex(TestCase):
         does_not_show_previous = (
             self.previous_act.b_title not in content and
             self.previous_class.b_title not in content and
-            self.previous_vendor.b_title not in content and
+            "%s - %s" % (
+                self.previous_vendor.business.name,
+                self.previous_conf.conference_slug) not in content and
             self.previous_costume.b_title not in content)
         shows_all_current = (
             self.current_act.b_title in content and
             self.current_class.b_title in content and
-            self.current_vendor.b_title in content and
+            "%s - %s" % (
+                self.current_vendor.business.name,
+                self.current_conf.conference_slug) in content and
             self.current_costume.b_title in content)
         assert does_not_show_previous
         assert shows_all_current
@@ -219,15 +222,19 @@ class TestIndex(TestCase):
         shows_all_previous = (
             self.previous_act.b_title in content and
             self.previous_class.b_title in content and
-            self.previous_vendor.b_title in content and
+            "%s - %s" % (
+                self.previous_vendor.business.name,
+                self.previous_conf.conference_slug) in content and
             self.previous_costume.b_title in content in content)
         does_not_show_current = (
             self.current_act.b_title not in content and
             self.current_class.b_title not in content and
-            self.current_vendor.b_title not in content and
+            "%s - %s" % (
+                self.current_vendor.business.name,
+                self.current_conf.conference_slug) not in content and
             self.current_costume.b_title not in content)
-        nt.assert_true(shows_all_previous and
-                       does_not_show_current)
+        assert shows_all_previous
+        assert does_not_show_current
         self.assert_event_is_present(response, self.previous_sched)
         self.assert_event_is_not_present(response, self.current_sched)
         self.assert_event_is_present(response, self.previous_class_sched)
@@ -300,7 +307,7 @@ class TestIndex(TestCase):
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
 
-        self.assertContains(response, vendor.b_title)
+        self.assertContains(response, vendor.business.name)
 
     def test_costumes_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
@@ -517,12 +524,13 @@ class TestIndex(TestCase):
 
     def test_unpaid_vendor_draft(self):
         self.unpaid_vendor = VendorFactory(
-            profile=self.profile,
+            business__owners=[self.profile],
             submitted=False,
             b_conference=self.current_conf)
         expected_string = (
-            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
-            ) % self.unpaid_vendor.b_title
+            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s - %s</b>'
+            ) % (self.unpaid_vendor.business.name,
+                 self.current_conf.conference_slug)
         bpt_event_id = make_vendor_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, expected_string)
@@ -533,12 +541,13 @@ class TestIndex(TestCase):
         make_vendor_app_purchase(self.current_conf,
                                  self.profile.user_object)
         self.paid_vendor = VendorFactory(
-            profile=self.profile,
+            business__owners=[self.profile],
             submitted=False,
             b_conference=self.current_conf)
         expected_string = (
-            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s</b>'
-            ) % self.paid_vendor.b_title
+            '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s - %s</b>'
+            ) % (self.paid_vendor.business.name,
+                 self.current_conf.conference_slug)
         bpt_event_id = make_vendor_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, expected_string)

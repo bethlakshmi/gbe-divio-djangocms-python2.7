@@ -495,6 +495,8 @@ bad_token_msg = '''This link is either expired or invalid.  Get a new link \
 emailed to you on this page'''
 default_create_persona_msg = "Your persona has been created."
 default_edit_persona_msg = "Your persona has been updated."
+default_create_business_msg = "Your business has been created."
+default_edit_business_msg = "Your business has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''

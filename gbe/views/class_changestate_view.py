@@ -8,9 +8,6 @@ class ClassChangeStateView(BidChangeStateView):
     coordinator_permissions = ('Class Coordinator', )
     redirectURL = 'class_review_list'
 
-    def get_bidder(self):
-        self.bidder = self.object.teacher.contact
-
     @log_func
     def bid_state_change(self, request):
         # if the class has been rejected/no decision, clear any schedule items.

@@ -70,15 +70,15 @@ class TestReviewVendorList(TestCase):
 
         nt.assert_equal(200, response.status_code)
         for vendor in self.vendors:
-            self.assertContains(response, vendor.b_title)
+            self.assertContains(response, vendor.business.name)
 
     def test_review_vendor_inactive_user(self):
+        inactive_profile = ProfileFactory(user_object__is_active=False)
         self.vendors = VendorFactory(
+            business__owners=[inactive_profile],
             b_conference=self.conference,
-            submitted=True,
-            profile__user_object__is_active=False)
-        url = reverse('vendor_review',
-                      urlconf='gbe.urls')
+            submitted=True)
+        url = reverse('vendor_review', urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertContains(response, 'gbe-table-row gbe-table-danger')
