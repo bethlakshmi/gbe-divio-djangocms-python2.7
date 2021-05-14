@@ -3,10 +3,10 @@
  <div class="row top-buffer">
   <div class="col-12"><h3 class="readonlyform gbe-subtitle">The Presenter</h3></div>
   {% if performer.img %}
-  <div class="col-lg-4 col-md-5 col-12">
+  <div class="col-lg-5 col-md-5 col-12">
     <img src="{% thumbnail performer.img 350x350 crop=scale subject_location=performer.img.subject_location %}" class="sched_bio_image">
   </div>
-  <div class="col-lg-8 col-md-7 col-12">
+  <div class="col-lg-7 col-md-7 col-12">
 
   {% else %}<div class="col-12">{% endif %}
   <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Stage Name:</div>
