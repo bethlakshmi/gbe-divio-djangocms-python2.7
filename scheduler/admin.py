@@ -35,6 +35,7 @@ class EventItemAdmin(admin.ModelAdmin):
     list_display = (
         'eventitem_id', str, 'visible', 'event_type', 'conference')
     list_filter = ['visible', 'event__e_conference']
+    search_fields = ['event__e_title']
 
     def event_type(self, obj):
         if str(obj.child().__class__.__name__) == 'GenericEvent':
