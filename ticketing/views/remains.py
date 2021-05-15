@@ -226,10 +226,10 @@ def ticket_item_edit(request, item_id=None):
                     'summary': "Introduction Message",
                     'description': intro_make_ticket_message})
     title = "Edit Ticket Item"
-    another_button_text = "Edit & Add More"
+    another_button_text = "Save & Add More"
     cancel_url = reverse('ticket_items', urlconf='ticketing.urls')
     can_delete = True
-    button_text = 'Edit Ticket'
+    button_text = 'Save'
     if 'delete_item' in request.POST or 'delete_item' in request.GET:
         item = get_object_or_404(TicketItem, id=item_id)
         cancel_url = "%s?conference=%s&open_panel=%s" % (
@@ -350,8 +350,8 @@ def bptevent_edit(request, event_id=None):
     if event_id:
         event = get_object_or_404(BrownPaperEvents, id=event_id)
         title = "Edit Ticketed Event"
-        button_text = 'Edit Event'
-        another_button_text = "Edit & Add Tickets"
+        button_text = 'Save'
+        another_button_text = "Save & Add Tickets"
         cancel_url = "%s?open_panel=%s" % (cancel_url,
                                            make_open_panel(event))
 

@@ -3,6 +3,15 @@
 {% block title %}
   Edit Ticket Item
 {% endblock %}
+{% block head %}
+
+    {# Include Bootstrap 4 and jQuery #}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<!-- Form media -->
+  {{forms.0.media}}
+<!-- end form media -->
+{% endblock %}
 {% block content %}
 
 <h2 class="gbe-title">{{title}}</h2>

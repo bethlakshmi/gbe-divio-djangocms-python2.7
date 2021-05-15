@@ -300,11 +300,8 @@ class TestListTickets(TestCase):
             start_time=datetime.now()-timedelta(days=1),
             end_time=datetime.now()+timedelta(days=1))
 
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
-        response = self.client.get(url, data={
+        response = self.client.get(self.url, data={
             "conference": active_ticket.bpt_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
@@ -314,6 +311,51 @@ class TestListTickets(TestCase):
         self.assertContains(
             response,
             active_ticket.end_time.strftime('%m/%d/%Y'))
+        self.assertContains(
+            response,
+            '<tr class="dedicated-sched gbe-table-row">')
+
+    def test_ticket_not_yet_active(self):
+        '''
+           privileged user gets the list for a conference
+        '''
+        inactive_ticket = TicketItemFactory(
+            live=True,
+            start_time=datetime.now()+timedelta(days=1))
+
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url, data={
+            "conference": inactive_ticket.bpt_event.conference.conference_slug}
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            inactive_ticket.start_time.strftime('%m/%d/%Y'))
+        self.assertNotContains(
+            response,
+            '<tr class="dedicated-sched gbe-table-row">')
+
+    def test_ticket_no_longer_active(self):
+        '''
+           privileged user gets the list for a conference
+        '''
+        inactive_ticket = TicketItemFactory(
+            live=True,
+            end_time=datetime.now()-timedelta(days=1))
+
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url, data={
+            "conference": inactive_ticket.bpt_event.conference.conference_slug}
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            inactive_ticket.end_time.strftime('%m/%d/%Y'))
+        self.assertNotContains(
+            response,
+            '<tr class="dedicated-sched gbe-table-row">')
 
     def test_ticket_active_donation(self):
         '''

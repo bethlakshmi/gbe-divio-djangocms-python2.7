@@ -782,7 +782,7 @@ ticket_item_labels = {
     'ticket_id': 'Ticket Item Id:',
     'live': 'Display Item to Users?:',
     'cost': 'Ticket Price:',
-    'bpt_event': 'Event in BPT',
+    'bpt_event': 'Fee/Event',
     'is_minimum': 'Act as minimum donation',
     'has_coupon': 'Coupon Required',
 }
@@ -790,8 +790,8 @@ ticket_item_help_text = {
     'ticket_id': 'If using BPT, this must match the BPT configuration to sync. \
     if using PayPal, this is used for tracking only.',
     'live': 'Will be shown on this site, if it is within the start/end time',
-    'bpt_event': 'Ticket collection - all tickets within this event count the \
-    same.',
+    'bpt_event': 'What this ticket pays for - application fee, vendor spot, \
+    ticket for conference, show, special event, etc.',
     'is_minimum': 'A donation supercedes any other ticket.  The lowest cost \
     among all tickets is the minimum.',
     'has_coupon': 'Coupon Required, only works with BPT, not available with \
