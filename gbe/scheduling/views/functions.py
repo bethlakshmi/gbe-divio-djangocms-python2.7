@@ -171,9 +171,9 @@ def get_event_display_info(eventitem_id):
                 bio_grid_list[header] += [performer]
             else:
                 bio_grid_list[header] = [performer]
-    featured_grid_list.sort(key=lambda p:p['bio'].name)
+    featured_grid_list.sort(key=lambda p: p['bio'].name)
     for header, perf_list in bio_grid_list.items():
-        perf_list.sort(key=lambda p:p.name)
+        perf_list.sort(key=lambda p: p.name)
 
     booking_response = get_people(
         foreign_event_ids=[eventitem_id],
