@@ -268,7 +268,10 @@ def setup_event_management_form(
     return (context, initial_form_info)
 
 
-def update_event(scheduling_form, occurrence_id, roles=None, people_formset=[]):
+def update_event(scheduling_form,
+                 occurrence_id,
+                 roles=None,
+                 people_formset=[]):
     start_time = get_start_time(scheduling_form.cleaned_data)
     people = []
     for assignment in people_formset:
