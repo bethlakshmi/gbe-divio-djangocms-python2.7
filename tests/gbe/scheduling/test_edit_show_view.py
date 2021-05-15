@@ -8,6 +8,7 @@ from tests.factories.gbe_factories import (
 from scheduler.models import (
     EventContainer,
     EventLabel,
+    ResourceAllocation,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -136,6 +137,35 @@ class TestEditShowWizard(TestCase):
         self.assertContains(
             response,
             "Occurrence id %d not found" % (self.context.sched_event.pk+1000))
+
+    def test_edit_event_keep_performers(self):
+        self.url = reverse(
+            'edit_show',
+            args=[self.context.conference.conference_slug,
+                  self.context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        login_as(self.privileged_user, self)
+        data = {
+            'e_title': "Test Show Edit",
+            'e_description': 'Description',
+            'max_volunteer': 0,
+            'day': self.context.days[0].pk,
+            'time': '11:00:00',
+            'duration': 2.5,
+            'location': self.room.pk,
+            'alloc_0-role': 'Producer',
+            'edit_event': 'Save and Continue'
+        }
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertRedirects(
+            response,
+            "%s?volunteer_open=True" % self.url)
+        self.assertTrue(ResourceAllocation.objects.filter(
+            event=self.context.sched_event,
+            resource__worker___item=self.context.performer).count() == 1)
 
     def test_create_slot(self):
         login_as(self.privileged_profile, self)
