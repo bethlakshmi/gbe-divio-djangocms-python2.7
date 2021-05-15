@@ -3,5 +3,6 @@ from .eval_view import eval_view
 from .interest_view import interest_view
 from .review_staff_area_view import review_staff_area_view
 from .staff_area_view import staff_area_view
+from .all_volunteer_view import all_volunteer_view
 from .welcome_letter_view import WelcomeLetterView
 from .review_act_techinfo import review_act_techinfo
