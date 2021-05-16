@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from gbe.scheduling.forms import (
     CopyEventForm,
-    CopyEventPickDayForm,
+    CopyEventSoloPickModeForm,
     CopyEventPickModeForm,
 )
 from scheduler.idd import (
@@ -44,11 +44,9 @@ class CopyCollectionsView(View):
                 event_type=context['event_type'],
                 initial={'room': context['room']})
         else:
-            context['pick_day'] = CopyEventPickDayForm(
+            context['copy_solo_mode'] = CopyEventSoloPickModeForm(
                 post,
                 initial={'room': context['room']})
-            context['pick_day'].fields['copy_to_day'].empty_label = None
-            context['pick_day'].fields['copy_to_day'].required = True
         return context
 
     def validate_and_proceed(self, request, context):
@@ -82,8 +80,8 @@ class CopyCollectionsView(View):
                 context['second_form'] = self.make_event_picker(
                     request,
                     delta)
-        elif 'pick_day' in list(
-                context.keys()) and context['pick_day'].is_valid():
+        elif 'copy_solo_mode' in list(
+                context.keys()) and context['copy_solo_mode'].is_valid():
             make_copy = True
         return make_copy, context
 
@@ -177,6 +175,7 @@ class CopyCollectionsView(View):
             context = self.make_context(request, post=request.POST)
             make_copy, context = self.validate_and_proceed(request, context)
             if make_copy:
+                raise Exception("rework")
                 target_day = context['pick_day'].cleaned_data[
                     'copy_to_day']
                 delta = target_day.day - self.start_day

@@ -193,13 +193,23 @@ event_collect_choices = [
                 ("Volunteer", "All Volunteer Events")]
 copy_mode_labels = {
     'copy_mode': "How would you like to copy this event?",
-    'room': "Choose the default room"
+    'room': "Choose the default room",
+    'solo_room': "Choose the room",
+    'copy_mode_solo': "Options for how to copy the event",
 }
 copy_mode_choices = [
     ("copy_children_only",
      "Copy all sub-events to "),
     ("include_parent",
      "Include this event and all sub events, make new event on ")
+]
+copy_mode_solo_choices = [
+    ("copy_to_parent",
+     "Link to this parent event "),
+    ("copy_to_area",
+     "Link to this staff area "),
+    ("choose_day",
+     "Pick day - will be used instead of parent day if chosen")
 ]
 copy_errors = {
     'room_conf_mismatch': "This room is not available for the conference on " +
