@@ -22,7 +22,7 @@
       <td>{{ opp.event.container_event.parent_event.eventitem.event.e_title}}</td>
       <td>{% for area in opp.areas %}{{area}}{% endfor %}</td>
       <td>{{ opp.event.location}}</td>
-      <td>{{ opp.event.starttime}}</td>
+      <td>{{ opp.event.starttime|date:"M j, Y, g:i A"}}</td>
 	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.max_volunteer}}</td>
 	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.people|length}}</td>
       <td>{% for contact in opp.event.people%}{% if contact.role in visible_roles %}
