@@ -37,11 +37,11 @@ class TestAllVolunteer(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, show.e_title)
         self.assertContains(response, context.opportunity.e_title)
-        self.assertContains(response,reverse(
+        self.assertContains(response, reverse(
             'mail_to_individual',
             urlconf='gbe.email.urls',
             args=[context.profile.resourceitem_id]))
-        self.assertContains(response,reverse(
+        self.assertContains(response, reverse(
             'edit_event',
             urlconf='gbe.scheduling.urls',
             args=[context.conference.conference_slug, context.opp_event.pk]))
@@ -111,7 +111,7 @@ class TestAllVolunteer(TestCase):
             context.conference.conference_slug))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(vol1))
-        self.assertNotContains(response,reverse(
+        self.assertNotContains(response, reverse(
             'edit_event',
             urlconf='gbe.scheduling.urls',
             args=[context.conference.conference_slug, opp1.event.pk]))

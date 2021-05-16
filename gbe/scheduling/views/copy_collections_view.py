@@ -54,8 +54,9 @@ class CopyCollectionsView(View):
                 initial={'room': context['room']})
         else:
             area = None
-            if StaffArea.objects.exclude(conference__status="completed").filter(
-                slug__in=self.occurrence.labels).exists():
+            if StaffArea.objects.exclude(
+                    conference__status="completed").filter(
+                    slug__in=self.occurrence.labels).exists():
                 area = StaffArea.objects.exclude(
                     conference__status="completed").filter(
                     slug__in=self.occurrence.labels).first()
@@ -67,7 +68,7 @@ class CopyCollectionsView(View):
                 view=self.__class__.__name__,
                 code="COPY_SOLO_INTRO",
                 defaults={
-                    'summary': "Copying an event with no children instructions",
+                    'summary': "Copying event with no children instructions",
                     'description': copy_solo_intro})
             context['introduction'] = user_message[0].description
         return context

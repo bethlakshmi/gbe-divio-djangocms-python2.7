@@ -146,8 +146,8 @@ class CopyEventSoloPickModeForm(CopyEventPickModeForm):
                 e_conference__status="completed").filter(type="Special")
         response = get_occurrences(
             foreign_event_ids=list(
-                shows.values_list('eventitem_id',flat=True)) +
-            list(specials.values_list('eventitem_id',flat=True)))
+                shows.values_list('eventitem_id', flat=True)) +
+            list(specials.values_list('eventitem_id', flat=True)))
         if response.occurrences:
             for occurrence in response.occurrences:
                 choices += [(occurrence.pk, "%s - %s" % (
