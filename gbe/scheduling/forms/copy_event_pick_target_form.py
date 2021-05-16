@@ -169,6 +169,10 @@ class CopyEventSoloPickModeForm(CopyEventPickModeForm):
         if copy_mode_solo_choices[1][0] in copy_mode and not area:
             msg = copy_errors['no_area']
             self.add_error('area', msg)
+        if copy_mode_solo_choices[2][0] not in copy_mode and (
+                copy_mode_solo_choices[0][0] not in copy_mode):
+            msg = copy_errors['no_delta']
+            self.add_error('copy_mode', msg)
         if copy_mode_solo_choices[2][0] in copy_mode and not copy_to_day:
             msg = copy_errors['no_day']
             self.add_error('copy_to_day', msg)

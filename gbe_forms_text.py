@@ -215,9 +215,11 @@ copy_errors = {
     'room_conf_mismatch': "This room is not available for the conference on " +
     "this day.",
     'no_target': " Must choose the target event when copying sub-events.",
-    'no_day': " Must choose a day when copying all events.",
+    'no_day': " Must choose a day when copying events.",
     'room_target_mismatch': "This room is not available for the conference " +
-    "of the chosen event."
+    "of the chosen event.",
+    'no_area': "If this option is chosen, an area choice is required.",
+    'no_delta': "Either a parent event, or a target date must be chosen.",
 }
 inform_about_options = [('Exhibiting Art or Costumes',
                          'Exhibiting Art or Costumes'),
