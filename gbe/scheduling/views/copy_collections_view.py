@@ -23,6 +23,11 @@ from gbe_forms_text import (
     copy_errors,
     copy_mode_solo_choices,
 )
+from gbetext import copy_solo_intro
+from gbe.models import (
+    StaffArea,
+    UserMessage,
+)
 
 
 class CopyCollectionsView(View):
@@ -48,9 +53,23 @@ class CopyCollectionsView(View):
                 event_type=context['event_type'],
                 initial={'room': context['room']})
         else:
+            area = None
+            if StaffArea.objects.exclude(conference__status="completed").filter(
+                slug__in=self.occurrence.labels).exists():
+                area = StaffArea.objects.exclude(
+                    conference__status="completed").filter(
+                    slug__in=self.occurrence.labels).first()
             context['copy_solo_mode'] = CopyEventSoloPickModeForm(
                 post,
-                initial={'room': context['room']})
+                initial={'room': context['room'],
+                         'area': area})
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="COPY_SOLO_INTRO",
+                defaults={
+                    'summary': "Copying an event with no children instructions",
+                    'description': copy_solo_intro})
+            context['introduction'] = user_message[0].description
         return context
 
     def validate_and_proceed(self, request, context):

@@ -10,6 +10,7 @@
 {% block first_form %}
   <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
+  {% if introduction %}<p>{{introduction}}</p>{% endif %}
   {% if copy_solo_mode %}
     {% if copy_solo_mode.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
     <font class="gbe-form-error">{{ copy_solo_mode.non_field_errors }}</font>
