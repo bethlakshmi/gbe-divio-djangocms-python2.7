@@ -30,7 +30,8 @@ urlpatterns = [
     url(r'^reports/review_volunteers/?$',
         review_staff_area_view,
         name='staff_area'),
-    url(r'^reports/review_volunteers/(?P<parent_type>area|event)/(?P<target>\d+)/?$',
+    url('^reports/review_volunteers/(?P<parent_type>area|event)/' +
+        '(?P<target>\d+)/?$',
         staff_area_view,
         name='staff_area'),
     url(r'^reports/review_all_volunteers/?$',
