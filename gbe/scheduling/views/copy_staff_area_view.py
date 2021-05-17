@@ -18,6 +18,7 @@ from django.contrib import messages
 from gbe.models import UserMessage
 from gbetext import no_conf_day_msg
 from django.urls import reverse
+from gbe.scheduling.forms import CopyEventPickDayForm
 
 
 class CopyStaffAreaView(CopyCollectionsView):
@@ -60,6 +61,14 @@ class CopyStaffAreaView(CopyCollectionsView):
         return super(CopyStaffAreaView, self).make_context(request,
                                                            context,
                                                            post)
+
+    def setup_solo(self, context, post):
+        context['pick_day'] = CopyEventPickDayForm(
+            post,
+            initial={'room': context['room']})
+        context['pick_day'].fields['copy_to_day'].empty_label = None
+        context['pick_day'].fields['copy_to_day'].required = True
+        return context
 
     def get_copy_target(self, context):
         area = get_object_or_404(
@@ -114,7 +123,33 @@ class CopyStaffAreaView(CopyCollectionsView):
                 new_area.title))
         return new_area
 
-    def copy_event(self, occurrence, delta, conference, room, root=None):
+    def copy_solo(self, request, context):
+        target_day = context['pick_day'].cleaned_data['copy_to_day']
+        delta = target_day.day - self.start_day
+        new_root = self.copy_root(
+            request,
+            delta,
+            target_day.conference,
+            context['pick_day'].cleaned_data['room'])
+
+        if new_root:
+            slug = target_day.conference.conference_slug
+            return HttpResponseRedirect(
+                "%s?%s-day=%d&filter=Filter&new=%s" % (
+                        reverse('manage_event_list',
+                                urlconf='gbe.scheduling.urls',
+                                args=[slug]),
+                        slug,
+                        target_day.pk,
+                        str([new_root.pk]),))
+
+    def copy_event(self,
+                   occurrence,
+                   delta,
+                   conference,
+                   room,
+                   labels,
+                   root=None):
         new_event_room = room
         gbe_event_copy = occurrence.as_subtype
         gbe_event_copy.pk = None
@@ -123,10 +158,8 @@ class CopyStaffAreaView(CopyCollectionsView):
         gbe_event_copy.eventitem_id = None
         gbe_event_copy.e_conference = conference
         gbe_event_copy.save()
-        labels = [conference.conference_slug,
-                  gbe_event_copy.calendar_type]
         if root:
-            labels += [root.slug]
+            labels += [self.area.slug]
         if occurrence.location.as_subtype.conferences.filter(
                 pk=conference.pk).exists():
             new_event_room = occurrence.location

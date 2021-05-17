@@ -7,7 +7,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from gbe.scheduling.forms import (
     CopyEventForm,
-    CopyEventSoloPickModeForm,
     CopyEventPickModeForm,
 )
 from scheduler.idd import (
@@ -21,12 +20,6 @@ from datetime import timedelta
 from django.forms.utils import ErrorList
 from gbe_forms_text import (
     copy_errors,
-    copy_mode_solo_choices,
-)
-from gbetext import copy_solo_intro
-from gbe.models import (
-    StaffArea,
-    UserMessage,
 )
 
 
@@ -53,24 +46,7 @@ class CopyCollectionsView(View):
                 event_type=context['event_type'],
                 initial={'room': context['room']})
         else:
-            area = None
-            if StaffArea.objects.exclude(
-                    conference__status="completed").filter(
-                    slug__in=self.occurrence.labels).exists():
-                area = StaffArea.objects.exclude(
-                    conference__status="completed").filter(
-                    slug__in=self.occurrence.labels).first()
-            context['copy_solo_mode'] = CopyEventSoloPickModeForm(
-                post,
-                initial={'room': context['room'],
-                         'area': area})
-            user_message = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="COPY_SOLO_INTRO",
-                defaults={
-                    'summary': "Copying event with no children instructions",
-                    'description': copy_solo_intro})
-            context['introduction'] = user_message[0].description
+            context = self.setup_solo(context, post)
         return context
 
     def validate_and_proceed(self, request, context):
@@ -106,6 +82,9 @@ class CopyCollectionsView(View):
                     delta)
         elif 'copy_solo_mode' in list(
                 context.keys()) and context['copy_solo_mode'].is_valid():
+            make_copy = True
+        elif 'pick_day' in list(
+                context.keys()) and context['pick_day'].is_valid():
             make_copy = True
         return make_copy, context
 
@@ -150,12 +129,15 @@ class CopyCollectionsView(View):
 
             for sub_event_id in form.cleaned_data["copied_event"]:
                 response = get_occurrence(sub_event_id)
+                labels = [conference.conference_slug,
+                          response.occurrence.as_subtype.calendar_type]
                 response = self.copy_event(
                     response.occurrence,
                     delta,
                     conference,
                     room,
-                    new_root)
+                    labels,
+                    new_root.pk)
                 show_scheduling_occurrence_status(
                     request,
                     response,
@@ -199,66 +181,7 @@ class CopyCollectionsView(View):
             context = self.make_context(request, post=request.POST)
             make_copy, context = self.validate_and_proceed(request, context)
             if make_copy:
-                delta = None
-                parent_event_id = None
-                copy_mode = context['copy_solo_mode'].cleaned_data['copy_mode']
-                if copy_mode_solo_choices[2][0] in copy_mode:
-                    target_day = context['copy_solo_mode'].cleaned_data[
-                        'copy_to_day']
-                    conference = target_day.conference
-                    delta = target_day.day - self.start_day
-                if copy_mode_solo_choices[0][0] in copy_mode:
-                    parent_event_id = context['copy_solo_mode'].cleaned_data[
-                        'target_event']
-                    resp = get_occurrence(
-                        context['copy_solo_mode'].cleaned_data['target_event'])
-                    if delta is None:
-                        delta = resp.occurrence.starttime.date(
-                            ) - self.start_day
-                    conference = resp.occurrence.eventitem.event.e_conference
-
-                gbe_event_copy = self.occurrence.as_subtype
-                gbe_event_copy.pk = None
-                gbe_event_copy.event_id = None
-                gbe_event_copy.eventitem_ptr_id = None
-                gbe_event_copy.eventitem_id = None
-                gbe_event_copy.e_conference = conference
-                gbe_event_copy.save()
-                labels = [conference.conference_slug,
-                          gbe_event_copy.calendar_type]
-                if copy_mode_solo_choices[1][0] in copy_mode:
-                    labels += [
-                        context['copy_solo_mode'].cleaned_data['area'].slug]
-                if self.occurrence.location.as_subtype.conferences.filter(
-                        pk=conference.pk).exists():
-                    new_event_room = self.occurrence.location
-                else:
-                    new_event_room = context['copy_solo_mode'].cleaned_data[
-                        'room']
-
-                response = create_occurrence(
-                    gbe_event_copy.eventitem_id,
-                    self.occurrence.starttime + delta,
-                    max_volunteer=self.occurrence.max_volunteer,
-                    max_commitments=self.occurrence.max_commitments,
-                    locations=[new_event_room],
-                    parent_event_id=parent_event_id,
-                    labels=labels,
-                    approval=self.occurrence.approval_needed)
-                show_scheduling_occurrence_status(
-                    request,
-                    response,
-                    self.__class__.__name__)
-                if response.occurrence:
-                    slug = target_day.conference.conference_slug
-                    return HttpResponseRedirect(
-                        "%s?%s-day=%d&filter=Filter&new=%s" % (
-                            reverse('manage_event_list',
-                                    urlconf='gbe.scheduling.urls',
-                                    args=[slug]),
-                            slug,
-                            target_day.pk,
-                            str([response.occurrence.pk]),))
+                return self.copy_solo(request, context)
         if 'pick_event' in list(request.POST.keys()):
             return self.copy_events_from_form(request)
         return render(

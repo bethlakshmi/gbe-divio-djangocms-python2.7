@@ -37,7 +37,7 @@ from gbetext import no_conf_day_msg
 from tests.gbe.test_gbe import TestGBE
 
 
-class TestCopyOccurrence(TestGBE):
+class TestCopyStaffArea(TestGBE):
     view_name = 'copy_staff_schedule'
     copy_date_format = "%a, %b %-d, %Y %-I:%M %p"
     copy_children_only_checked = '<input type="radio" name="copy_mode" ' + \

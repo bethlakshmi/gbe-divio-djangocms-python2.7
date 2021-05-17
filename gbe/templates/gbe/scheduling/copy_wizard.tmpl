@@ -11,7 +11,30 @@
   <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {% if introduction %}<p>{{introduction}}</p>{% endif %}
-  {% if copy_solo_mode %}
+  {% if pick_day %}
+    <h4>Choose Day and Room</h4>
+    <p>
+      Choose the target day of the conference and an event at the same time will be made.
+      If the room has changed between the previous conference and the new conference, please update the room.  Rooms from previous conferences will not be available here.</p>
+      {% if pick_day.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
+    <div class="row">
+    {% for field in pick_day %}
+      <div class="col-lg-3 col-sm-6 col-12">
+        <label for="{{field.name}}" class="control-label">        
+          {% if field.errors %}<font class="gbe-form-error">!
+          {% elif field.css_classes == 'required' %}<font class="gbe-form-required">*</font>
+          {% endif %} 
+          {{ field.label_tag }}
+          {% if field.errors %}</font>{% endif %} 
+      </label></div>
+      <div class="col-lg-3 col-sm-6 col-12">
+        {{ field }}
+        {% if field.errors %}<br/><label>
+        <font class="gbe-form-error">{{ field.errors }}</font></label>{% endif %}
+      </div>
+    {% endfor %}<br><br>
+  </div>
+  {% elif copy_solo_mode %}
     {% if copy_solo_mode.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
     <font class="gbe-form-error">{{ copy_solo_mode.non_field_errors }}</font>
       <div class="form-row"><div class="form-group"><div class="col-12">
