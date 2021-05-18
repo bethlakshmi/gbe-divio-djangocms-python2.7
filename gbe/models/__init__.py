@@ -1,4 +1,3 @@
-from .available_interest import AvailableInterest
 from .evaluation_category import EvaluationCategory
 from .conference import Conference
 from .room import Room
@@ -28,7 +27,6 @@ from .profile_preferences import ProfilePreferences
 from .user_message import UserMessage
 
 # staff evaluations, pre-acceptance
-from .volunteer_interest import VolunteerInterest
 from .bid_evaluation import BidEvaluation
 from .show_vote import ShowVote
 from .act_bid_evaluation import ActBidEvaluation

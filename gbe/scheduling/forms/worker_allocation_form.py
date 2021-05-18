@@ -6,10 +6,7 @@ from django.forms import (
     Form,
     ModelChoiceField,
 )
-from gbe.models import (
-    AvailableInterest,
-    GenericEvent,
-)
+from gbe.models import GenericEvent
 from gbe.forms.common_queries import visible_profiles
 from gbetext import role_options
 from dal import autocomplete

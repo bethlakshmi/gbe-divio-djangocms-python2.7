@@ -23,13 +23,6 @@ from datetime import (
 from pytz import utc
 
 
-class AvailableInterestFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.AvailableInterest
-        django_get_or_create = ('interest',)
-    interest = 'Registration'
-
-
 class ConferenceFactory(DjangoModelFactory):
     class Meta:
         model = conf.Conference
@@ -167,7 +160,6 @@ class GenericEventFactory(DjangoModelFactory):
         lambda a: "Description for %s" % a.e_title)
     duration = timedelta(hours=1)
     type = 'Special'
-    volunteer_type = SubFactory(AvailableInterestFactory)
     e_conference = SubFactory(ConferenceFactory)
 
 
@@ -229,30 +221,6 @@ class VolunteerFactory(DjangoModelFactory):
         model = conf.Volunteer
 
     profile = SubFactory(ProfileFactory)
-    number_shifts = 1
-    availability = LazyAttribute(
-        lambda a: ("Availability for test Volunteer #%s" %
-                   a.profile.display_name))
-    unavailability = LazyAttribute(
-        lambda a: ("Unavailability for test Volunteer #%s" %
-                   a.profile.display_name))
-    opt_outs = LazyAttribute(
-        lambda a: ("Opt-outs for test Volunteer #%s" %
-                   a.profile.display_name))
-    pre_event = False
-    background = LazyAttribute(
-        lambda a: ("Background for test Volunteer #%s" %
-                   a.profile.display_name))
-    b_conference = SubFactory(ConferenceFactory)
-
-
-class VolunteerInterestFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.VolunteerInterest
-
-    interest = SubFactory(AvailableInterestFactory, interest='Security/usher')
-    volunteer = SubFactory(VolunteerFactory)
-    rank = 4
 
 
 class BusinessFactory(DjangoModelFactory):

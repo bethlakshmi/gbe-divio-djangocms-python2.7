@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from gbe.models import (
-    AvailableInterest,
     Conference,
     StaffArea,
     Show,

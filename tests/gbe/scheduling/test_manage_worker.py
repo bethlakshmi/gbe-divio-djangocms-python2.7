@@ -8,7 +8,6 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     ProfilePreferencesFactory,
     VolunteerFactory,
-    VolunteerInterestFactory,
 )
 from tests.contexts import StaffAreaContext
 from tests.functions.gbe_functions import (
@@ -186,9 +185,6 @@ class TestManageWorker(TestCase):
             submitted=False,
             accepted=2,
             b_conference=context.conference)
-        VolunteerInterestFactory(
-            volunteer=volunteer,
-            interest=volunteer_opp.as_subtype.volunteer_type)
         url = reverse(self.view_name,
                       args=[context.conference.conference_slug,
                             volunteer_opp.pk],

@@ -17,7 +17,6 @@ from tests.factories.ticketing_factories import (
     TicketItemFactory,
     PurchaserFactory,
 )
-from gbe_forms_text import rank_interest_options
 from post_office.models import (
     Email,
     EmailTemplate
@@ -86,22 +85,6 @@ def assert_alert_exists(response, tag, label, text):
         '          <strong>%s:</strong> %s\n' \
         '	</div>'
     assert bytes(alert_html % (tag, label, text), 'utf-8') in response.content
-
-
-def assert_rank_choice_exists(response, interest, selection=None):
-    assert bytes('<label for="id_%d-rank">%s:</label>' % (
-        interest.pk,
-        interest.interest), 'utf-8') in response.content
-    assert bytes('<select name="%d-rank" id="id_%d-rank">' % (
-        interest.pk,
-        interest.pk), 'utf-8') in response.content
-    for value, text in rank_interest_options:
-        if selection and selection == value:
-            assert bytes('<option value="%d" selected>%s</option>' % (
-                value, text), 'utf-8') in response.content
-        else:
-            assert bytes('<option value="%d">%s</option>' % (
-                value, text), 'utf-8') in response.content
 
 
 def assert_option_state(response, value, text, selected=False):

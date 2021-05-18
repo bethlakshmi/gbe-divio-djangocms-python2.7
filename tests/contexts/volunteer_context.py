@@ -7,7 +7,6 @@ from tests.factories.gbe_factories import (
     RoomFactory,
     ShowFactory,
     VolunteerFactory,
-    VolunteerInterestFactory
 )
 from tests.factories.scheduler_factories import (
     EventContainerFactory,
@@ -55,8 +54,6 @@ class VolunteerContext():
             self.bid = VolunteerFactory(
                 b_conference=self.conference,
                 profile=self.profile)
-        self.interest = VolunteerInterestFactory(
-            volunteer=self.bid)
         self.event = event or ShowFactory(
             e_conference=self.conference)
         self.role = role or "Volunteer"
@@ -91,8 +88,7 @@ class VolunteerContext():
     def add_opportunity(self, opportunity=None, start_time=None):
         opportunity = opportunity or GenericEventFactory(
             e_conference=self.conference,
-            type='Volunteer',
-            volunteer_type=self.interest.interest)
+            type='Volunteer')
         start_time = start_time or datetime.combine(
             self.conf_day.day,
             time(12, 0, 0))

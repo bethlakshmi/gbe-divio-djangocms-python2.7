@@ -295,25 +295,6 @@ volunteer_availability_options = [('SH0', 'Thursday evening (6PM-11PM)'),
                                   ('SH6', 'Saturday afternoon (12PM-6PM)'),
                                   ('SH7', 'Saturday night (5PM-10PM)')]
 
-volunteer_labels = {
-    'number_shifts': 'How many hours would you like to work?',
-    'opt_outs': 'Are there events that we should make sure to not schedule \
-        you during?',
-    'pre_event': 'Are you interested in helping with pre-event tasks?',
-    'background': 'Tell us about your background, including relevant skills \
-        and experience'
-
-}
-
-volunteer_help_texts = {
-    'pre_event': ('Pre-event tasks could be anything from marketing \
-    to logistics to advertising sales to data entry. In short, \
-    anything we need done before the BurlExpo starts'),
-    'volunteer_availability_options': ('These times are general guidelines.  \
-    If there are specific times that you cannot work, please let us know \
-    in the box below.')
-}
-
 available_time_conflict = \
     'Available times conflict with unavailable times.  Conflicts are: %s'
 
@@ -625,13 +606,6 @@ class_schedule_options = [('0', 'Friday Afternoon'),
                           ('2', 'Saturday Afternoon'),
                           ('3', 'Sunday Morning'),
                           ('4', 'Sunday Afternoon')]
-
-rank_interest_options = [(0, '--------------'),
-                         (1, 'Not interested'),
-                         (2, 'Slightly interested'),
-                         (3, 'Neither interested nor disinterested'),
-                         (4, 'Somewhat interested'),
-                         (5, 'Strongly interested')]
 
 space_error1 = ('''A class of workshop type cannot have space choices.''')
 space_type_error1 = ('''A workshop has seating in a ring around the room, \

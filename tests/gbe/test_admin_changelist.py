@@ -3,10 +3,7 @@ from django.test import (
     TestCase
 )
 from django.contrib.auth.models import User
-from gbe.models import (
-    Event,
-    VolunteerInterest,
-)
+from gbe.models import Event
 from tests.factories.gbe_factories import(
     ActFactory,
     BusinessFactory,
@@ -15,7 +12,6 @@ from tests.factories.gbe_factories import(
     ProfileFactory,
     TechInfoFactory,
     VendorFactory,
-    VolunteerInterestFactory,
 )
 from django.contrib.admin.sites import AdminSite
 
@@ -29,12 +25,6 @@ class GBEAdminChangeListTests(TestCase):
         self.client.login(
             username=self.privileged_user.username,
             password=password)
-
-    def test_get_volunteer_interest_conference(self):
-        obj = VolunteerInterestFactory()
-        response = self.client.get('/admin/gbe/volunteerinterest/',
-                                   follow=True)
-        self.assertContains(response, obj.volunteer.b_conference)
 
     def test_get_event_subclass(self):
         obj = GenericEventFactory()

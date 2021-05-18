@@ -30,7 +30,6 @@ from gbetext import (
 )
 from gbe.scheduling.forms import WorkerAllocationForm
 from gbe.scheduling.views.functions import show_scheduling_booking_status
-from gbe_forms_text import rank_interest_options
 from scheduler.data_transfer import (
     Error,
     BookingResponse,
