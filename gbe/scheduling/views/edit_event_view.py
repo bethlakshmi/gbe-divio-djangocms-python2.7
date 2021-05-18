@@ -161,6 +161,7 @@ class EditEventView(ManageVolWizardView):
             self.success_url,
             "volunteer_open",
             self.occurrence.pk,
+            event_settings[self.item.type.lower()]['roles'],
             self.is_formset_valid(worker_formset),
             worker_formset)
         context['worker_formset'] = worker_formset
