@@ -26,7 +26,6 @@ from scheduler.idd import (
 )
 from django.contrib import messages
 from gbe.models import (
-    Act,
     ActCastingOption,
     Conference,
     Event,
@@ -154,11 +153,12 @@ def get_event_display_info(eventitem_id):
         else:
             regular_roles[casting.casting] = casting.display_header
     for casting in response.people:
-        act = Act.objects.get(pk=casting.commitment.class_id)
+        performer = eval(casting.public_class).objects.get(
+            pk=casting.public_id)
         if len(casting.commitment.role) > 0 and (
                 casting.commitment.role in special_roles):
             featured_grid_list += [{
-                'bio': act.bio,
+                'bio': performer,
                 'role': special_roles[casting.commitment.role]}]
         else:
             if len(casting.commitment.role) > 0 and (
@@ -168,9 +168,12 @@ def get_event_display_info(eventitem_id):
                 header = "Fabulous Performers"
 
             if header in bio_grid_list:
-                bio_grid_list[header] += [act.bio]
+                bio_grid_list[header] += [performer]
             else:
-                bio_grid_list[header] = [act.bio]
+                bio_grid_list[header] = [performer]
+    featured_grid_list.sort(key=lambda p: p['bio'].name)
+    for header, perf_list in bio_grid_list.items():
+        perf_list.sort(key=lambda p: p.name)
 
     booking_response = get_people(
         foreign_event_ids=[eventitem_id],
