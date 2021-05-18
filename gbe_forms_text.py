@@ -211,6 +211,9 @@ copy_mode_solo_choices = [
     ("choose_day",
      "Pick day - will be used instead of parent day if chosen")
 ]
+copy_solo_mode_errors = {
+    'required': 'Pick at least one of these options.',
+}
 copy_errors = {
     'room_conf_mismatch': "This room is not available for the conference on " +
     "this day.",

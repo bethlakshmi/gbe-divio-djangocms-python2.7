@@ -22,6 +22,7 @@ from gbe_forms_text import (
     copy_mode_labels,
     copy_mode_choices,
     copy_mode_solo_choices,
+    copy_solo_mode_errors,
     copy_errors,
 )
 from scheduler.idd import get_occurrences
@@ -131,7 +132,8 @@ class CopyEventSoloPickModeForm(CopyEventPickModeForm):
     copy_mode = MultipleChoiceField(choices=copy_mode_solo_choices,
                                     label=copy_mode_labels['copy_mode_solo'],
                                     required=True,
-                                    widget=CheckboxSelectMultiple)
+                                    widget=CheckboxSelectMultiple,
+                                    error_messages=copy_solo_mode_errors)
     area = ModelChoiceField(
         queryset=StaffArea.objects.exclude(conference__status="completed"),
         required=False)
@@ -159,6 +161,8 @@ class CopyEventSoloPickModeForm(CopyEventPickModeForm):
 
     def clean(self):
         cleaned_data = super(CopyEventPickModeForm, self).clean()
+        if cleaned_data.get("copy_mode") is None:
+            return cleaned_data
         copy_mode = cleaned_data.get("copy_mode")
         target_event = cleaned_data.get("target_event")
         copy_to_day = cleaned_data.get("copy_to_day")

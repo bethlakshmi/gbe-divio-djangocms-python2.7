@@ -165,19 +165,15 @@ class CopyOccurrenceView(CopyCollectionsView):
                   self.occurrence.as_subtype.calendar_type]
         if copy_mode_solo_choices[1][0] in copy_mode:
             labels += [context['copy_solo_mode'].cleaned_data['area'].slug]
-        if self.occurrence.location.as_subtype.conferences.filter(
-                pk=conference.pk).exists():
-            new_event_room = self.occurrence.location
-        else:
-            new_event_room = context['copy_solo_mode'].cleaned_data['room']
 
         response = self.copy_event(
             self.occurrence,
             delta,
             conference,
-            new_event_room,
+            context['copy_solo_mode'].cleaned_data['room'],
             labels,
-            parent_event_id=parent_event_id)
+            parent_event_id=parent_event_id,
+            set_room=True)
 
         show_scheduling_occurrence_status(
             request,

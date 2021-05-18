@@ -76,10 +76,7 @@
             <br/><font class="gbe-form-error"><ul>
             {{ copy_solo_mode.room.errors }}
             </ul></font>
-          {% endif %}
-    </div>
-    <div class="col-12">The default room is used for any case where the original
-      room isn't available for the target conference.
+      {% endif %}
     </div></div></div>
   {% elif copy_mode %}
     {% if copy_mode.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
