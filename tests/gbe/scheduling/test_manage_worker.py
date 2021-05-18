@@ -175,8 +175,6 @@ class TestManageWorker(TestCase):
             alloc,
             'Do these notes work?',
             allocations=3)
-        assert len(volunteer.volunteering.all().filter(
-            b_conference=volunteer_opp.eventitem.get_conference())) == 1
 
     def test_post_form_valid_make_new_allocation_volunteer_exists(self):
         context = StaffAreaContext()
@@ -206,9 +204,6 @@ class TestManageWorker(TestCase):
             allocations=3)
         assert len(volunteer.profile.volunteering.all().filter(
             b_conference=volunteer_opp.eventitem.get_conference())) == 1
-        updated = get_object_or_404(Volunteer, pk=volunteer.pk)
-        assert updated.submitted
-        assert updated.accepted == 3
 
     def test_post_form_edit_exiting_allocation(self):
         new_volunteer = ProfileFactory()

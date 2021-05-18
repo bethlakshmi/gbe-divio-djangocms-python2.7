@@ -96,10 +96,6 @@ class Profile(WorkerItem):
             from gbe.models import Vendor  # late import, circularity
             reviews += Vendor().bids_to_review.exclude(
                 bidevaluation__evaluator=self)
-        if 'Volunteer Reviewers' in self.privilege_groups:
-            from gbe.models import Volunteer
-            reviews += Volunteer().bids_to_review.exclude(
-                bidevaluation__evaluator=self)
         return reviews
 
     @property
@@ -169,9 +165,6 @@ class Profile(WorkerItem):
     def get_costumebids(self, historical=False):
         costumes = self.costumes.all()
         return (c for c in costumes if c.is_current != historical)
-
-    def get_volunteerbids(self):
-        return [vbid for vbid in self.volunteering.all() if vbid.is_current]
 
     def get_performers(self):
         performers = self.get_personae()
