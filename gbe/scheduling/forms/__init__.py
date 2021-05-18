@@ -7,7 +7,7 @@ from .pick_class_form import PickClassForm
 from .pick_show_form import PickShowForm
 from .pick_volunteer_topic_form import PickVolunteerTopicForm
 from .copy_event_pick_target_form import (
-	CopyEventPickDayForm,
+    CopyEventPickDayForm,
     CopyEventSoloPickModeForm,
     CopyEventPickModeForm,
 )

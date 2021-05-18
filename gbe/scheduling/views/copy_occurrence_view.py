@@ -185,13 +185,13 @@ class CopyOccurrenceView(CopyCollectionsView):
                 conference=response.occurrence.eventitem.event.e_conference
                 ).first()
             return HttpResponseRedirect(
-                "%s?%s-day=%d&filter=Filter&new=%s" % (reverse(
-                    'manage_event_list',
-                    urlconf='gbe.scheduling.urls',
-                    args=[conference.conference_slug]),
-                conference.conference_slug,
-                target_day.pk,
-                str([response.occurrence.pk]),))
+                "%s?%s-day=%d&filter=Filter&new=%s" % (
+                    reverse('manage_event_list',
+                            urlconf='gbe.scheduling.urls',
+                            args=[conference.conference_slug]),
+                    conference.conference_slug,
+                    target_day.pk,
+                    str([response.occurrence.pk]),))
 
     def get_child_copy_settings(self, form):
         response = get_occurrence(
