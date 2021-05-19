@@ -16,12 +16,5 @@ class Volunteer(Biddable):
                          on_delete=CASCADE,
                          related_name="volunteering")
 
-    def __str__(self):
-        return self.profile.display_name
-
-    @property
-    def bidder_is_active(self):
-        return self.profile.user_object.is_active
-
     class Meta:
         app_label = "gbe"

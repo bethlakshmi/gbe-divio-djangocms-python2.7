@@ -97,26 +97,6 @@ def assert_option_state(response, value, text, selected=False):
     assert bytes(option_state, 'utf-8') in response.content
 
 
-def assert_has_help_text(response, help_text):
-    assert b'<span class="dropt" title="Help">' in response.content
-    assert (
-        b'<img src= "/static/img/question.png" alt="?"/>' in response.content)
-    assert (b'<span style="width:200px;float:right;text-align:left;">'
-            in response.content)
-    assert bytes(help_text, 'utf-8') in response.content
-    assert b'</span>' in response.content
-
-
-def assert_interest_view(response, interest):
-    assert (bytes('<label class="required" ' +
-                  'for="id_Volunteer Info-interest_id-%d">%s:</label>' %
-                  (interest.pk, interest.interest.interest), 'utf-8')
-            in response.content)
-    assert bytes(interest.rank_description, 'utf-8') in response.content
-    if interest.interest.help_text:
-        assert_has_help_text(response, interest.interest.help_text)
-
-
 def assert_email_template_create(
         template_name,
         expected_subject):

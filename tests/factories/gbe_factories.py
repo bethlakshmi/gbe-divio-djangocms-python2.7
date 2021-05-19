@@ -221,6 +221,7 @@ class VolunteerFactory(DjangoModelFactory):
         model = conf.Volunteer
 
     profile = SubFactory(ProfileFactory)
+    b_conference = SubFactory(ConferenceFactory)
 
 
 class BusinessFactory(DjangoModelFactory):

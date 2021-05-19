@@ -27,7 +27,6 @@ from datetime import (
 class VolunteerContext():
     def __init__(self,
                  profile=None,
-                 bid=None,
                  event=None,
                  opportunity=None,
                  role=None,
@@ -45,15 +44,6 @@ class VolunteerContext():
         if not hasattr(self.profile, 'preferences'):
             ProfilePreferencesFactory(profile=self.profile)
 
-        if bid is False:
-            self.bid = None
-        elif bid:
-            self.bid = bid
-            self.profile = self.bid.profile
-        else:
-            self.bid = VolunteerFactory(
-                b_conference=self.conference,
-                profile=self.profile)
         self.event = event or ShowFactory(
             e_conference=self.conference)
         self.role = role or "Volunteer"

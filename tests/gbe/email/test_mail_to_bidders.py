@@ -7,6 +7,7 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
+    VolunteerFactory,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -328,6 +329,28 @@ class TestMailToBidder(TestMailFilters):
         self.assertNotContains(
             response,
             second_bid.performer.contact.user_object.email)
+
+    def test_pick_volunteer_bidder(self):
+        ''' This is the old way of doing volunteers.  The only remaining
+        functionality at this point is retaining our ability to email them.
+        '''
+        vol_bid = VolunteerFactory(submitted=True,
+                                   accepted=3)
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk,
+                                        vol_bid.b_conference.pk],
+            'email-select-bid_type': ["Volunteer"],
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            self.context.teacher.contact.user_object.email)
+        self.assertContains(
+            response,
+            vol_bid.profile.user_object.email)
 
     def test_pick_status_bidder(self):
         second_class = ClassFactory(accepted=2)
