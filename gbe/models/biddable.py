@@ -60,7 +60,7 @@ class Biddable(Model):
     def bidder_is_active(self):
         if len(self.profiles) > 1:
             return self.profiles.filter(
-            user_object__is_active=True).count() > 0
+                user_object__is_active=True).count() > 0
         else:
             return self.profiles[0].user_object.is_active
 
