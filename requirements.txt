@@ -58,7 +58,7 @@ django-simple-sso==0.14.1
 django-sortedm2m==3.0.2
 django-storages==1.8
 django-tempus-dominus==5.1.2.13
-django-treebeard==4.5.1   # via django-cms
+django-treebeard==4.4   # via django-cms
 django==3.0.12            # via aldryn-boilerplates, aldryn-sites, django-appconf, django-classy-tags, django-cms, django-formtools, django-import-export, django-model-utils, django-mptt, django-paypal, django-polymorphic, django-post-office, django-ranged-response, django-sekizai, django-select2, django-simple-captcha, django-simple-sso, django-storages, django-tempus-dominus, django-treebeard, easy-thumbnails, jsonfield, webservices
 djangocms-admin-style==2.0.2  # via django-cms
 djangocms-attributes-field==2.0.0
