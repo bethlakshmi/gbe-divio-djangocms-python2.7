@@ -26,7 +26,6 @@ from scheduler.idd import (
 )
 from django.contrib import messages
 from gbe.models import (
-    Act,
     ActCastingOption,
     Conference,
     Event,
@@ -154,11 +153,12 @@ def get_event_display_info(eventitem_id):
         else:
             regular_roles[casting.casting] = casting.display_header
     for casting in response.people:
-        act = Act.objects.get(pk=casting.commitment.class_id)
+        performer = eval(casting.public_class).objects.get(
+            pk=casting.public_id)
         if len(casting.commitment.role) > 0 and (
                 casting.commitment.role in special_roles):
             featured_grid_list += [{
-                'bio': act.bio,
+                'bio': performer,
                 'role': special_roles[casting.commitment.role]}]
         else:
             if len(casting.commitment.role) > 0 and (
@@ -168,9 +168,12 @@ def get_event_display_info(eventitem_id):
                 header = "Fabulous Performers"
 
             if header in bio_grid_list:
-                bio_grid_list[header] += [act.bio]
+                bio_grid_list[header] += [performer]
             else:
-                bio_grid_list[header] = [act.bio]
+                bio_grid_list[header] = [performer]
+    featured_grid_list.sort(key=lambda p: p['bio'].name)
+    for header, perf_list in bio_grid_list.items():
+        perf_list.sort(key=lambda p: p.name)
 
     booking_response = get_people(
         foreign_event_ids=[eventitem_id],
@@ -268,7 +271,10 @@ def setup_event_management_form(
     return (context, initial_form_info)
 
 
-def update_event(scheduling_form, occurrence_id, people_formset=[]):
+def update_event(scheduling_form,
+                 occurrence_id,
+                 roles=None,
+                 people_formset=[]):
     start_time = get_start_time(scheduling_form.cleaned_data)
     people = []
     for assignment in people_formset:
@@ -278,11 +284,14 @@ def update_event(scheduling_form, occurrence_id, people_formset=[]):
                     'worker'].workeritem.as_subtype.user_object,
                 public_id=assignment.cleaned_data['worker'].workeritem.pk,
                 role=assignment.cleaned_data['role'])]
+    if len(people) == 0:
+        people = None
     response = update_occurrence(
         occurrence_id,
         start_time,
         scheduling_form.cleaned_data['max_volunteer'],
         people=people,
+        roles=roles,
         locations=[scheduling_form.cleaned_data['location']],
         approval=scheduling_form.cleaned_data['approval'])
     return response
@@ -294,6 +303,7 @@ def process_post_response(request,
                           start_success_url,
                           next_step,
                           occurrence_id,
+                          roles=None,
                           additional_validity=True,
                           people_forms=[]):
     success_url = start_success_url
@@ -316,6 +326,7 @@ def process_post_response(request,
         new_event.save()
         response = update_event(context['scheduling_form'],
                                 occurrence_id,
+                                roles,
                                 people_forms)
         if request.POST.get('edit_event', 0) != "Save and Continue":
             success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (

@@ -286,7 +286,7 @@ th.rotate-review {
 th.rotate div {
   transform: 
     /* Magic Numbers */
-    translate(0px, 51px)
+    translate(0px, 113px)
     /* 45 is really 360 - 45 */
     rotate(270deg);
   width: 20px;
