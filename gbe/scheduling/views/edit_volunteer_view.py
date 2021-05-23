@@ -14,6 +14,7 @@ from gbe.scheduling.views.functions import (
 )
 from gbe.scheduling.forms import EventAssociationForm
 from django.forms.widgets import CheckboxInput
+from gbe.models import StaffArea
 
 
 class EditVolunteerView(ManageWorkerView):
@@ -56,7 +57,15 @@ class EditVolunteerView(ManageWorkerView):
             self.occurrence,
             context,
             open_to_public=False)
-        context['association_form'] = EventAssociationForm()
+        area = StaffArea.objects.filter(
+                conference=self.item.e_conference,
+                slug__in=self.occurrence.labels).first()
+        parent_id = None
+        if hasattr(self.occurrence, 'container_event'):
+            parent_id = self.occurrence.container_event.parent_event.pk
+        context['association_form'] = EventAssociationForm(initial={
+            'staff_area': area,
+            'parent_event': parent_id})
         context['edit_title'] = self.title
         context['scheduling_form'].fields['approval'].widget = CheckboxInput()
 
