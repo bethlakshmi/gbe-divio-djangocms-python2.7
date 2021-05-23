@@ -12,6 +12,7 @@ from gbe.scheduling.views.functions import (
     show_scheduling_occurrence_status,
     shared_groundwork,
 )
+from gbe.scheduling.forms import EventAssociationForm
 from django.forms.widgets import CheckboxInput
 
 
@@ -55,6 +56,7 @@ class EditVolunteerView(ManageWorkerView):
             self.occurrence,
             context,
             open_to_public=False)
+        context['association_form'] = EventAssociationForm()
         context['edit_title'] = self.title
         context['scheduling_form'].fields['approval'].widget = CheckboxInput()
 

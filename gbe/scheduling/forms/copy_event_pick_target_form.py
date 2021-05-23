@@ -156,8 +156,6 @@ class CopyEventSoloPickModeForm(CopyEventPickModeForm):
                     str(occurrence),
                     occurrence.start_time.strftime(GBE_DATETIME_FORMAT)))]
         self.fields['target_event'].choices = BLANK_CHOICE_DASH + choices
-        self.fields['target_event'].label = copy_mode_labels['solo_room']
-        self.fields['target_event'].label = copy_mode_labels['solo_room']
 
     def clean(self):
         cleaned_data = super(CopyEventPickModeForm, self).clean()

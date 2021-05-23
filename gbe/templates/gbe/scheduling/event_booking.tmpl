@@ -15,6 +15,7 @@
   <font class="gbe-form-error">
   {{ form.non_field_errors }}
   {{ scheduling_form.non_field_errors }}
+  {{ association_form.non_field_errors }}
   {{ tickets.non_field_errors }}</font>
 <p>
 The following fields are common to all scheduled items for this event.
@@ -51,6 +52,15 @@ Changing fields in this section will change them in all calendar items.</p>
       </div>
     </div></div>
     {% endfor %}</div>
+  {% if association_form %}
+  <div class="form-row">
+    <div class="col-12 ml-auto">
+    <h3>Associations</h3>
+    <div class="form-row">
+    {% include "gbe/scheduling/event_booking_field.tmpl" with field=association_form.parent_event header_size="col-lg-2 col-md-3 col-12" field_size="col-lg-5 col-md-9 col-12" %}
+    {% include "gbe/scheduling/event_booking_field.tmpl" with field=association_form.staff_area header_size="col-lg-2 col-md-3 col-12" field_size="col-lg-3 col-md-9 col-12" %}
+  </div></div></div>
+  {% endif %}
   <div class="form-row">
   {% if scheduling_form %}
     {% if scheduling_info %}
