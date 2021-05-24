@@ -133,7 +133,7 @@ class EditVolunteerView(ManageWorkerView):
             request.POST,
             conference=self.item.e_conference,
             open_to_public=event_settings[self.item.type.lower()][
-            'open_to_public'])
+                'open_to_public'])
 
         if context['event_form'].is_valid(
                 ) and context['scheduling_form'].is_valid(
@@ -146,7 +146,8 @@ class EditVolunteerView(ManageWorkerView):
                       self.item.e_conference.conference_slug]
             if context['association_form'].cleaned_data['staff_area']:
                 labels += [
-                    context['association_form'].cleaned_data['staff_area'].slug]
+                    context['association_form'].cleaned_data['staff_area'].slug
+                    ]
             parent_id = -1
             if context['association_form'].cleaned_data['parent_event']:
                 parent_id = int(
@@ -157,7 +158,8 @@ class EditVolunteerView(ManageWorkerView):
                 context['scheduling_form'].cleaned_data['max_volunteer'],
                 people=None,
                 roles=None,
-                locations=[context['scheduling_form'].cleaned_data['location']],
+                locations=[
+                    context['scheduling_form'].cleaned_data['location']],
                 approval=context['scheduling_form'].cleaned_data['approval'],
                 labels=labels,
                 parent_event_id=parent_id)
@@ -166,8 +168,8 @@ class EditVolunteerView(ManageWorkerView):
                 self.success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
                     reverse('manage_event_list',
                             urlconf='gbe.scheduling.urls',
-                            args=[slug]),
-                    slug,
+                            args=[self.item.e_conference.conference_slug]),
+                    self.item.e_conference.conference_slug,
                     context['scheduling_form'].cleaned_data['day'].pk,
                     str([self.occurrence.pk]),)
             else:

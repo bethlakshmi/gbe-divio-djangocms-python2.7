@@ -14,7 +14,10 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from settings import GBE_DATE_FORMAT
+from settings import (
+    GBE_DATE_FORMAT,
+    GBE_DATETIME_FORMAT,
+)
 from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
@@ -53,6 +56,8 @@ class TestEditVolunteer(TestGBE):
             'e_title': "Test Event Wizard",
             'e_description': 'Description',
             'max_volunteer': 3,
+            'parent_event': '',
+            'staff_area': '',
             'day': self.extra_day.pk,
             'time': '11:00:00',
             'duration': 2.5,
@@ -77,7 +82,7 @@ class TestEditVolunteer(TestGBE):
                     args=[self.context.conference.conference_slug,
                           self.context.sched_event.pk]) + "?")
 
-    def test_authorized_user_can_access_event(self):
+    def test_authorized_user_can_access_event_w_parent(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -85,6 +90,14 @@ class TestEditVolunteer(TestGBE):
         self.assertContains(response, "Finish")
         self.assertContains(response, self.context.opportunity.e_title)
         self.assertContains(response, self.context.opportunity.e_description)
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s - %s</option>' % (
+                self.context.sched_event.pk,
+                self.context.event.e_title,
+                self.context.sched_event.start_time.strftime(
+                    GBE_DATETIME_FORMAT)),
+            html=True)
         assert_option_state(
             response,
             self.context.conf_day.pk,
@@ -214,6 +227,82 @@ class TestEditVolunteer(TestGBE):
             '<input type="checkbox" name="approval" ' +
             'id="id_approval" checked />',
             html=True)
+        self.assertContains(
+            response,
+            '<option value="%d">%s - %s</option>' % (
+                self.context.sched_event.pk,
+                self.context.event.e_title,
+                self.context.sched_event.start_time.strftime(
+                    GBE_DATETIME_FORMAT)),
+            html=True)
+
+    def test_edit_event_change_parent(self):
+        other_context = VolunteerContext(conference=self.context.conference)
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['parent_event'] = other_context.sched_event.pk
+        data['edit_event'] = "Save and Continue"
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertRedirects(
+            response,
+            "%s?worker_open=True" % self.url)
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s - %s</option>' % (
+                other_context.sched_event.pk,
+                other_context.event.e_title,
+                other_context.sched_event.start_time.strftime(
+                    GBE_DATETIME_FORMAT)),
+            html=True)
+
+    def test_edit_event_set_area(self):
+        other_context = StaffAreaContext(conference=self.context.conference)
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['staff_area'] = other_context.area.pk
+        data['edit_event'] = "Save and Continue"
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertRedirects(
+            response,
+            "%s?worker_open=True" % self.url)
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s</option>' % (
+                other_context.area.pk,
+                other_context.area),
+            html=True)
+
+    def test_edit_event_unset_area(self):
+        staff_context = StaffAreaContext()
+        volunteer_sched_event = staff_context.add_volunteer_opp()
+        volunteer_sched_event.approval_needed = True
+        volunteer_sched_event.save()
+        url = reverse(self.view_name,
+                      urlconf="gbe.scheduling.urls",
+                      args=[staff_context.conference.conference_slug,
+                            volunteer_sched_event.pk])
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['edit_event'] = "Save and Continue"
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertContains(
+            response,
+            '<option value="%d">%s</option>' % (
+                staff_context.area.pk,
+                staff_context.area),
+            html=True)
 
     def test_auth_user_bad_schedule_assign(self):
         login_as(self.privileged_user, self)
@@ -264,7 +353,13 @@ class TestEditVolunteer(TestGBE):
             '<input type="checkbox" name="approval" ' +
             'id="id_approval" checked />',
             html=True)
-        self.assertContains
+
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s</option>' % (
+                staff_context.area.pk,
+                staff_context.area),
+            html=True)
 
     def test_inactive_user_not_listed(self):
         staff_context = StaffAreaContext()

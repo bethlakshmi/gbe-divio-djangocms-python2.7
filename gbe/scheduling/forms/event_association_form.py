@@ -10,10 +10,7 @@ from gbe.models import (
 )
 from scheduler.idd import get_occurrences
 from django.db.models.fields import BLANK_CHOICE_DASH
-from settings import (
-    GBE_DATE_FORMAT,
-    GBE_DATETIME_FORMAT
-)
+from settings import GBE_DATETIME_FORMAT
 
 
 class EventAssociationForm(Form):
