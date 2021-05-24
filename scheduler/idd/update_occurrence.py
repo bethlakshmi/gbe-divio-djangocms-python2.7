@@ -15,35 +15,53 @@ def update_occurrence(occurrence_id,
                       people=None,
                       roles="All",
                       locations=None,
-                      approval=None):
+                      approval=None,
+                      parent_event_id=None,
+                      labels=None):
     response = get_occurrence(occurrence_id)
     if response.errors:
         return response
 
+    occurrence = response.occurrence
     if start_time:
-        response.occurrence.starttime = start_time
+        occurrence.starttime = start_time
     if max_volunteer is not None:
-        response.occurrence.max_volunteer = max_volunteer
+        occurrence.max_volunteer = max_volunteer
     if max_commitments is not None:
-        response.occurrence.max_commitments = max_commitments
+        occurrence.max_commitments = max_commitments
     if approval is not None:
-        response.occurrence.approval_needed = approval
+        occurrence.approval_needed = approval
     if start_time or max_volunteer or approval or max_commitments:
-        response.occurrence.save()
-
+        occurrence.save()
     if locations is not None:
-        response.occurrence.set_locations(locations)
+        occurrence.set_locations(locations)
+    if parent_event_id is not None:
+        if hasattr(occurrence, 'container_event'):
+            occurrence.container_event.delete()
+        if parent_event_id > -1:
+            parent = get_occurrence(parent_event_id)
+            if parent.errors:
+                return parent
+            family = EventContainer(
+                child_event=response.occurrence,
+                parent_event=parent.occurrence)
+            family.save()
+    if labels is not None:
+        occurrence.eventlabel_set.all().delete()
+        for label in labels:
+            label = EventLabel(text=label, event=response.occurrence)
+            label.save()
 
     warnings = []
     if people is not None:
         if roles == "All":
             Worker.objects.filter(
-                allocations__event=response.occurrence).delete()
+                allocations__event=occurrence).delete()
         else:
-            Worker.objects.filter(allocations__event=response.occurrence,
+            Worker.objects.filter(allocations__event=occurrence,
                                   role__in=roles).delete()
         for person in people:
-            warnings += response.occurrence.allocate_person(
+            warnings += occurrence.allocate_person(
                 person).warnings
     response.warnings = warnings
     return response
