@@ -105,18 +105,6 @@ best_time_to_call_options = [('Any', 'Any'),
                              ('Afternoons', 'Afternoons'),
                              ('Evenings', 'Evenings')]
 
-volunteer_shift_options = [(2, 2),
-                           (3, 3),
-                           (4, 4),
-                           (5, 5),
-                           (6, 6),
-                           (7, 7),
-                           (8, 8),
-                           (9, 9),
-                           (10, 10),
-                           (11, 11),
-                           (12, 12)]
-
 states_options = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'),
                   ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'),
                   ('CT', 'Connecticut'), ('DE', 'Delaware'), ('FL', 'Florida'),
@@ -417,16 +405,6 @@ default_costume_draft_msg = "Your draft was successfully saved"
 default_propose_submit_msg = "Your idea was successfully submitted"
 default_vendor_submit_msg = "Your vendor proposal was sucessfully submitted"
 default_vendor_draft_msg = "Your draft was successfully saved"
-default_volunteer_submit_msg = \
-    "Your offer to volunteer was successfully submitted"
-default_volunteer_edit_msg = "You have successfully edited a volunteer."
-default_volunteer_no_interest_msg = \
-    "You must have at least one interest to volunteer."
-default_volunteer_no_bid_msg = \
-    "We are not accepting volunteer bids at this time."
-existing_volunteer_msg = \
-    "You've already offered to volunteer, " + \
-    "would you like to update your proposal?"
 default_submit_msg = "Thank you for submitting your bid."
 invalid_volunteer_event = '''The following event is not currently available.  \
 It may have just reached a maximum number of volunteers. Unavailable event is \

@@ -17,7 +17,6 @@ from tests.factories.gbe_factories import(
     TroupeFactory,
     UserFactory,
     VendorFactory,
-    VolunteerFactory,
 )
 from tests.factories.scheduler_factories import (
     LabelFactory,
@@ -286,17 +285,6 @@ class TestIndex(TestCase):
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertContains(response, klass.b_title)
-
-    def test_volunteers_to_review(self):
-        staff_profile = ProfileFactory(user_object__is_staff=True)
-        grant_privilege(staff_profile, "Volunteer Reviewers")
-        login_as(staff_profile, self)
-        volunteer = VolunteerFactory(submitted=True,
-                                     b_conference=self.current_conf)
-
-        url = reverse('home', urlconf='gbe.urls')
-        response = self.client.get(url)
-        self.assertContains(response, volunteer.b_title)
 
     def test_vendors_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)

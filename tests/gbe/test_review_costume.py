@@ -99,3 +99,13 @@ class TestReviewCostume(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Bid Information')
+
+    def test_view_costume_how_heard(self):
+        '''view_costume view, success
+        '''
+        profile = ProfileFactory(how_heard=['Word of mouth'])
+        costume = CostumeFactory(profile=profile)
+        url = reverse(self.view_name, urlconf="gbe.urls", args=[costume.pk])
+        login_as(self.privileged_user, self)
+        response = self.client.get(url)
+        self.assertContains(response, profile.how_heard[0])

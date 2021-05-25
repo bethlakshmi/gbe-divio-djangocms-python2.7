@@ -30,7 +30,6 @@ from gbetext import (
 )
 from gbe.scheduling.forms import WorkerAllocationForm
 from gbe.scheduling.views.functions import show_scheduling_booking_status
-from gbe_forms_text import rank_interest_options
 from scheduler.data_transfer import (
     Error,
     BookingResponse,
@@ -181,9 +180,6 @@ class ManageWorkerView(View):
                     email_status = send_schedule_update_mail(
                         "Volunteer", data['worker'].workeritem.as_subtype)
             elif data.get('worker', None):
-                if data['role'] == "Volunteer":
-                    data['worker'].workeritem.as_subtype.check_vol_bid(
-                        self.item.e_conference)
                 person = Person(
                     user=data['worker'].workeritem.as_subtype.user_object,
                     public_id=data['worker'].workeritem.as_subtype.pk,

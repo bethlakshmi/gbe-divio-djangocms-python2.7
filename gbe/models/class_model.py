@@ -103,10 +103,6 @@ class Class(Biddable, Event):
             accepted=0)
 
     @property
-    def bidder_is_active(self):
-        return self.teacher.contact.user_object.is_active
-
-    @property
     def bid_review_header(self):
         return (['Title',
                  'Teacher',

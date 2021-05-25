@@ -17,7 +17,6 @@ from tests.factories.ticketing_factories import (
     TicketItemFactory,
     PurchaserFactory,
 )
-from gbe_forms_text import rank_interest_options
 from post_office.models import (
     Email,
     EmailTemplate
@@ -88,22 +87,6 @@ def assert_alert_exists(response, tag, label, text):
     assert bytes(alert_html % (tag, label, text), 'utf-8') in response.content
 
 
-def assert_rank_choice_exists(response, interest, selection=None):
-    assert bytes('<label for="id_%d-rank">%s:</label>' % (
-        interest.pk,
-        interest.interest), 'utf-8') in response.content
-    assert bytes('<select name="%d-rank" id="id_%d-rank">' % (
-        interest.pk,
-        interest.pk), 'utf-8') in response.content
-    for value, text in rank_interest_options:
-        if selection and selection == value:
-            assert bytes('<option value="%d" selected>%s</option>' % (
-                value, text), 'utf-8') in response.content
-        else:
-            assert bytes('<option value="%d">%s</option>' % (
-                value, text), 'utf-8') in response.content
-
-
 def assert_option_state(response, value, text, selected=False):
     selected_state = ""
     if selected:
@@ -112,26 +95,6 @@ def assert_option_state(response, value, text, selected=False):
         '<option value="%s"%s>%s</option>' % (
                     value, selected_state, text))
     assert bytes(option_state, 'utf-8') in response.content
-
-
-def assert_has_help_text(response, help_text):
-    assert b'<span class="dropt" title="Help">' in response.content
-    assert (
-        b'<img src= "/static/img/question.png" alt="?"/>' in response.content)
-    assert (b'<span style="width:200px;float:right;text-align:left;">'
-            in response.content)
-    assert bytes(help_text, 'utf-8') in response.content
-    assert b'</span>' in response.content
-
-
-def assert_interest_view(response, interest):
-    assert (bytes('<label class="required" ' +
-                  'for="id_Volunteer Info-interest_id-%d">%s:</label>' %
-                  (interest.pk, interest.interest.interest), 'utf-8')
-            in response.content)
-    assert bytes(interest.rank_description, 'utf-8') in response.content
-    if interest.interest.help_text:
-        assert_has_help_text(response, interest.interest.help_text)
 
 
 def assert_email_template_create(

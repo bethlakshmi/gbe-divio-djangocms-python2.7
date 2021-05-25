@@ -71,10 +71,6 @@ class Act (Biddable):
         return self.performer.get_profiles()
 
     @property
-    def bio(self):
-        return self.performer
-
-    @property
     def bids_to_review(self):
         return type(self).objects.filter(
             visible_bid_query,
@@ -134,10 +130,6 @@ class Act (Biddable):
             raise ValidationError({
                 NON_FIELD_ERRORS: [act_not_unique, ]
             })
-
-    @property
-    def bidder_is_active(self):
-        return self.performer.contact.user_object.is_active
 
     @property
     def profile(self):
