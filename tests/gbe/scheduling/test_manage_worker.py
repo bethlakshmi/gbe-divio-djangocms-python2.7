@@ -7,7 +7,6 @@ from tests.factories.gbe_factories import (
     EmailTemplateSenderFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
-    VolunteerFactory,
 )
 from tests.contexts import StaffAreaContext
 from tests.functions.gbe_functions import (
