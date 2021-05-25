@@ -6,7 +6,6 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     RoomFactory,
     ShowFactory,
-    VolunteerFactory,
 )
 from tests.factories.scheduler_factories import (
     EventContainerFactory,
