@@ -280,21 +280,6 @@ event_labels = {
     'e_title': 'Title',
     'e_description': 'Description'}
 
-volunteer_availability_options = [('SH0', 'Thursday evening (6PM-11PM)'),
-                                  ('SH8', 'Saturday late night (10PM-1AM)'),
-                                  ('SH1', 'Friday morning (9AM-12PM)'),
-                                  ('SH9', 'Sunday morning (8AM-12PM)'),
-                                  ('SH2', 'Friday afternoon (12PM-6PM)'),
-                                  ('SH10', 'Sunday afternoon (12PM-6PM)'),
-                                  ('SH3', 'Friday night (5PM-10PM)'),
-                                  ('SH11', 'Sunday night (5PM-10PM)'),
-                                  ('SH4', 'Friday late night (10PM-1AM)'),
-                                  ('SH12', 'Strike Crew (10PM-1AM)'),
-                                  ('SH5', 'Saturday morning (8AM-12PM)'),
-                                  ('SH13', 'Monday morning (9AM-12PM)'),
-                                  ('SH6', 'Saturday afternoon (12PM-6PM)'),
-                                  ('SH7', 'Saturday night (5PM-10PM)')]
-
 available_time_conflict = \
     'Available times conflict with unavailable times.  Conflicts are: %s'
 
