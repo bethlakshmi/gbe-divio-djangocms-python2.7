@@ -7,8 +7,6 @@ from tests.factories.gbe_factories import (
     EmailTemplateSenderFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
-    VolunteerFactory,
-    VolunteerInterestFactory,
 )
 from tests.contexts import StaffAreaContext
 from tests.functions.gbe_functions import (
@@ -176,43 +174,6 @@ class TestManageWorker(TestCase):
             alloc,
             'Do these notes work?',
             allocations=3)
-        assert len(volunteer.volunteering.all().filter(
-            b_conference=volunteer_opp.eventitem.get_conference())) == 1
-
-    def test_post_form_valid_make_new_allocation_volunteer_exists(self):
-        context = StaffAreaContext()
-        volunteer_opp = context.add_volunteer_opp()
-        volunteer = VolunteerFactory(
-            submitted=False,
-            accepted=2,
-            b_conference=context.conference)
-        VolunteerInterestFactory(
-            volunteer=volunteer,
-            interest=volunteer_opp.as_subtype.volunteer_type)
-        url = reverse(self.view_name,
-                      args=[context.conference.conference_slug,
-                            volunteer_opp.pk],
-                      urlconf="gbe.scheduling.urls")
-        data = self.get_create_data()
-        data['worker'] = volunteer.profile.pk,
-
-        login_as(self.privileged_profile, self)
-        response = self.client.post(url, data=data, follow=True)
-        alloc = volunteer_opp.resources_allocated.all().order_by(
-            'pk').reverse().first()
-        self.assertIsNotNone(alloc)
-        self.assert_good_post(
-            response,
-            volunteer_opp,
-            volunteer.profile,
-            alloc,
-            'Do these notes work?',
-            allocations=3)
-        assert len(volunteer.profile.volunteering.all().filter(
-            b_conference=volunteer_opp.eventitem.get_conference())) == 1
-        updated = get_object_or_404(Volunteer, pk=volunteer.pk)
-        assert updated.submitted
-        assert updated.accepted == 3
 
     def test_post_form_edit_exiting_allocation(self):
         new_volunteer = ProfileFactory()

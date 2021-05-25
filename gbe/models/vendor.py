@@ -62,11 +62,6 @@ class Vendor(Biddable):
         return vendor
 
     @property
-    def bidder_is_active(self):
-        return self.business.owners.filter(
-            user_object__is_active=True).count() > 0
-
-    @property
     def bid_review_header(self):
         return (['Bidder',
                  'Business Name',

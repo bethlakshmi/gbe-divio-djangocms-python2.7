@@ -11,7 +11,6 @@ from gbe.models import (
     Costume,
     Profile,
     Vendor,
-    Volunteer,
     Event,
     UserMessage,
 )
@@ -61,13 +60,11 @@ def LandingPageView(request, profile_id=None, historical=False):
     class_to_class_name = {Act: "Act",
                            Class: "Class",
                            Costume: "Costume",
-                           Vendor: "Vendor",
-                           Volunteer: "Volunteer"}
+                           Vendor: "Vendor"}
     class_to_view_name = {Act: 'act_review',
                           Class: 'class_review',
                           Costume: 'costume_review',
-                          Vendor: 'vendor_review',
-                          Volunteer: 'volunteer_review'}
+                          Vendor: 'vendor_review'}
 
     if viewer_profile:
         bids_to_review = []
@@ -130,7 +127,6 @@ def LandingPageView(request, profile_id=None, historical=False):
             'classes': viewer_profile.is_teaching(historical),
             'proposed_classes': viewer_profile.proposed_classes(historical),
             'vendors': viewer_profile.vendors(historical),
-            'volunteering': viewer_profile.get_volunteerbids(),
             'costumes': viewer_profile.get_costumebids(historical),
             'review_items': bids_to_review,
             'tickets': get_purchased_tickets(viewer_profile.user_object),

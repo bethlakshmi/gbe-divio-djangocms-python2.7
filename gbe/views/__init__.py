@@ -37,7 +37,6 @@ from .make_act_view import MakeActView
 from .make_class_view import MakeClassView
 from .make_costume_view import MakeCostumeView
 from .make_vendor_view import MakeVendorView
-from .make_volunteer_view import MakeVolunteerView
 from .make_summer_act_view import MakeSummerActView
 
 # view
@@ -46,20 +45,17 @@ from .view_class_view import ViewClassView
 from .view_costume_view import ViewCostumeView
 from .view_summer_act_view import ViewSummerActView
 from .view_vendor_view import ViewVendorView
-from .view_volunteer_view import ViewVolunteerView
 
 # review
 from .review_flex_bid_view import FlexibleReviewBidView
 from .review_class_view import ReviewClassView
 from .review_costume_view import ReviewCostumeView
 from .review_vendor_view import ReviewVendorView
-from .review_volunteer_view import ReviewVolunteerView
 
 # review list
 from .review_act_list_view import ReviewActListView
 from .review_class_list_view import ReviewClassListView
 from .review_costume_list_view import ReviewCostumeListView
-from .review_volunteer_list_view import ReviewVolunteerListView
 from .review_vendor_list_view import ReviewVendorListView
 
 # change state

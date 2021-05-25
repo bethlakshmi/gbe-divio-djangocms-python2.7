@@ -128,29 +128,6 @@ class MessageAdmin(admin.ModelAdmin):
     list_filter = ['view', 'code']
 
 
-class AvailableInterestAdmin(admin.ModelAdmin):
-    list_display = ('id',
-                    'interest',
-                    'visible',
-                    'help_text')
-    list_editable = ('interest',
-                     'visible',
-                     'help_text')
-
-
-class VolunteerInterestAdmin(admin.ModelAdmin):
-    list_display = ('interest',
-                    'volunteer',
-                    'rank',
-                    'conference')
-    list_filter = ['interest',
-                   'rank',
-                   'volunteer__b_conference__conference_slug']
-
-    def conference(self, obj):
-        return obj.volunteer.b_conference
-
-
 class ConferenceDayAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'day',
@@ -276,7 +253,6 @@ class BusinessAdmin(admin.ModelAdmin):
 
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
-admin.site.register(AvailableInterest, AvailableInterestAdmin)
 admin.site.register(Biddable, BidAdmin)
 admin.site.register(Class, ClassAdmin)
 admin.site.register(ClassProposal, ClassProposalAdmin)
@@ -302,7 +278,6 @@ admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(UserMessage, MessageAdmin)
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Volunteer, BidAdmin)
-admin.site.register(VolunteerInterest, VolunteerInterestAdmin)
 admin.site.register(StyleValue, StyleValueAdmin)
 admin.site.register(StyleProperty, StylePropertyAdmin)
 admin.site.register(StyleSelector, StyleSelectorAdmin)

@@ -28,7 +28,6 @@ from gbe.views import (
     MakeClassView,
     MakeCostumeView,
     MakeVendorView,
-    MakeVolunteerView,
     MakeSummerActView,
     PerformerUpdate,
     PersonaCreate,
@@ -47,8 +46,6 @@ from gbe.views import (
     ReviewTroupesView,
     ReviewVendorView,
     ReviewVendorListView,
-    ReviewVolunteerView,
-    ReviewVolunteerListView,
     SubmitActView,
     TroupeCreate,
     TroupeUpdate,
@@ -59,7 +56,6 @@ from gbe.views import (
     ViewSummerActView,
     ViewTroupeView,
     ViewVendorView,
-    ViewVolunteerView,
 )
 
 # NOTE: in general, url patterns should end with '/?$'. This
@@ -167,20 +163,6 @@ urlpatterns = [
     url(r'^business/(?P<pk>.*)/$',
         BusinessUpdate.as_view(),
         name='business-update'),
-
-    #  volunteers
-    url(r'^volunteer/view/(?P<bid_id>\d+)/?$',
-        ViewVolunteerView.as_view(), name='volunteer_view'),
-    url(r'^volunteer/edit/(?P<bid_id>\d+)/?$',
-        MakeVolunteerView.as_view(), name='volunteer_edit'),
-    url(r'^volunteer/review/(?P<object_id>\d+)/?$',
-        ReviewVolunteerView.as_view(), name='volunteer_review'),
-    url(r'^volunteer/review/?$',
-        ReviewVolunteerListView.as_view(),
-        name='volunteer_review'),
-    url(r'^volunteer/reviewlist/?$',
-        ReviewVolunteerListView.as_view(),
-        name='volunteer_review_list'),
 
     #  vendors
     url(r'^vendor/create/?$',

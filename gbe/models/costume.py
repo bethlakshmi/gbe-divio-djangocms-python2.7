@@ -58,10 +58,6 @@ class Costume(Biddable):
     picture = FileField(upload_to="uploads/images", blank=True)
 
     @property
-    def bidder_is_active(self):
-        return self.profile.user_object.is_active
-
-    @property
     def bid_review_header(self):
         return (['Performer (Creator)',
                  'Title',

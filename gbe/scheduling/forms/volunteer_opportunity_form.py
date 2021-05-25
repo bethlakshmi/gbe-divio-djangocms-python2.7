@@ -5,10 +5,7 @@ from django.forms import (
     IntegerField,
     ModelChoiceField,
 )
-from gbe.models import (
-    AvailableInterest,
-    GenericEvent,
-)
+from gbe.models import GenericEvent
 from gbe.scheduling.forms import ScheduleBasicForm
 
 

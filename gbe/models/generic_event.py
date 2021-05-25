@@ -4,10 +4,7 @@ from django.db.models import (
     CharField,
     ForeignKey,
 )
-from gbe.models import (
-    AvailableInterest,
-    Event,
-)
+from gbe.models import Event
 from scheduler.models import EventContainer
 from gbetext import (
     calendar_for_event,
@@ -24,10 +21,6 @@ class GenericEvent (Event):
                      choices=event_options,
                      blank=False,
                      default="Special")
-    volunteer_type = ForeignKey(AvailableInterest,
-                                on_delete=CASCADE,
-                                blank=True,
-                                null=True)
 
     def __str__(self):
         return self.e_title
