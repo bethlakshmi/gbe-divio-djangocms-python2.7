@@ -509,6 +509,11 @@ and last name, a name we can use on your badge, and a phone number we can \
 use to notify you of changes to the schedule at run time.'''
 no_login_msg = '''Please set up and account and give us some ways to \
 contact you, or login, if you already have an account.'''
+register_msg = '''In order to do most other things at The Expo, we need you \
+to register for a free account.  If you're planning on applying to perform, \
+want to teach, or are going to be a vendor or a volunteer, you need to \
+register.  You do <b>not</b> need to register if all you're doing is \
+buying tickets.'''
 full_login_msg = '''%s - <a href="%s">Login</a>'''
 default_deactivate_profile_admin_msg = '''This user is involved in one or \
 more activities on this site.  To protect unintended changes, the user was \
