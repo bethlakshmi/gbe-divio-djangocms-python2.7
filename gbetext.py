@@ -631,6 +631,11 @@ a valid ticket or pass to attend the class or the conference.<br><br>Want \
 more interested attendees?  We fully endorse shameless promotion! Post your \
 event page to your fans on social media, email, your website or anywhere and \
 get the word out!'''
+current_bid_msg = '''We are only showing bids for the current conference. \
+If you have proposed acts, classes, or vendors in previous click below.'''
+historic_bid_msg = '''These bids are not currently available for \
+consideration. Click the "clone" button to re-submit an act, class, or vendor \
+bid in the current conference.'''
 interested_report_explain_msg = '''This list includes all scheduled \
 classes and provides a count of how many logged in users have shown interest \
 in the class.  Interest does not reflect a firm commitment, nor does it \
