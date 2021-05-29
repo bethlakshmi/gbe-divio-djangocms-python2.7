@@ -548,6 +548,9 @@ admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\
  Paper Tickets purchase was made under a different email.  Please handle email\
  information with care and do not distribute or use for any purpose outside of\
  Expo communication.'''
+email_template_instruction = '''HTML entered in this form will be transformed \
+into plain text for email systems which require text-only messages. Any links \
+will be removed, so be sure give readers some context for any links.'''
 save_email_template_success_msg = '''The email template has been saved.  \
 Your updates will be applied to all future automated messages using this \
 template.  The Email Template name is '''
