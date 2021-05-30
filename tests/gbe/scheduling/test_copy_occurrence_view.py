@@ -10,6 +10,7 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     RoomFactory,
 )
+from tests.factories.scheduler_factories import EventLabelFactory
 from scheduler.models import Event
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -28,11 +29,14 @@ from settings import (
 from tests.contexts import (
     ClassContext,
     ShowContext,
+    StaffAreaContext,
     VolunteerContext,
 )
 from gbe_forms_text import (
     copy_mode_labels,
     copy_mode_choices,
+    copy_mode_solo_choices,
+    copy_solo_mode_errors,
     copy_errors,
 )
 from tests.gbe.test_gbe import TestGBE
@@ -64,6 +68,20 @@ class TestCopyOccurrence(TestGBE):
             title,
             date.strftime(GBE_DATETIME_FORMAT)))
 
+    def get_solo_data(self):
+        another_day = ConferenceDayFactory(
+            conference=self.context.conference,
+            day=self.context.conf_day.day + timedelta(days=1))
+        other_room = RoomFactory()
+        other_room.conferences.add(another_day.conference)
+        data = {
+            'copy_to_day': another_day.pk,
+            'room': other_room.pk,
+            'copy_mode': ['choose_day'],
+            'pick_mode': "Next",
+        }
+        return data, another_day, other_room
+
     def test_create_event_unauthorized_user(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url)
@@ -80,6 +98,7 @@ class TestCopyOccurrence(TestGBE):
 
     def test_authorized_user_get_no_child_event(self):
         login_as(self.privileged_user, self)
+        staff = StaffAreaContext()
         self.url = reverse(
             self.view_name,
             args=[self.context.opp_event.pk],
@@ -89,7 +108,25 @@ class TestCopyOccurrence(TestGBE):
         self.assertContains(
             response,
             self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
-        self.assertNotContains(response, copy_mode_choices[0][1])
+        self.assertContains(response, copy_mode_solo_choices[0][1])
+        self.assertContains(response, staff.area.title)
+        self.assertContains(response, self.context.event.e_title)
+
+    def test_authorized_user_get_set_staff_area(self):
+        staff = StaffAreaContext()
+        vol_sched_event = staff.add_volunteer_opp()
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[vol_sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.get(self.url)
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s</option>' % (
+                staff.area.pk,
+                staff.area.title),
+            html=True)
 
     def test_authorized_user_get_right_rooms(self):
         not_this_room = RoomFactory()
@@ -183,22 +220,15 @@ class TestCopyOccurrence(TestGBE):
         self.assertEqual(403, response.status_code)
 
     def test_copy_single_event(self):
-        another_day = ConferenceDayFactory(
-            conference=self.context.conference,
-            day=self.context.conf_day.day + timedelta(days=1))
-        other_room = RoomFactory()
-        other_room.conferences.add(another_day.conference)
-        data = {
-            'copy_to_day': another_day.pk,
-            'room': other_room.pk,
-            'pick_mode': "Next",
-        }
         login_as(self.privileged_user, self)
         self.url = reverse(
             self.view_name,
             args=[self.context.opp_event.pk],
             urlconf='gbe.scheduling.urls')
-        response = self.client.post(self.url, data=data, follow=True)
+        data, another_day, other_room = self.get_solo_data()
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
         max_pk = Event.objects.latest('pk').pk
         redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
             reverse('manage_event_list',
@@ -219,6 +249,172 @@ class TestCopyOccurrence(TestGBE):
                     another_day.day,
                     self.context.opp_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
+
+    def test_copy_single_event_date_wins(self):
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data, another_day, other_room = self.get_solo_data()
+        data['copy_mode'] = ['copy_to_parent', 'choose_day']
+        data['target_event'] = self.context.sched_event.pk
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        max_pk = Event.objects.latest('pk').pk
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[another_day.conference.conference_slug]),
+            another_day.conference.conference_slug,
+            another_day.pk,
+            str([max_pk]),)
+        self.assertRedirects(response, redirect_url)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                self.context.opportunity.e_title,
+                datetime.combine(
+                    another_day.day,
+                    self.context.opp_event.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
+
+    def test_copy_single_set_area(self):
+        data, another_day, other_room = self.get_solo_data()
+        staff = StaffAreaContext(conference=another_day.conference)
+        data['copy_mode'] = ['copy_to_area', 'choose_day']
+        data['area'] = staff.area.pk
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        max_pk = Event.objects.latest('pk').pk
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[another_day.conference.conference_slug]),
+            another_day.conference.conference_slug,
+            another_day.pk,
+            str([max_pk]),)
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, other_room.name)
+        self.assertContains(response, reverse(
+            'edit_staff',
+            urlconf='gbe.scheduling.urls',
+            args=[staff.area.pk]))
+
+    def test_copy_single_set_parent(self):
+        data = {
+            'target_event': self.context.sched_event.pk,
+            'room': self.context.room.pk,
+            'copy_mode': ['copy_to_parent'],
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        max_pk = Event.objects.latest('pk').pk
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[self.context.conference.conference_slug]),
+            self.context.conference.conference_slug,
+            self.context.conf_day.pk,
+            str([max_pk]),)
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, self.context.room.name, 3)
+        self.assertContains(response, self.context.event.e_title, 3)
+
+    def test_copy_single_no_delta(self):
+        data, another_day, other_room = self.get_solo_data()
+        staff = StaffAreaContext(conference=another_day.conference)
+        data['copy_mode'] = ['copy_to_area']
+        data['area'] = staff.area.pk
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertContains(response, copy_errors['no_delta'])
+
+    def test_copy_single_no_area(self):
+        data = {
+            'target_event': self.context.sched_event.pk,
+            'room': self.context.room.pk,
+            'copy_mode': ['copy_to_parent', 'copy_to_area'],
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertContains(response, copy_errors['no_area'])
+
+    def test_copy_single_no_parent(self):
+        data = {
+            'room': self.context.room.pk,
+            'copy_mode': ['copy_to_parent'],
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertContains(response, copy_errors['no_target'])
+
+    def test_copy_single_no_date(self):
+        data = {
+            'room': self.context.room.pk,
+            'copy_mode': ['choose_day'],
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertContains(response, copy_errors['no_day'])
+
+    def test_copy_single_no_mode(self):
+        data = {
+            'room': self.context.room.pk,
+            'pick_mode': "Next",
+        }
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        self.assertContains(response, copy_solo_mode_errors['required'])
 
     def test_copy_single_event_room_conf_mismatch(self):
         another_day = ConferenceDayFactory(
@@ -570,6 +766,35 @@ class TestCopyOccurrence(TestGBE):
                     show_context.sched_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
         self.assertContains(response, "Occurrence has been updated.<br>", 1)
+
+    def test_copy_parent_w_area(self):
+        show_context = VolunteerContext()
+        staff = StaffAreaContext(conference=show_context.conference)
+        EventLabelFactory(event=show_context.sched_event, text=staff.area.slug)
+        url = reverse(
+            self.view_name,
+            args=[show_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'include_parent',
+            'copy_to_day': show_context.conf_day.pk,
+            'room': self.context.room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=data, follow=True)
+        max_pk = Event.objects.latest('pk').pk
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=[%s]" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[show_context.conference.conference_slug]),
+            show_context.conference.conference_slug,
+            show_context.conf_day.pk,
+            str(max_pk),)
+        self.assertContains(response, reverse(
+            'edit_staff',
+            urlconf='gbe.scheduling.urls',
+            args=[staff.area.pk]))
 
     def test_copy_bad_second_form(self):
         another_day = ConferenceDayFactory()

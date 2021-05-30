@@ -1,0 +1,17 @@
+      <div class="{{header_size}} event-booking-cell">
+	<label for="{{scheduling_form.day.name}}" class="control-label">	      
+          {% if field.errors %}
+            <font class="gbe-form-error">!&nbsp;&nbsp;
+	  {% elif field.css_classes == 'required' %}
+            <font class="gbe-form-required">*</font>
+          {% endif %} 
+          {{ field.label_tag }}
+          {% if field.errors %}</font>{% endif %} 
+      </label></div>
+      <div class="{{field_size}} event-booking-cell">
+	{{ field }}
+        {% if field.errors %}
+ 	<br><label>
+	  <font class="gbe-form-error">{{ field.errors }}</font>
+        </label>{% endif %}
+      </div>

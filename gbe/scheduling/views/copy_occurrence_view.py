@@ -2,7 +2,9 @@ from gbe.scheduling.views import CopyCollectionsView
 from django.http import (
     Http404,
     HttpResponseForbidden,
+    HttpResponseRedirect,
 )
+from django.urls import reverse
 from scheduler.idd import (
     create_occurrence,
     get_occurrence,
@@ -15,8 +17,15 @@ from gbe.scheduling.views.functions import (
 from gbe.models import (
     Conference,
     ConferenceDay,
+    StaffArea,
+    UserMessage,
 )
 from gbe.functions import validate_perms
+from gbe_forms_text import (
+    copy_mode_solo_choices,
+)
+from gbe.scheduling.forms import CopyEventSoloPickModeForm
+from gbetext import copy_solo_intro
 
 
 class CopyOccurrenceView(CopyCollectionsView):
@@ -49,6 +58,26 @@ class CopyOccurrenceView(CopyCollectionsView):
                                                             context,
                                                             post)
 
+    def setup_solo(self, context, post):
+        area = None
+        if StaffArea.objects.exclude(
+                conference__status="completed").filter(
+                slug__in=self.occurrence.labels).exists():
+            area = StaffArea.objects.exclude(
+                conference__status="completed").filter(
+                slug__in=self.occurrence.labels).first()
+        context['copy_solo_mode'] = CopyEventSoloPickModeForm(
+            post,
+            initial={'room': context['room'], 'area': area})
+        user_message = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="COPY_SOLO_INTRO",
+            defaults={
+                'summary': "Copying event with no children instructions",
+                'description': copy_solo_intro})
+        context['introduction'] = user_message[0].description
+        return context
+
     def get_copy_target(self, context):
         response = get_occurrence(
             context['copy_mode'].cleaned_data['target_event'])
@@ -64,12 +93,10 @@ class CopyOccurrenceView(CopyCollectionsView):
                    delta,
                    conference,
                    room,
-                   root=None,
+                   labels,
+                   parent_event_id=None,
                    set_room=False):
-        parent_event_id = None
         new_event_room = room
-        if root:
-            parent_event_id = root.pk
         if (not set_room) and \
                 occurrence.location.as_subtype.conferences.filter(
                 pk=conference.pk).exists():
@@ -81,10 +108,7 @@ class CopyOccurrenceView(CopyCollectionsView):
         gbe_event_copy.eventitem_id = None
         gbe_event_copy.e_conference = conference
         gbe_event_copy.save()
-        labels = [conference.conference_slug]
-        for label in occurrence.labels:
-            if not Conference.objects.filter(conference_slug=label).exists():
-                labels += [label]
+
         response = create_occurrence(
             gbe_event_copy.eventitem_id,
             occurrence.starttime + delta,
@@ -99,11 +123,18 @@ class CopyOccurrenceView(CopyCollectionsView):
 
     def copy_root(self, request, delta, conference, room):
         new_occurrence = None
+        labels = [conference.conference_slug,
+                  self.occurrence.as_subtype.calendar_type]
+        for area in StaffArea.objects.filter(
+                conference=conference,
+                slug__in=self.occurrence.labels):
+            labels += [area.slug]
         response = self.copy_event(
             self.occurrence,
             delta,
             conference,
             room,
+            labels,
             set_room=True)
         show_scheduling_occurrence_status(
             request,
@@ -112,6 +143,55 @@ class CopyOccurrenceView(CopyCollectionsView):
         if response.occurrence:
             new_occurrence = response.occurrence
         return new_occurrence
+
+    def copy_solo(self, request, context):
+        delta = None
+        parent_event_id = None
+        copy_mode = context['copy_solo_mode'].cleaned_data['copy_mode']
+        if copy_mode_solo_choices[2][0] in copy_mode:
+            target_day = context['copy_solo_mode'].cleaned_data['copy_to_day']
+            conference = target_day.conference
+            delta = target_day.day - self.start_day
+        if copy_mode_solo_choices[0][0] in copy_mode:
+            parent_event_id = context['copy_solo_mode'].cleaned_data[
+                'target_event']
+            resp = get_occurrence(context['copy_solo_mode'].cleaned_data[
+                'target_event'])
+            if delta is None:
+                delta = resp.occurrence.starttime.date() - self.start_day
+                conference = resp.occurrence.eventitem.event.e_conference
+
+        labels = [conference.conference_slug,
+                  self.occurrence.as_subtype.calendar_type]
+        if copy_mode_solo_choices[1][0] in copy_mode:
+            labels += [context['copy_solo_mode'].cleaned_data['area'].slug]
+
+        response = self.copy_event(
+            self.occurrence,
+            delta,
+            conference,
+            context['copy_solo_mode'].cleaned_data['room'],
+            labels,
+            parent_event_id=parent_event_id,
+            set_room=True)
+
+        show_scheduling_occurrence_status(
+            request,
+            response,
+            self.__class__.__name__)
+        if response.occurrence:
+            target_day = ConferenceDay.objects.filter(
+                day=response.occurrence.starttime.date(),
+                conference=response.occurrence.eventitem.event.e_conference
+                ).first()
+            return HttpResponseRedirect(
+                "%s?%s-day=%d&filter=Filter&new=%s" % (
+                    reverse('manage_event_list',
+                            urlconf='gbe.scheduling.urls',
+                            args=[conference.conference_slug]),
+                    conference.conference_slug,
+                    target_day.pk,
+                    str([response.occurrence.pk]),))
 
     def get_child_copy_settings(self, form):
         response = get_occurrence(

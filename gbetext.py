@@ -668,6 +668,11 @@ Specify the days for this conference before proceeding.'''
 rehearsal_delete_msg = '''This rehearsal slot was deleted.  If any acts were \
 booked for this slot, they will be warned on their account page to fine a new \
 slot.'''
+copy_solo_intro = '''Choosing a target day to copy MUST be selected if the \
+parent event is not chosen.  If parent event is chosen, this overrides the \
+day choice.  WARNING - be sure to choose events, staff areas, and days from \
+the same conference or results can be unpredictable.  Only upcoming \
+conference options are shown.'''
 user_messages = {
     "THEME_INSTRUCTIONS": {
         'summary':  "Instructions at top of theme edit page",

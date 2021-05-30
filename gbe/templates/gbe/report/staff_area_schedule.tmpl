@@ -41,7 +41,7 @@
     {% if contact.role in visible_roles %}
     <tr {% if not contact.user.profile.is_active %}class="gbe-form-error"{% endif %}>
       <td>{% for role, commit in role_commit_map.items %}{% if role == contact.role %}
-        &nbsp;<i class="{{commit.1}}">
+        &nbsp;<i class="{{commit.1}}"></i>
           {% endif %}{% endfor %}</td>
       <td>{{contact.user.profile}}</td>
       <td>{{contact.role}}</td>

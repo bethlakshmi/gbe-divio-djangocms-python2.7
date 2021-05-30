@@ -7,10 +7,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from gbe.scheduling.forms import (
     CopyEventForm,
-    CopyEventPickDayForm,
     CopyEventPickModeForm,
 )
 from scheduler.idd import (
+    create_occurrence,
     get_occurrence,
 )
 from gbe.scheduling.views.functions import (
@@ -18,7 +18,9 @@ from gbe.scheduling.views.functions import (
 )
 from datetime import timedelta
 from django.forms.utils import ErrorList
-from gbe_forms_text import copy_errors
+from gbe_forms_text import (
+    copy_errors,
+)
 
 
 class CopyCollectionsView(View):
@@ -44,11 +46,7 @@ class CopyCollectionsView(View):
                 event_type=context['event_type'],
                 initial={'room': context['room']})
         else:
-            context['pick_day'] = CopyEventPickDayForm(
-                post,
-                initial={'room': context['room']})
-            context['pick_day'].fields['copy_to_day'].empty_label = None
-            context['pick_day'].fields['copy_to_day'].required = True
+            context = self.setup_solo(context, post)
         return context
 
     def validate_and_proceed(self, request, context):
@@ -82,6 +80,9 @@ class CopyCollectionsView(View):
                 context['second_form'] = self.make_event_picker(
                     request,
                     delta)
+        elif 'copy_solo_mode' in list(
+                context.keys()) and context['copy_solo_mode'].is_valid():
+            make_copy = True
         elif 'pick_day' in list(
                 context.keys()) and context['pick_day'].is_valid():
             make_copy = True
@@ -128,12 +129,15 @@ class CopyCollectionsView(View):
 
             for sub_event_id in form.cleaned_data["copied_event"]:
                 response = get_occurrence(sub_event_id)
+                labels = [conference.conference_slug,
+                          response.occurrence.as_subtype.calendar_type]
                 response = self.copy_event(
                     response.occurrence,
                     delta,
                     conference,
                     room,
-                    new_root)
+                    labels,
+                    new_root.pk)
                 show_scheduling_occurrence_status(
                     request,
                     response,
@@ -177,25 +181,7 @@ class CopyCollectionsView(View):
             context = self.make_context(request, post=request.POST)
             make_copy, context = self.validate_and_proceed(request, context)
             if make_copy:
-                target_day = context['pick_day'].cleaned_data[
-                    'copy_to_day']
-                delta = target_day.day - self.start_day
-                new_root = self.copy_root(
-                    request,
-                    delta,
-                    target_day.conference,
-                    context['pick_day'].cleaned_data['room'])
-
-                if new_root:
-                    slug = target_day.conference.conference_slug
-                    return HttpResponseRedirect(
-                        "%s?%s-day=%d&filter=Filter&new=%s" % (
-                            reverse('manage_event_list',
-                                    urlconf='gbe.scheduling.urls',
-                                    args=[slug]),
-                            slug,
-                            target_day.pk,
-                            str([new_root.pk]),))
+                return self.copy_solo(request, context)
         if 'pick_event' in list(request.POST.keys()):
             return self.copy_events_from_form(request)
         return render(

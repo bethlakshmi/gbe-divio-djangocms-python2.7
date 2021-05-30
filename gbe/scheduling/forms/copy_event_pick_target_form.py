@@ -1,6 +1,8 @@
 from django.forms import (
+    CheckboxSelectMultiple,
     ChoiceField,
     ModelChoiceField,
+    MultipleChoiceField,
     Form,
     RadioSelect,
 )
@@ -19,6 +21,8 @@ from settings import (
 from gbe_forms_text import (
     copy_mode_labels,
     copy_mode_choices,
+    copy_mode_solo_choices,
+    copy_solo_mode_errors,
     copy_errors,
 )
 from scheduler.idd import get_occurrences
@@ -48,7 +52,8 @@ class CopyEventPickDayForm(Form):
         queryset=Room.objects.filter(
             conferences__status__in=("ongoing", "upcoming")
             ).order_by('name').distinct(),
-        required=True)
+        required=True,
+        label=copy_mode_labels['room'])
 
     def clean(self):
         cleaned_data = super(CopyEventPickDayForm, self).clean()
@@ -71,12 +76,6 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
 
     target_event = ChoiceField(choices=[],
                                required=False)
-    room = ModelChoiceField(
-        queryset=Room.objects.filter(
-            conferences__status__in=("ongoing", "upcoming")
-            ).order_by('name').distinct(),
-        required=True,
-        label=copy_mode_labels['room'])
 
     def __init__(self, *args, **kwargs):
         event_type = None
@@ -109,6 +108,7 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
             for area in areas:
                 choices += [(area.pk, area.title)]
         self.fields['target_event'].choices = BLANK_CHOICE_DASH + choices
+        self.fields['target_event'].label = copy_mode_labels['room']
 
     def clean(self):
         cleaned_data = super(CopyEventPickModeForm, self).clean()
@@ -122,4 +122,60 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
             if copy_mode == copy_mode_choices[1][0] and not copy_to_day:
                 msg = copy_errors['no_day']
                 self.add_error('copy_to_day', msg)
+        return cleaned_data
+
+
+class CopyEventSoloPickModeForm(CopyEventPickModeForm):
+    '''
+    Form for selecting the type of event to create
+    '''
+    copy_mode = MultipleChoiceField(choices=copy_mode_solo_choices,
+                                    label=copy_mode_labels['copy_mode_solo'],
+                                    required=True,
+                                    widget=CheckboxSelectMultiple,
+                                    error_messages=copy_solo_mode_errors)
+    area = ModelChoiceField(
+        queryset=StaffArea.objects.exclude(conference__status="completed"),
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        event_type = None
+        choices = []
+        events = None
+        super(CopyEventSoloPickModeForm, self).__init__(*args, **kwargs)
+        shows = Show.objects.exclude(e_conference__status="completed")
+        specials = GenericEvent.objects.exclude(
+                e_conference__status="completed").filter(type="Special")
+        response = get_occurrences(
+            foreign_event_ids=list(
+                shows.values_list('eventitem_id', flat=True)) +
+            list(specials.values_list('eventitem_id', flat=True)))
+        if response.occurrences:
+            for occurrence in response.occurrences:
+                choices += [(occurrence.pk, "%s - %s" % (
+                    str(occurrence),
+                    occurrence.start_time.strftime(GBE_DATETIME_FORMAT)))]
+        self.fields['target_event'].choices = BLANK_CHOICE_DASH + choices
+
+    def clean(self):
+        cleaned_data = super(CopyEventPickModeForm, self).clean()
+        if cleaned_data.get("copy_mode") is None:
+            return cleaned_data
+        copy_mode = cleaned_data.get("copy_mode")
+        target_event = cleaned_data.get("target_event")
+        copy_to_day = cleaned_data.get("copy_to_day")
+        area = cleaned_data.get("area")
+        if copy_mode_solo_choices[0][0] in copy_mode and not target_event:
+            msg = copy_errors['no_target']
+            self.add_error('target_event', msg)
+        if copy_mode_solo_choices[1][0] in copy_mode and not area:
+            msg = copy_errors['no_area']
+            self.add_error('area', msg)
+        if copy_mode_solo_choices[2][0] not in copy_mode and (
+                copy_mode_solo_choices[0][0] not in copy_mode):
+            msg = copy_errors['no_delta']
+            self.add_error('copy_mode', msg)
+        if copy_mode_solo_choices[2][0] in copy_mode and not copy_to_day:
+            msg = copy_errors['no_day']
+            self.add_error('copy_to_day', msg)
         return cleaned_data

@@ -1,0 +1,43 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% load gbe_tags %}
+{% block title %}
+  Volunteer Report
+{% endblock %}
+{% block before_table %}
+<h2 class="gbe-title">All Volunteer Events</h2>
+  <br/>
+      {% include "conference_picker.tmpl" %}
+  <br/>
+  <div>Red text indicates a user that has become inactive.</div>
+  <div>Yellow background indicates a volunteer session that requires approval.</div>
+  <div>Blue background indicates volunteers that have no yet been approved.  Use the <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> to approve or reject them.</div>
+  <div>Green background indicates has max volunteers.  If an event is full, it will not show up in the volunteer calendar.</div>
+  {% endblock %}
+{% block tbody %}
+  {% for opp in opps%}
+    <tr class="gbe-table-row{% for contact in opp.event.people%}{% if contact.role == 'Pending Volunteer' %} gbe-table-info{% endif %}{% endfor %}{% if opp.event.max_volunteer == opp.event.people|length%} gbe-table-success{% endif %}" >
+      <td>
+        {% if conference.status != "completed" %}<a href="{% url 'scheduling:edit_event' conference.conference_slug opp.event.pk %}" class="gbe-table-link" data-toggle="tooltip" title="Edit">{% endif %}
+          {{ opp.event.eventitem.event.e_title}}{% if conference.status != "completed" %}</a>{% endif %}</td>
+      <td>{{ opp.event.container_event.parent_event.eventitem.event.e_title}}</td>
+      <td>{% for area in opp.areas %}{{area}}{% endfor %}</td>
+      <td>{{ opp.event.location}}</td>
+      <td>{{ opp.event.starttime|date:"M j, Y, g:i A"}}</td>
+	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.max_volunteer}}</td>
+	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.people|length}}</td>
+      <td>{% for contact in opp.event.people%}{% if contact.role in visible_roles %}
+        <div {% if not contact.user.profile.is_active %}class="gbe-form-error"{% endif %}>{% for role, commit in role_commit_map.items %}
+          {% if role == contact.role %}<i class="{{commit.1}}"></i>{% endif %}{% endfor %}
+        {{contact.user.profile}}
+        <a href="{% url 'email:mail_to_individual' contact.user.profile.resourceitem_id %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Email"><i class="far fa-envelope"></i></a>{% if contact.role == 'Pending Volunteer' %}<a href="{% url 'scheduling:review_pending' %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Approve/Reject Volunteer"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></a>{% endif %}<br> P: {{contact.user.profile.phone}}</div>
+          {% endif %}
+          {% endfor %}
+  	  </td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+{% block after_table %}
+  {% if opps|length == 0 %}
+    <br>
+    There are no available volunteer events.  None have been configured.
+{% endif %}{% endblock %}

@@ -193,7 +193,9 @@ event_collect_choices = [
                 ("Volunteer", "All Volunteer Events")]
 copy_mode_labels = {
     'copy_mode': "How would you like to copy this event?",
-    'room': "Choose the default room"
+    'room': "Choose the default room",
+    'solo_room': "Choose the room",
+    'copy_mode_solo': "Options for how to copy the event",
 }
 copy_mode_choices = [
     ("copy_children_only",
@@ -201,13 +203,26 @@ copy_mode_choices = [
     ("include_parent",
      "Include this event and all sub events, make new event on ")
 ]
+copy_mode_solo_choices = [
+    ("copy_to_parent",
+     "Link to this parent event "),
+    ("copy_to_area",
+     "Link to this staff area "),
+    ("choose_day",
+     "Pick day - will be used instead of parent day if chosen")
+]
+copy_solo_mode_errors = {
+    'required': 'Pick at least one of these options.',
+}
 copy_errors = {
     'room_conf_mismatch': "This room is not available for the conference on " +
     "this day.",
     'no_target': " Must choose the target event when copying sub-events.",
-    'no_day': " Must choose a day when copying all events.",
+    'no_day': " Must choose a day when copying events.",
     'room_target_mismatch': "This room is not available for the conference " +
-    "of the chosen event."
+    "of the chosen event.",
+    'no_area': "If this option is chosen, an area choice is required.",
+    'no_delta': "Either a parent event, or a target date must be chosen.",
 }
 inform_about_options = [('Exhibiting Art or Costumes',
                          'Exhibiting Art or Costumes'),

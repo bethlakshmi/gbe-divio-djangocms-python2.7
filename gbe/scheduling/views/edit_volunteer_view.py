@@ -7,12 +7,21 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe.functions import validate_perms
 from gbe.scheduling.views.functions import (
-    process_post_response,
+    get_start_time,
     setup_event_management_form,
     show_scheduling_occurrence_status,
     shared_groundwork,
 )
+from gbe.scheduling.forms import (
+    EventAssociationForm,
+    EventBookingForm,
+    ScheduleOccurrenceForm,
+)
 from django.forms.widgets import CheckboxInput
+from gbe.models import StaffArea
+from gbe_forms_text import event_settings
+from datetime import timedelta
+from scheduler.idd import update_occurrence
 
 
 class EditVolunteerView(ManageWorkerView):
@@ -37,6 +46,12 @@ class EditVolunteerView(ManageWorkerView):
                         args=[self.conference.conference_slug,
                               self.occurrence.pk]),
                 request.GET.urlencode()))
+        self.area = StaffArea.objects.filter(
+                conference=self.item.e_conference,
+                slug__in=self.occurrence.labels).first()
+        self.parent_id = -1
+        if hasattr(self.occurrence, 'container_event'):
+            self.parent_id = self.occurrence.container_event.parent_event.pk
         self.manage_worker_url = reverse('manage_workers',
                                          urlconf='gbe.scheduling.urls',
                                          args=[self.conference.conference_slug,
@@ -55,6 +70,10 @@ class EditVolunteerView(ManageWorkerView):
             self.occurrence,
             context,
             open_to_public=False)
+
+        context['association_form'] = EventAssociationForm(initial={
+            'staff_area': self.area,
+            'parent_event': self.parent_id})
         context['edit_title'] = self.title
         context['scheduling_form'].fields['approval'].widget = CheckboxInput()
 
@@ -96,19 +115,69 @@ class EditVolunteerView(ManageWorkerView):
     @never_cache
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
+        context = {}
+        response = None
         error_url = self.groundwork(request, args, kwargs)
         if error_url:
             return error_url
         if "manage-workers" in request.path:
             return super(EditVolunteerView,
                          self).post(request, *args, **kwargs)
-        context, self.success_url, response = process_post_response(
-            request,
-            self.conference.conference_slug,
-            self.item,
-            self.success_url,
-            "worker_open",
-            self.occurrence.pk)
+        context['association_form'] = EventAssociationForm(
+            request.POST,
+            initial={'staff_area': self.area,
+                     'parent_event': self.parent_id})
+        context['event_form'] = EventBookingForm(request.POST,
+                                                 instance=self.item)
+        context['scheduling_form'] = ScheduleOccurrenceForm(
+            request.POST,
+            conference=self.item.e_conference,
+            open_to_public=event_settings[self.item.type.lower()][
+                'open_to_public'])
+
+        if context['event_form'].is_valid(
+                ) and context['scheduling_form'].is_valid(
+                ) and context['association_form'].is_valid():
+            new_event = context['event_form'].save(commit=False)
+            new_event.duration = timedelta(
+                minutes=context['scheduling_form'].cleaned_data['duration']*60)
+            new_event.save()
+            labels = [self.item.calendar_type,
+                      self.item.e_conference.conference_slug]
+            if context['association_form'].cleaned_data['staff_area']:
+                labels += [
+                    context['association_form'].cleaned_data['staff_area'].slug
+                    ]
+            parent_id = -1
+            if context['association_form'].cleaned_data['parent_event']:
+                parent_id = int(
+                    context['association_form'].cleaned_data['parent_event'])
+            response = update_occurrence(
+                self.occurrence.pk,
+                get_start_time(context['scheduling_form'].cleaned_data),
+                context['scheduling_form'].cleaned_data['max_volunteer'],
+                people=None,
+                roles=None,
+                locations=[
+                    context['scheduling_form'].cleaned_data['location']],
+                approval=context['scheduling_form'].cleaned_data['approval'],
+                labels=labels,
+                parent_event_id=parent_id)
+
+            if request.POST.get('edit_event', 0) != "Save and Continue":
+                self.success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+                    reverse('manage_event_list',
+                            urlconf='gbe.scheduling.urls',
+                            args=[self.item.e_conference.conference_slug]),
+                    self.item.e_conference.conference_slug,
+                    context['scheduling_form'].cleaned_data['day'].pk,
+                    str([self.occurrence.pk]),)
+            else:
+                self.success_url = "%s?%s=True" % (self.success_url,
+                                                   "worker_open")
+        else:
+            context['start_open'] = True
+
         return self.make_post_response(request,
                                        response=response,
                                        errorcontext=context)

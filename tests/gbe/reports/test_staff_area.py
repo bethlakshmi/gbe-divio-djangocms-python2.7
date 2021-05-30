@@ -31,14 +31,14 @@ class TestStaffArea(TestCase):
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
                     args=['event', show.eventitem_id]))
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, show.e_title)
 
     def test_show_with_inactive(self):
         ''' view should load
         '''
         show = ShowFactory()
         inactive = ProfileFactory(
-            display_name="DON'T SEE THIS",
+            display_name="Inactive User",
             user_object__is_active=False
         )
         context = VolunteerContext(event=show, profile=inactive)

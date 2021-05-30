@@ -10,6 +10,7 @@
 {% block first_form %}
   <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
+  {% if introduction %}<p>{{introduction}}</p>{% endif %}
   {% if pick_day %}
     <h4>Choose Day and Room</h4>
     <p>
@@ -18,7 +19,7 @@
       {% if pick_day.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
     <div class="row">
     {% for field in pick_day %}
-      <div class="col-lg-2 col-md-2 col-sm-6 col-xs-5">
+      <div class="col-lg-3 col-sm-6 col-12">
         <label for="{{field.name}}" class="control-label">        
           {% if field.errors %}<font class="gbe-form-error">!
           {% elif field.css_classes == 'required' %}<font class="gbe-form-required">*</font>
@@ -26,13 +27,57 @@
           {{ field.label_tag }}
           {% if field.errors %}</font>{% endif %} 
       </label></div>
-      <div class="col-lg-3 col-md-4 col-sm-6 col-xs-7">
+      <div class="col-lg-3 col-sm-6 col-12">
         {{ field }}
         {% if field.errors %}<br/><label>
         <font class="gbe-form-error">{{ field.errors }}</font></label>{% endif %}
       </div>
-    {% endfor %}
+    {% endfor %}<br><br>
   </div>
+  {% elif copy_solo_mode %}
+    {% if copy_solo_mode.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
+    <font class="gbe-form-error">{{ copy_solo_mode.non_field_errors }}</font>
+      <div class="form-row"><div class="form-group"><div class="col-12">
+  <label for="{{copy_solo_mode.copy_mode.name}}" class="control-label">   
+          {{ copy_solo_mode.copy_mode.label_tag }}
+        </label>
+        <br>
+          {{ copy_solo_mode.copy_mode.0.tag }}
+          {{ copy_solo_mode.copy_mode.0.choice_label }} {{ copy_solo_mode.target_event }}
+        {% if copy_solo_mode.target_event.errors %}
+          <font class="gbe-form-error"><ul>{{ copy_solo_mode.target_event.errors }}</ul></font>
+        {% endif %}
+        <br>
+          {{ copy_solo_mode.copy_mode.1.tag }}
+          {{ copy_solo_mode.copy_mode.1.choice_label }} {{ copy_solo_mode.area }}
+        {% if copy_solo_mode.area.errors %}
+          <font class="gbe-form-error"><ul>{{ copy_solo_mode.area.errors }}</ul></font>
+        {% endif %}
+        <br>
+          {{ copy_solo_mode.copy_mode.2.tag }}
+          {{ copy_solo_mode.copy_mode.2.choice_label }} {{ copy_solo_mode.copy_to_day }}
+        <br>
+          {% if copy_solo_mode.copy_to_day.errors or copy_solo_mode.copy_mode.errors %}
+            <font class="gbe-form-error"><ul>
+            {{ copy_solo_mode.copy_to_day.errors }}
+            {{ copy_solo_mode.copy_mode.errors }}
+            </ul></font>
+          {% endif %}
+      </div>
+      <div class="col-12"><label for="{{copy_solo_mode.room.name}}" class="control-label">
+        <br>
+          {% if copy_solo_mode.room.errors %}<font class="gbe-form-error">!
+          {% elif copy_solo_mode.room.css_classes == 'required' %}<font class="gbe-form-required">*</font>
+          {% endif %} 
+          {{ copy_solo_mode.room.label_tag }}&nbsp;&nbsp;
+          {% if copy_solo_mode.room.errors %}</font>{% endif %} 
+      </label>{{ copy_solo_mode.room }}
+      {% if copy_solo_mode.room.errors or copy_solo_mode.room.errors %}
+            <br/><font class="gbe-form-error"><ul>
+            {{ copy_solo_mode.room.errors }}
+            </ul></font>
+      {% endif %}
+    </div></div></div>
   {% elif copy_mode %}
     {% if copy_mode.errors %}<p class="gbe-form-error"> There is an error on the form.</p>{% endif %}
     <font class="gbe-form-error">{{ copy_mode.non_field_errors }}</font>
@@ -57,7 +102,7 @@
             </ul></font>
           {% endif %}
       </div>
-      <div class="col-12"><label for="{{field.name}}" class="control-label">
+      <div class="col-12"><label for="{{copy_mode.room.name}}" class="control-label">
         <br>
           {% if copy_mode.room.errors %}<font class="gbe-form-error">!
           {% elif copy_mode.room.css_classes == 'required' %}<font class="gbe-form-required">*</font>
