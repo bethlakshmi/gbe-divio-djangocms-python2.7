@@ -122,12 +122,12 @@ class TestWelcomeLetter(TestCase):
         transaction = TransactionFactory()
         purchaser = ProfileFactory(
             user_object=transaction.purchaser.matched_to_user)
-        conference = transaction.ticket_item.bpt_event.conference
+        conference = transaction.ticket_item.ticketing_event.conference
         ticket_condition = TicketingEligibilityConditionFactory(
             tickets=[transaction.ticket_item]
         )
         context = ClassContext(
-            conference=transaction.ticket_item.bpt_event.conference)
+            conference=transaction.ticket_item.ticketing_event.conference)
         context.set_interest(interested_profile=purchaser)
 
         request = self.factory.get(
@@ -172,7 +172,7 @@ class TestWelcomeLetter(TestCase):
         transaction = TransactionFactory()
         purchaser = ProfileFactory(
             user_object=transaction.purchaser.matched_to_user)
-        conference = transaction.ticket_item.bpt_event.conference
+        conference = transaction.ticket_item.ticketing_event.conference
         ticket_condition = TicketingEligibilityConditionFactory(
             tickets=[transaction.ticket_item]
         )

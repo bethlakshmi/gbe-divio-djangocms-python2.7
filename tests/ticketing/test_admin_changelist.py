@@ -38,7 +38,7 @@ class TicketingChangeListTests(TestCase):
     def test_get_eventcontainer_conference(self):
         ticket = TicketItemFactory()
         response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
-        self.assertContains(response, str(ticket.bpt_event.conference))
+        self.assertContains(response, str(ticket.ticketing_event.conference))
 
     def test_get_transaction_act_fee_paid(self):
         conference = ConferenceFactory()

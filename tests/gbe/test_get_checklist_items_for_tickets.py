@@ -21,7 +21,7 @@ class TestGetCheckListForTickets(TestCase):
         self.transaction = TransactionFactory()
         self.purchaser = ProfileFactory(
             user_object=self.transaction.purchaser.matched_to_user)
-        self.conference = self.transaction.ticket_item.bpt_event.conference
+        self.conference = self.transaction.ticket_item.ticketing_event.conference
 
     def test_no_ticket_condition(self):
         '''

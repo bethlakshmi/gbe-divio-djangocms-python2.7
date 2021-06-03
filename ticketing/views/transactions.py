@@ -71,12 +71,12 @@ def transactions(request):
                'view_format': view_format}
     if view_format == "ticket":
         context['transactions'] = Transaction.objects.filter(
-            ticket_item__bpt_event__conference=conference).order_by(
-            'ticket_item__bpt_event',
+            ticket_item__ticketing_event__conference=conference).order_by(
+            'ticket_item__ticketing_event',
             'ticket_item__title',
             'purchaser')
     else:
         context['users'] = User.objects.filter(
-            purchaser__transaction__ticket_item__bpt_event__conference=conference
+            purchaser__transaction__ticket_item__ticketing_event__conference=conference
             ).distinct().order_by('email')
     return render(request, r'ticketing/transactions.tmpl', context)

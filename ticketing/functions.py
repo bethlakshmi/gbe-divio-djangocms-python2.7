@@ -2,7 +2,7 @@ from ticketing.models import *
 from itertools import chain
 from datetime import datetime
 from ticketing.brown_paper import get_bpt_price_list
-
+from ticketing.eventbright import get_eb_events
 
 def import_ticket_items(events=None):
     '''
@@ -27,19 +27,19 @@ def get_tickets(linked_event, most=False, conference=False):
     general_events = []
 
     if most:
-        general_events = BrownPaperEvents.objects.filter(
+        general_events = TicketingEvents.objects.filter(
             include_most=True,
             conference=linked_event.e_conference)
     if conference:
         general_events = list(chain(
             general_events,
-            BrownPaperEvents.objects.filter(
+            TicketingEvents.objects.filter(
                 include_conference=True,
                 conference=linked_event.e_conference)))
 
     general_events = list(chain(
         general_events,
-        BrownPaperEvents.objects.filter(
+        TicketingEvents.objects.filter(
             linked_events=linked_event)))
 
     ticket_events = []
@@ -53,12 +53,12 @@ def get_tickets(linked_event, most=False, conference=False):
 def get_fee_list(bid_type, conference):
     ticket_items = []
     ticket_items = TicketItem.objects.filter(
-        bpt_event__conference=conference, live=True, has_coupon=False).exclude(
+        ticketing_event__conference=conference, live=True, has_coupon=False).exclude(
         start_time__gt=datetime.now()).exclude(end_time__lt=datetime.now())
     if bid_type == "Vendor":
         ticket_items = ticket_items.filter(
-            bpt_event__vendor_submission_event=True)
+            ticketing_event__vendor_submission_event=True)
     elif bid_type == "Act":
         ticket_items = ticket_items.filter(
-            bpt_event__act_submission_event=True)
+            ticketing_event__act_submission_event=True)
     return ticket_items

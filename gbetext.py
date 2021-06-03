@@ -234,7 +234,9 @@ time_options = (('Morning', "Morning (before noon)"),
 day_options = (('Fri', "Friday"),
                ('Sat', "Saturday"),
                ('Sun', "Sunday"))
-
+system_options = (
+    (0, 'local/debug'),
+    (1, 'test/live'))
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),

@@ -756,7 +756,7 @@ ticket_item_labels = {
     'ticket_id': 'Ticket Item Id:',
     'live': 'Display Item to Users?:',
     'cost': 'Ticket Price:',
-    'bpt_event': 'Fee/Event',
+    'ticketing_event': 'Fee/Event',
     'is_minimum': 'Act as minimum donation',
     'has_coupon': 'Coupon Required',
 }
@@ -764,7 +764,7 @@ ticket_item_help_text = {
     'ticket_id': 'If using BPT, this must match the BPT configuration to sync. \
     if using PayPal, this is used for tracking only.',
     'live': 'Will be shown on this site, if it is within the start/end time',
-    'bpt_event': 'What this ticket pays for - application fee, vendor spot, \
+    'ticketing_event': 'What this ticket pays for - application fee, vendor spot, \
     ticket for conference, show, special event, etc.',
     'is_minimum': 'A donation supercedes any other ticket.  The lowest cost \
     among all tickets is the minimum.',
@@ -776,8 +776,8 @@ ticket_item_help_text = {
     gives the user, it is an additional feature after a main purchase',
 }
 link_event_labels = {
-    'bpt_events': "Choose from existing tickets",
-    'bpt_event_id': "New BPT Event Id",
+    'ticketing_events': "Choose from existing tickets",
+    'event_id': "New BPT Event Id",
     'display_icon': "Display Icon"
 }
 link_event_help_text = {
@@ -786,7 +786,7 @@ link_event_help_text = {
         shown.  Display Icon must come from http://simplelineicons.com/
         -- NOTE:  Avoid the "."'''
 }
-bpt_event_labels = {
+ticketing_event_labels = {
     'act_submission_event': 'Act Submission Fee?:',
     'vendor_submission_event': 'Vendor Submission Fee?:',
     'linked_events': 'GBE Events on Ticket:',
@@ -794,11 +794,11 @@ bpt_event_labels = {
     'include_most': 'Whole Shebang?:',
     'badgeable': 'Print a Badge?:',
     'ticket_style': 'Other Ticket Notes:',
-    'bpt_event_id': '(BPT) Event Id',
+    'event_id': '(BPT) Event Id',
 }
 
-bpt_event_help_text = {
-    'bpt_event_id': 'Must match the event if using BPT.  If using PayPal, \
+ticketing_event_help_text = {
+    'event_id': 'Must match the event if using BPT.  If using PayPal, \
     this value is irrelevant, but required.',
     'act_submission_event': 'Used to submit Act Applications',
     'vendor_submission_event': 'Used to submit Vendor Applications',

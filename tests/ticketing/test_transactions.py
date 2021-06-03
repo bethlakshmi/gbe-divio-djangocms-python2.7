@@ -1,12 +1,12 @@
 from django.core.files import File
 from django.core.exceptions import PermissionDenied
 from ticketing.models import (
-    BrownPaperEvents,
+    TicketingEvents,
     BrownPaperSettings,
     Transaction
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
+    TicketingEventsFactory,
     BrownPaperSettingsFactory,
     TicketItemFactory
 )
@@ -74,8 +74,8 @@ class TestTransactions(TestCase):
            privileged user gets the list
         '''
         context = PurchasedTicketContext()
-        context.transaction.ticket_item.bpt_event.act_submission_event = True
-        context.transaction.ticket_item.bpt_event.save()
+        context.transaction.ticket_item.ticketing_event.act_submission_event = True
+        context.transaction.ticket_item.ticketing_event.save()
         grant_privilege(self.privileged_user, 'Registrar')
         login_as(self.privileged_user, self)
         response = self.client.get(self.url + "?format=user")
@@ -93,7 +93,7 @@ class TestTransactions(TestCase):
         '''
            privileged user gets the list
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
@@ -110,8 +110,8 @@ class TestTransactions(TestCase):
         old_context.transaction.purchaser.matched_to_user = limbo
         old_context.transaction.purchaser.save()
         old_ticket = old_context.transaction.ticket_item
-        old_ticket.bpt_event.vendor_submission_event = True
-        old_ticket.bpt_event.save()
+        old_ticket.ticketing_event.vendor_submission_event = True
+        old_ticket.ticketing_event.save()
         context = PurchasedTicketContext()
         login_as(self.privileged_user, self)
         response = self.client.get("%s?conference=%s" % (
@@ -161,13 +161,13 @@ class TestTransactions(TestCase):
         '''
            privileged user syncs orders
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         BrownPaperSettingsFactory()
-        event = BrownPaperEventsFactory(bpt_event_id="1")
+        event = TicketingEventsFactory(event_id="1")
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
 
         limbo, created = User.objects.get_or_create(username='limbo')
 

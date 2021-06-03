@@ -1,11 +1,11 @@
 from django.core.files import File
 from ticketing.models import (
-    BrownPaperEvents,
+    TicketingEvents,
     BrownPaperSettings,
     TicketItem
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
+    TicketingEventsFactory,
     BrownPaperSettingsFactory,
     TicketItemFactory
 )
@@ -74,9 +74,9 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the inventory of tickets from (fake) BPT
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         BrownPaperSettingsFactory()
 
         a = Mock()
@@ -90,7 +90,7 @@ class TestListTickets(TestCase):
         self.assertEqual(response.status_code, 200)
         ticket = get_object_or_404(
             TicketItem,
-            ticket_id='%s-4513068' % (event.bpt_event_id))
+            ticket_id='%s-4513068' % (event.event_id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ticket.cost, Decimal('125.00'))
 
@@ -99,15 +99,15 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the inventory of tickets from (fake) BPT
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         BrownPaperSettingsFactory()
         TicketItemFactory(
-            ticket_id='%s-4513068' % (event.bpt_event_id),
+            ticket_id='%s-4513068' % (event.event_id),
             has_coupon=True,
             live=False,
-            bpt_event=event)
+            ticketing_event=event)
         a = Mock()
         date_filename = open("tests/ticketing/datelist.xml", 'r')
         price_filename = open("tests/ticketing/pricelist.xml", 'r')
@@ -119,7 +119,7 @@ class TestListTickets(TestCase):
         self.assertEqual(response.status_code, 200)
         ticket = get_object_or_404(
             TicketItem,
-            ticket_id='%s-4513068' % (event.bpt_event_id))
+            ticket_id='%s-4513068' % (event.event_id))
         assert ticket.live
         assert ticket.has_coupon
 
@@ -128,9 +128,9 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the inventory of tickets from (fake) BPT
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory(title='', description='')
+        event = TicketingEventsFactory(title='', description='')
         BrownPaperSettingsFactory()
 
         a = Mock()
@@ -145,8 +145,8 @@ class TestListTickets(TestCase):
         response = self.import_tickets()
         self.assertEqual(response.status_code, 200)
         reload_event = get_object_or_404(
-            BrownPaperEvents,
-            bpt_event_id='%s' % (event.bpt_event_id))
+            TicketingEvents,
+            event_id='%s' % (event.event_id))
         self.assertEqual(response.status_code, 200)
         self.assertIn(
             "The Great Burlesque Exposition of 2016 takes place Feb. 5-7",
@@ -156,7 +156,7 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the inventory of tickets with no tickets
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         response = self.import_tickets()
         self.assertEqual(response.status_code, 200)
 
@@ -165,9 +165,9 @@ class TestListTickets(TestCase):
         '''
            not event list comes when getting inventory
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory(title="", description="")
+        event = TicketingEventsFactory(title="", description="")
         BrownPaperSettingsFactory()
 
         a = Mock()
@@ -182,9 +182,9 @@ class TestListTickets(TestCase):
         '''
            not date list comes when getting inventory
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory(title="", description="")
+        event = TicketingEventsFactory(title="", description="")
         BrownPaperSettingsFactory()
 
         a = Mock()
@@ -200,9 +200,9 @@ class TestListTickets(TestCase):
         '''
            not price list comes when getting inventory
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory(title="", description="")
+        event = TicketingEventsFactory(title="", description="")
         BrownPaperSettingsFactory()
 
         a = Mock()
@@ -220,9 +220,9 @@ class TestListTickets(TestCase):
         '''
            first read from BPT has a URL read error
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory(title="", description="")
+        event = TicketingEventsFactory(title="", description="")
         BrownPaperSettingsFactory()
 
         a = Mock()
@@ -237,9 +237,9 @@ class TestListTickets(TestCase):
         '''
            not date list comes when getting inventory
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory(title="", description="")
+        event = TicketingEventsFactory(title="", description="")
 
         a = Mock()
         event_filename = open("tests/ticketing/eventlist.xml", 'r')
@@ -260,7 +260,7 @@ class TestListTickets(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(
             url,
-            data={"conference": ticket.bpt_event.conference.conference_slug})
+            data={"conference": ticket.ticketing_event.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "All Conference Classes")
         self.assertNotContains(response, "fas fa-check")
@@ -272,18 +272,18 @@ class TestListTickets(TestCase):
         active_ticket = TicketItemFactory(live=True)
         not_live_ticket = TicketItemFactory(
             live=False,
-            bpt_event=active_ticket.bpt_event)
+            ticketing_event=active_ticket.ticketing_event)
         coupon_ticket = TicketItemFactory(
             has_coupon=True,
             live=True,
-            bpt_event=active_ticket.bpt_event)
+            ticketing_event=active_ticket.ticketing_event)
 
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, data={
-            "conference": active_ticket.bpt_event.conference.conference_slug})
+            "conference": active_ticket.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visible')
@@ -302,7 +302,7 @@ class TestListTickets(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
-            "conference": active_ticket.bpt_event.conference.conference_slug})
+            "conference": active_ticket.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(
@@ -325,7 +325,7 @@ class TestListTickets(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
-            "conference": inactive_ticket.bpt_event.conference.conference_slug}
+            "conference": inactive_ticket.ticketing_event.conference.conference_slug}
             )
 
         self.assertEqual(response.status_code, 200)
@@ -346,7 +346,7 @@ class TestListTickets(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
-            "conference": inactive_ticket.bpt_event.conference.conference_slug}
+            "conference": inactive_ticket.ticketing_event.conference.conference_slug}
             )
 
         self.assertEqual(response.status_code, 200)
@@ -368,15 +368,16 @@ class TestListTickets(TestCase):
             urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, data={
-            "conference": active_ticket.bpt_event.conference.conference_slug})
+            "conference": active_ticket.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visible')
         self.assertContains(response, 'Minimum Donation')
 
     def test_ticket_includes_conference(self):
-        active_ticket = TicketItemFactory(live=True,
-                                          bpt_event__include_conference=True)
+        active_ticket = TicketItemFactory(
+            live=True,
+            ticketing_event__include_conference=True)
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
@@ -394,10 +395,11 @@ class TestListTickets(TestCase):
         self.assertContains(response, "Includes all Conference Classes")
 
     def test_ticket_includes_most(self):
-        active_ticket = TicketItemFactory(live=True,
-                                          bpt_event__include_most=True)
+        active_ticket = TicketItemFactory(
+            live=True,
+            ticketing_event__include_most=True)
         gbe_event = ShowFactory(
-            e_conference=active_ticket.bpt_event.conference)
+            e_conference=active_ticket.ticketing_event.conference)
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
@@ -422,9 +424,9 @@ class TestListTickets(TestCase):
     def test_ticket_linked_event(self):
         active_ticket = TicketItemFactory(live=True)
         gbe_event = ShowFactory(
-            e_conference=active_ticket.bpt_event.conference)
-        active_ticket.bpt_event.linked_events.add(gbe_event)
-        active_ticket.bpt_event.save()
+            e_conference=active_ticket.ticketing_event.conference)
+        active_ticket.ticketing_event.linked_events.add(gbe_event)
+        active_ticket.ticketing_event.save()
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')

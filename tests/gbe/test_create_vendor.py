@@ -72,7 +72,7 @@ class TestCreateVendor(TestCase):
     def test_create_vendor_post_form_valid(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        bpt_event_id = make_vendor_app_ticket(self.conference)
+        event_id = make_vendor_app_ticket(self.conference)
         response, data = self.post_unpaid_vendor_draft()
 
         self.assertEqual(response.status_code, 200)

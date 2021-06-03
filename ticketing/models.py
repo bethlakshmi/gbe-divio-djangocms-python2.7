@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-from gbetext import role_options
+from gbetext import (
+    role_options,
+    system_options,
+)
 from datetime import datetime
 
 
@@ -17,6 +20,20 @@ class BrownPaperSettings(models.Model):
         verbose_name_plural = 'Brown Paper Settings'
 
 
+class EventbriteSettings(models.Model):
+    '''
+    if oath exists, the "sync" thread will first attempt to get org id
+    if org id is present, then it will sync events & tickets & transactions
+    automatically and/or on button click in ticketing
+    '''
+    oauth = models.CharField(max_length=128)
+    organization_id = models.CharField(max_length=128)
+    system = models.IntegerField(choices=system_options, unique=True)
+
+    class Meta:
+        verbose_name_plural = 'Eventbrite Settings'
+
+
 class PayPalSettings(models.Model):
     '''
     This class is used to hold basic settings sent to Paypal to identify
@@ -28,7 +45,7 @@ class PayPalSettings(models.Model):
         verbose_name_plural = 'PayPal Settings'
 
 
-class BrownPaperEvents(models.Model):
+class TicketingEvents(models.Model):
     '''
     This class is used to hold the BPT event list.  It defines with Brown Paper
     Ticket Events should be queried to obtain information on the Ticket Items
@@ -40,7 +57,7 @@ class BrownPaperEvents(models.Model):
             Classes, or Shows, or Special Events
       - include_most = includes everything EXCEPT Master Classes
     '''
-    bpt_event_id = models.CharField(max_length=10,
+    event_id = models.CharField(max_length=10,
                                     unique=True)
     act_submission_event = models.BooleanField(default=False,
                                                verbose_name='Act Fee')
@@ -62,7 +79,7 @@ class BrownPaperEvents(models.Model):
     display_icon = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return "%s - %s" % (self.bpt_event_id, self.title)
+        return "%s - %s" % (self.event_id, self.title)
 
     @property
     def visible(self):
@@ -73,7 +90,7 @@ class BrownPaperEvents(models.Model):
     @property
     def live_ticket_count(self):
         return TicketItem.objects.filter(
-            bpt_event=self,
+            ticketing_event=self,
             live=True,
             has_coupon=False).count()
 
@@ -83,7 +100,7 @@ class BrownPaperEvents(models.Model):
 
 class EventDetail(models.Model):
     detail = models.CharField(max_length=50, blank=True)
-    bpt_event = models.ForeignKey(BrownPaperEvents,
+    ticketing_event = models.ForeignKey(TicketingEvents,
                                   on_delete=models.CASCADE,
                                   blank=True)
 
@@ -102,7 +119,7 @@ class TicketItem(models.Model):
     cost = models.DecimalField(max_digits=20, decimal_places=2)
     datestamp = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=30)
-    bpt_event = models.ForeignKey(BrownPaperEvents,
+    ticketing_event = models.ForeignKey(TicketingEvents,
                                   on_delete=models.CASCADE,
                                   related_name="ticketitems",
                                   blank=True)
@@ -135,7 +152,7 @@ class TicketItem(models.Model):
 class Purchaser(models.Model):
     '''
     This class is used to hold the information for a given person who has
-    purchased a ticket at BPT.  It has all the information we can gather
+    purchased a ticket.  It has all the information we can gather
     from BPT about the user.  It is meant to be mapped to a given User in
     our system, if we can.
 

@@ -12,7 +12,7 @@ from tests.factories.gbe_factories import (
 )
 
 from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
+    TicketingEventsFactory,
     TransactionFactory,
     TicketItemFactory,
     PurchaserFactory,
@@ -168,18 +168,18 @@ def make_act_app_purchase(conference, user_object):
     purchaser = PurchaserFactory(
         matched_to_user=user_object)
     transaction = TransactionFactory(purchaser=purchaser)
-    transaction.ticket_item.bpt_event.conference = conference
-    transaction.ticket_item.bpt_event.act_submission_event = True
-    transaction.ticket_item.bpt_event.save()
+    transaction.ticket_item.ticketing_event.conference = conference
+    transaction.ticket_item.ticketing_event.act_submission_event = True
+    transaction.ticket_item.ticketing_event.save()
     return transaction
 
 
 def make_act_app_ticket(conference):
-    bpt_event = BrownPaperEventsFactory(conference=conference,
+    ticketing_event = TicketingEventsFactory(conference=conference,
                                         act_submission_event=True)
-    ticket_id = "%s-1111" % (bpt_event.bpt_event_id)
+    ticket_id = "%s-1111" % (ticketing_event.event_id)
     ticket = TicketItemFactory(ticket_id=ticket_id)
-    return bpt_event.bpt_event_id
+    return ticketing_event.event_id
 
 
 def post_act_conflict(conference, performer, data, url, testcase):
@@ -197,35 +197,37 @@ def post_act_conflict(conference, performer, data, url, testcase):
 
 
 def make_vendor_app_purchase(conference, user_object):
-    bpt_event = BrownPaperEventsFactory(conference=conference,
-                                        vendor_submission_event=True)
+    ticketing_event = TicketingEventsFactory(conference=conference,
+                                             vendor_submission_event=True)
     purchaser = PurchaserFactory(matched_to_user=user_object)
-    ticket_id = "%s-1111" % (bpt_event.bpt_event_id)
-    ticket = TicketItemFactory(ticket_id=ticket_id, bpt_event=bpt_event)
+    ticket_id = "%s-1111" % (ticketing_event.event_id)
+    ticket = TicketItemFactory(ticket_id=ticket_id,
+                               ticketing_event=ticketing_event)
     transaction = TransactionFactory(ticket_item=ticket,
                                      purchaser=purchaser)
     return transaction
 
 
 def make_vendor_app_ticket(conference):
-    bpt_event = BrownPaperEventsFactory(conference=conference,
-                                        vendor_submission_event=True)
-    ticket_id = "%s-1111" % (bpt_event.bpt_event_id)
+    ticketing_event = TicketingEventsFactory(conference=conference,
+                                             vendor_submission_event=True)
+    ticket_id = "%s-1111" % (ticketing_event.event_id)
     ticket = TicketItemFactory(ticket_id=ticket_id)
-    return bpt_event.bpt_event_id
+    return ticketing_event.event_id
 
 
 def make_admission_purchase(conference,
                             user_object,
                             include_most=False,
                             include_conference=False):
-    bpt_event = BrownPaperEventsFactory(conference=conference,
-                                        include_most=include_most,
-                                        include_conference=include_conference)
+    ticketing_event = TicketingEventsFactory(
+        conference=conference,
+        include_most=include_most,
+        include_conference=include_conference)
     purchaser = PurchaserFactory(matched_to_user=user_object)
-    ticket_id = "%s-1111" % (bpt_event.bpt_event_id)
+    ticket_id = "%s-1111" % (ticketing_event.event_id)
     ticket = TicketItemFactory(ticket_id=ticket_id,
-                               bpt_event=bpt_event)
+                               ticketing_event=ticketing_event)
     transaction = TransactionFactory(ticket_item=ticket,
                                      purchaser=purchaser)
 

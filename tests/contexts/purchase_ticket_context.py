@@ -11,7 +11,7 @@ class PurchasedTicketContext:
 
     def __init__(self, profile=None):
         self.transaction = TransactionFactory(
-            ticket_item__bpt_event__badgeable=True
+            ticket_item__ticketing_event__badgeable=True
         )
         if profile:
             self.profile = profile
@@ -23,4 +23,4 @@ class PurchasedTicketContext:
             self.profile = ProfileFactory(
                 user_object=self.transaction.purchaser.matched_to_user
             )
-        self.conference = self.transaction.ticket_item.bpt_event.conference
+        self.conference = self.transaction.ticket_item.ticketing_event.conference

@@ -47,10 +47,10 @@ Results:  {{count}} new transactions were added to the system.
 </div>
 {% ifequal view_format "ticket" %}
 {% for item in transactions %}
-{% ifchanged item.ticket_item.bpt_event %}
+{% ifchanged item.ticket_item.ticketing_event %}
 {% if not forloop.first %}</tbody></table>{% endif %}
-<br><br><h3 class="gbe-title">{{item.ticket_item.bpt_event.title }} ({{item.ticket_item.bpt_event.bpt_event_id }})</h3>
-{% include 'ticketing/event_details.tmpl' with event=item.ticket_item.bpt_event %}
+<br><br><h3 class="gbe-title">{{item.ticket_item.ticketing_event.title }} ({{item.ticket_item.ticketing_event.event_id }})</h3>
+{% include 'ticketing/event_details.tmpl' with event=item.ticket_item.ticketing_event %}
 <table id="" class="datatable" cellspacing="0" width="100%">
   <thead>
     <tr class="gbe-table-header">
@@ -80,7 +80,7 @@ Results:  {{count}} new transactions were added to the system.
   <td>{% include "ticketing/purchaser_name.tmpl" with user=item.purchaser.matched_to_user purchaser=item.purchaser %}</td>
   <td>{% include "email_crop.tmpl" with email=item.purchaser.email %}</td>
   <td>{{ item.payment_source }}</td>
-  <td>{{ item.ticket_item.title}}{% if item.ticket_item.bpt_event.vendor_submission_event %} - Vendor{% elif item.ticket_item.bpt_event.act_submission_event %} - Act{% endif %}</td>
+  <td>{{ item.ticket_item.title}}{% if item.ticket_item.ticketing_event.vendor_submission_event %} - Vendor{% elif item.ticket_item.ticketing_event.act_submission_event %} - Act{% endif %}</td>
   <td>${{ item.amount }}</td>
   <td>{{ item.import_date|date:"M j, Y, g:i A" }}</td>
   <td>

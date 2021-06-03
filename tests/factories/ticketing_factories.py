@@ -14,19 +14,19 @@ from tests.factories.gbe_factories import (
 from django.utils import timezone
 
 
-class BrownPaperEventsFactory(DjangoModelFactory):
+class TicketingEventsFactory(DjangoModelFactory):
     class Meta:
-        model = tickets.BrownPaperEvents
+        model = tickets.TicketingEvents
     title = Sequence(lambda x: "title #%d" % x)
     description = "This is a desription"
-    bpt_event_id = Sequence(lambda x: "%d" % x)
+    event_id = Sequence(lambda x: "%d" % x)
     conference = SubFactory(ConferenceFactory)
     act_submission_event = False
     vendor_submission_event = False
     include_conference = False
     include_most = False
     badgeable = False
-    ticket_style = Sequence(lambda x: "BrownPaperEventTicketStyle #%d" % x)
+    ticket_style = Sequence(lambda x: "TicketingEventsTicketStyle #%d" % x)
 
 
 class BrownPaperSettingsFactory(DjangoModelFactory):
@@ -40,7 +40,7 @@ class BrownPaperSettingsFactory(DjangoModelFactory):
 class TicketItemFactory(DjangoModelFactory):
     class Meta:
         model = tickets.TicketItem
-    bpt_event = SubFactory(BrownPaperEventsFactory)
+    ticketing_event = SubFactory(TicketingEventsFactory)
     ticket_id = "111111-222222"
     title = Sequence(lambda x: "Ticket Item #%d" % x)
     cost = 99.99

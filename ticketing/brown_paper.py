@@ -10,7 +10,7 @@ from django.utils import timezone
 import xml.etree.ElementTree as et
 from django.contrib.auth.models import User
 from ticketing.models import (
-    BrownPaperEvents,
+    TicketingEvents,
     BrownPaperSettings,
     Purchaser,
     TicketItem,
@@ -113,7 +113,7 @@ def set_bpt_event_detail(event):
                     'id=%s&client=%s&event_id=%s'])
     event_call = url % (get_bpt_developer_id(),
                         get_bpt_client_id(),
-                        event.bpt_event_id)
+                        event.event_id)
     event_xml = perform_bpt_api_call(event_call)
     if event_xml is None:
         return None
@@ -145,7 +145,7 @@ def get_bpt_event_date_list(event_id):
     return date_list
 
 
-def get_bpt_price_list(bpt_events=None):
+def get_bpt_price_list(ticketing_events=None):
     '''
     Used to get the list of prices from BPT - which directly relates to
     ticket items on our system.
@@ -154,18 +154,18 @@ def get_bpt_price_list(bpt_events=None):
     '''
     ti_list = []
 
-    if not bpt_events:
-        bpt_events = BrownPaperEvents.objects.exclude(
+    if not ticketing_events:
+        ticketing_events = TicketingEvents.objects.exclude(
             conference__status="completed")
-    for event in bpt_events:
+    for event in ticketing_events:
         set_bpt_event_detail(event)
 
-        for date in get_bpt_event_date_list(event.bpt_event_id):
+        for date in get_bpt_event_date_list(event.event_id):
             url = "?".join(
                 ['http://www.brownpapertickets.com/api2/pricelist',
                  'id=%s&event_id=%s&date_id=%s'])
             price_call = url % (get_bpt_developer_id(),
-                                event.bpt_event_id,
+                                event.event_id,
                                 date)
             price_xml = perform_bpt_api_call(price_call)
 
@@ -191,12 +191,12 @@ def bpt_price_to_ticketitem(event, bpt_price):
     if bpt_price.find('live').text == 'y':
         live = True
     t_item = {
-        'ticket_id': '%s-%s' % (event.bpt_event_id,
+        'ticket_id': '%s-%s' % (event.event_id,
                                 bpt_price.find('price_id').text),
         'title': bpt_price.find('name').text,
         'cost': bpt_price.find('value').text,
         'modified_by': 'BPT Auto Import',
-        'bpt_event': event,
+        'ticketing_event': event,
         'live': live,
     }
 
@@ -216,12 +216,12 @@ def process_bpt_order_list():
     # Process the list from Brown Paper Tickets
     dev_id = get_bpt_developer_id()
     client_id = get_bpt_client_id()
-    for event in BrownPaperEvents.objects.exclude(
+    for event in TicketingEvents.objects.exclude(
             conference__status='completed'):
         url = "?".join(['http://www.brownpapertickets.com/api2/orderlist',
                         'id=%s&event_id=%s&account=%s&includetracker=1'])
         order_list_call = url % (dev_id,
-                                 event.bpt_event_id,
+                                 event.event_id,
                                  client_id)
         order_list_xml = perform_bpt_api_call(order_list_call)
         if order_list_xml is not None:
@@ -229,8 +229,7 @@ def process_bpt_order_list():
                 ticket_number = bpt_order.find('ticket_number').text
 
                 if not (transaction_reference_exists(ticket_number)):
-                    if bpt_save_order_to_database(event.bpt_event_id,
-                                                  bpt_order):
+                    if bpt_save_order_to_database(event.event_id, bpt_order):
                         count += 1
 
     # Recheck to see if any emails match to users now.  For example, if
