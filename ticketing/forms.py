@@ -113,9 +113,7 @@ class LinkBPTEventForm(forms.ModelForm):
 
     class Meta:
         model = TicketingEvents
-        fields = [
-            'event_id',
-            'display_icon']
+        fields = ['event_id', 'display_icon']
         labels = link_event_labels
         help_texts = link_event_help_text
 

@@ -145,12 +145,12 @@ Changing fields in this section will change them in all calendar items.</p>
           {% if tickets.ticketing_events.errors %}
             <font class="gbe-form-error">!&nbsp;&nbsp;{% endif %}
           {{ tickets.ticketing_events.label_tag }}
-          {% if tickets.ticketing_event.errors %}</font>{% endif %} 
+          {% if tickets.ticketing_events.errors %}</font>{% endif %} 
         </label>
-	{{ tickets.ticketing_event }}
-        {% if tickets.ticketing_event.errors %}
+	{{ tickets.ticketing_events }}
+        {% if tickets.ticketing_events.errors %}
  	<br><label>
-	  <font class="gbe-form-error">{{ tickets.ticketing_event.errors }}</font>
+	  <font class="gbe-form-error">{{ tickets.ticketing_events.errors }}</font>
         </label>{% endif %}
       </div>
       <div class="col-md-2 col-sm-3 col-12 event-booking-cell">

@@ -95,7 +95,7 @@ class TicketingEvents(models.Model):
             has_coupon=False).count()
 
     class Meta:
-        verbose_name_plural = 'Brown Paper Events'
+        verbose_name_plural = 'Ticketing Events'
 
 
 class EventDetail(models.Model):

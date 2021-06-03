@@ -28,7 +28,7 @@ class TestGetPurchasedTickets(TestCase):
         conference = purchase.ticket_item.ticketing_event.conference
         TransactionFactory(
             purchaser=purchase.purchaser,
-            ticket_item__ticketing_eventt__conference=conference)
+            ticket_item__ticketing_event__conference=conference)
         TransactionFactory(
             purchaser=purchase.purchaser,
             ticket_item__ticketing_event__conference=conference)
