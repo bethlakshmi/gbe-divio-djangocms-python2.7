@@ -41,4 +41,13 @@ class Migration(migrations.Migration):
             old_name='bpt_event',
             new_name='ticketing_event',
         ),
+        migrations.AlterModelOptions(
+            name='ticketingevents',
+            options={'verbose_name_plural': 'Ticketing Events'},
+        ),
+        migrations.AlterField(
+            model_name='eventbritesettings',
+            name='organization_id',
+            field=models.CharField(max_length=128, null=True),
+        ),
     ]

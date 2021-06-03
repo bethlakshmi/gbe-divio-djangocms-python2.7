@@ -2,7 +2,18 @@ from ticketing.models import *
 from itertools import chain
 from datetime import datetime
 from ticketing.brown_paper import get_bpt_price_list
-from ticketing.eventbright import get_eb_events
+from ticketing.models import EventbriteSettings
+from eventbrite import Eventbrite
+from django.conf import settings
+
+
+def setup_eb_api():
+    if settings.DEBUG:
+        eb_settings = EventbriteSettings.objects.get(system=0)
+    else:
+        eb_settings = EventbriteSettings.objects.get(system=1)
+    eventbrite = Eventbrite(eb_settings.oauth)
+    return eventbrite, eb_settings
 
 def import_ticket_items(events=None):
     '''

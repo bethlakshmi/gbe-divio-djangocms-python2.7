@@ -577,6 +577,14 @@ intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
 intro_ticket_assign_message = '''This grid shows what tickets are connected \
 to which GBE event.'''
+org_id_instructions = '''The organization id has not been defined.  Go to \
+admin and set one of the following ids in the EventbriteSettings for \
+'organization_id' for debug or live.  Only events for this organization \
+will be synced.'''
+no_settings_error = '''There are no Eventbrite settings for this server.  Go \
+to admin and ticketing -> EventbrightSettings and enter settings.  Oauth 
+token can be found in the API settings in EventBrite.  After that, return
+here to get the organization id.'''
 intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \
 events.  For Paypal, it's simply a container for a set of prices.  These \
 containers define payment for act fees, vendor fees, or entry into the expo \
