@@ -57,8 +57,7 @@ class TicketingEvents(models.Model):
             Classes, or Shows, or Special Events
       - include_most = includes everything EXCEPT Master Classes
     '''
-    event_id = models.CharField(max_length=10,
-                                    unique=True)
+    event_id = models.CharField(max_length=100, unique=True)
     act_submission_event = models.BooleanField(default=False,
                                                verbose_name='Act Fee')
     vendor_submission_event = models.BooleanField(default=False,

@@ -581,6 +581,8 @@ org_id_instructions = '''The organization id has not been defined.  Go to \
 admin and set one of the following ids in the EventbriteSettings for \
 'organization_id' for debug or live.  Only events for this organization \
 will be synced.'''
+eventbrite_error = '''There was an error in contacting eventbrite.  Status: \
+%d, Message: %s'''
 no_settings_error = '''There are no Eventbrite settings for this server.  Go \
 to admin and ticketing -> EventbrightSettings and enter settings.  Oauth 
 token can be found in the API settings in EventBrite.  After that, return

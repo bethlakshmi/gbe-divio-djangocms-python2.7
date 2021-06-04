@@ -12,8 +12,6 @@ from gbe.models import UserMessage
 from gbetext import (
     intro_ticket_assign_message,
     intro_ticket_message,
-    no_settings_error,
-    org_id_instructions,
 )
 from gbe.ticketing_idd_interface import get_ticket_form
 from ticketing.functions import (
@@ -32,34 +30,12 @@ def ticket_items(request, conference_choice=None):
     validate_perms(request, ('Ticketing - Admin', ))
 
     if 'Import' in request.POST:
-        eventbrite = None
-        settings = None
-        try:
-            eventbrite, settings = setup_eb_api()
-        except:
-            messages.error(request, UserMessage.objects.get_or_create(
-                view="SyncTicketItems",
-                code="NO_OAUTH",
-                defaults={
-                    'summary': "Instructions to Set Eventbrite Oauth",
-                    'description': no_settings_error})[0].description)
-        if settings is not None and settings.organization_id is not None:
-            import_ticket_items()
-        elif eventbrite is not None:
-            msg = UserMessage.objects.get_or_create(
-                view="SyncTicketItems",
-                code="NO_ORGANIZATION",
-                defaults={
-                    'summary': "Instructions to Set Organization ID",
-                    'description': org_id_instructions})[0].description
-            org_resp = eventbrite.get('/users/me/organizations/')
-            raise Exception(org_resp)
-            for organization in org_resp["organizations"]:
-                msg = "%s<br>%s - %s" % (
-                    msg,
-                    organization['id'],
-                    organization['name'])
-                messages.error(request, msg)
+        msg, is_success = import_ticket_items()
+        if is_success:
+            messages.success(request, msg)
+        else:
+            messages.error(request, msg)
+
     conference_choice = request.GET.get('conference', None)
     if conference_choice:
         events = TicketingEvents.objects.filter(

@@ -51,7 +51,6 @@ from django.db.models import (
 )
 from gbe.ticketing_idd_interface import get_ticket_form
 from django.contrib import messages
-from ticketing.functions import import_ticket_items
 
 
 def index(request):
