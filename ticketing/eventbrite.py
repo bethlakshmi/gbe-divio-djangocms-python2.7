@@ -42,14 +42,16 @@ def load_tickets(eventbrite, ticketing_events=None):
             conference__status="completed")
     for event in ticketing_events:
         has_more_items = True
+        continuation_token = ""
         while has_more_items:
             event_response = eventbrite.get(
-                '/events/%s/ticket_classes/' % event.event_id)
+                '/events/%s/ticket_classes/%s' % (event.event_id,
+                                                  continuation_token))
             if 'ticket_classes' not in event_response.keys():
                 has_more_items = False
                 if event_response['status_code'] != 404:
                     msg = eventbrite_error_create(event_response)
-                    return ti_list, msg
+                    return ti_count, msg
             else:
                 has_more_items = event_response['pagination']['has_more_items']
                 for ticket in event_response['ticket_classes']:
@@ -73,6 +75,10 @@ def load_tickets(eventbrite, ticketing_events=None):
                             ticketing_event=event)
                         ticket.save()
                         ti_count = ti_count + 1
+            if has_more_items:
+                continuation_token = "?continuation=%s" % (
+                    event_response['pagination']['continuation'])
+
     return ti_count, msg
 
 
@@ -127,10 +133,12 @@ def import_eb_ticket_items(events=None):
 def load_events(eventbrite, organization_id):
     from gbe.functions import get_current_conference
     has_more_items = True
+    continuation_token = ""
     while has_more_items:
         import_item_list = eventbrite.get(
             ('/organizations/%s/events/?order_by=start_asc&' +
-             'time_filter=current_future') % organization_id)
+             'time_filter=current_future%s') % (organization_id,
+                                                continuation_token))
         if 'events' not in import_item_list.keys():
             return 0, eventbrite_error_create(import_item_list)
         has_more_items = import_item_list['pagination']['has_more_items']
@@ -145,4 +153,7 @@ def load_events(eventbrite, organization_id):
                     conference=conference)
                 new_event.save()
                 event_count = event_count + 1
+        if has_more_items:
+            continuation_token = "&continuation=%s" % (
+                import_item_list['pagination']['continuation'])
     return event_count, ""
