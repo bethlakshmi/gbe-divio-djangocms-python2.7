@@ -97,7 +97,7 @@ Vendor Fees
 <form method="POST" action="{% url 'ticketing:ticket_items' %}" enctype="multipart/form-data">
 {% csrf_token %}
     <input type="hidden" name="Import" value="1">
-    <input type="submit" class="btn gbe-btn-primary" value="Synchronize with Brown Paper Tickets"> 
+    <input type="submit" class="btn gbe-btn-primary" value="Synchronize with Ticket Site"> 
 </form>
 </div></div>
 {% addtoblock "js" %}

@@ -33,7 +33,7 @@ Results:  {{count}} new transactions were added to the system.
 <form method="POST" action="{% url 'ticketing:transactions' %}" enctype="multipart/form-data">
 {% csrf_token %}
     <input type="hidden" name="Sync" value="1">
-    <button type="submit" class="btn gbe-btn-primary">Synchronize with Brown Paper Tickets</button>
+    <button type="submit" class="btn gbe-btn-primary">Synchronize with Ticket Site</button>
 </form>
 </div></div></div><br><br>
 <div class="container review">

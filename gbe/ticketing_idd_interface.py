@@ -196,7 +196,7 @@ def create_ticketing_event(event_id, conference, events=[], display_icon=None):
     if len(events) > 0:
         event.linked_events.add(*events)
     event.save()
-    count = import_ticket_items([event])
+    count, msg = import_ticket_items([event])
     return event, count
 
 

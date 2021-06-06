@@ -14,10 +14,7 @@ from gbetext import (
     intro_ticket_message,
 )
 from gbe.ticketing_idd_interface import get_ticket_form
-from ticketing.functions import (
-    import_ticket_items,
-    setup_eb_api
-)
+from ticketing.functions import import_ticket_items
 from django.contrib import messages
 
 
