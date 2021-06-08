@@ -274,8 +274,8 @@ def bpt_match_existing_purchasers_using_email():
     for purchaser in Purchaser.objects.filter(
             matched_to_user__username='limbo'):
         matched_user = attempt_match_purchaser_to_user(purchaser)
-        if (matched_user != -1):
-            purchaser.matched_to_user = User.objects.get(id=matched_user)
+        if matched_user is not None:
+            purchaser.matched_to_user = matched_user
             purchaser.save()
 
 
@@ -320,10 +320,10 @@ def bpt_save_order_to_database(event_id, bpt_order):
     tracker_id = str(bpt_order.find('tracker_id').text)
     matched_user = attempt_match_purchaser_to_user(purchaser, tracker_id)
 
-    if (matched_user == -1):
+    if matched_user is None:
         purchaser.matched_to_user = User.objects.get(username='limbo')
     else:
-        purchaser.matched_to_user = User.objects.get(id=matched_user)
+        purchaser.matched_to_user = matched_user
 
     # Attempt to see if purchaser exists in database, otherwise it is new.
 
@@ -350,7 +350,7 @@ def bpt_save_order_to_database(event_id, bpt_order):
     return True
 
 
-def attempt_match_purchaser_to_user(purchaser, tracker_id='None'):
+def attempt_match_purchaser_to_user(purchaser, tracker_id=None):
     '''
     Function attempts to match a given purchaser to a user in the system, using
     the algorithm agreed upon by Betty and Scratch.
@@ -361,42 +361,25 @@ def attempt_match_purchaser_to_user(purchaser, tracker_id='None'):
     '''
 
     # First try to match the tracker id to a user in the system
-
-    try:
+    if tracker_id is not None:
         user_id = int(tracker_id[3:])
-        User.objects.get(id=user_id)
-        return user_id
-    except:
-        user_found = False
+        return User.objects.get(id=user_id)
 
     # Next try to match to a purchase email address from the Profile
     # (Manual Override Mechanism)
 
     for profile in Profile.objects.filter(
             purchase_email__iexact=purchaser.email):
-        return profile.user_object.id
+        return profile.user_object
 
     # Finally, try to match to the user's email.  If an overriding
     # purchase_email from the Profile exists for a given user, ignore
     # the user email field for that user.
 
-    for user in User.objects.filter(email__iexact=purchaser.email):
-        purchase_email = get_purchase_email_from_user(user.id)
-        if purchase_email is None or len(purchase_email) == 0:
-            return user.id
-    return -1
-
-
-def get_purchase_email_from_user(user_id):
-    '''
-    Function attempts to obtain the purchase email address, if it exists
-    in the user's profile.
-
-    user_id - the user ID for the query
-    returns - the purchase_email from the user profile, or None
-    '''
-    for profile in Profile.objects.filter(user_object__id=user_id):
-        return profile.purchase_email.strip()
+    for profile in Profile.objects.filter(
+            user_object__email__iexact=purchaser.email):
+        if profile.purchase_email is None or len(profile.purchase_email) == 0:
+            return user
     return None
 
 

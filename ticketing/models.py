@@ -30,6 +30,9 @@ class EventbriteSettings(models.Model):
     organization_id = models.CharField(max_length=128, blank=True, null=True)
     system = models.IntegerField(choices=system_options, unique=True)
 
+    def __str__(self):
+        return system_options[self.system][1]
+
     class Meta:
         verbose_name_plural = 'Eventbrite Settings'
 

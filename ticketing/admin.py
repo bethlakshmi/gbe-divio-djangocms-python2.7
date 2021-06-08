@@ -27,7 +27,8 @@ class TransactionAdmin(admin.ModelAdmin):
 
 
 class PurchaserAdmin(admin.ModelAdmin):
-    list_display = ('matched_to_user',
+    list_display = ('pk',
+                    'matched_to_user',
                     'first_name',
                     'last_name',
                     'email',

@@ -9,10 +9,6 @@
 {% block content %}
 <div class="container card"><div class="row card-body gbe-bg-light">
 <div class="col-8">
-The ticketing system was last synchronized at {{sync_time|date:"D d M Y"}} {{sync_time|time:"H:i:s"}} {{sync_time|date:"T"}}.
-<br>
-<br>
-
 {% if error %}
 <font color=red>
 {{error}}
@@ -21,12 +17,6 @@ Note:  You may need to update the ticket item list before processing transaction
 <br>
 <br>
 </font>
-{% endif %}
-
-{% if count >= 0 %}
-Results:  {{count}} new transactions were added to the system.
-<br>
-<br>
 {% endif %}
 </div>
 <div class="col-4">

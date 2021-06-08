@@ -234,9 +234,9 @@ time_options = (('Morning', "Morning (before noon)"),
 day_options = (('Fri', "Friday"),
                ('Sat', "Saturday"),
                ('Sun', "Sunday"))
-system_options = (
+system_options = [
     (0, 'local/debug'),
-    (1, 'test/live'))
+    (1, 'test/live')]
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),
@@ -570,7 +570,7 @@ included.'''
 intro_transaction_message = '''Transactions marked in blue are associated \
 with the "limbo" user as a placeholder, because no user matching the \
 purchaser's email could be found.'''
-import_transaction_message = '''A BPT Sync was attempted, check the logs for \
+import_transaction_message = '''A sync was attempted, check the logs for \
 errors, if 0 transactions were recieved, it can mean we are up to date, it \
 can mean we failed to import any.'''
 intro_ticket_message = '''The tickets below are all the ticket events & items \
