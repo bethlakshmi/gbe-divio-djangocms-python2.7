@@ -163,7 +163,6 @@ def load_events(eventbrite, organization_id):
         if has_more_items:
             continuation_token = "&continuation=%s" % (
                 import_item_list['pagination']['continuation'])
-            print("continuing....")
     return event_count, ""
 
 def process_eb_purchases():
