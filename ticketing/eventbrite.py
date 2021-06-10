@@ -141,6 +141,7 @@ def load_events(eventbrite, organization_id):
     from gbe.functions import get_current_conference
     has_more_items = True
     continuation_token = ""
+    event_count = 0
     while has_more_items:
         import_item_list = eventbrite.get(
             ('/organizations/%s/events/?order_by=start_asc&' +
@@ -150,7 +151,6 @@ def load_events(eventbrite, organization_id):
             return 0, eventbrite_error_create(import_item_list)
         has_more_items = import_item_list['pagination']['has_more_items']
         conference = get_current_conference()
-        event_count = 0
         for event in import_item_list['events']:
             if not TicketingEvents.objects.filter(event_id=event['id']).exists():
                 new_event = TicketingEvents(
@@ -163,6 +163,7 @@ def load_events(eventbrite, organization_id):
         if has_more_items:
             continuation_token = "&continuation=%s" % (
                 import_item_list['pagination']['continuation'])
+            print("continuing....")
     return event_count, ""
 
 def process_eb_purchases():
