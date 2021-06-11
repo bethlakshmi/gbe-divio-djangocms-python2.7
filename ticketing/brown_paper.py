@@ -233,6 +233,10 @@ def process_bpt_order_list():
 
     Returns: the number of transactions imported.
     '''
+    if BrownPaperSettings.objects.exists():
+        settings = BrownPaperSettings.objects.first()
+        if not settings.active_sync:
+            return 0
 
     count = 0
 
@@ -365,7 +369,7 @@ def attempt_match_purchaser_to_user(purchaser, tracker_id=None):
     '''
 
     # First try to match the tracker id to a user in the system
-    if tracker_id is not None:
+    if tracker_id is not None and isinstance(tracker_id, int):
         user_id = int(tracker_id[3:])
         return User.objects.get(id=user_id)
 

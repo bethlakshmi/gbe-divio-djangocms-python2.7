@@ -32,12 +32,51 @@ def eventbrite_error_create(response):
 
 
 def setup_eb_api():
+    from gbe.models import UserMessage
+    system_state = 1
+    eb_settings = None
+    eventbrite = None
     if settings.DEBUG:
-        eb_settings = EventbriteSettings.objects.get(system=0)
+        system_state = 0
+    if EventbriteSettings.objects.filter(system=system_state).exists():
+        eb_settings = EventbriteSettings.objects.get(system=system_state)
+        eventbrite = Eventbrite(eb_settings.oauth)
     else:
-        eb_settings = EventbriteSettings.objects.get(system=1)
-    eventbrite = Eventbrite(eb_settings.oauth)
-    return eventbrite, eb_settings
+        return False, (UserMessage.objects.get_or_create(
+            view="SyncTicketItems",
+            code="NO_OAUTH",
+            defaults={
+                'summary': "Instructions to Set Eventbrite Oauth",
+                'description': no_settings_error}
+            )[0].description, True), None, None
+
+    if not eb_settings.active_sync:
+        return False, (UserMessage.objects.get_or_create(
+            view="SyncTicketItems",
+            code="SYNC_OFF",
+            defaults={
+                'summary': "Ticketing Sync is OFF",
+                'description': sync_off_instructions}
+            )[0].description % "Eventbrite", True), None, None
+    if eb_settings.organization_id is None:
+        org_resp = eventbrite.get('/users/me/organizations/')
+        if 'organizations' not in org_resp.keys():
+            msg = eventbrite_error_create(org_resp)
+        else:
+            msg = UserMessage.objects.get_or_create(
+                view="SyncTicketItems",
+                code="NO_ORGANIZATION",
+                defaults={
+                    'summary': "Instructions to Set Organization ID",
+                    'description': org_id_instructions})[0].description
+            for organization in org_resp["organizations"]:
+                msg = "%s<br>%s - %s" % (
+                    msg,
+                    organization['id'],
+                    organization['name'])
+        return False, (msg, False), None, None
+
+    return True, ("", ""), eventbrite, eb_settings
 
 
 def get_cost(eb_entity):
@@ -90,62 +129,6 @@ def load_tickets(eventbrite, ticketing_events=None):
     return ti_count, msg
 
 
-def import_eb_ticket_items(events=None):
-    '''
-    Function is used to initiate an import from ticketing source, returns:
-      - a message
-      - a is_success boolean false = failure, true = success
-    '''
-    from gbe.models import UserMessage
-    eventbrite = None
-    settings = None
-    msg = "No message available"
-    try:
-        eventbrite, settings = setup_eb_api()
-    except:
-        return UserMessage.objects.get_or_create(
-            view="SyncTicketItems",
-            code="NO_OAUTH",
-            defaults={
-                'summary': "Instructions to Set Eventbrite Oauth",
-                'description': no_settings_error})[0].description, False
-    if not settings.active_sync:
-        return UserMessage.objects.get_or_create(
-            view="SyncTicketItems",
-            code="SYNC_OFF",
-            defaults={
-                'summary': "Ticketing Sync is OFF",
-                'description': sync_off_instructions}
-                )[0].description % "Eventbrite", True
-    if settings.organization_id is None:
-        org_resp = eventbrite.get('/users/me/organizations/')
-        if 'organizations' not in org_resp.keys():
-            msg = eventbrite_error_create(org_resp)
-        else:
-            msg = UserMessage.objects.get_or_create(
-                view="SyncTicketItems",
-                code="NO_ORGANIZATION",
-                defaults={
-                    'summary': "Instructions to Set Organization ID",
-                    'description': org_id_instructions})[0].description
-            for organization in org_resp["organizations"]:
-                msg = "%s<br>%s - %s" % (
-                    msg,
-                    organization['id'],
-                    organization['name'])
-        return msg, False
-
-    event_count, msg = load_events(eventbrite, settings.organization_id)
-    if len(msg) > 0:
-        return msg, False
-    tickets_count, msg = load_tickets(eventbrite)
-    if len(msg) > 0:
-        return msg, False
-    return "Successfully imported %d events, %d tickets" % (
-        event_count,
-        tickets_count), True
-
-
 def load_events(eventbrite, organization_id):
     from gbe.functions import get_current_conference
     has_more_items = True
@@ -176,6 +159,31 @@ def load_events(eventbrite, organization_id):
                 import_item_list['pagination']['continuation'])
     return event_count, ""
 
+
+def import_eb_ticket_items(events=None):
+    '''
+    Function is used to initiate an import from ticketing source, returns:
+      - a message
+      - a is_success boolean false = failure, true = success
+    '''
+    eventbrite = None
+    settings = None
+    msg = "No message available"
+
+    proceed, return_tuple, eventbrite, settings = setup_eb_api()
+    if not proceed:
+        return return_tuple
+    event_count, msg = load_events(eventbrite, settings.organization_id)
+    if len(msg) > 0:
+        return msg, False
+    tickets_count, msg = load_tickets(eventbrite)
+    if len(msg) > 0:
+        return msg, False
+    return "Successfully imported %d events, %d tickets" % (
+        event_count,
+        tickets_count), True
+
+
 def process_eb_purchases():
     '''
     Used to get the list of current orders in eventbrite and update the
@@ -188,32 +196,9 @@ def process_eb_purchases():
     eventbrite = None
     settings = None
     msg = "No message available"
-    try:
-        eventbrite, settings = setup_eb_api()
-    except:
-        return UserMessage.objects.get_or_create(
-            view="SyncTicketItems",
-            code="NO_OAUTH",
-            defaults={
-                'summary': "Instructions to Set Eventbrite Oauth",
-                'description': no_settings_error})[0].description, False
-    if settings.organization_id is None:
-        org_resp = eventbrite.get('/users/me/organizations/')
-        if 'organizations' not in org_resp.keys():
-            msg = eventbrite_error_create(org_resp)
-        else:
-            msg = UserMessage.objects.get_or_create(
-                view="SyncTicketItems",
-                code="NO_ORGANIZATION",
-                defaults={
-                    'summary': "Instructions to Set Organization ID",
-                    'description': org_id_instructions})[0].description
-            for organization in org_resp["organizations"]:
-                msg = "%s<br>%s - %s" % (
-                    msg,
-                    organization['id'],
-                    organization['name'])
-        return msg, False
+    proceed, return_tuple, eventbrite, settings = setup_eb_api()
+    if not proceed:
+        return return_tuple
 
     for event in TicketingEvents.objects.exclude(
             conference__status='completed').filter(source=2):

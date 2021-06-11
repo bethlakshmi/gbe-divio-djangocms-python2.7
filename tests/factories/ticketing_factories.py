@@ -27,6 +27,7 @@ class TicketingEventsFactory(DjangoModelFactory):
     include_most = False
     badgeable = False
     ticket_style = Sequence(lambda x: "TicketingEventsTicketStyle #%d" % x)
+    source = 1
 
 
 class BrownPaperSettingsFactory(DjangoModelFactory):
@@ -35,6 +36,16 @@ class BrownPaperSettingsFactory(DjangoModelFactory):
     developer_token = "devtoken"
     client_username = "clientusername"
     last_poll_time = timezone.now()
+    active_sync = True
+
+
+class EventbriteSettingsFactory(DjangoModelFactory):
+    class Meta:
+        model = tickets.EventbriteSettings
+    oauth = "UseAMock"
+    organization_id = "12345678"
+    system = 1
+    active_sync = True
 
 
 class TicketItemFactory(DjangoModelFactory):

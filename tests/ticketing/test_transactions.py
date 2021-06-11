@@ -3,11 +3,13 @@ from django.core.exceptions import PermissionDenied
 from ticketing.models import (
     TicketingEvents,
     BrownPaperSettings,
+    EventbriteSettings,
     Transaction
 )
 from tests.factories.ticketing_factories import (
     TicketingEventsFactory,
     BrownPaperSettingsFactory,
+    EventbriteSettingsFactory,
     TicketItemFactory
 )
 import nose.tools as nt
@@ -30,7 +32,11 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from gbetext import import_transaction_message
+from gbetext import (
+    import_transaction_message,
+    no_settings_error,
+    sync_off_instructions,
+)
 from tests.contexts import PurchasedTicketContext
 
 
@@ -157,7 +163,7 @@ class TestTransactions(TestCase):
         self.assertNotContains(response, context.transaction.ticket_item.title)
 
     @patch('urllib.request.urlopen', autospec=True)
-    def test_transactions_sync(self, m_urlopen):
+    def test_transactions_sync_bpt_only(self, m_urlopen):
         '''
            privileged user syncs orders
         '''
@@ -196,6 +202,47 @@ class TestTransactions(TestCase):
         assert_alert_exists(response,
                             'success',
                             'Success',
-                            "%s   Transactions imported: %s" % (
+                            "%s   Transactions imported: %s - BPT" % (
                                 import_transaction_message,
                                 "1"))
+        assert_alert_exists(response, 'success', 'Success', no_settings_error)
+
+    def test_transactions_sync_no_sources_on(self):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory(active_sync=False)
+        EventbriteSettingsFactory(active_sync=False)
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s   Transactions imported: %s - BPT" % (
+                                import_transaction_message,
+                                "0"))
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            sync_off_instructions % "Eventbrite")
+
+    def test_transactions_sync_both_on_no_events(self):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        EventbriteSettingsFactory()
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s   Transactions imported: %s - BPT" % (
+                                import_transaction_message,
+                                "0"))
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s  Transactions imported: %d -- Eventbrite" % (
+                                import_transaction_message,
+                                0))
