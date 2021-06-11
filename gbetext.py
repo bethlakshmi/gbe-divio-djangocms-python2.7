@@ -237,6 +237,10 @@ day_options = (('Fri', "Friday"),
 system_options = [
     (0, 'local/debug'),
     (1, 'test/live')]
+source_options = [
+    (0, 'Paypal'),
+    (1, 'Brown Paper'),
+    (2, 'Eventbrite')]
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),
@@ -581,6 +585,8 @@ org_id_instructions = '''The organization id has not been defined.  Go to \
 admin and set one of the following ids in the EventbriteSettings for \
 'organization_id' for debug or live.  Only events for this organization \
 will be synced.'''
+sync_off_instructions = '''%s ticketing system is not currently syncing.  \
+This can be changed on the settings page in the admin.'''
 eventbrite_error = '''There was an error in contacting eventbrite.  Status: \
 %d, Message: %s'''
 no_settings_error = '''There are no Eventbrite settings for this server.  Go \

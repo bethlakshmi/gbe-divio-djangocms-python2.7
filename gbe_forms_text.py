@@ -794,7 +794,8 @@ ticketing_event_labels = {
     'include_most': 'Whole Shebang?:',
     'badgeable': 'Print a Badge?:',
     'ticket_style': 'Other Ticket Notes:',
-    'event_id': '(BPT) Event Id',
+    'event_id': 'Event Id',
+    'source': 'Managed By',
 }
 
 ticketing_event_help_text = {

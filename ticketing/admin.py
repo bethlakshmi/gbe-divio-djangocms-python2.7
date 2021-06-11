@@ -67,7 +67,7 @@ class DetailInline(admin.TabularInline):
     model = EventDetail
 
 
-class BPTEventsAdmin(admin.ModelAdmin):
+class TicketingEventsAdmin(admin.ModelAdmin):
     filter_horizontal = ("linked_events",)
     search_fields = ('title', )
     list_display = ('title',
@@ -77,6 +77,7 @@ class BPTEventsAdmin(admin.ModelAdmin):
                     'include_conference',
                     'include_most')
     list_filter = ['conference',
+                   'source',
                    'act_submission_event',
                    'vendor_submission_event',
                    'badgeable',
@@ -149,7 +150,7 @@ class TicketEligibilityConditionAdmin(admin.ModelAdmin):
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
-admin.site.register(TicketingEvents, BPTEventsAdmin)
+admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)

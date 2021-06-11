@@ -16,6 +16,7 @@ from gbetext import (
     no_settings_error,
     org_id_instructions,
     import_transaction_message,
+    sync_off_instructions,
 )
 from ticketing.brown_paper import attempt_match_purchaser_to_user
 
@@ -51,7 +52,7 @@ def load_tickets(eventbrite, ticketing_events=None):
     msg = ""
     if not ticketing_events:
         ticketing_events = TicketingEvents.objects.exclude(
-            conference__status="completed")
+            conference__status="completed").filter(source=2)
     for event in ticketing_events:
         has_more_items = True
         continuation_token = ""
@@ -108,6 +109,14 @@ def import_eb_ticket_items(events=None):
             defaults={
                 'summary': "Instructions to Set Eventbrite Oauth",
                 'description': no_settings_error})[0].description, False
+    if not settings.active_sync:
+        return UserMessage.objects.get_or_create(
+            view="SyncTicketItems",
+            code="SYNC_OFF",
+            defaults={
+                'summary': "Ticketing Sync is OFF",
+                'description': sync_off_instructions}
+                )[0].description % "Eventbrite", True
     if settings.organization_id is None:
         org_resp = eventbrite.get('/users/me/organizations/')
         if 'organizations' not in org_resp.keys():
@@ -152,12 +161,14 @@ def load_events(eventbrite, organization_id):
         has_more_items = import_item_list['pagination']['has_more_items']
         conference = get_current_conference()
         for event in import_item_list['events']:
-            if not TicketingEvents.objects.filter(event_id=event['id']).exists():
+            if not TicketingEvents.objects.filter(
+                    event_id=event['id']).exists():
                 new_event = TicketingEvents(
                     event_id=event['id'],
                     title=event['name']['text'],
                     description=event['description']['html'],
-                    conference=conference)
+                    conference=conference,
+                    source=2)
                 new_event.save()
                 event_count = event_count + 1
         if has_more_items:
@@ -205,7 +216,7 @@ def process_eb_purchases():
         return msg, False
 
     for event in TicketingEvents.objects.exclude(
-            conference__status='completed'):
+            conference__status='completed').filter(source=2):
         has_more_items = True
         continuation_token = ""
         while has_more_items:

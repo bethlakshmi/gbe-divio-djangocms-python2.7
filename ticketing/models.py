@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from gbetext import (
     role_options,
+    source_options,
     system_options,
 )
 from datetime import datetime
@@ -15,6 +16,7 @@ class BrownPaperSettings(models.Model):
     developer_token = models.CharField(max_length=15, primary_key=True)
     client_username = models.CharField(max_length=30)
     last_poll_time = models.DateTimeField()
+    active_sync = models.BooleanField()
 
     class Meta:
         verbose_name_plural = 'Brown Paper Settings'
@@ -29,6 +31,7 @@ class EventbriteSettings(models.Model):
     oauth = models.CharField(max_length=128)
     organization_id = models.CharField(max_length=128, blank=True, null=True)
     system = models.IntegerField(choices=system_options, unique=True)
+    active_sync = models.BooleanField()
 
     def __str__(self):
         return system_options[self.system][1]
@@ -79,6 +82,7 @@ class TicketingEvents(models.Model):
     description = models.TextField(blank=True, null=True)
     title = models.CharField(max_length=50, blank=True, null=True)
     display_icon = models.CharField(max_length=50, blank=True)
+    source = models.IntegerField(choices=source_options, default=0)
 
     def __str__(self):
         return "%s - %s" % (self.event_id, self.title)

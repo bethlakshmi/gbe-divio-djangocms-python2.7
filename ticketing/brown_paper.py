@@ -29,6 +29,10 @@ def import_bpt_ticket_items(events=None):
     Function is used to initiate an import from BPT or other sources of
     new Ticket Items.  It will not override existing items.
     '''
+    if BrownPaperSettings.objects.exists():
+        settings = BrownPaperSettings.objects.first()
+        if not settings.active_sync:
+            return 0
     import_item_list = get_bpt_price_list(events)
 
     for i_item in import_item_list:
@@ -175,7 +179,7 @@ def get_bpt_price_list(ticketing_events=None):
 
     if not ticketing_events:
         ticketing_events = TicketingEvents.objects.exclude(
-            conference__status="completed")
+            conference__status="completed").filter(source=1)
     for event in ticketing_events:
         set_bpt_event_detail(event)
 
@@ -236,7 +240,7 @@ def process_bpt_order_list():
     dev_id = get_bpt_developer_id()
     client_id = get_bpt_client_id()
     for event in TicketingEvents.objects.exclude(
-            conference__status='completed'):
+            conference__status='completed').filter(source=1):
         url = "?".join(['http://www.brownpapertickets.com/api2/orderlist',
                         'id=%s&event_id=%s&account=%s&includetracker=1'])
         order_list_call = url % (dev_id,
