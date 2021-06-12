@@ -255,7 +255,8 @@ def eb_save_orders_to_database(event_id, attendee):
 
         if not TicketItem.objects.filter(
                 ticket_id=attendee['ticket_class_id']).exists():
-            return "Ticket Item for id %s does not exist", False
+            return "Ticket Item for id %s does not exist" % (
+                attendee['ticket_class_id']), False
 
         trans.ticket_item = TicketItem.objects.get(
             ticket_id=attendee['ticket_class_id'])

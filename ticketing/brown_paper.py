@@ -384,9 +384,10 @@ def attempt_match_purchaser_to_user(purchaser, tracker_id=None):
     # purchase_email from the Profile exists for a given user, ignore
     # the user email field for that user.
 
-    for profile in Profile.objects.filter(
-            user_object__email__iexact=purchaser.email):
-        if profile.purchase_email is None or len(profile.purchase_email) == 0:
+    for user in User.objects.filter(email__iexact=purchaser.email):
+        if not hasattr(user, 'profile'
+                ) or user.profile.purchase_email is None or len(
+                user.profile.purchase_email) == 0:
             return user
     return None
 

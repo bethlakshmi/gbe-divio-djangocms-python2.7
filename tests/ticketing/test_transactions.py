@@ -22,7 +22,8 @@ from ticketing.views import (
     transactions
 )
 from tests.factories.gbe_factories import (
-    ProfileFactory
+    ProfileFactory,
+    UserFactory,
 )
 from mock import patch, Mock
 import urllib
@@ -54,6 +55,26 @@ class TestTransactions(TestCase):
         self.url = reverse('transactions', urlconf='ticketing.urls')
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_ticket_missing(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        eb_set = EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='11111')
+
+        m_eventbrite.return_value = order_dict
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        print(response.content)
+        assert_alert_exists(response,
+                            'danger',
+                            'Error',
+                            "Ticket Item for id 3255985 does not exist")
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_only(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
@@ -69,7 +90,6 @@ class TestTransactions(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        print(response.content)
         assert_alert_exists(response,
                             'success',
                             'Success',
@@ -89,6 +109,31 @@ class TestTransactions(TestCase):
         purchaser = PurchaserFactory()
         known_buyer_order = order_dict
         known_buyer_order['attendees'][0]["profile"]["email"] = purchaser.email
+        m_eventbrite.return_value = known_buyer_order
+
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s  Transactions imported: %d -- Eventbrite" % (
+                                import_transaction_message,
+                                1))
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_w_user(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        eb_set = EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+        profile = ProfileFactory()
+        known_buyer_order = order_dict
+        known_buyer_order[
+            'attendees'][0]["profile"]["email"] = profile.purchase_email
         m_eventbrite.return_value = known_buyer_order
 
 
