@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from eventbrite import Eventbrite
 from django.conf import settings
+from django.contrib.auth.models import User
 from ticketing.models import (
     EventbriteSettings,
     Purchaser,
@@ -197,6 +198,7 @@ def process_eb_purchases():
     settings = None
     msg = "No message available"
     proceed, return_tuple, eventbrite, settings = setup_eb_api()
+
     if not proceed:
         return return_tuple
 
@@ -265,7 +267,7 @@ def eb_save_orders_to_database(event_id, attendee):
             purchaser = Purchaser.objects.filter(
                 email=attendee['profile']['email']).order_by('-pk').first()
         else:
-            Purchaser(
+            purchaser = Purchaser(
                 email=attendee['profile']['email'],
                 first_name = attendee['profile']['first_name'],
                 last_name = attendee['profile']['last_name'])

@@ -7,10 +7,11 @@ from ticketing.models import (
     Transaction
 )
 from tests.factories.ticketing_factories import (
-    TicketingEventsFactory,
     BrownPaperSettingsFactory,
     EventbriteSettingsFactory,
-    TicketItemFactory
+    PurchaserFactory,
+    TicketItemFactory,
+    TicketingEventsFactory,
 )
 import nose.tools as nt
 from django.contrib.auth.models import User
@@ -33,12 +34,14 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from gbetext import (
+    eventbrite_error,
     import_transaction_message,
     no_settings_error,
     sync_off_instructions,
 )
 from tests.contexts import PurchasedTicketContext
-
+from tests.ticketing.eb_order_list import order_dict
+import eventbrite
 
 class TestTransactions(TestCase):
     '''Tests for transactions view'''
@@ -50,11 +53,73 @@ class TestTransactions(TestCase):
         grant_privilege(self.privileged_user, 'Ticketing - Transactions')
         self.url = reverse('transactions', urlconf='ticketing.urls')
 
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_only(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        eb_set = EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+
+        limbo, created = User.objects.get_or_create(username='limbo')
+        m_eventbrite.return_value = order_dict
+
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        print(response.content)
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s  Transactions imported: %d -- Eventbrite" % (
+                                import_transaction_message,
+                                1))
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_w_purchaser(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        eb_set = EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+        purchaser = PurchaserFactory()
+        known_buyer_order = order_dict
+        known_buyer_order['attendees'][0]["profile"]["email"] = purchaser.email
+        m_eventbrite.return_value = known_buyer_order
+
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        print(response.content)
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s  Transactions imported: %d -- Eventbrite" % (
+                                import_transaction_message,
+                                1))
+
+    def test_transactions_sync_eb_bad_auth_token(self):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(response, 'danger', 'Error', eventbrite_error % (
+            401,
+            "The OAuth token you provided was invalid."))
+
     @nt.raises(PermissionDenied)
     def test_user_is_not_ticketing(self):
-        '''
-            The user does not have the right privileges.  Send PermissionDenied
-        '''
+        # The user does not have the right privileges.  Send PermissionDenied
         user = ProfileFactory.create().user_object
         request = self.factory.get(
             reverse('transactions', urlconf='ticketing.urls'),
@@ -63,9 +128,6 @@ class TestTransactions(TestCase):
         response = transactions(request)
 
     def test_transactions_w_privilege(self):
-        '''
-           privileged user gets the list
-        '''
         context = PurchasedTicketContext()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
@@ -76,9 +138,6 @@ class TestTransactions(TestCase):
         self.assertNotContains(response, "- Act")
 
     def test_transactions_w_privilege_userview_editpriv(self):
-        '''
-           privileged user gets the list
-        '''
         context = PurchasedTicketContext()
         context.transaction.ticket_item.ticketing_event.act_submission_event = True
         context.transaction.ticket_item.ticketing_event.save()
@@ -96,9 +155,6 @@ class TestTransactions(TestCase):
             args=[context.profile.resourceitem_id]))
 
     def test_transactions_empty(self):
-        '''
-           privileged user gets the list
-        '''
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         login_as(self.privileged_user, self)
@@ -106,9 +162,6 @@ class TestTransactions(TestCase):
         nt.assert_equal(response.status_code, 200)
 
     def test_transactions_old_conf_limbo_purchase(self):
-        '''
-           privileged user gets the list
-        '''
         limbo, created = User.objects.get_or_create(username='limbo')
         old_context = PurchasedTicketContext()
         old_context.conference.status = "past"
@@ -136,9 +189,6 @@ class TestTransactions(TestCase):
         self.assertNotContains(response, context.transaction.ticket_item.title)
 
     def test_transactions_old_conf_limbo_purchase_user_view(self):
-        '''
-           privileged user gets the list
-        '''
         limbo, created = User.objects.get_or_create(username='limbo')
         old_context = PurchasedTicketContext()
         old_context.conference.status = "past"
@@ -164,9 +214,6 @@ class TestTransactions(TestCase):
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_transactions_sync_bpt_only(self, m_urlopen):
-        '''
-           privileged user syncs orders
-        '''
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         BrownPaperSettingsFactory()
@@ -230,7 +277,7 @@ class TestTransactions(TestCase):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
+        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
