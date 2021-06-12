@@ -30,6 +30,7 @@ class TestEditBPTEvent(TestCase):
     def get_bptevent_form(self):
         return {
                 'title': "Title",
+                'source': 1,
                 'description': 'Description',
                 'display_icon': 'fa display-icon',
                 'primary': True,
