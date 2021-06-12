@@ -196,8 +196,8 @@ def create_ticketing_event(event_id, conference, events=[], display_icon=None):
     if len(events) > 0:
         event.linked_events.add(*events)
     event.save()
-    count, msg = import_ticket_items([event])
-    return event, count
+    msg, is_success = import_ticket_items(event)
+    return event, msg, is_success
 
 
 def get_ticket_form(bid_type, conference, post=None):

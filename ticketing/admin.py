@@ -69,7 +69,7 @@ class DetailInline(admin.TabularInline):
 
 class TicketingEventsAdmin(admin.ModelAdmin):
     filter_horizontal = ("linked_events",)
-    search_fields = ('title', )
+    search_fields = ('title', 'event_id')
     list_display = ('title',
                     'event_id',
                     'act_submission_event',

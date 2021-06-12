@@ -8,11 +8,16 @@ from ticketing.eventbrite import import_eb_ticket_items
 from ticketing.brown_paper import import_bpt_ticket_items
 
 
-def import_ticket_items(events=None):
-        msg, is_success = import_eb_ticket_items(events)
-        if not is_success:
-            return msg, is_success
-        count = import_bpt_ticket_items(events)
+def import_ticket_items(event=None):
+        # Since Eventbrite autosyncs events, we would only need to manually
+        # import BPT
+        msg = "0"
+        is_success = True
+        if event is None:
+            msg, is_success = import_eb_ticket_items()
+            if not is_success:
+                return msg, is_success
+        count = import_bpt_ticket_items(event)
 
         return "EventBrite: %s, BPT: imported %d tickets" % (
             msg,

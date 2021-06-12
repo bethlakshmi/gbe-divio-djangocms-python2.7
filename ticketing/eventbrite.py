@@ -162,7 +162,7 @@ def load_events(eventbrite, organization_id):
     return event_count, ""
 
 
-def import_eb_ticket_items(events=None):
+def import_eb_ticket_items():
     '''
     Function is used to initiate an import from ticketing source, returns:
       - a message

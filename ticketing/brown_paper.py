@@ -24,7 +24,7 @@ from datetime import datetime
 import pytz
 
 
-def import_bpt_ticket_items(events=None):
+def import_bpt_ticket_items(event=None):
     '''
     Function is used to initiate an import from BPT or other sources of
     new Ticket Items.  It will not override existing items.
@@ -33,7 +33,7 @@ def import_bpt_ticket_items(events=None):
         settings = BrownPaperSettings.objects.first()
         if not settings.active_sync:
             return 0
-    import_item_list = get_bpt_price_list(events)
+    import_item_list = get_bpt_price_list([event])
 
     for i_item in import_item_list:
         ticket_item, created = TicketItem.objects.get_or_create(
