@@ -100,7 +100,6 @@ class TestThemesList(TestCase):
         login_as(self.user, self)
         response = self.client.get(
             "%s?error_id=%d" % (self.url, self.version.pk))
-        print(response.content)
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-error"><td>%d</td>' % (
