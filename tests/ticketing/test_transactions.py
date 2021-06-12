@@ -44,6 +44,7 @@ from tests.contexts import PurchasedTicketContext
 from tests.ticketing.eb_order_list import order_dict
 import eventbrite
 
+
 class TestTransactions(TestCase):
     '''Tests for transactions view'''
 
@@ -87,7 +88,6 @@ class TestTransactions(TestCase):
         limbo, created = User.objects.get_or_create(username='limbo')
         m_eventbrite.return_value = order_dict
 
-
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
         assert_alert_exists(response,
@@ -110,7 +110,6 @@ class TestTransactions(TestCase):
         known_buyer_order = order_dict
         known_buyer_order['attendees'][0]["profile"]["email"] = purchaser.email
         m_eventbrite.return_value = known_buyer_order
-
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
@@ -135,7 +134,6 @@ class TestTransactions(TestCase):
         known_buyer_order[
             'attendees'][0]["profile"]["email"] = profile.purchase_email
         m_eventbrite.return_value = known_buyer_order
-
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})

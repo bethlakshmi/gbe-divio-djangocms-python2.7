@@ -25,7 +25,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ticketingevents',
             name='source',
-            field=models.IntegerField(choices=[(0, 'Paypal'), (1, 'Brown Paper'), (2, 'Eventbrite')], default=1),
+            field=models.IntegerField(
+                choices=[(0, 'Paypal'), (1, 'Brown Paper'), (2, 'Eventbrite')],
+                default=1),
         ),
         migrations.AlterField(
             model_name='eventbritesettings',

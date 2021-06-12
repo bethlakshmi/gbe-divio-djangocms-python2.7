@@ -590,7 +590,7 @@ This can be changed on the settings page in the admin.'''
 eventbrite_error = '''There was an error in contacting eventbrite.  Status: \
 %d, Message: %s'''
 no_settings_error = '''There are no Eventbrite settings for this server.  Go \
-to admin and ticketing -> EventbrightSettings and enter settings.  Oauth 
+to admin and ticketing -> EventbrightSettings and enter settings.  Oauth
 token can be found in the API settings in EventBrite.  After that, return
 here to get the organization id.'''
 intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \

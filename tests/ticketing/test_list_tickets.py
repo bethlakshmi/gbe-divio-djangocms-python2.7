@@ -253,14 +253,14 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the list for a conference
         '''
-        ticket = TicketItemFactory()
+        t = TicketItemFactory()
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(
             url,
-            data={"conference": ticket.ticketing_event.conference.conference_slug})
+            data={"conference": t.ticketing_event.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "All Conference Classes")
         self.assertNotContains(response, "fas fa-check")
@@ -269,21 +269,21 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the list for a conference
         '''
-        active_ticket = TicketItemFactory(live=True)
+        at = TicketItemFactory(live=True)
         not_live_ticket = TicketItemFactory(
             live=False,
-            ticketing_event=active_ticket.ticketing_event)
+            ticketing_event=at.ticketing_event)
         coupon_ticket = TicketItemFactory(
             has_coupon=True,
             live=True,
-            ticketing_event=active_ticket.ticketing_event)
+            ticketing_event=at.ticketing_event)
 
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, data={
-            "conference": active_ticket.ticketing_event.conference.conference_slug})
+            "conference": at.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visible')
@@ -295,22 +295,22 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the list for a conference
         '''
-        active_ticket = TicketItemFactory(
+        at = TicketItemFactory(
             live=True,
             start_time=datetime.now()-timedelta(days=1),
             end_time=datetime.now()+timedelta(days=1))
 
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
-            "conference": active_ticket.ticketing_event.conference.conference_slug})
+            "conference": at.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            active_ticket.start_time.strftime('%m/%d/%Y'))
+            at.start_time.strftime('%m/%d/%Y'))
         self.assertContains(
             response,
-            active_ticket.end_time.strftime('%m/%d/%Y'))
+            at.end_time.strftime('%m/%d/%Y'))
         self.assertContains(
             response,
             '<tr class="dedicated-sched gbe-table-row">')
@@ -319,19 +319,19 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the list for a conference
         '''
-        inactive_ticket = TicketItemFactory(
+        it = TicketItemFactory(
             live=True,
             start_time=datetime.now()+timedelta(days=1))
 
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
-            "conference": inactive_ticket.ticketing_event.conference.conference_slug}
+            "conference": it.ticketing_event.conference.conference_slug}
             )
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            inactive_ticket.start_time.strftime('%m/%d/%Y'))
+            it.start_time.strftime('%m/%d/%Y'))
         self.assertNotContains(
             response,
             '<tr class="dedicated-sched gbe-table-row">')
@@ -340,19 +340,19 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the list for a conference
         '''
-        inactive_ticket = TicketItemFactory(
+        it = TicketItemFactory(
             live=True,
             end_time=datetime.now()-timedelta(days=1))
 
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
-            "conference": inactive_ticket.ticketing_event.conference.conference_slug}
+            "conference": it.ticketing_event.conference.conference_slug}
             )
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            inactive_ticket.end_time.strftime('%m/%d/%Y'))
+            it.end_time.strftime('%m/%d/%Y'))
         self.assertNotContains(
             response,
             '<tr class="dedicated-sched gbe-table-row">')
@@ -361,14 +361,14 @@ class TestListTickets(TestCase):
         '''
            privileged user gets the list for a conference
         '''
-        active_ticket = TicketItemFactory(live=True, is_minimum=True)
+        at = TicketItemFactory(live=True, is_minimum=True)
 
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, data={
-            "conference": active_ticket.ticketing_event.conference.conference_slug})
+            "conference": at.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visible')

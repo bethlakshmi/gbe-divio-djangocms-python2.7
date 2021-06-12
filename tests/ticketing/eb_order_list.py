@@ -40,7 +40,7 @@ order_dict = {
                     "major_value": "0.00"
                 }
             },
-            "resource_uri": "https://www.eventbriteapi.com/v3/events/121212/attendees/34344333/",
+            "resource_uri": "https://www.eventbriteapi.com/v3/short",
             "id": "2455995931",
             "changed": "2021-06-06T18:07:20Z",
             "created": "2021-06-06T18:07:19Z",

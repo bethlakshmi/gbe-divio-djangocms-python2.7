@@ -21,6 +21,7 @@ from gbetext import (
 )
 from ticketing.brown_paper import attempt_match_purchaser_to_user
 
+
 def eventbrite_error_create(response):
     from gbe.models import UserMessage
     msg = UserMessage.objects.get_or_create(
@@ -270,8 +271,8 @@ def eb_save_orders_to_database(event_id, attendee):
         else:
             purchaser = Purchaser(
                 email=attendee['profile']['email'],
-                first_name = attendee['profile']['first_name'],
-                last_name = attendee['profile']['last_name'])
+                first_name=attendee['profile']['first_name'],
+                last_name=attendee['profile']['last_name'])
 
             # assign to a user or limbo
             matched_user = attempt_match_purchaser_to_user(purchaser)

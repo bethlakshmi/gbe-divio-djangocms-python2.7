@@ -13,10 +13,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EventbriteSettings',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('oauth', models.CharField(max_length=128)),
                 ('organization_id', models.CharField(max_length=128)),
-                ('system', models.IntegerField(choices=[(0, 'local/debug'), (1, 'test/live')], unique=True)),
+                ('system', models.IntegerField(
+                    choices=[(0, 'local/debug'), (1, 'test/live')],
+                    unique=True)),
             ],
             options={
                 'verbose_name_plural': 'Eventbrite Settings',

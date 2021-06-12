@@ -8,8 +8,8 @@ from tests.factories.ticketing_factories import (
 def setup_fees(conference, is_act=False, is_vendor=False):
     PayPalSettingsFactory()
     event = TicketingEventsFactory(conference=conference,
-                                    vendor_submission_event=is_vendor,
-                                    act_submission_event=is_act)
+                                   vendor_submission_event=is_vendor,
+                                   act_submission_event=is_act)
     if is_vendor:
         ticket = TicketItemFactory(live=True, ticketing_event=event)
         add_on = TicketItemFactory(live=True,

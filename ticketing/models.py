@@ -107,8 +107,8 @@ class TicketingEvents(models.Model):
 class EventDetail(models.Model):
     detail = models.CharField(max_length=50, blank=True)
     ticketing_event = models.ForeignKey(TicketingEvents,
-                                  on_delete=models.CASCADE,
-                                  blank=True)
+                                        on_delete=models.CASCADE,
+                                        blank=True)
 
 
 class TicketItem(models.Model):
@@ -126,9 +126,9 @@ class TicketItem(models.Model):
     datestamp = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=30)
     ticketing_event = models.ForeignKey(TicketingEvents,
-                                  on_delete=models.CASCADE,
-                                  related_name="ticketitems",
-                                  blank=True)
+                                        on_delete=models.CASCADE,
+                                        related_name="ticketitems",
+                                        blank=True)
     live = models.BooleanField(default=False)
     add_on = models.BooleanField(default=False)
     has_coupon = models.BooleanField(default=False)

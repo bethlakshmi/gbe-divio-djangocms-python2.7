@@ -49,7 +49,9 @@ def get_tickets(linked_event, most=False, conference=False):
 def get_fee_list(bid_type, conference):
     ticket_items = []
     ticket_items = TicketItem.objects.filter(
-        ticketing_event__conference=conference, live=True, has_coupon=False).exclude(
+        ticketing_event__conference=conference,
+        live=True,
+        has_coupon=False).exclude(
         start_time__gt=datetime.now()).exclude(end_time__lt=datetime.now())
     if bid_type == "Vendor":
         ticket_items = ticket_items.filter(

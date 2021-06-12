@@ -176,7 +176,7 @@ def make_act_app_purchase(conference, user_object):
 
 def make_act_app_ticket(conference):
     ticketing_event = TicketingEventsFactory(conference=conference,
-                                        act_submission_event=True)
+                                             act_submission_event=True)
     ticket_id = "%s-1111" % (ticketing_event.event_id)
     ticket = TicketItemFactory(ticket_id=ticket_id)
     return ticketing_event.event_id
