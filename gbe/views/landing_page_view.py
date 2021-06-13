@@ -21,6 +21,8 @@ from gbe.ticketing_idd_interface import (
 )
 from gbetext import (
     acceptance_states,
+    current_bid_msg,
+    historic_bid_msg,
     interested_explain_msg,
 )
 from gbe.functions import (
@@ -139,6 +141,12 @@ def LandingPageView(request, profile_id=None, historical=False):
             'vendor_paid': verify_vendor_app_paid(
                 viewer_profile.user_object.username,
                 current_conf),
+            'logged_in_message': UserMessage.objects.get_or_create(
+                view="LandingPageView",
+                code="GENERAL_MESSAGE",
+                defaults={
+                    'summary': "Left hand sidebar message",
+                    'description': ''})[0].description
             }
         if not historical:
             user_message = UserMessage.objects.get_or_create(
@@ -147,8 +155,21 @@ def LandingPageView(request, profile_id=None, historical=False):
                 defaults={
                     'summary': "About Interested Attendees",
                     'description': interested_explain_msg})
+            right_side_msg = UserMessage.objects.get_or_create(
+                view="LandingPageView",
+                code="CURRENT_BID_INSTRUCTION",
+                defaults={
+                    'summary': "Right Hand Sidebar - Current Bid Message",
+                    'description': current_bid_msg})
             context['interested_info'] = user_message[0].description
-
+        else:
+            right_side_msg = UserMessage.objects.get_or_create(
+                view="LandingPageView",
+                code="HISTORICAL_BID_INSTRUCTION",
+                defaults={
+                    'summary': "Right Hand Sidebar - Historical Bid Message",
+                    'description': historic_bid_msg})
+        context['right_side_intro'] = right_side_msg[0].description
     else:
         context = {'standard_context': standard_context}
     return render(request, 'gbe/landing_page.tmpl', context)

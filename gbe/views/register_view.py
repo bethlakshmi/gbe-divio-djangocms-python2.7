@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.shortcuts import render
 from gbe_logging import log_func
 from gbe.forms import UserCreateForm
+from gbetext import register_msg
+from gbe.models import UserMessage
 
 
 @log_func
@@ -35,4 +37,11 @@ def RegisterView(request):
                                                 urlconf='gbe.urls'))
     else:
         form = UserCreateForm()
-    return render(request, 'gbe/register.tmpl', {'form': form})
+    return render(request, 'gbe/register.tmpl', {
+        'form': form,
+        'instructions': UserMessage.objects.get_or_create(
+            view="RegisterView",
+            code="REGISTRATION_INSTRUCTIONS",
+            defaults={
+                'summary': "Instructions for Registration",
+                'description': register_msg})[0].description})
