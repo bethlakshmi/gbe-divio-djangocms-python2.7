@@ -31,6 +31,7 @@ from settings import GBE_DATE_FORMAT
 from gbetext import (
     create_ticket_event_success_msg,
     link_event_to_ticket_success_msg,
+    no_tickets_found_msg,
 )
 from mock import patch, Mock
 import urllib
@@ -478,7 +479,11 @@ class TestTicketedEventWizard(TestScheduling):
                 data['event_id'],
                 "GBE10 Whole Shebang 2016")
             )
-
+        assert_alert_exists(
+            response,
+            'warning',
+            "Warning",
+            no_tickets_found_msg)
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_make_and_sync_new_ticket(self, m_urlopen):

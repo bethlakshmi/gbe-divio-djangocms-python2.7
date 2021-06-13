@@ -18,6 +18,7 @@ from gbe.functions import validate_perms
 from gbetext import (
     create_ticket_event_success_msg,
     link_event_to_ticket_success_msg,
+    no_tickets_found_msg,
 )
 from gbe_forms_text import event_settings
 from datetime import timedelta
@@ -69,13 +70,13 @@ class TicketedEventWizardView(EventWizardView):
                 user_message[0].description + ticket_list)
 
         if ticket_form.cleaned_data['event_id']:
-            ticket_event, msg, is_success = create_ticketing_event(
+            ticket_event, ticket_count = create_ticketing_event(
                 ticket_form.cleaned_data['event_id'],
                 conference=self.conference,
                 events=[new_event],
                 display_icon=ticket_form.cleaned_data['display_icon'],
             )
-            if is_success:
+            if ticket_event:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="NEW_TICKETING_EVENT",
@@ -86,9 +87,16 @@ class TicketedEventWizardView(EventWizardView):
                     user_message[0].description,
                     ticket_event.event_id,
                     ticket_event.title))
-                messages.success(request, msg)
-            else:
-                messages.error(request, msg)
+            if ticket_count == 0:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="NO_TICKETS_FOR_EVENT",
+                    defaults={
+                        'summary': "Tickets not found for BPT Event",
+                        'description': no_tickets_found_msg, })
+                messages.warning(
+                    request,
+                    user_message[0].description)
 
     @never_cache
     @method_decorator(login_required)

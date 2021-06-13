@@ -581,6 +581,9 @@ intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
 intro_ticket_assign_message = '''This grid shows what tickets are connected \
 to which GBE event.'''
+no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
+Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
+tickets listed, users will be unable to purchase entrance to this event.'''
 org_id_instructions = '''The organization id has not been defined.  Go to \
 admin and set one of the following ids in the EventbriteSettings for \
 'organization_id' for debug or live.  Only events for this organization \

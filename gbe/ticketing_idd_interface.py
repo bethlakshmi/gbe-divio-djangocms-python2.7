@@ -22,10 +22,8 @@ from gbe.models import (
 )
 from scheduler.idd import get_roles
 from ticketing.brown_paper import *
-from ticketing.functions import (
-    get_fee_list,
-    import_ticket_items,
-)
+from ticketing.functions import get_fee_list
+from ticketing.brown_paper import import_bpt_ticket_items
 from django.db.models import Count
 from django.db.models import Q
 from datetime import datetime
@@ -196,8 +194,8 @@ def create_ticketing_event(event_id, conference, events=[], display_icon=None):
     if len(events) > 0:
         event.linked_events.add(*events)
     event.save()
-    msg, is_success = import_ticket_items(event)
-    return event, msg, is_success
+    count = import_bpt_ticket_items([event])
+    return event, count
 
 
 def get_ticket_form(bid_type, conference, post=None):
