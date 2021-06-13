@@ -249,14 +249,14 @@ def process_bpt_order_list():
     # Recheck to see if any emails match to users now.  For example, if
     # a new user created a profile after purchasing a ticket.
 
-    bpt_match_existing_purchasers_using_email()
+    match_existing_purchasers_using_email()
 
     if count > 0:
         set_bpt_last_poll_time()
     return count
 
 
-def bpt_match_existing_purchasers_using_email():
+def match_existing_purchasers_using_email():
     '''
     Function goes through all of the purchasers in the system, and if
     the purchasers is currently set to the "limbo" user (indicating

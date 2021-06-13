@@ -70,7 +70,7 @@ class TestListTickets(TestCase):
         # test case for debug server being different, w no events to sync
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
+        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory(system=0)
         empty_event_dict = copy.deepcopy(event_dict)
         empty_event_dict['events'] = []

@@ -9,6 +9,7 @@ from ticketing.models import (
     TicketingEvents,
     BrownPaperSettings,
     EventbriteSettings,
+    Purchaser,
     Transaction
 )
 from tests.factories.ticketing_factories import (
@@ -97,6 +98,27 @@ class TestTransactions(TestCase):
                                 1))
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_match_prior_purchaser(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory(active_sync=False)
+        EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+
+        limbo, created = User.objects.get_or_create(username='limbo')
+        purchaser = PurchaserFactory(matched_to_user=limbo)
+        user = UserFactory(email=purchaser.email)
+        m_eventbrite.return_value = order_dict
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        print(response.content)
+        test_purchaser = Purchaser.objects.get(pk=purchaser.pk)
+        self.assertEqual(test_purchaser.matched_to_user, user)
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_pagination(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
@@ -169,7 +191,8 @@ class TestTransactions(TestCase):
                                 import_transaction_message,
                                 1))
 
-    def test_transactions_sync_eb_bad_auth_token(self):
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_bad_auth_token(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
@@ -177,6 +200,11 @@ class TestTransactions(TestCase):
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+ 
+        m_eventbrite.side_effect = [{
+            "status_code": 401,
+            "error_description": "The OAuth token you provided was invalid.",
+            "error": "NOT_AUTH"}]
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})

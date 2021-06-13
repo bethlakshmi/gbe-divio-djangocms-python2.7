@@ -19,7 +19,10 @@ from gbetext import (
     import_transaction_message,
     sync_off_instructions,
 )
-from ticketing.brown_paper import attempt_match_purchaser_to_user
+from ticketing.brown_paper import (
+    attempt_match_purchaser_to_user,
+    match_existing_purchasers_using_email,
+)
 
 
 def eventbrite_error_create(response):
@@ -202,6 +205,9 @@ def process_eb_purchases():
 
     if not proceed:
         return return_tuple
+
+    # sync up any prior purchasers who may have setup accounts after purchase
+    match_existing_purchasers_using_email() 
 
     for event in TicketingEvents.objects.exclude(
             conference__status='completed').filter(source=2):
