@@ -207,7 +207,7 @@ def process_eb_purchases():
         return return_tuple
 
     # sync up any prior purchasers who may have setup accounts after purchase
-    match_existing_purchasers_using_email() 
+    match_existing_purchasers_using_email()
 
     for event in TicketingEvents.objects.exclude(
             conference__status='completed').filter(source=2):

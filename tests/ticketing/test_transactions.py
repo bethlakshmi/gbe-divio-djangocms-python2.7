@@ -200,7 +200,7 @@ class TestTransactions(TestCase):
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
- 
+
         m_eventbrite.side_effect = [{
             "status_code": 401,
             "error_description": "The OAuth token you provided was invalid.",
