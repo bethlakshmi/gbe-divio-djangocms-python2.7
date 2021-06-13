@@ -61,15 +61,13 @@ class TestTransactions(TestCase):
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
         BrownPaperSettingsFactory()
-        eb_set = EventbriteSettingsFactory()
+        EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
-        ticket = TicketItemFactory(ticketing_event=event, ticket_id='11111')
 
         m_eventbrite.return_value = order_dict
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        print(response.content)
         assert_alert_exists(response,
                             'danger',
                             'Error',
@@ -81,7 +79,7 @@ class TestTransactions(TestCase):
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
         BrownPaperSettingsFactory()
-        eb_set = EventbriteSettingsFactory()
+        EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
 
@@ -103,7 +101,7 @@ class TestTransactions(TestCase):
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
         BrownPaperSettingsFactory()
-        eb_set = EventbriteSettingsFactory()
+        EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
         purchaser = PurchaserFactory()
@@ -126,7 +124,7 @@ class TestTransactions(TestCase):
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
         BrownPaperSettingsFactory()
-        eb_set = EventbriteSettingsFactory()
+        EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
         profile = ProfileFactory()

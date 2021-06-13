@@ -95,19 +95,6 @@ def get_bpt_client_id():
     return None
 
 
-def get_bpt_last_poll_time():
-    '''
-    Used to obtain the last time the system poled BPT for transactions.
-
-    Returns: the last poll time, or None if it doesn't exist.
-    '''
-
-    if BrownPaperSettings.objects.exists():
-        settings = BrownPaperSettings.objects.first()
-        return settings.last_poll_time
-    return None
-
-
 def set_bpt_last_poll_time():
     '''
     Used to set the last time the system poled BPT for transactions

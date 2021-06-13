@@ -9,10 +9,7 @@ from ticketing.models import (
   Purchaser,
   Transaction,
 )
-from ticketing.brown_paper import (
-    get_bpt_last_poll_time,
-    process_bpt_order_list,
-)
+from ticketing.brown_paper import process_bpt_order_list
 from ticketing.eventbrite import process_eb_purchases
 from django.shortcuts import render
 from gbe.models import UserMessage
