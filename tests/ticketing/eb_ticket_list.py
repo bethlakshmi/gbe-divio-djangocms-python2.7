@@ -158,7 +158,7 @@ ticket_dict2 = {
                 "value": 0,
                 "major_value": "0.00"
             },
-            "resource_uri": "https://www.eventbriteapi.com/v3/events/158717222485/ticket_classes/789789789/",
+            "resource_uri": "https://www.eventbriteapi.com/v3/events/158717222485/ticket_classes/3255985/",
             "display_name": "Regular Price",
             "name": "Regular Price",
             "description": None,
