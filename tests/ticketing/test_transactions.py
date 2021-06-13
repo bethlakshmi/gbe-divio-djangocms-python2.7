@@ -1,5 +1,10 @@
+import copy
+from mock import patch, Mock
+import urllib
 from django.core.files import File
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
     BrownPaperSettings,
@@ -25,10 +30,6 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     UserFactory,
 )
-from mock import patch, Mock
-import urllib
-from django.shortcuts import get_object_or_404
-from django.urls import reverse
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     grant_privilege,
@@ -78,13 +79,39 @@ class TestTransactions(TestCase):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
+        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
 
         limbo, created = User.objects.get_or_create(username='limbo')
         m_eventbrite.return_value = order_dict
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s  Transactions imported: %d -- Eventbrite" % (
+                                import_transaction_message,
+                                1))
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_pagination(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+
+        limbo, created = User.objects.get_or_create(username='limbo')
+        continue_order_page = copy.deepcopy(order_dict)
+        continue_order_page['pagination']['has_more_items'] = True
+        continue_order_page['pagination']['continuation'] = "eyJwYWdlIjogMn0"
+        m_eventbrite.side_effect = [continue_order_page,
+                                    order_dict]
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
@@ -135,7 +162,6 @@ class TestTransactions(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        print(response.content)
         assert_alert_exists(response,
                             'success',
                             'Success',

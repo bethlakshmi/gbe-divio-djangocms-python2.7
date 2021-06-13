@@ -1,6 +1,14 @@
 import copy
 import eventbrite
 from django.core.files import File
+from django.test import TestCase
+from django.test import Client
+from django.test.utils import override_settings
+from mock import patch, Mock
+import urllib
+from django.shortcuts import get_object_or_404
+from decimal import Decimal
+from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
     BrownPaperSettings,
@@ -12,21 +20,14 @@ from tests.factories.ticketing_factories import (
     TicketItemFactory,
     TicketingEventsFactory,
 )
-from django.test import TestCase
-from django.test import Client
-from ticketing.views import ticket_items
 from tests.factories.gbe_factories import (
     ProfileFactory,
     ShowFactory,
 )
-from mock import patch, Mock
-import urllib
-from django.shortcuts import get_object_or_404
-from decimal import Decimal
-from django.urls import reverse
 from gbetext import (
     eventbrite_error,
     no_settings_error,
+    org_id_instructions,
 )
 from tests.ticketing.eb_event_list import event_dict
 from tests.ticketing.eb_ticket_list import (
@@ -34,6 +35,7 @@ from tests.ticketing.eb_ticket_list import (
     ticket_dict2,
     ticket_dict3
 )
+from tests.ticketing.eb_organizations import org_dict
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     grant_privilege,
@@ -61,6 +63,65 @@ class TestListTickets(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data)
         return response
+
+    @override_settings(DEBUG=True)
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_get_eb_debug_server(self, m_eventbrite):
+        # test case for debug server being different, w no events to sync
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        BrownPaperSettingsFactory()
+        EventbriteSettingsFactory(system=0)
+        empty_event_dict = copy.deepcopy(event_dict)
+        empty_event_dict['events'] = []
+        m_eventbrite.side_effect = [empty_event_dict]
+
+        response = self.import_tickets()
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            ("EventBrite: Successfully imported %d events, %d tickets, " +
+             "BPT: imported %d tickets") % (0, 0, 0))
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_get_eb_no_org(self, m_eventbrite):
+        # privileged user gets the inventory of tickets from (fake) EB
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        event = TicketingEventsFactory()
+        BrownPaperSettingsFactory()
+        EventbriteSettingsFactory(organization_id=None)
+
+        m_eventbrite.side_effect = [org_dict]
+
+        response = self.import_tickets()
+        assert_alert_exists(
+            response,
+            'danger',
+            'Error',
+            "%s<br>%s - %s" % (org_id_instructions, "547440371489", "GBE Dev"))
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_get_eb_org_fail(self, m_eventbrite):
+        # privileged user gets the inventory of tickets from (fake) EB
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        event = TicketingEventsFactory()
+        BrownPaperSettingsFactory()
+        EventbriteSettingsFactory(organization_id=None)
+
+        m_eventbrite.side_effect = [{
+            "status_code": 403,
+            "error_description": "Made up error",
+            "error": "NOT_ALLOWED"}]
+
+        response = self.import_tickets()
+        assert_alert_exists(
+            response,
+            'danger',
+            'Error',
+            eventbrite_error % (403, "Made up error"))
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_get_eb_inventory(self, m_eventbrite):
