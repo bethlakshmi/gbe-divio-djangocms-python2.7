@@ -27,7 +27,7 @@ class UserCreateForm(UserCreationForm):
 
         if valid:
             email = self.cleaned_data['email']
-            if User.objects.filter(email=email).count():
+            if User.objects.filter(email__iexact=email).count():
                 self._errors['email'] = 'That email address is already in use'
                 valid = False
         return valid
