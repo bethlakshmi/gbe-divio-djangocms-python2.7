@@ -11,6 +11,7 @@ from gbe_forms_text import (
 )
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
+from gbe.functions import check_forum_spam
 
 
 class UserCreateForm(UserCreationForm):
@@ -30,6 +31,9 @@ class UserCreateForm(UserCreationForm):
             if User.objects.filter(email__iexact=email).count():
                 self._errors['email'] = 'That email address is already in use'
                 valid = False
+            elif check_forum_spam(self.cleaned_data['email']):
+                self._errors['email'] = 'That email address is not accepted'
+                valid = False 
         return valid
 
     class Meta:

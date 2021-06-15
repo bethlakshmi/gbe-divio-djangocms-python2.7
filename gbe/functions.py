@@ -21,8 +21,11 @@ from gbetext import (
     full_login_msg,
 )
 import json
+import urllib
 from settings import GBE_DATETIME_FORMAT
 from django.db.models import Q
+import xml.etree.ElementTree as et
+import html
 
 
 def jsonify(data):
@@ -171,3 +174,14 @@ def get_ticketable_gbe_events(conference_slug=None):
         return event_set.filter(e_conference__conference_slug=conference_slug)
     else:
         return event_set.exclude(e_conference__status="completed")
+
+def check_forum_spam(email):
+    found_it = False
+    req = urllib.request.Request(
+        "http://api.stopforumspam.org/api?email=%s" % email)
+    res = urllib.request.urlopen(req)
+    xml_tree = et.fromstring(res.read())
+    was_seen = html.unescape(xml_tree.find('.//appears').text)
+    if was_seen == "yes":
+        found_it = True
+    return found_it
