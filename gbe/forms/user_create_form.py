@@ -12,6 +12,10 @@ from gbe_forms_text import (
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
 from gbe.functions import check_forum_spam
+from gbetext import (
+    email_in_use_msg,
+    found_on_list_msg,
+)
 
 
 class UserCreateForm(UserCreationForm):
@@ -24,15 +28,28 @@ class UserCreateForm(UserCreationForm):
     verification = ReCaptchaField(widget=ReCaptchaWidget())
 
     def is_valid(self):
+        from gbe.models import UserMessage
         valid = super(UserCreateForm, self).is_valid()
 
         if valid:
             email = self.cleaned_data['email']
             if User.objects.filter(email__iexact=email).count():
-                self._errors['email'] = 'That email address is already in use'
+                self._errors['email'] = UserMessage.objects.get_or_create(
+                    view="RegisterView",
+                    code="EMAIL_IN_USE",
+                    defaults={
+                        'summary': "User with Email Exists",
+                        'description': email_in_use_msg
+                        })[0].description
                 valid = False
             elif check_forum_spam(self.cleaned_data['email']):
-                self._errors['email'] = 'That email address is not accepted'
+                self._errors['email'] = UserMessage.objects.get_or_create(
+                    view="RegisterView",
+                    code="FOUND_IN_FORUMSPAM",
+                    defaults={
+                        'summary': "User on Stop Forum Spam",
+                        'description': found_on_list_msg
+                        })[0].description
                 valid = False 
         return valid
 
