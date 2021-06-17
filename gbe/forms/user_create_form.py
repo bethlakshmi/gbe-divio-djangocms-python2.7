@@ -50,7 +50,7 @@ class UserCreateForm(UserCreationForm):
                         'summary': "User on Stop Forum Spam",
                         'description': found_on_list_msg
                         })[0].description
-                valid = False 
+                valid = False
         return valid
 
     class Meta:

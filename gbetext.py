@@ -548,9 +548,8 @@ able to see your profile information. If you're teaching, the conference \
 committee members and staff will be able to see your profile information, \
 etc.).'''
 email_in_use_msg = 'That email address is already in use'
-found_on_list_msg = '''Your email has been found on stopforumspam.com and \
-is not acceptable to this site.  Either work with the forum to remove your 
-email or contact our administrators for assistance.'''
+found_on_list_msg = '''This is not an acceptable email.  Please contact us \
+if this is the email you wish to use.'''
 send_link_message = '''This site could not verify the email unsubscribe link. \
 Please enter your email and a new link will be mailed to you.'''
 admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\
