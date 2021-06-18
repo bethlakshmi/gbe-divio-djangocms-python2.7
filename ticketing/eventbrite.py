@@ -91,12 +91,11 @@ def get_cost(eb_entity):
     return cost
 
 
-def load_tickets(eventbrite, ticketing_events=None):
+def load_tickets(eventbrite):
     ti_count = 0
     msg = ""
-    if not ticketing_events:
-        ticketing_events = TicketingEvents.objects.exclude(
-            conference__status="completed").filter(source=2)
+    ticketing_events = TicketingEvents.objects.exclude(
+        conference__status="completed").filter(source=2)
     for event in ticketing_events:
         has_more_items = True
         continuation_token = ""
