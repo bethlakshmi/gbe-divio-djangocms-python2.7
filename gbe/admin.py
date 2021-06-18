@@ -251,6 +251,16 @@ class BusinessAdmin(admin.ModelAdmin):
     def show_owners(self, obj):
         return obj.show_owners(False)
 
+
+class FlexAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'bid',
+        'category',
+        'evaluator',
+        'ranking')
+
+
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
 admin.site.register(Biddable, BidAdmin)
@@ -263,6 +273,7 @@ admin.site.register(Costume, BidAdmin)
 admin.site.register(EvaluationCategory, EvalCategoryAdmin)
 admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
 admin.site.register(Event, EventAdmin)
+admin.site.register(FlexibleEvaluation, FlexAdmin)
 admin.site.register(GenericEvent, GenericAdmin)
 admin.site.register(PerformerFestivals)
 admin.site.register(Performer, PerformerAdmin)

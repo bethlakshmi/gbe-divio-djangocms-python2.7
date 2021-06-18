@@ -47,7 +47,7 @@ class ReviewActListView(ReviewBidListView):
                     flexibleevaluation__bid=bid,
                     flexibleevaluation__ranking__gt=-1
                     ).aggregate(Avg('flexibleevaluation__ranking'))
-                if average['flexibleevaluation__ranking__avg']:
+                if average['flexibleevaluation__ranking__avg'] is not None:
                     bid_row['reviews'] += [round(
                         average['flexibleevaluation__ranking__avg'], 2)]
                     total_average += average[
