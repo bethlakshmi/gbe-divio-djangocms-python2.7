@@ -14,13 +14,10 @@ def import_ticket_items():
         msg = "0"
         is_success = True
         msg, is_success = import_eb_ticket_items()
-        if not is_success:
-            return msg, is_success
         count = import_bpt_ticket_items()
 
-        return "EventBrite: %s, BPT: imported %d tickets" % (
-            msg,
-            count), is_success
+        return [(msg, is_success), 
+                ("BPT: imported %d tickets" % count, True)]
 
 
 def get_tickets(linked_event, most=False, conference=False):

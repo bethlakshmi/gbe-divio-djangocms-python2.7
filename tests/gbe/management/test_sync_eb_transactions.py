@@ -36,7 +36,6 @@ class TestSyncEBTransactions(TestCase):
         out = StringIO()
         call_command("sync_eb_transactions", stdout=out)
         response = out.getvalue()
-        print(response)
         self.assertIn(
             "Successfully imported %d events, %d tickets" % (3, 6),
             response)

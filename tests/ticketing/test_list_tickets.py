@@ -77,12 +77,10 @@ class TestListTickets(TestCase):
         m_eventbrite.side_effect = [empty_event_dict]
 
         response = self.import_tickets()
-        assert_alert_exists(
-            response,
-            'success',
-            'Success',
-            ("EventBrite: Successfully imported %d events, %d tickets, " +
-             "BPT: imported %d tickets") % (0, 0, 0))
+        assert_alert_exists(response, 'success', 'Success', (
+            "Successfully imported %d events, %d tickets") % (0, 0))
+        assert_alert_exists(response, 'success', 'Success', (
+            "BPT: imported %d tickets") % (0))
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_get_eb_no_org(self, m_eventbrite):
@@ -138,12 +136,10 @@ class TestListTickets(TestCase):
                                     ticket_dict3]
 
         response = self.import_tickets()
-        assert_alert_exists(
-            response,
-            'success',
-            'Success',
-            ("EventBrite: Successfully imported %d events, %d tickets, " +
-             "BPT: imported %d tickets") % (3, 6, 0))
+        assert_alert_exists(response, 'success', 'Success', (
+            "Successfully imported %d events, %d tickets") % (3, 6))
+        assert_alert_exists(response, 'success', 'Success', (
+            "BPT: imported %d tickets") % (0))
         ticket = get_object_or_404(TicketItem, ticket_id='987987987')
         self.assertEqual(ticket.cost, Decimal('0.00'))
         ticket = get_object_or_404(TicketItem, ticket_id='098098098')
@@ -167,12 +163,10 @@ class TestListTickets(TestCase):
                                     ticket_dict3]
 
         response = self.import_tickets()
-        assert_alert_exists(
-            response,
-            'success',
-            'Success',
-            ("EventBrite: Successfully imported %d events, %d tickets, " +
-             "BPT: imported %d tickets") % (1, 4, 0))
+        assert_alert_exists(response, 'success', 'Success',(
+            "Successfully imported %d events, %d tickets" % (1, 4)))
+        assert_alert_exists(response, 'success', 'Success', (
+            "BPT: imported %d tickets") % (0))
         ticket = get_object_or_404(TicketItem, ticket_id='987987987')
         self.assertEqual(ticket.cost, Decimal('0.00'))
         ticket = get_object_or_404(TicketItem, ticket_id='098098098')
@@ -240,12 +234,10 @@ class TestListTickets(TestCase):
                                     ticket_dict2,
                                     ticket_dict3]
         response = self.import_tickets()
-        assert_alert_exists(
-            response,
-            'success',
-            'Success',
-            ("EventBrite: Successfully imported %d events, %d tickets, " +
-             "BPT: imported %d tickets") % (3, 6, 0))
+        assert_alert_exists(response, 'success', 'Success', (
+            "Successfully imported %d events, %d tickets" % (3, 6)))
+        assert_alert_exists(response, 'success', 'Success', (
+            "BPT: imported %d tickets" % 0))
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_get_bpt_inventory(self, m_urlopen):
@@ -266,10 +258,14 @@ class TestListTickets(TestCase):
         self.assertEqual(response.status_code, 200)
         assert_alert_exists(
             response,
+            'danger',
+            'Error',
+            no_settings_error)
+        assert_alert_exists(
+            response,
             'success',
             'Success',
-            "EventBrite: %s, BPT: imported %d tickets" % (
-                no_settings_error, 12))
+            "BPT: imported %d tickets" % 12)
         ticket = get_object_or_404(
             TicketItem,
             ticket_id='%s-4513068' % (event.event_id))

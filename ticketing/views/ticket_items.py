@@ -27,11 +27,12 @@ def ticket_items(request, conference_choice=None):
     validate_perms(request, ('Ticketing - Admin', ))
 
     if 'Import' in request.POST:
-        msg, is_success = import_ticket_items()
-        if is_success:
-            messages.success(request, msg)
-        else:
-            messages.error(request, msg)
+        msgs = import_ticket_items()
+        for msg, is_success in msgs:
+            if is_success:
+                messages.success(request, msg)
+            else:
+                messages.error(request, msg)
 
     conference_choice = request.GET.get('conference', None)
     if conference_choice:
