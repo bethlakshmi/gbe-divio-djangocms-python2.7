@@ -265,7 +265,7 @@ def process_eb_purchases():
                                             import_type="EB Transaction")
                         status.save()
                     else:
-                        count = msg + count
+                        count = save_msg + count
                 if has_more_items:
                     continuation_token = "&continuation=%s" % (
                         import_list['pagination']['continuation'])
@@ -301,6 +301,7 @@ def eb_save_orders_to_database(event_id, attendee):
 
         if not TicketItem.objects.filter(
                 ticket_id=attendee['ticket_class_id']).exists():
+            # it's ok this is terminal, it's the lowest layer of loop
             return "Ticket Item for id %s does not exist" % (
                 attendee['ticket_class_id']), False
 

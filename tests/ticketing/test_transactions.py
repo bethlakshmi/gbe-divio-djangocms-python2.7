@@ -10,6 +10,7 @@ from ticketing.models import (
     BrownPaperSettings,
     EventbriteSettings,
     Purchaser,
+    SyncStatus,
     Transaction
 )
 from tests.factories.ticketing_factories import (
@@ -62,6 +63,7 @@ class TestTransactions(TestCase):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
+        SyncStatus.objects.all().delete()
         BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
@@ -74,12 +76,21 @@ class TestTransactions(TestCase):
                             'danger',
                             'Error',
                             "Ticket Item for id 3255985 does not exist")
+        error_status = SyncStatus.objects.filter(is_success=False).first()
+        success_status = SyncStatus.objects.filter(is_success=True).first()
+        self.assertEqual(error_status.error_msg,
+                         "Ticket Item for id 3255985 does not exist")
+        self.assertEqual(success_status.import_type,
+                         "EB Transaction")
+        self.assertEqual(success_status.import_number,
+                         0)
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_only(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
+        SyncStatus.objects.all().delete()
         BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
@@ -96,6 +107,11 @@ class TestTransactions(TestCase):
                             "%s  Transactions imported: %d -- Eventbrite" % (
                                 import_transaction_message,
                                 1))
+        success_status = SyncStatus.objects.filter(is_success=True).first()
+        self.assertEqual(success_status.import_type,
+                         "EB Transaction")
+        self.assertEqual(success_status.import_number,
+                         1)
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_match_prior_purchaser(self, m_eventbrite):
@@ -347,7 +363,7 @@ class TestTransactions(TestCase):
                             "%s   Transactions imported: %s - BPT" % (
                                 import_transaction_message,
                                 "1"))
-        assert_alert_exists(response, 'success', 'Success', no_settings_error)
+        assert_alert_exists(response, 'danger', 'Error', no_settings_error)
 
     def test_transactions_sync_no_sources_on(self):
         TicketingEvents.objects.all().delete()
