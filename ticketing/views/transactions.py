@@ -45,11 +45,12 @@ def transactions(request):
     error = ''
 
     if ('Sync' in request.POST):
-        msg, is_success = process_eb_purchases()
-        if is_success:
-            messages.success(request, msg)
-        else:
-            messages.error(request, msg)
+        msgs = process_eb_purchases()
+        for msg, is_success in msgs:
+            if is_success:
+                messages.success(request, msg)
+            else:
+                messages.error(request, msg)
         count = process_bpt_order_list()
         success_msg = UserMessage.objects.get_or_create(
           view="ViewTransactions",

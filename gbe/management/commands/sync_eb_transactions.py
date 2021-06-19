@@ -15,6 +15,7 @@ class Command(BaseCommand):
         msg, is_success = import_eb_ticket_items()
         logger.info(msg)
         self.stdout.write(msg)
-        msg, is_success = process_eb_purchases()
-        logger.info(msg)
-        self.stdout.write(msg)
+        msgs = process_eb_purchases()
+        for msg, is_success in msgs:
+            logger.info(msg)
+            self.stdout.write(msg)

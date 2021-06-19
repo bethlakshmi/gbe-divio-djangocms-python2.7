@@ -147,6 +147,16 @@ class TicketEligibilityConditionAdmin(admin.ModelAdmin):
     ]
 
 
+class SyncStatusAdmin(admin.ModelAdmin):
+    list_display = ('pk',
+                    'is_success',
+                    'import_type',
+                    'import_number',
+                    'error_msg',
+                    'created_at',
+                    'updated_at')
+
+
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
@@ -159,3 +169,4 @@ admin.site.register(TicketingEligibilityCondition,
 admin.site.register(RoleEligibilityCondition,
                     EligibilityConditionAdmin)
 admin.site.register(CheckListItem)
+admin.site.register(SyncStatus, SyncStatusAdmin)

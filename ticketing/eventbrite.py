@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from ticketing.models import (
     EventbriteSettings,
     Purchaser,
+    SyncStatus,
     TicketingEvents,
     TicketItem,
     Transaction,
@@ -53,7 +54,7 @@ def setup_eb_api():
             defaults={
                 'summary': "Instructions to Set Eventbrite Oauth",
                 'description': no_settings_error}
-            )[0].description, True), None, None
+            )[0].description, False), None, None
 
     if not eb_settings.active_sync:
         return False, (UserMessage.objects.get_or_create(
@@ -179,10 +180,34 @@ def import_eb_ticket_items():
         return return_tuple
     event_count, msg = load_events(eventbrite, settings.organization_id)
     if len(msg) > 0:
+        status = SyncStatus(is_success=False,
+                            error_msg=msg,
+                            import_type="EB Event",
+                            import_number=event_count)
+        status.save()
         return msg, False
+    else:
+        status, created = SyncStatus.objects.get_or_create(
+            is_success=True,
+            import_type="EB Event")
+        status.import_number = event_count
+        status.save()
+
     tickets_count, msg = load_tickets(eventbrite)
     if len(msg) > 0:
+        status = SyncStatus(is_success=False,
+                            error_msg=msg,
+                            import_type="EB Ticket",
+                            import_number=tickets_count)
+        status.save()
         return msg, False
+    else:
+        status, created = SyncStatus.objects.get_or_create(
+            is_success=True,
+            import_type="EB Ticket")
+        status.import_number = tickets_count
+        status.save()
+
     return "Successfully imported %d events, %d tickets" % (
         event_count,
         tickets_count), True
@@ -199,11 +224,11 @@ def process_eb_purchases():
     from gbe.models import UserMessage
     eventbrite = None
     settings = None
-    msg = "No message available"
+    msgs = []
     proceed, return_tuple, eventbrite, settings = setup_eb_api()
 
     if not proceed:
-        return return_tuple
+        return [return_tuple]
 
     # sync up any prior purchasers who may have setup accounts after purchase
     match_existing_purchasers_using_email()
@@ -219,31 +244,46 @@ def process_eb_purchases():
                     continuation_token))
             if 'attendees' not in import_list.keys():
                 has_more_items = False
-                if import_list['status_code'] != 404:
-                    return eventbrite_error_create(import_list), False
+                eb_msg = eventbrite_error_create(import_list)
+                msgs += [(eb_msg, False)]
+                status = SyncStatus(
+                    is_success=False,
+                    error_msg=eb_msg,
+                    import_type="EB Transaction")
+                status.save()
             else:
                 has_more_items = import_list['pagination']['has_more_items']
                 for attendee in import_list['attendees']:
-                    msg, is_success = eb_save_orders_to_database(
+                    save_msg, is_success = eb_save_orders_to_database(
                         event.event_id,
                         attendee)
                     if not is_success:
-                        return msg, False
+                        msgs += [(save_msg, False)]
+
+                        status = SyncStatus(is_success=False,
+                                            error_msg=save_msg,
+                                            import_type="EB Transaction")
+                        status.save()
                     else:
                         count = msg + count
                 if has_more_items:
                     continuation_token = "&continuation=%s" % (
                         import_list['pagination']['continuation'])
-
     success_msg = UserMessage.objects.get_or_create(
-        view="ViewTransactions",
-        code="IMPORT_EB_MESSAGE",
-        defaults={'summary': "Import EB Transactions Message",
-                  'description': import_transaction_message})
+            view="ViewTransactions",
+            code="IMPORT_EB_MESSAGE",
+            defaults={'summary': "Import EB Transactions Message",
+                      'description': import_transaction_message})
     msg = "%s  Transactions imported: %d -- Eventbrite" % (
         success_msg[0].description,
         count)
-    return msg, True
+    status, created = SyncStatus.objects.get_or_create(
+        is_success=True,
+        import_type="EB Transaction")
+    status.import_number = count
+    status.save()
+    msgs += [(msg, True)]
+    return msgs
 
 
 def eb_save_orders_to_database(event_id, attendee):
