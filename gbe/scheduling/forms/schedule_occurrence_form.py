@@ -49,7 +49,7 @@ class ScheduleOccurrenceForm(Form):
                           label=schedule_occurrence_labels['duration'])
     location = ModelChoiceField(
         queryset=Room.objects.all().order_by('name'))
-    max_volunteer = IntegerField(required=True, initial=0)
+    max_volunteer = IntegerField(required=True, initial=0, min_value=0)
     occurrence_id = IntegerField(required=False, widget=HiddenInput())
     approval = BooleanField(
         initial=False,

@@ -214,8 +214,8 @@ class TestEditVolunteer(TestGBE):
             True)
         self.assertContains(
             response,
-            '<input type="number" name="max_volunteer" value="3" ' +
-            'required id="id_max_volunteer" />',
+            '<input type="number" name="max_volunteer" value="3" min="0" ' +
+            'required id="id_max_volunteer">',
             html=True)
         self.assertContains(
             response,

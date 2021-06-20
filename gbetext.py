@@ -515,6 +515,11 @@ and last name, a name we can use on your badge, and a phone number we can \
 use to notify you of changes to the schedule at run time.'''
 no_login_msg = '''Please set up and account and give us some ways to \
 contact you, or login, if you already have an account.'''
+register_msg = '''In order to do most other things at The Expo, we need you \
+to register for a free account.  If you're planning on applying to perform, \
+want to teach, or are going to be a vendor or a volunteer, you need to \
+register.  You do <b>not</b> need to register if all you're doing is \
+buying tickets.'''
 full_login_msg = '''%s - <a href="%s">Login</a>'''
 default_deactivate_profile_admin_msg = '''This user is involved in one or \
 more activities on this site.  To protect unintended changes, the user was \
@@ -554,6 +559,9 @@ admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\
  Paper Tickets purchase was made under a different email.  Please handle email\
  information with care and do not distribute or use for any purpose outside of\
  Expo communication.'''
+email_template_instruction = '''HTML entered in this form will be transformed \
+into plain text for email systems which require text-only messages. Any links \
+will be removed, so be sure give readers some context for any links.'''
 save_email_template_success_msg = '''The email template has been saved.  \
 Your updates will be applied to all future automated messages using this \
 template.  The Email Template name is '''
@@ -649,6 +657,11 @@ a valid ticket or pass to attend the class or the conference.<br><br>Want \
 more interested attendees?  We fully endorse shameless promotion! Post your \
 event page to your fans on social media, email, your website or anywhere and \
 get the word out!'''
+current_bid_msg = '''We are only showing bids for the current conference. \
+If you have proposed acts, classes, or vendors in previous click below.'''
+historic_bid_msg = '''These bids are not currently available for \
+consideration. Click the "clone" button to re-submit an act, class, or vendor \
+bid in the current conference.'''
 interested_report_explain_msg = '''This list includes all scheduled \
 classes and provides a count of how many logged in users have shown interest \
 in the class.  Interest does not reflect a firm commitment, nor does it \

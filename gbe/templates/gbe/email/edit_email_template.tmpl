@@ -16,9 +16,7 @@
   <p class="gbe-form-error">{{error}}</p>
 {% endfor %}{% endif %}
 <p>
-HTML entered in this form will be transformed into plain text for email
-systems which require text-only messages.  Any links will be removed, so be
-sure give readers some context for any links.
+{{instructions}}
 </p>
 {% if description %}
 <div class="card round gbe-panel-list mx-2 my-4">
@@ -31,12 +29,7 @@ sure give readers some context for any links.
 
    {% include "form_table_wrapper.tmpl" %}
 
-   {% if nodraft %}
-    <input type="submit" class="btn gbe-btn-primary float-right" name="submit" value="{{nodraft}}">
-   {% else %}
-   <input type="submit" class="btn gbe-btn-secondary float-right" name="draft" value="Save Draft">
-   <input type="submit" class="btn gbe-btn-primary float-right" name="submit" value="Submit For Approval">
-   {% endif %}
+<input type="submit" class="btn gbe-btn-primary float-right" name="submit" value="{{submit_button}}">
    </form>
 
 {% endblock %}

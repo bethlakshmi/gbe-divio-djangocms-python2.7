@@ -16,6 +16,7 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    email_template_instruction,
     save_email_template_success_msg,
     unsub_footer_include,
     unsub_footer_plain_include,
@@ -70,7 +71,14 @@ class EditTemplateView(View):
     def make_context(self):
         context = {
             'forms': [self.form],
-            'nodraft': self.submit_button,
+            'submit_button': self.submit_button,
+            'instructions': UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="TEMPLATE_INSTRUCTIONS",
+                defaults={
+                    'summary': "Email Template Instructions",
+                    'description': email_template_instruction}
+                )[0].description,
             'page_title': self.page_title,
             'view_title': self.view_title}
         if self.template:
