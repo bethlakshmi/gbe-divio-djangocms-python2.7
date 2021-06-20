@@ -21,8 +21,13 @@ from gbetext import (
     full_login_msg,
 )
 import json
+import urllib
 from settings import GBE_DATETIME_FORMAT
 from django.db.models import Q
+import xml.etree.ElementTree as et
+import html
+from gbe_logging import logger
+import sys
 
 
 def jsonify(data):
@@ -171,3 +176,33 @@ def get_ticketable_gbe_events(conference_slug=None):
         return event_set.filter(e_conference__conference_slug=conference_slug)
     else:
         return event_set.exclude(e_conference__status="completed")
+
+
+def check_forum_spam(email):
+    from gbe.email.functions import notify_admin_on_error
+    activity = "Email Spam Check"
+    found_it = False
+    try:
+        url = "http://api.stopforumspam.org/api?email=%s"
+        req = urllib.request.Request(url % email)
+        res = urllib.request.urlopen(req)
+        xml_tree = et.fromstring(res.read())
+        was_seen = html.unescape(xml_tree.find('.//appears').text)
+        if was_seen == "yes":
+            found_it = True
+    except urllib.error.URLError as io_error:
+        logger.error('Could not perform email check:  %s' % io_error.reason)
+        notify_admin_on_error(
+            activity,
+            ('Could not perform email check (failed open):  %s calling %s ' +
+             'to verify email %s') % (io_error.reason, url, email),
+            reverse('register', urlconf='gbe.urls'))
+    except:
+        logger.error(
+            'Could not perform BPT call.  Reason: %s ' % (sys.exc_info()[0]))
+        notify_admin_on_error(
+            activity,
+            ('Could not perform email check (failed open):  %s calling %s ' +
+             'to verify email %s') % (sys.exc_info()[0], url, email),
+            reverse('register', urlconf='gbe.urls'))
+    return found_it

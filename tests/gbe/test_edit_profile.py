@@ -21,6 +21,11 @@ from gbetext import (
     default_update_profile_msg,
     email_pref_note,
 )
+from mock import patch, Mock
+import urllib
+from django.core.files import File
+from gbetext import found_on_list_msg
+from django.conf import settings
 
 
 class TestEditProfile(TestCase):
@@ -136,23 +141,41 @@ class TestEditProfile(TestCase):
             html=True)
         self.assertContains(response, email_pref_note.replace("'", "&#x27;"))
 
-    def test_update_profile_post_empty_display_name(self):
+    @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_post_empty_display_name(self, m_urlopen):
         data = self.get_form()
         data['display_name'] = ""
         data['purchase_email'] = ""
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+
         response = self.post_profile(form=data)
         self.assertContains(
             response,
             "%s %s" % (data['first_name'].title(),
                        data['last_name'].title()))
 
-    def test_update_profile_post_cleanup_display_name(self):
+    @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_post_cleanup_display_name(self, m_urlopen):
         data = self.get_form()
         data['display_name'] = " trim me   nocaps"
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+
         response = self.post_profile(form=data)
         self.assertContains(response, "Trim Me Nocaps")
 
-    def test_update_profile_post_valid_form(self):
+    @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_post_valid_form(self, m_urlopen):
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+
         response = self.post_profile()
         self.assertContains(response, "Your Account")
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
@@ -160,11 +183,17 @@ class TestEditProfile(TestCase):
         self.assertTrue(preferences.send_daily_schedule)
         self.assertFalse(preferences.send_bid_notifications)
 
-    def test_update_profile_post_valid_redirect(self):
+    @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_post_valid_redirect(self, m_urlopen):
         context = VolunteerContext()
         context.conference.accepting_bids = True
         context.conference.save()
         redirect = reverse('volunteer_signup', urlconf='gbe.scheduling.urls')
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+
         response = self.post_profile(redirect=redirect)
         self.assertRedirects(response, redirect)
 
@@ -177,15 +206,37 @@ class TestEditProfile(TestCase):
         self.assertContains(response, "Your Profile")
         self.assertEqual(response.status_code, 200)
 
-    def test_update_profile_make_message(self):
+    @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_make_message(self, m_urlopen):
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+
         response = self.post_profile()
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
 
-    def test_update_profile_has_message(self):
+    @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_has_message(self, m_urlopen):
         msg = UserMessageFactory(
             view='EditProfileView',
             code='UPDATE_PROFILE')
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+
         response = self.post_profile()
         assert_alert_exists(
             response, 'success', 'Success', msg.description)
+
+    @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_bad_email(self, m_urlopen):
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response_bad.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+
+        response = self.post_profile()
+        self.assertContains(response, found_on_list_msg)

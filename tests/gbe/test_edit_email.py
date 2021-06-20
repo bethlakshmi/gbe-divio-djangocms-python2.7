@@ -14,7 +14,6 @@ from gbe.models import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    assert_email_template_used,
     login_as
 )
 from gbetext import (
