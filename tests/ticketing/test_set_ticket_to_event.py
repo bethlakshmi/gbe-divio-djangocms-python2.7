@@ -5,11 +5,10 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
+    TicketingEventsFactory,
     TransactionFactory,
 )
 from django.urls import reverse
-from ticketing.models import BrownPaperEvents
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -25,13 +24,13 @@ class TestEditBPTEvent(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.bpt_event = BrownPaperEventsFactory()
+        self.ticketing_event = TicketingEventsFactory()
         self.gbe_event = ShowFactory()
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
         self.url = reverse('set_ticket_to_event',
                            urlconf='ticketing.urls',
-                           args=[self.bpt_event.bpt_event_id,
+                           args=[self.ticketing_event.event_id,
                                  "on",
                                  self.gbe_event.eventitem_id])
 
@@ -48,16 +47,16 @@ class TestEditBPTEvent(TestCase):
             response,
             "%s?conference=%s&open_panel=ticket&updated_events=[%s]" % (
                 reverse('ticket_items', urlconf='ticketing.urls'),
-                str(self.bpt_event.conference.conference_slug),
-                self.bpt_event.id))
+                str(self.ticketing_event.conference.conference_slug),
+                self.ticketing_event.id))
         self.assertContains(response, link_event_to_ticket_success_msg)
 
     def test_set_link_off(self):
-        self.bpt_event.linked_events.add(self.gbe_event)
-        self.bpt_event.save()
+        self.ticketing_event.linked_events.add(self.gbe_event)
+        self.ticketing_event.save()
         self.url = reverse('set_ticket_to_event',
                            urlconf='ticketing.urls',
-                           args=[self.bpt_event.bpt_event_id,
+                           args=[self.ticketing_event.event_id,
                                  "off",
                                  self.gbe_event.eventitem_id])
         login_as(self.privileged_user, self)
@@ -66,14 +65,14 @@ class TestEditBPTEvent(TestCase):
             response,
             "%s?conference=%s&open_panel=ticket&updated_events=[%s]" % (
                 reverse('ticket_items', urlconf='ticketing.urls'),
-                str(self.bpt_event.conference.conference_slug),
-                self.bpt_event.id))
+                str(self.ticketing_event.conference.conference_slug),
+                self.ticketing_event.id))
         self.assertContains(response, unlink_event_to_ticket_success_msg)
 
     def test_bad_logic(self):
         self.url = reverse('set_ticket_to_event',
                            urlconf='ticketing.urls',
-                           args=[self.bpt_event.bpt_event_id,
+                           args=[self.ticketing_event.event_id,
                                  "off",
                                  self.gbe_event.eventitem_id])
         login_as(self.privileged_user, self)
@@ -82,7 +81,7 @@ class TestEditBPTEvent(TestCase):
             response,
             "%s?conference=%s&open_panel=ticket&updated_events=[%s]" % (
                 reverse('ticket_items', urlconf='ticketing.urls'),
-                str(self.bpt_event.conference.conference_slug),
-                self.bpt_event.id))
+                str(self.ticketing_event.conference.conference_slug),
+                self.ticketing_event.id))
         self.assertNotContains(response, unlink_event_to_ticket_success_msg)
         self.assertNotContains(response, link_event_to_ticket_success_msg)

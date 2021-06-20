@@ -10,9 +10,9 @@
     <thead>
       <tr class="gbe-table-header">
         <th>&nbsp;</th>
-      {% for bpt_event in events %}
+      {% for ticketing_event in events %}
         <th><div><span>
-        <a href="{% url 'ticketing:ticket_item_edit' bpt_event.id %}" class="gbe-table-link">{{ bpt_event.title }}</a>
+        <a href="{% url 'ticketing:ticket_item_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
         </span></div></th>
       {% endfor %}
       </tr>
@@ -20,9 +20,9 @@
     <tfoot>
       <tr class="gbe-table-header">
         <th>&nbsp;</th>
-      {% for bpt_event in events %}
+      {% for ticketing_event in events %}
         <th><div><span>
-        <a href="{% url 'ticketing:ticket_item_edit' bpt_event.id %}" class="gbe-table-link">{{ bpt_event.title }}</a>
+        <a href="{% url 'ticketing:ticket_item_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
         </span></div></th>
       {% endfor %}
       </tr>
@@ -31,22 +31,22 @@
     {% for gbe_event in gbe_events %}
       <tr class="gbe-table-row">
         <td><a href="{% url 'scheduling:detail_view' gbe_event.eventitem_id  %}" class="gbe-table-link">{{gbe_event.e_title}}</a></td>
-      {% for bpt_event in events %}
+      {% for ticketing_event in events %}
         <td class="text-center">
-          {% if gbe_event in bpt_event.linked_events.all %}
-          <a href="{% url 'ticketing:set_ticket_to_event' bpt_event.bpt_event_id 'off' gbe_event.eventitem_id %}" data-toggle="tooltip" title="Remove Event from Ticket">
+          {% if gbe_event in ticketing_event.linked_events.all %}
+          <a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.event_id 'off' gbe_event.eventitem_id %}" data-toggle="tooltip" title="Remove Event from Ticket">
             <i class="fas fa-check gbe-text-success active-check"></i></a>
-          {% elif bpt_event.include_most and gbe_event.type != "Master Class" %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most'"></i>
-          {% else %}<a href="{% url 'ticketing:set_ticket_to_event' bpt_event.bpt_event_id 'on' gbe_event.eventitem_id %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Add Event to Ticket"><i class="fas fa-plus link-events-plus"></i></a>{% endif %}
+          {% elif ticketing_event.include_most and gbe_event.type != "Master Class" %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most'"></i>
+          {% else %}<a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.event_id 'on' gbe_event.eventitem_id %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Add Event to Ticket"><i class="fas fa-plus link-events-plus"></i></a>{% endif %}
         </td>
       {% endfor %}
       </tr>
     {% endfor %}
       <tr class="gbe-table-row">
         <td><i>All Conference Classes</i></td>
-        {% for bpt_event in events %}
+        {% for ticketing_event in events %}
         <td class="text-center">
-          {% if bpt_event.include_conference or bpt_event.include_most %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most' or 'Includes Conference'"></i>{% else %}&nbsp;{% endif %}
+          {% if ticketing_event.include_conference or ticketing_event.include_most %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most' or 'Includes Conference'"></i>{% else %}&nbsp;{% endif %}
         </td>
       {% endfor %}
     </tr>

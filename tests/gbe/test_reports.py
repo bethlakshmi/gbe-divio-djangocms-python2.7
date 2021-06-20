@@ -135,7 +135,7 @@ class TestReports(TestCase):
             'env_stuff',
             urlconf="gbe.reporting.urls",
             args=[
-                transaction.ticket_item.bpt_event.conference.conference_slug]))
+                transaction.ticket_item.ticketing_event.conference.conference_slug]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=env_stuff.csv")
@@ -269,7 +269,7 @@ class TestReports(TestCase):
             'badge_report',
             urlconf='gbe.reporting.urls',
             args=[
-                transaction.ticket_item.bpt_event.conference.conference_slug]))
+                transaction.ticket_item.ticketing_event.conference.conference_slug]))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),

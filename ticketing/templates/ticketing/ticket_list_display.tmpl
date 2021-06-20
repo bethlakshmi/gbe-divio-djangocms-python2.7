@@ -4,7 +4,7 @@
 ({{event}})
 </div><div class="col-xs-5 col-sm-3 col-md-3 text-right">
 <div class="btn-group" role="group" aria-label="...">
-  <a href="{% url 'ticketing:ticket_item_edit' %}?bpt_event_id={{event.bpt_event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn gbe-btn-secondary btn-sm" id="action-button">
+  <a href="{% url 'ticketing:ticket_item_edit' %}?event_id={{event.event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn gbe-btn-secondary btn-sm" id="action-button">
     <i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-ticket" aria-hidden="true"></i></a>
   <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-secondary btn-sm" id="action-button">
     <i class="fa fa-pencil" aria-hidden="true"></i></a>

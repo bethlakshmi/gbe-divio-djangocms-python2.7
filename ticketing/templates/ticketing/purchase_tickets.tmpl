@@ -53,7 +53,7 @@
                 {% endfor %}
               </ul>
               <div class="button-area">
-                <a href="http://www.brownpapertickets.com/event/ID-{{ user_id }}/{{ item.bpt_event_id }}/" target="_blank" class="btn gbe-btn-common">
+                <a href="http://www.brownpapertickets.com/event/ID-{{ user_id }}/{{ item.event_id }}/" target="_blank" class="btn gbe-btn-common">
                     ${{ item.min_price|floatformat:2 }}
                 {% if item.min_price < item.max_price%}
                 - ${{ item.max_price|floatformat:2 }}{% endif %}</a>

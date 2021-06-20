@@ -10,11 +10,11 @@ from tests.factories.gbe_factories import (
     RoomFactory,
 )
 from ticketing.models import (
-    BrownPaperEvents,
+    TicketingEvents,
     BrownPaperSettings,
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
+    TicketingEventsFactory,
     BrownPaperSettingsFactory,
 )
 from scheduler.models import Event
@@ -396,21 +396,21 @@ class TestTicketedEventWizard(TestScheduling):
 
     def test_get_tickets(self):
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
-        bpt_event = BrownPaperEventsFactory(
+        ticketing_event = TicketingEventsFactory(
             conference=self.current_conference)
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "%s - %s" % (bpt_event.bpt_event_id,
-                                                   bpt_event.title))
+        self.assertContains(response, "%s - %s" % (ticketing_event.event_id,
+                                                   ticketing_event.title))
 
     def test_set_ticket(self):
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
-        bpt_event = BrownPaperEventsFactory(
+        ticketing_event = TicketingEventsFactory(
             conference=self.current_conference)
         login_as(self.privileged_user, self)
         data = self.edit_class()
-        data['bpt_events'] = bpt_event.pk
+        data['ticketing_events'] = ticketing_event.pk
         response = self.client.post(
             self.url,
             data=data,
@@ -433,17 +433,17 @@ class TestTicketedEventWizard(TestScheduling):
             'success',
             'Success',
             link_event_to_ticket_success_msg + '%s - %s, ' % (
-                bpt_event.bpt_event_id,
-                bpt_event.title)
+                ticketing_event.event_id,
+                ticketing_event.title)
             )
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_make_new_ticket(self, m_urlopen):
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         BrownPaperSettingsFactory()
-        bpt_event = BrownPaperEventsFactory(
+        ticketing_event = TicketingEventsFactory(
             conference=self.current_conference)
         a = Mock()
         event_filename = open("tests/ticketing/eventlist.xml", 'r')
@@ -451,7 +451,7 @@ class TestTicketedEventWizard(TestScheduling):
         m_urlopen.return_value = a
         login_as(self.privileged_user, self)
         data = self.edit_class()
-        data['bpt_event_id'] = "1122333"
+        data['event_id'] = "1122333"
         data['display_icon'] = "icon-diamond"
         response = self.client.post(
             self.url,
@@ -474,26 +474,24 @@ class TestTicketedEventWizard(TestScheduling):
             response,
             'success',
             'Success',
-            "%s %s - %s, with %d tickets from BPT" % (
+            "%s %s - %s" % (
                 create_ticket_event_success_msg,
-                data['bpt_event_id'],
-                "GBE10 Whole Shebang 2016",
-                0)
+                data['event_id'],
+                "GBE10 Whole Shebang 2016")
             )
         assert_alert_exists(
             response,
             'warning',
-            'Warning',
-            no_tickets_found_msg
-            )
+            "Warning",
+            no_tickets_found_msg)
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_make_and_sync_new_ticket(self, m_urlopen):
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
         BrownPaperSettingsFactory()
-        bpt_event = BrownPaperEventsFactory(
+        ticketing_event = TicketingEventsFactory(
             conference=self.current_conference)
         a = Mock()
         event_filename = open("tests/ticketing/eventlist.xml", 'r')
@@ -505,7 +503,7 @@ class TestTicketedEventWizard(TestScheduling):
         m_urlopen.return_value = a
         login_as(self.privileged_user, self)
         data = self.edit_class()
-        data['bpt_event_id'] = "1122333"
+        data['event_id'] = "1122333"
         data['display_icon'] = "icon-diamond"
         response = self.client.post(
             self.url,
@@ -528,9 +526,8 @@ class TestTicketedEventWizard(TestScheduling):
             response,
             'success',
             'Success',
-            "%s %s - %s, with %d tickets from BPT" % (
+            "%s %s - %s" % (
                 create_ticket_event_success_msg,
-                data['bpt_event_id'],
-                "GBE10 Whole Shebang 2016",
-                12)
+                data['event_id'],
+                "GBE10 Whole Shebang 2016")
             )

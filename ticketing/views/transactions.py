@@ -9,10 +9,8 @@ from ticketing.models import (
   Purchaser,
   Transaction,
 )
-from ticketing.brown_paper import (
-    get_bpt_last_poll_time,
-    process_bpt_order_list,
-)
+from ticketing.brown_paper import process_bpt_order_list
+from ticketing.eventbrite import process_eb_purchases
 from django.shortcuts import render
 from gbe.models import UserMessage
 from gbetext import (
@@ -47,6 +45,12 @@ def transactions(request):
     error = ''
 
     if ('Sync' in request.POST):
+        msgs = process_eb_purchases()
+        for msg, is_success in msgs:
+            if is_success:
+                messages.success(request, msg)
+            else:
+                messages.error(request, msg)
         count = process_bpt_order_list()
         success_msg = UserMessage.objects.get_or_create(
           view="ViewTransactions",
@@ -54,29 +58,25 @@ def transactions(request):
           defaults={
                     'summary': "Import BPT Transactions Message",
                     'description': import_transaction_message})
-        messages.success(request, "%s   Transactions imported: %s" % (
+        messages.success(request, "%s   Transactions imported: %s - BPT" % (
             success_msg[0].description,
             count))
-
-    sync_time = get_bpt_last_poll_time()
 
     user_editor = validate_perms(request, ('Registrar', ), require=False)
     context = {'conference_slugs': conference_slugs(),
                'conference': conference,
-               'sync_time': sync_time,
                'error': error,
-               'count': count,
                'intro': intro[0].description,
                'can_edit': user_editor,
                'view_format': view_format}
     if view_format == "ticket":
         context['transactions'] = Transaction.objects.filter(
-            ticket_item__bpt_event__conference=conference).order_by(
-            'ticket_item__bpt_event',
+            ticket_item__ticketing_event__conference=conference).order_by(
+            'ticket_item__ticketing_event',
             'ticket_item__title',
             'purchaser')
     else:
         context['users'] = User.objects.filter(
-            purchaser__transaction__ticket_item__bpt_event__conference=conference
+            purchaser__transaction__ticket_item__ticketing_event__conference=conference
             ).distinct().order_by('email')
     return render(request, r'ticketing/transactions.tmpl', context)

@@ -141,31 +141,31 @@ Changing fields in this section will change them in all calendar items.</p>
     </div>
   <div class="form-row">
       <div class="col-12 event-booking-cell gbe-flat-list">
-	<label for="{{tickets.bpt_events.name}}" class="control-label">	      
-          {% if tickets.bpt_events.errors %}
+	<label for="{{tickets.ticketing_events.name}}" class="control-label">	      
+          {% if tickets.ticketing_events.errors %}
             <font class="gbe-form-error">!&nbsp;&nbsp;{% endif %}
-          {{ tickets.bpt_events.label_tag }}
-          {% if tickets.bpt_events.errors %}</font>{% endif %} 
+          {{ tickets.ticketing_events.label_tag }}
+          {% if tickets.ticketing_events.errors %}</font>{% endif %} 
         </label>
-	{{ tickets.bpt_events }}
-        {% if tickets.bpt_events.errors %}
+	{{ tickets.ticketing_events }}
+        {% if tickets.ticketing_events.errors %}
  	<br><label>
-	  <font class="gbe-form-error">{{ tickets.bpt_events.errors }}</font>
+	  <font class="gbe-form-error">{{ tickets.ticketing_events.errors }}</font>
         </label>{% endif %}
       </div>
       <div class="col-md-2 col-sm-3 col-12 event-booking-cell">
-	<label for="{{tickets.bpt_event_id.name}}" class="control-label">	      
-          {% if tickets.bpt_event_id.errors %}
+	<label for="{{tickets.event_id.name}}" class="control-label">	      
+          {% if tickets.event_id.errors %}
             <font class="gbe-form-error">!&nbsp;&nbsp;
           {% endif %} 
-          {{ tickets.bpt_event_id.label_tag }}
-          {% if tickets.bpt_event_id.errors %}</font>{% endif %} 
+          {{ tickets.event_id.label_tag }}
+          {% if tickets.event_id.errors %}</font>{% endif %} 
       </label></div>
       <div class="col-md-3 col-sm-9 col-12 event-booking-cell">
-	{{ tickets.bpt_event_id }}
-        {% if tickets.bpt_event_id.errors %}
+	{{ tickets.event_id }}
+        {% if tickets.event_id.errors %}
  	<br><label>
-	  <font class="gbe-form-error">{{ tickets.bpt_event_id.errors }}</font>
+	  <font class="gbe-form-error">{{ tickets.event_id.errors }}</font>
         </label>{% endif %}
       </div>
       <div class="col-md-2 col-sm-3 col-12 event-booking-cell">

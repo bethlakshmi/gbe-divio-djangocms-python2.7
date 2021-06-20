@@ -13,7 +13,7 @@ from gbe.scheduling.forms import (
 )
 from gbe.scheduling.views import EventWizardView
 from ticketing.forms import LinkBPTEventForm
-from gbe.ticketing_idd_interface import create_bpt_event
+from gbe.ticketing_idd_interface import create_ticketing_event
 from gbe.functions import validate_perms
 from gbetext import (
     create_ticket_event_success_msg,
@@ -51,11 +51,11 @@ class TicketedEventWizardView(EventWizardView):
 
     def setup_ticket_links(self, request, new_event, ticket_form):
         ticket_list = ""
-        for ticket_event in ticket_form.cleaned_data['bpt_events']:
+        for ticket_event in ticket_form.cleaned_data['ticketing_events']:
             ticket_event.linked_events.add(new_event)
             ticket_event.save()
             ticket_list += "%s - %s, %s" % (
-                ticket_event.bpt_event_id,
+                ticket_event.event_id,
                 ticket_event.title,
                 ticket_list)
         if len(ticket_list) > 0:
@@ -69,9 +69,9 @@ class TicketedEventWizardView(EventWizardView):
                 request,
                 user_message[0].description + ticket_list)
 
-        if ticket_form.cleaned_data['bpt_event_id']:
-            ticket_event, ticket_count = create_bpt_event(
-                ticket_form.cleaned_data['bpt_event_id'],
+        if ticket_form.cleaned_data['event_id']:
+            ticket_event, ticket_count = create_ticketing_event(
+                ticket_form.cleaned_data['event_id'],
                 conference=self.conference,
                 events=[new_event],
                 display_icon=ticket_form.cleaned_data['display_icon'],
@@ -83,13 +83,10 @@ class TicketedEventWizardView(EventWizardView):
                     defaults={
                         'summary': "Created New Ticked Event",
                         'description': create_ticket_event_success_msg})
-                messages.success(
-                    request,
-                    "%s %s - %s, with %d tickets from BPT" % (
-                        user_message[0].description,
-                        ticket_event.bpt_event_id,
-                        ticket_event.title,
-                        ticket_count))
+                messages.success(request, "%s %s - %s" % (
+                    user_message[0].description,
+                    ticket_event.event_id,
+                    ticket_event.title))
             if ticket_count == 0:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,

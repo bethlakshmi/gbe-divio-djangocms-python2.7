@@ -6,7 +6,7 @@
 # - Betty 8/15
 from gbe_logging import logger
 from ticketing.models import (
-    BrownPaperEvents,
+    TicketingEvents,
     PayPalSettings,
     RoleEligibilityCondition,
     TicketingEligibilityCondition,
@@ -22,10 +22,8 @@ from gbe.models import (
 )
 from scheduler.idd import get_roles
 from ticketing.brown_paper import *
-from ticketing.functions import (
-    get_fee_list,
-    import_ticket_items,
-)
+from ticketing.functions import get_fee_list
+from ticketing.brown_paper import import_bpt_ticket_items
 from django.db.models import Count
 from django.db.models import Q
 from datetime import datetime
@@ -57,8 +55,8 @@ def verify_performer_app_paid(user_name, conference):
     # First figure out how many acts this user has purchased
     act_fees_purchased = Transaction.objects.filter(
         ticket_item__add_on=False,
-        ticket_item__bpt_event__act_submission_event=True,
-        ticket_item__bpt_event__conference=conference,
+        ticket_item__ticketing_event__act_submission_event=True,
+        ticket_item__ticketing_event__conference=conference,
         purchaser__matched_to_user__username=str(user_name)).count()
     # Then figure out how many acts have already been submitted.
     acts_submitted = Act.objects.filter(
@@ -86,8 +84,8 @@ def verify_vendor_app_paid(user_name, conference):
     # First figure out how many vendor spots this user has purchased
     vendor_fees_purchased = Transaction.objects.filter(
             ticket_item__add_on=False,
-            ticket_item__bpt_event__vendor_submission_event=True,
-            ticket_item__bpt_event__conference=conference,
+            ticket_item__ticketing_event__vendor_submission_event=True,
+            ticket_item__ticketing_event__conference=conference,
             purchaser__matched_to_user__username=str(user_name)).count()
 
     # Then figure out how many vendor applications have already been submitted.
@@ -102,9 +100,10 @@ def verify_vendor_app_paid(user_name, conference):
 
 def verify_bought_conference(user, conference):
     return TicketItem.objects.filter(
-        Q(bpt_event__conference=conference),
+        Q(ticketing_event__conference=conference),
         Q(transaction__purchaser__matched_to_user=user),
-        Q(bpt_event__include_conference=True) | Q(bpt_event__include_most=True)
+        Q(ticketing_event__include_conference=True) | Q(
+            ticketing_event__include_most=True)
         ).exists()
 
 
@@ -117,7 +116,7 @@ def get_purchased_tickets(user):
         status="completed").order_by('status')
     for conf in conferences:
         tickets = TicketItem.objects.filter(
-            bpt_event__conference=conf,
+            ticketing_event__conference=conf,
             transaction__purchaser__matched_to_user=user).annotate(
                 number_of_tickets=Count('transaction')).order_by('title')
         if tickets:
@@ -173,7 +172,7 @@ def get_checklist_items(profile, conference):
     get the checklist items for a person with a profile
     '''
     tickets = TicketItem.objects.filter(
-        bpt_event__conference=conference,
+        ticketing_event__conference=conference,
         transaction__purchaser__matched_to_user=profile.user_object).distinct()
 
     ticket_items = get_checklist_items_for_tickets(profile,
@@ -187,15 +186,15 @@ def get_checklist_items(profile, conference):
     return (ticket_items, role_items)
 
 
-def create_bpt_event(bpt_event_id, conference, events=[], display_icon=None):
-    event = BrownPaperEvents.objects.create(
-            bpt_event_id=bpt_event_id,
+def create_ticketing_event(event_id, conference, events=[], display_icon=None):
+    event = TicketingEvents.objects.create(
+            event_id=event_id,
             conference=conference,
             display_icon=display_icon)
     if len(events) > 0:
         event.linked_events.add(*events)
     event.save()
-    count = import_ticket_items([event])
+    count = import_bpt_ticket_items([event])
     return event, count
 
 

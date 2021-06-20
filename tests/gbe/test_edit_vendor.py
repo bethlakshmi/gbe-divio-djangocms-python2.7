@@ -154,7 +154,6 @@ class TestEditVendor(TestCase):
         data = self.get_vendor_form(submit=True)
         data['add_ons'] = tickets[1].pk
         response = self.client.post(url, data, follow=True)
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, payment_details_error)
         self.assertContains(response, "This field is required.")

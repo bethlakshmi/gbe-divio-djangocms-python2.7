@@ -1,12 +1,12 @@
 from django.core.files import File
 from ticketing.models import (
-    BrownPaperEvents,
+    TicketingEvents,
     BrownPaperSettings,
     TicketItem,
     Transaction
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperEventsFactory,
+    TicketingEventsFactory,
     BrownPaperSettingsFactory,
     TicketItemFactory
 )
@@ -29,7 +29,7 @@ class TestProcessBPTOrderList(TestCase):
         '''
            no events are available to process
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
 
         self.assertEqual(process_bpt_order_list(), 0)
 
@@ -38,12 +38,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            get a transaction for the limbo user
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         limbo, created = User.objects.get_or_create(username='limbo')
 
@@ -71,12 +71,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            get a transaction for a real user via the purchase_email
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         profile = ProfileFactory(purchase_email='test@tickets.com')
 
@@ -106,12 +106,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            get a transaction for a real user via the purchase_email
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         profile = ProfileFactory(purchase_email='Test@Tickets.com')
 
@@ -141,12 +141,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            get a transaction for a real user with transaction id match
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         profile = ProfileFactory(purchase_email='test@tickets.com')
 
@@ -180,12 +180,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            in a case of user email vs. purchase email, purchase wins.
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         limbo, created = User.objects.get_or_create(username='limbo')
         user = UserFactory(email='test@tickets.com')
@@ -216,12 +216,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            match to a user with no purchase_email, but matching email
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         user = UserFactory(email='test@tickets.com')
         profile = ProfileFactory(user_object=user,
@@ -251,12 +251,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            match to a user with no purchase_email, but matching email
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         user = UserFactory(email='test@tickets.com')
         a = Mock()
@@ -284,12 +284,12 @@ class TestProcessBPTOrderList(TestCase):
         '''
            match to a user with no purchase_email, but matching email
         '''
-        BrownPaperEvents.objects.all().delete()
+        TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
-        event = BrownPaperEventsFactory()
+        event = TicketingEventsFactory()
         ticket = TicketItemFactory(
-            bpt_event=event,
-            ticket_id='%s-%s' % (event.bpt_event_id, '3255985'))
+            ticketing_event=event,
+            ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
         user = UserFactory(email='Test@Tickets.com')
         a = Mock()

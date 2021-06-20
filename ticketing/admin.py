@@ -16,18 +16,19 @@ class TransactionAdmin(admin.ModelAdmin):
                     'amount',
                     'order_date',
                     'import_date')
-    list_filter = ['ticket_item__bpt_event__conference',
+    list_filter = ['ticket_item__ticketing_event__conference',
                    'order_date',
                    'import_date',
-                   'ticket_item__bpt_event__act_submission_event',
-                   'ticket_item__bpt_event__vendor_submission_event']
+                   'ticket_item__ticketing_event__act_submission_event',
+                   'ticket_item__ticketing_event__vendor_submission_event']
     search_fields = ['ticket_item__title',
                      'purchaser__matched_to_user__username',
                      'purchaser__email']
 
 
 class PurchaserAdmin(admin.ModelAdmin):
-    list_display = ('matched_to_user',
+    list_display = ('pk',
+                    'matched_to_user',
                     'first_name',
                     'last_name',
                     'email',
@@ -50,13 +51,13 @@ class TicketItemAdmin(admin.ModelAdmin):
                     'conference')
     list_filter = ['datestamp',
                    'modified_by',
-                   'bpt_event',
+                   'ticketing_event',
                    'live',
                    'has_coupon']
     search_fields = ['title']
 
     def conference(self, obj):
-        return obj.bpt_event.conference
+        return obj.ticketing_event.conference
 
     def active(self, obj):
         return obj.active
@@ -66,16 +67,17 @@ class DetailInline(admin.TabularInline):
     model = EventDetail
 
 
-class BPTEventsAdmin(admin.ModelAdmin):
+class TicketingEventsAdmin(admin.ModelAdmin):
     filter_horizontal = ("linked_events",)
-    search_fields = ('title', )
+    search_fields = ('title', 'event_id')
     list_display = ('title',
-                    'bpt_event_id',
+                    'event_id',
                     'act_submission_event',
                     'vendor_submission_event',
                     'include_conference',
                     'include_most')
     list_filter = ['conference',
+                   'source',
                    'act_submission_event',
                    'vendor_submission_event',
                    'badgeable',
@@ -85,7 +87,7 @@ class BPTEventsAdmin(admin.ModelAdmin):
     ]
     fieldsets = (
         ("Control Fields", {
-            'fields': ('bpt_event_id', 'conference',),
+            'fields': ('event_id', 'conference',),
             'description': '''Use the event id from BPT.  Conference controls
                 where events are displayed - only active/upcoming conferences
                 are synced.''',
@@ -145,9 +147,20 @@ class TicketEligibilityConditionAdmin(admin.ModelAdmin):
     ]
 
 
+class SyncStatusAdmin(admin.ModelAdmin):
+    list_display = ('pk',
+                    'is_success',
+                    'import_type',
+                    'import_number',
+                    'error_msg',
+                    'created_at',
+                    'updated_at')
+
+
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
+admin.site.register(EventbriteSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
-admin.site.register(BrownPaperEvents, BPTEventsAdmin)
+admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
@@ -156,3 +169,4 @@ admin.site.register(TicketingEligibilityCondition,
 admin.site.register(RoleEligibilityCondition,
                     EligibilityConditionAdmin)
 admin.site.register(CheckListItem)
+admin.site.register(SyncStatus, SyncStatusAdmin)

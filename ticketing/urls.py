@@ -19,7 +19,7 @@ urlpatterns = [
         name='bptevent_edit'),
     url(r'^ticketing/transactions/?$', views.transactions,
         name='transactions'),
-    url(r'^ticketing/set_ticket_to_event/(?P<bpt_event_id>\d+)/' +
+    url(r'^ticketing/set_ticket_to_event/(?P<event_id>\d+)/' +
         '(?P<state>on|off)/(?P<gbe_eventitem_id>\d+)/?$',
         views.set_ticket_to_event,
         name='set_ticket_to_event'),
