@@ -25,16 +25,16 @@ class TestGetPurchasedTickets(TestCase):
         purchase = TransactionFactory()
         purchase.ticket_item.title = "ZZZZ Last Title"
         purchase.ticket_item.save()
-        conference = purchase.ticket_item.bpt_event.conference
+        conference = purchase.ticket_item.ticketing_event.conference
         TransactionFactory(
             purchaser=purchase.purchaser,
-            ticket_item__bpt_event__conference=conference)
+            ticket_item__ticketing_event__conference=conference)
         TransactionFactory(
             purchaser=purchase.purchaser,
-            ticket_item__bpt_event__conference=conference)
+            ticket_item__ticketing_event__conference=conference)
         old_purchase = TransactionFactory(purchaser=purchase.purchaser)
-        old_purchase.ticket_item.bpt_event.conference.status = "ongoing"
-        old_purchase.ticket_item.bpt_event.conference.save()
+        old_purchase.ticket_item.ticketing_event.conference.status = "ongoing"
+        old_purchase.ticket_item.ticketing_event.conference.save()
         ticket_set = get_purchased_tickets(purchase.purchaser.matched_to_user)
 
         self.assertEqual(len(ticket_set), 2)

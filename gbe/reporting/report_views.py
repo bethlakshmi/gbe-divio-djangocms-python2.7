@@ -55,7 +55,7 @@ def env_stuff(request, conference_choice=None):
         accepted=3,
         b_conference=conference)
     tickets = tix.Transaction.objects.filter(
-        ticket_item__bpt_event__conference=conference)
+        ticket_item__ticketing_event__conference=conference)
     roles = sched.Worker.objects.filter(
         Q(allocations__event__eventitem__event__e_conference=conference))
     commits = sched.ResourceAllocation.objects.filter(
@@ -84,7 +84,8 @@ def env_stuff(request, conference_choice=None):
 
         for ticket in tickets.filter(
                 purchaser__matched_to_user=person.user_object):
-            ticket_list += str(ticket.ticket_item.bpt_event.ticket_style)+", "
+            ticket_list += str(
+                ticket.ticket_item.ticketing_event.ticket_style)+", "
             ticket_names += ticket.ticket_item.title+", "
 
         for lead in roles.filter(role="Staff Lead", _item=person):
@@ -251,18 +252,18 @@ def export_badge_report(request, conference_choice=None):
 
     if conference_choice:
         badges = tix.Transaction.objects.filter(
-            ticket_item__bpt_event__badgeable=True,
-            ticket_item__bpt_event__conference__conference_slug=(
+            ticket_item__ticketing_event__badgeable=True,
+            ticket_item__ticketing_event__conference__conference_slug=(
                 conference_choice)
             ).order_by(
                 'ticket_item')
 
     else:
         badges = tix.Transaction.objects.filter(
-            ticket_item__bpt_event__badgeable=True
+            ticket_item__ticketing_event__badgeable=True
         ).exclude(
-            ticket_item__bpt_event__conference__status='completed').order_by(
-                'ticket_item')
+            ticket_item__ticketing_event__conference__status='completed'
+            ).order_by('ticket_item')
 
     # build header, segmented in same structure as subclasses
     header = ['First',

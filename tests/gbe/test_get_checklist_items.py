@@ -31,7 +31,7 @@ class TestGetCheckListItems(TestCase):
         self.ticket_condition.tickets.add(transaction.ticket_item)
         ticket_items, role_items = get_checklist_items(
             no_match_profile,
-            transaction.ticket_item.bpt_event.conference)
+            transaction.ticket_item.ticketing_event.conference)
 
         nt.assert_equal(len(ticket_items), 0)
         nt.assert_equal(len(role_items), 0)
@@ -59,7 +59,7 @@ class TestGetCheckListItems(TestCase):
         transaction = TransactionFactory()
         purchaser = ProfileFactory(
             user_object=transaction.purchaser.matched_to_user)
-        conference = transaction.ticket_item.bpt_event.conference
+        conference = transaction.ticket_item.ticketing_event.conference
         self.ticket_condition.tickets.add(transaction.ticket_item)
         self.ticket_condition.save()
 
@@ -84,8 +84,8 @@ class TestGetCheckListItems(TestCase):
             matched_to_user=teacher.performer_profile.user_object)
         transaction = TransactionFactory(
             purchaser=purchaser)
-        transaction.ticket_item.bpt_event.conference = conference
-        transaction.ticket_item.bpt_event.save()
+        transaction.ticket_item.ticketing_event.conference = conference
+        transaction.ticket_item.ticketing_event.save()
         self.ticket_condition.tickets.add(transaction.ticket_item)
         self.ticket_condition.save()
 

@@ -234,7 +234,13 @@ time_options = (('Morning', "Morning (before noon)"),
 day_options = (('Fri', "Friday"),
                ('Sat', "Saturday"),
                ('Sun', "Sunday"))
-
+system_options = [
+    (0, 'local/debug'),
+    (1, 'test/live')]
+source_options = [
+    (0, 'Paypal'),
+    (1, 'Brown Paper'),
+    (2, 'Eventbrite')]
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),
@@ -579,13 +585,28 @@ included.'''
 intro_transaction_message = '''Transactions marked in blue are associated \
 with the "limbo" user as a placeholder, because no user matching the \
 purchaser's email could be found.'''
-import_transaction_message = '''A BPT Sync was attempted, check the logs for \
+import_transaction_message = '''A sync was attempted, check the logs for \
 errors, if 0 transactions were recieved, it can mean we are up to date, it \
 can mean we failed to import any.'''
 intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
 intro_ticket_assign_message = '''This grid shows what tickets are connected \
 to which GBE event.'''
+no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
+Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
+tickets listed, users will be unable to purchase entrance to this event.'''
+org_id_instructions = '''The organization id has not been defined.  Go to \
+admin and set one of the following ids in the EventbriteSettings for \
+'organization_id' for debug or live.  Only events for this organization \
+will be synced.'''
+sync_off_instructions = '''%s ticketing system is not currently syncing.  \
+This can be changed on the settings page in the admin.'''
+eventbrite_error = '''There was an error in contacting eventbrite.  Status: \
+%d, Message: %s'''
+no_settings_error = '''There are no Eventbrite settings for this server.  Go \
+to admin and ticketing -> EventbrightSettings and enter settings.  Oauth
+token can be found in the API settings in EventBrite.  After that, return
+here to get the organization id.'''
 intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \
 events.  For Paypal, it's simply a container for a set of prices.  These \
 containers define payment for act fees, vendor fees, or entry into the expo \
@@ -608,9 +629,6 @@ link_event_to_ticket_success_msg = '''Successfully linked the following \
 unlink_event_to_ticket_success_msg = '''Successfully disconnected the  \
 following tickets from events: '''
 create_ticket_event_success_msg = "Created and linked a new BPT Event: "
-no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
-Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
-tickets listed, users will be unable to purchase entrance to this event.'''
 payment_details_error = '''Your choice for fee selections was not valid, \
 please check the form and try again.'''
 set_volunteer_role_summary = "Volunteer Offer %s"

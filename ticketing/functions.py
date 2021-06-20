@@ -1,45 +1,42 @@
-from ticketing.models import *
 from itertools import chain
 from datetime import datetime
-from ticketing.brown_paper import get_bpt_price_list
+from ticketing.models import (
+    TicketingEvents,
+    TicketItem,
+)
+from ticketing.eventbrite import import_eb_ticket_items
+from ticketing.brown_paper import import_bpt_ticket_items
 
 
-def import_ticket_items(events=None):
-    '''
-    Function is used to initiate an import from BPT or other sources of
-    new Ticket Items.  It will not override existing items.
-    '''
-    import_item_list = get_bpt_price_list(events)
+def import_ticket_items():
+        # Since Eventbrite autosyncs events, we would only need to manually
+        # import BPT
+        msg = "0"
+        is_success = True
+        msg, is_success = import_eb_ticket_items()
+        count = import_bpt_ticket_items()
 
-    for i_item in import_item_list:
-        ticket_item, created = TicketItem.objects.get_or_create(
-            ticket_id=i_item['ticket_id'],
-            defaults=i_item)
-        if not created:
-            ticket_item.modified_by = 'BPT Import'
-            ticket_item.live = i_item['live']
-            ticket_item.cost = i_item['cost']
-            ticket_item.save()
-    return len(import_item_list)
+        return [(msg, is_success), 
+                ("BPT: imported %d tickets" % count, True)]
 
 
 def get_tickets(linked_event, most=False, conference=False):
     general_events = []
 
     if most:
-        general_events = BrownPaperEvents.objects.filter(
+        general_events = TicketingEvents.objects.filter(
             include_most=True,
             conference=linked_event.e_conference)
     if conference:
         general_events = list(chain(
             general_events,
-            BrownPaperEvents.objects.filter(
+            TicketingEvents.objects.filter(
                 include_conference=True,
                 conference=linked_event.e_conference)))
 
     general_events = list(chain(
         general_events,
-        BrownPaperEvents.objects.filter(
+        TicketingEvents.objects.filter(
             linked_events=linked_event)))
 
     ticket_events = []
@@ -53,12 +50,14 @@ def get_tickets(linked_event, most=False, conference=False):
 def get_fee_list(bid_type, conference):
     ticket_items = []
     ticket_items = TicketItem.objects.filter(
-        bpt_event__conference=conference, live=True, has_coupon=False).exclude(
+        ticketing_event__conference=conference,
+        live=True,
+        has_coupon=False).exclude(
         start_time__gt=datetime.now()).exclude(end_time__lt=datetime.now())
     if bid_type == "Vendor":
         ticket_items = ticket_items.filter(
-            bpt_event__vendor_submission_event=True)
+            ticketing_event__vendor_submission_event=True)
     elif bid_type == "Act":
         ticket_items = ticket_items.filter(
-            bpt_event__act_submission_event=True)
+            ticketing_event__act_submission_event=True)
     return ticket_items

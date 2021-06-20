@@ -5,15 +5,15 @@
 #
 
 from ticketing.models import (
-    BrownPaperEvents,
+    TicketingEvents,
     TicketItem,
 )
 from gbe.functions import get_ticketable_gbe_events
 from django import forms
 from gbe.models import Conference
 from gbe_forms_text import (
-    bpt_event_help_text,
-    bpt_event_labels,
+    ticketing_event_help_text,
+    ticketing_event_labels,
     donation_help_text,
     donation_labels,
     link_event_help_text,
@@ -33,11 +33,11 @@ class TicketItemForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    bpt_event = forms.ModelChoiceField(
-        queryset=BrownPaperEvents.objects.exclude(
+    ticketing_event = forms.ModelChoiceField(
+        queryset=TicketingEvents.objects.exclude(
             conference__status='completed'),
         empty_label=None,
-        label=ticket_item_labels['bpt_event'])
+        label=ticket_item_labels['ticketing_event'])
     start_time = forms.DateField(
         help_text=ticket_item_help_text['start_time'],
         required=False,
@@ -62,7 +62,7 @@ class TicketItemForm(forms.ModelForm):
         fields = ['ticket_id',
                   'title',
                   'cost',
-                  'bpt_event',
+                  'ticketing_event',
                   'has_coupon',
                   'live',
                   'start_time',
@@ -88,7 +88,7 @@ class TicketItemForm(forms.ModelForm):
 
 class PickBPTEventField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
-        return "%s - %s" % (obj.bpt_event_id, obj.title)
+        return "%s - %s" % (obj.event_id, obj.title)
 
 
 class LinkBPTEventForm(forms.ModelForm):
@@ -97,25 +97,23 @@ class LinkBPTEventForm(forms.ModelForm):
     '''
     required_css_class = 'required'
     error_css_class = 'error'
-    bpt_events = PickBPTEventField(
-        queryset=BrownPaperEvents.objects.exclude(
-            conference__status="completed").order_by('bpt_event_id'),
+    ticketing_events = PickBPTEventField(
+        queryset=TicketingEvents.objects.exclude(
+            conference__status="completed").order_by('event_id'),
         required=False,
-        label=link_event_labels['bpt_events'],
+        label=link_event_labels['ticketing_events'],
         widget=CheckboxSelectMultiple(),)
-    bpt_event_id = forms.IntegerField(
+    event_id = forms.IntegerField(
         required=False,
-        label=link_event_labels['bpt_event_id'])
+        label=link_event_labels['event_id'])
     display_icon = forms.CharField(
         required=False,
         label=link_event_labels['display_icon'],
         help_text=link_event_help_text['display_icon'])
 
     class Meta:
-        model = BrownPaperEvents
-        fields = [
-            'bpt_event_id',
-            'display_icon']
+        model = TicketingEvents
+        fields = ['event_id', 'display_icon']
         labels = link_event_labels
         help_texts = link_event_help_text
 
@@ -124,8 +122,8 @@ class LinkBPTEventForm(forms.ModelForm):
         if 'initial' in kwargs and 'conference' in kwargs['initial']:
             initial = kwargs.pop('initial')
             self.fields[
-                'bpt_events'].queryset = BrownPaperEvents.objects.filter(
-                conference=initial['conference']).order_by('bpt_event_id')
+                'ticketing_events'].queryset = TicketingEvents.objects.filter(
+                conference=initial['conference']).order_by('event_id')
 
 
 class BPTEventForm(forms.ModelForm):
@@ -138,17 +136,18 @@ class BPTEventForm(forms.ModelForm):
     linked_events = forms.ModelMultipleChoiceField(
         queryset=get_ticketable_gbe_events().order_by('e_title'),
         required=False,
-        label=bpt_event_labels['linked_events'])
+        label=ticketing_event_labels['linked_events'])
     conference = forms.ModelChoiceField(
         queryset=Conference.objects.exclude(
             status='completed'),
         empty_label=None)
 
     class Meta:
-        model = BrownPaperEvents
+        model = TicketingEvents
         fields = [
             'conference',
-            'bpt_event_id',
+            'event_id',
+            'source',
             'title',
             'description',
             'display_icon',
@@ -159,8 +158,8 @@ class BPTEventForm(forms.ModelForm):
             'include_most',
             'badgeable',
             'ticket_style']
-        labels = bpt_event_labels
-        help_texts = bpt_event_help_text
+        labels = ticketing_event_labels
+        help_texts = ticketing_event_help_text
 
 
 class PickTicketField(forms.ModelChoiceField):

@@ -37,7 +37,7 @@ class TestEditTicketItem(TestCase):
                 'title': "Title from Form",
                 'live': False,
                 'cost': 1.01,
-                'bpt_event': self.ticketitem.bpt_event.pk
+                'ticketing_event': self.ticketitem.ticketing_event.pk
         }
 
     def test_edit_ticket_user_is_not_ticketing(self):
@@ -66,13 +66,13 @@ class TestEditTicketItem(TestCase):
            good user gets new ticket form, all is good.
         '''
         login_as(self.privileged_user, self)
-        response = self.client.get("%s?bpt_event_id=%s" % (
+        response = self.client.get("%s?event_id=%s" % (
             reverse(self.view_name, urlconf='ticketing.urls'),
-            self.ticketitem.bpt_event.bpt_event_id))
+            self.ticketitem.ticketing_event.event_id))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Create Ticket Item')
         self.assertContains(response, '<option value="%s" selected>' % (
-            self.ticketitem.bpt_event.id))
+            self.ticketitem.ticketing_event.id))
 
     def test_edit_ticketitem(self):
         '''
@@ -97,9 +97,9 @@ class TestEditTicketItem(TestCase):
             follow=True)
         self.assertRedirects(
             response,
-            "%s?bpt_event_id=%s&updated_tickets=%s&updated_events=[]" % (
+            "%s?event_id=%s&updated_tickets=%s&updated_events=[]" % (
                 reverse('ticket_item_edit', urlconf='ticketing.urls'),
-                self.ticketitem.bpt_event.bpt_event_id,
+                self.ticketitem.ticketing_event.event_id,
                 str([self.ticketitem.id])))
 
     def test_ticket_create_post_form_all_good(self):
@@ -118,7 +118,7 @@ class TestEditTicketItem(TestCase):
             ('%s?conference=%s&open_panel=ticket&updated_tickets=%s' +
              '&updated_events=[]') % (
              reverse('ticket_items', urlconf='ticketing.urls'),
-             str(self.ticketitem.bpt_event.conference.conference_slug),
+             str(self.ticketitem.ticketing_event.conference.conference_slug),
              str([self.ticketitem.id+1])))
 
     def test_ticket_edit_post_form_bad_bptevent(self):
@@ -126,7 +126,7 @@ class TestEditTicketItem(TestCase):
             Invalid form data submitted, fail with error and return form
         '''
         error_form = self.get_ticketitem_form()
-        error_form['bpt_event'] = -1
+        error_form['ticketing_event'] = -1
         login_as(self.privileged_user, self)
         response = self.client.post(
             self.url,
@@ -146,8 +146,8 @@ class TestEditTicketItem(TestCase):
             response,
             '%s?conference=%s&open_panel=ticket&updated_events=%s' % (
                 reverse('ticket_items', urlconf='ticketing.urls'),
-                str(self.ticketitem.bpt_event.conference.conference_slug),
-                str([self.ticketitem.bpt_event.id])))
+                str(self.ticketitem.ticketing_event.conference.conference_slug),
+                str([self.ticketitem.ticketing_event.id])))
         self.assertContains(
             response,
             delete_ticket_success_message)

@@ -360,7 +360,7 @@ class TestIndex(TestCase):
             pronouns="text",
             introduction_text="text")
         act.tech.save()
-        bpt_event_id = make_act_app_ticket(self.current_conf)
+        event_id = make_act_app_ticket(self.current_conf)
         login_as(member.performer_profile, self)
         url = reverse("home", urlconf="gbe.urls")
         response = self.client.get(url)
@@ -494,7 +494,7 @@ class TestIndex(TestCase):
         expected_string = (
             '<b>%s</b></span> - Not submitted'
             ) % self.unpaid_act.b_title
-        bpt_event_id = make_act_app_ticket(self.current_conf)
+        event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, expected_string)
 
@@ -506,7 +506,7 @@ class TestIndex(TestCase):
         self.paid_act = ActFactory(performer=self.performer,
                                    submitted=False,
                                    b_conference=self.current_conf)
-        bpt_event_id = make_act_app_ticket(self.current_conf)
+        event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, "Fee has been paid, submit NOW!")
 
@@ -519,7 +519,7 @@ class TestIndex(TestCase):
             '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s - %s</b>'
             ) % (self.unpaid_vendor.business.name,
                  self.current_conf.conference_slug)
-        bpt_event_id = make_vendor_app_ticket(self.current_conf)
+        event_id = make_vendor_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, expected_string)
 
@@ -536,12 +536,12 @@ class TestIndex(TestCase):
             '<i class="fas fa-arrow-alt-circle-right"></i> <b>%s - %s</b>'
             ) % (self.paid_vendor.business.name,
                  self.current_conf.conference_slug)
-        bpt_event_id = make_vendor_app_ticket(self.current_conf)
+        event_id = make_vendor_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(response, expected_string)
         self.assertNotContains(response, "%d/%s" % (
             self.profile.user_object.id,
-            bpt_event_id))
+            event_id))
         self.assertContains(response, "Fee has been paid, submit NOW!")
 
     def test_act_tech_alert(self):
@@ -554,7 +554,7 @@ class TestIndex(TestCase):
         self.current_act.tech.save()
         self.current_act.accepted = 3
         self.current_act.save()
-        bpt_event_id = make_act_app_ticket(self.current_conf)
+        event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertContains(
             response,
@@ -581,7 +581,7 @@ class TestIndex(TestCase):
             introduction_text="text")
         self.current_act.accepted = 3
         self.current_act.save()
-        bpt_event_id = make_act_app_ticket(self.current_conf)
+        event_id = make_act_app_ticket(self.current_conf)
         response = self.get_landing_page()
         self.assertNotContains(
             response,

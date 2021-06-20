@@ -4,6 +4,7 @@ from django.test import (
 )
 from django.contrib.auth.models import User
 from tests.factories.ticketing_factories import(
+    EventbriteSettingsFactory,
     NoEventRoleExclusionFactory,
     RoleEligibilityConditionFactory,
     RoleExclusionFactory,
@@ -35,10 +36,17 @@ class TicketingChangeListTests(TestCase):
         response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
         self.assertContains(response, "True")
 
+    def test_get_ebsettings_active(self):
+        settings = EventbriteSettingsFactory()
+        response = self.client.get(
+            '/admin/ticketing/eventbritesettings/',
+            follow=True)
+        self.assertContains(response, str(settings))
+
     def test_get_eventcontainer_conference(self):
         ticket = TicketItemFactory()
         response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
-        self.assertContains(response, str(ticket.bpt_event.conference))
+        self.assertContains(response, str(ticket.ticketing_event.conference))
 
     def test_get_transaction_act_fee_paid(self):
         conference = ConferenceFactory()

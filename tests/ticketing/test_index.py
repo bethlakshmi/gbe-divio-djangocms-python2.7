@@ -23,7 +23,7 @@ class TestTicketingIndex(TestCase):
         self.client = Client()
         self.url = reverse('index', urlconf='ticketing.urls')
         self.ticket = TicketItemFactory(live=True,
-                                        bpt_event__title="Event Title")
+                                        ticketing_event__title="Event Title")
 
     def test_one_ticket(self):
         '''
@@ -47,13 +47,13 @@ class TestTicketingIndex(TestCase):
         not_shown = TicketItemFactory(
             live=False,
             cost=999.99,
-            bpt_event__title='This is the Event Title')
+            ticketing_event__title='This is the Event Title')
         also_not_shown = TicketItemFactory(
             has_coupon=True,
             cost=not_shown.cost,
-            bpt_event__title=not_shown.bpt_event)
+            ticketing_event__title=not_shown.ticketing_event)
         ticket = TicketItemFactory(live=True,
-                                   bpt_event=not_shown.bpt_event,
+                                   ticketing_event=not_shown.ticketing_event,
                                    cost=123.00)
         response = self.client.get(self.url)
         self.assertContains(response, 'This is the Event Title')
@@ -73,7 +73,8 @@ class TestTicketingIndex(TestCase):
         self.assertContains(response, '<i class="icon-pencil"></i>')
 
     def test_two_prices_one_event(self):
-        second_ticket = TicketItemFactory(bpt_event=self.ticket.bpt_event,
-                                          cost=self.ticket.cost+10)
+        second_ticket = TicketItemFactory(
+            ticketing_event=self.ticket.ticketing_event,
+            cost=self.ticket.cost+10)
         response = self.client.get(self.url)
         assert "$%f - $%f" % (self.ticket.cost, second_ticket.cost)
