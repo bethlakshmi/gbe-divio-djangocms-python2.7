@@ -4,7 +4,7 @@
     {% for ticket in tickets %}
       <li class="ticket_list_item">
         {{ ticket.title }} - 
-        <a href="http://www.brownpapertickets.com/event/ID-{{ user_id }}/{{ ticket.event_id }}/" target="_blank" class="gbe-link">
+        <a href="https://www.eventbrite.com/e/{{ ticket.event_id }}" target="_blank" class="gbe-link">
             Buy it now!</a>
       </li>{% endfor %}
     </ul></div>
