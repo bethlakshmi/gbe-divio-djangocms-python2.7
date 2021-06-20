@@ -19,6 +19,7 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from django.core.exceptions import PermissionDenied
+from gbe.models import EvaluationCategory
 
 
 class TestReviewActList(TestCase):
@@ -152,3 +153,26 @@ class TestReviewActList(TestCase):
         self.assertContains(response, str(flex_eval.ranking))
         self.assertContains(response, "4.0", 2)
         self.assertContains(response, '<td>--</td>', 12)
+
+    def test_review_act_has_average_w_zero(self):
+        EvaluationCategory.objects.all().delete()
+        flex_eval = FlexibleEvaluationFactory(
+            bid=self.acts[0],
+            evaluator=self.privileged_profile,
+            )
+        flex_eval = FlexibleEvaluationFactory(
+            bid=self.acts[0],
+            evaluator=self.privileged_profile,
+            ranking=0)
+        flex_eval = FlexibleEvaluationFactory(
+            bid=self.acts[0],
+            evaluator=self.privileged_profile,
+            ranking=5)
+        login_as(self.privileged_user, self)
+        response = self.client.get(
+            self.url,
+            data={'conf_slug': self.conference.conference_slug})
+        self.assertContains(response, "0.0", 1)
+        self.assertContains(response, "5.0", 1)
+        self.assertContains(response, "3.0", 1)
+        self.assertContains(response, "2.67", 1)
