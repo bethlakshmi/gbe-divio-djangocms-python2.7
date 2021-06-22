@@ -55,7 +55,8 @@ class ParticipantForm(ModelForm):
 
         if valid:
             email = self.cleaned_data['email']
-            if User.objects.filter(email__iexact=email).count():
+            if User.objects.filter(email__iexact=email).exclude(
+                    pk=self.instance.user_object.pk).count():
                 self._errors['email'] = UserMessage.objects.get_or_create(
                     view="RegisterView",
                     code="EMAIL_IN_USE",

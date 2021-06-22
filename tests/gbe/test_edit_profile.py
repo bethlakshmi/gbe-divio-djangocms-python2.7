@@ -184,6 +184,22 @@ class TestEditProfile(TestCase):
         self.assertFalse(preferences.send_bid_notifications)
 
     @patch('urllib.request.urlopen', autospec=True)
+    def test_update_profile_post_valid_form_same_email(self, m_urlopen):
+        a = Mock()
+        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
+        a.read.side_effect = [File(ok_email_filename).read()]
+        m_urlopen.return_value = a
+        url = reverse(self.view_name, urlconf='gbe.urls')
+        data = self.get_form()
+        data['email'] = self.profile.user_object.email
+        login_as(self.profile, self)
+        response = self.client.post(url, data=data, follow=True)
+        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
+        preferences = ProfilePreferences.objects.get(profile=self.profile)
+        self.assertTrue(preferences.send_daily_schedule)
+        self.assertFalse(preferences.send_bid_notifications)
+
+    @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_post_valid_redirect(self, m_urlopen):
         context = VolunteerContext()
         context.conference.accepting_bids = True
