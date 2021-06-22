@@ -38,7 +38,9 @@ from scheduler.data_transfer import Person
 class ApproveVolunteerView(View):
     template = 'gbe/scheduling/approve_volunteer.tmpl'
     conference = None
-    reviewer_permissions = ('Volunteer Coordinator', 'Staff Lead')
+    reviewer_permissions = ('Volunteer Coordinator',
+                            'Stage Manager',
+                            'Staff Lead')
     review_list_view_name = 'approve_volunteer'
     changed_id = -1
 
