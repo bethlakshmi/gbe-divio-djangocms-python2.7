@@ -41,6 +41,7 @@ class TestMailToRoles(TestMailFilters):
                  "Panelist",
                  "Performer",
                  "Producer",
+                 "Stage Manager",
                  "Staff Lead",
                  "Teacher",
                  "Technical Director",

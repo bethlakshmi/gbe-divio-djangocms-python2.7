@@ -25,7 +25,7 @@ class TestStaffArea(TestCase):
         '''
         show = ShowFactory()
         context = VolunteerContext(event=show)
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
@@ -42,7 +42,7 @@ class TestStaffArea(TestCase):
             user_object__is_active=False
         )
         context = VolunteerContext(event=show, profile=inactive)
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
@@ -66,7 +66,7 @@ class TestStaffArea(TestCase):
 
     def test_show_bad_event(self):
         show = ShowFactory()
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
@@ -77,7 +77,7 @@ class TestStaffArea(TestCase):
 
     def test_staff_area_bad_area(self):
         context = StaffAreaContext()
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
@@ -94,7 +94,7 @@ class TestStaffArea(TestCase):
             user_object__is_active=False
         )
         vol, opp = context.book_volunteer(volunteer=inactive)
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
@@ -113,7 +113,7 @@ class TestStaffArea(TestCase):
         vol2, opp2 = context.book_volunteer(role="Pending Volunteer")
         vol3, opp3 = context.book_volunteer(role="Waitlisted")
         vol4, opp4 = context.book_volunteer(role="Rejected")
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
@@ -141,7 +141,7 @@ class TestStaffArea(TestCase):
         vol2, opp2 = context.book_volunteer(role="Pending Volunteer")
         vol3, opp3 = context.book_volunteer(role="Waitlisted")
         vol4, opp4 = context.book_volunteer(role="Rejected")
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             "%s?filter=Potential" %
@@ -164,7 +164,7 @@ class TestStaffArea(TestCase):
         context = VolunteerContext()
         context.conference.status = "completed"
         context.conference.save()
-        grant_privilege(self.profile, 'Act Reviewers')
+        grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
