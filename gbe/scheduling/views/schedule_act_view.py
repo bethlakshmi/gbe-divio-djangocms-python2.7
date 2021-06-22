@@ -32,7 +32,7 @@ from gbe.scheduling.views.functions import show_general_status
 
 class ScheduleAct(View):
     template = 'gbe/scheduling/act_schedule.tmpl'
-    permissions = ('Scheduling Mavens',)
+    permissions = ('Scheduling Mavens', 'Stage Manager')
     entry = "%s<li>Performer: %s, Act: %s - Show: %s, Order: %d</li>"
 
     def select_shows(self, request):

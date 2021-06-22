@@ -17,7 +17,19 @@ def staff_area_view(request, parent_type, target):
     volunteers scheduled, sorted by time/day
     See ticket #250
     '''
-    viewer_profile = validate_perms(request, 'any', require=True)
+    viewer_profile = validate_perms(request, (
+        'Act Coordinator',
+        'Class Coordinator',
+        'Costume Coordinator',
+        'Vendor Coordinator',
+        'Volunteer Coordinator',
+        'Tech Crew',
+        'Scheduling Mavens',
+        'Stage Manager',
+        'Staff Lead',
+        'Ticketing - Admin',
+        'Registrar',
+        ), require=True)
     other = "Potential"
     roles = []
     if 'filter' in list(request.GET.keys()) and (

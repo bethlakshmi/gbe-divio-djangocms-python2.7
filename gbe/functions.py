@@ -56,7 +56,10 @@ def validate_perms(request, perms, require=True):
     '''
     permitted_roles = []
     profile = validate_profile(request, require=False)
-    event_roles = ['Technical Director', 'Producer', 'Staff Lead']
+    event_roles = ['Technical Director',
+                   'Producer',
+                   'Stage Manager',
+                   'Staff Lead']
 
     if not profile:
         if require:
