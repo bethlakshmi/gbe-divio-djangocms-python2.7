@@ -44,37 +44,26 @@ class ParticipantForm(ModelForm):
     def clean(self):
         changed = self.changed_data
         if self.has_changed() and 'email' in self.changed_data:
+            from gbe.models import UserMessage
             if User.objects.filter(
-                    email=self.cleaned_data.get('email')).exists():
-                raise ValidationError('That email address is already in use')
-        return self.cleaned_data
-
-    def is_valid(self):
-        from gbe.models import UserMessage
-        valid = super(ParticipantForm, self).is_valid()
-
-        if valid:
-            email = self.cleaned_data['email']
-            if User.objects.filter(email__iexact=email).exclude(
-                    pk=self.instance.user_object.pk).count():
-                self._errors['email'] = UserMessage.objects.get_or_create(
+                    email__iexact=self.cleaned_data.get('email')).exclude(
+                    pk=self.instance.user_object.pk).exists():
+                raise ValidationError(UserMessage.objects.get_or_create(
                     view="RegisterView",
                     code="EMAIL_IN_USE",
                     defaults={
                         'summary': "User with Email Exists",
                         'description': email_in_use_msg
-                        })[0].description
-                valid = False
+                        })[0].description)
             elif check_forum_spam(self.cleaned_data['email']):
-                self._errors['email'] = UserMessage.objects.get_or_create(
+                raise ValidationError(UserMessage.objects.get_or_create(
                     view="RegisterView",
                     code="FOUND_IN_FORUMSPAM",
                     defaults={
                         'summary': "User on Stop Forum Spam",
                         'description': found_on_list_msg
-                        })[0].description
-                valid = False
-        return valid
+                        })[0].description)
+        return self.cleaned_data
 
     def save(self, commit=True):
         partform = super(ParticipantForm, self).save(commit=False)

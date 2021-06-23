@@ -24,7 +24,10 @@ from gbetext import (
 from mock import patch, Mock
 import urllib
 from django.core.files import File
-from gbetext import found_on_list_msg
+from gbetext import (
+    email_in_use_msg,
+    found_on_list_msg,
+)
 from django.conf import settings
 
 
@@ -184,20 +187,31 @@ class TestEditProfile(TestCase):
         self.assertFalse(preferences.send_bid_notifications)
 
     @patch('urllib.request.urlopen', autospec=True)
-    def test_update_profile_post_valid_form_same_email(self, m_urlopen):
+    def test_update_profile_post_valid_form_keep_email(self, m_urlopen):
+        self.profile.email = "TheCaseDoesntMatter@email.com"
+        self.profile.save()
         a = Mock()
         ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
         a.read.side_effect = [File(ok_email_filename).read()]
         m_urlopen.return_value = a
+
         url = reverse(self.view_name, urlconf='gbe.urls')
         data = self.get_form()
-        data['email'] = self.profile.user_object.email
+        data['email'] = "thecasedoesntmatter@email.com"
         login_as(self.profile, self)
         response = self.client.post(url, data=data, follow=True)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
-        preferences = ProfilePreferences.objects.get(profile=self.profile)
-        self.assertTrue(preferences.send_daily_schedule)
-        self.assertFalse(preferences.send_bid_notifications)
+
+    def test_update_profile_post_duplicate_email(self):
+        self.other_profile = ProfileFactory(
+            user_object__email="TheCaseDoesntMatter@email.com")
+
+        url = reverse(self.view_name, urlconf='gbe.urls')
+        data = self.get_form()
+        data['email'] = "thecasedoesntmatter@email.com"
+        login_as(self.profile, self)
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, email_in_use_msg)
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_post_valid_redirect(self, m_urlopen):
