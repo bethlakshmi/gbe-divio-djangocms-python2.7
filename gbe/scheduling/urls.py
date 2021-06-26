@@ -21,6 +21,7 @@ from gbe.scheduling.views import (
     SetFavoriteView,
     SetVolunteerView,
     ShowCalendarView,
+    ShowDashboard,
     StaffAreaWizardView,
     TicketedEventWizardView,
     VolunteerSignupView,
@@ -48,6 +49,9 @@ urlpatterns = [
         ManageEventsView.as_view(), name='manage_event_list'),
     url(r'^scheduler/delete_occurrence/(?P<occurrence_id>\d+)/?$',
         DeleteEventView.as_view(), name='delete_occurrence'),
+    url(r'^scheduling/show_dashboard/(?P<occurrence_id>\d+)/?$',
+        ShowDashboard.as_view(),
+        name='show_dashboard'),
 
     url(r'^scheduling/create_class_wizard/(?P<conference>[-\w]+)/?$',
         ClassWizardView.as_view(), name='create_class_wizard'),
