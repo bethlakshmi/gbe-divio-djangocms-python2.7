@@ -3,6 +3,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.contrib import messages
 from django.shortcuts import (
     render,
     get_object_or_404,
@@ -20,12 +21,14 @@ from gbe.models import (
     Act,
     GenericEvent,
     Show,
+    UserMessage,
 )
 from scheduler.idd import (
     get_occurrences,
     get_people,
     get_schedule,
 )
+from gbetext import no_scope_error
 
 
 class ShowDashboard(ProfileRequiredMixin, View):
@@ -67,10 +70,22 @@ class ShowDashboard(ProfileRequiredMixin, View):
                     'eventitem_id',
                     flat=True)).occurrences
         else:
+            check_scope = False
             for item in get_schedule(
                     user=self.profile.user_object,
                     roles=self.view_perm).schedule_items:
                 self.show_scope += [item.event]
+                if item.event == self.occurrence:
+                    check_scope = True
+            if not check_scope:
+                messages.error(request, UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="NO SHOW SCOPE PRIVILEGE",
+                    defaults={
+                        'summary': "User is accesing show they don't manage",
+                        'description': no_scope_error})[0].description)
+                error_url = reverse('home', urlconf='gbe.urls')
+                return HttpResponseRedirect(error_url)
 
     def get_context_data(self, request):
         acts = []
