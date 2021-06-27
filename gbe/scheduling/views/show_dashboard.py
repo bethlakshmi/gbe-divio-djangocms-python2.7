@@ -35,8 +35,8 @@ class ShowDashboard(ProfileRequiredMixin, View):
     template = 'gbe/scheduling/show_dashboard.tmpl'
     conference = None
     view_perm = ('Scheduling Mavens',
+                 'Staff Lead',
                  'Stage Manager',
-                 'Tech Crew',
                  'Technical Director',
                  'Producer')
     schedule_act_perm = ('Scheduling Mavens', 'Stage Manager')

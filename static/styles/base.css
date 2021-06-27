@@ -374,8 +374,8 @@ span.opps-errors ul {padding: 0px;}
 .vol_header {padding: 0 3px 0 3px;}
 
 .gbe_accordion .fa-stack {font-size: 14px;}
-.gbe_accordion button.btn {width: 100%;font-weight: bold;padding: 0;}
-.gbe_accordion a.btn {font-size: 18px;margin-top: 20px;margin-bottom: 10px;}
+.gbe_accordion h2 button.btn {width: 100%;font-weight: bold;padding: 0;}
+.gbe_accordion h2 a.btn {font-size: 18px;margin-top: 20px;margin-bottom: 10px;}
 #ticket_button {font-size: 12px;}
 #ticket_action {width: 70px;padding: 0px;text-align: center;}
 #ticket_action div a {margin: 2px 0px 2px 0px;}
