@@ -53,7 +53,7 @@ from settings import GBE_DATETIME_FORMAT
 
 class ActTechWizardView(View):
     template = 'gbe/act_tech_wizard.tmpl'
-    permissions = ('Technical Director', 'Producer')
+    permissions = ('Technical Director', 'Producer', 'Stage Manager')
     default_event_type = None
     page_title = 'Edit Act Technical Information'
     first_title = 'Set Rehearsal Time'
@@ -181,6 +181,8 @@ class ActTechWizardView(View):
     def groundwork(self, request, args, kwargs):
         self.shows = []
         self.rehearsals = {}
+        self.next_page = request.GET.get('next',
+                                         reverse('home', urlconf='gbe.urls'))
         profile = validate_profile(request, require=False)
         if not profile:
             return HttpResponseRedirect(reverse('profile_update',
@@ -307,8 +309,7 @@ class ActTechWizardView(View):
                 return render(request, self.template, self.make_context(
                     basic_form=self.get_initial_basic_form(),
                     advanced_form=advanced_form))
-        return HttpResponseRedirect(
-                        reverse('home', urlconf='gbe.urls'))
+        return HttpResponseRedirect(self.next_page)
 
     @never_cache
     @method_decorator(login_required)
