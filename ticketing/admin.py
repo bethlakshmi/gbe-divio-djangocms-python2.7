@@ -111,8 +111,8 @@ class TicketingEventsAdmin(admin.ModelAdmin):
             'fields': ('display_icon', 'title', 'description'),
             'description': '''What is shown on the 'I Want to Buy Tickets'
                 page.  Description is not shown there, it's pulled from
-                BPT but not shown.  Display Icon must come from
-                http://simplelineicons.com/ -- NOTE:  Avoid the "."''',
+                ticket source but not shown.  Display Icon must come from
+                https://simplelineicons.github.io/ -- NOTE:  Avoid the "."''',
         }),
     )
 
