@@ -1,4 +1,5 @@
-{% load static sekizai_tags gbe_tags %}
+{% load sekizai_tags gbe_tags %}
+<h3 class="gbe-title">Act Tech Info & Rehearsal Slots</h3>
 <br><br>
 <span class="gbe-form-error">Highlighted text</span> reflects incomplete acts.<br>
 <span class="gbe-form-error gbe-inactive">Bold and red names</span> reflects acts with
@@ -11,15 +12,6 @@ deactivated users.<br>
     Toggle column(s):
     {% for column in columns %}
     <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ forloop.counter0 }}">{{column}}</button>
-    {% endfor %}
-    {% for vertical_column in vertical_columns %}
-      {% if vertical_column|length > 15 %}
-        <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ columns|length|add:forloop.counter0 }}" title="{{ vertical_column }}">
-        {{ vertical_column|truncatechars:15 }}</button>
-      {% else %}
-        <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ columns|length|add:forloop.counter0 }}">{{ vertical_column }}</button>
-      {% endif %}
-    </button>
     {% endfor %}
   </div>
   <br/>

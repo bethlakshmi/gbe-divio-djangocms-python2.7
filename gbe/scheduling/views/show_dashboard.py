@@ -21,6 +21,7 @@ from gbe.models import (
     Act,
     GenericEvent,
     Show,
+    StaffArea,
     UserMessage,
 )
 from scheduler.idd import (
@@ -28,7 +29,10 @@ from scheduler.idd import (
     get_people,
     get_schedule,
 )
-from gbetext import no_scope_error
+from gbetext import (
+    no_scope_error,
+    role_commit_map,
+)
 
 
 class ShowDashboard(ProfileRequiredMixin, View):
@@ -97,9 +101,11 @@ class ShowDashboard(ProfileRequiredMixin, View):
                    'Music',
                    'Action']
         conference = self.item.e_conference
+
+        # Setup act pane
         response = get_people(foreign_event_ids=[self.item.eventitem_id],
                               roles=["Performer"])
-        show_general_status(request, response, "ReviewActTechinfo")
+        show_general_status(request, response, "ShowDashboard")
         for performer in response.people:
             rehearsals = []
             order = -1
@@ -109,7 +115,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
             sched_response = get_schedule(
                 labels=[act.b_conference.conference_slug],
                 commitment=act)
-            show_general_status(request, sched_response, "ReviewActTechinfo")
+            show_general_status(request, sched_response, "ShowDashboard")
             for item in sched_response.schedule_items:
                 if item.event not in rehearsals and (
                         GenericEvent.objects.filter(
@@ -127,6 +133,28 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 urlconf='gbe.scheduling.urls',
                 args=[self.item.pk])
 
+        # Setup Volunteer pane
+        opps = []
+        roles = []
+        for role, commit in list(role_commit_map.items()):
+            if commit[0] > 0 and commit[0] < 4:
+                roles += [role]
+        opps_response = get_occurrences(
+            labels=[conference.conference_slug, "Volunteer"],
+            parent_event_id=self.occurrence.pk)
+
+        if opps_response:
+            show_general_status(request, opps_response, "ShowDashboard")
+            for opp in opps_response.occurrences:
+                item = {
+                    'event': opp,
+                    'areas': [],
+                }
+                for area in StaffArea.objects.filter(slug__in=opp.labels,
+                                                     conference=conference):
+                    item['areas'] += [area]
+                opps += [item]
+
         return {'this_show': self.item,
                 'this_occurrence': self.occurrence,
                 'acts': acts,
@@ -136,8 +164,18 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'conference': conference,
                 'scheduling_link': scheduling_link,
                 'change_acts': self.can_change_techinfo,
+                'opps': opps,
+                'role_commit_map': role_commit_map,
+                'visible_roles': roles,
                 'return_link': reverse('act_techinfo_review',
-                                       urlconf='gbe.reporting.urls',)}
+                                       urlconf='gbe.reporting.urls',),
+                'vol_columns': ['Event',
+                                'Area',
+                                'Date/Time',
+                                'Location',
+                                'Max',
+                                'Current',
+                                'Volunteers']}
 
     @never_cache
     def get(self, request, *args, **kwargs):
