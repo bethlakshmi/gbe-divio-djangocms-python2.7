@@ -60,7 +60,7 @@ deactivated users.<br>
     <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" title="View Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-eye"></i></a>
   {% if act.act.video_link and act.act.video_choice != "1" %}
     <a href="{{ act.act.video_link }}" title="Watch Act Video" class="btn gbe-btn-table btn-sm"><i class="fas fa-video"></i></a>{% endif %}
-    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}" title="Edit Act Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i>
+    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}?next={{ request.get_full_path }}" title="Edit Act Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i>
 </a>
     <form action="{% url 'gbe:act_changestate' act.act.id%}" method="post">
       {% csrf_token %}
