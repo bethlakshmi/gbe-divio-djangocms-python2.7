@@ -88,6 +88,7 @@ def LandingPageView(request, profile_id=None, historical=False):
                                 'bid_type': bid_type}]
         bookings = []
         booking_ids = []
+        manage_shows = []
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
             gbe_event = booking.event.eventitem.child()
@@ -112,6 +113,11 @@ def LandingPageView(request, profile_id=None, historical=False):
                             'eval_event',
                             args=[booking.event.pk, ],
                             urlconf='gbe.scheduling.urls')
+            if booking.role in (
+                    'Stage Manager',
+                    'Technical Director',
+                    'Producer'):
+                manage_shows += [booking.event]
             if booking.event.pk not in booking_ids:
                 bookings += [booking_item]
                 booking_ids += [booking.event.pk]
@@ -122,6 +128,7 @@ def LandingPageView(request, profile_id=None, historical=False):
             'alerts': viewer_profile.alerts(historical),
             'standard_context': standard_context,
             'personae': viewer_profile.get_personae(),
+            'manage_shows': manage_shows,
             'troupes': viewer_profile.get_troupes(),
             'businesses': viewer_profile.business_set.all(),
             'acts': viewer_profile.get_acts(historical),

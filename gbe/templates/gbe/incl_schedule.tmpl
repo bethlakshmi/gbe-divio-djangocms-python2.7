@@ -38,6 +38,14 @@
     {% empty %}
       {{ profile.display_name }} is not scheduled for anything at this time.
     {% endfor %}
-
+    {% for show in manage_shows %}
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <a class="btn gbe-btn-primary" role="button" href='{% url 'scheduling:show_dashboard' show.pk%}'>Manage {{ show.eventitem }}</a>
+    </div>
+  </div>
+</div><br>
+    {% endfor %}
 </div>
 
