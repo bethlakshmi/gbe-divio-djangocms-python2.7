@@ -29,12 +29,17 @@ from scheduler.idd import (
     get_occurrences,
     get_people,
     get_schedule,
+    set_person,
 )
 from gbetext import (
     act_order_form_invalid,
     act_order_submit_success,
     no_scope_error,
     role_commit_map,
+)
+from scheduler.data_transfer import (
+    Commitment,
+    Person,
 )
 
 
@@ -109,7 +114,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
         # Setup act pane
         response = get_people(foreign_event_ids=[self.item.eventitem_id],
                               roles=["Performer"])
-        show_general_status(request, response, "ShowDashboard")
+        show_general_status(request, response, self.__class__.__name__)
         for performer in response.people:
             rehearsals = []
             order = -1
@@ -119,7 +124,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
             sched_response = get_schedule(
                 labels=[act.b_conference.conference_slug],
                 commitment=act)
-            show_general_status(request, sched_response, "ShowDashboard")
+            show_general_status(request,
+                                sched_response,
+                                self.__class__.__name__)
             for item in sched_response.schedule_items:
                 if item.event not in rehearsals and (
                         GenericEvent.objects.filter(
@@ -161,7 +168,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
             parent_event_id=self.occurrence.pk)
 
         if opps_response:
-            show_general_status(request, opps_response, "ShowDashboard")
+            show_general_status(request,
+                                opps_response,
+                                self.__class__.__name__)
             for opp in opps_response.occurrences:
                 item = {
                     'event': opp,
@@ -209,12 +218,32 @@ class ShowDashboard(ProfileRequiredMixin, View):
                     'description': act_order_form_invalid})[0].description)
             data['open_panel'] = 'act'
         else:
-            messages.success(request, UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="ACT_SCHED_SUCCESS",
-                defaults={
-                    'summary': "Order of Acts was updated",
-                    'description': act_order_submit_success})[0].description)
+            update_success = True
+            for act in data['acts']:
+                person = Person(public_id=act['act'].performer.pk,
+                                booking_id=act['form'].prefix,
+                                role="Performer",
+                                commitment=Commitment(
+                                    decorator_class=act['act'],
+                                    order=act['form'].cleaned_data['order']))
+                response = set_person(person=person,
+                                      occurrence_id=self.occurrence.pk)
+                # we don't care about overbook warnings on this case
+                response.warnings = []
+                show_general_status(request,
+                                    response,
+                                    self.__class__.__name__)
+                if not response.occurrence:
+                    update_success = False
+            if update_success:
+                messages.success(request, UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="ACT_SCHED_SUCCESS",
+                    defaults={
+                        'summary': "Order of Acts was updated",
+                        'description': act_order_submit_success}
+                    )[0].description)
+       
         return render(request, self.template, data)
 
 

@@ -37,7 +37,7 @@ deactivated users.<br>
     <tbody>
     {% for act in acts %}
     <tr  class="gbe-table-row {% if not act.act.tech.is_complete  %}gbe-form-error{% endif %}" >
-      <td>{{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
+      <td data-order='{% if act.order %}{{ act.order }}{% endif %}'>{{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
       </td>
       <td>{{ act.act.b_title }}</td>
       <td>{% if not act.act.performer.contact.user_object.is_active  %}
@@ -95,8 +95,8 @@ deactivated users.<br>
     var table = $('#gbe-table').DataTable({
       "paging": false,
       "columnDefs": [
-        { "width": "5%", "targets": 0 }]{% if order %},
-      "order": [[ {{order}}, "desc" ]]{% endif %}
+        { "width": "5%", "targets": 0 }],
+      "order": [[ 0, "asc" ]]
     } );
     $('button.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
