@@ -24,12 +24,15 @@ from gbe.models import (
     StaffArea,
     UserMessage,
 )
+from gbe.scheduling.forms import ActScheduleBasics
 from scheduler.idd import (
     get_occurrences,
     get_people,
     get_schedule,
 )
 from gbetext import (
+    act_order_form_invalid,
+    act_order_submit_success,
     no_scope_error,
     role_commit_map,
 )
@@ -84,7 +87,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
             if not check_scope:
                 messages.error(request, UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
-                    code="NO SHOW SCOPE PRIVILEGE",
+                    code="NO_SHOW_SCOPE_PRIVILEGE",
                     defaults={
                         'summary': "User is accesing show they don't manage",
                         'description': no_scope_error})[0].description)
@@ -93,6 +96,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
 
     def get_context_data(self, request):
         acts = []
+        all_valid = True
         scheduling_link = ''
         columns = ['Order',
                    'Act',
@@ -126,7 +130,20 @@ class ShowDashboard(ProfileRequiredMixin, View):
                         eventitem_id=item.event.eventitem.eventitem_id
                         ).exists():
                     order = item.commitment.order
-            acts += [{'act': act, 'rehearsals': rehearsals, 'order': order}]
+            if request.POST:
+                form = ActScheduleBasics(
+                    request.POST,
+                    prefix=performer.booking_id)
+                all_valid = all_valid and form.is_valid()
+            else:
+                form = ActScheduleBasics(
+                    prefix=performer.booking_id,
+                    initial={'order': performer.commitment.order})
+            acts += [{
+                'act': act,
+                'rehearsals': rehearsals,
+                'order': order,
+                'form': form}]
         if self.can_schedule_acts:
             scheduling_link = reverse(
                 'schedule_acts',
@@ -158,6 +175,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
         return {'this_show': self.item,
                 'this_occurrence': self.occurrence,
                 'acts': acts,
+                'all_valid': all_valid,
                 'columns': columns,
                 'other_shows': self.show_scope,
                 'conference_slugs': conference_slugs(),
@@ -176,6 +194,29 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                 'Max',
                                 'Current',
                                 'Volunteers']}
+    @never_cache
+    def post(self, request, *args, **kwargs):
+        error_url = self.groundwork(request, args, kwargs)
+        if error_url:
+            return error_url
+        data = self.get_context_data(request)
+        if not data['all_valid']:
+            messages.error(request, UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="ACT_SCHED_ERROR",
+                defaults={
+                    'summary': "Act Order Forms not valid",
+                    'description': act_order_form_invalid})[0].description)
+            data['open_panel'] = 'act'
+        else:
+            messages.success(request, UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="ACT_SCHED_SUCCESS",
+                defaults={
+                    'summary': "Order of Acts was updated",
+                    'description': act_order_submit_success})[0].description)
+        return render(request, self.template, data)
+
 
     @never_cache
     def get(self, request, *args, **kwargs):

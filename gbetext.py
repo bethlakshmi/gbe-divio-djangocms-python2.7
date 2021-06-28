@@ -74,7 +74,9 @@ act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                      (1, 'The Main Event, in competition'),
                      (2, 'The Main Event, not in competition'),
                      (3, 'The Newcomer\'s Showcase')]
-
+act_order_form_invalid = '''There was a problem updating the act order.  \
+Check the list of acts for more information on the error.'''
+act_order_submit_success = '''The order of acts has been updated.'''
 more_shows_options = [
     (4, 'Friday, July 28'),
     (5, 'Saturday, July 29'),

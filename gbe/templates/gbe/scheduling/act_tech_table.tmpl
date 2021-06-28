@@ -1,6 +1,7 @@
 {% load sekizai_tags gbe_tags %}
 <h3 class="gbe-title">Act Tech Info & Rehearsal Slots</h3>
 <br><br>
+{% if acts %}
 <span class="gbe-form-error">Highlighted text</span> reflects incomplete acts.<br>
 <span class="gbe-form-error gbe-inactive">Bold and red names</span> reflects acts with
 deactivated users.<br>
@@ -15,6 +16,11 @@ deactivated users.<br>
     {% endfor %}
   </div>
   <br/>
+<form method="POST" action='' enctype="multipart/form-data">
+  <div class="float-right pb-2">
+  <input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">
+  </div>
+{% csrf_token %}
   <table id="gbe-table" style="width:100%">
     <thead>
       <tr class="gbe-table-header">
@@ -31,7 +37,8 @@ deactivated users.<br>
     <tbody>
     {% for act in acts %}
     <tr  class="gbe-table-row {% if not act.act.tech.is_complete  %}gbe-form-error{% endif %}" >
-      <td>{% if act.order %}{{ act.order }}{% endif %}</td>
+      <td>{{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
+      </td>
       <td>{{ act.act.b_title }}</td>
       <td>{% if not act.act.performer.contact.user_object.is_active  %}
         <span class="gbe-form-error gbe-inactive">
@@ -65,7 +72,11 @@ deactivated users.<br>
   {% endfor %}
     </tbody>
   </table>
-  {% if not acts %}
+  <div class="float-right py-2">
+  <input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">
+  </div>
+</form>
+  {% else %}
     <br>
     There are no available acts.  That may mean that:
     <ul>
