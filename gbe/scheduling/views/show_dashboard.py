@@ -25,6 +25,10 @@ from gbe.models import (
     UserMessage,
 )
 from gbe.scheduling.forms import ActScheduleBasics
+from gbe.email.forms import (
+    SecretRoleInfoForm,
+    SelectEventForm,
+)
 from scheduler.idd import (
     get_occurrences,
     get_people,
@@ -54,6 +58,19 @@ class ShowDashboard(ProfileRequiredMixin, View):
     schedule_act_perm = ('Scheduling Mavens', 'Stage Manager')
     change_tech_perm = ('Technical Director', 'Producer', 'Stage Manager')
     cross_show_scope = ('Scheduling Mavens', )
+
+    def setup_email_forms(self):
+        role_form = SecretRoleInfoForm(
+            initial={'conference': [self.item.e_conference],
+                     'roles': None},
+            prefix="email-select")
+        event_form = SelectEventForm(
+            prefix="event-select",
+            initial={'events': [self.item]})
+        event_form['events'].queryset = Show.objects.filter(pk=self.item.pk)
+        event_form['staff_areas'].queryset = None
+        event_form['event_collections'].queryset = None
+        return [role_form, event_form]
 
     def groundwork(self, request, args, kwargs):
         groundwork_data = shared_groundwork(
@@ -180,8 +197,8 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                                      conference=conference):
                     item['areas'] += [area]
                 opps += [item]
-
         return {'this_show': self.item,
+                'email_forms': self.setup_email_forms(),
                 'this_occurrence': self.occurrence,
                 'acts': acts,
                 'all_valid': all_valid,

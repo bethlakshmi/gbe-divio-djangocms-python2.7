@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load gbe_tags %}
 {% block title %}
-   Act Tech Report
+   Manage {{this_show}}
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
@@ -18,7 +18,36 @@
  <div class="gbe-tab-area">
 {% endif %}
   <h2 class="review-title gbe-title">{{this_show}} Dashboard</h2>
-
+<div class="pt-2">
+  <div class="row"><div class="col-4">
+  <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
+    {% for form in email_forms %}
+      {{form}}
+    {% endfor %}
+    <input type="hidden" name="email-select-roles" value="Performer" id="id_email-select-roles_0">
+  <input type = "submit" name="refine" value="Email Performers" class="btn gbe-btn-primary">
+  </form>
+  </div>
+  <div class="col-4">
+  <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
+    {% for form in email_forms %}
+      {{form}}
+    {% endfor %}
+    <input type="hidden" name="email-select-roles" value="Volunteer" id="id_email-select-roles_0">
+    <input type = "submit" name="refine" value="Email Volunters" class="btn gbe-btn-primary">
+  </form>
+  </div>
+  <div class="col-4">
+  <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
+    {% for form in email_forms %}
+      {{form}}
+    {% endfor %}
+    <input type="hidden" name="email-select-roles" value="Performer" id="id_email-select-roles_0">
+    <input type="hidden" name="email-select-roles" value="Volunteer" id="id_email-select-roles_1">
+    <input type = "submit" name="refine" value="Email Performers & Volunteers" class="btn gbe-btn-primary">
+  </form>
+  </div></div>
+</div>
 <div id="accordion" class="gbe_accordion my-3">
   <div class="card gbe-panel-list">
     <div class="card-header gbe-bg-dark" id="headingOne">
@@ -33,9 +62,6 @@
     </div>
     <div id="collapseOne" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
       <div class="card-body">
-  {% if scheduling_link and scheduling_link|length > 0 %}
-    <a href="{{scheduling_link}}">Schedule Acts for this Show</a><br>
-  {% endif %}
   {% include "gbe/scheduling/act_tech_table.tmpl"%}
      </div>
     </div>
