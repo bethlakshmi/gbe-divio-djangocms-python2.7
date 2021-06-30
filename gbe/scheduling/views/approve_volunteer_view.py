@@ -4,6 +4,7 @@ from django.shortcuts import (
     render,
 )
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -187,7 +188,9 @@ class ApproveVolunteerView(View):
         if 'action' in kwargs and 'booking_id' in kwargs and (
                 'public_id' in kwargs):
             self.set_status(request, kwargs)
-
-        return render(request,
-                      self.template,
-                      self.make_context(self.get_list(request)))
+        if 'next' in request.GET.keys():
+            return HttpResponseRedirect(request.GET.get('next'))
+        else:
+            return render(request,
+                          self.template,
+                          self.make_context(self.get_list(request)))
