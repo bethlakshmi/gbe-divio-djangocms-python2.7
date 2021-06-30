@@ -18,7 +18,7 @@ deactivated users.<br>
   <br/>
 <form method="POST" action='' enctype="multipart/form-data">
   <div class="float-right pb-2">
-  <input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">
+  {% if can_schedule %}<input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">{% endif }
   </div>
 {% csrf_token %}
   <table id="gbe-table" style="width:100%">
@@ -37,7 +37,8 @@ deactivated users.<br>
     <tbody>
     {% for act in acts %}
     <tr  class="gbe-table-row {% if not act.act.tech.is_complete  %}gbe-form-error{% endif %}" >
-      <td data-order='{% if act.order %}{{ act.order }}{% endif %}'>{{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
+      <td data-order='{% if act.order %}{{ act.order }}{% endif %}'>{% if can_schedule %}{{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
+        {% if can_rebook %}<a href="" class="btn gbe-btn-primary btn-sm float-right">Change Show</a>{% endif %}{% else %}{{ act.order }}{% endif %}
       </td>
       <td>{{ act.act.b_title }}</td>
       <td>{% if not act.act.performer.contact.user_object.is_active  %}
@@ -73,7 +74,7 @@ deactivated users.<br>
     </tbody>
   </table>
   <div class="float-right py-2">
-  <input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">
+  {% if can_schedule %}<input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">{% endif %}
   </div>
 </form>
   {% else %}

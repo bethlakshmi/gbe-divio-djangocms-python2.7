@@ -50,14 +50,16 @@ from scheduler.data_transfer import (
 class ShowDashboard(ProfileRequiredMixin, View):
     template = 'gbe/scheduling/show_dashboard.tmpl'
     conference = None
-    view_perm = ('Scheduling Mavens',
+    view_perm = ('Act Coordinator',
+                 'Scheduling Mavens',
                  'Staff Lead',
                  'Stage Manager',
                  'Technical Director',
                  'Producer')
-    schedule_act_perm = ('Scheduling Mavens', 'Stage Manager')
+    schedule_act_perm = ('Scheduling Mavens', 'Producer', 'Stage Manager')
     change_tech_perm = ('Technical Director', 'Producer', 'Stage Manager')
     cross_show_scope = ('Scheduling Mavens', )
+    rebook_perm = ('Scheduling Mavens', 'Producer', 'Act Coordinator')
 
     def setup_email_forms(self):
         role_form = SecretRoleInfoForm(
@@ -89,6 +91,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
         self.can_change_techinfo = validate_perms(request,
                                                   self.change_tech_perm,
                                                   require=False)
+        self.can_rebook = validate_perms(request,
+                                         self.rebook_perm,
+                                         require=False)
         self.show_scope = []
         if validate_perms(request,
                           self.cross_show_scope,
@@ -168,11 +173,6 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'rehearsals': rehearsals,
                 'order': order,
                 'form': form}]
-        if self.can_schedule_acts:
-            scheduling_link = reverse(
-                'schedule_acts',
-                urlconf='gbe.scheduling.urls',
-                args=[self.item.pk])
 
         # Setup Volunteer pane
         opps = []
@@ -206,7 +206,8 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'other_shows': self.show_scope,
                 'conference_slugs': conference_slugs(),
                 'conference': conference,
-                'scheduling_link': scheduling_link,
+                'can_schedule': self.can_schedule_acts,
+                'can_rebook': self.can_rebook,
                 'change_acts': self.can_change_techinfo,
                 'opps': opps,
                 'role_commit_map': role_commit_map,
