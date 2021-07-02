@@ -8,11 +8,17 @@ from django.shortcuts import (
     render,
     get_object_or_404,
 )
+from django.forms import (
+    ChoiceField,
+    Form,
+    HiddenInput
+)
 from gbe.functions import (
     conference_slugs,
     validate_perms,
 )
 from gbe.views import ProfileRequiredMixin
+from gbe.views.functions import make_show_casting_form
 from gbe.scheduling.views.functions import (
     shared_groundwork,
     show_general_status,
@@ -58,7 +64,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                  'Producer')
     schedule_act_perm = ('Scheduling Mavens', 'Producer', 'Stage Manager')
     change_tech_perm = ('Technical Director', 'Producer', 'Stage Manager')
-    cross_show_scope = ('Scheduling Mavens', )
+    cross_show_scope = ('Scheduling Mavens', 'Act Coordinator', 'Staff Lead')
     rebook_perm = ('Scheduling Mavens', 'Producer', 'Act Coordinator')
 
     def setup_email_forms(self):
@@ -168,10 +174,20 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 form = ActScheduleBasics(
                     prefix=performer.booking_id,
                     initial={'order': performer.commitment.order})
+            rebook_form = Form()
+            rebook_form.fields['accepted'] = ChoiceField(
+                choices=((3,3), ),
+                initial=3,
+                widget = HiddenInput())
+            rebook_form = make_show_casting_form(conference,
+                                                 rebook_form,
+                                                 self.item.eventitem_id,
+                                                 performer.commitment.role)
             acts += [{
                 'act': act,
                 'rehearsals': rehearsals,
                 'order': order,
+                'rebook_form': rebook_form,
                 'form': form}]
 
         # Setup Volunteer pane

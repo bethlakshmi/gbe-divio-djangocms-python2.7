@@ -18,7 +18,7 @@ deactivated users.<br>
   <br/>
 <form method="POST" action='' enctype="multipart/form-data">
   <div class="float-right pb-2">
-  {% if can_schedule %}<input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">{% endif }
+  {% if can_schedule %}<input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">{% endif %}
   </div>
 {% csrf_token %}
   <table id="gbe-table" style="width:100%">
@@ -37,8 +37,10 @@ deactivated users.<br>
     <tbody>
     {% for act in acts %}
     <tr  class="gbe-table-row {% if not act.act.tech.is_complete  %}gbe-form-error{% endif %}" >
-      <td data-order='{% if act.order %}{{ act.order }}{% endif %}'>{% if can_schedule %}{{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
-        {% if can_rebook %}<a href="" class="btn gbe-btn-primary btn-sm float-right">Change Show</a>{% endif %}{% else %}{{ act.order }}{% endif %}
+      <td data-order='{% if act.order %}{{ act.order }}{% endif %}'>
+        {% if can_schedule %}
+          {{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
+        {% else %}{{ act.order }}{% endif %}
       </td>
       <td>{{ act.act.b_title }}</td>
       <td>{% if not act.act.performer.contact.user_object.is_active  %}
@@ -60,14 +62,38 @@ deactivated users.<br>
     <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" title="View Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-eye"></i></a>
   {% if act.act.video_link and act.act.video_choice != "1" %}
     <a href="{{ act.act.video_link }}" title="Watch Act Video" class="btn gbe-btn-table btn-sm"><i class="fas fa-video"></i></a>{% endif %}
-    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}?next={{ request.get_full_path }}" title="Edit Act Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i>
-</a>
+    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}?next={{ request.get_full_path }}" title="Edit Act Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
     <form action="{% url 'gbe:act_changestate' act.act.id%}" method="post">
       {% csrf_token %}
       <input type="hidden" id="id_accepted" name="accepted" value="4">
       <input type="hidden" id="id_next" name="next" value="{{ request.get_full_path }}">
     <button title="Remove Act from Show" type="submit" class="btn gbe-btn-table btn-sm">
-        <i class="fa fa-trash" aria-hidden="true"></i></button></form>{% endif %}</div>
+        <i class="fa fa-trash" aria-hidden="true"></i></button></form>{% endif %}
+    </div>
+        {% if can_rebook %}
+        {% url 'gbe:act_changestate' act.act.id%}
+      <form action="{% url 'gbe:act_changestate' act.act.id%}" method="post">
+        {% url 'gbe:act_changestate' act.act.id%}
+        <button type="submit" id="dropdownMenuButton{{act.act.pk}}" class="btn gbe-btn-secondary btn-sm mt-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Show</button>
+        <div class="dropdown-menu px-4 py-3 gbe-form-dropdown" onclick="event.stopPropagation()" aria-labelledby="dropdownMenuButton {{act.act.pk}}">
+            <div class="form-group">
+              {% csrf_token %}
+              <input type="hidden" id="id_next" name="next" value="{{ request.get_full_path }}">
+              {% for field in act.rebook_form.hidden_fields %}
+                {{field}}
+              {% endfor %}
+              {% for field in act.rebook_form.visible_fields %}
+                {{field.label_tag}}<br>
+                {{field}}<br><br>
+              {% endfor %}
+            </div>
+            <div class="form-group">
+              <button title="Rebook to new show or role" type="submit" class="btn gbe-btn-primary">Change Show/Casting</button>
+            </div>
+          </div>
+      </form>
+        {% endif %}
+    </div>
     </td>
       </tr>
   {% endfor %}
@@ -77,7 +103,7 @@ deactivated users.<br>
   {% if can_schedule %}<input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">{% endif %}
   </div>
 </form>
-  {% else %}
+{% else %}
     <br>
     There are no available acts.  That may mean that:
     <ul>
@@ -85,7 +111,7 @@ deactivated users.<br>
     <li>There are no acts in the show - check bid review for acts</li>
     <li>The show identified does not exist - please pick from the list above...</li>
     </ul>
-  {% endif %}
+{% endif %}
 {% addtoblock "js" %}
   <script charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>

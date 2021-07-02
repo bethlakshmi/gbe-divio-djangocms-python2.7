@@ -1,12 +1,19 @@
 from gbe.forms import ParticipantForm
-from django.forms import MultipleChoiceField
+from django.forms import (
+    ChoiceField,
+    MultipleChoiceField,
+)
 from gbe_forms_text import (
     how_heard_options,
     participant_labels,
 )
 from gbetext import (
+    act_casting_label,
     states_options,
 )
+from scheduler.idd import get_occurrences
+from gbe.models import Show
+from gbe.views.act_display_functions import get_act_casting
 
 
 def get_participant_form(profile, prefix='Contact Info'):
@@ -34,3 +41,23 @@ def get_participant_form(profile, prefix='Contact Info'):
         required=False,
         label=participant_labels['how_heard'])
     return participantform
+
+# used in review flex bid view and the show dashboard, takes a 
+# base form to play well with the inheritance in bid review
+def make_show_casting_form(conference, base_form, start, casting):
+    choices = []
+    response = get_occurrences(
+        foreign_event_ids=Show.objects.filter(
+            e_conference=conference).values_list('eventitem_id', flat=True))
+    for occurrence in response.occurrences:
+        choices += [(occurrence.eventitem.pk, str(occurrence))]
+    base_form.fields['show'] = ChoiceField(
+        choices=choices,
+        label='Pick a Show',
+        initial=start)
+    base_form.fields['casting'] = ChoiceField(
+        choices=get_act_casting(),
+        required=False,
+        label=act_casting_label,
+        initial=casting)
+    return base_form
