@@ -48,6 +48,21 @@ div.container {top:0;}
     line-height: 1.5 !important;
     border-radius: 3px !important;
 }
+.gbe-btn-primary, .gbe-btn-secondary, .gbe-btn-light
+{
+  border-radius: 24px;
+}
+.gbe-btn-primary:active,
+.gbe-btn-primary.active,
+.gbe-btn-secondary:active,
+.gbe-btn-secondary.active,
+.gbe-btn-light:active,
+.gbe-btn-light.active,
+ {
+  box-shadow: none;
+  margin-bottom: -3px;
+  margin-top: 3px;
+}
 div.banner {
   left: 0px;
   top: 0px;

@@ -48,10 +48,10 @@
         <a href="{% url 'scheduling:approve_volunteer' 'approve' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm"data-toggle="tooltip" title="Approve">
             <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
         <a href="{% url 'scheduling:approve_volunteer' 'waitlist' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm {% if contact.role == 'Waitlisted' %} disabled{% endif %}" data-toggle="tooltip" title="Waitlist">
-            <i class="fa fa-clock" aria-hidden="true"></i></a>
+            <i class="fa fa-clock" aria-hidden="true"></i></a>{% endif %}
         <a href="{% url 'scheduling:approve_volunteer' 'reject' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm" data-toggle="tooltip" title="Reject">
             <i class="fas fa-thumbs-down" aria-hidden="true"></i></a>
-    {% endif %}</div><br> P: {{contact.user.profile.phone}}</div>
+    </div><br> P: {{contact.user.profile.phone}}</div>
           {% endif %}
           {% endfor %}
   	  </td>

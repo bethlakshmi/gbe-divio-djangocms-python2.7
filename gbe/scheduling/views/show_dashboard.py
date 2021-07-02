@@ -65,7 +65,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
     schedule_act_perm = ('Scheduling Mavens', 'Producer', 'Stage Manager')
     change_tech_perm = ('Technical Director', 'Producer', 'Stage Manager')
     cross_show_scope = ('Scheduling Mavens', 'Act Coordinator', 'Staff Lead')
-    rebook_perm = ('Scheduling Mavens', 'Producer', 'Act Coordinator')
+    rebook_perm = ('Producer', 'Act Coordinator')
 
     def setup_email_forms(self):
         role_form = SecretRoleInfoForm(
