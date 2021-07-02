@@ -58,7 +58,7 @@ deactivated users.<br>
             <span class="gbe-form-error">No track provided</span>
           {% endif %}
           </td>
-      <td><div class="btn-group">
+      <td><div class="btn-group"><form action="" method="post"></form>
     <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" title="View Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-eye"></i></a>
   {% if act.act.video_link and act.act.video_choice != "1" %}
     <a href="{{ act.act.video_link }}" title="Watch Act Video" class="btn gbe-btn-table btn-sm"><i class="fas fa-video"></i></a>{% endif %}
@@ -71,11 +71,9 @@ deactivated users.<br>
         <i class="fa fa-trash" aria-hidden="true"></i></button></form>{% endif %}
     </div>
         {% if can_rebook %}
-        {% url 'gbe:act_changestate' act.act.id%}
-      <form action="{% url 'gbe:act_changestate' act.act.id%}" method="post">
-        {% url 'gbe:act_changestate' act.act.id%}
         <button type="submit" id="dropdownMenuButton{{act.act.pk}}" class="btn gbe-btn-secondary btn-sm mt-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Show</button>
         <div class="dropdown-menu px-4 py-3 gbe-form-dropdown" onclick="event.stopPropagation()" aria-labelledby="dropdownMenuButton {{act.act.pk}}">
+        <form action="{% url 'gbe:act_changestate' act.act.id%}" method="post">
             <div class="form-group">
               {% csrf_token %}
               <input type="hidden" id="id_next" name="next" value="{{ request.get_full_path }}">
@@ -89,9 +87,8 @@ deactivated users.<br>
             </div>
             <div class="form-group">
               <button title="Rebook to new show or role" type="submit" class="btn gbe-btn-primary">Change Show/Casting</button>
-            </div>
+            </div></form>
           </div>
-      </form>
         {% endif %}
     </div>
     </td>
