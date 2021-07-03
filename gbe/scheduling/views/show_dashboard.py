@@ -63,9 +63,17 @@ class ShowDashboard(ProfileRequiredMixin, View):
                  'Technical Director',
                  'Producer')
     schedule_act_perm = ('Scheduling Mavens', 'Producer', 'Stage Manager')
-    change_tech_perm = ('Technical Director', 'Producer', 'Stage Manager')
+    change_tech_perm = ('Technical Director',
+                        'Producer',
+                        'Stage Manager',
+                        'Staff Lead')
     cross_show_scope = ('Scheduling Mavens', 'Act Coordinator', 'Staff Lead')
     rebook_perm = ('Producer', 'Act Coordinator')
+    approve_volunteers = ('Technical Director',
+                          'Scheduling Mavens',
+                          'Producer',
+                          'Stage Manager',
+                          'Staff Lead')
 
     def setup_email_forms(self):
         role_form = SecretRoleInfoForm(
@@ -100,6 +108,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
         self.can_rebook = validate_perms(request,
                                          self.rebook_perm,
                                          require=False)
+        self.can_approve_vol = validate_perms(request,
+                                              self.approve_volunteers,
+                                              require=False)
         self.show_scope = []
         if validate_perms(request,
                           self.cross_show_scope,
@@ -224,6 +235,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'conference': conference,
                 'can_schedule': self.can_schedule_acts,
                 'can_rebook': self.can_rebook,
+                'can_approve_vol': self.can_approve_vol,
                 'change_acts': self.can_change_techinfo,
                 'opps': opps,
                 'role_commit_map': role_commit_map,

@@ -44,13 +44,14 @@
           {% if role == contact.role %}<i class="{{commit.1}}"></i>{% endif %}{% endfor %}
         {{contact.user.profile}}
         <div class="btn-group" role="group" aria-label="..."><a href="{% url 'email:mail_to_individual' contact.user.profile.resourceitem_id %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Email"><i class="far fa-envelope"></i></a>
-    {% if contact.role == 'Pending Volunteer' or contact.role == 'Waitlisted'%}
+    {% if can_approve_vol %}
+      {% if contact.role == 'Pending Volunteer' or contact.role == 'Waitlisted'%}
         <a href="{% url 'scheduling:approve_volunteer' 'approve' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm"data-toggle="tooltip" title="Approve">
             <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
         <a href="{% url 'scheduling:approve_volunteer' 'waitlist' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm {% if contact.role == 'Waitlisted' %} disabled{% endif %}" data-toggle="tooltip" title="Waitlist">
             <i class="fa fa-clock" aria-hidden="true"></i></a>{% endif %}
-        <a href="{% url 'scheduling:approve_volunteer' 'reject' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm" data-toggle="tooltip" title="Reject">
-            <i class="fas fa-thumbs-down" aria-hidden="true"></i></a>
+        <a href="{% url 'scheduling:approve_volunteer' 'reject' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm" data-toggle="tooltip" title="Reject"><i class="fas fa-thumbs-down" aria-hidden="true"></i></a>
+    {% endif %}
     </div><br> P: {{contact.user.profile.phone}}</div>
           {% endif %}
           {% endfor %}
