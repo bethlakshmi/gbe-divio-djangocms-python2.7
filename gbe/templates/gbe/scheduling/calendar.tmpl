@@ -58,6 +58,8 @@
      {% for role, teacher in occurrence.teachers %}{{ role }}:  {{ teacher.name }}
      {% if not forloop.last %}, {% endif %}{% endfor %}<br>
      <i>{{ occurrence.location }}</i>
+     {% if occurrence.show_dashboard %}
+       <a href="{{occurrence.show_dashboard}}" class="btn gbe-btn-secondary btn-sm mb-2 float-right">Dashboard</a>{% endif %}
     </div>
 {% endfor %}
 {% if not occurrences %}

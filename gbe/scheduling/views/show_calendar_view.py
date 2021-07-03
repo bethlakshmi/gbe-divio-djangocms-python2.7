@@ -27,6 +27,7 @@ from gbe.functions import (
     get_conference_days,
     get_conference_by_slug,
     conference_slugs,
+    validate_perms,
 )
 from scheduler.idd import (
     get_bookings,
@@ -52,12 +53,14 @@ class ShowCalendarView(View):
         2: 6,
         1: 12,
     }
+    show_editors = ('Schedule Mavens', 'Act Coordinator')
 
     def process_inputs(self, request, args, kwargs):
         context = {}
         self.calendar_type = None
         self.conference = None
         self.this_day = None
+        self.can_edit_show = False
         if "calendar_type" in kwargs:
             self.calendar_type = kwargs['calendar_type']
             if self.calendar_type not in list(calendar_type_options.values()):
@@ -90,6 +93,12 @@ class ShowCalendarView(View):
             'conference_slugs': conference_slugs(),
             'this_day': self.this_day,
         }
+        if self.calendar_type == "General" and validate_perms(
+                request,
+                self.show_editors,
+                require=False):
+            self.can_edit_show = True
+
         if self.this_day:
             open_to_public = [True]
             if self.calendar_type == "Volunteer":
@@ -131,8 +140,13 @@ class ShowCalendarView(View):
                 'detail_link': reverse('detail_view',
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.eventitem.pk]),
+                'teachers': [],
             }
-            occurrence_detail['teachers'] = []
+            if self.can_edit_show and occurrence.event_type_name == "Show":
+                occurrence_detail['show_dashboard'] = reverse(
+                    'show_dashboard',
+                    urlconf='gbe.scheduling.urls',
+                    args=[occurrence.pk])
             for person in get_bookings([occurrence.pk],
                                        roles=["Teacher", "Moderator"]).people:
                 presenter = Performer.objects.get(pk=person.public_id)
