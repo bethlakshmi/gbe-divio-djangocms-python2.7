@@ -41,7 +41,10 @@ class ApproveVolunteerView(View):
     conference = None
     reviewer_permissions = ('Volunteer Coordinator',
                             'Stage Manager',
-                            'Staff Lead')
+                            'Staff Lead',
+                            'Technical Director',
+                            'Scheduling Mavens',
+                            'Producer')
     review_list_view_name = 'approve_volunteer'
     changed_id = -1
 

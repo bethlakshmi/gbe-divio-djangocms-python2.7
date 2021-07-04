@@ -53,7 +53,10 @@ from settings import GBE_DATETIME_FORMAT
 
 class ActTechWizardView(View):
     template = 'gbe/act_tech_wizard.tmpl'
-    permissions = ('Technical Director', 'Producer', 'Stage Manager')
+    permissions = ('Technical Director',
+                   'Producer',
+                   'Stage Manager',
+                   'Staff Lead')
     default_event_type = None
     page_title = 'Edit Act Technical Information'
     first_title = 'Set Rehearsal Time'

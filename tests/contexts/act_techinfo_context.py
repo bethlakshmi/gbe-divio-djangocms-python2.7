@@ -3,6 +3,7 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     GenericEventFactory,
     PersonaFactory,
+    ProfileFactory,
     RoomFactory,
     ShowFactory,
 )
@@ -29,7 +30,10 @@ class ActTechInfoContext():
                  schedule_rehearsal=False,
                  act_role="Regular Act",
                  set_waitlist=False):
-        self.show = show or ShowFactory()
+        if conference:
+            self.show = show or ShowFactory(e_conference=conference)
+        else:
+            self.show = show or ShowFactory()
         self.conference = conference or self.show.e_conference
         self.performer = performer or PersonaFactory()
         self.act = act or ActFactory(performer=self.performer,
@@ -60,13 +64,13 @@ class ActTechInfoContext():
                 event=self.sched_event,
                 resource=LocationFactory(_item=self.room.locationitem_ptr))
         # schedule the act into the show
-        booking = ResourceAllocationFactory(
+        self.booking = ResourceAllocationFactory(
             event=self.sched_event,
             resource=WorkerFactory(
                 _item=self.act.performer,
                 role=role))
         self.order = OrderingFactory(
-            allocation=booking,
+            allocation=self.booking,
             class_id=self.act.pk,
             class_name="Act",
             role=act_role)
@@ -107,3 +111,10 @@ class ActTechInfoContext():
         ordering, created = Ordering.objects.get_or_create(allocation=alloc)
         ordering.order = order
         ordering.save()
+
+    def make_priv_role(self, role="Stage Manager"):
+        profile = ProfileFactory()
+        ResourceAllocationFactory(
+            event=self.sched_event,
+            resource=WorkerFactory(role=role, _item=profile))
+        return profile

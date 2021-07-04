@@ -52,10 +52,8 @@
             <i class="fa fa-clock" aria-hidden="true"></i></a>{% endif %}
         <a href="{% url 'scheduling:approve_volunteer' 'reject' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm" data-toggle="tooltip" title="Reject"><i class="fas fa-thumbs-down" aria-hidden="true"></i></a>
     {% endif %}
-    </div><br> P: {{contact.user.profile.phone}}</div>
-          {% endif %}
-          {% endfor %}
-  	  </td>
+    </div><br> P: {{contact.user.profile.phone}}</div>{% endif %}{% endfor %}
+      </td>
     </tr>
   {% endfor %}
   </tbody></table>

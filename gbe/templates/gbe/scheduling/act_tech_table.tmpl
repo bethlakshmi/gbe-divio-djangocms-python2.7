@@ -36,7 +36,7 @@ deactivated users.<br>
     </tfoot>
     <tbody>
     {% for act in acts %}
-    <tr  class="gbe-table-row {% if not act.act.tech.is_complete  %}gbe-form-error{% endif %}" >
+    <tr class="gbe-table-row {% if not act.act.tech.is_complete  %}gbe-form-error{% endif %}" >
       <td data-order='{% if act.order %}{{ act.order }}{% endif %}'>
         {% if can_schedule %}
           {{ act.form.order }}<span class="opps-errors gbe-form-error">{{ act.form.order.errors }}</span>
@@ -90,8 +90,7 @@ deactivated users.<br>
             </div></form>
           </div>
         {% endif %}
-    </div>
-    </td>
+       </td>
       </tr>
   {% endfor %}
     </tbody>
