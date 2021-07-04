@@ -17,7 +17,6 @@ from gbe.scheduling.views import (
     ManageEventsView,
     ManageVolWizardView,
     RehearsalWizardView,
-    ScheduleAct,
     SetFavoriteView,
     SetVolunteerView,
     ShowCalendarView,
@@ -119,8 +118,4 @@ urlpatterns = [
         ListEventsView.as_view(), name='event_list'),
     url(r'^scheduling/details/(?P<eventitem_id>\d+)/?$',
         EventDetailView.as_view(), name='detail_view'),
-    url(r'^scheduling/acts/?$',
-        ScheduleAct.as_view(), name='schedule_acts'),
-    url(r'^scheduling/acts/(?P<show_id>\d+)/?$',
-        ScheduleAct.as_view(), name='schedule_acts'),
 ]

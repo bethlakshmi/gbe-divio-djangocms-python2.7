@@ -21,7 +21,7 @@ from django.utils.formats import date_format
 from gbetext import no_scope_error
 
 
-class TestReviewActTechInfo(TestCase):
+class TestShowDashboard(TestCase):
     '''Tests for index view'''
     view_name = 'show_dashboard'
 

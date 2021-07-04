@@ -16,7 +16,6 @@ from .edit_staff_area_view import EditStaffAreaView
 from .copy_collections_view import CopyCollectionsView
 from .copy_occurrence_view import CopyOccurrenceView
 from .copy_staff_area_view import CopyStaffAreaView
-from .schedule_act_view import ScheduleAct
 
 # Misc
 from .manage_events_view import ManageEventsView

@@ -20,60 +20,16 @@ class TestStaffArea(TestCase):
         self.client = Client()
         self.profile = ProfileFactory()
 
-    def test_staff_area_path(self):
-        '''staff_area view should load
-        '''
-        show = ShowFactory()
-        context = VolunteerContext(event=show)
-        grant_privilege(self.profile, 'Act Coordinator')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('staff_area',
-                    urlconf="gbe.reporting.urls",
-                    args=['event', show.eventitem_id]))
-        self.assertContains(response, show.e_title)
-
-    def test_show_with_inactive(self):
-        ''' view should load
-        '''
-        show = ShowFactory()
-        inactive = ProfileFactory(
-            display_name="Inactive User",
-            user_object__is_active=False
-        )
-        context = VolunteerContext(event=show, profile=inactive)
-        grant_privilege(self.profile, 'Act Coordinator')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('staff_area',
-                    urlconf="gbe.reporting.urls",
-                    args=['event', show.eventitem_id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '<tr class="gbe-form-error">')
-
     def test_staff_area_path_fail(self):
         '''staff_area view should fail for non-authenticated users
         '''
-        show = ShowFactory()
+        context = StaffAreaContext()
         login_as(self.profile, self)
         response = self.client.get(
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
-                    args=['event', show.eventitem_id]))
+                    args=[context.area.pk]))
         self.assertEqual(response.status_code, 403)
-
-    def test_show_bad_event(self):
-        show = ShowFactory()
-        grant_privilege(self.profile, 'Act Coordinator')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('staff_area',
-                    urlconf="gbe.reporting.urls",
-                    args=['event', show.eventitem_id+100]))
-        self.assertContains(response,
-                            "Staff Schedules for None")
 
     def test_staff_area_bad_area(self):
         context = StaffAreaContext()
@@ -82,7 +38,7 @@ class TestStaffArea(TestCase):
         response = self.client.get(
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
-                    args=['area', context.area.pk+100]), follow=True)
+                    args=[context.area.pk+100]), follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_staff_area_with_inactive(self):
@@ -99,7 +55,7 @@ class TestStaffArea(TestCase):
         response = self.client.get(
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
-                    args=['area', context.area.pk]))
+                    args=[context.area.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
@@ -118,7 +74,7 @@ class TestStaffArea(TestCase):
         response = self.client.get(
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
-                    args=['area', context.area.pk]))
+                    args=[context.area.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(vol1))
         self.assertContains(response, role_commit_map["Volunteer"][1])
@@ -147,7 +103,7 @@ class TestStaffArea(TestCase):
             "%s?filter=Potential" %
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
-                    args=['area', context.area.pk]))
+                    args=[context.area.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(vol1))
         self.assertContains(response, str(vol2))
@@ -159,19 +115,3 @@ class TestStaffArea(TestCase):
         self.assertNotContains(response, reverse("edit_staff",
                                                  urlconf='gbe.scheduling.urls',
                                                  args=[context.area.pk]))
-
-    def test_show_completed(self):
-        context = VolunteerContext()
-        context.conference.status = "completed"
-        context.conference.save()
-        grant_privilege(self.profile, 'Act Coordinator')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('staff_area',
-                    urlconf="gbe.reporting.urls",
-                    args=['event', context.event.eventitem_id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, reverse(
-            "edit_event",
-            urlconf='gbe.scheduling.urls',
-            args=[context.conference.conference_slug, context.sched_event.pk]))

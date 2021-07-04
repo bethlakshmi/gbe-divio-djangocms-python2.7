@@ -11,7 +11,7 @@ from gbetext import role_commit_map
 from django.urls import reverse
 
 
-def staff_area_view(request, parent_type, target):
+def staff_area_view(request, target):
     '''
     Generates a staff area report: volunteer opportunities scheduled,
     volunteers scheduled, sorted by time/day
@@ -25,7 +25,6 @@ def staff_area_view(request, parent_type, target):
         'Volunteer Coordinator',
         'Tech Crew',
         'Scheduling Mavens',
-        'Stage Manager',
         'Staff Lead',
         'Ticketing - Admin',
         'Registrar',
@@ -44,30 +43,15 @@ def staff_area_view(request, parent_type, target):
     opps = None
     conference = None
     edit_link = None
-    if parent_type == "area":
-        area = get_object_or_404(StaffArea, pk=target)
-        opps_response = get_occurrences(labels=[
-            area.conference.conference_slug,
-            area.slug])
-        conference = area.conference
-        if area.conference.status != 'completed':
-            edit_link = reverse("edit_staff",
-                                urlconf='gbe.scheduling.urls',
-                                args=[area.pk])
-    elif parent_type == "event":
-        parent_response = get_occurrences(foreign_event_ids=[target])
-        if parent_response.occurrences:
-            area = parent_response.occurrences[0]
-            opps_response = get_occurrences(
-                parent_event_id=parent_response.occurrences[0].pk)
-            conference = Conference.objects.filter(
-                conference_slug__in=area.labels).first()
-            if conference.status != 'completed':
-                edit_link = reverse(
-                    "edit_event",
-                    urlconf='gbe.scheduling.urls',
-                    args=[conference.conference_slug, area.pk])
-
+    area = get_object_or_404(StaffArea, pk=target)
+    opps_response = get_occurrences(labels=[
+        area.conference.conference_slug,
+        area.slug])
+    conference = area.conference
+    if area.conference.status != 'completed':
+        edit_link = reverse("edit_staff",
+                            urlconf='gbe.scheduling.urls',
+                            args=[area.pk])
     if opps_response:
         show_general_status(request, opps_response, "staff_area")
         opps = opps_response.occurrences

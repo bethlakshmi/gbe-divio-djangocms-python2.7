@@ -27,6 +27,5 @@ def review_staff_area_view(request):
         'gbe/report/staff_areas.tmpl',
         {'header': header,
          'areas': StaffArea.objects.filter(conference=conference),
-         'shows': Show.objects.filter(e_conference=conference),
          'conference_slugs': conference_slugs(),
          'conference': conference})
