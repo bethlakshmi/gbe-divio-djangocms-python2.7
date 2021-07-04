@@ -166,16 +166,6 @@ class TestEditEventView(TestScheduling):
             'name="duration" value="1.0"')
         self.assertContains(response, "Display Staff", 2)
 
-    def test_bad_conference(self):
-        login_as(self.privileged_user, self)
-        self.url = reverse(
-            self.view_name,
-            args=["BadConf",
-                  self.context.sched_event.pk],
-            urlconf='gbe.scheduling.urls')
-        response = self.client.get(self.url, follow=True)
-        self.assertEqual(response.status_code, 404)
-
     def test_bad_occurrence_id(self):
         login_as(self.privileged_user, self)
         self.url = reverse(
