@@ -56,7 +56,7 @@ class EditStaffAreaView(ManageVolWizardView):
                 self.manage_vol_url,
                 self.conference,
                 request,
-                ['area', self.staff_area.pk],
+                [self.staff_area.pk],
                 errorcontext=errorcontext,
                 labels=[self.conference.conference_slug,
                         self.staff_area.slug]))
