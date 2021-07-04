@@ -59,8 +59,7 @@ class SpecialMenu(Menu):
             roles = profile.get_roles()
             for role in ['Technical Director',
                          'Producer',
-                         'Staff Lead',
-                         'Stage Manager']:
+                         'Staff Lead']:
                 if role in roles:
                     privileges.add(role)
             nodes.append(NavigationNode(_("Special"), "", 1))
