@@ -240,8 +240,6 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'opps': opps,
                 'role_commit_map': role_commit_map,
                 'visible_roles': roles,
-                'return_link': reverse('act_techinfo_review',
-                                       urlconf='gbe.reporting.urls',),
                 'vol_columns': ['Event',
                                 'Area',
                                 'Date/Time',

@@ -194,9 +194,9 @@ class TestActChangestate(TestCase):
         grant_privilege(self.privileged_user, 'Technical Director')
         login_as(self.privileged_user, self)
         next_url = reverse(
-            'act_techinfo_review',
-            urlconf='gbe.reporting.urls',
-            args=[self.show.eventitem_id])
+            'show_dashboard',
+            urlconf='gbe.scheduling.urls',
+            args=[self.sched_event.pk])
         data = {
             'accepted': 4,
             'next': next_url,
