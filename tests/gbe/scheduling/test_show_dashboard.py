@@ -9,6 +9,7 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
 )
+from tests.factories.scheduler_factories import EventLabelFactory
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -16,9 +17,15 @@ from tests.functions.gbe_functions import (
 from tests.contexts import (
     ActTechInfoContext,
     ShowContext,
+    StaffAreaContext,
+    VolunteerContext,
 )
 from django.utils.formats import date_format
-from gbetext import no_scope_error
+from gbetext import (
+    act_order_form_invalid,
+    act_order_submit_success,
+    no_scope_error,
+)
 
 
 class TestShowDashboard(TestCase):
@@ -34,6 +41,11 @@ class TestShowDashboard(TestCase):
         self.url = reverse(self.view_name,
                            urlconf='gbe.scheduling.urls',
                            args=[self.context.sched_event.pk])
+
+    def get_basic_post(self, order_value=1):
+        data = {
+            "%d-order" % self.context.booking.pk: order_value}
+        return data
 
     def test_no_permission(self):
         profile = ProfileFactory()
@@ -180,3 +192,123 @@ class TestShowDashboard(TestCase):
         login_as(self.profile, self)
         response = self.client.get(no_act_url)
         self.assertContains(response, "There are no available acts.")
+
+    def test_show_volunteer(self):
+        '''staff_area view should load
+        '''
+        vol_context = VolunteerContext(event=self.context.show,
+                                       sched_event=self.context.sched_event)
+        self.profile = ProfileFactory()
+        grant_privilege(self.profile, 'Scheduling Mavens')
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, vol_context.opportunity.e_title)
+        self.assertContains(response, reverse(
+            'mail_to_individual',
+            urlconf='gbe.email.urls',
+            args=[vol_context.profile.resourceitem_id]))
+        self.assertContains(response, reverse(
+            'detail_view',
+            urlconf='gbe.scheduling.urls',
+            args=[vol_context.opp_event.eventitem_id]))
+
+    def test_show_with_inactive(self):
+        ''' view should load
+        '''
+        inactive = ProfileFactory(
+            display_name="Inactive User",
+            user_object__is_active=False
+        )
+        context = VolunteerContext(event=self.context.show,
+                                   sched_event=self.context.sched_event,
+                                   profile=inactive)
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, context.opportunity.e_title)
+        self.assertContains(
+            response,
+            '<div class="gbe-form-error">')
+        self.assertContains(response, inactive.display_name)
+
+    def test_show_approval_needed_event(self):
+        context = VolunteerContext(event=self.context.show,
+                                   sched_event=self.context.sched_event)
+        context.opp_event.approval_needed = True
+        context.opp_event.save()
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, context.opportunity.e_title)
+        self.assertContains(response, 'class="approval_needed"')
+
+    def test_staff_area_role_display(self):
+        vol_context = VolunteerContext(event=self.context.show,
+                                       sched_event=self.context.sched_event)
+        context = StaffAreaContext(conference=self.context.conference)
+        EventLabelFactory(event=vol_context.opp_event,
+                          text=context.area.slug)
+        vol1, opp1 = context.book_volunteer(
+            volunteer_sched_event=vol_context.opp_event)
+        vol2, opp2 = context.book_volunteer(
+            volunteer_sched_event=vol_context.opp_event,
+            role="Pending Volunteer")
+        vol3, opp3 = context.book_volunteer(
+            volunteer_sched_event=vol_context.opp_event,
+            role="Waitlisted")
+        vol4, opp4 = context.book_volunteer(
+            volunteer_sched_event=vol_context.opp_event,
+            role="Rejected")
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, str(vol1))
+        self.assertContains(response, str(vol2))
+        self.assertContains(response, str(vol3))
+        self.assertNotContains(response, str(vol4))
+        self.assertNotContains(response, reverse(
+            "approve_volunteer",
+            urlconf='gbe.scheduling.urls',
+            args=['approve', vol1.pk, opp1.pk]))
+        self.assertContains(response, reverse(
+            "approve_volunteer",
+            urlconf='gbe.scheduling.urls',
+            args=['approve', vol2.pk, opp2.pk]))
+        self.assertContains(response, reverse(
+            "approve_volunteer",
+            urlconf='gbe.scheduling.urls',
+            args=['approve', vol3.pk, opp3.pk]))
+        self.assertContains(response, context.area.title)
+
+    def test_post_success(self):
+        login_as(self.profile, self)
+        response = self.client.post(
+            self.url,
+            data=self.get_basic_post(),
+            follow=True)
+        self.assertContains(response, act_order_submit_success)
+        self.assertContains(response,
+                            "%s Dashboard" % self.context.show.e_title)
+
+    def test_post_invalid(self):
+        login_as(self.profile, self)
+        response = self.client.post(
+            self.url,
+            data=self.get_basic_post(-1),
+            follow=True)
+        self.assertContains(response, act_order_form_invalid)
+        self.assertContains(response,
+                            "%s Dashboard" % self.context.show.e_title)
+
+    def test_good_user_post_bad_show(self):
+        login_as(self.profile, self)
+        bad_url = reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[self.other_context.sched_event.pk+100])
+        response = self.client.post(
+            bad_url,
+            data=self.get_basic_post(),
+            follow=True)
+        self.assertContains(
+            response,
+            "OCCURRENCE_NOT_FOUND  Occurrence id %d not found" % (
+                self.other_context.sched_event.pk+100))

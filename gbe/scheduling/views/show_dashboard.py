@@ -262,7 +262,6 @@ class ShowDashboard(ProfileRequiredMixin, View):
                     'description': act_order_form_invalid})[0].description)
             data['open_panel'] = 'act'
         else:
-            update_success = True
             for act in data['acts']:
                 person = Person(public_id=act['act'].performer.pk,
                                 booking_id=act['form'].prefix,
@@ -277,16 +276,14 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 show_general_status(request,
                                     response,
                                     self.__class__.__name__)
-                if not response.occurrence:
-                    update_success = False
-            if update_success:
-                messages.success(request, UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="ACT_SCHED_SUCCESS",
-                    defaults={
-                        'summary': "Order of Acts was updated",
-                        'description': act_order_submit_success}
-                    )[0].description)
+            # I can't think of a reason the set_person could fail that isn't
+            # already ruled out by how the request is constructed.
+            messages.success(request, UserMessage.objects.get_or_create(
+                 view=self.__class__.__name__,
+                code="ACT_SCHED_SUCCESS",
+                defaults={
+                    'summary': "Order of Acts was updated",
+                    'description': act_order_submit_success})[0].description)
        
         return render(request, self.template, data)
 
