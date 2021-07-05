@@ -19,6 +19,7 @@ from tests.factories.gbe_factories import(
     VendorFactory,
 )
 from tests.factories.scheduler_factories import (
+    EventLabelFactory,
     LabelFactory,
     SchedEventFactory,
     ResourceAllocationFactory,
@@ -591,7 +592,7 @@ class TestIndex(TestCase):
         self.assertContains(response, reverse(
             'show_dashboard',
             urlconf='gbe.scheduling.urls',
-            args=[self.context.sched_event.pk]))
+            args=[show_context.sched_event.pk]))
 
     def test_no_act_tech_alert(self):
         current_act_context = ActTechInfoContext(
