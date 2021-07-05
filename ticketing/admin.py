@@ -112,7 +112,9 @@ class TicketingEventsAdmin(admin.ModelAdmin):
             'description': '''What is shown on the 'I Want to Buy Tickets'
                 page.  Description is not shown there, it's pulled from
                 ticket source but not shown.  Display Icon must come from
-                https://simplelineicons.github.io/ -- NOTE:  Avoid the "."''',
+                https://simplelineicons.github.io/ or
+                https://icons.getbootstrap.com/ -- NOTE:  Use only the
+                classes, the i tag is already in the code.''',
         }),
     )
 
