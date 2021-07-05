@@ -187,9 +187,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
                     initial={'order': performer.commitment.order})
             rebook_form = Form()
             rebook_form.fields['accepted'] = ChoiceField(
-                choices=((3,3), ),
+                choices=((3, 3), ),
                 initial=3,
-                widget = HiddenInput())
+                widget=HiddenInput())
             rebook_form = make_show_casting_form(conference,
                                                  rebook_form,
                                                  self.item.eventitem_id,
@@ -247,6 +247,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                 'Max',
                                 'Current',
                                 'Volunteers']}
+
     @never_cache
     def post(self, request, *args, **kwargs):
         error_url = self.groundwork(request, args, kwargs)
@@ -279,14 +280,13 @@ class ShowDashboard(ProfileRequiredMixin, View):
             # I can't think of a reason the set_person could fail that isn't
             # already ruled out by how the request is constructed.
             messages.success(request, UserMessage.objects.get_or_create(
-                 view=self.__class__.__name__,
+                view=self.__class__.__name__,
                 code="ACT_SCHED_SUCCESS",
                 defaults={
                     'summary': "Order of Acts was updated",
                     'description': act_order_submit_success})[0].description)
-       
-        return render(request, self.template, data)
 
+        return render(request, self.template, data)
 
     @never_cache
     def get(self, request, *args, **kwargs):

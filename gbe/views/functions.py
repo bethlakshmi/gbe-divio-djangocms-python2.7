@@ -35,14 +35,15 @@ def get_participant_form(profile, prefix='Contact Info'):
         if option[0] in profile.how_heard:
             how_heard_selected += [option]
     if len(how_heard_selected) == 0:
-        how_heard_selected = [('', ''),]
+        how_heard_selected = [('', ''), ]
     participantform.fields['how_heard'] = MultipleChoiceField(
         choices=how_heard_selected,
         required=False,
         label=participant_labels['how_heard'])
     return participantform
 
-# used in review flex bid view and the show dashboard, takes a 
+
+# used in review flex bid view and the show dashboard, takes a
 # base form to play well with the inheritance in bid review
 def make_show_casting_form(conference, base_form, start, casting):
     choices = []

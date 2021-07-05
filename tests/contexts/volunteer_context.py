@@ -35,7 +35,7 @@ class VolunteerContext():
             self.conference = conference or ConferenceFactory()
         else:
             self.conference = event.e_conference
-    
+
         if ConferenceDay.objects.filter(conference=self.conference).exists():
             self.conf_day = ConferenceDay.objects.filter(
                 conference=self.conference).first()

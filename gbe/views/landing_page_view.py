@@ -72,7 +72,9 @@ def LandingPageView(request, profile_id=None, historical=False):
 
     if viewer_profile:
         bids_to_review = []
-        is_staff_lead = validate_perms(request, ['Staff Lead', ], require=False)
+        is_staff_lead = validate_perms(request,
+                                       ['Staff Lead', ],
+                                       require=False)
         person = Person(
             user=viewer_profile.user_object,
             public_id=viewer_profile.pk,

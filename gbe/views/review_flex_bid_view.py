@@ -60,9 +60,9 @@ class FlexibleReviewBidView(ReviewBidView):
                 start = item.event.eventitem.pk
                 casting = item.commitment.role
         self.actionform = make_show_casting_form(act.b_conference,
-                                                  self.actionform,
-                                                  start,
-                                                  casting)
+                                                 self.actionform,
+                                                 start,
+                                                 casting)
         self.actionURL = reverse(self.changestate_view_name,
                                  urlconf='gbe.urls',
                                  args=[act.id])
