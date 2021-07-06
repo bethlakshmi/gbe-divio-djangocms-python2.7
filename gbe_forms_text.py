@@ -759,6 +759,7 @@ ticket_item_labels = {
     'ticketing_event': 'Fee/Event',
     'is_minimum': 'Act as minimum donation',
     'has_coupon': 'Coupon Required',
+    'special_comp': 'Anytime Comp',
 }
 ticket_item_help_text = {
     'ticket_id': 'If using BPT, this must match the BPT configuration to sync. \
@@ -774,6 +775,8 @@ ticket_item_help_text = {
     'end_time': 'When the event is no longer available & is not shown on site',
     'add_on': 'Does not consitute a qualifying purchase for what the event \
     gives the user, it is an additional feature after a main purchase',
+    'special_comp': 'This comp will let the user use it, even after the \
+    application deadline is closed.'
 }
 link_event_labels = {
     'ticketing_events': "Choose from existing tickets",

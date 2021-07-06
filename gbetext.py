@@ -482,6 +482,7 @@ default_edit_persona_msg = "Your persona has been updated."
 default_create_business_msg = "Your business has been created."
 default_edit_business_msg = "Your business has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+create_comp_msg = '''Comp has been created, user can now apply.'''
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''
 default_advanced_acttech_instruct = '''The following information is optional.\

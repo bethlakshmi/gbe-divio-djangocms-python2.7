@@ -35,6 +35,7 @@ Note:  You may need to update the ticket item list before processing transaction
     <a class="btn {% ifequal view_format "ticket" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
     <a class="btn {% ifequal view_format "user" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
 </div>
+<a href="{% url 'ticketing:comp_ticket' %}" class="btn gbe-btn-primary float-right">Create Comp</a>
 {% ifequal view_format "ticket" %}
 {% for item in transactions %}
 {% ifchanged item.ticket_item.ticketing_event %}
@@ -66,7 +67,7 @@ Note:  You may need to update the ticket item list before processing transaction
   </tfoot>
   <tbody>
  {% endifchanged %}
-<tr class="gbe-table-row {% if item.id in updated_transactions %}gbe-table-success {% elif not item.purchaser.matched_to_user.profile %}gbe-table-info {% endif %}">
+<tr class="gbe-table-row {% if item.pk == changed_id %}gbe-table-success {% elif not item.purchaser.matched_to_user.profile %}gbe-table-info {% endif %}">
   <td>{% include "ticketing/purchaser_name.tmpl" with user=item.purchaser.matched_to_user purchaser=item.purchaser %}</td>
   <td>{% include "email_crop.tmpl" with email=item.purchaser.email %}</td>
   <td>{{ item.payment_source }}</td>

@@ -7,10 +7,14 @@
 from ticketing.models import (
     TicketingEvents,
     TicketItem,
+    Transaction,
 )
 from gbe.functions import get_ticketable_gbe_events
 from django import forms
-from gbe.models import Conference
+from gbe.models import (
+    Conference,
+    Profile,
+)
 from gbe_forms_text import (
     ticketing_event_help_text,
     ticketing_event_labels,
@@ -23,6 +27,9 @@ from gbe_forms_text import (
 )
 from django.forms.widgets import CheckboxSelectMultiple
 from tempus_dominus.widgets import DatePicker
+from dal import autocomplete
+from django.urls import reverse_lazy
+from django.db.models import Q
 
 
 class TicketItemForm(forms.ModelForm):
@@ -64,6 +71,7 @@ class TicketItemForm(forms.ModelForm):
                   'cost',
                   'ticketing_event',
                   'has_coupon',
+                  'special_comp',
                   'live',
                   'start_time',
                   'end_time',
@@ -198,3 +206,22 @@ class TicketPayForm(forms.Form):
         queryset=TicketItem.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple)
+
+
+class CompFeeForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+    ticket_item = forms.ModelChoiceField(
+        queryset=TicketItem.objects.exclude(
+            ticketing_event__conference__status='completed',).filter(
+            Q(ticketing_event__act_submission_event=True) |
+            Q(ticketing_event__vendor_submission_event=True),
+            special_comp=True).order_by(
+            'ticketing_event',
+            'title'))
+    profile = forms.ModelChoiceField(
+        queryset=Profile.objects.filter(user_object__is_active=True),
+        widget=autocomplete.ModelSelect2(url='profile-autocomplete'))
+    class Meta:
+        model = Transaction
+        fields = ['ticket_item', ]
