@@ -15,9 +15,9 @@ from tests.functions.gbe_functions import (
 from gbetext import (
     default_edit_troupe_msg,
     no_persona_msg,
-    no_profile_msg,
     troupe_header_text,
 )
+from gbe_utils.text import no_profile_msg
 from gbe.models import UserMessage
 
 

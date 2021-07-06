@@ -29,12 +29,12 @@ from tests.functions.gbe_functions import (
     login_as,
     make_admission_purchase,
 )
+from gbe_utils.text import no_profile_msg
 from gbetext import (
     eval_as_presenter_error,
     eval_success_msg,
     full_login_msg,
     new_grade_options,
-    no_profile_msg,
     no_login_msg,
     not_purchased_msg,
     not_ready_for_eval,

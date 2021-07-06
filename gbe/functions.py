@@ -16,10 +16,10 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.contrib import messages
 from gbetext import (
-    no_profile_msg,
     no_login_msg,
     full_login_msg,
 )
+from gbe_utils.text import no_profile_msg
 import json
 import urllib
 from settings import GBE_DATETIME_FORMAT

@@ -15,8 +15,8 @@ from tests.functions.gbe_functions import (
 from gbetext import (
     default_class_submit_msg,
     default_class_draft_msg,
-    no_profile_msg,
 )
+from gbe_utils.text import no_profile_msg
 from gbe.models import (
     Conference,
     UserMessage

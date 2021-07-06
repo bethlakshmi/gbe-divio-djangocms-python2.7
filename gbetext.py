@@ -511,9 +511,6 @@ act_status_no_change_msg = "Act status has not been changed."
 no_persona_msg = '''A troupe must have at least one member, please enter your
  stage name and performer bio.  Troupe activities will be shown on your
  schedule and the schedule of any other member.'''
-no_profile_msg = '''Your profile is not complete, you must provide a first \
-and last name, a name we can use on your badge, and a phone number we can \
-use to notify you of changes to the schedule at run time.'''
 no_login_msg = '''Please set up and account and give us some ways to \
 contact you, or login, if you already have an account.'''
 register_msg = '''In order to do most other things at The Expo, we need you \
