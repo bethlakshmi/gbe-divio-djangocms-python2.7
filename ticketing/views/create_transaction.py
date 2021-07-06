@@ -1,7 +1,7 @@
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from datetime import datetime
-from gbe.views import (
+from gbe_utils.mixins import (
     GbeFormMixin,
     ProfileRequiredMixin,
 )
