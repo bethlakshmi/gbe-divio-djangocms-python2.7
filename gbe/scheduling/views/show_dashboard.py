@@ -226,6 +226,12 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                                      conference=conference):
                     item['areas'] += [area]
                 opps += [item]
+        vol_msg = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="VOLUNTEER_PANEL_INSTRUCTIONS",
+            defaults={
+                'summary': "Instructions at top of Act Panel",
+                'description': volunteer_panel_instr})
         return {'this_show': self.item,
                 'email_forms': self.setup_email_forms(),
                 'this_occurrence': self.occurrence,
@@ -248,12 +254,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                     defaults={
                         'summary': "Instructions at top of Act Panel",
                         'description': act_panel_instr})[0].description,
-                'volunteer_panel_instructions': UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="VOLUNTEER_PANEL_INSTRUCTIONS",
-                    defaults={
-                        'summary': "Instructions at top of Act Panel",
-                        'description': volunteer_panel_instr})[0].description,
+                'volunteer_panel_instructions': vol_msg[0].description,
                 'vol_columns': ['Event',
                                 'Area',
                                 'Date/Time',
