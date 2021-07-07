@@ -1,10 +1,7 @@
 {% load sekizai_tags gbe_tags %}
 
 <h3 class="gbe-title">Volunteer Slots & Volunteers</h3>
-  <div>Red text indicates a user that has become inactive.</div>
-  <div>Yellow background indicates a volunteer session that requires approval.</div>
-  <div>Blue background indicates volunteers that have no yet been approved.  Use the <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> to approve or reject them.</div>
-  <div>Green background indicates has max volunteers.  If an event is full, it will not show up in the public volunteer calendar.</div>
+{{volunteer_panel_instructions|safe}}
 
   <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
   press "Shift" to sort a secondary column.</div>

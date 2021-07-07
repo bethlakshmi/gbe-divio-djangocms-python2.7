@@ -44,8 +44,10 @@ from scheduler.idd import (
 from gbetext import (
     act_order_form_invalid,
     act_order_submit_success,
+    act_panel_instr,
     no_scope_error,
     role_commit_map,
+    volunteer_panel_instr,
 )
 from scheduler.data_transfer import (
     Commitment,
@@ -240,6 +242,18 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'opps': opps,
                 'role_commit_map': role_commit_map,
                 'visible_roles': roles,
+                'act_panel_instructions': UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="ACT_PANEL_INSTRUCTIONS",
+                    defaults={
+                        'summary': "Instructions at top of Act Panel",
+                        'description': act_panel_instr})[0].description,
+                'volunteer_panel_instructions': UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="VOLUNTEER_PANEL_INSTRUCTIONS",
+                    defaults={
+                        'summary': "Instructions at top of Act Panel",
+                        'description': volunteer_panel_instr})[0].description,
                 'vol_columns': ['Event',
                                 'Area',
                                 'Date/Time',
