@@ -1,0 +1,84 @@
+{% load sekizai_tags gbe_tags %}
+
+<h3 class="gbe-title">Volunteer Slots & Volunteers</h3>
+{{volunteer_panel_instructions|safe}}
+
+  <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
+  press "Shift" to sort a secondary column.</div>
+  <br/>
+  <div>
+    Toggle column(s):
+    {% for column in vol_columns %}
+    <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ forloop.counter0 }}">{{column}}</button>
+    {% endfor %}
+  </div>
+  <br/>
+  <table id="gbe-vol-table" style="width:100%">
+    <thead>
+      <tr class="gbe-table-header">
+    {% for column in vol_columns %}
+      <th>{{column}}</th>{% endfor %}
+      </tr>
+    </thead>
+    <tfoot>
+      <tr class="gbe-table-header">
+    {% for column in vol_columns %}
+          <th>{{column}}</th>{% endfor %}
+      </tr>
+    </tfoot>
+    <tbody>
+  {% for opp in opps%}
+    <tr class="gbe-table-row{% for contact in opp.event.people%}{% if contact.role == 'Pending Volunteer' %} gbe-table-info{% endif %}{% endfor %}{% if opp.event.max_volunteer == opp.event.people|length%} gbe-table-success{% endif %}" >
+      <td>
+        <a href="{% url 'scheduling:detail_view' opp.event.eventitem_id %}" class="gbe-table-link" data-toggle="tooltip" title="Edit">{{ opp.event.eventitem.event.e_title}}</a></td>
+      <td>{% for area in opp.areas %}{{area}}{% endfor %}</td>
+      <td>{{ opp.event.location}}</td>
+      <td>{{ opp.event.starttime|date:"M j, Y, g:i A"}}</td>
+	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.max_volunteer}}</td>
+	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.people|length}}</td>
+      <td>{% for contact in opp.event.people%}{% if contact.role in visible_roles %}
+        <div {% if not contact.user.profile.is_active %}class="gbe-form-error"{% endif %}>{% for role, commit in role_commit_map.items %}
+          {% if role == contact.role %}<i class="{{commit.1}}"></i>{% endif %}{% endfor %}
+        {{contact.user.profile}}
+        <div class="btn-group" role="group" aria-label="..."><a href="{% url 'email:mail_to_individual' contact.user.profile.resourceitem_id %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Email"><i class="far fa-envelope"></i></a>
+    {% if can_approve_vol %}
+      {% if contact.role == 'Pending Volunteer' or contact.role == 'Waitlisted'%}
+        <a href="{% url 'scheduling:approve_volunteer' 'approve' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm"data-toggle="tooltip" title="Approve">
+            <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+        <a href="{% url 'scheduling:approve_volunteer' 'waitlist' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm {% if contact.role == 'Waitlisted' %} disabled{% endif %}" data-toggle="tooltip" title="Waitlist">
+            <i class="fa fa-clock" aria-hidden="true"></i></a>{% endif %}
+        <a href="{% url 'scheduling:approve_volunteer' 'reject' contact.public_id contact.booking_id %}?next={{ request.get_full_path }}" class="btn gbe-btn-table btn-sm" data-toggle="tooltip" title="Reject"><i class="fas fa-thumbs-down" aria-hidden="true"></i></a>
+    {% endif %}
+    </div><br> P: {{contact.user.profile.phone}}</div>{% endif %}{% endfor %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody></table>
+
+  {% if opps|length == 0 %}
+    <br>
+    There are no available volunteer events.  None have been configured.
+  {% endif %}
+
+{% addtoblock "js" %}
+  <script>
+  $(document).ready(function() {
+    $.fn.dataTable.moment( 'MMM D, YYYY, H:mm A' );
+    var table = $('#gbe-vol-table').DataTable({
+      "paging": false,
+      "columnDefs": [
+        { "width": "5%", "targets": 0 }]{% if order %},
+      "order": [[ {{order}}, "desc" ]]{% endif %}
+    } );
+    $('button.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+ 
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+ 
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+  } );
+  </script>
+{% endaddtoblock %}

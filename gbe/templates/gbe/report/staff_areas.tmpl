@@ -28,34 +28,8 @@
  	  {{area.staff_lead}}
         </td>
         <td>
-          <a href="{%url 'reporting:staff_area' 'area' area.pk %}" class="gbe-table-link">
+          <a href="{%url 'reporting:staff_area' area.pk %}" class="gbe-table-link">
 	    Get Staff Schedule</a>
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
-</div>
-
-<div class="card round gbe-panel-list mx-2 my-4">
-  <div class="card-header gbe-bg-dark">
-    <h2 class="card-title">Shows</h2></div>
-  <table class="table gbe-panel-table">
-    <tr>
-      {% for header_item in header %}
-      <th>{{ header_item }}</th>
-      {% endfor %}
-    </tr>
-    {% for show in shows %}
-      <tr>
-        <td>{{show.e_title}}</td>
-        <td>
- 	  {% for worker in show.roles %}
-            {{worker.role}} - {{worker.workeritem}}
- 	  {% endfor %}	
-        </td>
-        <td>
-          <a href="{%url 'reporting:staff_area' 'event' show.eventitem_id %}" class="gbe-table-link">
-	    Get Show Schedule</a>
         </td>
       </tr>
     {% endfor %}

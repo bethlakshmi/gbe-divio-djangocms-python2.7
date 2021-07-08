@@ -18,7 +18,12 @@ class MailToPersonView(MailView):
                          'Act Coordinator',
                          'Conference Coordinator',
                          'Vendor Coordinator',
-                         'Ticketing - Admin']
+                         'Ticketing - Admin',
+                         'Scheduling Mavens',
+                         'Staff Lead',
+                         'Stage Manager',
+                         'Technical Director',
+                         'Producer']
     email_type = "individual"
 
     def groundwork(self, request, args, kwargs):

@@ -88,9 +88,6 @@ class ShowContext:
                                 accepted=3,
                                 submitted=True)
         role = "Performer"
-        if act.accepted == 2:
-            role = "Waitlisted"
-            act_role = 'Waitlisted'
         booking = ResourceAllocationFactory(
             event=self.sched_event,
             resource=WorkerFactory(_item=act.performer, role=role))
@@ -100,13 +97,6 @@ class ShowContext:
             class_name="Act",
             role=act_role)
         return (act, booking)
-
-    def order_act(self, act, order):
-        alloc = self.sched_event.resources_allocated.filter(
-            resource__worker___item=act.performer).first()
-        ordering, created = Ordering.objects.get_or_create(allocation=alloc)
-        ordering.order = order
-        ordering.save()
 
     def set_interest(self, interested_profile=None):
         interested_profile = interested_profile or ProfileFactory()

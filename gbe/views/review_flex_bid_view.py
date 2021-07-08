@@ -4,17 +4,12 @@ from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
 from django.db.models import Avg
-from django.forms import (
-    ChoiceField,
-    ModelChoiceField,
-)
 from gbe.models import (
     Act,
     ActBidEvaluation,
     EvaluationCategory,
     FlexibleEvaluation,
     Profile,
-    Show,
     UserMessage,
 )
 from gbe.forms import (
@@ -28,27 +23,21 @@ from gbe.functions import (
     validate_perms,
     get_conf,
 )
-from gbe.views.act_display_functions import (
-    get_act_casting,
-    get_act_form,
-)
+from gbe.views.functions import make_show_casting_form
+from gbe.views.act_display_functions import get_act_form
 from gbetext import (
-    act_casting_label,
     default_act_review_error_msg,
     default_act_review_success_msg,
 )
 from gbe.views import ReviewBidView
 from collections import OrderedDict
-from scheduler.idd import (
-    get_occurrences,
-    get_schedule,
-)
+from scheduler.idd import get_schedule
 
 
 class FlexibleReviewBidView(ReviewBidView):
     reviewer_permissions = ('Act Reviewers', )
     review_list_view_name = 'act_review_list'
-    coordinator_permissions = ('Act Coordinator',)
+    coordinator_permissions = ('Act Coordinator', 'Producer')
     bid_state_change_form = BidStateChangeForm
     bid_evaluation_type = FlexibleEvaluation
     bid_evaluation_form_type = FlexibleEvaluationForm
@@ -61,7 +50,6 @@ class FlexibleReviewBidView(ReviewBidView):
     notes = None
 
     def create_action_form(self, act):
-        choices = []
         self.actionform = self.bid_state_change_form(instance=act)
         start = 0
         casting = ""
@@ -71,22 +59,10 @@ class FlexibleReviewBidView(ReviewBidView):
             if item.event.event_type_name == "Show":
                 start = item.event.eventitem.pk
                 casting = item.commitment.role
-        response = get_occurrences(
-            foreign_event_ids=Show.objects.filter(
-                e_conference=act.b_conference).values_list(
-                'eventitem_id',
-                flat=True))
-        for occurrence in response.occurrences:
-            choices += [(occurrence.eventitem.pk, str(occurrence))]
-        self.actionform.fields['show'] = ChoiceField(
-            choices=choices,
-            label='Pick a Show',
-            initial=start)
-        self.actionform.fields['casting'] = ChoiceField(
-            choices=get_act_casting(),
-            required=False,
-            label=act_casting_label,
-            initial=casting)
+        self.actionform = make_show_casting_form(act.b_conference,
+                                                 self.actionform,
+                                                 start,
+                                                 casting)
         self.actionURL = reverse(self.changestate_view_name,
                                  urlconf='gbe.urls',
                                  args=[act.id])
