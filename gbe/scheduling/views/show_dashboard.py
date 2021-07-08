@@ -230,7 +230,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
             view=self.__class__.__name__,
             code="VOLUNTEER_PANEL_INSTRUCTIONS",
             defaults={
-                'summary': "Instructions at top of Act Panel",
+                'summary': "Instructions at top of Volunteer Panel",
                 'description': volunteer_panel_instr})
         return {'this_show': self.item,
                 'email_forms': self.setup_email_forms(),
