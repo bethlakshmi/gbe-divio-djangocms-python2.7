@@ -28,7 +28,7 @@ Act state is {{ state }}</span>
  <div class="col-xs-12 col-md-6 col-lg-4">
 <h4>Show:  {% for show in shows %}{{show}}, {% empty %}<font class="gbe-form-error">No Show</font>{% endfor %}</h4>
 <h4>Rehearsal: {% for rehearsal in rehearsals %}{{ rehearsal.start_time }}
-{% empty %}<font class="gbe-form-error">No Rehearsal</font>{% endfor %}</h4>
+{% empty %}{% if act.tech.confirm_no_rehearsal %}Not Attending{% else %}<font class="gbe-form-error">No Rehearsal</font>{% endif %}{% endfor %}</h4>
 {% if order >= 0 %}
 <div class="act_tech_box gbe-bg-light" style="text-align:center;"><br><span style="font-size: 3em;">
   {{ order }}<br></span><br>Show Order</div>{% endif %}
