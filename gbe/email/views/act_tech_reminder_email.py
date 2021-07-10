@@ -7,7 +7,10 @@ def act_tech_reminder():
     reminders_sent = 0
     for act in Act.objects.filter(
             b_conference__status__in=["upcoming", "ongoing"],
+            accepted=3,
             performer__contact__preferences__send_schedule_change_notifications=True):
+        if act.performer.contact.contact_email == "veronicalockhartburlesque@gmail.com":
+            raise Exception(Act)
         if not act.is_complete:
             send_act_tech_reminder(act, email_type)
             reminders_sent = reminders_sent + 1
