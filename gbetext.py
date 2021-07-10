@@ -400,6 +400,16 @@ unique_email_templates = {
          'category': 'volunteer',
          'default_base': "volunteer_schedule_change",
          'default_subject': "Volunteer Schedule Change", }],
+    'act': [
+        {'name': 'act tech reminder',
+         'description': '''This email is sent periodically to any user who \
+         has not completed their act tech form and/or not signed up for a \
+         rehearsal or confirmed they don't want one.  This is sent only to \
+         the performer contact (not the whole troupe).''',
+         'category': 'act',
+         'default_base': "act_tech_reminder",
+         'default_subject':
+            "Reminder to Finish your Act Tech Info", }, ],
     'scheduling': [
         {'name': 'daily schedule',
          'description': '''This email is sent daily to any user with a \
