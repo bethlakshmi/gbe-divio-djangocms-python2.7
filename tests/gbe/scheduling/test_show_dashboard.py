@@ -8,6 +8,7 @@ from django.test import TestCase, Client
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
+    TechInfoFactory,
 )
 from tests.factories.scheduler_factories import EventLabelFactory
 from tests.functions.gbe_functions import (
@@ -114,8 +115,9 @@ class TestShowDashboard(TestCase):
              self.context.booking.pk),
             html=True)
 
-    def test_no_techinfo_no_order_change(self):
-        '''Act Coordinaor can't edit act tect, or the order
+    def test_no_techinfo_edit_no_order_change(self):
+        '''Act Coordinator can't edit act tech, or the order
+        This should be an act w/out tech info.
         '''
         self.context.order_act(self.context.act, "3")
         self.profile = ProfileFactory()
@@ -123,6 +125,10 @@ class TestShowDashboard(TestCase):
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertContains(response, self.context.act.b_title)
+        self.assertContains(
+            response,
+            'class="gbe-table-row gbe-form-error"',
+            1)
         self.assertNotContains(response, reverse(
             "act_tech_wizard",
             urlconf='gbe.urls',
@@ -229,6 +235,34 @@ class TestShowDashboard(TestCase):
             response,
             '<div class="gbe-form-error">')
         self.assertContains(response, inactive.display_name)
+
+    def test_complete_wout_rehearsals_act(self):
+        ''' view should load
+        '''
+        complete_act_context = ActTechInfoContext()
+        complete_act_context.act.tech = TechInfoFactory(
+            confirm_no_music=True,
+            confirm_no_rehearsal=True,
+            prop_setup="text",
+            starting_position="Onstage",
+            primary_color="text",
+            feel_of_act="text",
+            pronouns="text",
+            introduction_text="text")
+        complete_act_context.act.accepted = 3
+        complete_act_context.act.save()
+        self.profile = complete_act_context.make_priv_role()
+        login_as(self.profile, self)
+        response = self.client.get(reverse(
+            self.view_name,
+            urlconf='gbe.scheduling.urls',
+            args=[complete_act_context.sched_event.pk]))
+        self.assertContains(response, complete_act_context.act.b_title)
+        self.assertNotContains(
+            response,
+            'class="gbe-table-row gbe-form-error"')
+        self.assertContains(response, "No audio track needed")
+        self.assertContains(response, "Will not be attending rehearsal")
 
     def test_show_approval_needed_event(self):
         context = VolunteerContext(event=self.context.show,

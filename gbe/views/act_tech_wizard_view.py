@@ -87,8 +87,12 @@ class ActTechWizardView(View):
                 elif event.has_commitment_space("Act"):
                     choices += [(event.pk,
                                  date_format(event.starttime, "TIME_FORMAT"))]
-            if initial is None and not self.act.tech.confirm_no_rehearsal:
-                initial = {'rehearsal': choices[1][0]}
+            if initial is None:
+                if self.act.tech.confirm_no_rehearsal:
+                    initial = {'rehearsal': choices[0][0]}
+                elif len(choices) > 1:
+                    initial = {'rehearsal': choices[1][0]}
+
             if request:
                 rehearsal_form = BasicRehearsalForm(
                     request.POST,

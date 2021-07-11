@@ -16,7 +16,7 @@ Act state is {{ state }}</span>
  <div class="col-xs-12 col-md-6 col-lg-4">
   <h2 class="gbe-title">Performer: {{act.performer}}</H2>
   <h3 class="gbe-subtitle">Act Name: {{act.b_title}}</h3>
-  {% if not act.tech.is_complete %}<font class="gbe-form-error">Act Tech is NOT complete</font>{% endif %}
+  {% if not act.tech.is_complete %}<font class="gbe-form-error">Act Tech is NOT complete</font><br>{% endif %}
   <b>Email:</b>  <a href='mailto:{{act.act.performer.contact.user_object.email}}'>
     {{act.performer.contact.user_object.email}}</a><br>
   <b>Phone:</b>  {{act.performer.contact.phone}}<br>
