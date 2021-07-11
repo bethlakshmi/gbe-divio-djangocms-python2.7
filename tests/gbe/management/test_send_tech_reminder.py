@@ -66,6 +66,30 @@ class TestSendTechReminder(TestCase):
             )
         self.assertEqual(queued_email.count(), 0)
 
+    def test_dont_mail_complete_acts_no_rehearsal(self):
+        complete_act_context = ActTechInfoContext()
+        complete_act_context.act.tech = TechInfoFactory(
+            confirm_no_rehearsal=True,
+            track_artist="",
+            track=SimpleUploadedFile("file.mp3", b"file_content"),
+            prop_setup="text",
+            starting_position="Onstage",
+            primary_color="text",
+            feel_of_act="text",
+            pronouns="text",
+            introduction_text="text")
+        complete_act_context.act.accepted = 3
+        complete_act_context.act.save()
+        act = complete_act_context.act
+        ProfilePreferencesFactory(profile=act.performer.contact)
+        call_command("send_tech_reminder")
+        queued_email = Email.objects.filter(
+            status=2,
+            subject="Reminder to Finish your Act Tech Info",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 0)
+
     def test_obey_email_preference(self):
         incomplete_act_context = ActTechInfoContext()
         incomplete_act_context.act.accepted = 3
