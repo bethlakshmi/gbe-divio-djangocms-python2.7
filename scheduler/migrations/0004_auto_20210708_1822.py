@@ -13,6 +13,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='worker',
             name='role',
-            field=models.CharField(blank=True, choices=[('Interested', 'Interested'), ('Moderator', 'Moderator'), ('Panelist', 'Panelist'), ('Performer', 'Performer'), ('Producer', 'Producer'), ('Stage Manager', 'Stage Manager'), ('Staff Lead', 'Staff Lead'), ('Teacher', 'Teacher'), ('Technical Director', 'Technical Director'), ('Volunteer', 'Volunteer'), ('Rejected', 'Rejected'), ('Waitlisted', 'Waitlisted'), ('Pending Volunteer', 'Pending Volunteer')], max_length=50),
+            field=models.CharField(blank=True, choices=[
+                ('Interested', 'Interested'),
+                ('Moderator', 'Moderator'),
+                ('Panelist', 'Panelist'),
+                ('Performer', 'Performer'),
+                ('Producer', 'Producer'),
+                ('Stage Manager', 'Stage Manager'),
+                ('Staff Lead', 'Staff Lead'),
+                ('Teacher', 'Teacher'),
+                ('Technical Director', 'Technical Director'),
+                ('Volunteer', 'Volunteer'),
+                ('Rejected', 'Rejected'),
+                ('Waitlisted', 'Waitlisted'),
+                ('Pending Volunteer', 'Pending Volunteer')], max_length=50),
         ),
     ]

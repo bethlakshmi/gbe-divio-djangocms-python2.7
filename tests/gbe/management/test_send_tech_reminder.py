@@ -37,9 +37,10 @@ class TestSendTechReminder(TestCase):
         self.assertTrue(act.b_title in queued_email[0].html_message)
         self.assertTrue(
             act.performer.contact.contact_email in queued_email[0].to)
-        self.assertTrue(
-            reverse('act_tech_wizard', args=[act.pk], urlconf='gbe.urls'
-                ) in queued_email[0].html_message)
+        self.assertTrue(reverse(
+            'act_tech_wizard',
+            args=[act.pk],
+            urlconf='gbe.urls') in queued_email[0].html_message)
 
     def test_dont_mail_complete_acts(self):
         complete_act_context = ActTechInfoContext(

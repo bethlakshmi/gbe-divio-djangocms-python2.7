@@ -75,10 +75,10 @@ act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                      (2, 'The Main Event, not in competition'),
                      (3, 'The Newcomer\'s Showcase')]
 act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
- act order before clicking other buttons in this dashboard.<br><br></div><div><span
- class="gbe-form-error">Highlighted text</span> reflects incomplete acts.
-</div><div><span class="gbe-form-error gbe-inactive">Bold and red names</span>
- reflects acts with deactivated users.<br></div>'''
+ act order before clicking other buttons in this dashboard.<br><br></div>
+<div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
+ acts.</div><div><span class="gbe-form-error gbe-inactive">Bold and red names
+</span> reflects acts with deactivated users.<br></div>'''
 volunteer_panel_instr = '''<div>Red text indicates a user that has become
  inactive.</div><div>Yellow background indicates a volunteer session that
  requires approval.</div><div>Blue background indicates volunteers that have
