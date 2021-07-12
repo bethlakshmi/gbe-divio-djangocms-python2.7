@@ -238,6 +238,7 @@ special_menu_tree = [
      'parent_id': 1,
      'id': 40,
      'groups': ['Act Coordinator',
+                'Admins',
                 'Class Coordinator',
                 'Scheduling Mavens',
                 ]},
@@ -252,5 +253,5 @@ special_menu_tree = [
                     urlconf='gbe.scheduling.urls'),
      'parent_id': 40,
      'id': 60,
-     'groups': ['Scheduling Mavens']},
+     'groups': ['Admins']},
 ]

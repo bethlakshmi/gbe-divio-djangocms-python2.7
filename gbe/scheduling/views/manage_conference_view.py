@@ -40,7 +40,7 @@ class ManageConferenceView(View):
         return super(ManageConferenceView, self).dispatch(*args, **kwargs)
 
     def groundwork(self, request, args, kwargs):
-        self.profile = validate_perms(request, ("Scheduling Mavens", ))
+        self.profile = validate_perms(request, ('Admins', ))
         if not self.profile.user_object.is_superuser:
             raise PermissionDenied
         message = UserMessage.objects.get_or_create(
