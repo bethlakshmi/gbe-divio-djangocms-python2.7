@@ -19,6 +19,7 @@ from gbetext import (
     default_rehearsal_booked,
     mic_options,
     rehearsal_book_error,
+    rehearsal_remove_confirmation,
 )
 from django.utils.formats import date_format
 from settings import GBE_DATETIME_FORMAT
@@ -153,7 +154,8 @@ class TestActTechWizard(TestCase):
         assert_option_state(
             response,
             str(rehearsal.id),
-            date_format(rehearsal.starttime, "TIME_FORMAT"))
+            date_format(rehearsal.starttime, "TIME_FORMAT"),
+            True)
         self.assertNotContains(response, "Provide Technical Information")
         self.assertNotContains(response,
                                'Advanced Technical Information (Optional)')
@@ -309,6 +311,32 @@ class TestActTechWizard(TestCase):
             True)
         self.assertNotContains(response,
                                'Advanced Technical Information (Optional)')
+
+    def test_book_no_rehearsal_and_continue(self):
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        context.act.tech.save()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = {'book_continue': "Book & Continue"}
+        data['%d-rehearsal' % context.sched_event.pk] = -1
+        alloc = ResourceAllocation.objects.get(
+            event=context.rehearsal,
+            ordering__class_id=context.act.pk)
+        data['%d-booking_id' % context.sched_event.pk] = alloc.pk
+        response = self.client.post(url, data)
+        assert_alert_exists(
+            response, 'success', 'Success', rehearsal_remove_confirmation)
+        self.assertNotContains(response, "Current Rehearsal Reservation")
+        self.assertContains(response,
+                            'name="%d-booking_id"' % context.sched_event.pk)
+        self.assertContains(response, "Provide Technical Information")
+        assert_option_state(
+            response,
+            "-1",
+            "No rehearsal needed",
+            True)
 
     def test_book_rehearsal_and_continue_no_music(self):
         context = ActTechInfoContext(schedule_rehearsal=True)

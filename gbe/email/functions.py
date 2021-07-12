@@ -211,6 +211,29 @@ def send_daily_schedule_mail(schedules, day, slug, email_type):
             priority="medium")
 
 
+def send_act_tech_reminder(act, email_type):
+    name = 'act tech reminder'
+    template = get_or_create_template(
+        name,
+        "act_tech_reminder",
+        "Reminder to Finish your Act Tech Info")
+
+    return mail_send_gbe(
+        act.performer.contact.contact_email,
+        template.sender.from_email,
+        template=name,
+        context={
+            'act': act,
+            'name': act.performer.name,
+            'act_tech_link': reverse('act_tech_wizard',
+                                     args=[act.pk],
+                                     urlconf='gbe.urls'),
+            'unsubscribe_link': create_unsubscribe_link(
+                act.performer.contact.contact_email,
+                "send_%s" % email_type)},
+            priority="medium")
+
+
 def send_unsubscribe_link(user):
     name = 'unsubscribe email'
     template = get_or_create_template(

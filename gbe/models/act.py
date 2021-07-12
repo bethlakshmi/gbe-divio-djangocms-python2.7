@@ -111,6 +111,8 @@ class Act (Biddable):
     @property
     def is_complete(self):
         if self.tech.is_complete:
+            if self.tech.confirm_no_rehearsal:
+                return True
             for item in get_schedule(commitment=self).schedule_items:
                 if item.event.event_type_name == 'GenericEvent':
                     return True

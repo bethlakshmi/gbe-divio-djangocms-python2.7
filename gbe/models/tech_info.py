@@ -14,6 +14,8 @@ from gbe_forms_text import *
 
 
 class TechInfo(Model):
+    confirm_no_rehearsal = BooleanField(default=False)
+
     # Basic Info
     track_title = CharField(max_length=128, blank=True)
     track_artist = CharField(max_length=123, blank=True)
