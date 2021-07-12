@@ -196,6 +196,19 @@ class TestApproveVolunteer(TestCase):
             "Your volunteer proposal has changed status to Wait List",
             outbox_size=2)
 
+    def test_redirects(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        login_as(self.privileged_user, self)
+        response = self.client.get("%s?next=%s" % (
+            reverse(self.approve_name,
+                    urlconf='gbe.scheduling.urls',
+                    args=["waitlist",
+                          self.context.profile.pk,
+                          self.context.allocation.pk]),
+            reverse("home", urlconf='gbe.urls')), follow=True)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+
     def test_set_reject(self):
         self.context.worker.role = "Pending Volunteer"
         self.context.worker.save()

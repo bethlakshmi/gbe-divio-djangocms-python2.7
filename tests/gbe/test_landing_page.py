@@ -19,6 +19,7 @@ from tests.factories.gbe_factories import(
     VendorFactory,
 )
 from tests.factories.scheduler_factories import (
+    EventLabelFactory,
     LabelFactory,
     SchedEventFactory,
     ResourceAllocationFactory,
@@ -36,6 +37,8 @@ from tests.functions.gbe_functions import (
 from tests.contexts import (
     ActTechInfoContext,
     ClassContext,
+    StaffAreaContext,
+    VolunteerContext,
 )
 from django.utils.formats import date_format
 from gbetext import (
@@ -563,6 +566,33 @@ class TestIndex(TestCase):
                 reverse('act_tech_wizard',
                         urlconf='gbe.urls',
                         args=[self.current_act.id])))
+
+    def test_stage_manager_button(self):
+        self.context = ActTechInfoContext(schedule_rehearsal=True)
+        self.profile = self.context.make_priv_role()
+        response = self.get_landing_page()
+        self.assertContains(response, reverse(
+            'show_dashboard',
+            urlconf='gbe.scheduling.urls',
+            args=[self.context.sched_event.pk]))
+
+    def test_staff_lead_button(self):
+        show_context = ActTechInfoContext(schedule_rehearsal=True)
+        vol_context = VolunteerContext(event=show_context.show,
+                                       sched_event=show_context.sched_event)
+        context = StaffAreaContext(conference=show_context.conference)
+        EventLabelFactory(event=vol_context.opp_event,
+                          text=context.area.slug)
+        vol1, opp1 = context.book_volunteer(
+            volunteer_sched_event=vol_context.opp_event,
+            volunteer=context.staff_lead)
+        self.profile = context.staff_lead
+
+        response = self.get_landing_page()
+        self.assertContains(response, reverse(
+            'show_dashboard',
+            urlconf='gbe.scheduling.urls',
+            args=[show_context.sched_event.pk]))
 
     def test_no_act_tech_alert(self):
         current_act_context = ActTechInfoContext(

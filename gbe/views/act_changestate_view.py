@@ -37,7 +37,8 @@ class ActChangeStateView(BidChangeStateView):
     object_type = Act
     coordinator_permissions = ('Act Coordinator',
                                'Technical Director',
-                               'Producer')
+                               'Producer',
+                               'Stage Manager')
     redirectURL = 'act_review_list'
     new_show = None
     show_booked_states = (3, 2)

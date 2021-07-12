@@ -4,7 +4,10 @@ from django.test import (
     Client,
     TestCase,
 )
-from tests.functions.gbe_functions import login_as
+from tests.functions.gbe_functions import (
+    grant_privilege,
+    login_as,
+)
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ConferenceDayFactory,
@@ -71,6 +74,24 @@ class TestCalendarView(TestCase):
         self.assertNotContains(response, self.other_show.show.e_title)
         self.assertNotContains(response, self.classcontext.bid.e_title)
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertNotContains(response, reverse(
+            'show_dashboard',
+            urlconf='gbe.scheduling.urls',
+            args=[self.showcontext.sched_event.pk]))
+
+    def test_calendar_priv_dash_link(self):
+        profile = ProfileFactory()
+        grant_privilege(profile, 'Schedule Mavens')
+        login_as(profile, self)
+        url = reverse('calendar',
+                      urlconf="gbe.scheduling.urls",
+                      args=['General'])
+        response = self.client.get(url)
+        self.assertContains(response, self.showcontext.show.e_title)
+        self.assertContains(response, reverse(
+            'show_dashboard',
+            urlconf='gbe.scheduling.urls',
+            args=[self.showcontext.sched_event.pk]))
 
     def test_calendar_conference_w_default_conf(self):
         url = reverse('calendar',

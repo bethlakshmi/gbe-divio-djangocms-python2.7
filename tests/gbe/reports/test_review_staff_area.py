@@ -63,14 +63,3 @@ class TestReviewStaffArea(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, context.area.title)
         self.assertContains(response, context.area.staff_lead)
-
-    def test_get_show(self, ):
-        context = VolunteerContext()
-        grant_privilege(self.profile, 'Act Reviewers')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('staff_area',
-                    urlconf="gbe.reporting.urls"),
-            data={'conf_slug': context.conference.conference_slug})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, context.event.e_title)

@@ -27,6 +27,7 @@ class VolunteerContext():
     def __init__(self,
                  profile=None,
                  event=None,
+                 sched_event=None,
                  opportunity=None,
                  role=None,
                  conference=None):
@@ -34,6 +35,7 @@ class VolunteerContext():
             self.conference = conference or ConferenceFactory()
         else:
             self.conference = event.e_conference
+
         if ConferenceDay.objects.filter(conference=self.conference).exists():
             self.conf_day = ConferenceDay.objects.filter(
                 conference=self.conference).first()
@@ -43,23 +45,26 @@ class VolunteerContext():
         if not hasattr(self.profile, 'preferences'):
             ProfilePreferencesFactory(profile=self.profile)
 
-        self.event = event or ShowFactory(
-            e_conference=self.conference)
         self.role = role or "Volunteer"
         self.room = RoomFactory()
         self.room.conferences.add(self.conference)
+        self.event = event or ShowFactory(
+            e_conference=self.conference)
 
-        self.sched_event = SchedEventFactory(
-            eventitem=self.event.eventitem_ptr,
-            starttime=datetime.combine(self.conf_day.day,
-                                       time(12, 0, 0)))
-        ResourceAllocationFactory(
-            event=self.sched_event,
-            resource=LocationFactory(_item=self.room))
-        EventLabelFactory(event=self.sched_event,
-                          text="General")
-        EventLabelFactory(event=self.sched_event,
-                          text=self.conference.conference_slug)
+        if not sched_event:
+            self.sched_event = SchedEventFactory(
+                eventitem=self.event.eventitem_ptr,
+                starttime=datetime.combine(self.conf_day.day,
+                                           time(12, 0, 0)))
+            ResourceAllocationFactory(
+                event=self.sched_event,
+                resource=LocationFactory(_item=self.room))
+            EventLabelFactory(event=self.sched_event,
+                              text="General")
+            EventLabelFactory(event=self.sched_event,
+                              text=self.conference.conference_slug)
+        else:
+            self.sched_event = sched_event
         self.worker = WorkerFactory(_item=self.profile.workeritem,
                                     role=self.role)
         self.opportunity, self.opp_event = self.add_opportunity(opportunity)

@@ -12,6 +12,7 @@ from gbe.models import (
     Profile,
     Vendor,
     Event,
+    Show,
     UserMessage,
 )
 from gbe.ticketing_idd_interface import (
@@ -45,6 +46,7 @@ from scheduler.data_transfer import Person
 def LandingPageView(request, profile_id=None, historical=False):
     historical = "historical" in list(request.GET.keys())
     standard_context = {}
+    is_staff_lead = False
     standard_context['events_list'] = Event.objects.all()[:5]
     if (profile_id):
         admin_profile = validate_perms(request, ('Registrar',
@@ -70,6 +72,9 @@ def LandingPageView(request, profile_id=None, historical=False):
 
     if viewer_profile:
         bids_to_review = []
+        is_staff_lead = validate_perms(request,
+                                       ['Staff Lead', ],
+                                       require=False)
         person = Person(
             user=viewer_profile.user_object,
             public_id=viewer_profile.pk,
@@ -88,6 +93,7 @@ def LandingPageView(request, profile_id=None, historical=False):
                                 'bid_type': bid_type}]
         bookings = []
         booking_ids = []
+        manage_shows = []
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
             gbe_event = booking.event.eventitem.child()
@@ -112,6 +118,21 @@ def LandingPageView(request, profile_id=None, historical=False):
                             'eval_event',
                             args=[booking.event.pk, ],
                             urlconf='gbe.scheduling.urls')
+            if gbe_event.e_conference.status != "completed":
+                # roles assigned direct to shows
+                if booking.role in (
+                        'Stage Manager',
+                        'Technical Director',
+                        'Producer'):
+                    manage_shows += [booking.event]
+                # staff leads often work a volunteer slot in the show
+                elif is_staff_lead and hasattr(booking.event,
+                                               'container_event'):
+                    parent = booking.event.container_event.parent_event
+                    if parent not in manage_shows and Show.objects.filter(
+                            eventitem_id=parent.eventitem.eventitem_id
+                            ).exists() and parent not in manage_shows:
+                        manage_shows += [parent]
             if booking.event.pk not in booking_ids:
                 bookings += [booking_item]
                 booking_ids += [booking.event.pk]
@@ -122,6 +143,7 @@ def LandingPageView(request, profile_id=None, historical=False):
             'alerts': viewer_profile.alerts(historical),
             'standard_context': standard_context,
             'personae': viewer_profile.get_personae(),
+            'manage_shows': manage_shows,
             'troupes': viewer_profile.get_troupes(),
             'businesses': viewer_profile.business_set.all(),
             'acts': viewer_profile.get_acts(historical),

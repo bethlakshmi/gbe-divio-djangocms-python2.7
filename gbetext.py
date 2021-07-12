@@ -74,7 +74,21 @@ act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                      (1, 'The Main Event, in competition'),
                      (2, 'The Main Event, not in competition'),
                      (3, 'The Newcomer\'s Showcase')]
-
+act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
+ act order before clicking other buttons in this dashboard.<br><br></div><div><span
+ class="gbe-form-error">Highlighted text</span> reflects incomplete acts.
+</div><div><span class="gbe-form-error gbe-inactive">Bold and red names</span>
+ reflects acts with deactivated users.<br></div>'''
+volunteer_panel_instr = '''<div>Red text indicates a user that has become
+ inactive.</div><div>Yellow background indicates a volunteer session that
+ requires approval.</div><div>Blue background indicates volunteers that have
+ not yet been approved.  Use the <i class="fa fa-thumbs-o-up"
+ aria-hidden="true"></i> to approve or reject them.</div><div>Green
+ background indicates has max volunteers.  If an event is full, it will not
+ show up in the public volunteer calendar.</div>'''
+act_order_form_invalid = '''There was a problem updating the act order.  \
+Check the list of acts for more information on the error.'''
+act_order_submit_success = '''The order of acts has been updated.'''
 more_shows_options = [
     (4, 'Friday, July 28'),
     (5, 'Saturday, July 29'),
@@ -247,6 +261,7 @@ role_options = (
     ('Panelist', "Panelist"),
     ('Performer', "Performer"),
     ('Producer', "Producer"),
+    ('Stage Manager', "Stage Manager"),
     ('Staff Lead', "Staff Lead"),
     ('Teacher', "Teacher"),
     ('Technical Director', "Technical Director"),
@@ -264,6 +279,7 @@ role_commit_map = {
     'Producer': (1, "fas fa-check-circle gbe-text-success"),
     'Staff Lead': (1, "fas fa-check-circle gbe-text-success"),
     'Teacher': (1, "fas fa-check-circle gbe-text-success"),
+    'Stage Manager': (1, "fas fa-check-circle gbe-text-success"),
     'Technical Director': (1, "fas fa-check-circle gbe-text-success"),
     'Volunteer': (1, "fas fa-check-circle gbe-text-success"),
     'Rejected': (4, "fas fa-window-close gbe-text-danger"),
@@ -743,3 +759,5 @@ the new start day and all conference days will be moved and all events will be
 updated.  This assumes that the conference is the same number of days long.'''
 missing_day_form_note = '''Could not load the form for the identified day.
   This may be because the day is for a past conference.'''
+no_scope_error = '''You do not have the allowed role to view this event.  If \
+this is in error, please contact our web support.'''

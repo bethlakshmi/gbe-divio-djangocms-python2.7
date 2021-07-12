@@ -217,10 +217,6 @@ def shared_groundwork(request, kwargs, permissions):
     occurrence = None
     item = None
     profile = validate_perms(request, permissions)
-    if "conference" in kwargs:
-        conference = get_object_or_404(
-            Conference,
-            conference_slug=kwargs['conference'])
 
     if "occurrence_id" in kwargs:
         occurrence_id = int(kwargs['occurrence_id'])

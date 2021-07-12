@@ -32,6 +32,7 @@ def act_techinfo_detail(request, act_id):
     # troupe or the performer.
     if not validate_perms(request, (
             'Scheduling Mavens',
+            'Stage Manager',
             'Tech Crew',
             'Technical Director',
             'Producer'), require=False):

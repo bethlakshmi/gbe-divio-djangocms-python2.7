@@ -37,6 +37,7 @@ class MailToRolesView(MailToFilterView):
                             'Registrar',
                             'Schedule Mavens',
                             'Staff Lead',
+                            'Stage Manager',
                             'Technical Director',
                             'Volunteer Coordinator',
                             ]
@@ -49,7 +50,8 @@ class MailToRolesView(MailToFilterView):
         if is_superuser or len(
                 [i for i in ["Schedule Mavens",
                              "Registrar",
-                             "Volunteer Coordinator"] if i in priv_list]) > 0:
+                             "Volunteer Coordinator",
+                             "Staff Lead"] if i in priv_list]) > 0:
             event_queryset = Event.objects.filter(
                 e_conference__in=conferences
                 ).filter(
@@ -57,21 +59,11 @@ class MailToRolesView(MailToFilterView):
                 Q(show__pk__gt=0))
         elif len([i for i in ['Producer',
                               'Technical Director',
-                              'Act Coordinator',
-                              'Staff Lead'] if i in priv_list]) > 0:
-            query = None
-            if 'Staff Lead' in priv_list:
-                query = Q(genericevent__type__in=["Special"],)
-            if len([i for i in ['Producer',
-                                'Technical Director',
-                                'Act Coordinator'] if i in priv_list]) > 0:
-                if query:
-                    query = query | Q(show__pk__gt=0)
-                else:
-                    query = Q(show__pk__gt=0)
+                              'Stage Manager',
+                              'Act Coordinator'] if i in priv_list]) > 0:
             event_queryset = Event.objects.filter(
                     e_conference__in=conferences
-                    ).filter(query)
+                    ).filter(Q(show__pk__gt=0))
         return event_queryset
 
     def setup_staff_queryset(self, is_superuser, priv_list, conferences):
@@ -238,6 +230,7 @@ class MailToRolesView(MailToFilterView):
         else:
             if len([i for i in ['Producer',
                                 'Technical Director',
+                                'Stage Manager',
                                 'Act Coordinator',
                                 'Staff Lead'] if i in self.priv_list]) > 0:
                 response = None

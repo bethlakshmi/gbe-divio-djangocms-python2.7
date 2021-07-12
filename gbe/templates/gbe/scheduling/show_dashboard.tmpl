@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load gbe_tags %}
+{% block title %}
+   Manage {{this_show}}
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
+{% endblock %}
+{% block content %}
+{% if other_shows|length > 0 %}
+<div class="container review">
+ <ul class="nav nav-tabs" id="inner">
+  {% for show in other_shows %}
+  <li role="presentation"><a href="{% url 'scheduling:show_dashboard' show.pk%}" class="{% if this_occurrence.pk == show.pk %}gbe-tab-active{% else %}gbe-tab{% endif %}">{{show.eventitem}}</a></li>
+  {% endfor %}
+ </ul>
+ <div class="gbe-tab-area">
+{% endif %}
+  <h2 class="review-title gbe-title">{{this_show}} Dashboard</h2>
+<div class="pt-2">
+  <div class="row"><div class="col-4">
+  <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
+    {% for form in email_forms %}
+      {{form}}
+    {% endfor %}
+    <input type="hidden" name="email-select-roles" value="Performer" id="id_email-select-roles_0">
+  <input type = "submit" name="refine" value="Email Performers" class="btn gbe-btn-primary">
+  </form>
+  </div>
+  <div class="col-4">
+  <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
+    {% for form in email_forms %}
+      {{form}}
+    {% endfor %}
+    <input type="hidden" name="email-select-roles" value="Volunteer" id="id_email-select-roles_0">
+    <input type = "submit" name="refine" value="Email Volunters" class="btn gbe-btn-primary">
+  </form>
+  </div>
+  <div class="col-4">
+  <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
+    {% for form in email_forms %}
+      {{form}}
+    {% endfor %}
+    <input type="hidden" name="email-select-roles" value="Performer" id="id_email-select-roles_0">
+    <input type="hidden" name="email-select-roles" value="Volunteer" id="id_email-select-roles_1">
+    <input type = "submit" name="refine" value="Email Performers & Volunteers" class="btn gbe-btn-primary">
+  </form>
+  </div></div>
+</div>
+<div id="accordion" class="gbe_accordion my-3">
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingOne">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Act Information
+          <span class="fa-stack fa-sm">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapseOne" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+  {% include "gbe/scheduling/act_tech_table.tmpl"%}
+     </div>
+    </div>
+  </div>
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingTwo">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Volunteer Information
+          <span class="fa-stack fa-2x">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapseTwo" class="collapse{% if open_panel == "vendor" %} show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordion">
+      <div class="card-body">
+  {% include "gbe/scheduling/volunteer_table.tmpl"%}
+</div></div></div>
+</div>
+
+{% if other_shows|length > 0 %}
+</div></div>{% endif %}{% endblock %}
