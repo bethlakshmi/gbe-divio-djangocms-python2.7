@@ -18,7 +18,7 @@ urlpatterns = [
         name='bptevent_edit'),
     url(r'^ticketing/bptevent_edit/(?P<event_id>\d+)/?$', views.bptevent_edit,
         name='bptevent_edit'),
-    url(r'^ticketing/transactions/?$',views.transactions,
+    url(r'^ticketing/transactions/?$', views.transactions,
         name='transactions'),
     url(r'^ticketing/transaction/create/?$',
         CreateTransaction.as_view(),

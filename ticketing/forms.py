@@ -222,6 +222,7 @@ class CompFeeForm(forms.ModelForm):
     profile = forms.ModelChoiceField(
         queryset=Profile.objects.filter(user_object__is_active=True),
         widget=autocomplete.ModelSelect2(url='profile-autocomplete'))
+
     class Meta:
         model = Transaction
         fields = ['ticket_item', ]

@@ -41,7 +41,7 @@ class EventbriteSettings(models.Model):
 
 
 class SyncStatus(models.Model):
-    is_success =  models.BooleanField(default=True)
+    is_success = models.BooleanField(default=True)
     import_type = models.CharField(max_length=128)
     import_number = models.IntegerField(default=0)
     error_msg = models.CharField(max_length=300, blank=True, null=True)
