@@ -248,7 +248,7 @@ special_menu_tree = [
      'parent_id': 40,
      'id': 43,
      'groups': ['Scheduling Mavens']},
-    {'title': 'Conferences',
+    {'title': 'Expo Dates',
      'url': reverse('manage_conference',
                     urlconf='gbe.scheduling.urls'),
      'parent_id': 40,
