@@ -52,7 +52,7 @@ class TestManageConference(TestCase):
 
     def test_not_admin(self):
         not_admin = ProfileFactory()
-        grant_privilege(not_admin, 'Scheduling Mavens')
+        grant_privilege(not_admin, 'Admins')
         login_as(not_admin, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
