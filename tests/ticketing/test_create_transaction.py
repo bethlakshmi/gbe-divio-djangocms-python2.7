@@ -16,7 +16,7 @@ from tests.functions.gbe_functions import (
     make_act_app_ticket,
 )
 from gbetext import create_comp_msg
-from gbe_utils.text import no_permission_msg 
+from gbe_utils.text import no_permission_msg
 
 
 class TestIndex(TestCase):
@@ -59,8 +59,7 @@ class TestIndex(TestCase):
     def test_bad_user(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url, follow=True)
-        self.assertRedirects(response,
-                                   reverse('home', urlconf="gbe.urls"))
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
         self.assertContains(response, no_permission_msg)
 
     def test_make_purchaser(self):
