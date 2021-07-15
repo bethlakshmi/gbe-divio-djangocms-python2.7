@@ -1,0 +1,13 @@
+{% extends CMS_TEMPLATE %}
+
+{% block meta %}
+    {%  if meta %}
+        {% include "meta/meta.html" %}
+    {% endif %}
+{% endblock meta %}
+
+{% block content %}
+<div class="app app-blog">
+    {% block content_blog %}{% endblock %}
+</div>
+{% endblock content %}
