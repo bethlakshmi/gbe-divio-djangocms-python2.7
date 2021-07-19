@@ -35,6 +35,7 @@ def transactions(request):
         conference = get_current_conference()
 
     view_format = request.GET.get('format', 'ticket')
+    changed_id = int(request.GET.get('changed_id', -1))
 
     intro = UserMessage.objects.get_or_create(
       view="ViewTransactions",
@@ -65,6 +66,7 @@ def transactions(request):
     user_editor = validate_perms(request, ('Registrar', ), require=False)
     context = {'conference_slugs': conference_slugs(),
                'conference': conference,
+               'changed_id': changed_id,
                'error': error,
                'intro': intro[0].description,
                'can_edit': user_editor,

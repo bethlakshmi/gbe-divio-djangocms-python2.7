@@ -2,7 +2,7 @@ from django.views.generic.edit import (
     CreateView,
     UpdateView,
 )
-from gbe.views import (
+from gbe_utils.mixins import (
     GbeFormMixin,
     ProfileRequiredMixin,
 )

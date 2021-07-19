@@ -17,7 +17,7 @@ from gbe.functions import (
     conference_slugs,
     validate_perms,
 )
-from gbe.views import ProfileRequiredMixin
+from gbe_utils.mixins import ProfileRequiredMixin
 from gbe.views.functions import make_show_casting_form
 from gbe.scheduling.views.functions import (
     shared_groundwork,

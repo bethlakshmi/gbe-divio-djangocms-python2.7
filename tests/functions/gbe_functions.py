@@ -10,7 +10,6 @@ from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceFactory,
 )
-
 from tests.factories.ticketing_factories import (
     TicketingEventsFactory,
     TransactionFactory,
@@ -178,7 +177,8 @@ def make_act_app_ticket(conference):
     ticketing_event = TicketingEventsFactory(conference=conference,
                                              act_submission_event=True)
     ticket_id = "%s-1111" % (ticketing_event.event_id)
-    ticket = TicketItemFactory(ticket_id=ticket_id)
+    ticket = TicketItemFactory(ticket_id=ticket_id,
+                               ticketing_event=ticketing_event)
     return ticketing_event.event_id
 
 

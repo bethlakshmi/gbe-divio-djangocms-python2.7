@@ -19,8 +19,8 @@ from tests.functions.gbe_functions import (
 )
 from django.shortcuts import get_object_or_404
 from gbe.models import Volunteer
+from gbe_utils.text import no_profile_msg
 from gbetext import (
-    no_profile_msg,
     no_login_msg,
     full_login_msg,
     set_favorite_msg,

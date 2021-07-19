@@ -25,7 +25,6 @@ from tests.functions.gbe_functions import (
 from django.shortcuts import get_object_or_404
 from gbe.models import Volunteer
 from gbetext import (
-    no_profile_msg,
     no_login_msg,
     full_login_msg,
     set_volunteer_msg,
@@ -34,6 +33,7 @@ from gbetext import (
     unset_pending_msg,
     volunteer_allocate_email_fail_msg,
 )
+from gbe_utils.text import no_profile_msg
 from settings import GBE_DATETIME_FORMAT
 
 
