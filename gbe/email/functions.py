@@ -21,9 +21,9 @@ from gbe.functions import make_warning_msg
 from gbetext import (
     acceptance_states,
     email_template_desc,
-    no_profile_msg,
     unique_email_templates,
 )
+from gbe_utils.text import no_profile_msg
 from scheduler.idd import get_all_container_bookings
 from django.core.signing import (
     TimestampSigner,

@@ -6,7 +6,7 @@ from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
-from gbe.views import (
+from gbe_utils.mixins import (
     GbeFormMixin,
     ProfileRequiredMixin,
 )

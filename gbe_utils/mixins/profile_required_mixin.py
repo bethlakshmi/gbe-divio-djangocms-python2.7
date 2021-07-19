@@ -4,7 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.contrib import messages
 from gbe.models import UserMessage
-from gbetext import no_profile_msg
+from gbe_utils.text import no_profile_msg
 
 
 class ProfileRequiredMixin(PermissionRequiredMixin):

@@ -31,9 +31,9 @@ from settings import URL_DATE
 
 
 class ManageConferenceView(View):
-    title = "Manage Conference"
+    title = "Manage Expo Dates "
     button = "Change Dates"
-    header = "Change Conference Start Day"
+    header = "Change Expo Start Day"
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

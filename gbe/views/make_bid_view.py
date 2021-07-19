@@ -19,13 +19,13 @@ from gbe.functions import (
 )
 from gbe.email.functions import notify_reviewers_on_bid_change
 from gbetext import (
-    no_profile_msg,
     no_login_msg,
     fee_instructions,
     full_login_msg,
     payment_needed_msg,
     payment_details_error,
 )
+from gbe_utils.text import no_profile_msg
 from gbe.ticketing_idd_interface import (
     get_payment_details,
     get_ticket_form,

@@ -41,7 +41,7 @@ class EventbriteSettings(models.Model):
 
 
 class SyncStatus(models.Model):
-    is_success =  models.BooleanField(default=True)
+    is_success = models.BooleanField(default=True)
     import_type = models.CharField(max_length=128)
     import_number = models.IntegerField(default=0)
     error_msg = models.CharField(max_length=300, blank=True, null=True)
@@ -142,6 +142,7 @@ class TicketItem(models.Model):
                                         related_name="ticketitems",
                                         blank=True)
     live = models.BooleanField(default=False)
+    special_comp = models.BooleanField(default=False)
     add_on = models.BooleanField(default=False)
     has_coupon = models.BooleanField(default=False)
     start_time = models.DateTimeField(blank=True, null=True)

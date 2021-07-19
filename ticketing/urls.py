@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from ticketing import views
+from ticketing.views import CreateTransaction
 
 app_name = "ticketing"
 
@@ -19,6 +20,9 @@ urlpatterns = [
         name='bptevent_edit'),
     url(r'^ticketing/transactions/?$', views.transactions,
         name='transactions'),
+    url(r'^ticketing/transaction/create/?$',
+        CreateTransaction.as_view(),
+        name='comp_ticket'),
     url(r'^ticketing/set_ticket_to_event/(?P<event_id>\d+)/' +
         '(?P<state>on|off)/(?P<gbe_eventitem_id>\d+)/?$',
         views.set_ticket_to_event,

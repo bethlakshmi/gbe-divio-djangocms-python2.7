@@ -38,7 +38,7 @@
   {% elif item.end_time %}Valid Before: <br>{{ item.end_time | date:'m/d/Y'}}
   {% elif item.has_coupon %}Requires Coupon
   {% elif item.live %}Visible{% else %}Hidden
-  {% endif %}</td>
+  {% endif %}{% if item.special_comp %}<br><i>Useable any time</i>{% endif %}</td>
   <td>{% if item.is_minimum %}Minimum Donation
     {% elif item.add_on %}Optional Add-On{% else %}Regular Fee{% endif %}</td>
   <td>${{ item.cost }}</td>

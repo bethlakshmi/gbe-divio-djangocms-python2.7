@@ -32,7 +32,7 @@ class TestManageConference(TestCase):
         self.privileged_user = User.objects.create_superuser(
             'myuser', 'myemail@test.com', password)
         self.profile = ProfileFactory(user_object=self.privileged_user)
-        grant_privilege(self.profile, 'Scheduling Mavens')
+        grant_privilege(self.profile, 'Admins')
         self.day = ConferenceDayFactory()
         self.url = reverse(self.view_name,
                            urlconf="gbe.scheduling.urls")
@@ -52,7 +52,7 @@ class TestManageConference(TestCase):
 
     def test_not_admin(self):
         not_admin = ProfileFactory()
-        grant_privilege(not_admin, 'Scheduling Mavens')
+        grant_privilege(not_admin, 'Admins')
         login_as(not_admin, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
