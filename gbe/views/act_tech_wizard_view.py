@@ -34,6 +34,7 @@ from gbetext import (
     default_rehearsal_booked,
     default_rehearsal_acttech_instruct,
     rehearsal_book_error,
+    rehearsal_remove_confirmation,
 )
 from scheduler.idd import (
     get_occurrences,
@@ -73,7 +74,7 @@ class ActTechWizardView(View):
                 labels=[self.act.b_conference.conference_slug],
                 foreign_event_ids=possible_rehearsals,
                 parent_event_id=show.pk)
-            choices = []
+            choices = [(-1, "No rehearsal needed")]
             initial = None
             for event in response.occurrences:
                 if (show.pk in self.rehearsals) and (
@@ -86,6 +87,12 @@ class ActTechWizardView(View):
                 elif event.has_commitment_space("Act"):
                     choices += [(event.pk,
                                  date_format(event.starttime, "TIME_FORMAT"))]
+            if initial is None:
+                if self.act.tech.confirm_no_rehearsal:
+                    initial = {'rehearsal': choices[0][0]}
+                elif len(choices) > 1:
+                    initial = {'rehearsal': choices[1][0]}
+
             if request:
                 rehearsal_form = BasicRehearsalForm(
                     request.POST,
@@ -115,26 +122,57 @@ class ActTechWizardView(View):
             return error, bookings, forms, request
 
         for rehearsal_form in forms:
-            person = Person(public_id=self.act.performer.pk,
-                            role="performer",
-                            commitment=Commitment(decorator_class=self.act))
-            if rehearsal_form.cleaned_data['booking_id']:
-                person.booking_id = int(
-                    rehearsal_form.cleaned_data['booking_id'])
-            response = set_person(
-                occurrence_id=int(rehearsal_form.cleaned_data['rehearsal']),
-                person=person)
-            # errors are internal, and not OK to show regular user
-            if response.errors:
-                error = True
+            if int(rehearsal_form.cleaned_data['rehearsal']) >= 0:
+                person = Person(
+                    public_id=self.act.performer.pk,
+                    role="performer",
+                    commitment=Commitment(decorator_class=self.act))
+                if rehearsal_form.cleaned_data['booking_id']:
+                    person.booking_id = int(
+                        rehearsal_form.cleaned_data['booking_id'])
+                response = set_person(
+                    occurrence_id=int(
+                        rehearsal_form.cleaned_data['rehearsal']),
+                    person=person)
+                # errors are internal, and not OK to show regular user
+                if response.errors:
+                    error = True
+                else:
+                    show_general_status(request,
+                                        response,
+                                        self.__class__.__name__)
+                self.act.tech.confirm_no_rehearsal = False
+                if response.occurrence:
+                    bookings += [response.occurrence]
+                    self.rehearsals[int(rehearsal_form.prefix)] = ScheduleItem(
+                        event=response.occurrence,
+                        booking_id=response.booking_id)
             else:
-                show_general_status(request, response, self.__class__.__name__)
-
-            if response.occurrence:
-                bookings += [response.occurrence]
-                self.rehearsals[int(rehearsal_form.prefix)] = ScheduleItem(
-                    event=response.occurrence,
-                    booking_id=response.booking_id)
+                if rehearsal_form.cleaned_data['booking_id']:
+                    response = remove_booking(
+                        occurrence_id=self.rehearsals[int(
+                            rehearsal_form.prefix)].event.pk,
+                        booking_id=int(
+                            rehearsal_form.cleaned_data['booking_id']))
+                    # errors are internal, and not OK to show regular user
+                    if response.errors:
+                        error = True
+                    else:
+                        del self.rehearsals[int(rehearsal_form.prefix)]
+                        success = UserMessage.objects.get_or_create(
+                            view=self.__class__.__name__,
+                            code="REHEARSAL_REMOVED",
+                            defaults={
+                                'summary': "User Canceled Rehearsal",
+                                'description': rehearsal_remove_confirmation})
+                        messages.success(request, success[0].description)
+                self.act.tech.confirm_no_rehearsal = True
+                self.act.tech.save()
+        # if there has been no failure, we've changed the state of rehearsal
+        # bookings, and the forms should be changed to reflect the new
+        # persistent state - BUG found on 7/9/21 with GBE-238
+        if not error:
+            forms = self.set_rehearsal_forms()
         return error, bookings, forms, request
 
     def make_context(self,

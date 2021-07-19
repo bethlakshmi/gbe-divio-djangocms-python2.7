@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
     ActFactory,
     PersonaFactory,
     ProfileFactory,
+    TechInfoFactory,
     TroupeFactory,
 )
 from tests.functions.gbe_functions import (
@@ -132,6 +133,32 @@ class TestReviewActTechInfo(TestCase):
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertContains(response, "Act Tech is NOT complete")
+
+    def test_review_act_techinfo_complete_w_no_rehearsal(self):
+        '''review_act_techinfo view should load for Tech Crew
+           and fail for others
+        '''
+        self.context = ActTechInfoContext()
+        self.context.act.tech = TechInfoFactory(
+            confirm_no_music=True,
+            confirm_no_rehearsal=True,
+            prop_setup="[u'I have props I will need ' + \
+            'set before my number', u'I will leave props or set pieces ' + \
+            'on-stage that will need to be cleared']",
+            starting_position="Onstage",
+            primary_color="text",
+            feel_of_act="text",
+            pronouns="text",
+            introduction_text="text")
+        self.context.act.accepted = 3
+        self.context.act.save()
+        login_as(self.profile, self)
+        response = self.client.get(reverse(self.view_name,
+                                           urlconf='gbe.reporting.urls',
+                                           args=[self.context.act.id]))
+        self.assertContains(response, self.context.act.b_title)
+        self.assertNotContains(response, "Act Tech is NOT complete")
+        self.assertContains(response, "Not Attending")
 
     def test_withdrawn_act(self):
         act = ActFactory(accepted=4)

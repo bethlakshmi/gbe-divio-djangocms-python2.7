@@ -400,6 +400,16 @@ unique_email_templates = {
          'category': 'volunteer',
          'default_base': "volunteer_schedule_change",
          'default_subject': "Volunteer Schedule Change", }],
+    'act': [
+        {'name': 'act tech reminder',
+         'description': '''This email is sent periodically to any user who \
+         has not completed their act tech form and/or not signed up for a \
+         rehearsal or confirmed they don't want one.  This is sent only to \
+         the performer contact (not the whole troupe).''',
+         'category': 'act',
+         'default_base': "act_tech_reminder",
+         'default_subject':
+            "Reminder to Finish your Act Tech Info", }, ],
     'scheduling': [
         {'name': 'daily schedule',
          'description': '''This email is sent daily to any user with a \
@@ -511,6 +521,8 @@ technical details about your act can be added later.'''
 default_rehearsal_booked = '''Rehearsal is booked.'''
 rehearsal_book_error = '''The rehearsal could not be booked.  If this issue \
 persists, please contact GBE support.'''
+rehearsal_remove_confirmation = '''Your rehearsal booking has been canceled, \
+you can reschedule a rehearsal at any time, if a slot is available.'''
 default_act_tech_advanced_submit = "All of your act tech details have been \
 submitted."
 default_act_tech_basic_submit = "Your basic act tech details have been \

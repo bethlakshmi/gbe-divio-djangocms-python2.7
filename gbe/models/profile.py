@@ -154,7 +154,8 @@ class Profile(WorkerItem):
                             reverse('profile_update',
                                     urlconf='gbe.urls'))
         for act in self.get_acts():
-            if act.accepted == 3 and act.is_current and not act.is_complete:
+            if act.accepted == 3 and act.profile == self and not (
+                    act.is_complete):
                 p_alerts.append(
                     profile_alerts['schedule_rehearsal'] %
                     (act.b_title, reverse('act_tech_wizard',
