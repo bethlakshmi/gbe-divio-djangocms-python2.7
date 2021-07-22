@@ -54,7 +54,7 @@
                 {% endfor %}
               </ul>
               <div class="button-area">
-                <a href="https://www.eventbrite.com/e/{{ item.event_id }}" target="_blank" class="btn gbe-btn-common">
+                <a href="{{ item.link }}" target="_blank" class="btn gbe-btn-common">
                     ${{ item.min_price|floatformat:2 }}
                 {% if item.min_price < item.max_price%}
                 - ${{ item.max_price|floatformat:2 }}{% endif %}</a>
