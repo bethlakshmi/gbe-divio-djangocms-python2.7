@@ -11,7 +11,6 @@ from gbe.models import (
     Biddable,
     Business,
     Conference,
-    visible_bid_query
 )
 from gbetext import (
     acceptance_states,
@@ -83,13 +82,6 @@ class Vendor(Biddable):
                 self.business.website,
                 self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance]
-
-    @property
-    def bids_to_review(self):
-        return type(self).objects.filter(
-            visible_bid_query,
-            submitted=True,
-            accepted=0)
 
     @property
     def get_help_times_display(self):

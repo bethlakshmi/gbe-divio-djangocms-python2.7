@@ -68,7 +68,7 @@ app_name = "gbe"
 urlpatterns = [
     #  landing page
     url(r'^gbe/?',
-        LandingPageView, name='home'),
+        LandingPageView.as_view(), name='home'),
 
     #  bios
     url(r'^bios/teachers/?$',
@@ -256,7 +256,7 @@ urlpatterns = [
     url(r'^profile/delete/(\d+)/?$',
         DeleteProfileView,
         name='delete_profile'),
-    url(r'^profile/landing_page/(\d+)/?$',
-        LandingPageView,
+    url(r'^profile/landing_page/(?P<profile_id>\d+)/?$',
+        LandingPageView.as_view(),
         name='admin_landing_page')
 ]

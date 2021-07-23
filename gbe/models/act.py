@@ -17,7 +17,6 @@ from gbe.models import (
     Conference,
     Performer,
     TechInfo,
-    visible_bid_query,
 )
 from gbetext import (
     acceptance_states,
@@ -69,13 +68,6 @@ class Act (Biddable):
         Gets all of the performers involved in the act.
         '''
         return self.performer.get_profiles()
-
-    @property
-    def bids_to_review(self):
-        return type(self).objects.filter(
-            visible_bid_query,
-            submitted=True,
-            accepted=0)
 
     @property
     def bid_review_header(self):
