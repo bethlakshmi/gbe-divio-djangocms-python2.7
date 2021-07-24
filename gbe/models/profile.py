@@ -97,9 +97,7 @@ class Profile(WorkerItem):
                 bidevaluation__evaluator=self).exclude(
                 flexibleevaluation__evaluator=self).select_subclasses()
             for bid in bids_to_review:
-                if  bid.__class__.__name__ == "Volunteer":
-                    pass
-                elif "%s Reviewers" % bid.__class__.__name__ in priv_grps:
+                if "%s Reviewers" % bid.__class__.__name__ in priv_grps:
                     reviews += [bid]
         return reviews
 
@@ -158,12 +156,6 @@ class Profile(WorkerItem):
                     (act.b_title, reverse('act_tech_wizard',
                                           urlconf='gbe.urls',
                                           args=[act.id])))
-
-        if ((len(shows) > 0 or len(classes) > 0) and len(
-                self.phone.strip()) == 0):
-            p_alerts.append(profile_alerts['onsite_phone'] %
-                            reverse('profile_update',
-                                    urlconf='gbe.urls'))
         return p_alerts
 
     def get_costumebids(self, historical=False):
@@ -184,15 +176,12 @@ class Profile(WorkerItem):
             performers += troupes
             return performers
 
-    def get_acts(self, show_historical=False):
+    def get_acts(self):
         acts = []
         performers = self.get_performers()
         for performer in performers:
             acts += performer.acts.all()
-        if show_historical:
-            def f(a): return not a.is_current
-        else:
-            def f(a): return a.is_current
+        def f(a): return a.is_current
         return list(filter(f, acts))
 
     def get_shows(self):
