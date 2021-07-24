@@ -60,12 +60,13 @@ class LandingPageView(ProfileRequiredMixin, View):
                                                  'Vendor Coordinator',
                                                  'Ticketing - Admin'))
             self.viewer_profile = get_object_or_404(Profile, pk=profile_id)
-            self.admin_message = "You are viewing a user's profile, not your own."
+            self.admin_message = "You are viewing a user's profile, " + \
+                "not your own."
         else:
             self.viewer_profile = validate_profile(request, require=False)
         self.is_staff_lead = validate_perms(request,
-                                       ['Staff Lead', ],
-                                       require=False)
+                                            ['Staff Lead', ],
+                                            require=False)
 
     def dispatch(self, *args, **kwargs):
         return super(LandingPageView, self).dispatch(*args, **kwargs)
@@ -96,7 +97,7 @@ class LandingPageView(ProfileRequiredMixin, View):
         shows = []
         classes = []
         acts = Act.objects.filter(
-            Q(performer__in=personae)|Q(performer__in=troupes))
+            Q(performer__in=personae) | Q(performer__in=troupes))
 
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:

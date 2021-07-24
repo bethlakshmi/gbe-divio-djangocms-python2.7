@@ -9,7 +9,7 @@ from gbe.views import (
     PersonaAutocomplete,
     ProfileAutocomplete,
 )
-import debug_toolbar
+# import debug_toolbar
 from django.urls import include, path
 
 
@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^', include('gbe.scheduling.urls')),
     url(r'^', include('gbe.themes.urls')),
     url(r'^paypal/', include('paypal.standard.ipn.urls')),
-    path('__debug__/', include(debug_toolbar.urls)),
+#    path('__debug__/', include(debug_toolbar.urls)),
 ] + aldryn_addons.urls.patterns() + i18n_patterns(
     # add your own i18n patterns here
     *aldryn_addons.urls.i18n_patterns()  # MUST be the last entry!

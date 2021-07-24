@@ -168,7 +168,7 @@ class Profile(WorkerItem):
         from gbe.models import Troupe  # late import, circularity
         solos = self.personae.all()
         troupes = Troupe.objects.filter(
-            Q(contact=self)|Q(membership__performer_profile=self)).distinct()
+            Q(contact=self) | Q(membership__performer_profile=self)).distinct()
         if organize:
             return solos, troupes
         else:
@@ -181,7 +181,9 @@ class Profile(WorkerItem):
         performers = self.get_performers()
         for performer in performers:
             acts += performer.acts.all()
+
         def f(a): return a.is_current
+
         return list(filter(f, acts))
 
     def get_shows(self):
@@ -244,9 +246,9 @@ class Profile(WorkerItem):
         from gbe.models import Vendor  # late import, circularity
         vendors = Vendor.objects.filter(business__owners=self)
         if historical:
-           vendors = vendors.filter(b_conference__status="completed")
+            vendors = vendors.filter(b_conference__status="completed")
         else:
-           vendors = vendors.exclude(b_conference__status="completed")
+            vendors = vendors.exclude(b_conference__status="completed")
         return vendors
 
     def proposed_classes(self, historical=False):
