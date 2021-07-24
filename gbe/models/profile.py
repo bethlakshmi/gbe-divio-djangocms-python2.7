@@ -162,8 +162,10 @@ class Profile(WorkerItem):
         return p_alerts
 
     def get_costumebids(self, historical=False):
-        costumes = self.costumes.all()
-        return (c for c in costumes if c.is_current != historical)
+        if historical:
+            return self.costumes.filter(b_conference__status="completed")
+        else:
+            return self.costumes.exclude(b_conference__status="completed")
 
     def get_performers(self, organize=False):
         from gbe.models import Troupe  # late import, circularity
@@ -248,10 +250,10 @@ class Profile(WorkerItem):
         from gbe.models import Vendor  # late import, circularity
         vendors = Vendor.objects.filter(business__owners=self)
         if historical:
-            def f(v): return not v.is_current
+           vendors = vendors.filter(b_conference__status="completed")
         else:
-            def f(v): return v.is_current
-        return list(filter(f, vendors))
+           vendors = vendors.exclude(b_conference__status="completed")
+        return vendors
 
     def proposed_classes(self, historical=False):
         from gbe.models import Class
