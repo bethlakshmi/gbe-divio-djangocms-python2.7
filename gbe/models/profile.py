@@ -142,14 +142,9 @@ class Profile(WorkerItem):
                 email_privs += [bid_type.lower()]
         return email_privs
 
-    def alerts(self, shows):
+    def alerts(self, shows, classes):
         p_alerts = []
-        expo_commitments = shows
-        expo_commitments += self.is_teaching()
-        if (len(expo_commitments) > 0 and len(self.phone.strip()) == 0):
-            p_alerts.append(profile_alerts['onsite_phone'] %
-                            reverse('profile_update',
-                                    urlconf='gbe.urls'))
+
         for show, act in shows:
             if act.accepted == 3 and act.profile == self and not (
                     act.is_complete):
@@ -158,6 +153,12 @@ class Profile(WorkerItem):
                     (act.b_title, reverse('act_tech_wizard',
                                           urlconf='gbe.urls',
                                           args=[act.id])))
+
+        if ((len(shows) > 0 or len(classes) > 0) and len(
+                self.phone.strip()) == 0):
+            p_alerts.append(profile_alerts['onsite_phone'] %
+                            reverse('profile_update',
+                                    urlconf='gbe.urls'))
         return p_alerts
 
     def get_costumebids(self, historical=False):
@@ -243,17 +244,6 @@ class Profile(WorkerItem):
             badge_name = self.user_object.first_name
         return badge_name
 
-    def is_teaching(self, historical=False):
-        '''
-        return a list of classes this user is teaching
-        '''
-        if historical:
-            return [c for c in self.workeritem.get_bookings('Teacher')
-                    if not c.is_current]
-        else:
-            return [c for c in self.workeritem.get_bookings('Teacher')
-                    if c.is_current]
-
     def vendors(self, historical=False):
         from gbe.models import Vendor  # late import, circularity
         vendors = Vendor.objects.filter(business__owners=self)
@@ -264,13 +254,12 @@ class Profile(WorkerItem):
         return list(filter(f, vendors))
 
     def proposed_classes(self, historical=False):
-        classes = sum([list(teacher.is_teaching.all())
-                       for teacher in self.personae.all()], [])
+        from gbe.models import Class
+        classes = Class.objects.filter(teacher__contact=self)
         if historical:
-            def f(c): return not c.is_current
+            classes = classes.filter(b_conference__status="completed")
         else:
-            def f(c): return c.is_current
-        classes = list(filter(f, classes))
+            classes = classes.exclude(b_conference__status="completed")
         return classes
 
     def has_role_in_event(self, role, event):

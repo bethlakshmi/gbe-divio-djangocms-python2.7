@@ -94,6 +94,7 @@ class LandingPageView(ProfileRequiredMixin, View):
         booking_ids = []
         manage_shows = []
         shows = []
+        classes = []
         acts = Act.objects.filter(
             Q(performer__in=personae)|Q(performer__in=troupes))
         if self.historical:
@@ -125,6 +126,8 @@ class LandingPageView(ProfileRequiredMixin, View):
                             'eval_event',
                             args=[booking.event.pk, ],
                             urlconf='gbe.scheduling.urls')
+            elif gbe_event.calendar_type == "Conference":
+                classes += [booking_item]
             if gbe_event.e_conference.status != "completed":
                 if gbe_event.calendar_type == "General" and (
                         booking.commitment is not None):
@@ -152,15 +155,15 @@ class LandingPageView(ProfileRequiredMixin, View):
         context = {
             'profile': viewer_profile,
             'historical': self.historical,
-            'alerts': viewer_profile.alerts(shows),
+            'alerts': viewer_profile.alerts(shows, classes),
             'personae': personae,
             'troupes': troupes,
             'manage_shows': manage_shows,
             'businesses': viewer_profile.business_set.all(),
             'acts': acts,
             'shows': shows,
-            'classes': viewer_profile.is_teaching(self.historical),
-            'proposed_classes': viewer_profile.proposed_classes(self.historical),
+            'proposed_classes': viewer_profile.proposed_classes(
+                self.historical),
             'vendors': viewer_profile.vendors(self.historical),
             'costumes': viewer_profile.get_costumebids(self.historical),
             'review_items': bids_to_review,
