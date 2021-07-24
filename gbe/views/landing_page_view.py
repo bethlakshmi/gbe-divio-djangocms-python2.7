@@ -97,10 +97,6 @@ class LandingPageView(ProfileRequiredMixin, View):
         classes = []
         acts = Act.objects.filter(
             Q(performer__in=personae)|Q(performer__in=troupes))
-        if self.historical:
-            acts = acts.filter(b_conference__status="completed")
-        else:
-            acts = acts.exclude(b_conference__status="completed")
 
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
@@ -152,6 +148,11 @@ class LandingPageView(ProfileRequiredMixin, View):
                 bookings += [booking_item]
                 booking_ids += [booking.event.pk]
         current_conf = get_current_conference()
+        # filter for conf AFTER bookings
+        if self.historical:
+            acts = acts.filter(b_conference__status="completed")
+        else:
+            acts = acts.exclude(b_conference__status="completed")
         context = {
             'profile': viewer_profile,
             'historical': self.historical,

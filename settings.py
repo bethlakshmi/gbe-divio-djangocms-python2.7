@@ -85,9 +85,9 @@ except:
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda _request: DEBUG
-}
+#DEBUG_TOOLBAR_CONFIG = {
+#    'SHOW_TOOLBAR_CALLBACK': lambda _request: DEBUG
+#}
 
 # TIME_FORMAT is often used for ending times of events, or when you
 # do not need to give the date, such as in calendar grids

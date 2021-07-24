@@ -145,6 +145,11 @@ class Profile(WorkerItem):
     def alerts(self, shows, classes):
         p_alerts = []
 
+        if (len(self.display_name.strip()) == 0 or
+                len(self.purchase_email.strip()) == 0):
+            p_alerts.append(profile_alerts['empty_profile'] %
+                            reverse('profile_update',
+                                    urlconf='gbe.urls'))
         for show, act in shows:
             if act.accepted == 3 and act.profile == self and not (
                     act.is_complete):

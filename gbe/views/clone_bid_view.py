@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
-from gbe.views import LandingPageView
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from gbe.models import (
     Act,
     Class,
@@ -30,4 +31,4 @@ def CloneBidView(request, bid_type, bid_id):
             'summary': "Clone %s Success" % bid_type,
             'description': default_clone_msg})
     messages.success(request, user_message[0].description)
-    return LandingPageView(request)
+    return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
