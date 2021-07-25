@@ -51,6 +51,7 @@ div.container {top:0;}
 .gbe-btn-primary, .gbe-btn-secondary, .gbe-btn-light
 {
   border-radius: 24px;
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.3));
 }
 .gbe-btn-primary:active,
 .gbe-btn-primary.active,
