@@ -34,7 +34,6 @@ class StyleValueForm(ModelForm):
             style_property = kwargs.get('initial')['style_property']
 
         super(StyleValueForm, self).__init__(*args, **kwargs)
-        value_format = []
         if 'instance' in kwargs:
             instance = kwargs.get('instance')
             style_property = instance.style_property
