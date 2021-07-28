@@ -175,6 +175,13 @@ new_grade_options = ((4, "A"),
                      (0, "F"),
                      (None, "NA"),)
 
+day_of_week = ((0, "Monday"),
+               (1, "Tuesday"),
+               (2, "Wednesday"),
+               (3, "Thursday"),
+               (4, "Friday"),
+               (5, "Saturday"),
+               (6, "Sunday"))
 answer_types = (("grade", "grade"),
                 ("text", "text"),
                 ("boolean", "boolean"),)

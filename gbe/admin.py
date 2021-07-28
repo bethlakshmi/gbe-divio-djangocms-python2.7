@@ -260,6 +260,11 @@ class FlexAdmin(admin.ModelAdmin):
         'evaluator',
         'ranking')
 
+class EmailFrequencyAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'email_type',
+        'weekday')
 
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
@@ -270,6 +275,7 @@ admin.site.register(Conference, ConferenceAdmin)
 admin.site.register(ConferenceDay, ConferenceDayAdmin)
 admin.site.register(ConferenceVolunteer, ConferenceVolunteerAdmin)
 admin.site.register(Costume, BidAdmin)
+admin.site.register(EmailFrequency, EmailFrequencyAdmin)
 admin.site.register(EvaluationCategory, EvalCategoryAdmin)
 admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
 admin.site.register(Event, EventAdmin)
