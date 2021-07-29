@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 import scheduler.models as sched
 from datetime import (
     date,
+    datetime,
     time,
     timedelta,
 )
@@ -373,6 +374,13 @@ class EmailTemplateSenderFactory(DjangoModelFactory):
     class Meta:
         model = conf.EmailTemplateSender
 
+
+class EmailFrequencyFactory(DjangoModelFactory):
+     email_type = "act_tech_reminder"
+     weekday = datetime.now().weekday()
+
+     class Meta:
+        model = conf.EmailFrequency
 
 class StaffAreaFactory(DjangoModelFactory):
     title = Sequence(lambda x: "Staff Title #%d" % x)

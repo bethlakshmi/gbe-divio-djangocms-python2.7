@@ -1,16 +1,23 @@
+from io import StringIO
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
-from gbe.models import Conference
+from gbe.models import (
+    Conference,
+    EmailFrequency,
+)
 from post_office.models import Email
 from django.core.management import call_command
 from django.conf import settings
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (
+    EmailFrequencyFactory,
     ProfilePreferencesFactory,
     TechInfoFactory,
 )
 from django.core.files.uploadedfile import SimpleUploadedFile
+from datetime import datetime
+from gbetext import day_of_week
 
 
 class TestSendTechReminder(TestCase):
@@ -20,6 +27,9 @@ class TestSendTechReminder(TestCase):
         self.client = Client()
         Email.objects.all().delete()
         Conference.objects.all().delete()
+        EmailFrequency.objects.all().delete()
+        EmailFrequencyFactory()
+
 
     def test_send_reminder(self):
         incomplete_act_context = ActTechInfoContext()
@@ -104,3 +114,22 @@ class TestSendTechReminder(TestCase):
             from_email=settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 0)
+
+    def test_dont_send_today(self):
+        EmailFrequency.objects.all().delete()
+        incomplete_act_context = ActTechInfoContext()
+        incomplete_act_context.act.accepted = 3
+        incomplete_act_context.act.save()
+        act = incomplete_act_context.act
+        ProfilePreferencesFactory(profile=act.performer.contact)
+        out = StringIO()
+        call_command("send_tech_reminder", stdout=out)
+        queued_email = Email.objects.filter(
+            status=2,
+            subject="Reminder to Finish your Act Tech Info",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 0)
+        response = out.getvalue()
+        self.assertIn('Today is day %s, and not a scheduled day.' % (
+            day_of_week[datetime.now().weekday()][1]), response)

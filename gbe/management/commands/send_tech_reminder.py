@@ -21,5 +21,5 @@ class Command(BaseCommand):
             logger.info('%s tech reminders sent.' % number_emails)
             self.stdout.write('%s tech reminders sent.' % number_emails)
         else:
-            logger.info('Today is day %s, and not a scheduled day.' % (
+            self.stdout.write('Today is day %s, and not a scheduled day.' % (
                 day_of_week[datetime.now().weekday()][1]))
