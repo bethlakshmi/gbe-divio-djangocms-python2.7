@@ -376,11 +376,12 @@ class EmailTemplateSenderFactory(DjangoModelFactory):
 
 
 class EmailFrequencyFactory(DjangoModelFactory):
-     email_type = "act_tech_reminder"
-     weekday = datetime.now().weekday()
+    email_type = "act_tech_reminder"
+    weekday = datetime.now().weekday()
 
-     class Meta:
+    class Meta:
         model = conf.EmailFrequency
+
 
 class StaffAreaFactory(DjangoModelFactory):
     title = Sequence(lambda x: "Staff Title #%d" % x)

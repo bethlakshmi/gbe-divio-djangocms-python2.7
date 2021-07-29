@@ -260,11 +260,13 @@ class FlexAdmin(admin.ModelAdmin):
         'evaluator',
         'ranking')
 
+
 class EmailFrequencyAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
         'email_type',
         'weekday')
+
 
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
