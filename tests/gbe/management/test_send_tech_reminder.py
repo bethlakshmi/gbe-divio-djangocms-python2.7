@@ -30,6 +30,7 @@ class TestSendTechReminder(TestCase):
         EmailFrequency.objects.all().delete()
         EmailFrequencyFactory()
 
+
     def test_send_reminder(self):
         incomplete_act_context = ActTechInfoContext()
         incomplete_act_context.act.accepted = 3
