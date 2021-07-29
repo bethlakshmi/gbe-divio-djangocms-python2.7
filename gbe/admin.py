@@ -184,10 +184,14 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
         'pk',
         'selector',
         'style_property',
-        'value_type')
+        'value_type',
+        'element',
+        'label')
     list_editable = (
         'style_property',
-        'value_type')
+        'value_type',
+        'element',
+        'label')
     list_filter = [
         'selector',
         'style_property']

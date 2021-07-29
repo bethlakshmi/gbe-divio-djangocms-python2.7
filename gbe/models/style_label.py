@@ -16,7 +16,7 @@ class StyleLabel(Model):
     order = IntegerField()
 
     def __str__(self):
-        return ("%s - %s" % (self.element, self.name))
+        return ("%s - %s" % (self.group, self.name))
 
     class Meta:
         app_label = "gbe"
