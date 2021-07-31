@@ -193,7 +193,8 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
         'element',
         'label')
     list_filter = [
-        'selector',
+        'element',
+        'label',
         'style_property']
     search_fields = ['selector__selector',
                      'selector__used_for',

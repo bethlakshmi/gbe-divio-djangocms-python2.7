@@ -28,13 +28,14 @@ class CloneTheme(ManageTheme):
     title_format = "Clone Styles Settings for {}, version {:.1f}"
     instruction_code = "CLONE_INSTRUCTIONS"
 
-    def make_context(self, version_form, forms):
-        context = super(CloneTheme, self).make_context(forms)
+    def make_context(self, version_form, forms, group_forms):
+        context = super(CloneTheme, self).make_context(forms, group_forms)
         context['version_form'] = version_form
         return context
 
     def setup_forms(self, request):
         forms = []
+        group_forms = {}
         if request.POST:
             version_form = ThemeVersionForm(request.POST)
         else:
@@ -61,18 +62,32 @@ class CloneTheme(ManageTheme):
                 else:
                     form = form_type(instance=value,
                                      prefix=str(value.pk))
-                forms += [(value, form)]
+                if value.style_property.element is not None and (
+                        value.style_property.label is not None):
+                    if value.style_property.label in group_forms:
+                        if value.style_property.element in group_forms[
+                                value.style_property.label]:
+                            group_forms[value.style_property.label][
+                                value.style_property.element] += [form]
+                        else:
+                            group_forms[value.style_property.label][
+                                value.style_property.element] = [form]
+                    else:
+                        group_forms[value.style_property.label] = {
+                            value.style_property.element: [form]}
+                else:
+                    forms += [(value, form)]
             except Exception as e:
                 messages.error(request, e)
-        return (version_form, forms)
+        return (version_form, forms, group_forms)
 
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
-        (version_form, forms) = self.setup_forms(request)
+        (version_form, forms, group_forms) = self.setup_forms(request)
         return render(request,
                       self.template,
-                      self.make_context(version_form, forms))
+                      self.make_context(version_form, forms, group_forms))
 
     @never_cache
     @method_decorator(login_required)
@@ -82,7 +97,7 @@ class CloneTheme(ManageTheme):
             return HttpResponseRedirect(reverse('themes_list',
                                                 urlconf='gbe.themes.urls'))
         self.groundwork(request, args, kwargs)
-        (version_form, forms) = self.setup_forms(request)
+        (version_form, forms, group_forms) = self.setup_forms(request)
         all_valid = version_form.is_valid()
         if len(messages.get_messages(request)) > 0:
             all_valid = False
@@ -114,4 +129,4 @@ class CloneTheme(ManageTheme):
 
         return render(request,
                       self.template,
-                      self.make_context(version_form, forms))
+                      self.make_context(version_form, forms, group_forms))

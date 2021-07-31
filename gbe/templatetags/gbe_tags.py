@@ -45,3 +45,7 @@ def volunteer_schedule(profile):
 @register.inclusion_tag('gbe/tag_templates/schedule_plaintext.tmpl')
 def volunteer_schedule_plaintext(profile):
     return build_schedule_context(profile)
+
+@register.filter
+def keyvalue(dict, key):    
+    return dict[key]

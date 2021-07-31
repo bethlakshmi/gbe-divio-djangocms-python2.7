@@ -9,6 +9,7 @@ from django.shortcuts import (
     render,
 )
 from gbe.models import (
+    StyleGroup,
     StyleValue,
     StyleVersion,
     UserMessage,
@@ -38,7 +39,7 @@ class ManageTheme(View):
         version_id = kwargs.get("version_id")
         self.style_version = get_object_or_404(StyleVersion, id=version_id)
 
-    def make_context(self, forms):
+    def make_context(self, forms, group_forms):
         msg = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
             code=self.instruction_code,
@@ -48,17 +49,27 @@ class ManageTheme(View):
                     'description']})
         title = self.title_format.format(self.style_version.name,
                                          self.style_version.number)
+        groups = []
+        for group in StyleGroup.objects.all():
+            group_dict = {
+                'group': group,
+                'properties': {},
+            }
+            groups += [group_dict]
         context = {
             'instructions': msg[0].description,
             'page_title': self.page_title,
             'title': title,
             'forms': forms,
+            'group_forms': group_forms,
             'version': self.style_version,
+            'groups': groups,
         }
         return context
 
     def setup_forms(self, request):
         forms = []
+        group_forms = {}
         for value in StyleValue.objects.filter(
                 style_version=self.style_version).order_by(
                 'style_property__selector__used_for',
@@ -77,10 +88,24 @@ class ManageTheme(View):
                 else:
                     form = form_type(instance=value,
                                      prefix=str(value.pk))
-                forms += [(value, form)]
+                if value.style_property.element is not None and (
+                        value.style_property.label is not None):
+                    if value.style_property.label in group_forms:
+                        if value.style_property.element in group_forms[
+                                value.style_property.label]:
+                            group_forms[value.style_property.label][
+                                value.style_property.element] += [form]
+                        else:
+                            group_forms[value.style_property.label][
+                                value.style_property.element] = [form]
+                    else:
+                        group_forms[value.style_property.label] = {
+                            value.style_property.element: [form]}
+                else:
+                    forms += [(value, form)]
             except Exception as e:
                 messages.error(request, e)
-        return forms
+        return forms, group_forms
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -89,8 +114,10 @@ class ManageTheme(View):
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
-        forms = self.setup_forms(request)
-        return render(request, self.template, self.make_context(forms))
+        forms, group_forms = self.setup_forms(request)
+        return render(request,
+                      self.template,
+                      self.make_context(forms, group_forms))
 
     @never_cache
     @method_decorator(login_required)
@@ -100,13 +127,15 @@ class ManageTheme(View):
             return HttpResponseRedirect(reverse('themes_list',
                                                 urlconf='gbe.themes.urls'))
         self.groundwork(request, args, kwargs)
-        forms = self.setup_forms(request)
+        forms, group_forms = self.setup_forms(request)
         all_valid = True
         if len(messages.get_messages(request)) > 0:
             all_valid = False
+
         for value, form in forms:
             if not form.is_valid():
                 all_valid = False
+
         if all_valid:
             for value, form in forms:
                 form.save()
@@ -128,4 +157,6 @@ class ManageTheme(View):
                 request,
                 "Something was wrong, correct the errors below and try again.")
 
-        return render(request, self.template, self.make_context(forms))
+        return render(request,
+                      self.template,
+                      self.make_context(forms, group_forms))

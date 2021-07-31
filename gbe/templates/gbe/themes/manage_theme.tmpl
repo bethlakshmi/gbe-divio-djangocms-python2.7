@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static sekizai_tags %}
+{% load static sekizai_tags gbe_tags %}
 {% block title %}
    {{page_title}}
 {% endblock %}
@@ -15,7 +15,77 @@
     {% if version_form %}
     <h4 class="gbe-subtitle">New Theme Settings</h4>
     {% include "form_table.tmpl" with form=version_form %}
-    {% endif %}
+    {% endif %} 
+<div id="accordion" class="gbe_accordion my-3">
+  {% for group_dict in groups %}
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingOne">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapse{{group_dict.group.pk}}" aria-expanded="false" aria-controls="collapse{{group_dict.group.pk}}">
+{{group_dict.group}}
+          <span class="fa-stack fa-sm">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapse{{group_dict.group.pk}}" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body gbe-bg-light">
+{{group_dict.group.test_notes}}
+<ul>{% for test_url in group_dict.group.test_urls.all %}
+  <li><a href="{{test_url.partial_url}}" class="gbe-link">{{test_url.display_name}}</a> - {{test_url.test_notes}}</li>
+{% endfor %}</ul>
+<table>
+  <tbody><tr>&nbsp;</tr><tr class="gbe-table-row"><td>&nbsp;</td>{% for element in group_dict.group.styleelement_set.all %}
+    <td>{{ element.sample_html|safe }}<br><br><i>{{ element.description }}</i></td>
+  {% endfor %}</tr>
+  {% for label in group_dict.group.stylelabel_set.all %}
+  <tr class="gbe-table-row"><td>{{label.name}}
+    <span class="dropt" title="Help">
+    <img src= "{% static "img/question.png" %}" alt="?"/>
+    <span style="width:200px;float:right;text-align:left;">
+      {{ label.help_text }}
+    </span>
+    </span></td>
+    {% for element in group_dict.group.styleelement_set.all %}
+        <td>{% for form in group_forms|keyvalue:label|keyvalue:element %}
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+          {% for field in form.visible_fields %}
+            {{ field }}
+          {% endfor %}
+          <font class="gbe-form-error">{% if form.errors %}
+          <p class="gbe-form-error"> There is an error on the form.</p>
+          {% endif %}
+          {{ form.non_field_errors }}
+          {% for field in form.visible_fields %}{{ field.errors }}{% endfor %}</font>
+        {% endfor %}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+     </div>
+    </div>
+  </div>
+  {% endfor %}
+    <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingOne">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapseEverything" aria-expanded="false" aria-controls="collapseEverything">
+Everything Else
+          <span class="fa-stack fa-sm">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapseEverything" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body gbe-bg-light">
+
     {% for value, form in forms %}
     {% ifchanged value.style_property.selector.used_for %}<h3 class="gbe-subtitle">{{ value.style_property.selector.used_for }}</h3>{% endifchanged %}
     {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
@@ -62,6 +132,10 @@
     {% include "form_horizontal.tmpl" %}
     {% endif %}
     {% endfor %}
+     </div>
+    </div>
+  </div>
+</div>
 <div class="row">
   <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7 dropdown">
     {% if not version_form %}
