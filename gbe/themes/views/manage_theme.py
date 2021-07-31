@@ -67,11 +67,24 @@ class ManageTheme(View):
         }
         return context
 
+
+    def make_single_form(self, request, form_type, value):
+        if request.POST:
+            form = form_type(request.POST,
+                             request.FILES,
+                             instance=value,
+                             prefix=str(value.pk))
+        else:
+            form = form_type(instance=value, prefix=str(value.pk))
+        return form
+
+
     def setup_forms(self, request):
         forms = []
         group_forms = {}
         for value in StyleValue.objects.filter(
-                style_version=self.style_version).order_by(
+                style_version=self.style_version,
+                style_property__hidden=False).order_by(
                 'style_property__selector__used_for',
                 'style_property__selector__selector',
                 'style_property__selector__pseudo_class',
@@ -80,14 +93,7 @@ class ManageTheme(View):
             if value.style_property.value_type == "image":
                 form_type = StyleValueImageForm
             try:
-                if request.POST:
-                    form = form_type(request.POST,
-                                     request.FILES,
-                                     instance=value,
-                                     prefix=str(value.pk))
-                else:
-                    form = form_type(instance=value,
-                                     prefix=str(value.pk))
+                form = self.make_single_form(request, form_type, value)
                 if value.style_property.element is not None and (
                         value.style_property.label is not None):
                     if value.style_property.label in group_forms:
@@ -105,6 +111,8 @@ class ManageTheme(View):
                     forms += [(value, form)]
             except Exception as e:
                 messages.error(request, e)
+                print(e)
+
         return forms, group_forms
 
     @method_decorator(login_required)

@@ -41,7 +41,7 @@
     <td>{{ element.sample_html|safe }}<br><br><i>{{ element.description }}</i></td>
   {% endfor %}</tr>
   {% for label in group_dict.group.stylelabel_set.all %}
-  <tr class="gbe-table-row"><td>{{label.name}}
+  <tr class="gbe-table-row"><td><b>{{label.name}}</b>
     <span class="dropt" title="Help">
     <img src= "{% static "img/question.png" %}" alt="?"/>
     <span style="width:200px;float:right;text-align:left;">
