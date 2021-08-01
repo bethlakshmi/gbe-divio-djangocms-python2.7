@@ -111,7 +111,6 @@ class ManageTheme(View):
                     forms += [(value, form)]
             except Exception as e:
                 messages.error(request, e)
-                print(e)
 
         return forms, group_forms
 
@@ -127,6 +126,21 @@ class ManageTheme(View):
                       self.template,
                       self.make_context(forms, group_forms))
 
+    def forms_and_context(self, request):
+        forms, group_forms = self.setup_forms(request)
+        return self.make_context(forms, group_forms)
+
+    def process_forms(self, context):
+        for value, form in context['forms']:
+            form.save()
+        for label, label_forms in context['group_forms'].items():
+            for element, element_form in label_forms.items():
+                for table_form in element_form:
+                    table_form.save()
+        self.style_version.updated_at = datetime.now()
+        self.style_version.save()
+        return (self.style_version.pk, "Updated %s" % self.style_version)
+
     @never_cache
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
@@ -135,31 +149,33 @@ class ManageTheme(View):
             return HttpResponseRedirect(reverse('themes_list',
                                                 urlconf='gbe.themes.urls'))
         self.groundwork(request, args, kwargs)
-        forms, group_forms = self.setup_forms(request)
+        context = self.forms_and_context(request)
         all_valid = True
         if len(messages.get_messages(request)) > 0:
             all_valid = False
 
-        for value, form in forms:
+        for value, form in context['forms']:
             if not form.is_valid():
                 all_valid = False
+        for label, label_forms in context['group_forms'].items():
+            for element, element_form in label_forms.items():
+                for table_form in element_form:
+                    if not table_form.is_valid():
+                        all_valid = False
 
         if all_valid:
-            for value, form in forms:
-                form.save()
-            self.style_version.updated_at = datetime.now()
-            self.style_version.save()
-            messages.success(request, "Updated %s" % self.style_version)
+            version_pk, success_msg = self.process_forms(context)
+            messages.success(request, success_msg)
 
             if 'update' in list(request.POST.keys()):
                 return HttpResponseRedirect(reverse(
                     'manage_theme',
                     urlconf='gbe.themes.urls',
-                    args=[self.style_version.pk]))
+                    args=[version_pk]))
             else:
                 return HttpResponseRedirect("%s?changed_id=%d" % (
                     reverse('themes_list', urlconf='gbe.themes.urls'),
-                    self.style_version.pk))
+                    version_pk))
         else:
             messages.error(
                 request,
@@ -167,4 +183,4 @@ class ManageTheme(View):
 
         return render(request,
                       self.template,
-                      self.make_context(forms, group_forms))
+                      context)

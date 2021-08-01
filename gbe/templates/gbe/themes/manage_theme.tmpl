@@ -21,16 +21,10 @@
   <div class="card gbe-panel-list">
     <div class="card-header gbe-bg-dark" id="headingOne">
       <h2 class="mb-0">
-        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapse{{group_dict.group.pk}}" aria-expanded="false" aria-controls="collapse{{group_dict.group.pk}}">
-{{group_dict.group}}
-          <span class="fa-stack fa-sm">
-            <i class="fas fa-circle fa-stack-2x"></i>
-            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
-          </span>
-        </button>
+      {{group_dict.group}}
       </h2>
     </div>
-    <div id="collapse{{group_dict.group.pk}}" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
+    <div class="{% if open_panel == "act" %}show{% endif %}">
       <div class="card-body gbe-bg-light">
 {{group_dict.group.test_notes}}
 <ul>{% for test_url in group_dict.group.test_urls.all %}
@@ -74,16 +68,10 @@
     <div class="card gbe-panel-list">
     <div class="card-header gbe-bg-dark" id="headingOne">
       <h2 class="mb-0">
-        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapseEverything" aria-expanded="false" aria-controls="collapseEverything">
-Everything Else
-          <span class="fa-stack fa-sm">
-            <i class="fas fa-circle fa-stack-2x"></i>
-            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
-          </span>
-        </button>
+      Everything Else
       </h2>
     </div>
-    <div id="collapseEverything" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
+    <div class="{% if open_panel == "act" %}show{% endif %}">
       <div class="card-body gbe-bg-light">
 
     {% for value, form in forms %}

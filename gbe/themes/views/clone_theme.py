@@ -33,7 +33,6 @@ class CloneTheme(ManageTheme):
         context['version_form'] = version_form
         return context
 
-
     def make_single_form(self, request, form_type, value):
         if request.POST:
             form = form_type(request.POST,
@@ -46,7 +45,6 @@ class CloneTheme(ManageTheme):
             form = form_type(instance=value, prefix=str(value.pk))
         return form
 
-
     def setup_forms(self, request):
         if request.POST:
             version_form = ThemeVersionForm(request.POST)
@@ -54,7 +52,6 @@ class CloneTheme(ManageTheme):
             version_form = ThemeVersionForm()
         forms, group_forms = super(CloneTheme, self).setup_forms(request)
         return (version_form, forms, group_forms)
-
 
     @never_cache
     def get(self, request, *args, **kwargs):
@@ -64,44 +61,24 @@ class CloneTheme(ManageTheme):
                       self.template,
                       self.make_context(version_form, forms, group_forms))
 
-    @never_cache
-    @method_decorator(login_required)
-    def post(self, request, *args, **kwargs):
-        if 'cancel' in list(request.POST.keys()):
-            messages.success(request, "The last update was canceled.")
-            return HttpResponseRedirect(reverse('themes_list',
-                                                urlconf='gbe.themes.urls'))
-        self.groundwork(request, args, kwargs)
+    def forms_and_context(self, request):
         (version_form, forms, group_forms) = self.setup_forms(request)
-        all_valid = version_form.is_valid()
-        if len(messages.get_messages(request)) > 0:
-            all_valid = False
-        for value, form in forms:
-            if not form.is_valid():
-                all_valid = False
-        if all_valid:
-            new_version = version_form.save()
-            for value, form in forms:
-                instance = form.save(commit=False)
-                instance.style_version = new_version
-                instance.save()
-            messages.success(request, "Cloned %s from %s" % (
-                new_version,
-                self.style_version))
-            if 'update' in list(request.POST.keys()):
-                return HttpResponseRedirect(
-                    reverse('manage_theme',
-                            urlconf='gbe.themes.urls',
-                            args=[new_version.pk]))
-            else:
-                return HttpResponseRedirect("%s?changed_id=%d" % (
-                    reverse('themes_list', urlconf='gbe.themes.urls'),
-                    new_version.pk))
-        else:
+        if not version_form.is_valid():
             messages.error(
-                request,
-                "Something was wrong, correct the errors below and try again.")
+                "Theme setup information is not correct, see form for errors")
+        return self.make_context(version_form, forms, group_forms)
 
-        return render(request,
-                      self.template,
-                      self.make_context(version_form, forms, group_forms))
+    def process_forms(self, context):
+        new_version = context['version_form'].save()
+        for value, form in context['forms']:
+            instance = form.save(commit=False)
+            instance.style_version = new_version
+            instance.save()
+        for label, label_forms in context['group_forms'].items():
+            for element, element_form in label_forms.items():
+                for table_form in element_form:
+                    instance = table_form.save(commit=False)
+                    instance.style_version = new_version
+                    instance.save()
+        return (new_version.pk,
+                "Cloned %s from %s" % (new_version, self.style_version))
