@@ -28,8 +28,16 @@ class CloneTheme(ManageTheme):
     title_format = "Clone Styles Settings for {}, version {:.1f}"
     instruction_code = "CLONE_INSTRUCTIONS"
 
-    def make_context(self, version_form, forms, group_forms):
-        context = super(CloneTheme, self).make_context(forms, group_forms)
+    def make_context(self, request):
+        context = super(CloneTheme, self).make_context(request)
+        if request.POST:
+            version_form = ThemeVersionForm(request.POST)
+            if not version_form.is_valid():
+                messages.error(
+                    request,
+                    "Theme setup information is not correct")
+        else:
+            version_form = ThemeVersionForm()
         context['version_form'] = version_form
         return context
 
@@ -44,29 +52,6 @@ class CloneTheme(ManageTheme):
         else:
             form = form_type(instance=value, prefix=str(value.pk))
         return form
-
-    def setup_forms(self, request):
-        if request.POST:
-            version_form = ThemeVersionForm(request.POST)
-        else:
-            version_form = ThemeVersionForm()
-        forms, group_forms = super(CloneTheme, self).setup_forms(request)
-        return (version_form, forms, group_forms)
-
-    @never_cache
-    def get(self, request, *args, **kwargs):
-        self.groundwork(request, args, kwargs)
-        (version_form, forms, group_forms) = self.setup_forms(request)
-        return render(request,
-                      self.template,
-                      self.make_context(version_form, forms, group_forms))
-
-    def forms_and_context(self, request):
-        (version_form, forms, group_forms) = self.setup_forms(request)
-        if not version_form.is_valid():
-            messages.error(
-                "Theme setup information is not correct, see form for errors")
-        return self.make_context(version_form, forms, group_forms)
 
     def process_forms(self, context):
         new_version = context['version_form'].save()

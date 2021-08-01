@@ -39,7 +39,8 @@ class ManageTheme(View):
         version_id = kwargs.get("version_id")
         self.style_version = get_object_or_404(StyleVersion, id=version_id)
 
-    def make_context(self, forms, group_forms):
+    def make_context(self, request):
+        forms, group_forms = self.setup_forms(request)
         msg = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
             code=self.instruction_code,
@@ -121,14 +122,9 @@ class ManageTheme(View):
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
-        forms, group_forms = self.setup_forms(request)
         return render(request,
                       self.template,
-                      self.make_context(forms, group_forms))
-
-    def forms_and_context(self, request):
-        forms, group_forms = self.setup_forms(request)
-        return self.make_context(forms, group_forms)
+                      self.make_context(request))
 
     def process_forms(self, context):
         for value, form in context['forms']:
@@ -149,7 +145,7 @@ class ManageTheme(View):
             return HttpResponseRedirect(reverse('themes_list',
                                                 urlconf='gbe.themes.urls'))
         self.groundwork(request, args, kwargs)
-        context = self.forms_and_context(request)
+        context = self.make_context(request)
         all_valid = True
         if len(messages.get_messages(request)) > 0:
             all_valid = False
