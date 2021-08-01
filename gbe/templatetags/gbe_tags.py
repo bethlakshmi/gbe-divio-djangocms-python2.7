@@ -49,3 +49,7 @@ def volunteer_schedule_plaintext(profile):
 @register.filter
 def keyvalue(dict, key):    
     return dict[key]
+
+@register.filter
+def testkey(dict, key):    
+    return key in dict

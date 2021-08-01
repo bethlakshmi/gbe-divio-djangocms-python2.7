@@ -54,6 +54,8 @@ class ManageTheme(View):
         for group in StyleGroup.objects.all():
             group_dict = {
                 'group': group,
+                'elements': group.styleelement_set.all().order_by('order'),
+                'labels': group.stylelabel_set.all().order_by('order'),
                 'properties': {},
             }
             groups += [group_dict]
