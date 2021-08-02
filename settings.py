@@ -3,7 +3,8 @@ import os
 import aldryn_addons.settings
 
 INSTALLED_ADDONS = [
-    # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
+    # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS
+    # tags is auto-generated. Manual changes will be overwritten.
     'aldryn-addons',
     'aldryn-django',
     'aldryn-sso',
@@ -43,6 +44,7 @@ INSTALLED_APPS.extend([
     'dal',
     'dal_select2',
     'django_addanother',
+    # 'debug_toolbar',
 ])
 
 EMAIL_BACKEND = 'post_office.EmailBackend'
@@ -51,6 +53,8 @@ ADMINS = [('Betty',
            'Scratch',
            'info@burlesque-expo.com')]
 
+# MIDDLEWARE += [
+#    'debug_toolbar.middleware.DebugToolbarMiddleware', ]
 try:
     DEFAULT_FROM_EMAIL = os.environ["DEFAULT_FROM_EMAIL"]
 except:
@@ -78,7 +82,12 @@ try:
     LOG_FORMAT
 except:
     LOG_FORMAT = '%(asctime)s::%(levelname)s::%(funcName)s - %(message)s'
-
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+# DEBUG_TOOLBAR_CONFIG = {
+#    'SHOW_TOOLBAR_CALLBACK': lambda _request: DEBUG
+# }
 
 # TIME_FORMAT is often used for ending times of events, or when you
 # do not need to give the date, such as in calendar grids

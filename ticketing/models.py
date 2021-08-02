@@ -4,6 +4,7 @@ from gbetext import (
     role_options,
     source_options,
     system_options,
+    ticket_link,
 )
 from datetime import datetime
 
@@ -65,10 +66,9 @@ class PayPalSettings(models.Model):
 
 class TicketingEvents(models.Model):
     '''
-    This class is used to hold the BPT event list.  It defines with Brown Paper
-    Ticket Events should be queried to obtain information on the Ticket Items
-    above.  This information mainly remains static - it is set up info for the
-    interface with BPT.
+    This class is used to hold the event connection to the ticketing system.
+    The ticket system sells the collection of tickets as an event whose
+    data maps to this.
 
       - include_conferece = if True this event provides tickets for all parts
             of the conference - Classes, Panels, Workshops - but not Master
@@ -111,6 +111,10 @@ class TicketingEvents(models.Model):
             ticketing_event=self,
             live=True,
             has_coupon=False).count()
+
+    @property
+    def link(self):
+        return ticket_link[self.source] % self.event_id
 
     class Meta:
         verbose_name_plural = 'Ticketing Events'
@@ -202,9 +206,8 @@ class Purchaser(models.Model):
 
 class Transaction(models.Model):
     '''
-    This class holds transaction records from an external source - in this
-    case, Brown Paper Tickets.  Transactions are associated to a purchaser
-    and a specific ticket item.
+    This class holds transaction records from an external source.
+    Transactions are associated to a purchaser and a specific ticket item.
     '''
 
     ticket_item = models.ForeignKey(TicketItem, on_delete=models.CASCADE)

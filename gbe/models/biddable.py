@@ -10,12 +10,7 @@ from django.db.models import (
 )
 from gbe.models import Conference
 from gbetext import acceptance_states
-from django.db.models import Q
 from model_utils.managers import InheritanceManager
-
-
-visible_bid_query = (Q(biddable_ptr__b_conference__status='upcoming') |
-                     Q(biddable_ptr__b_conference__status='ongoing'))
 
 
 class Biddable(Model):

@@ -14,7 +14,6 @@ from gbe.models import (
     Event,
     Persona,
     Profile,
-    visible_bid_query,
 )
 from gbetext import (
     acceptance_states,
@@ -94,13 +93,6 @@ class Class(Biddable, Event):
                 if key == self.space_needs:
                     needs = top + " - " + sub_level
         return needs
-
-    @property
-    def bids_to_review(self):
-        return type(self).objects.filter(
-            visible_bid_query,
-            submitted=True,
-            accepted=0)
 
     @property
     def bid_review_header(self):

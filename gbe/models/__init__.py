@@ -9,7 +9,6 @@ from .persona import Persona
 from .troupe import Troupe
 from .tech_info import TechInfo
 from .biddable import Biddable
-from .biddable import visible_bid_query
 from .act import Act
 from .event import Event
 from .show import Show

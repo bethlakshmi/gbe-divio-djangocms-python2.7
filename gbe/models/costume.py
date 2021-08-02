@@ -17,9 +17,7 @@ from gbe.models import (
     Biddable,
     Persona,
     Profile,
-    visible_bid_query
 )
-
 from gbetext import (
     acceptance_states,
     boolean_options,
@@ -79,13 +77,6 @@ class Costume(Biddable):
                 self.act_title,
                 self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance_states[self.accepted][1]]
-
-    @property
-    def bids_to_review(self):
-        return type(self).objects.filter(
-            visible_bid_query,
-            submitted=True,
-            accepted=0)
 
     class Meta:
         app_label = "gbe"

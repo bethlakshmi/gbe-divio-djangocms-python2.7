@@ -42,7 +42,7 @@ class TestProposeClass(TestCase):
         current_conference()
         url = reverse(self.view_name, urlconf="gbe.urls")
         data = self.get_class_form(valid=True)
-        login_as(UserFactory(), self)
+        login_as(ProfileFactory().user_object, self)
         response = self.client.post(url, data=data, follow=True)
         return response
 
