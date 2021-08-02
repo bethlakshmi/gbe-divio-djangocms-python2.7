@@ -252,6 +252,9 @@ source_options = [
     (0, 'Paypal'),
     (1, 'Brown Paper'),
     (2, 'Eventbrite')]
+ticket_link = {
+    1: 'http://www.brownpapertickets.com/event/ID-user_id/%s/',
+    2: 'https://www.eventbrite.com/e/%s'}
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),
