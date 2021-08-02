@@ -5,6 +5,8 @@ from django.shortcuts import (
     render,
 )
 from django.urls import reverse
+from django.views.generic import View
+from django.db.models import Q
 from gbe.models import (
     Act,
     Class,
@@ -38,62 +40,65 @@ from scheduler.idd import (
     get_schedule,
 )
 from scheduler.data_transfer import Person
+from gbe_utils.mixins import ProfileRequiredMixin
 
 
-@login_required
-@log_func
-@never_cache
-def LandingPageView(request, profile_id=None, historical=False):
-    historical = "historical" in list(request.GET.keys())
-    standard_context = {}
-    is_staff_lead = False
-    standard_context['events_list'] = Event.objects.all()[:5]
-    if (profile_id):
-        admin_profile = validate_perms(request, ('Registrar',
+class LandingPageView(ProfileRequiredMixin, View):
+
+    def groundwork(self, request, args, kwargs):
+        self.historical = "historical" in list(request.GET.keys())
+        self.is_staff_lead = False
+        self.admin_message = None
+
+        if "profile_id" in kwargs:
+            profile_id = kwargs.get("profile_id")
+            self.admin_profile = validate_perms(request,
+                                                ('Registrar',
                                                  'Volunteer Coordinator',
                                                  'Act Coordinator',
                                                  'Class Coordinator',
                                                  'Vendor Coordinator',
                                                  'Ticketing - Admin'))
-        viewer_profile = get_object_or_404(Profile, pk=profile_id)
-        admin_message = "You are viewing a user's profile, not your own."
-    else:
-        viewer_profile = validate_profile(request, require=False)
-        admin_message = None
+            self.viewer_profile = get_object_or_404(Profile, pk=profile_id)
+            self.admin_message = "You are viewing a user's profile, " + \
+                "not your own."
+        else:
+            self.viewer_profile = validate_profile(request, require=False)
+        self.is_staff_lead = validate_perms(request,
+                                            ['Staff Lead', ],
+                                            require=False)
 
-    class_to_class_name = {Act: "Act",
-                           Class: "Class",
-                           Costume: "Costume",
-                           Vendor: "Vendor"}
-    class_to_view_name = {Act: 'act_review',
-                          Class: 'class_review',
-                          Costume: 'costume_review',
-                          Vendor: 'vendor_review'}
+    def dispatch(self, *args, **kwargs):
+        return super(LandingPageView, self).dispatch(*args, **kwargs)
 
-    if viewer_profile:
+    @never_cache
+    def get(self, request, *args, **kwargs):
+        self.groundwork(request, args, kwargs)
+        viewer_profile = self.viewer_profile
+        context = {}
         bids_to_review = []
-        is_staff_lead = validate_perms(request,
-                                       ['Staff Lead', ],
-                                       require=False)
+
         person = Person(
             user=viewer_profile.user_object,
             public_id=viewer_profile.pk,
             public_class="Profile")
         for bid in viewer_profile.bids_to_review():
-            bid_type = class_to_class_name.get(bid.__class__, "UNKNOWN")
-            view_name = class_to_view_name.get(bid.__class__, None)
-            url = ""
-            if view_name:
-                url = reverse(view_name,
-                              urlconf='gbe.urls',
-                              args=[str(bid.id)])
-            bids_to_review += [{'bid': bid,
-                                'url': url,
-                                'action': "Review",
-                                'bid_type': bid_type}]
+            bids_to_review += [{
+                'bid': bid,
+                'url': reverse('%s_review' % bid.__class__.__name__.lower(),
+                               urlconf='gbe.urls',
+                               args=[str(bid.id)]),
+                'action': "Review",
+                'bid_type': bid.__class__.__name__}]
+        personae, troupes = viewer_profile.get_performers(organize=True)
         bookings = []
         booking_ids = []
         manage_shows = []
+        shows = []
+        classes = []
+        acts = Act.objects.filter(
+            Q(performer__in=personae) | Q(performer__in=troupes))
+
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
             gbe_event = booking.event.eventitem.child()
@@ -118,7 +123,14 @@ def LandingPageView(request, profile_id=None, historical=False):
                             'eval_event',
                             args=[booking.event.pk, ],
                             urlconf='gbe.scheduling.urls')
+            elif gbe_event.calendar_type == "Conference":
+                classes += [booking_item]
             if gbe_event.e_conference.status != "completed":
+                if gbe_event.calendar_type == "General" and (
+                        booking.commitment is not None):
+                    shows += [(gbe_event,
+                               acts.get(id=booking.commitment.class_id))]
+
                 # roles assigned direct to shows
                 if booking.role in (
                         'Stage Manager',
@@ -126,8 +138,8 @@ def LandingPageView(request, profile_id=None, historical=False):
                         'Producer'):
                     manage_shows += [booking.event]
                 # staff leads often work a volunteer slot in the show
-                elif is_staff_lead and hasattr(booking.event,
-                                               'container_event'):
+                elif self.is_staff_lead and hasattr(booking.event,
+                                                    'container_event'):
                     parent = booking.event.container_event.parent_event
                     if parent not in manage_shows and Show.objects.filter(
                             eventitem_id=parent.eventitem.eventitem_id
@@ -137,25 +149,29 @@ def LandingPageView(request, profile_id=None, historical=False):
                 bookings += [booking_item]
                 booking_ids += [booking.event.pk]
         current_conf = get_current_conference()
+        # filter for conf AFTER bookings
+        if self.historical:
+            acts = acts.filter(b_conference__status="completed")
+        else:
+            acts = acts.exclude(b_conference__status="completed")
         context = {
             'profile': viewer_profile,
-            'historical': historical,
-            'alerts': viewer_profile.alerts(historical),
-            'standard_context': standard_context,
-            'personae': viewer_profile.get_personae(),
+            'historical': self.historical,
+            'alerts': viewer_profile.alerts(shows, classes),
+            'personae': personae,
+            'troupes': troupes,
             'manage_shows': manage_shows,
-            'troupes': viewer_profile.get_troupes(),
             'businesses': viewer_profile.business_set.all(),
-            'acts': viewer_profile.get_acts(historical),
-            'shows': viewer_profile.get_shows(),
-            'classes': viewer_profile.is_teaching(historical),
-            'proposed_classes': viewer_profile.proposed_classes(historical),
-            'vendors': viewer_profile.vendors(historical),
-            'costumes': viewer_profile.get_costumebids(historical),
+            'acts': acts,
+            'shows': shows,
+            'proposed_classes': viewer_profile.proposed_classes(
+                self.historical),
+            'vendors': viewer_profile.vendors(self.historical),
+            'costumes': viewer_profile.get_costumebids(self.historical),
             'review_items': bids_to_review,
             'tickets': get_purchased_tickets(viewer_profile.user_object),
             'acceptance_states': acceptance_states,
-            'admin_message': admin_message,
+            'admin_message': self.admin_message,
             'bookings': bookings,
             'act_paid': verify_performer_app_paid(
                 viewer_profile.user_object.username,
@@ -170,7 +186,7 @@ def LandingPageView(request, profile_id=None, historical=False):
                     'summary': "Left hand sidebar message",
                     'description': ''})[0].description
             }
-        if not historical:
+        if not self.historical:
             user_message = UserMessage.objects.get_or_create(
                 view="LandingPageView",
                 code="ABOUT_INTERESTED",
@@ -192,6 +208,4 @@ def LandingPageView(request, profile_id=None, historical=False):
                     'summary': "Right Hand Sidebar - Historical Bid Message",
                     'description': historic_bid_msg})
         context['right_side_intro'] = right_side_msg[0].description
-    else:
-        context = {'standard_context': standard_context}
-    return render(request, 'gbe/landing_page.tmpl', context)
+        return render(request, 'gbe/landing_page.tmpl', context)

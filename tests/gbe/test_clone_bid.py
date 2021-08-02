@@ -49,7 +49,7 @@ class TestCloneBid(TestCase):
                               'bid_id': bid.id})
         login_as(bid.performer.contact, self)
 
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         return response, bid
 
     def clone_vendor(self):
@@ -81,7 +81,7 @@ class TestCloneBid(TestCase):
                               'bid_id': bid.id})
         login_as(bid.teacher.contact, self)
 
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
         return response, count, bid
 
     def test_clone_act_succeed(self):

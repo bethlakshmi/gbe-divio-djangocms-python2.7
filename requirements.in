@@ -50,3 +50,4 @@ django-paypal
 django-autocomplete-light==3.9.0rc1
 django-addanother
 eventbrite
+django-debug-toolbar

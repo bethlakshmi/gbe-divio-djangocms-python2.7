@@ -9,7 +9,6 @@ from .persona import Persona
 from .troupe import Troupe
 from .tech_info import TechInfo
 from .biddable import Biddable
-from .biddable import visible_bid_query
 from .act import Act
 from .event import Event
 from .show import Show
@@ -30,6 +29,7 @@ from .user_message import UserMessage
 from .bid_evaluation import BidEvaluation
 from .show_vote import ShowVote
 from .act_bid_evaluation import ActBidEvaluation
+from .email_frequency import EmailFrequency
 from .email_template_sender import EmailTemplateSender
 from .act_casting_option import ActCastingOption
 from .flexible_evaluation import FlexibleEvaluation

@@ -179,8 +179,10 @@ class TestIndex(TestCase):
     def test_no_profile(self):
         url = reverse('home', urlconf="gbe.urls")
         login_as(UserFactory(), self)
-        response = self.client.get(url)
-        self.assertContains(response, "Your Expo")
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '%s?next=%s' % (
+            reverse('profile_update', urlconf="gbe.urls"),
+            url))
 
     def test_landing_page_path(self):
         '''Basic test of landing_page view
