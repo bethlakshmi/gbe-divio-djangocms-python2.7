@@ -12,6 +12,7 @@ from django.db.models import (
 )
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
+from django.db.models import Q
 from gbe.models import Conference
 from scheduler.models import WorkerItem
 from scheduler.idd import (
@@ -78,24 +79,26 @@ class Profile(WorkerItem):
         return self.display_name and self.phone
 
     def bids_to_review(self):
+        from gbe.models import Biddable
         reviews = []
-        missing_reviews = []
-        if 'Act Reviewers' in self.privilege_groups:
-            from gbe.models import Act
-            reviews += Act().bids_to_review.exclude(
-                flexibleevaluation__evaluator=self)
-        if 'Class Reviewers' in self.privilege_groups:
-            from gbe.models import Class
-            reviews += Class().bids_to_review.exclude(
-                bidevaluation__evaluator=self)
-        if 'Costume Reviewers' in self.privilege_groups:
-            from gbe.models import Costume
-            reviews += Costume().bids_to_review.exclude(
-                bidevaluation__evaluator=self)
-        if 'Vendor Reviewers' in self.privilege_groups:
-            from gbe.models import Vendor  # late import, circularity
-            reviews += Vendor().bids_to_review.exclude(
-                bidevaluation__evaluator=self)
+        reviewer = False
+        priv_grps = self.privilege_groups
+        for priv in ['Act Reviewers',
+                     'Class Reviewers',
+                     'Costume Reviewers',
+                     'Vendor Reviewers']:
+            if priv in priv_grps:
+                reviewer = True
+        if reviewer:
+            bids_to_review = Biddable.objects.filter(
+                b_conference__status__in=('upcoming', 'ongoing'),
+                submitted=True,
+                accepted=0).exclude(
+                bidevaluation__evaluator=self).exclude(
+                flexibleevaluation__evaluator=self).select_subclasses()
+            for bid in bids_to_review:
+                if "%s Reviewers" % bid.__class__.__name__ in priv_grps:
+                    reviews += [bid]
         return reviews
 
     @property
@@ -137,23 +140,15 @@ class Profile(WorkerItem):
                 email_privs += [bid_type.lower()]
         return email_privs
 
-    def alerts(self, historical=False):
-        if historical:
-            return []
+    def alerts(self, shows, classes):
         p_alerts = []
+
         if (len(self.display_name.strip()) == 0 or
                 len(self.purchase_email.strip()) == 0):
             p_alerts.append(profile_alerts['empty_profile'] %
                             reverse('profile_update',
                                     urlconf='gbe.urls'))
-        expo_commitments = []
-        expo_commitments += self.get_shows()
-        expo_commitments += self.is_teaching()
-        if (len(expo_commitments) > 0 and len(self.phone.strip()) == 0):
-            p_alerts.append(profile_alerts['onsite_phone'] %
-                            reverse('profile_update',
-                                    urlconf='gbe.urls'))
-        for act in self.get_acts():
+        for show, act in shows:
             if act.accepted == 3 and act.profile == self and not (
                     act.is_complete):
                 p_alerts.append(
@@ -164,38 +159,31 @@ class Profile(WorkerItem):
         return p_alerts
 
     def get_costumebids(self, historical=False):
-        costumes = self.costumes.all()
-        return (c for c in costumes if c.is_current != historical)
+        if historical:
+            return self.costumes.filter(b_conference__status="completed")
+        else:
+            return self.costumes.exclude(b_conference__status="completed")
 
-    def get_performers(self):
-        performers = self.get_personae()
-        performers += self.get_troupes()
-        return performers
-
-    def get_personae(self):
-        solos = self.personae.all()
-        performers = list(solos)
-        return performers
-
-    def get_troupes(self):
+    def get_performers(self, organize=False):
         from gbe.models import Troupe  # late import, circularity
         solos = self.personae.all()
-        performers = list()
-        for solo in solos:
-            performers += solo.troupes.all()
-        performers += Troupe.objects.filter(contact=self)
-        perf_set = set(performers)
-        return perf_set
+        troupes = Troupe.objects.filter(
+            Q(contact=self) | Q(membership__performer_profile=self)).distinct()
+        if organize:
+            return solos, troupes
+        else:
+            performers = list(solos)
+            performers += troupes
+            return performers
 
-    def get_acts(self, show_historical=False):
+    def get_acts(self):
         acts = []
         performers = self.get_performers()
         for performer in performers:
             acts += performer.acts.all()
-        if show_historical:
-            def f(a): return not a.is_current
-        else:
-            def f(a): return a.is_current
+
+        def f(a): return a.is_current
+
         return list(filter(f, acts))
 
     def get_shows(self):
@@ -254,34 +242,22 @@ class Profile(WorkerItem):
             badge_name = self.user_object.first_name
         return badge_name
 
-    def is_teaching(self, historical=False):
-        '''
-        return a list of classes this user is teaching
-        '''
-        if historical:
-            return [c for c in self.workeritem.get_bookings('Teacher')
-                    if not c.is_current]
-        else:
-            return [c for c in self.workeritem.get_bookings('Teacher')
-                    if c.is_current]
-
     def vendors(self, historical=False):
         from gbe.models import Vendor  # late import, circularity
         vendors = Vendor.objects.filter(business__owners=self)
         if historical:
-            def f(v): return not v.is_current
+            vendors = vendors.filter(b_conference__status="completed")
         else:
-            def f(v): return v.is_current
-        return list(filter(f, vendors))
+            vendors = vendors.exclude(b_conference__status="completed")
+        return vendors
 
     def proposed_classes(self, historical=False):
-        classes = sum([list(teacher.is_teaching.all())
-                       for teacher in self.personae.all()], [])
+        from gbe.models import Class
+        classes = Class.objects.filter(teacher__contact=self)
         if historical:
-            def f(c): return not c.is_current
+            classes = classes.filter(b_conference__status="completed")
         else:
-            def f(c): return c.is_current
-        classes = list(filter(f, classes))
+            classes = classes.exclude(b_conference__status="completed")
         return classes
 
     def has_role_in_event(self, role, event):

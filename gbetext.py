@@ -42,16 +42,13 @@ conf_volunteer_save_error = ("There was an error saving your presentation "
 
 not_yours = "You don't own that bid."
 
-ONSITE_PHONE = ("We need a number to reach you at during the expo. "
-                "<a href=' %s '>Fix this!</a>")
-EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
-                 "it. <a href=' %s '>Update it now!</a>")
 SCHEDULE_REHEARSAL = ('You need to schedule a rehearsal slot and/or update '
                       'act tech info for "%s". <a href = "%s">'
                       'Fix this now!</a>')
+EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
+                 "it. <a href=' %s '>Update it now!</a>")
 
-profile_alerts = {'onsite_phone': ONSITE_PHONE,
-                  'empty_profile': EMPTY_PROFILE,
+profile_alerts = {'empty_profile': EMPTY_PROFILE,
                   'schedule_rehearsal': SCHEDULE_REHEARSAL}
 
 ACT_COMPLETE_NOT_SUBMITTED = ("This act is complete and can be submitted "
