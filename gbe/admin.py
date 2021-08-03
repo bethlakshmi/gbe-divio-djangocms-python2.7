@@ -185,11 +185,13 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
         'selector',
         'style_property',
         'value_type',
+        'value_template',
         'element',
         'label')
     list_editable = (
         'style_property',
         'value_type',
+        'value_template',
         'element',
         'label')
     list_filter = [
@@ -208,8 +210,9 @@ class StyleValueAdmin(ImportExportActionModelAdmin):
         'style_version',
         'style_property',
         'value',
+        'parseable_values',
         'image')
-    list_editable = ('value', )
+    list_editable = ('value', 'parseable_values')
     list_filter = [
         'style_version__name',
         'style_version__number',

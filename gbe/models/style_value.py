@@ -16,9 +16,8 @@ class StyleValue(Model):
     style_property = ForeignKey(StyleProperty, on_delete=CASCADE)
     style_version = ForeignKey(StyleVersion, on_delete=CASCADE)
     value = CharField(max_length=200)
-    image = FilerImageField(
-        on_delete=CASCADE,
-        null=True)
+    parseable_values = CharField(max_length=200)
+    image = FilerImageField(on_delete=CASCADE, null=True)
 
     class Meta:
         app_label = "gbe"

@@ -14,6 +14,12 @@ def initialize_style(apps, schema_editor):
     StyleSelector = apps.get_model("gbe", "StyleSelector")
     StyleProperty = apps.get_model("gbe", "StyleProperty")
     StyleValue = apps.get_model("gbe", "StyleValue")
+
+    # properly initialize the values for the new logic
+    for value in StyleValue.objects.all():
+        value.parseable_values = value.value
+        value.save()
+
     url1 = TestURL(
         display_name="Personal Home Page",
         partial_url=reverse("home",  urlconf='gbe.urls'),
@@ -269,7 +275,7 @@ def destroy_style(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gbe', '0014_auto_20210802_0707'),
+        ('gbe', '0014_auto_20210803_0858'),
     ]
 
     operations = [
