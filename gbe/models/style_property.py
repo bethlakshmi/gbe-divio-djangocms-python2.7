@@ -26,9 +26,7 @@ class StyleProperty(Model):
     style_property = CharField(max_length=300)
     value_type = CharField(max_length=128)
     value_template = CharField(max_length=128,
-                               null=True,
-                               default=None,
-                               blank=True)
+                               default="default")
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 

@@ -102,14 +102,16 @@ class TestCloneTheme(TestCase):
         from gbe_forms_text import theme_help
         complex_value = StyleValueFactory(
             value="5px 4px rgba(10,10,10,1)",
+            parseable_values="5 4 rgba(10,10,10,1)",
             style_property__value_type="px px px rgba",
+            style_property__value_template="{}px {}px {}px {}",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
         login_as(self.user, self)
         response = self.client.get(self.url)
         self.assertContains(response, "%s, VALUES: %s" % (
             theme_help['mismatch'],
-            "[\'5px\', \'4px\', \'rgba(10,10,10,1)\']"))
+            "[\'5\', \'4\', \'rgba(10,10,10,1)\']"))
 
     def test_get_empty(self):
         empty = StyleVersionFactory()
@@ -146,7 +148,9 @@ class TestCloneTheme(TestCase):
     def test_post_complicated_property(self):
         complex_value = StyleValueFactory(
             value="5px 4px 3px rgba(10,10,10,1)",
+            parseable_values="5 4 3 rgba(10,10,10,1)",
             style_property__value_type="px px px rgba",
+            style_property__value_template="{}px {}px {}px {}",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
         login_as(self.user, self)
@@ -176,7 +180,9 @@ class TestCloneTheme(TestCase):
         from gbe_forms_text import theme_help
         complex_value = StyleValueFactory(
             value="5px 4px rgba(10,10,10,1)",
+            parseable_values="5 4 rgba(10,10,10,1)",
             style_property__value_type="px px px rgba",
+            style_property__value_template="{}px {}px {}px {}",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
         login_as(self.user, self)
@@ -191,7 +197,7 @@ class TestCloneTheme(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(response, "%s, VALUES: %s" % (
             theme_help['mismatch'],
-            "[\'5px\', \'4px\', \'rgba(10,10,10,1)\']"))
+            "[\'5\', \'4\', \'rgba(10,10,10,1)\']"))
         self.assertContains(
             response,
             "Something was wrong, correct the errors below and try again.")

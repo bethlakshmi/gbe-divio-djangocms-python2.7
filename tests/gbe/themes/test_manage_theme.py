@@ -236,8 +236,10 @@ class TestManageTheme(TestCase):
         from gbe_forms_text import style_value_help
         complex_value = StyleValueFactory(
             value="5px 4px 3px rgba(10,10,10,1)",
+            parseable_values="5 4 3 rgba(10,10,10,1)",
             style_property__style_property="text-shadow",
             style_property__value_type="px px px rgba",
+            style_property__value_template="{}px {}px {}px {}",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
         login_as(self.user, self)
@@ -271,6 +273,7 @@ class TestManageTheme(TestCase):
         from gbe_forms_text import theme_help
         complex_value = StyleValueFactory(
             value="5px 4px rgba(10,10,10,1)",
+            parseable_values="5px 4px rgba(10,10,10,1)",
             style_property__value_type="px px px rgba",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
@@ -283,7 +286,9 @@ class TestManageTheme(TestCase):
     def test_post_complicated_property(self):
         complex_value = StyleValueFactory(
             value="5px 4px 3px rgba(10,10,10,1)",
+            parseable_values="5 4 3 rgba(10,10,10,1)",
             style_property__value_type="px px px rgba",
+            style_property__value_template="{}px {}px {}px {}",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
         login_as(self.user, self)
@@ -324,7 +329,9 @@ class TestManageTheme(TestCase):
         from gbe_forms_text import theme_help
         complex_value = StyleValueFactory(
             value="5px 4px 3px",
+            parseable_values="5 4 3",
             style_property__value_type="px px px rgba",
+            style_property__value_template="{}px {}px {}px {}",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
         login_as(self.user, self)
@@ -341,7 +348,7 @@ class TestManageTheme(TestCase):
             }, follow=True)
         self.assertContains(response, "%s, VALUES: %s" % (
             theme_help['mismatch'],
-            "[\'5px\', \'4px\', \'3px\']"))
+            "[\'5\', \'4\', \'3\']"))
         self.assertContains(
             response,
             "Something was wrong, correct the errors below and try again.")
@@ -350,8 +357,10 @@ class TestManageTheme(TestCase):
         from gbe_forms_text import theme_help
         complex_value = StyleValueFactory(
             value="5px 4px 3px rgba(10,10,10,1) bad",
+            parseable_values="5 4 3 rgba(10,10,10,1) bad",
             style_property__style_property="text-shadow",
             style_property__value_type="px px px rgba bad",
+            style_property__value_template="{}px {}px {}px {} bad",
             style_property__selector=self.value.style_property.selector,
             style_version=self.value.style_version)
         login_as(self.user, self)

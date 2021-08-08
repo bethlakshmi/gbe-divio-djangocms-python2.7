@@ -45,7 +45,7 @@ class CloneTheme(ManageTheme):
         if request.POST:
             form = form_type(request.POST,
                              request.FILES,
-                             initial={'value': value.value,
+                             initial={'value': value.parseable_values,
                                       'image': value.image,
                                       'style_property': value.style_property},
                              prefix=str(value.pk))

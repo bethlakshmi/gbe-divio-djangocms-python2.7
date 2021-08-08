@@ -15,9 +15,37 @@ def initialize_style(apps, schema_editor):
     StyleProperty = apps.get_model("gbe", "StyleProperty")
     StyleValue = apps.get_model("gbe", "StyleValue")
 
+    # remove stuff we don't need for new look
+    try:
+        StyleProperty.objects.get(pk=25).delete()
+        StyleProperty.objects.get(pk=26).delete()
+        StyleProperty.objects.get(pk=27).delete()
+        StyleProperty.objects.get(pk=31).delete()
+        StyleProperty.objects.get(pk=32).delete()
+        StyleProperty.objects.get(pk=33).delete()
+        StyleProperty.objects.get(pk=34).delete()
+    except:
+        print("remember to repeat w pull from live")
+
     # properly initialize the values for the new logic
+    for style_prop in StyleProperty.objects.all():
+        template_string = ""
+        for value_type_item in style_prop.value_type.split():
+            if value_type_item == "rgba":
+                template_string = template_string + "{} "
+            elif value_type_item == "px":
+                template_string = template_string + "{}px "
+        style_prop.value_template = template_string.strip()
+        style_prop.save()
+
     for value in StyleValue.objects.all():
-        value.parseable_values = value.value
+        parseable = ""
+        for item in value.value.split():
+            if "px" in item:
+                parseable = parseable + item.rstrip("px") + " "
+            else:
+                parseable = parseable + item + " "
+        value.parseable_values = parseable.strip()
         value.save()
 
     url1 = TestURL(
@@ -157,6 +185,7 @@ def initialize_style(apps, schema_editor):
     v1.save()
     val1 = StyleValue.objects.get(pk=28)
     val1.value = "rgba(0,179,0,1)"
+    val1.parseable_values = val1.value
     val1.save()
     v2 = StyleProperty.objects.get(pk=29)
     v2.element = primary_button
@@ -164,6 +193,7 @@ def initialize_style(apps, schema_editor):
     v2.save()
     val2 = StyleValue.objects.get(pk=29)
     val2.value = "rgba(0,95,0,1)"
+    val2.parseable_values = val2.value
     val2.save()
     v3 = StyleProperty.objects.get(pk=30)
     v3.element = primary_button
@@ -171,14 +201,9 @@ def initialize_style(apps, schema_editor):
     v3.save()
     val3 = StyleValue.objects.get(pk=30)
     val3.value = "rgba(255,255,255,1)"
+    val3.parseable_values = val3.value
     val3.save()
-    StyleProperty.objects.get(pk=25).delete()
-    StyleProperty.objects.get(pk=26).delete()
-    StyleProperty.objects.get(pk=27).delete()
-    StyleProperty.objects.get(pk=31).delete()
-    StyleProperty.objects.get(pk=32).delete()
-    StyleProperty.objects.get(pk=33).delete()
-    StyleProperty.objects.get(pk=34).delete()
+
     selector1 = StyleSelector(
         selector=".gbe-btn-primary, .btn.gbe-btn-primary",
         description="primary button & focus (to override bootstrap)",
@@ -190,9 +215,11 @@ def initialize_style(apps, schema_editor):
                           label=text_shadow,
                           element=primary_button,
                           style_property="text-shadow",
-                          value_type="px px px rgba")
+                          value_type="px px px rgba",
+                          value_template="{}px {}px {}px {}")
     prop1.save()
     val4 = StyleValue(value="0px -1px 0px rgba(0,0,0,0.5)",
+                      parseable_values="0 -1 0 rgba(0,0,0,0.5)",
                       style_property=prop1,
                       style_version=val3.style_version)
     val4.save()
@@ -275,7 +302,7 @@ def destroy_style(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gbe', '0014_auto_20210803_0858'),
+        ('gbe', '0014_auto_20210804_1715'),
     ]
 
     operations = [
