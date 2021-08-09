@@ -29,9 +29,9 @@ class StyleValueForm(ModelForm):
         fields = ['style_property']
 
     def __init__(self, *args, **kwargs):
-        # there's some thought-crud here in that "template" used to mean 
+        # there's some thought-crud here in that "template" used to mean
         # the value type, while now "template" means the layout including
-        # CSS syntax the user doesn't see.  Changed the code, but not the 
+        # CSS syntax the user doesn't see.  Changed the code, but not the
         # UserMessages
         style_property = None
         if 'initial' in kwargs and 'style_property' in kwargs.get('initial'):

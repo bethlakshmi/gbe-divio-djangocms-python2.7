@@ -3,6 +3,9 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
+    StyleElementFactory,
+    StyleGroupFactory,
+    StyleLabelFactory,
     StyleValueFactory,
     StyleValueImageFactory,
     StyleVersionFactory,
@@ -320,6 +323,22 @@ class TestCloneTheme(TestCase):
                              reverse("themes_list", urlconf="gbe.themes.urls"))
 
     def test_post_bad_data(self):
+        login_as(self.user, self)
+        response = self.client.post(self.url, data={
+            'finish': "Finish",
+            }, follow=True)
+        self.assertContains(response, self.title)
+        self.assertContains(
+            response,
+            "Something was wrong, correct the errors below and try again.")
+        self.assertContains(response, "This field is required.")
+        self.assertContains(response, self.style_url)
+
+    def test_post_bad_data_in_group(self):
+        self.value.style_property.label = StyleLabelFactory()
+        self.value.style_property.element = StyleElementFactory(
+            group=self.value.style_property.label.group)
+        self.value.style_property.save()
         login_as(self.user, self)
         response = self.client.post(self.url, data={
             'finish': "Finish",

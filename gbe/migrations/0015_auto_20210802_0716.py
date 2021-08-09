@@ -70,7 +70,7 @@ def initialize_style(apps, schema_editor):
         display_name="Ticket Edit Page",
         partial_url="/ticketing/ticket_item_edit/277",
         test_notes=(
-            "Has the 3 main button colors at the bottom of the form, and " + 
+            "Has the 3 main button colors at the bottom of the form, and " +
             "uses the calendar picker, which has some other button impacts."))
     url2.save()
     url3 = TestURL(
@@ -362,7 +362,6 @@ def initialize_style(apps, schema_editor):
                        style_version=val3.style_version)
     val14.save()
 
-
     # ticket buy button
     v13 = StyleProperty.objects.get(pk=266)
     v13.element = buy_button
@@ -401,9 +400,9 @@ def initialize_style(apps, schema_editor):
                           value_template="0px -1px 0px {}")
     prop8.save()
     val12 = StyleValue(value="0px -1px 0px rgba(0,0,0,0.5)",
-                      parseable_values="rgba(0,0,0,0.5)",
-                      style_property=prop8,
-                      style_version=val3.style_version)
+                       parseable_values="rgba(0,0,0,0.5)",
+                       style_property=prop8,
+                       style_version=val3.style_version)
     val12.save()
     prop9 = StyleProperty(selector=v13.selector,
                           label=side,

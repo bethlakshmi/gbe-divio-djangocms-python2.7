@@ -10,10 +10,16 @@ from tests.factories.gbe_factories import(
     EventFactory,
     GenericEventFactory,
     ProfileFactory,
+    StyleElementFactory,
+    StyleGroupFactory,
+    StyleLabelFactory,
+    StylePropertyFactory,
+    TestURLFactory,
     TechInfoFactory,
     VendorFactory,
 )
 from django.contrib.admin.sites import AdminSite
+from django.urls import reverse
 
 
 class GBEAdminChangeListTests(TestCase):
@@ -59,3 +65,20 @@ class GBEAdminChangeListTests(TestCase):
         business = BusinessFactory(owners=[inactive])
         response = self.client.get('/admin/gbe/business/', follow=True)
         self.assertContains(response, str(inactive))
+
+    def test_get_styleproperty(self):
+        style_property = StylePropertyFactory(
+            label=StyleLabelFactory(),
+            element=StyleElementFactory())
+        response = self.client.get('/admin/gbe/styleproperty/', follow=True)
+        self.assertContains(response, str(style_property.label))
+        self.assertContains(response, str(style_property.element))
+
+    def test_get_stylegroupedit(self):
+        style_group = StyleGroupFactory()
+        test_url = TestURLFactory()
+        response = self.client.get(
+            reverse("admin:gbe_stylegroup_change",
+                    args=(style_group.id,)),
+            follow=True)
+        self.assertContains(response, str(test_url))

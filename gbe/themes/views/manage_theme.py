@@ -70,7 +70,6 @@ class ManageTheme(View):
         }
         return context
 
-
     def make_single_form(self, request, form_type, value):
         if request.POST:
             form = form_type(request.POST,
@@ -80,7 +79,6 @@ class ManageTheme(View):
         else:
             form = form_type(instance=value, prefix=str(value.pk))
         return form
-
 
     def setup_forms(self, request):
         forms = []

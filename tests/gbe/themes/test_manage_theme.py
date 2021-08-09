@@ -3,9 +3,13 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
+    StyleElementFactory,
+    StyleGroupFactory,
+    StyleLabelFactory,
     StyleValueFactory,
     StyleValueImageFactory,
     StyleVersionFactory,
+    TestURLFactory,
     UserFactory,
 )
 from filer.models.imagemodels import Image
@@ -68,6 +72,28 @@ class TestManageTheme(TestCase):
                             self.value.style_property.style_property)
         self.assertContains(response, self.style_url)
 
+    def test_get_group(self):
+        self.value.style_property.label = StyleLabelFactory()
+        self.value.style_property.element = StyleElementFactory(
+            group=self.value.style_property.label.group)
+        self.value.style_property.save()
+        test_url = TestURLFactory()
+        self.value.style_property.label.group.test_urls.add(test_url)
+        login_as(self.user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, reverse(
+            "clone_theme",
+            urlconf="gbe.themes.urls",
+            args=[self.value.style_version.pk]))
+        self.assertContains(response, self.value.value)
+        self.assertContains(response,
+                            self.value.style_property.label.name)
+        self.assertContains(response,
+                            self.value.style_property.element.sample_html)
+        self.assertContains(response,
+                            self.value.style_property.label.group.name)
+        self.assertContains(response, test_url.display_name)
+
     def test_get_image(self):
         Image.objects.all().delete()
         other_image = set_image()
@@ -118,6 +144,24 @@ class TestManageTheme(TestCase):
         self.assertEqual(404, response.status_code)
 
     def test_post_finish(self):
+        login_as(self.user, self)
+        response = self.client.post(self.url, data={
+            '%s-value_0' % self.value.pk: "rgba(255,255,255,0)",
+            '%s-style_property' % self.value.pk: self.value.style_property.pk,
+            'finish': "Finish",
+            }, follow=True)
+        self.assertContains(
+            response,
+            "Updated %s" % self.value.style_version)
+        self.assertRedirects(response, "%s?changed_id=%d" % (
+            reverse('themes_list', urlconf='gbe.themes.urls'),
+            self.value.style_version.pk))
+
+    def test_post_group(self):
+        self.value.style_property.label = StyleLabelFactory()
+        self.value.style_property.element = StyleElementFactory(
+            group=self.value.style_property.label.group)
+        self.value.style_property.save()
         login_as(self.user, self)
         response = self.client.post(self.url, data={
             '%s-value_0' % self.value.pk: "rgba(255,255,255,0)",
@@ -221,6 +265,22 @@ class TestManageTheme(TestCase):
                              reverse("themes_list", urlconf="gbe.themes.urls"))
 
     def test_post_bad_data(self):
+        login_as(self.user, self)
+        response = self.client.post(self.url, data={
+            'finish': "Finish",
+            }, follow=True)
+        self.assertContains(response, self.title)
+        self.assertContains(
+            response,
+            "Something was wrong, correct the errors below and try again.")
+        self.assertContains(response, "This field is required.")
+        self.assertContains(response, self.style_url)
+
+    def test_post_bad_data_in_group(self):
+        self.value.style_property.label = StyleLabelFactory()
+        self.value.style_property.element = StyleElementFactory(
+            group=self.value.style_property.label.group)
+        self.value.style_property.save()
         login_as(self.user, self)
         response = self.client.post(self.url, data={
             'finish': "Finish",

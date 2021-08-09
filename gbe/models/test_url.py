@@ -17,4 +17,3 @@ class TestURL(Model):
     class Meta:
         app_label = "gbe"
         ordering = ['display_name', ]
-

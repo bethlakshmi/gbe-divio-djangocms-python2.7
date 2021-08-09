@@ -22,6 +22,6 @@ class StyleLabel(Model):
         app_label = "gbe"
         ordering = ['group__order', 'order']
         constraints = [UniqueConstraint(fields=['name', 'group'],
-                                        name='label_unique_name'), 
+                                        name='label_unique_name'),
                        UniqueConstraint(fields=['order', 'group'],
                                         name='label_unique_order')]

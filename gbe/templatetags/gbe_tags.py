@@ -46,10 +46,12 @@ def volunteer_schedule(profile):
 def volunteer_schedule_plaintext(profile):
     return build_schedule_context(profile)
 
-@register.filter
-def keyvalue(dict, key):    
-    return dict[key]
 
 @register.filter
-def testkey(dict, key):    
+def keyvalue(dict, key):
+    return dict[key]
+
+
+@register.filter
+def testkey(dict, key):
     return key in dict
