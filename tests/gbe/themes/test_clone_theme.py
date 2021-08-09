@@ -148,6 +148,24 @@ class TestCloneTheme(TestCase):
             reverse('themes_list', urlconf='gbe.themes.urls'),
             new_version.pk))
 
+    def test_post_group(self):
+        self.value.style_property.label = StyleLabelFactory()
+        self.value.style_property.element = StyleElementFactory(
+            group=self.value.style_property.label.group)
+        self.value.style_property.save()
+        login_as(self.user, self)
+        data = self.get_post()
+        data['finish'] = 'Finish'
+        response = self.client.post(self.url, data=data, follow=True)
+        new_version = StyleVersion.objects.latest('pk')
+        self.assertContains(
+            response,
+            "Cloned %s from %s" % (new_version,
+                                   self.value.style_version))
+        self.assertRedirects(response, "%s?changed_id=%d" % (
+            reverse('themes_list', urlconf='gbe.themes.urls'),
+            new_version.pk))
+
     def test_post_complicated_property(self):
         complex_value = StyleValueFactory(
             value="5px 4px 3px rgba(10,10,10,1)",
@@ -323,22 +341,6 @@ class TestCloneTheme(TestCase):
                              reverse("themes_list", urlconf="gbe.themes.urls"))
 
     def test_post_bad_data(self):
-        login_as(self.user, self)
-        response = self.client.post(self.url, data={
-            'finish': "Finish",
-            }, follow=True)
-        self.assertContains(response, self.title)
-        self.assertContains(
-            response,
-            "Something was wrong, correct the errors below and try again.")
-        self.assertContains(response, "This field is required.")
-        self.assertContains(response, self.style_url)
-
-    def test_post_bad_data_in_group(self):
-        self.value.style_property.label = StyleLabelFactory()
-        self.value.style_property.element = StyleElementFactory(
-            group=self.value.style_property.label.group)
-        self.value.style_property.save()
         login_as(self.user, self)
         response = self.client.post(self.url, data={
             'finish': "Finish",

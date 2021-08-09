@@ -79,6 +79,15 @@ class TestManageTheme(TestCase):
         self.value.style_property.save()
         test_url = TestURLFactory()
         self.value.style_property.label.group.test_urls.add(test_url)
+        same_elem_label = StyleValueFactory(
+            style_property__label=self.value.style_property.label,
+            style_property__element=self.value.style_property.element,
+            style_version=self.value.style_version)
+        same_label = StyleValueFactory(
+            style_property__label=self.value.style_property.label,
+            style_property__element=StyleElementFactory(
+                group=self.value.style_property.label.group),
+            style_version=self.value.style_version)
         login_as(self.user, self)
         response = self.client.get(self.url)
         self.assertContains(response, reverse(
@@ -86,10 +95,14 @@ class TestManageTheme(TestCase):
             urlconf="gbe.themes.urls",
             args=[self.value.style_version.pk]))
         self.assertContains(response, self.value.value)
+        self.assertContains(response, same_elem_label.value)
+        self.assertContains(response, same_label.value)
         self.assertContains(response,
                             self.value.style_property.label.name)
         self.assertContains(response,
                             self.value.style_property.element.sample_html)
+        self.assertContains(response,
+                            same_label.style_property.element.sample_html)
         self.assertContains(response,
                             self.value.style_property.label.group.name)
         self.assertContains(response, test_url.display_name)

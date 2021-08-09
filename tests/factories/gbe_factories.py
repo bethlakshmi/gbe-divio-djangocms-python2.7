@@ -430,7 +430,7 @@ class StyleLabelFactory(DjangoModelFactory):
     group = SubFactory(StyleGroupFactory)
     name = Sequence(lambda n: 'Label Name %d' % n)
     help_text = Sequence(lambda n: 'label help text %d' % n)
-    order = 1
+    order = Sequence(lambda n: n)
 
 
 class StyleElementFactory(DjangoModelFactory):
@@ -439,7 +439,7 @@ class StyleElementFactory(DjangoModelFactory):
     group = SubFactory(StyleGroupFactory)
     name = Sequence(lambda n: 'Element Name %d' % n)
     description = Sequence(lambda n: 'Description %d' % n)
-    order = 1
+    order = Sequence(lambda n: n)
     sample_html = Sequence(lambda n: '<a>%d</a>' % n)
 
 
