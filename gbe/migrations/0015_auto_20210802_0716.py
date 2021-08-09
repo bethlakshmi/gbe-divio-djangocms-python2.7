@@ -375,18 +375,24 @@ def initialize_style(apps, schema_editor):
 
     v13.selector.selector = ".gbe-btn-common, .gbe-btn-common:focus, .gbe-btn-common:hover"
     v13.selector.save()
-    prop7 = StyleProperty(selector=v13.selector,
-                          label=border,
-                          element=buy_button,
-                          style_property="border-color",
-                          value_type="rgba",
-                          value_template="{}")
-    prop7.save()
-    val11 = StyleValue(value="rgba(186,11,8,1)",
-                      parseable_values="rgba(186,11,8,1)",
-                      style_property=prop7,
-                      style_version=val3.style_version)
-    val11.save()
+    if StyleProperty.objects.filter(selector=v13.selector, style_property="border-color").exists():
+        prop7 = StyleProperty.objects.filter(selector=v13.selector, style_property="border-color").first()
+        prop7.element = buy_button
+        prop7.label = border
+        prop7.save()
+    else:
+        prop7 = StyleProperty(selector=v13.selector,
+                              label=border,
+                              element=buy_button,
+                              style_property="border-color",
+                              value_type="rgba",
+                              value_template="{}")
+        prop7.save()
+        val11 = StyleValue(value="rgba(186,11,8,1)",
+                           parseable_values="rgba(186,11,8,1)",
+                           style_property=prop7,
+                           style_version=val3.style_version)
+        val11.save()
     prop8 = StyleProperty(selector=v13.selector,
                           label=text_shadow,
                           element=buy_button,

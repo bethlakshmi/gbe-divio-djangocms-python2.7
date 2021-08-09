@@ -17,9 +17,9 @@
 <p>
 {{intro}}
 </p>
-  <table>
     {% for day, form in forms %}
 <form method="POST" action="{% url 'scheduling:schedule_conference' day.pk %}" enctype="multipart/form-data">
+  <table>
 {% csrf_token %}
 {% for hidden in form.hidden_fields %}
   {{ hidden }}
