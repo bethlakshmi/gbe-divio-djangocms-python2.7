@@ -19,11 +19,16 @@ def initialize_style(apps, schema_editor):
     try:
         StyleProperty.objects.get(pk=25).delete()
         StyleProperty.objects.get(pk=26).delete()
-        StyleProperty.objects.get(pk=27).delete()
         StyleProperty.objects.get(pk=31).delete()
         StyleProperty.objects.get(pk=32).delete()
         StyleProperty.objects.get(pk=33).delete()
         StyleProperty.objects.get(pk=34).delete()
+        StyleProperty.objects.get(pk=55).delete()
+        StyleProperty.objects.get(pk=56).delete()
+        StyleProperty.objects.get(pk=73).delete()
+        StyleProperty.objects.get(pk=74).delete()
+        StyleSelector.objects.get(pk=25).delete()
+        StyleSelector.objects.get(pk=30).delete()
     except:
         print("remember to repeat w pull from live")
 
@@ -101,8 +106,8 @@ def initialize_style(apps, schema_editor):
         description="The main activity on any page.  This should stick out " +
         "the most, but can blend with the colors of the site.",
         order=5,
-        sample_html='<a href="" class="btn gbe-btn-primary" role="button"' +
-        '>Primary Button</a>')
+        sample_html='<a href="javascript:void(0)" class="btn gbe-btn-primary' +
+        ' my-2" role="button">Primary Button</a>')
     primary_button.save()
     secondary_button = StyleElement(
         name="Secondary Button",
@@ -111,8 +116,8 @@ def initialize_style(apps, schema_editor):
         "rececede in comparison to the primary, but be more engaging than " +
         "cancel.",
         order=10,
-        sample_html='<a href="" class="btn gbe-btn-secondary" role="button"' +
-        '>Secondary Button</a>')
+        sample_html='<a href="javascript:void(0)" class="btn ' +
+        'gbe-btn-secondary my-2" role="button">Secondary Button</a>')
     secondary_button.save()
     disabled_button = StyleElement(
         name="Disabled Secondary Button",
@@ -120,8 +125,8 @@ def initialize_style(apps, schema_editor):
         description="A secondary button that is not active, usually a " +
         "toggle next to the active secondary button.",
         order=15,
-        sample_html='<a class="btn gbe-btn-secondary-disabled disabled" ' +
-        'href="" role="button">Disabled Button</a>')
+        sample_html='<a class="btn gbe-btn-secondary-disabled disabled my-2"' +
+        ' href="javascript:void(0)" role="button">Disabled Button</a>')
     disabled_button.save()
     light_button = StyleElement(
         name="Light Button",
@@ -129,8 +134,8 @@ def initialize_style(apps, schema_editor):
         description="Light color in order to recede into the background." +
         "  Used for Cancel, but also for toggles and other low-key buttons.",
         order=20,
-        sample_html='<a class="btn gbe-btn-light" href="" role="button">' +
-        'Light Button</a>')
+        sample_html='<a class="btn gbe-btn-light my-2" ' +
+        'href="javascript:void(0)" role="button">Light Button</a>')
     light_button.save()
     buy_button = StyleElement(
         name="Ticket Buying Button",
@@ -139,8 +144,8 @@ def initialize_style(apps, schema_editor):
         "Based on a template we liked, this is a bit different than other " +
         "pages",
         order=25,
-        sample_html='<a href="" target="_blank" class="btn gbe-btn-common">' +
-        'Buy It Button</a>')
+        sample_html='<a href="javascript:void(0)" target="_blank" ' +
+        'class="btn gbe-btn-common my-2">Buy It Button</a>')
     buy_button.save()
     background = StyleLabel(
         name="Background",
@@ -207,7 +212,6 @@ def initialize_style(apps, schema_editor):
     selector1 = StyleSelector(
         selector=".gbe-btn-primary, .btn.gbe-btn-primary",
         description="primary button & focus (to override bootstrap)",
-        pseudo_class="focus",
         used_for="Forms",
         )
     selector1.save()
@@ -215,14 +219,26 @@ def initialize_style(apps, schema_editor):
                           label=text_shadow,
                           element=primary_button,
                           style_property="text-shadow",
-                          value_type="px px px rgba",
-                          value_template="{}px {}px {}px {}")
+                          value_type="rgba",
+                          value_template="0px -1px 0px {}")
     prop1.save()
     val4 = StyleValue(value="0px -1px 0px rgba(0,0,0,0.5)",
-                      parseable_values="0 -1 0 rgba(0,0,0,0.5)",
+                      parseable_values="rgba(0,0,0,0.5)",
                       style_property=prop1,
                       style_version=val3.style_version)
     val4.save()
+    prop2 = StyleProperty(selector=selector1,
+                          label=side,
+                          element=primary_button,
+                          style_property="box-shadow",
+                          value_type="rgba",
+                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);")
+    prop2.save()
+    val5 = StyleValue(value="0px 6px 0px rgba(0,79,0,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);",
+                      parseable_values="rgba(0,79,0,1)",
+                      style_property=prop2,
+                      style_version=val3.style_version)
+    val5.save()
 
     # secondary button
     v4 = StyleProperty.objects.get(pk=61)
@@ -237,6 +253,36 @@ def initialize_style(apps, schema_editor):
     v6.element = secondary_button
     v6.label = text_color
     v6.save()
+    v4.selector.selector = ".input-group-text, .gbe-btn-secondary, .input-group-text:focus, .gbe-btn-secondary:focus"
+    v4.selector.save()
+    val7 = StyleValue.objects.get(pk=57)
+    val7.value = "rgba(65,65,65,1)"
+    val7.parseable_values = "rgba(65,65,65,1)"
+    val7.save()
+    prop3 = StyleProperty(selector=v4.selector,
+                          label=text_shadow,
+                          element=secondary_button,
+                          style_property="text-shadow",
+                          value_type="rgba",
+                          value_template="0px -1px 0px {}")
+    prop3.save()
+    val6 = StyleValue(value="0px -1px 0px rgba(255,255,255,0.5)",
+                      parseable_values="rgba(255,255,255,0.5)",
+                      style_property=prop3,
+                      style_version=val3.style_version)
+    val6.save()
+    prop4 = StyleProperty(selector=v4.selector,
+                          label=side,
+                          element=secondary_button,
+                          style_property="box-shadow",
+                          value_type="rgba",
+                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);")
+    prop4.save()
+    val8 = StyleValue(value="0px 6px 0px rgba(123,80,85,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);",
+                      parseable_values="rgba(123,80,85,1)",
+                      style_property=prop4,
+                      style_version=val3.style_version)
+    val8.save()
 
     # light button
     v7 = StyleProperty.objects.get(pk=76)
@@ -251,6 +297,32 @@ def initialize_style(apps, schema_editor):
     v9.element = light_button
     v9.label = text_color
     v9.save()
+    v7.selector.selector = ".gbe-btn-light, .gbe-btn-light:focus"
+    v7.selector.save()
+    prop5 = StyleProperty(selector=v9.selector,
+                          label=text_shadow,
+                          element=light_button,
+                          style_property="text-shadow",
+                          value_type="rgba",
+                          value_template="0px -1px 0px {}")
+    prop5.save()
+    val9 = StyleValue(value="0px -1px 0px rgba(255,255,255,0.5)",
+                      parseable_values="rgba(255,255,255,0.5)",
+                      style_property=prop5,
+                      style_version=val3.style_version)
+    val9.save()
+    prop6 = StyleProperty(selector=v9.selector,
+                          label=side,
+                          element=light_button,
+                          style_property="box-shadow",
+                          value_type="rgba",
+                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);")
+    prop6.save()
+    val10 = StyleValue(value="0px 6px 0px rgba(138,139,150,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);",
+                       parseable_values="rgba(138,139,150,1)",
+                       style_property=prop6,
+                       style_version=val3.style_version)
+    val10.save()
 
     # disabled button
     v10 = StyleProperty.objects.get(pk=82)

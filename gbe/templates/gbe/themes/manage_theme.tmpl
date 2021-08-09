@@ -33,7 +33,7 @@
 {% endfor %}</ul>
 <table>
   <tbody><tr>&nbsp;</tr><tr class="gbe-table-row"><td>&nbsp;</td>{% for element in group_dict.elements %}
-    <td>{{ element.sample_html|safe }}<br><br><i>{{ element.description }}</i></td>
+    <td><div class="text-center">{{ element.sample_html|safe }}</div><br><i>{{ element.description }}</i></td>
   {% endfor %}</tr>
   {% for label in group_dict.labels %}
   <tr class="gbe-table-row"><td><b>{{label.name}}</b>

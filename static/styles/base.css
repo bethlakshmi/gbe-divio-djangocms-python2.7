@@ -58,19 +58,6 @@ div.container {top:0;}
 {
   background-image: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(50,50,50,0.3));
 }
-.gbe-btn-primary, .btn.gbe-btn-primary:focus {
-  text-shadow: 0px -1px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 6px 0px rgba(0,79,0,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-}
-
-.gbe-btn-secondary, .gbe-btn-light
-{
-  text-shadow: 0px -1px 0px rgba(255,255,255,0.5);
-}
-.gbe-btn-secondary, .gbe-btn-secondary:focus
-{
-  box-shadow: 0px 6px 0px rgba(123,80,85,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-}
 .gbe-btn-light, .gbe-btn-light:focus
 {
   box-shadow: 0px 6px 0px rgba(138,139,150,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
