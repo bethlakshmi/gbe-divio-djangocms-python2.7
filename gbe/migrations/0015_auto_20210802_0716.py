@@ -19,14 +19,18 @@ def initialize_style(apps, schema_editor):
     try:
         StyleProperty.objects.get(pk=25).delete()
         StyleProperty.objects.get(pk=26).delete()
+        StyleProperty.objects.get(pk=27).delete()
         StyleProperty.objects.get(pk=31).delete()
         StyleProperty.objects.get(pk=32).delete()
         StyleProperty.objects.get(pk=33).delete()
         StyleProperty.objects.get(pk=34).delete()
         StyleProperty.objects.get(pk=55).delete()
         StyleProperty.objects.get(pk=56).delete()
+        StyleProperty.objects.get(pk=57).delete()
         StyleProperty.objects.get(pk=73).delete()
         StyleProperty.objects.get(pk=74).delete()
+        StyleProperty.objects.get(pk=75).delete()
+        StyleProperty.objects.get(pk=268).delete()
         StyleProperty.objects.get(pk=269).delete()
         StyleSelector.objects.get(pk=25).delete()
         StyleSelector.objects.get(pk=30).delete()
@@ -210,6 +214,8 @@ def initialize_style(apps, schema_editor):
     v3.element = primary_button
     v3.label = text_color
     v3.save()
+    v1.selector.selector = ".gbe-btn-primary, .gbe-btn-primary:focus, .gbe-btn-primary:hover"
+    v1.selector.save()
     val3 = StyleValue.objects.get(pk=30)
     val3.value = "rgba(255,255,255,1)"
     val3.parseable_values = val3.value
@@ -259,12 +265,8 @@ def initialize_style(apps, schema_editor):
     v6.element = secondary_button
     v6.label = text_color
     v6.save()
-    v4.selector.selector = ".input-group-text, .gbe-btn-secondary, .input-group-text:focus, .gbe-btn-secondary:focus"
+    v4.selector.selector = ".input-group-text, .gbe-btn-secondary, .input-group-text:focus, .gbe-btn-secondary:focus, .input-group-text:hover, .gbe-btn-secondary:hover"
     v4.selector.save()
-    val7 = StyleValue.objects.get(pk=57)
-    val7.value = "rgba(65,65,65,1)"
-    val7.parseable_values = "rgba(65,65,65,1)"
-    val7.save()
     prop3 = StyleProperty(selector=v4.selector,
                           label=text_shadow,
                           element=secondary_button,
@@ -303,7 +305,7 @@ def initialize_style(apps, schema_editor):
     v9.element = light_button
     v9.label = text_color
     v9.save()
-    v7.selector.selector = ".gbe-btn-light, .gbe-btn-light:focus"
+    v7.selector.selector = ".gbe-btn-light, .gbe-btn-light:focus, .gbe-btn-light:hover"
     v7.selector.save()
     prop5 = StyleProperty(selector=v9.selector,
                           label=text_shadow,
@@ -371,7 +373,7 @@ def initialize_style(apps, schema_editor):
     v14.label = text_color
     v14.save()
 
-    v13.selector.selector = ".gbe-btn-common, .gbe-btn-common:focus"
+    v13.selector.selector = ".gbe-btn-common, .gbe-btn-common:focus, .gbe-btn-common:hover"
     v13.selector.save()
     prop7 = StyleProperty(selector=v13.selector,
                           label=border,
@@ -420,6 +422,12 @@ def initialize_style(apps, schema_editor):
     v17 = StyleProperty.objects.get(pk=37)
     v17.hidden = True
     v17.save()
+
+    # Transparent stuff that can be invisible on the forms
+    for pk in [194, 137, 179, 180, 169, 153, 151]:
+        invisi_prop = StyleProperty.objects.get(pk=pk)
+        invisi_prop.hidden = True
+        invisi_prop.save()
 
 
 def destroy_style(apps, schema_editor):
