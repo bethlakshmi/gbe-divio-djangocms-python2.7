@@ -32,17 +32,14 @@
   <li><a href="{{test_url.partial_url}}" class="gbe-link">{{test_url.display_name}}</a> - {{test_url.test_notes}}</li>
 {% endfor %}</ul>
 <table>
-  <tbody><tr>&nbsp;</tr><tr class="gbe-table-row"><td>&nbsp;</td>{% for element in group_dict.elements %}
+  <tbody><tr class="gbe-table-row">{% for element in group_dict.elements %}
     <td><div class="text-center">{{ element.sample_html|safe }}</div><br><i>{{ element.description }}</i></td>
   {% endfor %}</tr>
   {% for label in group_dict.labels %}
-  <tr class="gbe-table-row"><td><b>{{label.name}}</b>
-    <span class="dropt" title="Help">
-    <img src= "{% static "img/question.png" %}" alt="?"/>
-    <span style="width:200px;float:right;text-align:left;">
-      {{ label.help_text }}
-    </span>
-    </span></td>
+  <tr class="gbe-table-row"><td colspan="{{group_dict.elements|length}}"><b>{{label.name}}</b>
+    {% if label.help_text %}<br>{{ label.help_text }}{% endif %}
+    </td></tr>
+  <tr class="gbe-table-row">
     {% if group_forms|testkey:label %}
     {% for element in group_dict.elements %}
         <td>{% if group_forms|keyvalue:label|testkey:element %}

@@ -27,6 +27,7 @@ def initialize_style(apps, schema_editor):
         StyleProperty.objects.get(pk=56).delete()
         StyleProperty.objects.get(pk=73).delete()
         StyleProperty.objects.get(pk=74).delete()
+        StyleProperty.objects.get(pk=269).delete()
         StyleSelector.objects.get(pk=25).delete()
         StyleSelector.objects.get(pk=30).delete()
     except:
@@ -72,7 +73,7 @@ def initialize_style(apps, schema_editor):
         display_name="Transaction Edit Page",
         partial_url="/ticketing/transactions",
         test_notes="The one place we show the disabled secondary button " +
-        "(top of page")
+        "(top of page)")
     url3.save()
     url4 = TestURL(
         display_name="Manage Events Page (with Events)",
@@ -88,6 +89,11 @@ def initialize_style(apps, schema_editor):
         "has a bunch of unusual elements, including an bright button, " +
         "icons, and white panels for each ticket.")
     url5.save()
+    url6 = TestURL(
+        display_name="Manage Expo Dates",
+        partial_url="/conference/manage",
+        test_notes="Another calendar widget, very close to a primary button")
+    url6.save()
     group1 = StyleGroup(
         name="Buttons",
         test_notes="Be sure that button colors work on all panels, that text" +
@@ -144,7 +150,7 @@ def initialize_style(apps, schema_editor):
         "Based on a template we liked, this is a bit different than other " +
         "pages",
         order=25,
-        sample_html='<a href="javascript:void(0)" target="_blank" ' +
+        sample_html='<a href="javascript:void(0)" ' +
         'class="btn gbe-btn-common my-2">Buy It Button</a>')
     buy_button.save()
     background = StyleLabel(
@@ -232,9 +238,9 @@ def initialize_style(apps, schema_editor):
                           element=primary_button,
                           style_property="box-shadow",
                           value_type="rgba",
-                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);")
+                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5)")
     prop2.save()
-    val5 = StyleValue(value="0px 6px 0px rgba(0,79,0,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);",
+    val5 = StyleValue(value="0px 6px 0px rgba(0,79,0,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5)",
                       parseable_values="rgba(0,79,0,1)",
                       style_property=prop2,
                       style_version=val3.style_version)
@@ -276,9 +282,9 @@ def initialize_style(apps, schema_editor):
                           element=secondary_button,
                           style_property="box-shadow",
                           value_type="rgba",
-                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);")
+                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5)")
     prop4.save()
-    val8 = StyleValue(value="0px 6px 0px rgba(123,80,85,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);",
+    val8 = StyleValue(value="0px 6px 0px rgba(123,80,85,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5)",
                       parseable_values="rgba(123,80,85,1)",
                       style_property=prop4,
                       style_version=val3.style_version)
@@ -316,9 +322,9 @@ def initialize_style(apps, schema_editor):
                           element=light_button,
                           style_property="box-shadow",
                           value_type="rgba",
-                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);")
+                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5)")
     prop6.save()
-    val10 = StyleValue(value="0px 6px 0px rgba(138,139,150,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);",
+    val10 = StyleValue(value="0px 6px 0px rgba(138,139,150,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5)",
                        parseable_values="rgba(138,139,150,1)",
                        style_property=prop6,
                        style_version=val3.style_version)
@@ -333,10 +339,27 @@ def initialize_style(apps, schema_editor):
     v11.element = disabled_button
     v11.label = border
     v11.save()
+    val_v11 = StyleValue.objects.get(style_property=v11)
+    val_v11.parseable_values = "rgba(73,80,85,1)"
+    val_v11.value = "rgba(73,80,85,1)"
+    val_v11.save()
     v12 = StyleProperty.objects.get(pk=84)
     v12.element = disabled_button
     v12.label = text_color
     v12.save()
+    prop10 = StyleProperty(selector=v10.selector,
+                           label=text_shadow,
+                           element=disabled_button,
+                           style_property="text-shadow",
+                           value_type="rgba",
+                           value_template="0px -1px 0px {}")
+    prop10.save()
+    val14 = StyleValue(value="0px -1px 0px rgba(0,0,0,0.5)",
+                       parseable_values="rgba(0,0,0,0.5)",
+                       style_property=prop10,
+                       style_version=val3.style_version)
+    val14.save()
+
 
     # ticket buy button
     v13 = StyleProperty.objects.get(pk=266)
@@ -347,6 +370,45 @@ def initialize_style(apps, schema_editor):
     v14.element = buy_button
     v14.label = text_color
     v14.save()
+
+    v13.selector.selector = ".gbe-btn-common, .gbe-btn-common:focus"
+    v13.selector.save()
+    prop7 = StyleProperty(selector=v13.selector,
+                          label=border,
+                          element=buy_button,
+                          style_property="border-color",
+                          value_type="rgba",
+                          value_template="{}")
+    prop7.save()
+    val11 = StyleValue(value="rgba(186,11,8,1)",
+                      parseable_values="rgba(186,11,8,1)",
+                      style_property=prop7,
+                      style_version=val3.style_version)
+    val11.save()
+    prop8 = StyleProperty(selector=v13.selector,
+                          label=text_shadow,
+                          element=buy_button,
+                          style_property="text-shadow",
+                          value_type="rgba",
+                          value_template="0px -1px 0px {}")
+    prop8.save()
+    val12 = StyleValue(value="0px -1px 0px rgba(0,0,0,0.5)",
+                      parseable_values="rgba(0,0,0,0.5)",
+                      style_property=prop8,
+                      style_version=val3.style_version)
+    val12.save()
+    prop9 = StyleProperty(selector=v13.selector,
+                          label=side,
+                          element=buy_button,
+                          style_property="box-shadow",
+                          value_type="rgba",
+                          value_template="0px 6px 0px {}, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(233,30,99,.5), inset 0px 0px 3px rgba(233,30,99,.5)")
+    prop9.save()
+    val13 = StyleValue(value="0px 6px 0px rgba(140,8,6,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(233,30,99,.5), inset 0px 0px 3px rgba(233,30,99,.5)",
+                       parseable_values="rgba(140,8,6,1)",
+                       style_property=prop9,
+                       style_version=val3.style_version)
+    val13.save()
 
     # icon button
     v15 = StyleProperty.objects.get(pk=35)

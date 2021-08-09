@@ -48,33 +48,56 @@ div.container {top:0;}
     line-height: 1.5 !important;
     border-radius: 3px !important;
 }
-.gbe-btn-primary, .gbe-btn-secondary, .gbe-btn-light
+.gbe-btn-primary, .gbe-btn-secondary, .input-group-text, .gbe-btn-light, .gbe-btn-common
 {
   border-radius: 5px;
   background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.3));
   font-weight: bold;
 }
-.gbe-btn-primary:hover, .gbe-btn-secondary:hover, .gbe-btn-light:hover
+.gbe-btn-secondary-disabled
+{
+  border-radius: 5px;
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(255,255,255,0));
+  box-shadow: inset 0px 1px 0px rgba(0,0,0,.3), inset 0px 0px 3px rgba(0,0,0,.5);
+  font-weight: bold;
+  transform: translate(0, 5px);
+}
+.gbe-btn-primary:hover, .gbe-btn-secondary:hover, .input-group-text:hover, .gbe-btn-light:hover, .gbe-btn-common:hover
 {
   background-image: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(50,50,50,0.3));
 }
-.gbe-btn-light, .gbe-btn-light:focus
+.input-group-text
 {
-  box-shadow: 0px 6px 0px rgba(138,139,150,1), 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+  transform: translate(0, -4px);
 }
-
-.btn.gbe-btn-primary:active {
+.input-group-text:active {
+  transform: translate(0, 0px);
+}
+.btn.gbe-btn-primary:active,
+.btn.gbe-btn-secondary:active,
+.input-group-text:active,
+.btn.gbe-btn-light:active,
+.btn.gbe-btn-common:active {
   background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(255,255,255,0));
-  box-shadow: 0px 2px 0px rgba(0,79,0,1), 0px 1px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-  transform: translate(0, 4px);
+  box-shadow: 0px 2px 0px rgba(0,0,0,0), 0px 1px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
   transition: all .2s ease-in-out;
+}
+.btn.gbe-btn-primary:active,
+.btn.gbe-btn-secondary:active,
+.btn.gbe-btn-light:active,
+.btn.gbe-btn-common:active {
+    transform: translate(0, 4px);
 }
 .gbe-btn-primary:active,
 .gbe-btn-primary.active,
 .gbe-btn-secondary:active,
 .gbe-btn-secondary.active,
+.input-group-text:active,
+.input-group-text.active,
 .gbe-btn-light:active,
 .gbe-btn-light.active,
+.gbe-btn-common:active,
+.gbe-btn-common.active,
  {
   box-shadow: none;
   margin-bottom: -3px;

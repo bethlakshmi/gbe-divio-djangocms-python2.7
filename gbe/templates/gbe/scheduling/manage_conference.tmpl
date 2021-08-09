@@ -29,12 +29,12 @@
     <td style="padding: 3px"><b>Current Start Day:</b> {{day.day|date:"l - M j, Y"}}</td>
     <td style="padding: 3px">{{form.day}}
       {% if form.day.errors %}<br><font class="gbe-form-error">{{ form.day.errors }}</font>{% endif %}</td>
-    <td style="padding: 3px">
-      <input class="btn gbe-btn-primary" type="submit" name="submit" value="{{button}}">
-    </td>
-  </tr>
+  </tr></table> 
+  <div class="col-12 text-right">
+    <input class="btn gbe-btn-primary" type="submit" name="submit" value="{{button}}">
+  </div>
   {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
 </form>
     {% endfor %}
-   </table> 
+   
 {% endblock %}
