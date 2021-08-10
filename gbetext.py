@@ -62,11 +62,6 @@ ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete and cannot be "
 ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete but it has been "
                                 "submitted for a show.")
 
-act_alerts = {'act_complete_not_submitted': ACT_COMPLETE_NOT_SUBMITTED,
-              'act_complete_submitted': ACT_COMPLETE_SUBMITTED,
-              'act_incomplete_not_submitted': ACT_INCOMPLETE_NOT_SUBMITTED,
-              'act_incomplete_submitted': ACT_INCOMPLETE_NOT_SUBMITTED}
-
 act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                      (1, 'The Main Event, in competition'),
                      (2, 'The Main Event, not in competition'),
