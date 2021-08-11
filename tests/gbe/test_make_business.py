@@ -135,6 +135,11 @@ class TestBusinessEdit(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.expected_string)
         self.assertNotContains(response, "Create Troupe")
+        self.assertNotContains(
+            response,
+            '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
+            'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
+            html=True)
 
     def test_edit_persona_load_img(self):
         set_image(self.business)

@@ -88,3 +88,10 @@ class TroupeUpdate(UpdatePopupMixin,
     def get_queryset(self):
         return self.model.objects.filter(
             contact__user_object=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['delete_url'] = reverse("performer-delete",
+                                        urlconf="gbe.urls",
+                                        args=[self.get_object().pk])
+        return context
