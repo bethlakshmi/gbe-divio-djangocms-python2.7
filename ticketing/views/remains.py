@@ -41,6 +41,7 @@ from gbetext import (
     intro_ticket_assign_message,
     intro_ticket_message,
     link_event_to_ticket_success_msg,
+    purchase_intro_msg,
     unlink_event_to_ticket_success_msg,
 )
 import pytz
@@ -74,10 +75,16 @@ def index(request):
                           filter=Q(ticketitems__live=True,
                                    ticketitems__has_coupon=False))).order_by(
         'conference__conference_slug', '-max_price', '-min_price')
-
+    intro = UserMessage.objects.get_or_create(
+            view="ListPublicTickets",
+            code="INTRO_MESSAGE",
+            defaults={
+                'summary': "Intro at top of list",
+                'description': purchase_intro_msg})
     context = {'events': events,
                'user_id': request.user.id,
-               'site_name': get_current_site(request).name
+               'site_name': get_current_site(request).name,
+               'introduction': intro[0].description
                }
     return render(request, 'ticketing/purchase_tickets.tmpl', context)
 
