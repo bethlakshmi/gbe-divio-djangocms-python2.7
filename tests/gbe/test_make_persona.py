@@ -58,6 +58,11 @@ class TestPersonaCreate(TestCase):
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        self.assertNotContains(
+            response,
+            '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
+            'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
+            html=True)
 
     def test_register_persona_w_image(self):
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
@@ -190,6 +195,16 @@ class TestPersonaEdit(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.expected_string)
         self.assertNotContains(response, "Create Troupe")
+        self.assertContains(
+            response,
+            '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
+            'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
+            html=True)
+        self.assertContains(
+            response,
+            reverse("performer-delete",
+                    urlconf="gbe.urls",
+                    args=[self.persona.pk]))
 
     def test_edit_persona_load_img(self):
         '''edit_troupe view, create flow

@@ -29,8 +29,9 @@ class DeletePerformerView(ProfileRequiredMixin, DeleteView):
                     'summary': "Delete In Use Performer Error",
                     'description': delete_in_use})
             messages.error(self.request, msg[0].description)
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        else:           
+            return HttpResponseRedirect(
+                request.META.get('HTTP_REFERER', self.success_url))
+        else:
             msg = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="SUCCESS",

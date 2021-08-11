@@ -30,7 +30,7 @@ class Persona (Performer):
         return [self.performer_profile]
 
     def has_bids(self):
-        return (self.is_teaching.count() > 0 or self.acts.count() > 0 or 
+        return (self.is_teaching.count() > 0 or self.acts.count() > 0 or
                 self.costume_set.count() > 0)
 
     class Meta:
