@@ -47,6 +47,10 @@ class Performer (WorkerItem):
         return Performer.objects.get_subclass(
             resourceitem_id=self.resourceitem_id).get_profiles()
 
+    def has_bids(self):
+        return Performer.objects.get_subclass(
+            resourceitem_id=self.resourceitem_id).has_bids()
+
     @property
     def is_active(self):
         return self.contact.user_object.is_active

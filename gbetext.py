@@ -515,6 +515,8 @@ default_edit_persona_msg = "Your persona has been updated."
 default_create_business_msg = "Your business has been created."
 default_edit_business_msg = "Your business has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+delete_in_use = '''This performer is in use in a current, or prior bid.  It \
+can be updated but not deleted.'''
 create_comp_msg = '''Comp has been created, user can now apply.'''
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''
