@@ -26,5 +26,8 @@ class Troupe(Performer):
             profiles += member.get_profiles()
         return profiles
 
+    def has_bids(self):
+        return self.acts.count() > 0
+
     class Meta:
         app_label = "gbe"

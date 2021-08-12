@@ -5,7 +5,6 @@ from django.db.models import (
 from gbe.models import (
     Act,
     Event,
-    Persona,
 )
 from gbetext import cue_options
 from ticketing.functions import get_tickets
