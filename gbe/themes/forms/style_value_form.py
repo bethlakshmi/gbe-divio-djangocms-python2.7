@@ -96,16 +96,15 @@ class StyleValueForm(ModelForm):
         style_value = super(StyleValueForm, self).save(commit=False)
         i = 0
         value = ""
-        value_string = ""
         val_list = []
-        val_prop = style_value.style_property
-        for value_type_item in val_prop.value_type.split():
+        for value_type_item in style_value.style_property.value_type.split():
             value = value + str(self.cleaned_data['value_%d' % i]) + " "
             val_list += [str(self.cleaned_data['value_%d' % i])]
             i = i + 1
 
         style_value.parseable_values = value.strip()
-        style_value.value = val_prop.value_template.format(*val_list)
+        style_value.value = style_value.style_property.value_template.format(
+            *val_list)
         if commit:
             style_value.save()
         return style_value
