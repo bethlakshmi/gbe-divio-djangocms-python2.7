@@ -14,6 +14,7 @@ from tests.factories.gbe_factories import (
 from django.urls import reverse
 from tests.functions.gbe_functions import login_as
 from django.contrib.auth.models import User
+from gbetext import purchase_intro_msg
 
 
 class TestTicketingIndex(TestCase):
@@ -31,6 +32,7 @@ class TestTicketingIndex(TestCase):
         '''
         response = self.client.get(self.url)
         self.assertContains(response, self.ticket.cost, count=1)
+        self.assertContains(response, purchase_intro_msg)
 
     def test_no_ticket(self):
         '''
