@@ -9,7 +9,7 @@ from gbe_utils.mixins import (
 from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from gbe.models import Persona
 from gbe.forms import PersonaForm
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from gbetext import (
     default_create_persona_msg,
     default_edit_persona_msg,
@@ -55,3 +55,10 @@ class PersonaUpdate(UpdatePopupMixin,
     def get_queryset(self):
         return self.model.objects.filter(
             contact__user_object=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['delete_url'] = reverse("performer-delete",
+                                        urlconf="gbe.urls",
+                                        args=[self.get_object().pk])
+        return context

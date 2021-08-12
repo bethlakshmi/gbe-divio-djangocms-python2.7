@@ -51,6 +51,11 @@ class TestTroupeCreate(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.troupe_string)
         self.assertContains(response, troupe_header_text)
+        self.assertNotContains(
+            response,
+            '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
+            'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
+            html=True)
 
     def test_create_troupe_no_inactive_users(self):
         contact = PersonaFactory()
@@ -105,6 +110,11 @@ class TestTroupeEdit(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Tell Us About Your Troupe')
+        self.assertContains(
+            response,
+            '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
+            'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
+            html=True)
 
     def test_edit_wrong_user(self):
         '''edit_troupe view, edit flow success

@@ -510,6 +510,8 @@ default_edit_persona_msg = "Your persona has been updated."
 default_create_business_msg = "Your business has been created."
 default_edit_business_msg = "Your business has been updated."
 default_edit_troupe_msg = "Your troupe has been updated."
+delete_in_use = '''This performer is in use in a current, or prior bid.  It \
+can be updated but not deleted.'''
 create_comp_msg = '''Comp has been created, user can now apply.'''
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''
@@ -642,6 +644,10 @@ for all or some events.'''
 intro_make_ticket_message = '''This page makes an individual ticket (and \
 price) for either a fee or entry into the expo.  The BPT Event connected to \
 this ticket defines what the customer gets when they pay for the ticket.'''
+purchase_intro_msg = '''Welcome!<br>Thanks for your interest in the Great \
+Burlesque Expo.  Below are the ticket options available for purchase. \
+There are many ways you can be a part of the convention, so please read \
+the descriptions carefully.'''
 edit_event_message = '''Event has been successfully updated.'''
 edit_ticket_message = '''Ticket has been successfully updated.'''
 delete_ticket_fail_message = '''Deletion failed, transactions exist for this \
