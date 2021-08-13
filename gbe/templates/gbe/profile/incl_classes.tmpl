@@ -16,11 +16,6 @@
        	  <a class="gbe-link" href='{% url 'gbe:class_edit' class.id %}'>{{ class }} </a>
 	  (Click to edit)<br>
         {% endif %}
-      </div>          
-      {% for alert in class.alerts %}
-        <span class='gbe-alert'>{{alert | safe }}</a>
-      {% endfor %}
-
     {% if historical %}
     <ul>
       <li><a class="gbe-link" href='{% url 'gbe:clone_bid' bid_type='Class' bid_id=class.id %}'>Clone this class</a></li>

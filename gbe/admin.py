@@ -176,6 +176,7 @@ class StyleSelectorAdmin(ImportExportActionModelAdmin):
         'selector',
         'pseudo_class',
         'used_for')
+    search_fields = ['selector']
 
 
 class StylePropertyAdmin(ImportExportActionModelAdmin):
@@ -183,13 +184,24 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
         'pk',
         'selector',
         'style_property',
-        'value_type')
+        'value_type',
+        'value_template',
+        'element',
+        'label')
     list_editable = (
         'style_property',
-        'value_type')
+        'value_type',
+        'value_template',
+        'element',
+        'label')
     list_filter = [
-        'selector',
+        'element',
+        'label',
         'style_property']
+    search_fields = ['selector__selector',
+                     'selector__used_for',
+                     'selector__description',
+                     'style_property']
 
 
 class StyleValueAdmin(ImportExportActionModelAdmin):
@@ -198,14 +210,17 @@ class StyleValueAdmin(ImportExportActionModelAdmin):
         'style_version',
         'style_property',
         'value',
+        'parseable_values',
         'image')
-    list_editable = ('value', )
+    list_editable = ('value', 'parseable_values')
     list_filter = [
         'style_version__name',
         'style_version__number',
         'style_property__selector__selector',
         'style_property__selector__pseudo_class',
         'style_property__style_property']
+    search_fields = ['style_property__style_property',
+                     'style_property__selector__selector']
 
 
 class StyleVersionAdmin(ImportExportActionModelAdmin):
@@ -214,6 +229,54 @@ class StyleVersionAdmin(ImportExportActionModelAdmin):
         'number',
         'currently_live',
         'currently_test')
+
+
+class StyleGroupAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'order',
+        'name',
+        'test_notes')
+    list_editable = (
+        'order',
+        'name',
+        'test_notes')
+    search_fields = ['name', 'test_urls']
+    filter_horizontal = ("test_urls", )
+
+
+class StyleElementAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'order',
+        'name',
+        'group',
+        'description',
+        'sample_html')
+    list_editable = (
+        'order',
+        'name',
+        'group',
+        'description',
+        'sample_html')
+    list_filter = ['group', ]
+    search_fields = ['group__name', 'name', 'description', 'sample_html']
+
+
+class StyleLabelAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'order',
+        'name',
+        'group',
+        'help_text')
+    list_editable = (
+        'order',
+        'name',
+        'group',
+        'help_text')
+    list_filter = ['group']
+    search_fields = ['name', 'group__name', 'help_text']
 
 
 class UserStylePreviewAdmin(admin.ModelAdmin):
@@ -301,4 +364,8 @@ admin.site.register(StyleValue, StyleValueAdmin)
 admin.site.register(StyleProperty, StylePropertyAdmin)
 admin.site.register(StyleSelector, StyleSelectorAdmin)
 admin.site.register(StyleVersion, StyleVersionAdmin)
+admin.site.register(StyleGroup, StyleGroupAdmin)
+admin.site.register(StyleElement, StyleElementAdmin)
+admin.site.register(StyleLabel, StyleLabelAdmin)
 admin.site.register(UserStylePreview, UserStylePreviewAdmin)
+admin.site.register(TestURL)

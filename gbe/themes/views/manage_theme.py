@@ -9,6 +9,7 @@ from django.shortcuts import (
     render,
 )
 from gbe.models import (
+    StyleGroup,
     StyleValue,
     StyleVersion,
     UserMessage,
@@ -38,7 +39,8 @@ class ManageTheme(View):
         version_id = kwargs.get("version_id")
         self.style_version = get_object_or_404(StyleVersion, id=version_id)
 
-    def make_context(self, forms):
+    def make_context(self, request):
+        forms, group_forms = self.setup_forms(request)
         msg = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
             code=self.instruction_code,
@@ -48,19 +50,41 @@ class ManageTheme(View):
                     'description']})
         title = self.title_format.format(self.style_version.name,
                                          self.style_version.number)
+        groups = []
+        for group in StyleGroup.objects.all():
+            group_dict = {
+                'group': group,
+                'elements': group.styleelement_set.all().order_by('order'),
+                'labels': group.stylelabel_set.all().order_by('order'),
+            }
+            groups += [group_dict]
         context = {
             'instructions': msg[0].description,
             'page_title': self.page_title,
             'title': title,
             'forms': forms,
+            'group_forms': group_forms,
             'version': self.style_version,
+            'groups': groups,
         }
         return context
 
+    def make_single_form(self, request, form_type, value):
+        if request.POST:
+            form = form_type(request.POST,
+                             request.FILES,
+                             instance=value,
+                             prefix=str(value.pk))
+        else:
+            form = form_type(instance=value, prefix=str(value.pk))
+        return form
+
     def setup_forms(self, request):
         forms = []
+        group_forms = {}
         for value in StyleValue.objects.filter(
-                style_version=self.style_version).order_by(
+                style_version=self.style_version,
+                style_property__hidden=False).order_by(
                 'style_property__selector__used_for',
                 'style_property__selector__selector',
                 'style_property__selector__pseudo_class',
@@ -69,18 +93,26 @@ class ManageTheme(View):
             if value.style_property.value_type == "image":
                 form_type = StyleValueImageForm
             try:
-                if request.POST:
-                    form = form_type(request.POST,
-                                     request.FILES,
-                                     instance=value,
-                                     prefix=str(value.pk))
+                form = self.make_single_form(request, form_type, value)
+                if value.style_property.element is not None and (
+                        value.style_property.label is not None):
+                    if value.style_property.label in group_forms:
+                        if value.style_property.element in group_forms[
+                                value.style_property.label]:
+                            group_forms[value.style_property.label][
+                                value.style_property.element] += [form]
+                        else:
+                            group_forms[value.style_property.label][
+                                value.style_property.element] = [form]
+                    else:
+                        group_forms[value.style_property.label] = {
+                            value.style_property.element: [form]}
                 else:
-                    form = form_type(instance=value,
-                                     prefix=str(value.pk))
-                forms += [(value, form)]
+                    forms += [(value, form)]
             except Exception as e:
                 messages.error(request, e)
-        return forms
+
+        return forms, group_forms
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -89,8 +121,20 @@ class ManageTheme(View):
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
-        forms = self.setup_forms(request)
-        return render(request, self.template, self.make_context(forms))
+        return render(request,
+                      self.template,
+                      self.make_context(request))
+
+    def process_forms(self, context):
+        for value, form in context['forms']:
+            form.save()
+        for label, label_forms in context['group_forms'].items():
+            for element, element_form in label_forms.items():
+                for table_form in element_form:
+                    table_form.save()
+        self.style_version.updated_at = datetime.now()
+        self.style_version.save()
+        return (self.style_version.pk, "Updated %s" % self.style_version)
 
     @never_cache
     @method_decorator(login_required)
@@ -100,32 +144,38 @@ class ManageTheme(View):
             return HttpResponseRedirect(reverse('themes_list',
                                                 urlconf='gbe.themes.urls'))
         self.groundwork(request, args, kwargs)
-        forms = self.setup_forms(request)
+        context = self.make_context(request)
         all_valid = True
         if len(messages.get_messages(request)) > 0:
             all_valid = False
-        for value, form in forms:
+
+        for value, form in context['forms']:
             if not form.is_valid():
                 all_valid = False
+        for label, label_forms in context['group_forms'].items():
+            for element, element_form in label_forms.items():
+                for table_form in element_form:
+                    if not table_form.is_valid():
+                        all_valid = False
+
         if all_valid:
-            for value, form in forms:
-                form.save()
-            self.style_version.updated_at = datetime.now()
-            self.style_version.save()
-            messages.success(request, "Updated %s" % self.style_version)
+            version_pk, success_msg = self.process_forms(context)
+            messages.success(request, success_msg)
 
             if 'update' in list(request.POST.keys()):
                 return HttpResponseRedirect(reverse(
                     'manage_theme',
                     urlconf='gbe.themes.urls',
-                    args=[self.style_version.pk]))
+                    args=[version_pk]))
             else:
                 return HttpResponseRedirect("%s?changed_id=%d" % (
                     reverse('themes_list', urlconf='gbe.themes.urls'),
-                    self.style_version.pk))
+                    version_pk))
         else:
             messages.error(
                 request,
                 "Something was wrong, correct the errors below and try again.")
 
-        return render(request, self.template, self.make_context(forms))
+        return render(request,
+                      self.template,
+                      context)

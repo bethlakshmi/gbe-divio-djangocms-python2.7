@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static sekizai_tags %}
+{% load static sekizai_tags gbe_tags %}
 {% block title %}
    {{page_title}}
 {% endblock %}
@@ -15,7 +15,69 @@
     {% if version_form %}
     <h4 class="gbe-subtitle">New Theme Settings</h4>
     {% include "form_table.tmpl" with form=version_form %}
+    {% endif %} 
+<div id="accordion" class="gbe_accordion my-3">
+  {% for group_dict in groups %}
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="heading{{group_dict.group.pk}}">
+      <h2 class="mb-0">
+      <a data-toggle="collapse" href="#collapse{{group_dict.group.pk}}" role="button" aria-expanded="false" aria-controls="collapse{{group_dict.group.pk}}">
+        {{group_dict.group}}</a>
+      </h2>
+    </div>
+    <div id="collapse{{group_dict.group.pk}}" class="collapse">
+      <div class="card-body gbe-bg-light">
+{{group_dict.group.test_notes}}
+<ul>{% for test_url in group_dict.group.test_urls.all %}
+  <li><a href="{{test_url.partial_url}}" class="gbe-link">{{test_url.display_name}}</a> - {{test_url.test_notes}}</li>
+{% endfor %}</ul>
+<table>
+  <tbody><tr class="gbe-table-row">{% for element in group_dict.elements %}
+    <td><div class="text-center">{{ element.sample_html|safe }}</div><br><i>{{ element.description }}</i></td>
+  {% endfor %}</tr>
+  {% for label in group_dict.labels %}
+  <tr class="gbe-table-row"><td colspan="{{group_dict.elements|length}}"><b>{{label.name}}</b>
+    {% if label.help_text %}<br>{{ label.help_text }}{% endif %}
+    </td></tr>
+  <tr class="gbe-table-row">
+    {% if group_forms|testkey:label %}
+    {% for element in group_dict.elements %}
+        <td>{% if group_forms|keyvalue:label|testkey:element %}
+          {% for form in group_forms|keyvalue:label|keyvalue:element %}
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+          {% for field in form.visible_fields %}
+            {{ field }}
+          {% endfor %}
+          <font class="gbe-form-error">{% if form.errors %}
+          <p class="gbe-form-error"> There is an error on the form.</p>
+          {% endif %}
+          {{ form.non_field_errors }}
+          {% for field in form.visible_fields %}{{ field.errors }}{% endfor %}</font>
+        {% endfor %}{% else %}N/A{% endif %}</td>
+    {% endfor %}
+    {% else %}
+    <td colspan="{{group_dict.elements|length}}">No properties available in this version</td>
     {% endif %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+     </div>
+    </div>
+  </div>
+  {% endfor %}
+    <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingEverything">
+      <h2 class="mb-0">
+      <a data-toggle="collapse" href="#collapseEverything" role="button" aria-expanded="false" aria-controls="collapseEverything">
+      Everything Else
+      </a></h2>
+    </div>
+    <div id="collapseEverything" class="collapse">
+      <div class="card-body gbe-bg-light">
+
     {% for value, form in forms %}
     {% ifchanged value.style_property.selector.used_for %}<h3 class="gbe-subtitle">{{ value.style_property.selector.used_for }}</h3>{% endifchanged %}
     {% ifchanged value.style_property.selector %}<code><b>{{ value.style_property.selector }}</b></code><br><i>{{value.style_property.selector.description}}</i><br><br>{% endifchanged %}
@@ -62,6 +124,10 @@
     {% include "form_horizontal.tmpl" %}
     {% endif %}
     {% endfor %}
+     </div>
+    </div>
+  </div>
+</div>
 <div class="row">
   <div class="col-sm-12 col-md-6 offset-md-6 col-lg-5 offset-lg-7 dropdown">
     {% if not version_form %}

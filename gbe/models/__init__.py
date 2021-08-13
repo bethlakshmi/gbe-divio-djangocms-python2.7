@@ -35,6 +35,10 @@ from .act_casting_option import ActCastingOption
 from .flexible_evaluation import FlexibleEvaluation
 
 # Style stuff
+from .test_url import TestURL
+from .style_group import StyleGroup
+from .style_element import StyleElement
+from .style_label import StyleLabel
 from .style_version import StyleVersion
 from .style_selector import StyleSelector
 from .style_property import StyleProperty

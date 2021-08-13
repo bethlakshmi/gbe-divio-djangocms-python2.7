@@ -413,6 +413,34 @@ class StylePropertyFactory(DjangoModelFactory):
     selector = SubFactory(StyleSelectorFactory)
     style_property = Sequence(lambda n: 'style_property_%d' % n)
     value_type = "rgba"
+    value_template = "{}"
+
+
+class StyleGroupFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleGroup
+    name = Sequence(lambda n: 'Group Name %d' % n)
+    test_notes = Sequence(lambda n: 'label help text%d' % n)
+    order = Sequence(lambda n: n)
+
+
+class StyleLabelFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleLabel
+    group = SubFactory(StyleGroupFactory)
+    name = Sequence(lambda n: 'Label Name %d' % n)
+    help_text = Sequence(lambda n: 'label help text %d' % n)
+    order = Sequence(lambda n: n)
+
+
+class StyleElementFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.StyleElement
+    group = SubFactory(StyleGroupFactory)
+    name = Sequence(lambda n: 'Element Name %d' % n)
+    description = Sequence(lambda n: 'Description %d' % n)
+    order = Sequence(lambda n: n)
+    sample_html = Sequence(lambda n: '<a>%d</a>' % n)
 
 
 class StyleValueFactory(DjangoModelFactory):
@@ -421,6 +449,7 @@ class StyleValueFactory(DjangoModelFactory):
     style_property = SubFactory(StylePropertyFactory)
     style_version = SubFactory(StyleVersionFactory)
     value = "rgba(1,1,1,0)"
+    parseable_values = "rgba(1,1,1,0)"
 
 
 class StyleValueImageFactory(DjangoModelFactory):
@@ -429,6 +458,14 @@ class StyleValueImageFactory(DjangoModelFactory):
     style_property = SubFactory(StylePropertyFactory, value_type="image")
     style_version = SubFactory(StyleVersionFactory)
     value = ""
+
+
+class TestURLFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.TestURL
+    display_name = Sequence(lambda n: 'Element Name %d' % n)
+    partial_url = Sequence(lambda n: '/gbe/%d' % n)
+    test_notes = "notes"
 
 
 class UserStylePreviewFactory(DjangoModelFactory):
