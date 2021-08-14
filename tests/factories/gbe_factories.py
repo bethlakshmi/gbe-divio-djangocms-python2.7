@@ -262,31 +262,6 @@ class VendorFactory(DjangoModelFactory):
     b_conference = SubFactory(ConferenceFactory)
 
 
-class ClassProposalFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.ClassProposal
-
-    title = Sequence(lambda x: "Class Proposal %d: Title" % x)
-    name = Sequence(
-        lambda x: "Class Proposal %d: Name of Proposer" % x)
-    email = Sequence(lambda x: "john%d@gmail.com" % x)
-    proposal = LazyAttribute(lambda a: "Proposal titled %s" % a.title)
-    type = 'Class'
-    display = False
-    conference = SubFactory(ConferenceFactory)
-
-
-class ConferenceVolunteerFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.ConferenceVolunteer
-
-    presenter = SubFactory(PersonaFactory)
-    bid = SubFactory(ClassProposalFactory)
-    how_volunteer = 'Any of the Above'
-    qualification = 'True'
-    volunteering = True
-
-
 class ProfilePreferencesFactory(DjangoModelFactory):
     class Meta:
         model = conf.ProfilePreferences

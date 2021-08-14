@@ -4,7 +4,6 @@ from django.test import Client
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ClassFactory,
-    ClassProposalFactory,
     ProfileFactory,
     PersonaFactory
 )
