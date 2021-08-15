@@ -40,7 +40,6 @@ def delete_ticket_item(request, view, item):
     return success
 
 
-
 def make_open_panel(ticketing_event):
     open_panel = "ticket"
     if ticketing_event.act_submission_event:
