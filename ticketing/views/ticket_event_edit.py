@@ -13,6 +13,10 @@ from gbetext import (
     intro_bptevent_message,
 )
 from django.contrib import messages
+from ticketing.views.functions import (
+    delete_ticket_item,
+    make_open_panel,
+)
 
 
 @never_cache
