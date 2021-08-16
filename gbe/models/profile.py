@@ -180,11 +180,8 @@ class Profile(WorkerItem):
         acts = []
         performers = self.get_performers()
         for performer in performers:
-            acts += performer.acts.all()
-
-        def f(a): return a.is_current
-
-        return list(filter(f, acts))
+            acts += performer.acts.exclude(b_conference__status="completed")
+        return acts
 
     def get_shows(self):
         from gbe.models import Show  # late import, circularity
