@@ -18,6 +18,7 @@ from gbetext import (
     intro_make_ticket_message,
 )
 from django.contrib import messages
+import ast
 
 
 @never_cache
@@ -71,7 +72,9 @@ def ticket_item_edit(request, item_id=None):
                 success_msg[0].description,
                 item.ticket_id,
                 item.title))
-            updated_tickets = eval(request.GET.get('updated_tickets', '[]'))
+            updated_tickets = ast.literal_eval(request.GET.get(
+                'updated_tickets',
+                '[]'))
             updated_tickets += [item.id]
             if 'submit_another' in request.POST:
                 return HttpResponseRedirect(
