@@ -14,11 +14,6 @@ from .user_create_form import UserCreateForm
 from .persona_form import PersonaForm
 from .troupe_form import TroupeForm
 
-# proposal/panel forms
-from .class_proposal_form import ClassProposalForm
-from .conference_volunteer_form import ConferenceVolunteerForm
-from .proposal_publish_form import ProposalPublishForm
-
 # bid eval forms
 from .bid_evaluation_form import BidEvaluationForm
 from .flexible_evaluation_form import FlexibleEvaluationForm

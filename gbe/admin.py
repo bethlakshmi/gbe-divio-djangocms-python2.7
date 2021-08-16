@@ -70,19 +70,6 @@ class ProfileAdmin(admin.ModelAdmin):
                      'user_object__email']
 
 
-class ClassProposalAdmin(admin.ModelAdmin):
-    list_display = ('title', 'name', 'email', 'type', 'display')
-
-
-class ConferenceVolunteerAdmin(admin.ModelAdmin):
-    list_display = ('presenter',
-                    'bid',
-                    'how_volunteer',
-                    'qualification',
-                    'volunteering')
-    list_filter = ['presenter', 'bid', 'how_volunteer']
-
-
 class ProfilePreferencesAdmin(admin.ModelAdmin):
     list_display = ('profile',
                     'in_hotel',
@@ -335,10 +322,8 @@ admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
 admin.site.register(Biddable, BidAdmin)
 admin.site.register(Class, ClassAdmin)
-admin.site.register(ClassProposal, ClassProposalAdmin)
 admin.site.register(Conference, ConferenceAdmin)
 admin.site.register(ConferenceDay, ConferenceDayAdmin)
-admin.site.register(ConferenceVolunteer, ConferenceVolunteerAdmin)
 admin.site.register(Costume, BidAdmin)
 admin.site.register(EmailFrequency, EmailFrequencyAdmin)
 admin.site.register(EvaluationCategory, EvalCategoryAdmin)
