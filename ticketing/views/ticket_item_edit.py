@@ -76,6 +76,9 @@ def ticket_item_edit(request, item_id=None):
                 'updated_tickets',
                 '[]'))
             updated_tickets += [item.id]
+            updated_events = ast.literal_eval(request.GET.get(
+                'updated_events',
+                '[]'))
             if 'submit_another' in request.POST:
                 return HttpResponseRedirect(
                     ("%s?event_id=%s&updated_tickets=%s" +
@@ -83,7 +86,7 @@ def ticket_item_edit(request, item_id=None):
                         reverse('ticket_item_edit', urlconf='ticketing.urls'),
                         item.ticketing_event.event_id,
                         str(updated_tickets),
-                        request.GET.get('updated_events', '[]')))
+                        str(updated_events)))
             return HttpResponseRedirect(
                 ('%s?conference=%s&open_panel=%s&updated_tickets=%s' +
                  '&updated_events=%s') % (
@@ -93,7 +96,7 @@ def ticket_item_edit(request, item_id=None):
                     str(item.ticketing_event.conference.conference_slug),
                     make_open_panel(item.ticketing_event),
                     str(updated_tickets),
-                    request.GET.get('updated_events', '[]')))
+                    str(updated_events)))
     else:
         if (item_id is not None):
             item = get_object_or_404(TicketItem, id=item_id)
