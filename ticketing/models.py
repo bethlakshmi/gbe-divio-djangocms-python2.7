@@ -154,7 +154,10 @@ class TicketItem(models.Model):
     is_minimum = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s %s' % (self.ticket_id, self.title)
+        return '%s %s - %s' % (
+            self.ticket_id,
+            self.title,
+            self.ticketing_event.conference.conference_slug)
 
     @property
     def active(self):

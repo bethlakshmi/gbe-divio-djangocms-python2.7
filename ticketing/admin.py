@@ -129,8 +129,7 @@ class RoleExclusionInline(admin.TabularInline):
 
 
 class EligibilityConditionAdmin(admin.ModelAdmin):
-    list_display = ('__str__',
-                    'checklistitem')
+    list_display = ('checklistitem', '__str__')
     list_filter = ['checklistitem']
     inlines = [
         TicketingExclusionInline,
@@ -140,8 +139,7 @@ class EligibilityConditionAdmin(admin.ModelAdmin):
 
 class TicketEligibilityConditionAdmin(admin.ModelAdmin):
     filter_horizontal = ("tickets",)
-    list_display = ('__str__',
-                    'checklistitem')
+    list_display = ('checklistitem', '__str__')
     list_filter = ['checklistitem']
     inlines = [
         TicketingExclusionInline,
