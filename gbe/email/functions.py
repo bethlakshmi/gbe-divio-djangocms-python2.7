@@ -225,9 +225,10 @@ def send_act_tech_reminder(act, email_type):
         context={
             'act': act,
             'name': act.performer.name,
-            'act_tech_link': reverse('act_tech_wizard',
-                                     args=[act.pk],
-                                     urlconf='gbe.urls'),
+            'act_tech_link': Site.objects.get_current().domain + reverse(
+                'act_tech_wizard',
+                args=[act.pk],
+                urlconf='gbe.urls'),
             'unsubscribe_link': create_unsubscribe_link(
                 act.performer.contact.contact_email,
                 "send_%s" % email_type)},

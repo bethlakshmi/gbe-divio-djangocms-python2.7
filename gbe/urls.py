@@ -15,7 +15,6 @@ from gbe.views import (
     BusinessUpdate,
     ClassChangeStateView,
     CloneBidView,
-    ConferenceVolunteerView,
     CostumeChangeStateView,
     DeletePerformerView,
     DeleteProfileView,
@@ -33,8 +32,6 @@ from gbe.views import (
     PerformerUpdate,
     PersonaCreate,
     PersonaUpdate,
-    ProposeClassView,
-    PublishProposalView,
     RegisterView,
     ReviewActListView,
     FlexibleReviewBidView,
@@ -43,7 +40,6 @@ from gbe.views import (
     ReviewCostumeView,
     ReviewCostumeListView,
     ReviewProfilesView,
-    ReviewProposalListView,
     ReviewTroupesView,
     ReviewVendorView,
     ReviewVendorListView,
@@ -126,25 +122,6 @@ urlpatterns = [
     url(r'^class/changestate/(?P<object_id>\d+)/?$',
         ClassChangeStateView.as_view(),
         name='class_changestate'),
-
-    #  proposals
-    url(r'^class/propose/?$',
-        ProposeClassView,
-        name='class_propose'),
-    url(r'^classpropose/edit/?$',
-        PublishProposalView,
-        name='proposal_publish'),
-    url(r'^classpropose/edit/(\d+)/?$',
-        PublishProposalView,
-        name='proposal_publish'),
-    url(r'^classpropose/reviewlist/?$',
-        ReviewProposalListView,
-        name='proposal_review_list'),
-
-    #  conference
-    url(r'^conference/volunteer/?$',
-        ConferenceVolunteerView,
-        name='conference_volunteer'),
 
     #  personae & businesses
     url(r'^troupe/view/(\d+)/?$',

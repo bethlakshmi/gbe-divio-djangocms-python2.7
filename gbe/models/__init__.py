@@ -18,8 +18,6 @@ from .costume import Costume
 from .business import Business
 from .vendor import Vendor
 from .volunteer import Volunteer
-from .class_proposal import ClassProposal
-from .conference_volunteer import ConferenceVolunteer
 from .generic_event import GenericEvent
 from .performer_festivals import PerformerFestivals
 from .profile_preferences import ProfilePreferences
