@@ -10,7 +10,7 @@ from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory
 )
-
+from scheduler.idd import get_schedule
 from tests.functions.scheduler_functions import book_worker_item_for_role
 from gbe.ticketing_idd_interface import get_checklist_items
 
@@ -28,10 +28,15 @@ class TestGetCheckListItems(TestCase):
         '''
         no_match_profile = ProfileFactory()
         transaction = TransactionFactory()
+        conf = transaction.ticket_item.ticketing_event.conference
         self.ticket_condition.tickets.add(transaction.ticket_item)
+        no_schedule = get_schedule(
+                no_match_profile.user_object,
+                labels=[conf.conference_slug]).schedule_items
         ticket_items, role_items = get_checklist_items(
             no_match_profile,
-            transaction.ticket_item.ticketing_event.conference)
+            transaction.ticket_item.ticketing_event.conference,
+            no_schedule)
 
         nt.assert_equal(len(ticket_items), 0)
         nt.assert_equal(len(role_items), 0)
@@ -44,10 +49,14 @@ class TestGetCheckListItems(TestCase):
         booking = book_worker_item_for_role(teacher,
                                             self.role_condition.role)
         conference = booking.event.eventitem.get_conference()
+        self.schedule = get_schedule(
+                teacher.performer_profile.user_object,
+                labels=[conference.conference_slug]).schedule_items
 
         ticket_items, role_items = get_checklist_items(
             teacher.performer_profile,
-            conference)
+            conference,
+            self.schedule)
         nt.assert_equal(len(role_items), 1)
         nt.assert_equal(role_items[self.role_condition.role],
                         [self.role_condition.checklistitem])
@@ -62,10 +71,14 @@ class TestGetCheckListItems(TestCase):
         conference = transaction.ticket_item.ticketing_event.conference
         self.ticket_condition.tickets.add(transaction.ticket_item)
         self.ticket_condition.save()
+        self.schedule = get_schedule(
+                purchaser.user_object,
+                labels=[conference.conference_slug]).schedule_items
 
         ticket_items, role_items = get_checklist_items(
             purchaser,
-            conference)
+            conference,
+            self.schedule)
 
         nt.assert_equal(len(ticket_items), 1)
         nt.assert_equal(ticket_items[0]['items'],
@@ -89,9 +102,13 @@ class TestGetCheckListItems(TestCase):
         self.ticket_condition.tickets.add(transaction.ticket_item)
         self.ticket_condition.save()
 
+        self.schedule = get_schedule(
+                teacher.performer_profile.user_object,
+                labels=[conference.conference_slug]).schedule_items
         ticket_items, role_items = get_checklist_items(
             teacher.performer_profile,
-            conference)
+            conference,
+            self.schedule)
         nt.assert_equal(len(ticket_items), 1)
         nt.assert_equal(len(role_items), 1)
         nt.assert_equal(ticket_items[0]['ticket'],

@@ -11,7 +11,7 @@ from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory
 )
-
+from scheduler.idd import get_schedule
 from tests.functions.scheduler_functions import book_worker_item_for_role
 from gbe.ticketing_idd_interface import get_checklist_items_for_roles
 
@@ -25,16 +25,20 @@ class TestGetCheckListForRoles(TestCase):
         booking = book_worker_item_for_role(self.teacher,
                                             self.role_condition.role)
         self.conference = booking.event.eventitem.get_conference()
+        self.schedule = get_schedule(
+                self.teacher.performer_profile.user_object,
+                labels=[self.conference.conference_slug]).schedule_items
 
     def test_no_role(self):
         '''
             purchaser has no roles
         '''
         no_match_profile = ProfileFactory()
-
+        no_schedule = get_schedule(
+                no_match_profile.user_object,
+                labels=[self.conference.conference_slug]).schedule_items
         checklist_items = get_checklist_items_for_roles(
-            no_match_profile,
-            self.conference,
+            no_schedule,
             [])
 
         nt.assert_equal(len(checklist_items), 0)
@@ -43,10 +47,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
             purchaser has no roles in this conference
         '''
-        checklist_items = get_checklist_items_for_roles(
-            self.teacher.performer_profile,
-            ConferenceFactory(),
-            [])
+        checklist_items = get_checklist_items_for_roles([], [])
 
         nt.assert_equal(len(checklist_items), 0)
 
@@ -56,8 +57,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
 
         checklist_items = get_checklist_items_for_roles(
-            self.teacher.performer_profile,
-            self.conference,
+            self.schedule,
             [])
 
         nt.assert_equal(len(checklist_items), 1)
@@ -77,10 +77,12 @@ class TestGetCheckListForRoles(TestCase):
             GenericEventFactory(
                 e_conference=self.conference)
             )
+        self.schedule = get_schedule(
+                self.teacher.performer_profile.user_object,
+                labels=[self.conference.conference_slug]).schedule_items
 
         checklist_items = get_checklist_items_for_roles(
-            self.teacher.performer_profile,
-            self.conference,
+            self.schedule,
             [])
 
         nt.assert_equal(len(checklist_items), 2)
@@ -98,8 +100,7 @@ class TestGetCheckListForRoles(TestCase):
         another_match = RoleEligibilityConditionFactory()
 
         checklist_items = get_checklist_items_for_roles(
-            self.teacher.performer_profile,
-            self.conference,
+            self.schedule,
             [])
 
         nt.assert_equal(len(checklist_items), 1)
@@ -123,10 +124,12 @@ class TestGetCheckListForRoles(TestCase):
             GenericEventFactory(
                 e_conference=self.conference)
             )
+        self.schedule = get_schedule(
+                self.teacher.performer_profile.user_object,
+                labels=[self.conference.conference_slug]).schedule_items
 
         checklist_items = get_checklist_items_for_roles(
-            self.teacher.performer_profile,
-            self.conference,
+            self.schedule,
             [])
 
         nt.assert_equal(len(checklist_items), 0)
