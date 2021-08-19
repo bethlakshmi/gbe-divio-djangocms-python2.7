@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static sekizai_tags %}
+{% block title %}
+  Ticket Checklists
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+{% endblock %}
+{% block content %}
+<h3 class="gbe-title">Checklist Items</h3>
+<table id="" class="datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr class="gbe-table-header">
+        <th>&nbsp;</th>
+        <th colspan="{{ roles|length }}">Roles</th>
+    {% for event in ticket_events %}
+        <th colspan="{{event.count_items}}">{{event.title}}</th>
+    {% endfor %}
+    </tr>f
+    <tr class="gbe-table-header">
+      <th><i>Eligibility</i></th>
+{% for item in roles %}
+      <th class="rotate-review"><div><span>{{ item }}</span></div></th>
+{% endfor %}
+{% for item in tickets %}
+      <th class="rotate-review"><div><span>
+{% if item.title|length > 16 %}
+      <a href="#" data-toggle="tooltip" title="{{ item.title }}">
+            {{ item.title|truncatechars:15 }}</a>
+{% else %}
+      {{ item.title }}
+{% endif %}
+      </span></div></th>
+{% endfor %}
+</tr>
+  </thead>
+    <tfoot>
+    <tr class="gbe-table-header">
+      <th><i>Eligibility</i></th>
+{% for item in roles %}
+      <th class="rotate-review"><div><span>{{ item }}</span></div></th>
+{% endfor %}
+{% for item in tickets %}
+      <th class="rotate-review"><div><span>
+{% if item.title|length > 16 %}
+      <a href="#" data-toggle="tooltip" title="{{ item.title }}">
+            {{ item.title|truncatechars:15 }}</a>
+{% else %}
+      {{ item.title }}
+{% endif %}
+      </span></div></th>
+{% endfor %}
+</tr>
+  </tfoot>
+  <tbody>
+{% for item in object_list %}
+    <tr class="gbe-table-row"><td>{{ item.description }}</td>
+  {% for item in roles %}
+      <td>Y/N</td>
+  {% endfor %}
+  {% for item in tickets %}
+      <td>Y/N</td>
+  {% endfor %}
+{% endfor %}</tr>
+  </tbody>
+</table>
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+  <script>
+  $(document).ready(function() {
+    $.fn.dataTable.moment( 'MMM D, YYYY, H:mm A' );
+    var table = $('table.datatable').DataTable({
+        "paging": false});
+} );
+  </script>
+{% endaddtoblock %}
+{% endblock %}
