@@ -129,24 +129,38 @@ class RoleExclusionInline(admin.TabularInline):
 
 
 class EligibilityConditionAdmin(admin.ModelAdmin):
-    list_display = ('__str__',
-                    'checklistitem')
+    list_display = ('checklistitem',
+                    'ticketing_exclusions',
+                    'role_exclusions',
+                    '__str__')
     list_filter = ['checklistitem']
     inlines = [
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+    def ticketing_exclusions(self, obj):
+        return obj.ticketing_ticketingexclusion.count()
+
+    def role_exclusions(self, obj):
+        return obj.ticketing_roleexclusion.count()
 
 
 class TicketEligibilityConditionAdmin(admin.ModelAdmin):
     filter_horizontal = ("tickets",)
-    list_display = ('__str__',
-                    'checklistitem')
+    list_display = ('checklistitem',
+                    'ticketing_exclusions',
+                    'role_exclusions',
+                    '__str__')
     list_filter = ['checklistitem']
     inlines = [
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+    def ticketing_exclusions(self, obj):
+        return obj.ticketing_ticketingexclusion.count()
+
+    def role_exclusions(self, obj):
+        return obj.ticketing_roleexclusion.count()
 
 
 class SyncStatusAdmin(admin.ModelAdmin):
@@ -158,6 +172,17 @@ class SyncStatusAdmin(admin.ModelAdmin):
                     'created_at',
                     'updated_at')
 
+
+class RoleExcludeAdmin(admin.ModelAdmin):
+    list_display = ('pk',
+                    'condition',
+                    'role',
+                    'event')
+
+class TicketExcludeAdmin(admin.ModelAdmin):
+    list_display = ('pk',
+                    'condition',
+                    '__str__')
 
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
@@ -172,3 +197,5 @@ admin.site.register(RoleEligibilityCondition,
                     EligibilityConditionAdmin)
 admin.site.register(CheckListItem)
 admin.site.register(SyncStatus, SyncStatusAdmin)
+admin.site.register(TicketingExclusion, TicketExcludeAdmin)
+admin.site.register(RoleExclusion, RoleExcludeAdmin)

@@ -270,6 +270,9 @@ class EligibilityCondition(models.Model):
                     is_excluded = True
         return is_excluded
 
+    def __str__(self):
+        return self.checklistitem.description
+
 
 class TicketingEligibilityCondition(EligibilityCondition):
     '''
