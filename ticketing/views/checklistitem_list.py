@@ -39,6 +39,17 @@ class CheckListItemList(PermissionRequiredMixin, ListView):
             if condition.checklistitem not in ticket_conditions:
                 ticket_conditions[condition.checklistitem] = {}
             for ticket in condition.tickets.all():
-                ticket_conditions[condition.checklistitem][ticket] = condition
+                if ticket.ticketing_event not in ticket_conditions[condition.checklistitem]:
+                    ticket_conditions[condition.checklistitem][ticket.ticketing_event] = [ticket]
+                else:
+                    if ticket not in ticket_conditions[condition.checklistitem][ticket.ticketing_event]:
+                        ticket_conditions[condition.checklistitem][ticket.ticketing_event] += [ticket]
         context['ticket_conditions'] = ticket_conditions
+
+        for condition in RoleEligibilityCondition.objects.all():
+            if condition.checklistitem not in role_conditions:
+                role_conditions[condition.checklistitem] = {}
+            role_conditions[condition.checklistitem][condition.role] = condition
+        context['role_conditions'] = role_conditions
+
         return context
