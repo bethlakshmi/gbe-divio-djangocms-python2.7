@@ -7,7 +7,17 @@
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
 {% endblock %}
 {% block content %}
-<h3 class="gbe-title">Ticket Checklist Items</h3>
+<div class="row">
+<div class="col-md-6 col-sm-12">
+  <h2 class="gbe-title">Ticket Checklist Items</h2>
+  <p>{{ ticket_intro | safe }}</p>
+</div>
+<div class="col-md-6 col-sm-12 text-right">
+  <a href="{% url 'ticketing:ticket_items' %}" role="button" class="btn gbe-btn-primary">Ticket Inventory</a>
+  {% if user.is_superuser %}<a href="{% url 'admin:ticketing_ticketingeligibilitycondition_changelist' %}" role="button" class="btn gbe-btn-primary">Edit Conditions</a>{% endif %}
+</div>
+</div>
+
 <table id="" class="datatable" cellspacing="0" width="100%">
   <thead>
     <tr class="gbe-table-header">
@@ -35,25 +45,33 @@
             {% for ticket_item in ticket_conditions|keyvalue:item|keyvalue:ticket %}
                {{ ticket_item.title}}<br>
             {% endfor %}
-        {% else %}<td><i class="fas fa-plus link-events-plus"></i>{% endif %}
+        {% else %}<td><i class="fas fa-times link-events-plus"></i>{% endif %}
           </td>
     {% endfor %}
   {% else %}
     {% for ticket in ticket_events %}
-        <td><i class="fas fa-plus link-events-plus"></i></td>
+        <td><i class="fas fa-times link-events-plus"></i></td>
     {% endfor %}
   {% endif %}
 {% endfor %}</tr>
   </tbody>
 </table>
 <br><br><br>
-<h3 class="gbe-title">Role Checklist Items</h3>
+<div class="row">
+<div class="col-md-6 col-sm-12">
+  <h2 class="gbe-title">Role Checklist Items</h2>
+  <p>{{ role_intro | safe }}</p>
+</div>
+<div class="col-md-6 col-sm-12 text-right">
+  {% if user.is_superuser %}<a href="{% url 'admin:ticketing_roleeligibilitycondition_changelist' %}" role="button" class="btn gbe-btn-primary">Edit Conditions</a>{% endif %}
+</div>
+</div>
 <table id="" class="datatable" cellspacing="0" width="100%">
   <thead>
     <tr class="gbe-table-header">
       <th><i>Checklist Item</i></th>
 {% for item in roles %}
-      <th class="rotate-review"><div><span>{{ item }}</span></div></th>
+      <th>{{ item }}</th>
 {% endfor %}
 </tr>
   </thead>
@@ -61,7 +79,7 @@
     <tr class="gbe-table-header">
       <th><i>Checklist Item</i></th>
 {% for item in roles %}
-      <th class="rotate-review"><div><span>{{ item }}</span></div></th>
+      <th>{{ item }}</th>
 {% endfor %}
   </tr>
   </tfoot>
@@ -84,11 +102,11 @@
                 {% if condition.current_tickets_excluded|length == 0 and condition.ticketing_roleexclusion.all|length == 0 %}
                 No Override{% endif %}
             {% endwith %}
-        {% else %}<td><i class="fas fa-plus link-events-plus"></i>{% endif %}</td>
+        {% else %}<td><i class="fas fa-times link-events-plus"></i>{% endif %}</td>
     {% endfor %}
   {% else %}
     {% for role in roles %}
-        <td><i class="fas fa-plus link-events-plus"></i></td>
+        <td><i class="fas fa-times link-events-plus"></i></td>
     {% endfor %}
   {% endif %}
 {% endfor %}</tr>

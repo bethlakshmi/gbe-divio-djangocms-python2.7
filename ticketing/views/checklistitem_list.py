@@ -1,6 +1,9 @@
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from gbe.models import Conference
+from gbe.models import (
+    Conference,
+    UserMessage
+)
 from ticketing.models import (
     CheckListItem,
     RoleEligibilityCondition,
@@ -9,6 +12,10 @@ from ticketing.models import (
     TicketItem,
 )
 from django.db.models import Count
+from gbetext import (
+    intro_role_cond_message,
+    intro_ticket_cond_message,
+)
 
 
 class CheckListItemList(PermissionRequiredMixin, ListView):
@@ -22,6 +29,20 @@ class CheckListItemList(PermissionRequiredMixin, ListView):
         conferences = Conference.objects.exclude(status="completed")
         role_conditions = {}
         ticket_conditions = {}
+        ticket_intro = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="TICKET_INTRO_MESSAGE",
+                defaults={
+                    'summary': "Ticket Condition Intro Message",
+                    'description': intro_ticket_cond_message})
+        role_intro = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="ROLE_INTRO_MESSAGE",
+                defaults={
+                    'summary': "Role Condition Intro Message",
+                    'description': intro_role_cond_message})
+        context['ticket_intro'] = ticket_intro[0].description
+        context['role_intro'] = role_intro[0].description
         context['tickets'] = TicketItem.objects.filter(
             ticketing_event__conference__in=conferences).exclude(
             ticketing_event__act_submission_event=True).exclude(
