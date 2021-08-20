@@ -3,4 +3,4 @@
 <td>{% include "email_crop.tmpl" with email=purchaser.email %}</td>
 <td>{{transaction.total_count}}</td>
 <td>{{ transaction.ticket_item.ticket_id }}
-<td>{{ transaction.ticket_item.title }}{% if transaction.ticket_item.ticketing_event.vendor_submission_event %} - Vendor{% elif transaction.ticket_item.ticketing_event.act_submission_event %} - Act{% endif %}</td><td>{{ transaction.import_date|date:"M j, Y, g:i A" }}</td></tr>{% endifchanged %}{%endfor %}
+<td>{{ transaction.ticket_item.ticketing_event.title }} - {{ transaction.ticket_item.title }}{% if transaction.ticket_item.ticketing_event.vendor_submission_event %} - Vendor{% elif transaction.ticket_item.ticketing_event.act_submission_event %} - Act{% endif %}</td><td>{{ transaction.import_date|date:"M j, Y, g:i A" }}</td></tr>{% endifchanged %}{%endfor %}

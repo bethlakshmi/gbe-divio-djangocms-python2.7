@@ -43,6 +43,7 @@ class PurchaserAdmin(admin.ModelAdmin):
 
 class TicketItemAdmin(admin.ModelAdmin):
     list_display = ('title',
+                    'ticketing_event',
                     'ticket_id',
                     'active',
                     'cost',
@@ -54,7 +55,10 @@ class TicketItemAdmin(admin.ModelAdmin):
                    'ticketing_event',
                    'live',
                    'has_coupon']
-    search_fields = ['title']
+    search_fields = ['title',
+                     'ticketing_event__title',
+                     'ticketing_event__conference__conference_name',
+                     'ticketing_event__conference__conference_slug']
 
     def conference(self, obj):
         return obj.ticketing_event.conference

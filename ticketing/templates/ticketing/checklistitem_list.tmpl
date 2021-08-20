@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static sekizai_tags %}
+{% load static sekizai_tags gbe_tags %}
 {% block title %}
   Ticket Checklists
 {% endblock %}
@@ -55,12 +55,20 @@
   <tbody>
 {% for item in object_list %}
     <tr class="gbe-table-row"><td>{{ item.description }}</td>
-  {% for item in roles %}
+  {% for role in roles %}
       <td>Y/N</td>
   {% endfor %}
-  {% for item in tickets %}
-      <td>Y/N</td>
-  {% endfor %}
+  {% if ticket_conditions|testkey:item %}
+    {% for ticket in tickets %}
+        <td>{% if ticket_conditions|keyvalue:item|testkey:ticket %}
+            <i class="fas fa-check gbe-text-success active-check"></i>
+            {% else %}<i class="fas fa-plus link-events-plus"></i>{% endif %}</td>
+      {% endfor %}
+    {% else %}
+      {% for ticket in tickets %}
+        <td><i class="fas fa-plus link-events-plus"></i></td>
+      {% endfor %}
+    {% endif %}
 {% endfor %}</tr>
   </tbody>
 </table>
