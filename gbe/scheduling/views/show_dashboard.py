@@ -145,6 +145,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
         all_valid = True
         scheduling_link = ''
         columns = ['Order',
+                   'Tech Done',
                    'Act',
                    'Performer',
                    'Rehearsal',
