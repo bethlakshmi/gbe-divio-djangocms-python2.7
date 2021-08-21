@@ -53,7 +53,8 @@ class TicketingChangeListTests(TestCase):
         transaction = make_act_app_purchase(conference, self.privileged_user)
         response = self.client.get('/admin/ticketing/transaction/',
                                    follow=True)
-        self.assertContains(response, transaction.ticket_item.ticket_id)
+        self.assertContains(response,
+                            transaction.ticket_item.ticketing_event.title)
         self.assertContains(response, transaction.ticket_item.title)
         self.assertContains(response,
                             transaction.purchaser.matched_to_user.username)
@@ -64,7 +65,8 @@ class TicketingChangeListTests(TestCase):
                                                self.privileged_user)
         response = self.client.get('/admin/ticketing/transaction/',
                                    follow=True)
-        self.assertContains(response, transaction.ticket_item.ticket_id)
+        self.assertContains(response,
+                            transaction.ticket_item.ticketing_event.title)
         self.assertContains(response, transaction.ticket_item.title)
         self.assertContains(response,
                             transaction.purchaser.matched_to_user.username)
@@ -76,7 +78,7 @@ class TicketingChangeListTests(TestCase):
         response = self.client.get(
             '/admin/ticketing/ticketingeligibilitycondition/',
             follow=True)
-        self.assertContains(response, ticket.ticket_id)
+        self.assertContains(response, ticket.ticketing_event.title)
         self.assertContains(response, ticket.title)
 
     def test_get_role_eligibility(self):
@@ -126,4 +128,4 @@ class TicketingChangeListTests(TestCase):
             reverse("admin:ticketing_ticketingeligibilitycondition_change",
                     args=(match_condition.id,)),
             follow=True)
-        self.assertContains(response, "Performer, %s" % exclusion.event)
+        self.assertContains(response, "Performer in %s" % exclusion.event)
