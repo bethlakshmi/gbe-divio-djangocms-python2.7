@@ -154,10 +154,10 @@ class TicketItem(models.Model):
     is_minimum = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s %s - %s' % (
-            self.ticket_id,
-            self.title,
-            self.ticketing_event.conference.conference_slug)
+        if self.ticketing_event.title is not None:
+            return '%s %s' % (self.ticketing_event.title, self.title)
+        else:
+            return self.title
 
     @property
     def active(self):
@@ -273,6 +273,14 @@ class EligibilityCondition(models.Model):
                     is_excluded = True
         return is_excluded
 
+    def __str__(self):
+        return self.checklistitem.description
+
+    def current_tickets_excluded(self):
+        return TicketItem.objects.filter(
+            ticketingexclusion__condition=self).exclude(
+            ticketing_event__conference__status="completed")
+
 
 class TicketingEligibilityCondition(EligibilityCondition):
     '''
@@ -370,7 +378,7 @@ class RoleExclusion(Exclusion):
     def __str__(self):
         describe = self.role
         if self.event:
-            describe += ", " + str(self.event)
+            describe += " in " + str(self.event)
         return str(describe)
 
     def is_excluded(self, user_schedule):

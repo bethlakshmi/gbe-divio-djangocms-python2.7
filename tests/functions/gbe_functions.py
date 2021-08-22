@@ -4,6 +4,7 @@ from gbe.models import (
 )
 from django.contrib.auth.models import (
     Group,
+    Permission,
     User,
 )
 from tests.factories.gbe_factories import (
@@ -48,15 +49,19 @@ def login_as(user_or_profile, testcase):
                           password='foo')
 
 
-def grant_privilege(user_or_profile, privilege):
+def grant_privilege(user_or_profile, group, privilege=None):
     '''Add named privilege to user's groups. If group does not exist, create it
     '''
     user = _user_for(user_or_profile)
-    g, _ = Group.objects.get_or_create(name=privilege)
+    g, _ = Group.objects.get_or_create(name=group)
     if g in user.groups.all():
         return
     else:
         user.groups.add(g)
+    if privilege is not None:
+        privilege_obj = Permission.objects.get(codename=privilege)
+        if privilege_obj not in g.permissions.all():
+            g.permissions.add(privilege_obj)
 
 
 def is_login_page(response):

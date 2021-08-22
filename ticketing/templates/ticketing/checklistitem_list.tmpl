@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static sekizai_tags gbe_tags %}
+{% block title %}
+  Ticket Checklists
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-6 col-sm-12">
+  <h2 class="gbe-title">Ticket Checklist Items</h2>
+  <p>{{ ticket_intro | safe }}</p>
+</div>
+<div class="col-md-6 col-sm-12 text-right">
+  <a href="{% url 'ticketing:ticket_items' %}" role="button" class="btn gbe-btn-primary">Ticket Inventory</a>
+  {% if user.is_superuser %}<a href="{% url 'admin:ticketing_ticketingeligibilitycondition_changelist' %}" role="button" class="btn gbe-btn-primary">Edit Conditions</a>{% endif %}
+</div>
+</div>
+
+<table id="" class="datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr class="gbe-table-header">
+      <th><i>Checklist Item</i></th>
+    {% for event in ticket_events %}
+        <th>{{event.title}}</th>
+    {% endfor %}
+    </tr>
+  </thead>
+  <tfoot>
+    <tr class="gbe-table-header">
+      <th><i>Checklist Item</i></th>
+    {% for event in ticket_events %}
+        <th>{{event.title}}</th>
+    {% endfor %}
+    </tr>
+  </tfoot>
+  <tbody>
+{% for item in object_list %}
+    <tr class="gbe-table-row"><td>{{ item.description }}</td>
+  {% if ticket_conditions|testkey:item %}
+    {% for ticket in ticket_events %}
+        {% if ticket_conditions|keyvalue:item|testkey:ticket %}
+          <td class="gbe-table-success">
+            {% for ticket_item in ticket_conditions|keyvalue:item|keyvalue:ticket %}
+               {{ ticket_item.title}}<br>
+            {% endfor %}
+        {% else %}<td><i class="fas fa-times link-events-plus"></i>{% endif %}
+          </td>
+    {% endfor %}
+  {% else %}
+    {% for ticket in ticket_events %}
+        <td><i class="fas fa-times link-events-plus"></i></td>
+    {% endfor %}
+  {% endif %}
+{% endfor %}</tr>
+  </tbody>
+</table>
+<br><br><br>
+<div class="row">
+<div class="col-md-6 col-sm-12">
+  <h2 class="gbe-title">Role Checklist Items</h2>
+  <p>{{ role_intro | safe }}</p>
+</div>
+<div class="col-md-6 col-sm-12 text-right">
+  {% if user.is_superuser %}<a href="{% url 'admin:ticketing_roleeligibilitycondition_changelist' %}" role="button" class="btn gbe-btn-primary">Edit Conditions</a>{% endif %}
+</div>
+</div>
+<table id="" class="datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr class="gbe-table-header">
+      <th><i>Checklist Item</i></th>
+{% for item in roles %}
+      <th>{{ item }}</th>
+{% endfor %}
+</tr>
+  </thead>
+    <tfoot>
+    <tr class="gbe-table-header">
+      <th><i>Checklist Item</i></th>
+{% for item in roles %}
+      <th>{{ item }}</th>
+{% endfor %}
+  </tr>
+  </tfoot>
+  <tbody>
+{% for item in object_list %}
+    <tr class="gbe-table-row"><td>{{ item.description }}</td>
+  {% if role_conditions|testkey:item %}
+    {% for role in roles %}
+        {% if role_conditions|keyvalue:item|testkey:role %}
+            <td class="gbe-table-success">
+            {% with condition=role_conditions|keyvalue:item|keyvalue:role %}
+                {% for ticketitem in condition.current_tickets_excluded %}
+                  {% if forloop.first %}<b>Ticket Overrides:</b><br>{% endif %}
+                    {{ticketitem}}<br>
+                {% endfor %}
+                {% for exclusion in condition.ticketing_roleexclusion.all %}
+                  {% if forloop.first %}<b>Role Overrides:</b><br>{% endif %}
+                  {{exclusion}}<br>
+                {% endfor %}
+                {% if condition.current_tickets_excluded|length == 0 and condition.ticketing_roleexclusion.all|length == 0 %}
+                No Override{% endif %}
+            {% endwith %}
+        {% else %}<td><i class="fas fa-times link-events-plus"></i>{% endif %}</td>
+    {% endfor %}
+  {% else %}
+    {% for role in roles %}
+        <td><i class="fas fa-times link-events-plus"></i></td>
+    {% endfor %}
+  {% endif %}
+{% endfor %}</tr>
+  </tbody>
+</table>
+{% addtoblock "js" %}
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+  <script>
+  $(document).ready(function() {
+    $.fn.dataTable.moment( 'MMM D, YYYY, H:mm A' );
+    var table = $('table.datatable').DataTable({
+        "paging": false});
+} );
+  </script>
+{% endaddtoblock %}
+{% endblock %}
