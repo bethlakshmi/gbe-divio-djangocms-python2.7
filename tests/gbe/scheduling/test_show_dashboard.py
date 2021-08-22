@@ -127,8 +127,11 @@ class TestShowDashboard(TestCase):
         self.assertContains(response, self.context.act.b_title)
         self.assertContains(
             response,
-            'class="gbe-table-row gbe-form-error"',
+            'class="gbe-table-row gbe-table-danger"',
             1)
+        self.assertContains(
+            response,
+            '<i class="fas fa-window-close gbe-text-danger"></i>')
         self.assertNotContains(response, reverse(
             "act_tech_wizard",
             urlconf='gbe.urls',
@@ -260,9 +263,12 @@ class TestShowDashboard(TestCase):
         self.assertContains(response, complete_act_context.act.b_title)
         self.assertNotContains(
             response,
-            'class="gbe-table-row gbe-form-error"')
+            'class="gbe-table-row gbe-table-danger"')
         self.assertContains(response, "No audio track needed")
-        self.assertContains(response, "Will not be attending rehearsal")
+        self.assertContains(response, "Acknowledged No Rehearsal")
+        self.assertContains(
+            response,
+            '<i class="fas fa-check-circle gbe-text-success"></i>')
 
     def test_show_approval_needed_event(self):
         context = VolunteerContext(event=self.context.show,

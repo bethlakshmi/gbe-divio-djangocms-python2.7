@@ -10,18 +10,18 @@ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-addons/2.0.1/75074b5c-
 aldryn-boilerplates==0.8.0
 aldryn-client==2.3.5
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-common/1.0.4/1021e5a2-d7d6-4dde-8976-c2db74c52c68/aldryn-common-1.0.4.tar.gz#egg=aldryn-common==1.0.4
-https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.7.4.2/ce7bf736-ae57-447f-bb81-190100f6fbaf/aldryn-django-cms-3.7.4.2.tar.gz#egg=aldryn-django-cms==3.7.4.2
+https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.7.4.3/4f837109-2ac0-443d-8dba-0c76c7e86691/aldryn-django-cms-3.7.4.3.tar.gz#egg=aldryn-django-cms==3.7.4.3
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django/3.0.14.0/36bfd066-908c-496a-bbb0-8f30b7ea7a2b/aldryn-django-3.0.14.0.tar.gz#egg=aldryn-django==3.0.14.0
 aldryn-sites==0.6.0
 aldryn-snake==2.0.0
-https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-sso/2.0.0/e6eccefa-e8f5-492d-8e71-79fc99f30201/aldryn-sso-2.0.0.tar.gz#egg=aldryn-sso==2.0.0
+https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-sso/2.0.1/fc74bf76-5ef7-485e-b645-75b747d78ebf/aldryn-sso-2.0.1.tar.gz#egg=aldryn-sso==2.0.1
 argparse==1.4.0           # via djeese-fs
 asgiref==3.4.1            # via django
 attrs==21.2.0             # via pytest
 boto==2.49.0
 certifi==2021.5.30        # via djeese-fs, requests, sentry-sdk
 chardet==4.0.0            # via djeese-fs
-charset-normalizer==2.0.3  # via requests
+charset-normalizer==2.0.4  # via requests
 click==8.0.1              # via aldryn-client
 configparser==5.0.2
 coverage==5.5
@@ -37,7 +37,7 @@ django-cache-url==3.2.3
 django-classy-tags==2.0.0  # via django-cms, django-sekizai
 django-cms==3.7.4         # via djangocms-attributes-field
 django-compressor==2.4.1
-django-debug-toolbar==3.2.1
+django-debug-toolbar==3.2.2
 https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.0.2/437dbe66-4a2c-402d-9ad9-cd104a901316/django-filer-2.0.2.tar.gz#egg=django-filer==2.0.2
 django-formtools==2.3
 django-getenv==1.3.2
@@ -56,7 +56,7 @@ django-robots==4.0
 django-sekizai==2.0.0     # via django-cms
 django-select2==7.7.1
 django-simple-captcha==0.5.14
-django-simple-sso==0.14.1
+django-simple-sso==1.1.0
 django-sortedm2m==3.0.2
 django-storages==1.8
 django-tempus-dominus==5.1.2.14
@@ -72,20 +72,20 @@ https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-link/3.0.0/a2097f39
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-picture/3.0.0/a3be9a52-45ab-42f5-9de5-3a33934ed666/djangocms-picture-3.0.0.tar.gz#egg=djangocms-picture==3.0.0
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-snippet/3.0.0/436700f0-3a6e-4787-a007-38eedaf66d07/djangocms-snippet-3.0.0.tar.gz#egg=djangocms-snippet==3.0.0
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-style/3.0.0/7f83861c-9e68-4dcc-949b-48d429e4fead/djangocms-style-3.0.0.tar.gz#egg=djangocms-style==3.0.0
-https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-text-ckeditor/3.9.0/b69a0a27-5e76-4db2-86b6-c4931f16688f/djangocms-text-ckeditor-3.9.0.tar.gz#egg=djangocms-text-ckeditor==3.9.0
+https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-text-ckeditor/3.9.1/b5b1bd77-b935-40a0-9ac2-0f64ec4a1bfb/djangocms-text-ckeditor-3.9.1.tar.gz#egg=djangocms-text-ckeditor==3.9.1
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-video/3.0.0/a36bdd84-5189-4d20-9ad9-eab9e64d9e25/djangocms-video-3.0.0.tar.gz#egg=djangocms-video==3.0.0
 djeese-fs==0.1.21
 easy-thumbnails==2.7.1
 et-xmlfile==1.1.0         # via openpyxl
 eventbrite==3.3.5
 factory-boy==3.2.0
-faker==8.10.1
+faker==8.11.0
 furl==2.1.2
 html5lib==1.1
 idna==3.2                 # via requests
-importlib-metadata==4.6.1
+importlib-metadata==4.6.4
 iniconfig==1.0.0          # via pytest
-itsdangerous==2.0.1       # via django-simple-sso, webservices
+itsdangerous==0.24        # via django-simple-sso, webservices
 jsonfield==3.1.0
 lxml==4.6.3
 markuppy==1.14            # via tablib
@@ -98,7 +98,7 @@ packaging==21.0           # via pytest
 pep8==1.7.1
 pillow==8.3.1
 pluggy==0.13.1            # via pytest
-psycopg2==2.7.7
+psycopg2==2.9.1
 py==1.10.0                # via pytest
 pyparsing==2.4.7          # via packaging
 pytest-cov==2.12.1
@@ -108,10 +108,10 @@ python-dateutil==2.8.2    # via faker
 pytz==2021.1
 pyyaml==5.4.1             # via tablib
 rcssmin==1.0.6            # via django-compressor
-reportlab==3.5.68
+reportlab==3.6.1
 requests==2.26.0          # via aldryn-client, django-paypal, django-recaptcha2, eventbrite, webservices
 rjsmin==1.1.0             # via django-compressor
-sentry-sdk==1.3.0
+sentry-sdk==1.3.1
 six==1.16.0               # via aldryn-client, django-autocomplete-light, django-cms, django-compressor, django-paypal, django-simple-captcha, furl, html5lib, orderedmultidict, python-dateutil
 sqlparse==0.4.1           # via django, django-debug-toolbar
 tablib[html,ods,xls,xlsx,yaml]==3.0.0
