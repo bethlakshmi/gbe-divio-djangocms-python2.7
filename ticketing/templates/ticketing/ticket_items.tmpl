@@ -11,7 +11,7 @@
 {% include "conference_tabs.tmpl" %} 
  <div class="gbe-tab-area">
 <div class="row">
-<div class="col-8">
+<div class="col-md-6 col-sm-12">
 <h2 class="gbe-title">Edit Ticket Items</h2>
 
 <p>{{ intro }}</p>
@@ -20,7 +20,8 @@
 tickets on the site.
 
 </div>
-<div class="col-4 text-right">
+<div class="col-md-6 col-sm-12 text-right">
+  <a href="{% url 'ticketing:checklistitem_list' %}" role="button" class="btn gbe-btn-primary">Ticket Checklist</a>
   <a href="{% url 'ticketing:bptevent_edit' %}" role="button" class="btn gbe-btn-primary">Create Event</a></div>
 </div>
 

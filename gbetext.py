@@ -618,6 +618,14 @@ purchaser's email could be found.'''
 import_transaction_message = '''A sync was attempted, check the logs for \
 errors, if 0 transactions were recieved, it can mean we are up to date, it \
 can mean we failed to import any.'''
+intro_role_cond_message = '''These items are granted if the user has the given \
+role (shown in green cells), unles the overrides listed apply.  In cases of \
+a user having multiple roles, only 1 item is granted, so roles override each \
+other to avoid accumulating items.  If a user bought a ticket (at a discount), \
+their comps may also be overridden as it's covered by the discount.'''
+intro_ticket_cond_message = '''The ticket types listed in a given green cell \
+will grant the user the given item.  Ticket conditions do not show any \
+overrides.'''
 intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
 intro_ticket_assign_message = '''This grid shows what tickets are connected \
