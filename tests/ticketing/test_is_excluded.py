@@ -67,9 +67,6 @@ class TestIsExcluded(TestCase):
            role matches but event does not, not excluded
         '''
         new_exclude = RoleExclusionFactory.create()
-        print("new exclude event: %d" % new_exclude.event.eventitem_id)
-        for item in self.schedule:
-            print("scheduled event: %d" % item.event.foreign_event_id)
         nt.assert_false(new_exclude.is_excluded(self.schedule))
 
     def test_no_role_match(self):
@@ -121,4 +118,3 @@ class TestIsExcluded(TestCase):
         self.roleexclusion.delete()
         self.teacher.delete()
         self.conference.delete()
-
