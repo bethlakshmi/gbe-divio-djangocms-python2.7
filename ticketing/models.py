@@ -154,10 +154,11 @@ class TicketItem(models.Model):
     is_minimum = models.BooleanField(default=False)
 
     def __str__(self):
+        basic = "%s (%s)" % (self.title, self.ticket_id)
         if self.ticketing_event.title is not None:
-            return '%s %s' % (self.ticketing_event.title, self.title)
+            return '%s %s' % (self.ticketing_event.title, basic)
         else:
-            return self.title
+            return basic
 
     @property
     def active(self):

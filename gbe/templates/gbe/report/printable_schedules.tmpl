@@ -39,7 +39,7 @@
   <h3>{{ schedule.person.get_badge_name }}'s GBE Package Checklist</h3>
   <ul>
   {% for criteria in schedule.ticket_items %}
-    <li>Purchased {{criteria.count}} of {{criteria.ticket}}, for each item include:</li>
+    <li>Purchased {{criteria.count}} of {{criteria.ticket.title}}, for each item include:</li>
     <ul>
       {% for item in criteria.items%}
         <li>{{item}}</li>

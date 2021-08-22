@@ -43,8 +43,10 @@
         {% if ticket_conditions|keyvalue:item|testkey:ticket %}
           <td class="gbe-table-success">
             {% for ticket_item in ticket_conditions|keyvalue:item|keyvalue:ticket %}
-               {{ ticket_item.title}}<br>
-            {% endfor %}
+              <span title="{{ ticket_item.title }}"><i class="fas fa-ticket-alt"></i>{% if ticket_item.title|length > 10 %}
+              {{ ticket_item.title|truncatechars:10 }}
+              {% else %}{{ ticket_item.title }}{% endif %}<br>
+            {% endfor %}</span>
         {% else %}<td><i class="fas fa-times link-events-plus"></i>{% endif %}
           </td>
     {% endfor %}
