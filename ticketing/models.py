@@ -274,9 +274,6 @@ class EligibilityCondition(models.Model):
                     is_excluded = True
         return is_excluded
 
-    def __str__(self):
-        return self.checklistitem.description
-
     def current_tickets_excluded(self):
         return TicketItem.objects.filter(
             ticketingexclusion__condition=self).exclude(
