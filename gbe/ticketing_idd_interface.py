@@ -124,9 +124,7 @@ def get_purchased_tickets(user):
     return ticket_by_conf
 
 
-def get_checklist_items_for_tickets(profile,
-                                    conference,
-                                    tickets):
+def get_checklist_items_for_tickets(profile, user_schedule, tickets):
     '''
     get the checklist items for a purchaser in the BTP
     '''
@@ -140,7 +138,7 @@ def get_checklist_items_for_tickets(profile,
         if count > 0:
             for condition in TicketingEligibilityCondition.objects.filter(
                     tickets=ticket):
-                if not condition.is_excluded(tickets, profile, conference):
+                if not condition.is_excluded(tickets, user_schedule):
                     items += [condition.checklistitem]
             if len(items) > 0:
                 checklist_items += [{'ticket': ticket.title,
@@ -150,16 +148,19 @@ def get_checklist_items_for_tickets(profile,
     return checklist_items
 
 
-def get_checklist_items_for_roles(profile, conference, tickets):
+def get_checklist_items_for_roles(user_schedule, tickets):
     '''
     get the checklist items for the roles a person does in this conference
     '''
     checklist_items = {}
 
-    roles = get_roles(profile.user_object,
-                      labels=[conference.conference_slug]).roles
+    roles = []
+    for booking in user_schedule:
+        if booking.role not in roles:
+            roles += [booking.role]
+
     for condition in RoleEligibilityCondition.objects.filter(role__in=roles):
-        if not condition.is_excluded(tickets, profile, conference):
+        if not condition.is_excluded(tickets, user_schedule):
             if condition.role in checklist_items:
                 checklist_items[condition.role] += [condition.checklistitem]
             else:
@@ -167,7 +168,7 @@ def get_checklist_items_for_roles(profile, conference, tickets):
     return checklist_items
 
 
-def get_checklist_items(profile, conference):
+def get_checklist_items(profile, conference, user_schedule):
     '''
     get the checklist items for a person with a profile
     '''
@@ -175,13 +176,12 @@ def get_checklist_items(profile, conference):
         ticketing_event__conference=conference,
         transaction__purchaser__matched_to_user=profile.user_object).distinct()
 
-    ticket_items = get_checklist_items_for_tickets(profile,
-                                                   conference,
-                                                   tickets)
+    ticket_items = get_checklist_items_for_tickets(
+        profile,
+        user_schedule,
+        tickets)
 
-    role_items = get_checklist_items_for_roles(profile,
-                                               conference,
-                                               tickets)
+    role_items = get_checklist_items_for_roles(user_schedule, tickets)
 
     return (ticket_items, role_items)
 

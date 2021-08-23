@@ -154,10 +154,11 @@ class TicketItem(models.Model):
     is_minimum = models.BooleanField(default=False)
 
     def __str__(self):
+        basic = "%s (%s)" % (self.title, self.ticket_id)
         if self.ticketing_event.title is not None:
-            return '%s %s' % (self.ticketing_event.title, self.title)
+            return '%s %s' % (self.ticketing_event.title, basic)
         else:
-            return self.title
+            return basic
 
     @property
     def active(self):
@@ -260,21 +261,18 @@ class EligibilityCondition(models.Model):
         on_delete=models.CASCADE,
         related_name="%(app_label)s_%(class)s")
 
-    def is_excluded(self, held_tickets, profile, conference):
+    def is_excluded(self, held_tickets, user_schedule):
         is_excluded = False
         if held_tickets:
             for exclusion in self.ticketing_ticketingexclusion.all():
                 if exclusion.is_excluded(held_tickets):
                     is_excluded = True
 
-        if profile and not is_excluded:
+        if user_schedule and not is_excluded:
             for exclusion in self.ticketing_roleexclusion.all():
-                if exclusion.is_excluded(profile, conference):
+                if exclusion.is_excluded(user_schedule):
                     is_excluded = True
         return is_excluded
-
-    def __str__(self):
-        return self.checklistitem.description
 
     def current_tickets_excluded(self):
         return TicketItem.objects.filter(
@@ -381,7 +379,7 @@ class RoleExclusion(Exclusion):
             describe += " in " + str(self.event)
         return str(describe)
 
-    def is_excluded(self, profile, conference):
+    def is_excluded(self, user_schedule):
         '''
         Return True if the referenced condition should be excluded from the
         participant's package.  This is true when there is a match between the
@@ -389,7 +387,10 @@ class RoleExclusion(Exclusion):
         '''
         is_excluded = False
         if not self.event:
-            is_excluded = self.role in profile.get_roles(conference)
+            is_excluded = any(
+                self.role == booking.role for booking in user_schedule)
         else:
-            is_excluded = profile.has_role_in_event(self.role, self.event)
+            is_excluded = any((self.role == b.role and (
+                self.event.eventitem_id == b.event.foreign_event_id
+                )) for b in user_schedule)
         return is_excluded
