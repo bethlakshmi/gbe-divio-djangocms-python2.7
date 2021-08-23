@@ -56,6 +56,17 @@ class TestCheckListItemList(TestCase):
         self.assertContains(response, self.ticket_item.ticketing_event.title)
         self.assertContains(response, "No Override")
 
+    def test_two_tickets_one_event(self):
+        second_ticket_item = TicketItemFactory(
+            ticketing_event=self.ticket_item.ticketing_event)
+        self.ticket_condition.tickets.add(second_ticket_item)
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, self.ticket_item.title)
+        self.assertContains(response, self.ticket_item.ticketing_event.title)
+        self.assertContains(response, second_ticket_item.title)
+        self.assertContains(response, second_ticket_item.ticketing_event.title)
+
     def test_no_conditions(self):
         RoleEligibilityCondition.objects.all().delete()
         TicketingEligibilityCondition.objects.all().delete()

@@ -91,7 +91,7 @@ class TicketingChangeListTests(TestCase):
 
     def test_get_ticketing_eligibility_edit_ticket_exclude(self):
         ticket = TicketItemFactory()
-        ticket2 = TicketItemFactory()
+        ticket2 = TicketItemFactory(ticketing_event__title=None)
         ticket3 = TicketItemFactory()
         match_condition = TicketingEligibilityConditionFactory(
             tickets=[ticket])
@@ -103,6 +103,22 @@ class TicketingChangeListTests(TestCase):
                     args=(match_condition.id,)),
             follow=True)
         self.assertContains(response, "%s, %s" % (ticket2, ticket3))
+
+    def test_get_ticketing_eligibility_cond_changelist(self):
+        ticket = TicketItemFactory()
+        ticket2 = TicketItemFactory()
+        ticket3 = TicketItemFactory()
+        match_condition = TicketingEligibilityConditionFactory(
+            tickets=[ticket])
+        exclusion = TicketingExclusionFactory(
+            condition=match_condition,
+            tickets=[ticket2, ticket3])
+        response = self.client.get(
+            reverse(
+                "admin:ticketing_ticketingeligibilitycondition_changelist"),
+            follow=True)
+        self.assertContains(response,
+                            match_condition.checklistitem.description)
 
     def test_get_ticketing_eligibility_edit_role_exclude(self):
         ticket = TicketItemFactory()
