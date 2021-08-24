@@ -98,6 +98,37 @@ class TestClassWizard(TestScheduling):
         self.assertNotContains(response, str(other_class.b_title))
         self.assertNotContains(response, str(other_class.teacher))
 
+    def test_authorized_user_third_form_get(self):
+        # this is how the class coordinator can fast schedule from review
+        login_as(self.privileged_user, self)
+        response = self.client.get("%s?accepted_class=%d" % (
+            self.url,
+            self.test_class.eventitem_id))
+        self.assertContains(
+            response,
+            ('<input type="radio" name="accepted_class" value="%d" ' +
+             'id="id_accepted_class_1" checked />') % self.test_class.pk,
+            html=True)        
+        self.assertContains(
+            response,
+            'value="%s"' %
+            self.test_class.b_title)
+        self.assertContains(
+            response,
+            'type="number" name="duration" value="1.0"')
+        self.assertContains(
+            response,
+            '<option value="%d">%s</option>' % (
+                self.day.pk,
+                self.day.day.strftime(GBE_DATE_FORMAT)),
+            html=True)
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s</option>' % (
+                self.test_class.teacher.pk,
+                str(self.test_class.teacher)),
+            html=True)
+
     def test_auth_user_can_pick_class(self):
         login_as(self.privileged_user, self)
         data = self.get_data()
