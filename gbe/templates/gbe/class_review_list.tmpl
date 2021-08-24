@@ -1,0 +1,28 @@
+{% extends 'gbe/bid_review_list.tmpl' %}
+{% block tbody %}
+    {% for row in rows %}
+      <tr class="gbe-table-row {{ row.status }}">
+        {% for value in row.bid %}
+	        <td>{{ value|linebreaks }}</td>{% endfor %}
+        {% if "Reviews" in columns %}
+          <td>{% for review in row.reviews %}
+          {% if not forloop.first %}<hr/>{% endif %}
+          <b>Reviewer:</b> {{ review.evaluator.display_name }}<br>
+          <b>Recommendation:</b> {{ review.get_vote_display }}<br>
+          <b>Comment:</b> {{ review.notes }}<br>
+          {% endfor %}
+          </td>
+        {% endif %}
+          <td>
+            <a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm">
+	          Review</a>
+            {% if row.extra_button %}
+            <br><form action="{{ row.extra_button.url }}" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="id_accepted" name="accepted" value="3">
+                <input type="hidden" name="extra_button" value="Schedule >>">
+                <button title="{{row.extra_button.text}}" type="submit" class="btn gbe-btn-table btn-sm">{{row.extra_button.text}}</button></form>
+            {% endif %}</td>
+      </tr>
+    {% endfor %}
+{% endblock %}

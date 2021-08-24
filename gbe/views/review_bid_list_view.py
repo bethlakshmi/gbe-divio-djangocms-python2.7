@@ -35,10 +35,6 @@ class ReviewBidListView(View):
             bid__in=bids).select_related(
                 'evaluator').order_by('bid', 'evaluator')
 
-    def row_hook(self, bid, row):
-        # override on subclass
-        pass
-
     def set_row_basics(self, bid, review_query):
         bid_row = {
             'bid': bid.bid_review_summary,
@@ -68,7 +64,6 @@ class ReviewBidListView(View):
                 bid=bid.id).select_related(
                     'evaluator').order_by(
                         'evaluator')
-            self.row_hook(bid, bid_row)
             rows.append(bid_row)
         return rows
 

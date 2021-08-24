@@ -8,7 +8,7 @@
       {% include "conference_picker.tmpl" %}
   <br/>
   <div>Red background indicates a user that has become inactive.</div>
-  <div>Blue background indicates bids that are awaitng your review.
+  <div>Blue background indicates bids that are awaiting your review.
   Search for "Needs Review" to find them easily.</div>
 {% endblock %}
 {% block tbody %}
@@ -25,7 +25,7 @@
           {% endfor %}
           </td>
         {% endif %}
-          <td><a href="{{ row.review_url }}" class="gbe-table-link">
+          <td><a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm">
 	          Review</a></td>
       </tr>
     {% endfor %}

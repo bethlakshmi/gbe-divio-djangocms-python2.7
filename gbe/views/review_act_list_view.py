@@ -60,6 +60,5 @@ class ReviewActListView(ReviewBidListView):
                     total_average/valid_categories, 2)
             else:
                 bid_row['total_average'] = "--"
-            self.row_hook(bid, bid_row)
             rows.append(bid_row)
         return rows

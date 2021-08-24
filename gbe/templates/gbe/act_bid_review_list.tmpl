@@ -1,18 +1,4 @@
-{% extends 'gbe/gbe_table.tmpl' %}
-{% block title %}
-   Review Bids
-{% endblock %}
-{% block before_table %}
-  <h2 class="gbe-title">Act Bid Information for {{conference}}</h2>
-  <br/>
-      {% include "conference_picker.tmpl" %}
-  <br/>
-  <div>Red background indicates a user that has become inactive.</div>
-  <div>Blue background indicates bids that are awaitng your review.
-  Search for "Needs Review" to find them easily.</div>
-
-  <br/>
-{% endblock %}
+{% extends 'gbe/bid_review_list.tmpl' %}
 {% block tbody %}
   {% for row in rows %}
     <tr class="gbe-table-row {{ row.status }}">
