@@ -1,3 +1,4 @@
+from django.urls import reverse
 from gbe_logging import log_func
 from gbe.views import BidChangeStateView
 from gbe.models import Class
@@ -19,5 +20,11 @@ class ClassChangeStateView(BidChangeStateView):
             # editing are quite different
             self.object.e_title = self.object.b_title
             self.object.e_description = self.object.b_description
-        return super(ClassChangeStateView, self).bid_state_change(
-            request)
+            if int(request.POST['accepted']) == 3 and (
+                    'extra_button' in request.POST.keys()):
+                self.next_page = "%s?accepted_class=%d" % (
+                    reverse("create_class_wizard",
+                            urlconf='gbe.scheduling.urls',
+                            args=[self.object.b_conference.conference_slug]),
+                    self.object.eventitem_id)
+        return super(ClassChangeStateView, self).bid_state_change(request)

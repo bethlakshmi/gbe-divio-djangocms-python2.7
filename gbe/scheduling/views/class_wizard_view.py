@@ -68,12 +68,40 @@ class ClassWizardView(EventWizardView):
                     post=post)
         return formset
 
+    def setup_third_form(self, working_class=None):
+        context = {}
+        if working_class is not None:
+            context['third_title'] = "Book Class:  %s" % (
+                working_class.e_title)
+            context['third_form'] = ClassBookingForm(instance=working_class)
+            duration = working_class.duration.total_seconds() / timedelta(
+                hours=1).total_seconds()
+            context['scheduling_info'] = get_scheduling_info(working_class)
+        else:
+            context['third_form'] = ClassBookingForm()
+            duration = 1
+        context['scheduling_form'] = ScheduleOccurrenceForm(
+            conference=self.conference,
+            open_to_public=True,
+            initial={'duration': duration, })
+        context['scheduling_form'].fields[
+            'max_volunteer'].widget = HiddenInput()
+        context['worker_formset'] = self.make_formset(working_class)
+        return context
+
     @never_cache
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
+        working_class = None
+        if 'accepted_class' in request.GET:
+            working_class = get_object_or_404(
+                    Class,
+                    eventitem_id=request.GET['accepted_class'])
+            context.update(self.setup_third_form(working_class))
         context['second_form'] = PickClassForm(
-            initial={'conference':  self.conference})
+            initial={'conference':  self.conference,
+                     'accepted_class': working_class})
         return render(request, self.template, context)
 
     @never_cache
@@ -87,27 +115,11 @@ class ClassWizardView(EventWizardView):
         context['third_title'] = "Make New Class"
         if 'pick_class' in list(request.POST.keys()) and context[
                 'second_form'].is_valid():
-            if context['second_form'].cleaned_data[
-                    'accepted_class']:
+            working_class = None
+            if context['second_form'].cleaned_data['accepted_class']:
                 working_class = context['second_form'].cleaned_data[
                     'accepted_class']
-                context['third_title'] = "Book Class:  %s" % (
-                    working_class.e_title)
-                context['third_form'] = ClassBookingForm(
-                    instance=working_class)
-                duration = working_class.duration.total_seconds(
-                    ) / timedelta(hours=1).total_seconds()
-                context['scheduling_info'] = get_scheduling_info(working_class)
-            else:
-                context['third_form'] = ClassBookingForm()
-                duration = 1
-            context['scheduling_form'] = ScheduleOccurrenceForm(
-                conference=self.conference,
-                open_to_public=True,
-                initial={'duration': duration, })
-            context['scheduling_form'].fields[
-                'max_volunteer'].widget = HiddenInput()
-            context['worker_formset'] = self.make_formset(working_class)
+            context.update(self.setup_third_form(working_class))
 
         elif 'set_class' in list(request.POST.keys(
                 )) and 'eventitem_id' in list(request.POST.keys()):

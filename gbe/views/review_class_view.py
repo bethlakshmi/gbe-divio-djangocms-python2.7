@@ -30,4 +30,5 @@ class ReviewClassView(ReviewBidView):
         context['scheduling_info'] = get_scheduling_info(self.object)
         context['performer'] = self.performer
         context['display_contact_info'] = True
+        context['extra_button'] = "Schedule >>"
         return context
