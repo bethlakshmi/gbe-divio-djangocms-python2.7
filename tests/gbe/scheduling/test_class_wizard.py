@@ -108,7 +108,7 @@ class TestClassWizard(TestScheduling):
             response,
             ('<input type="radio" name="accepted_class" value="%d" ' +
              'id="id_accepted_class_1" checked />') % self.test_class.pk,
-            html=True)        
+            html=True)
         self.assertContains(
             response,
             'value="%s"' %
