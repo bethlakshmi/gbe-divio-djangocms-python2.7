@@ -72,9 +72,13 @@ class ReviewBidListView(View):
         review_query = self.review_query(bids)
         self.rows = self.get_rows(bids, review_query)
 
+    def groundwork(self, request):
+        pass
+
     @never_cache
     def get(self, request, *args, **kwargs):
         self.reviewer = validate_perms(request, self.reviewer_permissions)
+        self.groundwork(request)
         self.user = request.user
         if request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
@@ -92,6 +96,6 @@ class ReviewBidListView(View):
             return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
 
         self.conference_slugs = Conference.all_slugs()
-
-        return render(request, self.template,
+        return render(request,
+                      self.template,
                       self.get_context_dict())
