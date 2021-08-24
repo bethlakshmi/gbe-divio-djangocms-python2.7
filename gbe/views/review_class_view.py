@@ -1,3 +1,4 @@
+from gbe.functions import validate_perms
 from gbe.forms import (
     PersonaForm,
     ClassBidForm,
@@ -23,6 +24,9 @@ class ReviewClassView(ReviewBidView):
         super(ReviewClassView, self).groundwork(request, args, kwargs)
         self.readonlyform_pieces = None
         self.performer = self.object.teacher
+        self.can_schedule = validate_perms(request,
+                                           ('Scheduling Mavens',),
+                                           False)
 
     def make_context(self):
         context = super(ReviewClassView, self).make_context()
@@ -30,5 +34,6 @@ class ReviewClassView(ReviewBidView):
         context['scheduling_info'] = get_scheduling_info(self.object)
         context['performer'] = self.performer
         context['display_contact_info'] = True
-        context['extra_button'] = "Schedule >>"
+        if self.can_schedule:
+            context['extra_button'] = "Schedule >>"
         return context
