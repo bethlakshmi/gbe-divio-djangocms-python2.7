@@ -335,7 +335,8 @@ tech_labels = {
     'end_blackout': 'End with the stage blacked out',
 }
 prop_choices = [
-    ('I have no props or set pieces', 'I have no props or set pieces'),
+    ('I have no props or set pieces', 
+     'I have no props or set pieces/my props enter & exit with me'),
     ('I have props I will need set before my number',
      'I have props I will need set before my number'),
     ('I have props I will need a stage kitten to hand me or take from me '
