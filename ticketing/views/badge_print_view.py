@@ -11,6 +11,8 @@ from ticketing.models import (
 from django.http import HttpResponse
 import csv
 from django.views.decorators.cache import never_cache
+from gbe.functions import get_current_conference
+from scheduler.idd import get_people
 
 
 class BadgePrintView(PermissionRequiredMixin, View):
@@ -19,10 +21,12 @@ class BadgePrintView(PermissionRequiredMixin, View):
 
     @never_cache
     def get(self, request):
-        badged_purchases = Transaction.objects.exclude(
+        conference = get_current_conference()
+        badged_usernames = []
+
+        badged_purchases = Transaction.objects.filter(
+            ticket_item__ticketing_event__conference=conference).exclude(
             ticket_item__ticketingeligibilitycondition__checklistitem__badge_title__isnull=True
-            ).exclude(
-            ticket_item__ticketing_event__conference__status='completed'
             ).order_by('ticket_item')
 
         header = ['First',
@@ -31,8 +35,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
                   'Badge Name',
                   'Badge Type',
                   'Ticket Purhased',
-                  'Date',
-                  'State']
+                  'Date']
 
         badge_info = []
         # now build content - the order of loops is specific here,
@@ -40,6 +43,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
         # should have a BPT first/last name
         for badge in badged_purchases:
             buyer = badge.purchaser.matched_to_user
+            badged_usernames += [buyer.username]
             if hasattr(buyer, 'profile') and len(
                     buyer.profile.get_badge_name()) > 0:
                 badge_name = buyer.profile.get_badge_name()
@@ -54,8 +58,29 @@ class BadgePrintView(PermissionRequiredMixin, View):
                      str(badge_name),
                      condition.checklistitem.badge_title,
                      badge.ticket_item.title,
-                     badge.import_date,
-                     'In GBE'])
+                     badge.import_date])
+
+
+        role_conditions = RoleEligibilityCondition.objects.exclude(
+            checklistitem__badge_title__isnull=True)
+        title_to_badge = {}
+        for role_cond in role_conditions:
+            title_to_badge[role_cond.role] = role_cond.checklistitem.badge_title
+        roles = role_conditions.values_list('role', flat=True).distinct()
+        response = get_people(labels=[conference.conference_slug],
+                              roles=roles)
+
+        for person in response.people:
+            if person.user.username not in badged_usernames:
+                badge_info.append(
+                    [person.user.first_name,
+                     person.user.last_name,
+                     person.user.username,
+                     person.user.profile.get_badge_name(),
+                     title_to_badge[person.role],
+                     "Role Condition: %s" % person.role,
+                     "N/A"])
+                badged_usernames += [person.user.username]
 
         # end for loop through acts
         response = HttpResponse(content_type='text/csv')
