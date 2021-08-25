@@ -19,7 +19,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
 
     @never_cache
     def get(self, request):
-        badges = Transaction.objects.exclude(
+        badged_purchases = Transaction.objects.exclude(
             ticket_item__ticketingeligibilitycondition__checklistitem__badge_title__isnull=True
             ).exclude(
             ticket_item__ticketing_event__conference__status='completed'
@@ -38,7 +38,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
         # now build content - the order of loops is specific here,
         # we need ALL transactions, if they are limbo, then the purchaser
         # should have a BPT first/last name
-        for badge in badges:
+        for badge in badged_purchases:
             buyer = badge.purchaser.matched_to_user
             if hasattr(buyer, 'profile') and len(
                     buyer.profile.get_badge_name()) > 0:
