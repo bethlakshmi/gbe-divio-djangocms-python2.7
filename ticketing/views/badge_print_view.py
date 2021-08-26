@@ -60,7 +60,6 @@ class BadgePrintView(PermissionRequiredMixin, View):
                      badge.ticket_item.title,
                      badge.import_date])
 
-
         role_conditions = RoleEligibilityCondition.objects.exclude(
             checklistitem__badge_title__isnull=True)
         title_to_badge = {}
