@@ -99,26 +99,7 @@
           {%endif%}
 	  <i>downloads a CSV</i>
         </td>
-      </tr>    
-    <tr class="gbe-table-row">
-        <td><b>Badge Printing</b></td>
-        <td>
- 	  <i>Registration</i> this is for you!  Print runs for the Expo.
-	  <ul><li>Badge name auto-computed</li>
-	  <li>First, last and username</li>
-	  <li>Ticket for badge printing only</li>
-	  <li>One row per ticket</li>
-	  </ul>
-        <td>
-	  {% if conference %}
-            <a href="{%url 'reporting:badge_report' conference.conference_slug%}" class="gbe-table-link">
-	  {%else%}
-            <a href="{%url 'reporting:badge_report' %}" class="gbe-table-link">
-	  {%endif%}  
-	    Badge Print Run</a><br>
-	  <i>downloads a CSV</i>
-        </td>
-      </tr>    
+      </tr>
   </table>
 {% endblock %}
 

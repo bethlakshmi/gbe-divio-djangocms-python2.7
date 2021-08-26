@@ -34,7 +34,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
                   'username',
                   'Badge Name',
                   'Badge Type',
-                  'Ticket Purhased',
+                  'Ticket Purchased',
                   'Date']
 
         badge_info = []
@@ -64,25 +64,26 @@ class BadgePrintView(PermissionRequiredMixin, View):
         role_conditions = RoleEligibilityCondition.objects.exclude(
             checklistitem__badge_title__isnull=True)
         title_to_badge = {}
-        for role_cond in role_conditions:
-            title_to_badge[role_cond.role] = role_cond.checklistitem.badge_title
-        roles = role_conditions.values_list('role', flat=True).distinct()
-        response = get_people(labels=[conference.conference_slug],
-                              roles=roles)
+        if role_conditions.count() > 0:
+            for role_cond in role_conditions:
+                title_to_badge[
+                    role_cond.role] = role_cond.checklistitem.badge_title
+            roles = role_conditions.values_list('role', flat=True).distinct()
+            response = get_people(labels=[conference.conference_slug],
+                                  roles=roles)
 
-        for person in response.people:
-            if person.user.username not in badged_usernames:
-                badge_info.append(
-                    [person.user.first_name,
-                     person.user.last_name,
-                     person.user.username,
-                     person.user.profile.get_badge_name(),
-                     title_to_badge[person.role],
-                     "Role Condition: %s" % person.role,
-                     "N/A"])
-                badged_usernames += [person.user.username]
+            for person in response.people:
+                if person.user.username not in badged_usernames:
+                    badge_info.append(
+                        [person.user.first_name,
+                         person.user.last_name,
+                         person.user.username,
+                         person.user.profile.get_badge_name(),
+                         title_to_badge[person.role],
+                         "Role Condition: %s" % person.role,
+                         "N/A"])
+                    badged_usernames += [person.user.username]
 
-        # end for loop through acts
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=print_badges.csv'
         writer = csv.writer(response)
