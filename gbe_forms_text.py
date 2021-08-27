@@ -807,7 +807,6 @@ ticketing_event_labels = {
     'linked_events': 'GBE Events on Ticket:',
     'include_conference': 'Includes the Conference?:',
     'include_most': 'Whole Shebang?:',
-    'badgeable': 'Print a Badge?:',
     'ticket_style': 'Other Ticket Notes:',
     'event_id': 'Event Id',
     'source': 'Managed By',
@@ -823,7 +822,6 @@ ticketing_event_help_text = {
     'include_conference': 'All Classes, Panels and Workshops are included.',
     'include_most': ('Everything except Master Classes and Volunteer '
                      'Opportunities'),
-    'badgeable': 'The Reg Desk will print a name badge if this is true',
     'ticket_style': 'Special instructions for Reg Desk'
 }
 

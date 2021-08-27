@@ -39,7 +39,6 @@ class TestEditBPTEvent(TestCase):
                 'linked_events': [],
                 'include_conference': True,
                 'include_most': True,
-                'badgeable': True,
                 'ticket_style': 'ticket style',
                 'conference': self.ticketing_event.conference.pk,
                 'event_id': self.ticketing_event.event_id,

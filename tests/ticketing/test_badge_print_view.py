@@ -8,6 +8,7 @@ from tests.contexts import (
 from tests.factories.ticketing_factories import (
     RoleEligibilityConditionFactory,
     TicketingEligibilityConditionFactory,
+    TransactionFactory,
 )
 from tests.factories.gbe_factories import (
     ProfileFactory,
@@ -54,6 +55,35 @@ class TestBadgePrintView(TestCase):
         self.assertContains(
             response,
             self.ticket_context.transaction.ticket_item.title)
+        self.assertContains(response, "Badge Name")
+
+    def test_w_ticket_condition_only_purchaser(self):
+        '''loads with the default conference selection.
+        '''
+        transaction = TransactionFactory(
+            ticket_item__ticketing_event__conference=self.class_context.conference,
+        )
+        ticket_condition = TicketingEligibilityConditionFactory(
+            checklistitem__badge_title="Badge Name")
+        ticket_condition.tickets.add(
+            transaction.ticket_item)
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Disposition'),
+                         "attachment; filename=print_badges.csv")
+        self.assertContains(
+            response,
+            "First,Last,username,Badge Name,Badge Type,Ticket Purchased,Date")
+        self.assertContains(
+            response,
+            transaction.purchaser.matched_to_user.username)
+        self.assertContains(
+            response,
+            transaction.purchaser.first_name, 2)
+        self.assertContains(
+            response,
+            transaction.ticket_item.title)
         self.assertContains(response, "Badge Name")
 
     def test_w_role_condition(self):

@@ -84,7 +84,6 @@ class TicketingEventsAdmin(admin.ModelAdmin):
                    'source',
                    'act_submission_event',
                    'vendor_submission_event',
-                   'badgeable',
                    ]
     inlines = [
         DetailInline,
@@ -107,7 +106,7 @@ class TicketingEventsAdmin(admin.ModelAdmin):
                 ''',
         }),
         ("Registration", {
-            'fields': ('badgeable', 'ticket_style'),
+            'fields': ('ticket_style', ),
             'description': '''Older rules for registration.''',
             'classes': ('collapse',),
         }),

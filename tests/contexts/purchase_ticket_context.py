@@ -13,7 +13,6 @@ class PurchasedTicketContext:
         self.conference = conference or ConferenceFactory()
         self.profile = profile or ProfileFactory()
         self.transaction = TransactionFactory(
-            ticket_item__ticketing_event__badgeable=True,
             ticket_item__ticketing_event__conference=self.conference,
             purchaser__matched_to_user=self.profile.user_object,
         )

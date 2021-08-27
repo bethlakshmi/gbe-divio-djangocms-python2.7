@@ -85,7 +85,6 @@ class TicketingEvents(models.Model):
                                            blank=True)
     include_conference = models.BooleanField(default=False)
     include_most = models.BooleanField(default=False)
-    badgeable = models.BooleanField(default=False)
     ticket_style = models.CharField(max_length=50, blank=True)
     conference = models.ForeignKey('gbe.Conference',
                                    on_delete=models.CASCADE,
