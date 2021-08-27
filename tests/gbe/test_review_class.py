@@ -48,6 +48,20 @@ class TestReviewClass(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Bid Information')
+        self.assertContains(response, "Review Bids")
+        self.assertContains(response, "Bid Control for Coordinator")
+        self.assertNotContains(response, 'name="extra_button"')
+
+    def test_review_class_w_scheduling(self):
+        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        klass = ClassFactory()
+        url = reverse(self.view_name,
+                      args=[klass.pk],
+                      urlconf='gbe.urls')
+
+        login_as(self.privileged_user, self)
+        response = self.client.get(url)
+        self.assertContains(response, 'name="extra_button"')
 
     def test_review_class_post_form_invalid(self):
         klass = ClassFactory()

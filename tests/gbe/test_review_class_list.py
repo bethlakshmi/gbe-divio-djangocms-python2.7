@@ -1,5 +1,4 @@
 import gbe.models as conf
-import nose.tools as nt
 from django.test import (
     TestCase,
     Client,
@@ -44,8 +43,36 @@ class TestReviewClassList(TestCase):
             url,
             data={'conf_slug': self.conference.conference_slug})
 
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Bid Information')
+        self.assertNotContains(response, "Accept &amp; Schedule")
+
+    def test_review_class_w_scheduling(self):
+        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        url = reverse(self.view_name, urlconf="gbe.urls")
+        login_as(self.privileged_user, self)
+        response = self.client.get(
+            url,
+            data={'conf_slug': self.conference.conference_slug})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, "Accept &amp; Schedule")
+
+    def test_review_accepted_class_w_scheduling(self):
+        ClassFactory(
+            accepted=3,
+            b_conference=self.conference,
+            e_conference=self.conference,
+            submitted=True)
+        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        url = reverse(self.view_name, urlconf="gbe.urls")
+        login_as(self.privileged_user, self)
+        response = self.client.get(
+            url,
+            data={'conf_slug': self.conference.conference_slug})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, "Add to Schedule")
 
     def test_review_class_bad_user(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -53,7 +80,7 @@ class TestReviewClassList(TestCase):
         response = self.client.get(
             url,
             data={'conf_slug': self.conference.conference_slug})
-        nt.assert_equal(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_review_class_no_profile(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -61,7 +88,7 @@ class TestReviewClassList(TestCase):
         response = self.client.get(
             url,
             data={'conf_slug': self.conference.conference_slug})
-        nt.assert_equal(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_review_class_inactive_user(self):
         ClassFactory(

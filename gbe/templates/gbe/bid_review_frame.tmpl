@@ -52,6 +52,9 @@
           {{ actionform.as_table }}
         </table>
         <br><br>
+        {% if extra_button %}
+        <input type="submit" name="extra_button" value="{{extra_button}}" class="gbe-btn-primary">&nbsp;
+        {% endif %}
         <input type="submit" value="Submit Form" class="gbe-btn-primary"><br><br>
         </form>
     </div>

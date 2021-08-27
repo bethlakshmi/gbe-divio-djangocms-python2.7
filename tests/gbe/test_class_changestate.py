@@ -33,23 +33,6 @@ class TestClassChangestate(TestCase):
         response = self.client.post(url, data=self.data)
         nt.assert_equal(response.status_code, 302)
 
-    def test_class_accepted_displays_on_scheduler(self):
-        '''check that bid acceptance sets e_title & e_description'''
-        self.klass.e_title = ''
-        self.klass.e_description = ''
-        self.klass.save()
-        url = reverse(self.view_name,
-                      args=[self.klass.pk],
-                      urlconf='gbe.urls')
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
-        login_as(self.privileged_user, self)
-        response = self.client.post(url, data=self.data)
-        sched_url = reverse('create_class_wizard',
-                            urlconf='gbe.scheduling.urls',
-                            args=[self.klass.b_conference.conference_slug])
-        response = self.client.post(sched_url)
-        self.assertContains(response, self.klass.b_title)
-
     def test_class_changestate_unauthorized_user(self):
         '''A regular user is changing the state, it fails'''
         url = reverse(self.view_name,
@@ -68,6 +51,25 @@ class TestClassChangestate(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(url, data={'accepted': '1'})
         assert not context.bid.scheduler_events.exists()
+
+    def test_class_changestate_immediate_schedule(self):
+        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        context = ClassContext()
+        url = reverse(self.view_name,
+                      args=[context.bid.pk],
+                      urlconf='gbe.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.post(
+            url,
+            data={'accepted': '3', 'extra_button': "Schedule >>"},
+            follow=True)
+        self.assertRedirects(
+            response,
+            "%s?accepted_class=%d" % (
+                reverse("create_class_wizard",
+                        urlconf='gbe.scheduling.urls',
+                        args=[context.conference.conference_slug]),
+                context.bid.eventitem_id))
 
     def test_class_changestate_bad_data(self):
         '''The proper coordinator is changing the state, it works'''
