@@ -842,8 +842,6 @@ panel_participation_types = [('Moderator', 'Moderator'),
                              ('Panelist', 'Panelist'),
                              ('Any of the Above', 'Any of the Above')]
 
-class_participation_types = [('Teacher', 'Teacher')]
-
 list_titles = {
     'class': '''Class Descriptions at GBE''',
     'panel': '''Panel Descriptions at GBE''',
@@ -921,9 +919,6 @@ list_text = {
     'special': '''    <p> A collection of events so special that we had no \
         choice but to call them "Special Events".</p> '''
 }
-
-acceptance_note = '''Only accepted classes will show up in scheduling and on \
-        the website.'''
 
 # stop gap for refactoring - BB 4/28/2017
 scheduling_help_texts = {
@@ -1007,9 +1002,6 @@ costume_proposal_labels = {
         know?',
     'picture':  'Picture of the costume'
 }
-
-valid_model_error = '''Select a valid choice. That choice is not one of the \
-    available choices.'''
 
 theme_help = {
     'no_args': '''This form requires either an instance of a StyleValue or a

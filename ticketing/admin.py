@@ -141,6 +141,7 @@ class EligibilityConditionAdmin(admin.ModelAdmin):
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+
     def ticketing_exclusions(self, obj):
         return obj.ticketing_ticketingexclusion.count()
 
@@ -159,6 +160,7 @@ class TicketEligibilityConditionAdmin(admin.ModelAdmin):
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+
     def ticketing_exclusions(self, obj):
         return obj.ticketing_ticketingexclusion.count()
 
@@ -181,6 +183,7 @@ class RoleExcludeAdmin(admin.ModelAdmin):
                     'condition',
                     'role',
                     'event')
+
 
 class TicketExcludeAdmin(admin.ModelAdmin):
     list_display = ('pk',
