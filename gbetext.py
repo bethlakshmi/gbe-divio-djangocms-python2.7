@@ -73,7 +73,7 @@ act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
 </span> reflects acts with deactivated users.<br></div>'''
 act_coord_instruct = '''This will create an act that is owned by the performer
  selected.  The performer will be given a free act application fee, and
- the act will be submitted.  You will redirected to the act accept page, 
+ the act will be submitted.  You will redirected to the act accept page,
  so you can cast the act into a show.  As soon as that is done, the performer
  should submit their act tech info.  This flow skips notifying reviewers.'''
 volunteer_panel_instr = '''<div>Red text indicates a user that has become
@@ -623,11 +623,12 @@ purchaser's email could be found.'''
 import_transaction_message = '''A sync was attempted, check the logs for \
 errors, if 0 transactions were recieved, it can mean we are up to date, it \
 can mean we failed to import any.'''
-intro_role_cond_message = '''These items are granted if the user has the given \
-role (shown in green cells), unles the overrides listed apply.  In cases of \
-a user having multiple roles, only 1 item is granted, so roles override each \
-other to avoid accumulating items.  If a user bought a ticket (at a discount), \
-their comps may also be overridden as it's covered by the discount.'''
+intro_role_cond_message = '''These items are granted if the user has the given
+ role (shown in green cells), unles the overrides listed apply.  In cases of
+ a user having multiple roles, only 1 item is granted, so roles override each
+ other to avoid accumulating items.  If a user bought a ticket (at a
+ discount), their comps may also be overridden as it's covered by the
+  discount.'''
 intro_ticket_cond_message = '''The ticket types listed in a given green cell \
 will grant the user the given item.  Ticket conditions do not show any \
 overrides.'''
