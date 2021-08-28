@@ -6,6 +6,7 @@
 # - Betty 8/15
 from gbe_logging import logger
 from ticketing.models import (
+    Purchaser,
     TicketingEvents,
     PayPalSettings,
     RoleEligibilityCondition,
@@ -38,6 +39,29 @@ def fee_paid(bid_type, user_name, conference):
     elif bid_type == "Vendor":
         return verify_vendor_app_paid(user_name, conference)
     return True
+
+
+def comp_act(user, conference):
+    comp_ticket = TicketItem.objects.filter(
+        add_on=False,
+        ticketing_event__act_submission_event=True,
+        ticketing_event__conference=conference).first()
+    purchaser = Purchaser(
+        matched_to_user=user,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email)
+    purchaser.save()
+    transaction = Transaction(
+        purchaser=purchaser,
+        ticket_item=comp_ticket,
+        amount=0,
+        order_date=datetime.now(),
+        shipping_method="Comp'ed",
+        order_notes="Comped through IDD",
+        reference="auto",
+        payment_source="GBE")
+    transaction.save()
 
 
 def verify_performer_app_paid(user_name, conference):

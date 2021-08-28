@@ -3,7 +3,9 @@
    Review Bids
 {% endblock %}
 {% block before_table %}
+ {% block header %}
   <h2 class="gbe-title">Bid Information for {{conference}}</h2>
+ {% endblock %}
   <br/>
       {% include "conference_picker.tmpl" %}
   <br/>

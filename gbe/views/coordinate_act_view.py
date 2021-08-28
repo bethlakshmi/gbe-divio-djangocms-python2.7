@@ -1,16 +1,10 @@
 from gbe.views import MakeActView
-from dal import autocomplete
-from django.http import Http404
 from django.urls import reverse
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpResponseRedirect
-from gbe.models import (
-    Act,
-    Performer,
-    TechInfo,
-)
-from gbe.views.act_display_functions import display_invalid_act
-import datetime
+from gbe.models import TechInfo
+from gbe.forms import ActCoordinationForm
+from gbetext import act_coord_instruct
+from gbe.ticketing_idd_interface import comp_act
 
 
 class CoordinateActView(PermissionRequiredMixin, MakeActView):
@@ -18,6 +12,9 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
     view_title = 'Book an Act'
     has_draft = False
     permission_required = 'gbe.assign_act'
+    submit_form = ActCoordinationForm
+    coordinated = True
+    instructions = act_coord_instruct
 
     def groundwork(self, request, args, kwargs):
         # do the basic bid stuff, but NOT the regular act stuff
@@ -25,10 +22,33 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
         if redirect:
             return redirect
 
-    def set_up_form(self):
-        self.form.fields['performer'].widget = autocomplete.ModelSelect2(
-            url='coordinator-performer-autocomplete')
-        self.form.fields['performer'].queryset = Performer.objects.all()
-
     def get_initial(self):
         return {'b_conference': self.conference}
+
+    def set_valid_form(self, request):
+        if not hasattr(self.bid_object, 'tech'):
+            techinfo = TechInfo()
+        else:
+            techinfo = self.bid_object.tech
+
+        techinfo.duration = self.form.cleaned_data['act_duration']
+        techinfo.track_title = self.form.cleaned_data['track_title']
+        techinfo.track_artist = self.form.cleaned_data['track_artist']
+        techinfo.save()
+        self.bid_object.tech = techinfo
+        self.bid_object.save()
+        self.form.save()
+        comp_act(self.bid_object.performer.contact.user_object,
+                 self.conference)
+
+    def make_context(self, request):
+        context = super(MakeActView, self).make_context(request)
+        context['nodraft'] = "Submit & Proceed to Casting"
+        return context
+
+    def submit_bid(self, request):
+        self.bid_object.submitted = True
+        self.bid_object.save()
+        return reverse('act_review',
+                       urlconf="gbe.urls",
+                       args=[self.bid_object.id])

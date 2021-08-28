@@ -71,6 +71,11 @@ act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
  acts.</div><div><span class="gbe-form-error gbe-inactive">Bold and red names
 </span> reflects acts with deactivated users.<br></div>'''
+act_coord_instruct = '''This will create an act that is owned by the performer
+ selected.  The performer will be given a free act application fee, and
+ the act will be submitted.  You will redirected to the act accept page, 
+ so you can cast the act into a show.  As soon as that is done, the performer
+ should submit their act tech info.  This flow skips notifying reviewers.'''
 volunteer_panel_instr = '''<div>Red text indicates a user that has become
  inactive.</div><div>Yellow background indicates a volunteer session that
  requires approval.</div><div>Blue background indicates volunteers that have

@@ -16,7 +16,6 @@ from gbetext import (
     default_act_draft_msg,
 )
 from gbe.views.act_display_functions import display_invalid_act
-import datetime
 
 
 class MakeActView(MakeBidView):
