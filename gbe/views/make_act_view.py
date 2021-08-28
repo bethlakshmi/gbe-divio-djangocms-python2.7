@@ -80,17 +80,12 @@ class MakeActView(MakeBidView):
                 'act_duration': self.bid_object.tech.duration}
         else:
             initial = {
-                'owner': self.owner,
                 'performer': self.personae[0],
                 'b_conference': self.conference,
                 'b_title': "%s Act - %s" % (
                     self.owner,
                     self.conference.conference_slug)}
         return initial
-
-    def set_up_form(self):
-        self.form.fields['performer'].queryset = Performer.objects.filter(
-            contact=self.owner)
 
     def set_valid_form(self, request):
         if not hasattr(self.bid_object, 'tech'):

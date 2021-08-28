@@ -15,6 +15,7 @@ from gbe.views import (
     BusinessUpdate,
     ClassChangeStateView,
     CloneBidView,
+    CoordinateActView,
     CostumeChangeStateView,
     DeletePerformerView,
     DeleteProfileView,
@@ -90,6 +91,8 @@ urlpatterns = [
     url(r'^act/changestate/(?P<object_id>\d+)/?$',
         ActChangeStateView.as_view(),
         name='act_changestate'),
+    url(r'^act/coordinate/?$',
+        CoordinateActView.as_view(), name='act_coord_create'),
 
     url(r'^summer_act/create/?$',
         MakeSummerActView.as_view(), name='summeract_create'),
