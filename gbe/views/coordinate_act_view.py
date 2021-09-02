@@ -52,3 +52,7 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
         return reverse('act_review',
                        urlconf="gbe.urls",
                        args=[self.bid_object.id])
+
+    def get_invalid_response(self, request):
+        # Make Act gives personalized links, they are irrelevant here.
+        return super(MakeActView, self).get_invalid_response(request)

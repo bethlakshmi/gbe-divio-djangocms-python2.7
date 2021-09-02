@@ -539,8 +539,9 @@ submitted.  Stay tuned, later on you\'ll be asked for further information."
 default_update_act_tech = "Your Act Technical Details have been updated."
 default_act_title_conflict = '''You've aready created a draft or made a \
 submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''
-act_not_unique = '''Please name this act with a different title, \
-or edit the existing act.'''
+act_not_unique = '''The act has the same title as another act bid for this 
+ conference by this user.  Please name this act with a different title, \
+or change the title of the existing act.'''
 no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."
