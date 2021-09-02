@@ -84,7 +84,6 @@ class TicketingEventsAdmin(admin.ModelAdmin):
                    'source',
                    'act_submission_event',
                    'vendor_submission_event',
-                   'badgeable',
                    ]
     inlines = [
         DetailInline,
@@ -107,7 +106,7 @@ class TicketingEventsAdmin(admin.ModelAdmin):
                 ''',
         }),
         ("Registration", {
-            'fields': ('badgeable', 'ticket_style'),
+            'fields': ('ticket_style', ),
             'description': '''Older rules for registration.''',
             'classes': ('collapse',),
         }),
@@ -142,6 +141,7 @@ class EligibilityConditionAdmin(admin.ModelAdmin):
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+
     def ticketing_exclusions(self, obj):
         return obj.ticketing_ticketingexclusion.count()
 
@@ -160,6 +160,7 @@ class TicketEligibilityConditionAdmin(admin.ModelAdmin):
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+
     def ticketing_exclusions(self, obj):
         return obj.ticketing_ticketingexclusion.count()
 
@@ -182,6 +183,7 @@ class RoleExcludeAdmin(admin.ModelAdmin):
                     'condition',
                     'role',
                     'event')
+
 
 class TicketExcludeAdmin(admin.ModelAdmin):
     list_display = ('pk',

@@ -9,18 +9,10 @@ from tests.factories.ticketing_factories import (
 
 class PurchasedTicketContext:
 
-    def __init__(self, profile=None):
+    def __init__(self, profile=None, conference=None):
+        self.conference = conference or ConferenceFactory()
+        self.profile = profile or ProfileFactory()
         self.transaction = TransactionFactory(
-            ticket_item__ticketing_event__badgeable=True
+            ticket_item__ticketing_event__conference=self.conference,
+            purchaser__matched_to_user=self.profile.user_object,
         )
-        if profile:
-            self.profile = profile
-            # the order of setting this line matters - see test_reports - BB
-            self.transaction.purchaser.matched_to_user = \
-                self.profile.user_object
-            self.transaction.purchaser.save()
-        else:
-            self.profile = ProfileFactory(
-                user_object=self.transaction.purchaser.matched_to_user
-            )
-        self.conference = self.transaction.ticket_item.ticketing_event.conference

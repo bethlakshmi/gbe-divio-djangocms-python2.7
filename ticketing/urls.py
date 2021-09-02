@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from ticketing import views
 from ticketing.views import (
+    BadgePrintView,
     CheckListItemList,
     CreateTransaction,
 )
@@ -30,6 +31,9 @@ urlpatterns = [
     url(r'^ticketing/checklist/?$',
         CheckListItemList.as_view(),
         name='checklistitem_list'),
+    url(r'^ticketing/badges/?$',
+        BadgePrintView.as_view(),
+        name='badge_print'),
     url(r'^ticketing/set_ticket_to_event/(?P<event_id>\d+)/' +
         '(?P<state>on|off)/(?P<gbe_eventitem_id>\d+)/?$',
         views.set_ticket_to_event,

@@ -164,7 +164,6 @@ class BPTEventForm(forms.ModelForm):
             'linked_events',
             'include_conference',
             'include_most',
-            'badgeable',
             'ticket_style']
         labels = ticketing_event_labels
         help_texts = ticketing_event_help_text

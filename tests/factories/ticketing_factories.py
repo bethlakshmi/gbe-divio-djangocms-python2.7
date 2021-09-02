@@ -25,7 +25,6 @@ class TicketingEventsFactory(DjangoModelFactory):
     vendor_submission_event = False
     include_conference = False
     include_most = False
-    badgeable = False
     ticket_style = Sequence(lambda x: "TicketingEventsTicketStyle #%d" % x)
     source = 1
 

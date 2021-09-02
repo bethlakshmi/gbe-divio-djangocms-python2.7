@@ -12,7 +12,6 @@ from gbe.reporting.views import (
 )
 from gbe.reporting.report_views import (
     env_stuff,
-    export_badge_report,
     list_reports,
     room_schedule,
     room_setup,
@@ -63,8 +62,4 @@ urlpatterns = [
     url(r'^reports/acttechinfo/detail/(\d+)/?$',
         act_techinfo_detail,
         name='act_techinfo_detail'),
-    url(r'^reports/badges/print_run/(?P<conference_choice>[-\w]+)/?$',
-        export_badge_report, name='badge_report'),
-    url(r'^reports/badges/print_run/?$',
-        export_badge_report, name='badge_report'),
 ]
