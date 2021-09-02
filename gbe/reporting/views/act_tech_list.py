@@ -100,11 +100,8 @@ class ActTechList(View):
                         prop_setup_list = item
                     else:
                         prop_setup_list = "%s, %s" % (prop_setup_list, item)
-                if len(prop_setup_list) == 0:
-                    prop_setup_list = act.tech.crew_instruct
-                else:
-                    prop_setup_list = "%s\n%s" % (prop_setup_list,
-                                                  act.tech.crew_instruct)
+                prop_setup_list = "%s\n%s" % (prop_setup_list,
+                                              act.tech.crew_instruct)
             else:
                 prop_setup_list = act.tech.crew_instruct
             if act.tech.read_exact:
