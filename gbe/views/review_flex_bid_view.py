@@ -92,6 +92,9 @@ class FlexibleReviewBidView(ReviewBidView):
             bid=act).order_by('evaluator',)
 
     def bid_review_response(self, request):
+        if 'next' in request.GET:
+            self.actionURL = "%s?next=%s" % (self.actionURL,
+                                             request.GET['next'])
         return render(
             request,
             self.review_template,

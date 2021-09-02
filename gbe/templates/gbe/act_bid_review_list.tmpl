@@ -1,4 +1,11 @@
 {% extends 'gbe/bid_review_list.tmpl' %}
+ {% block header %}
+  <div class="row"><div class="col-md-8">
+    <h2 class="gbe-title">Bid Information for {{conference}}</h2>
+   </div><div class="col-md-4 text-right">
+    {% if perms.gbe.assign_act %}<a href="{% url 'gbe:act_coord_create' %}" role="button" class="btn gbe-btn-primary">Create Approved Act</a>{% endif %}
+  </div></div>
+ {% endblock %}
 {% block tbody %}
   {% for row in rows %}
     <tr class="gbe-table-row {{ row.status }}">

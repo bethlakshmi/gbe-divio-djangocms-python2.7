@@ -35,10 +35,10 @@ from gbe.ticketing_idd_interface import (
 
 class MakeBidView(View):
     form = None
-    fee_link = None
     has_draft = True
     instructions = ''
     payment_form = None
+    coordinated = False
 
     def groundwork(self, request, args, kwargs):
         self.owner = validate_profile(request, require=False)
@@ -120,7 +120,7 @@ class MakeBidView(View):
             'fee_paid': paid,
             'view_header_text': instructions[0].description,
             }
-        if not paid:
+        if not paid and not self.coordinated:
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="FEE_MESSAGE",
@@ -228,7 +228,7 @@ class MakeBidView(View):
         if not self.check_validity(request):
             return self.get_invalid_response(request)
 
-        if not fee_paid(
+        if not self.coordinated and not fee_paid(
                 self.bid_type,
                 self.owner.user_object.username,
                 self.conference) and "draft" not in list(request.POST.keys()):

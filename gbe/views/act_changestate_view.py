@@ -212,6 +212,8 @@ class ActChangeStateView(BidChangeStateView):
         super(ActChangeStateView, self).prep_bid(request, args, kwargs)
         if 'next' in request.POST:
             self.next_page = request.POST['next']
+        elif 'next' in request.GET:
+            self.next_page = request.GET['next']
         if self.act_accepted(request):
             response = get_occurrences(
                 foreign_event_ids=[request.POST['show']])

@@ -3,6 +3,7 @@ from django.conf.urls import url, include
 from aldryn_django.utils import i18n_patterns
 import aldryn_addons.urls
 from gbe.views import (
+    CoordinatorPerformerAutocomplete,
     LimitedBusinessAutocomplete,
     LimitedPerformerAutocomplete,
     LimitedPersonaAutocomplete,
@@ -31,6 +32,11 @@ urlpatterns = [
         name='limited-persona-autocomplete',
     ),
     url(
+        r'^coordinator-performer-autocomplete/$',
+        CoordinatorPerformerAutocomplete.as_view(),
+        name='coordinator-performer-autocomplete',
+    ),
+    url(
         r'^persona-autocomplete/$',
         PersonaAutocomplete.as_view(),
         name='persona-autocomplete',
@@ -47,7 +53,7 @@ urlpatterns = [
     url(r'^', include('gbe.scheduling.urls')),
     url(r'^', include('gbe.themes.urls')),
     url(r'^paypal/', include('paypal.standard.ipn.urls')),
-#    path('__debug__/', include(debug_toolbar.urls)),
+    #    path('__debug__/', include(debug_toolbar.urls)),
 ] + aldryn_addons.urls.patterns() + i18n_patterns(
     # add your own i18n patterns here
     *aldryn_addons.urls.i18n_patterns()  # MUST be the last entry!

@@ -131,3 +131,8 @@ class Act (Biddable):
 
     class Meta:
         app_label = "gbe"
+        permissions = [
+            ("assign_act",
+             "Coordinate acts - assign status, book, and create for others"),
+            ("review_act", "Can read other's acts and create reviews."),
+        ]

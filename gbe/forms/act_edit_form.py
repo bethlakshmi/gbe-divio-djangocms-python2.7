@@ -54,6 +54,11 @@ class ActEditDraftForm(ModelForm):
         required=False
     )
     b_conference = HiddenInput()
+    b_description = CharField(
+        required=True,
+        label=act_bid_labels['description'],
+        help_text=act_help_texts['description'],
+        widget=Textarea)
 
     class Meta:
         model = Act
@@ -69,10 +74,7 @@ class ActEditDraftForm(ModelForm):
             'video_choice',
             'b_description',
             'why_you',
-            'b_conference',
-            'act_duration',
-            'track_artist',
-            'track_title']
+            'b_conference']
         labels = act_bid_labels
         help_texts = act_help_texts
         widgets = {

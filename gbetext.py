@@ -71,6 +71,14 @@ act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
  acts.</div><div><span class="gbe-form-error gbe-inactive">Bold and red names
 </span> reflects acts with deactivated users.<br></div>'''
+act_coord_instruct = '''This will create an act that is owned by the performer
+ selected.  The performer will be given a free act application fee, and
+ the act will be submitted.  You will redirected to the act accept page,
+ so you can cast the act into a show.  As soon as that is done, the performer
+ should submit their act tech info.  This flow skips notifying reviewers.'''
+no_comp_msg = '''Something went wrong with creating a comp ticket.  This can
+ have unknown repurcussions on a user submitting future acts.  Set up an
+ act submit ticket and make a manual transaction for this user.'''
 volunteer_panel_instr = '''<div>Red text indicates a user that has become
  inactive.</div><div>Yellow background indicates a volunteer session that
  requires approval.</div><div>Blue background indicates volunteers that have
@@ -534,8 +542,9 @@ submitted.  Stay tuned, later on you\'ll be asked for further information."
 default_update_act_tech = "Your Act Technical Details have been updated."
 default_act_title_conflict = '''You've aready created a draft or made a \
 submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''
-act_not_unique = '''Please name this act with a different title, \
-or edit the existing act.'''
+act_not_unique = '''The act has the same title as another act bid for this
+ conference by this user.  Please name this act with a different title,
+ or change the title of the existing act.'''
 no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."
@@ -618,11 +627,12 @@ purchaser's email could be found.'''
 import_transaction_message = '''A sync was attempted, check the logs for \
 errors, if 0 transactions were recieved, it can mean we are up to date, it \
 can mean we failed to import any.'''
-intro_role_cond_message = '''These items are granted if the user has the given \
-role (shown in green cells), unles the overrides listed apply.  In cases of \
-a user having multiple roles, only 1 item is granted, so roles override each \
-other to avoid accumulating items.  If a user bought a ticket (at a discount), \
-their comps may also be overridden as it's covered by the discount.'''
+intro_role_cond_message = '''These items are granted if the user has the given
+ role (shown in green cells), unles the overrides listed apply.  In cases of
+ a user having multiple roles, only 1 item is granted, so roles override each
+ other to avoid accumulating items.  If a user bought a ticket (at a
+ discount), their comps may also be overridden as it's covered by the
+  discount.'''
 intro_ticket_cond_message = '''The ticket types listed in a given green cell \
 will grant the user the given item.  Ticket conditions do not show any \
 overrides.'''

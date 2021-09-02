@@ -71,6 +71,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                         'Staff Lead')
     cross_show_scope = ('Scheduling Mavens', 'Act Coordinator', 'Staff Lead')
     rebook_perm = ('Producer', 'Act Coordinator')
+    assign_act_perm = ('Producer', 'Stage Manager')
     approve_volunteers = ('Technical Director',
                           'Scheduling Mavens',
                           'Producer',
@@ -113,6 +114,10 @@ class ShowDashboard(ProfileRequiredMixin, View):
         self.can_approve_vol = validate_perms(request,
                                               self.approve_volunteers,
                                               require=False)
+        self.can_assign_act = request.user.has_perm(
+            'gbe.assign_act') or validate_perms(request,
+                                                self.assign_act_perm,
+                                                require=False)
         self.show_scope = []
         if validate_perms(request,
                           self.cross_show_scope,
@@ -245,6 +250,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'can_schedule': self.can_schedule_acts,
                 'can_rebook': self.can_rebook,
                 'can_approve_vol': self.can_approve_vol,
+                'can_assign_act': self.can_assign_act,
                 'change_acts': self.can_change_techinfo,
                 'opps': opps,
                 'role_commit_map': role_commit_map,
