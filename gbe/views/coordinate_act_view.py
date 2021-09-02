@@ -23,22 +23,17 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
 
     def groundwork(self, request, args, kwargs):
         # do the basic bid stuff, but NOT the regular act stuff
-        redirect = super(MakeActView, self).groundwork(request, args, kwargs)
-        if redirect:
-            return redirect
+        return super(MakeActView, self).groundwork(request, args, kwargs)
 
     def get_initial(self):
         return {'b_conference': self.conference}
 
     def set_valid_form(self, request):
-        if not hasattr(self.bid_object, 'tech'):
-            techinfo = TechInfo()
-        else:
-            techinfo = self.bid_object.tech
-
-        techinfo.duration = self.form.cleaned_data['act_duration']
-        techinfo.track_title = self.form.cleaned_data['track_title']
-        techinfo.track_artist = self.form.cleaned_data['track_artist']
+        techinfo = TechInfo(
+            duration=self.form.cleaned_data['act_duration'],
+            track_title=self.form.cleaned_data['track_title'],
+            track_artist = self.form.cleaned_data['track_artist']
+            )
         techinfo.save()
         self.bid_object.tech = techinfo
         self.bid_object.save()
