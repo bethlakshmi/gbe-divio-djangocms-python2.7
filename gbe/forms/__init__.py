@@ -26,6 +26,7 @@ from .act_edit_form import (
     ActEditDraftForm,
     ActEditForm,
 )
+from .act_coordination_form import ActCoordinationForm
 from .class_bid_form import (
     ClassBidDraftForm,
     ClassBidForm,

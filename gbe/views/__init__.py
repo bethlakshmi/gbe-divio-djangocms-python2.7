@@ -12,6 +12,7 @@ from .clone_bid_view import CloneBidView
 
 # personas & business
 from .limited_performer_autocomplete import LimitedPerformerAutocomplete
+from .coordinator_performer_autocomplete import CoordinatorPerformerAutocomplete
 from .limited_persona_autocomplete import LimitedPersonaAutocomplete
 from .limited_business_autocomplete import LimitedBusinessAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
@@ -37,6 +38,7 @@ from .make_class_view import MakeClassView
 from .make_costume_view import MakeCostumeView
 from .make_vendor_view import MakeVendorView
 from .make_summer_act_view import MakeSummerActView
+from .coordinate_act_view import CoordinateActView
 
 # view
 from .view_act_view import ViewActView

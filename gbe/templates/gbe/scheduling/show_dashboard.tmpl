@@ -17,37 +17,43 @@
  </ul>
  <div class="gbe-tab-area">
 {% endif %}
+<div class="row">
+  <div class="col-12 col-md-8">
   <h2 class="review-title gbe-title">{{this_show}} Dashboard</h2>
+</div><div class="col-12 col-md-4 text-right">{% if can_assign_act %}
+    <a href="{% url 'gbe:act_coord_create' %}?next={{ request.get_full_path }}" role="button" class="btn gbe-btn-secondary my-2">Create Act</a>{% endif %}
+    </div></div>
 <div class="pt-2">
-  <div class="row"><div class="col-4">
+  <div class="row">
+  <div class="col-12 col-lg-4">
   <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
     {% for form in email_forms %}
       {{form}}
     {% endfor %}
     <input type="hidden" name="email-select-roles" value="Performer" id="id_email-select-roles_0">
-  <input type = "submit" name="refine" value="Email Performers" class="btn gbe-btn-primary">
+  <input type = "submit" name="refine" value="Email Performers" class="btn gbe-btn-primary my-2">
   </form>
   </div>
-  <div class="col-4">
+  <div class="col-12 col-lg-4">
   <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
     {% for form in email_forms %}
       {{form}}
     {% endfor %}
     <input type="hidden" name="email-select-roles" value="Volunteer" id="id_email-select-roles_0">
-    <input type = "submit" name="refine" value="Email Volunters" class="btn gbe-btn-primary">
+    <input type = "submit" name="refine" value="Email Volunters" class="btn gbe-btn-primary my-2">
   </form>
   </div>
-  <div class="col-4">
+  <div class="col-12 col-lg-4">
   <form method="POST" action="{% url 'email:mail_to_roles' %}" enctype="multipart/form-data">{% csrf_token %}
     {% for form in email_forms %}
       {{form}}
     {% endfor %}
     <input type="hidden" name="email-select-roles" value="Performer" id="id_email-select-roles_0">
     <input type="hidden" name="email-select-roles" value="Volunteer" id="id_email-select-roles_1">
-    <input type = "submit" name="refine" value="Email Performers & Volunteers" class="btn gbe-btn-primary">
+    <input type = "submit" name="refine" value="Email Performers & Volunteers" class="btn gbe-btn-primary my-2">
   </form>
-  </div></div>
-</div>
+  </div>
+</div></div>
 <div id="accordion" class="gbe_accordion my-3">
   <div class="card gbe-panel-list">
     <div class="card-header gbe-bg-dark" id="headingOne">

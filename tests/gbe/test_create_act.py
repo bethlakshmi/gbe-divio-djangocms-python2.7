@@ -11,7 +11,6 @@ from tests.factories.gbe_factories import (
 )
 from tests.functions.gbe_functions import (
     login_as,
-    current_conference,
     assert_alert_exists,
     make_act_app_purchase,
     make_act_app_ticket,
@@ -76,7 +75,6 @@ class TestCreateAct(TestCase):
         return response, act_form
 
     def post_unpaid_act_draft(self):
-        current_conference()
         login_as(self.performer.performer_profile, self)
         POST = self.get_act_form()
         POST['draft'] = True
