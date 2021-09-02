@@ -85,7 +85,6 @@ class TicketingEvents(models.Model):
                                            blank=True)
     include_conference = models.BooleanField(default=False)
     include_most = models.BooleanField(default=False)
-    badgeable = models.BooleanField(default=False)
     ticket_style = models.CharField(max_length=50, blank=True)
     conference = models.ForeignKey('gbe.Conference',
                                    on_delete=models.CASCADE,
@@ -239,6 +238,7 @@ class CheckListItem(models.Model):
     a badge has a name on it)
     '''
     description = models.CharField(max_length=50, unique=True)
+    badge_title = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return str(self.description)

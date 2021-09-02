@@ -335,7 +335,8 @@ tech_labels = {
     'end_blackout': 'End with the stage blacked out',
 }
 prop_choices = [
-    ('I have no props or set pieces', 'I have no props or set pieces'),
+    ('I have no props or set pieces',
+     'I have no props or set pieces/my props enter & exit with me'),
     ('I have props I will need set before my number',
      'I have props I will need set before my number'),
     ('I have props I will need a stage kitten to hand me or take from me '
@@ -806,7 +807,6 @@ ticketing_event_labels = {
     'linked_events': 'GBE Events on Ticket:',
     'include_conference': 'Includes the Conference?:',
     'include_most': 'Whole Shebang?:',
-    'badgeable': 'Print a Badge?:',
     'ticket_style': 'Other Ticket Notes:',
     'event_id': 'Event Id',
     'source': 'Managed By',
@@ -822,7 +822,6 @@ ticketing_event_help_text = {
     'include_conference': 'All Classes, Panels and Workshops are included.',
     'include_most': ('Everything except Master Classes and Volunteer '
                      'Opportunities'),
-    'badgeable': 'The Reg Desk will print a name badge if this is true',
     'ticket_style': 'Special instructions for Reg Desk'
 }
 
@@ -842,8 +841,6 @@ conference_participation_types = [('Teacher', 'Teacher'),
 panel_participation_types = [('Moderator', 'Moderator'),
                              ('Panelist', 'Panelist'),
                              ('Any of the Above', 'Any of the Above')]
-
-class_participation_types = [('Teacher', 'Teacher')]
 
 list_titles = {
     'class': '''Class Descriptions at GBE''',
@@ -922,9 +919,6 @@ list_text = {
     'special': '''    <p> A collection of events so special that we had no \
         choice but to call them "Special Events".</p> '''
 }
-
-acceptance_note = '''Only accepted classes will show up in scheduling and on \
-        the website.'''
 
 # stop gap for refactoring - BB 4/28/2017
 scheduling_help_texts = {
@@ -1008,9 +1002,6 @@ costume_proposal_labels = {
         know?',
     'picture':  'Picture of the costume'
 }
-
-valid_model_error = '''Select a valid choice. That choice is not one of the \
-    available choices.'''
 
 theme_help = {
     'no_args': '''This form requires either an instance of a StyleValue or a
