@@ -89,6 +89,7 @@ class TestReviewActTechInfo(TestCase):
 
     def test_review_act_tech_advanced(self):
         self.set_the_basics()
+        self.context.act.tech.prop_setup = ""
         self.context.act.tech.mic_choice = "I own a mic"
         self.context.act.tech.background_color = "blue"
         self.context.act.tech.wash_color = "green"
@@ -96,6 +97,7 @@ class TestReviewActTechInfo(TestCase):
         self.context.act.tech.special_lighting_cue = "this is my cue"
         self.context.act.tech.start_blackout = True
         self.context.act.tech.end_blackout = True
+        self.context.act.tech.confirm_no_music = True
         self.context.act.tech.save()
 
         login_as(self.profile, self)
@@ -108,6 +110,10 @@ class TestReviewActTechInfo(TestCase):
         self.assertContains(response,
                             self.context.act.tech.special_lighting_cue)
         self.assertContains(response, "Blackout", 2)
+        self.assertNotContains(
+            response,
+            'I have props I will need set before my number')
+        self.assertContains(response, "no music")
 
     def test_review_act_techinfo_order(self):
         '''review_act_techinfo view should load for Tech Crew
