@@ -112,7 +112,7 @@ class ActTechList(View):
             if act.tech.start_blackout:
                 light_start = "Blackout"
             if act.tech.end_blackout:
-                light_end = act.tech.end_blackout
+                light_end = "Blackout"
             if act.tech.follow_spot_color:
                 follow_spot = act.tech.follow_spot_color
             if act.tech.wash_color:
