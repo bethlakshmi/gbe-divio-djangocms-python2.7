@@ -76,6 +76,9 @@ act_coord_instruct = '''This will create an act that is owned by the performer
  the act will be submitted.  You will redirected to the act accept page,
  so you can cast the act into a show.  As soon as that is done, the performer
  should submit their act tech info.  This flow skips notifying reviewers.'''
+no_comp_msg = '''Something went wrong with creating a comp ticket.  This can
+ have unknown repurcussions on a user submitting future acts.  Set up an
+ act submit ticket and make a manual transaction for this user.'''
 volunteer_panel_instr = '''<div>Red text indicates a user that has become
  inactive.</div><div>Yellow background indicates a volunteer session that
  requires approval.</div><div>Blue background indicates volunteers that have
@@ -539,9 +542,9 @@ submitted.  Stay tuned, later on you\'ll be asked for further information."
 default_update_act_tech = "Your Act Technical Details have been updated."
 default_act_title_conflict = '''You've aready created a draft or made a \
 submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''
-act_not_unique = '''The act has the same title as another act bid for this 
- conference by this user.  Please name this act with a different title, \
-or change the title of the existing act.'''
+act_not_unique = '''The act has the same title as another act bid for this
+ conference by this user.  Please name this act with a different title,
+ or change the title of the existing act.'''
 no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."

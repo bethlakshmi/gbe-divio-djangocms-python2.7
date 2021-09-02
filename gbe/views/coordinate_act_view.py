@@ -3,8 +3,13 @@ from django.urls import reverse
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from gbe.models import TechInfo
 from gbe.forms import ActCoordinationForm
-from gbetext import act_coord_instruct
+from gbetext import (
+    act_coord_instruct,
+    no_comp_msg,
+)
 from gbe.ticketing_idd_interface import comp_act
+from gbe.models import UserMessage
+from django.contrib import messages
 
 
 class CoordinateActView(PermissionRequiredMixin, MakeActView):
@@ -38,8 +43,16 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
         self.bid_object.tech = techinfo
         self.bid_object.save()
         self.form.save()
-        comp_act(self.bid_object.performer.contact.user_object,
-                 self.conference)
+        check = comp_act(self.bid_object.performer.contact.user_object,
+                         self.conference)
+        if not check:
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="NO_COMP_MADE",
+                defaults={
+                    'summary': "No Act Submit Ticket, No Comp for User",
+                    'description': no_comp_msg})
+            messages.error(request, user_message[0].description)
 
     def make_context(self, request):
         context = super(MakeActView, self).make_context(request)

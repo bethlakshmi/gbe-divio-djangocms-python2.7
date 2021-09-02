@@ -7,21 +7,16 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     PersonaFactory,
     ProfileFactory,
-    UserMessageFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
     assert_alert_exists,
-    make_act_app_purchase,
-    make_act_app_ticket,
-    post_act_conflict,
 )
 from gbetext import (
     default_act_submit_msg,
-    default_act_draft_msg,
-    default_act_title_conflict,
     act_coord_instruct,
+    no_comp_msg,
 )
 from gbe.models import (
     Conference,
@@ -29,10 +24,6 @@ from gbe.models import (
 )
 from tests.functions.ticketing_functions import setup_fees
 from ticketing.models import Transaction
-from datetime import (
-    datetime,
-    timedelta,
-)
 
 
 class TestCoordinateAct(TestCase):
@@ -51,6 +42,8 @@ class TestCoordinateAct(TestCase):
         grant_privilege(self.privileged_user,
                         'Act Coordinator',
                         'assign_act')
+        grant_privilege(self.privileged_user,
+                        'Act Reviewers')
 
     def get_act_form(self, valid=True):
 
@@ -87,7 +80,7 @@ class TestCoordinateAct(TestCase):
     def test_act_bid_post_form_not_valid(self):
         login_as(self.privileged_user, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
-        data = self.get_act_form(submit=True, valid=False)
+        data = self.get_act_form(valid=False)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Create Act for Coordinator")
@@ -96,17 +89,18 @@ class TestCoordinateAct(TestCase):
     def test_act_submit_act_succeed(self):
         tickets = setup_fees(self.current_conference, is_act=True)
         response, data = self.post_act_submission()
-        print(response.content)
         just_made = self.performer.acts.all().first()
         self.assertRedirects(response, reverse('act_review',
                                                urlconf="gbe.urls",
                                                args=[just_made.id]))
-        self.assertContains(response, just_made.title)
-        self.assertRedirects(response, reverse('act_review',
-                                               urlconf="gbe.urls",
-                                               args=[just_made.id]))
+        self.assertContains(response, just_made.b_title)
         assert_alert_exists(
             response, 'success', 'Success', default_act_submit_msg)
+        self.assertTrue(Transaction.objects.filter(
+            purchaser__matched_to_user=just_made.performer.contact.user_object,
+            ticket_item__ticketing_event__act_submission_event=True,
+            ticket_item__ticketing_event__conference=self.current_conference
+            ).exists())
 
     def test_act_submit_act_no_viable_ticket(self):
         response, data = self.post_act_submission()
@@ -115,12 +109,8 @@ class TestCoordinateAct(TestCase):
         self.assertRedirects(response, reverse('act_review',
                                                urlconf="gbe.urls",
                                                args=[just_made.id]))
-        self.assertContains(response, just_made.title)
-        self.assertRedirects(response, reverse('act_review',
-                                               urlconf="gbe.urls",
-                                               args=[just_made.id]))
         assert_alert_exists(
-            response, 'success', 'Success', default_act_submit_msg)
+            response, 'danger', 'Error', no_comp_msg)
 
     def test_bad_priv(self):
         login_as(self.performer.performer_profile, self)
@@ -139,6 +129,4 @@ class TestCoordinateAct(TestCase):
         response = self.client.post(url, data=data, follow=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response, 
-            "The act has the same title")
+        self.assertContains(response, "The act has the same title")

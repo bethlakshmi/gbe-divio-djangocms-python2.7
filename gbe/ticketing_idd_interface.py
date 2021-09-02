@@ -42,6 +42,11 @@ def fee_paid(bid_type, user_name, conference):
 
 
 def comp_act(user, conference):
+    if not TicketItem.objects.filter(
+            add_on=False,
+            ticketing_event__act_submission_event=True,
+            ticketing_event__conference=conference).exists():
+        return False
     comp_ticket = TicketItem.objects.filter(
         add_on=False,
         ticketing_event__act_submission_event=True,
@@ -62,6 +67,7 @@ def comp_act(user, conference):
         reference="auto",
         payment_source="GBE")
     transaction.save()
+    return True
 
 
 def verify_performer_app_paid(user_name, conference):
