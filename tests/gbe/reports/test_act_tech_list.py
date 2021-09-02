@@ -85,7 +85,6 @@ class TestReviewActTechInfo(TestCase):
         self.assertContains(response, self.context.act.tech.primary_color)
         self.assertContains(response, self.context.act.tech.secondary_color)
         self.assertContains(response, self.context.act.tech.pronouns)
-        self.assertContains(response, self.context.act.tech.track.url)
         self.assertContains(response, 'OFF')
 
     def test_review_act_tech_advanced(self):
