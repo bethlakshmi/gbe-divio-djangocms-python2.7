@@ -61,10 +61,11 @@ class TestCoordinateAct(TestCase):
             del(form_dict['theact-b_description'])
         return form_dict
 
-    def post_act_submission(self, act_form=None):
-        if not act_form:
-            act_form = self.get_act_form()
+    def post_act_submission(self, next_page=None):
+        act_form = self.get_act_form()
         url = reverse(self.view_name, urlconf='gbe.urls')
+        if next_page is not None:
+            url = "%s?next=%s" % (url, next_page)
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=act_form, follow=True)
         return response, act_form
@@ -102,9 +103,24 @@ class TestCoordinateAct(TestCase):
             ticket_item__ticketing_event__conference=self.current_conference
             ).exists())
 
+    def test_act_submit_act_succeed_w_redirect(self):
+        tickets = setup_fees(self.current_conference, is_act=True)
+        response, data = self.post_act_submission(next_page="/theredirect")
+        just_made = self.performer.acts.all().first()
+        self.assertRedirects(response, "%s?next=/theredirect" % (
+            reverse('act_review', urlconf="gbe.urls", args=[just_made.id])))
+        self.assertContains(response, just_made.b_title)
+        self.assertContains(response, "/theredirect")
+        assert_alert_exists(
+            response, 'success', 'Success', default_act_submit_msg)
+        self.assertTrue(Transaction.objects.filter(
+            purchaser__matched_to_user=just_made.performer.contact.user_object,
+            ticket_item__ticketing_event__act_submission_event=True,
+            ticket_item__ticketing_event__conference=self.current_conference
+            ).exists())
+
     def test_act_submit_act_no_viable_ticket(self):
         response, data = self.post_act_submission()
-        print(response.content)
         just_made = self.performer.acts.all().first()
         self.assertRedirects(response, reverse('act_review',
                                                urlconf="gbe.urls",

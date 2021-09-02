@@ -32,7 +32,7 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
         techinfo = TechInfo(
             duration=self.form.cleaned_data['act_duration'],
             track_title=self.form.cleaned_data['track_title'],
-            track_artist = self.form.cleaned_data['track_artist']
+            track_artist=self.form.cleaned_data['track_artist']
             )
         techinfo.save()
         self.bid_object.tech = techinfo
@@ -57,9 +57,12 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
     def submit_bid(self, request):
         self.bid_object.submitted = True
         self.bid_object.save()
-        return reverse('act_review',
-                       urlconf="gbe.urls",
-                       args=[self.bid_object.id])
+        redirect = reverse('act_review',
+                           urlconf="gbe.urls",
+                           args=[self.bid_object.id])
+        if 'next' in request.GET:
+            redirect = "%s?next=%s" % (redirect, request.GET['next'])
+        return redirect
 
     def get_invalid_response(self, request):
         # Make Act gives personalized links, they are irrelevant here.

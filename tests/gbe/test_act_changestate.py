@@ -216,6 +216,30 @@ class TestActChangestate(TestCase):
                 self.context.act.b_title,
                 "Withdrawn"))
 
+    def test_act_withdraw_redirect_get(self):
+        # accepted -> withdrawn
+        # show alert, but redirect to the identified page
+        grant_privilege(self.privileged_user, 'Technical Director')
+        login_as(self.privileged_user, self)
+        next_url = reverse(
+            'show_dashboard',
+            urlconf='gbe.scheduling.urls',
+            args=[self.sched_event.pk])
+        data = {'accepted': 4}
+        response = self.client.post("%s?next=%s" % (self.url, next_url),
+                                    data=data,
+                                    follow=True)
+        self.assertRedirects(response, next_url)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            "%s<br>Performer/Act: %s - %s<br>State: %s" % (
+                act_status_change_msg,
+                self.context.act.performer.name,
+                self.context.act.b_title,
+                "Withdrawn"))
+
     def test_act_accept_act_link_correct(self):
         # accepted -> accepted
         # change show, loose rehearsal

@@ -21,7 +21,7 @@
   <div class="col-12 col-md-8">
   <h2 class="review-title gbe-title">{{this_show}} Dashboard</h2>
 </div><div class="col-12 col-md-4 text-right">{% if can_assign_act %}
-    <a href="{% url 'gbe:act_coord_create' %}" role="button" class="btn gbe-btn-secondary my-2">Create Act</a>{% endif %}
+    <a href="{% url 'gbe:act_coord_create' %}?next={{ request.get_full_path }}" role="button" class="btn gbe-btn-secondary my-2">Create Act</a>{% endif %}
     </div></div>
 <div class="pt-2">
   <div class="row">
