@@ -5,10 +5,7 @@ from django.forms import (
     IntegerField,
     ModelForm,
     Textarea,
-    URLField,
-    URLInput,
 )
-from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
 from dal import autocomplete
 from gbe.models import Act
 from gbe_forms_text import (
