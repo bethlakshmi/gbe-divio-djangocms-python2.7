@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from gbe.reporting.views import (
     act_techinfo_detail,
+    ActTechList,
     eval_view,
     interest_view,
     all_volunteer_view,
@@ -62,4 +63,7 @@ urlpatterns = [
     url(r'^reports/acttechinfo/detail/(\d+)/?$',
         act_techinfo_detail,
         name='act_techinfo_detail'),
+    url(r'^reports/act_tech_list/(?P<occurrence_id>\d+)/?$',
+        ActTechList.as_view(),
+        name='act_tech_list'),
 ]

@@ -1,3 +1,4 @@
+from .act_tech_list import ActTechList
 from .act_techinfo_detail import act_techinfo_detail
 from .eval_view import eval_view
 from .interest_view import interest_view

@@ -16,6 +16,7 @@
   <br/>
 <form method="POST" action='' enctype="multipart/form-data">
   <div class="float-right pb-2">
+  <a href="{% url 'reporting:act_tech_list' this_occurrence.pk %}" class="btn gbe-btn-primary">Report Tech Details</a>
   {% if can_schedule %}<input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">{% endif %}
   </div>
 {% csrf_token %}
@@ -95,6 +96,7 @@
     </tbody>
   </table>
   <div class="float-right py-2">
+  <a href="{% url 'reporting:act_tech_list' this_occurrence.pk %}" class="btn gbe-btn-primary">Report Tech Details</a>
   {% if can_schedule %}<input type = "submit" name="submit" value="Set Act Order" class="btn gbe-btn-primary">{% endif %}
   </div>
 </form>
