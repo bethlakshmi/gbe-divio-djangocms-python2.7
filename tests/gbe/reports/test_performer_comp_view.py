@@ -56,7 +56,8 @@ class TestPerformerCompView(TestCase):
 
     def test_performer_ticket_exception(self):
         role_condition = RoleEligibilityConditionFactory(role="Performer")
-        other_role_condition = RoleEligibilityConditionFactory(role="Performer")
+        other_role_condition = RoleEligibilityConditionFactory(
+            role="Performer")
         context = ShowContext()
         transaction = TransactionFactory(
             purchaser__matched_to_user=context.performer.performer_profile.user_object,
