@@ -1,0 +1,104 @@
+from django.urls import reverse
+from django.test import TestCase
+from django.test.client import RequestFactory
+from tests.factories.gbe_factories import (
+    ConferenceFactory,
+    ProfileFactory,
+)
+from tests.factories.ticketing_factories import (
+    RoleEligibilityConditionFactory,
+    TransactionFactory,
+    TicketingExclusionFactory,
+)
+from tests.contexts import ShowContext
+from tests.functions.gbe_functions import (
+    grant_privilege,
+    login_as
+)
+
+
+class TestPerformerCompView(TestCase):
+    '''Tests for index view'''
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.priv_profile = ProfileFactory()
+        grant_privilege(self.priv_profile, 'Registrar')
+        self.url = reverse('perf_comp', urlconf='gbe.reporting.urls')
+
+    def test_no_priv_fail(self):
+        profile = ProfileFactory()
+        login_as(profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_empty_succeed(self):
+        ConferenceFactory()
+        login_as(self.priv_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Performer Comps")
+
+    def test_performer_one_show(self):
+        role_condition = RoleEligibilityConditionFactory(role="Performer")
+        context = ShowContext()
+
+        login_as(self.priv_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            str(role_condition.checklistitem),
+            msg_prefix="Role condition for performer was not found")
+        self.assertContains(
+            response,
+            str(context.performer.performer_profile),
+            msg_prefix="Performer is not in the list")
+
+    def test_performer_ticket_exception(self):
+        role_condition = RoleEligibilityConditionFactory(role="Performer")
+        other_role_condition = RoleEligibilityConditionFactory(role="Performer")
+        context = ShowContext()
+        transaction = TransactionFactory(
+            purchaser__matched_to_user=context.performer.performer_profile.user_object,
+            ticket_item__ticketing_event__conference=context.conference)
+        ticketingexclusion = TicketingExclusionFactory(
+            condition=role_condition,
+            tickets=[transaction.ticket_item])
+
+        login_as(self.priv_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(
+            response,
+            str(role_condition.checklistitem),
+            msg_prefix="Role condition present despite exclusion")
+        self.assertContains(
+            response,
+            str(other_role_condition.checklistitem),
+            msg_prefix="Role condition with no exclusion was not found")
+        self.assertContains(
+            response,
+            str(context.performer.performer_profile),
+            msg_prefix="Performer is not in the list")
+
+    def test_performer_w_no_stuff_does_not_show(self):
+        role_condition = RoleEligibilityConditionFactory(role="Performer")
+        context = ShowContext()
+        transaction = TransactionFactory(
+            purchaser__matched_to_user=context.performer.performer_profile.user_object,
+            ticket_item__ticketing_event__conference=context.conference)
+        ticketingexclusion = TicketingExclusionFactory(
+            condition=role_condition,
+            tickets=[transaction.ticket_item])
+
+        login_as(self.priv_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(
+            response,
+            str(role_condition.checklistitem),
+            msg_prefix="Role condition present despite exclusion")
+        self.assertNotContains(
+            response,
+            str(context.performer.performer_profile),
+            msg_prefix="Performer w no stuff shouldn't be here")
