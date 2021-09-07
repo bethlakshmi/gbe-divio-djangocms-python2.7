@@ -38,6 +38,16 @@ class TestPerformerCompView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Performer Comps")
 
+    def test_old_conf_succeed(self):
+        old_conf = ConferenceFactory(status="completed", accepting_bids=False)
+        login_as(self.priv_profile, self)
+        response = self.client.get(
+            "%s?conf_slug=%s&submit=Select+conference" % (
+                self.url,
+                old_conf.conference_slug))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Performer Comps")
+
     def test_performer_one_show(self):
         role_condition = RoleEligibilityConditionFactory(role="Performer")
         context = ShowContext()
