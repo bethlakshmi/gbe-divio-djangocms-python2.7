@@ -130,7 +130,6 @@ class TestTransactions(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        print(response.content)
         test_purchaser = Purchaser.objects.get(pk=purchaser.pk)
         self.assertEqual(test_purchaser.matched_to_user, user)
 

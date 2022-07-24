@@ -83,7 +83,6 @@ class TestCheckListItemList(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        print(response.content)
         self.assertContains(response, intro_role_cond_message)
         self.assertContains(response, intro_ticket_cond_message)
         self.assertContains(response,
