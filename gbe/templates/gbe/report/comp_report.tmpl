@@ -1,0 +1,29 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% block title %}
+   Performer Comp Report
+{% endblock %}
+{% block before_table %}
+  <br/>
+      {% include "conference_picker.tmpl" %}
+  <br/>
+{% endblock %}
+
+{% block tbody %}
+{% for schedule in schedules %}
+<tr class="gbe-table-row">
+  <td>{{ schedule.person.get_badge_name }}</td>
+  <td>{{ schedule.person.user_object.first_name }}</td>
+  <td>{{ schedule.person.user_object.last_name }}</td>
+  <td>{{ schedule.person.user_object.email }}</td>
+  <td>
+  {% for role, items in schedule.role_items.items %}
+    {% if role == "Performer" %}
+      {% for item in items%}
+        {{item}}<br>
+      {%endfor%}
+    {% endif %}
+  {% endfor %}
+  </td>
+  </tr>
+{% endfor %}
+{% endblock %}

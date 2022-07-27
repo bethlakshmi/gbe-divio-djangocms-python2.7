@@ -252,11 +252,11 @@ class TestCloneTheme(TestCase):
 
     def test_post_update_change_image(self):
         Image.objects.all().delete()
-        other_image = set_image(folder_name='Backgrounds')
         image_style = StyleValueImageFactory(
             style_version=self.value.style_version,
             image=set_image(folder_name='Backgrounds'))
         login_as(self.user, self)
+        other_image = set_image(folder_name='Backgrounds')
         data = self.get_post()
         data['update'] = 'Update'
         data['%s-style_property' % image_style.pk] = \
@@ -324,9 +324,9 @@ class TestCloneTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_2" checked>''' % (
                 new_style_image.pk,
-                image_style.image.pk + 1,
+                (image_style.image.pk + 1),
                 new_style_image.pk),
             html=True)
 

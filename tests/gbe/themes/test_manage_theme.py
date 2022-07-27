@@ -210,10 +210,10 @@ class TestManageTheme(TestCase):
 
     def test_post_update_change_image(self):
         Image.objects.all().delete()
-        other_image = set_image(folder_name='Backgrounds')
         image_style = StyleValueImageFactory(
             style_version=self.value.style_version,
             image=set_image(folder_name='Backgrounds'))
+        other_image = set_image(folder_name='Backgrounds')
         login_as(self.user, self)
         response = self.client.post(self.url, data={
             '%s-value_0' % self.value.pk: "rgba(255,255,255,0)",
@@ -261,7 +261,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_2" checked>''' % (
                 image_style.pk,
                 image_style.image.pk + 1,
                 image_style.pk),
