@@ -5,6 +5,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.http import Http404
 from django.shortcuts import (
     get_object_or_404,
     render,
@@ -63,6 +64,8 @@ class MakeBidView(View):
         else:
             self.conference = Conference.objects.filter(
                     accepting_bids=True).first()
+        if self.conference is None:
+            raise Http404
 
     def make_post_forms(self, request, the_form):
         if self.bid_object:

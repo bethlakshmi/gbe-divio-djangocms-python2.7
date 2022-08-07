@@ -30,7 +30,7 @@ class TestMakeBid(TestCase):
         self.conference = ConferenceFactory(accepting_bids=True)
 
     def test_bid_no_profile(self):
-        '''act_bid, when user has no profile, should bounce out to /profile'''
+        '''when user has no profile, should bounce out to /profile'''
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
         user = UserFactory()
@@ -41,6 +41,16 @@ class TestMakeBid(TestCase):
             '%s?next=%s' % (
                 reverse('profile_update', urlconf='gbe.urls'),
                 reverse('class_create', urlconf='gbe.urls')))
+
+    def test_bid_no_conference(self):
+        '''when there is no conference accepting bids, should throw 404'''
+        Conference.objects.all().delete()
+        self.conference = ConferenceFactory(accepting_bids=False)
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(self.performer.performer_profile, self)
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code)
 
     def test_get_new_bid(self):
         url = reverse(self.view_name,
