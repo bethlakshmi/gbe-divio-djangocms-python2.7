@@ -85,7 +85,7 @@ class ManageVolWizardView(View):
                                      manage_vol_info,
                                      conference,
                                      request,
-                                     report_data,
+                                     staff_area_id=None,
                                      errorcontext=None,
                                      occurrence_id=None,
                                      labels=[]):
@@ -145,10 +145,10 @@ class ManageVolWizardView(View):
             except:
                 pass
         context['actionform'] = actionform
-        if len(actionform) > 0:
+        if staff_area_id is not None:
             context['report_url'] = reverse('staff_area',
                                             urlconf='gbe.reporting.urls',
-                                            args=report_data)
+                                            args=[staff_area_id])
 
         if errorcontext and 'createform' in errorcontext:
             createform = errorcontext['createform']
