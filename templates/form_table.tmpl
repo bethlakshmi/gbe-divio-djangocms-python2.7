@@ -21,7 +21,7 @@
 <div class="form-group">
 	<div class="container">
 	<div class="row">
-  <div class="col-12"><b>
+  <div class="col-12">
       {% if field.errors %}
         <font class="gbe-form-error">!</font>&nbsp;&nbsp;
 	    {% elif field.css_classes == 'required' or field.name in submit_fields %}
@@ -36,7 +36,7 @@
       {% if field.errors %}
         </font>
       {% endif %}
-  </b></div>
+  </div>
   {% if field.help_text %}
   <div class="col-12"><span class="help-text">{{ field.help_text }}</span></div>
   {% endif %}
