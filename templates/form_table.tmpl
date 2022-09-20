@@ -18,42 +18,29 @@
 
     {# Include the visible fields #}
     {% for field in form.visible_fields %}
-    <div class="form-group">
+<div class="form-group">
 	<div class="container">
 	<div class="row">
-  {% if two_col %}<div class="col-md-5">
-  {% else %}<div class="col-md-4">{% endif %}
-	<label for="{{field.name}}" class="control-label">	      
-            {% if field.errors %}
-              <font class="gbe-form-error">!</font>&nbsp;&nbsp;
+  <div class="col-12"><b>
+      {% if field.errors %}
+        <font class="gbe-form-error">!</font>&nbsp;&nbsp;
 	    {% elif field.css_classes == 'required' or field.name in submit_fields %}
-              <font class="gbe-form-required">*</font>
-            {% endif %} 
-            {% if field.errors %}
-                <font class="gbe-form-error">
-            {% endif %}
-            {% if field.name in draft_fields %}
-	        <font class="gbe-draft">{{ field.label_tag }}</font>
+        <font class="gbe-form-required">*</font>
+      {% endif %} 
+      {% if field.errors %}<font class="gbe-form-error">{% endif %}
+      {% if field.name in draft_fields %}
+	       <font class="gbe-draft">{{ field.label_tag }}</font>
 	    {% else %}
 	        {{ field.label_tag }}
 	    {% endif %}
-
-            {% if field.errors %}
-                </font>
-            {% endif %} 
-
-            {% if field.help_text %}
-                <span class="dropt" title="Help">
-                <img src= "{% static "img/question.png" %}" alt="?"/>
-                  <span style="width:200px;float:right;text-align:left;">
-                  {{ field.help_text }}
-                  </span>
-                </span>
-            {% endif %}
-	</label>
-	</div>
-  <div class="{% if two_col %}col-md-7{% else %}col-md-8{% endif %}"> 
-{{ field }}</div>
+      {% if field.errors %}
+        </font>
+      {% endif %}
+  </b></div>
+  {% if field.help_text %}
+  <div class="col-12"><span class="help-text">{{ field.help_text }}</span></div>
+  {% endif %}
+  <div class="col-12">{{ field }}</div>
 	</div>
 	</div>
         </div>
