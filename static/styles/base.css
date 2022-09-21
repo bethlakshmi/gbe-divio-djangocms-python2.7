@@ -2,6 +2,7 @@
 body {margin: 0px;border: 0px;padding: 0px; font-size: 14px;font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
 .gbe-draft, .gbe-inactive {font-weight: bold;}
 .gbe-form-required {font-weight: bold;}
+.gbe-help-text {font-style: italic;}
 .gbe-title {
   font-family: 'Vast Shadow', cursive;
   letter-spacing: normal;
