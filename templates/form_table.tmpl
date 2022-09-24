@@ -17,11 +17,11 @@
   {{ form.non_field_errors }}</font>
 
     {# Include the visible fields #}
+<div class="container">
     {% for field in form.visible_fields %}
-<div class="form-group">
-	<div class="container">
-	<div class="row">
-  <div class="col-12">
+  <div class="form-group row">
+    {% if two_col %}<div class="col-md-5">
+    {% else %}<div class="col-md-4">{% endif %}
       {% if field.errors %}
         <font class="gbe-form-error">!</font>&nbsp;&nbsp;
 	    {% elif field.css_classes == 'required' or field.name in submit_fields %}
@@ -36,25 +36,16 @@
       {% if field.errors %}
         </font>
       {% endif %}
-  </div>
-  <div class="col-12">{{ field }}</div>
-  {% if field.help_text %}
-  <div class="col-12"><span class="gbe-help-text">{{ field.help_text }}</span></div>
-  {% endif %}
-	</div>
-	</div>
-        </div>
-
-      {% if field.errors %}
-	<div class="container">
-        <div class="row">
-	  <div class="col-md-2">&nbsp;</div>
-	  <div class="col-md-4">
- 	    <label for="{{field.name}}">	      
-              <font class="gbe-form-error">{{ field.errors }}</font>
-            </label>
-	  </div>
-	</div>
-	</div>
+    </div>
+    <div class="{% if two_col %}col-md-7{% else %}col-md-8{% endif %} form_field">
+      {{ field }}
+      {% if field.help_text %}
+      <small class="form-text text-muted">{{ field.help_text }}</small>
       {% endif %}
+{% if field.errors %}
+      <font class="gbe-form-error">{{ field.errors }}</font>
+{% endif %}
+    </div>
+  </div>
     {% endfor %}
+</div>

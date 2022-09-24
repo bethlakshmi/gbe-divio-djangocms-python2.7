@@ -2,7 +2,6 @@
 body {margin: 0px;border: 0px;padding: 0px; font-size: 14px;font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
 .gbe-draft, .gbe-inactive {font-weight: bold;}
 .gbe-form-required {font-weight: bold;}
-.gbe-help-text {font-style: italic;}
 .gbe-title {
   font-family: 'Vast Shadow', cursive;
   letter-spacing: normal;
@@ -404,7 +403,7 @@ ul.long_choice
   column-count: 2;
 }
 
-td.form_field ul {padding: 5px 0px;}
+.form_field ul {padding: 5px 0px; margin-bottom: 1px;}
 td.form_field.long_choice ul li{width: 250px;height: 20px;}
 .form-group div div div ul li{list-style-type: none;}
 .gbe-choice-list ul li{list-style-type: none;font-size: larger;font-weight: bold;}
