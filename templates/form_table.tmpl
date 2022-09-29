@@ -19,7 +19,7 @@
     {# Include the visible fields #}
 <div class="container">
     {% for field in form.visible_fields %}
-  <div class="form-group row">
+  <div class="form-group row pb-2">
     {% if two_col %}<div class="col-md-5">
     {% else %}<div class="col-md-4">{% endif %}
       {% if field.errors %}
@@ -36,15 +36,15 @@
       {% if field.errors %}
         </font>
       {% endif %}
+      {% if field.help_text %}
+        <small class="form-text text-muted pb-1 mt-0">{{ field.help_text }}</small>
+      {% endif %}
     </div>
     <div class="{% if two_col %}col-md-7{% else %}col-md-8{% endif %} form_field">
       {{ field }}
-      {% if field.help_text %}
-      <small class="form-text text-muted">{{ field.help_text }}</small>
+      {% if field.errors %}
+        <font class="gbe-form-error">{{ field.errors }}</font>
       {% endif %}
-{% if field.errors %}
-      <font class="gbe-form-error">{{ field.errors }}</font>
-{% endif %}
     </div>
   </div>
     {% endfor %}
