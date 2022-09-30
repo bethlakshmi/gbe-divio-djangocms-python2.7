@@ -17,57 +17,34 @@
   {{ form.non_field_errors }}</font>
 
     {# Include the visible fields #}
+<div class="container">
     {% for field in form.visible_fields %}
-    <div class="form-group">
-	<div class="container">
-	<div class="row">
-  {% if two_col %}<div class="col-md-5">
-  {% else %}<div class="col-md-4">{% endif %}
-	<label for="{{field.name}}" class="control-label">	      
-            {% if field.errors %}
-              <font class="gbe-form-error">!</font>&nbsp;&nbsp;
+  <div class="form-group row pb-2">
+    <div class="{% if two_col %}col-md-5{% else %}col-md-4{% endif %}">
+      {% if field.errors %}
+        <font class="gbe-form-error">!</font>&nbsp;&nbsp;
 	    {% elif field.css_classes == 'required' or field.name in submit_fields %}
-              <font class="gbe-form-required">*</font>
-            {% endif %} 
-            {% if field.errors %}
-                <font class="gbe-form-error">
-            {% endif %}
-            {% if field.name in draft_fields %}
-	        <font class="gbe-draft">{{ field.label_tag }}</font>
+        <font class="gbe-form-required">*</font>
+      {% endif %} 
+      {% if field.errors %}<font class="gbe-form-error">{% endif %}
+      {% if field.name in draft_fields %}
+	       <font class="gbe-draft">{{ field.label_tag }}</font>
 	    {% else %}
 	        {{ field.label_tag }}
 	    {% endif %}
-
-            {% if field.errors %}
-                </font>
-            {% endif %} 
-
-            {% if field.help_text %}
-                <span class="dropt" title="Help">
-                <img src= "{% static "img/question.png" %}" alt="?"/>
-                  <span style="width:200px;float:right;text-align:left;">
-                  {{ field.help_text }}
-                  </span>
-                </span>
-            {% endif %}
-	</label>
-	</div>
-  <div class="{% if two_col %}col-md-7{% else %}col-md-8{% endif %}"> 
-{{ field }}</div>
-	</div>
-	</div>
-        </div>
-
       {% if field.errors %}
-	<div class="container">
-        <div class="row">
-	  <div class="col-md-2">&nbsp;</div>
-	  <div class="col-md-4">
- 	    <label for="{{field.name}}">	      
-              <font class="gbe-form-error">{{ field.errors }}</font>
-            </label>
-	  </div>
-	</div>
-	</div>
+        </font>
       {% endif %}
+      {% if field.help_text %}
+        <small class="form-text text-muted pb-1 mt-0">{{ field.help_text }}</small>
+      {% endif %}
+    </div>
+    <div class="{% if two_col %}col-md-7{% else %}col-md-8{% endif %} form_field">
+      {{ field }}
+      {% if field.errors %}
+        <font class="gbe-form-error">{{ field.errors }}</font>
+      {% endif %}
+    </div>
+  </div>
     {% endfor %}
+</div>

@@ -55,6 +55,18 @@ class MakeBidView(View):
                 reverse('profile_update', urlconf='gbe.urls'),
                 reverse('%s_create' % self.bid_type.lower(),
                         urlconf='gbe.urls'))
+        self.page_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="PAGE_TITLE",
+                defaults={
+                    'summary': "%s Page Title" % self.bid_type,
+                    'description': self.page_title})[0].description
+        self.view_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="FIRST_HEADER",
+                defaults={
+                    'summary': "%s First Header" % self.bid_type,
+                    'description': self.view_title})[0].description
 
         self.bid_object = None
         if "bid_id" in kwargs:

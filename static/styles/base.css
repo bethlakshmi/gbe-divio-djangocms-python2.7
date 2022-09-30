@@ -403,7 +403,7 @@ ul.long_choice
   column-count: 2;
 }
 
-td.form_field ul {padding: 5px 0px;}
+.form_field ul {padding: 5px 0px; margin-bottom: 1px;}
 td.form_field.long_choice ul li{width: 250px;height: 20px;}
 .form-group div div div ul li{list-style-type: none;}
 .gbe-choice-list ul li{list-style-type: none;font-size: larger;font-weight: bold;}
