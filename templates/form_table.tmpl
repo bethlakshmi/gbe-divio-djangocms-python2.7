@@ -20,8 +20,7 @@
 <div class="container">
     {% for field in form.visible_fields %}
   <div class="form-group row pb-2">
-    {% if two_col %}<div class="col-md-5">
-    {% else %}<div class="col-md-4">{% endif %}
+    <div class="{% if two_col %}col-md-5{% else %}col-md-4{% endif %}">
       {% if field.errors %}
         <font class="gbe-form-error">!</font>&nbsp;&nbsp;
 	    {% elif field.css_classes == 'required' or field.name in submit_fields %}
