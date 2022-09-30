@@ -62,7 +62,12 @@ ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete and cannot be "
 ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete but it has been "
                                 "submitted for a show.")
 
-act_shows_options = [(0, 'The Bordello (Fri. Late)'),
+act_shows_options = [
+    (4, 'Thursday, May 4, 8PM: Star Bras!'),
+    (5, 'Friday, May 5, 9:30PM: The Burlesk Bordello'),
+    (6, 'Saturday, May 6, 7:30PM: The Main Event, not in competition'),
+    (7, 'Saturday, May 6, 9PM: The Main Event, competition')]
+old_act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                      (1, 'The Main Event, in competition'),
                      (2, 'The Main Event, not in competition'),
                      (3, 'The Newcomer\'s Showcase')]
