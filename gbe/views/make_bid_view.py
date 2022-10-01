@@ -266,7 +266,8 @@ class MakeBidView(View):
 
         self.set_valid_form(request)
         if 'phone' in self.form.cleaned_data:
-            raise Exception("phone here")
+            self.owner.phone = self.form.cleaned_data['phone']
+            self.owner.save()
 
         # if this isn't a draft, move forward through process, setting up
         # payment review if payment is needed
