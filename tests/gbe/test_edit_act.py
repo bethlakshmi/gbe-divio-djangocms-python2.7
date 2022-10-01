@@ -42,7 +42,7 @@ class TestEditAct(TestCase):
                      'theact-b_title': 'An act',
                      'theact-b_description': 'a description',
                      'theact-length_minutes': 60,
-                     'theact-shows_preferences': [0],
+                     'theact-shows_preferences': [5],
                      'theact-act_duration': '1:00',
                      'theact-b_conference': act.b_conference.pk,
                      }

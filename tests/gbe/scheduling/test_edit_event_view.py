@@ -164,7 +164,6 @@ class TestEditEventView(TestScheduling):
         self.assertContains(
             response,
             'name="duration" value="1.0"')
-        self.assertContains(response, "Display Staff", 2)
 
     def test_bad_occurrence_id(self):
         login_as(self.privileged_user, self)

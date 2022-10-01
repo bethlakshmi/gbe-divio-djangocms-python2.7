@@ -63,10 +63,17 @@ ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete but it has been "
                                 "submitted for a show.")
 
 act_shows_options = [
-    (4, 'Thursday, May 4, 8PM: Star Bras!'),
-    (5, 'Friday, May 5, 9:30PM: The Burlesk Bordello'),
-    (6, 'Saturday, May 6, 7:30PM: The Main Event, not in competition'),
-    (7, 'Saturday, May 6, 9PM: The Main Event, competition')]
+    (4, ('Thursday, May 4, 8PM: Star Bras! - Show us your space opera! '
+         'Visitors from any planet (or universe) are welcome, just bring us '
+         'your best sci-fi acts!')),
+    (5, ('Friday, May 5, 9:30PM: The Burlesk Bordello - 21+. We want your '
+         'sexiest, raunchiest, kinkiest, and most erotic numbers for this '
+         'intimate, late-night Cabaret')),
+    (6, ('Saturday, May 6, 7:30PM: The Main Event, not in competition - An '
+         'amazing opportunity for newer performers or those who want to be '
+         'seen on the big stage without the pressure of competition!')),
+    (7, ('Saturday, May 6, 9PM: The Main Event, competition - Bring us your '
+         'best act to compete for titles, prizes, and cash!'))]
 old_act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                          (1, 'The Main Event, in competition'),
                          (2, 'The Main Event, not in competition'),
