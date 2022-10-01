@@ -199,7 +199,7 @@ class TestEditAct(TestCase):
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
-        act = ActFactory(shows_preferences="[u'0']",
+        act = ActFactory(shows_preferences="[u'5']",
                          other_performance="[u'1', u'3']")
         url = reverse(self.view_name,
                       args=[act.pk],
