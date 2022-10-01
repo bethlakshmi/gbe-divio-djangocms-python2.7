@@ -48,7 +48,7 @@ class TestCreateAct(TestCase):
 
     def get_act_form(self, submit=False, valid=True):
 
-        form_dict = {'theact-shows_preferences': [1],
+        form_dict = {'theact-shows_preferences': [4],
                      'theact-b_title': 'An act',
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
