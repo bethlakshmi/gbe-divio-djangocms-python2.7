@@ -55,8 +55,8 @@ class TestProfileAutoComplete(TestCase):
         self.assertNotContains(response, profile2.display_name)
 
     def test_list_profile_w_search_by_first_name(self):
-        profile1 = ProfileFactory()
-        profile2 = ProfileFactory()
+        profile1 = ProfileFactory(user_object__first_name="profile1")
+        profile2 = ProfileFactory(user_object__first_name="profile2")
         login_as(self.user, self)
         response = self.client.get("%s?q=%s" % (
             self.url,
@@ -66,7 +66,7 @@ class TestProfileAutoComplete(TestCase):
         self.assertNotContains(response, profile2.display_name)
 
     def test_list_profile_w_search_by_last_name(self):
-        profile1 = ProfileFactory()
+        profile1 = ProfileFactory(user_object__last_name="profile1")
         profile2 = ProfileFactory(user_object=UserFactory(
             last_name="NOT HERE"))
         login_as(self.user, self)

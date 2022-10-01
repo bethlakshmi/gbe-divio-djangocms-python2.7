@@ -50,11 +50,8 @@ class WorkerItemFactory(DjangoModelFactory):
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
-    first_name = Sequence(lambda n: 'John_%s' % str(n))
-    last_name = 'Smith'
-    username = LazyAttribute(lambda a: "%s" % (a.first_name))
-    email = LazyAttribute(lambda a: '%s@smith.com' % (a.username))
-
+    email = Sequence(lambda n: 'John_%s@smith.com' % str(n))
+    username = LazyAttribute(lambda a: "%s" % (a.email))
 
 class ProfileFactory(DjangoModelFactory):
     class Meta:
@@ -64,9 +61,7 @@ class ProfileFactory(DjangoModelFactory):
     state = 'MD'
     zip_code = '12345'
     country = 'USA'
-    display_name = LazyAttribute(
-        lambda a: "%s_%s" % (a.user_object.first_name,
-                             a.user_object.last_name))
+    display_name = Sequence(lambda n: "%s_%s" % (str(n), str(n)))
 
 
 class ShowFactory(DjangoModelFactory):
