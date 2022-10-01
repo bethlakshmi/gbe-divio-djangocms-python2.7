@@ -40,13 +40,6 @@ class ActEditDraftForm(ModelForm):
         help_text=act_help_texts['shows_preferences'],
         required=False
     )
-    other_performance = MultipleChoiceField(
-        widget=CheckboxSelectMultiple,
-        choices=act_other_perf_options,
-        label=act_bid_labels['other_performance'],
-        help_text=act_help_texts['other_performance'],
-        required=False
-    )
     video_link = URLField(
         widget=URLInput(attrs={'placeholder': 'http://'}),
         help_text=act_help_texts['video_link'],
@@ -65,7 +58,6 @@ class ActEditDraftForm(ModelForm):
         fields = [
             'performer',
             'shows_preferences',
-            'other_performance',
             'b_title',
             'track_title',
             'track_artist',
