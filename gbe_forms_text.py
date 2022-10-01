@@ -813,7 +813,7 @@ donation_help_text = {'donation': '''Our fee is set to the minimum shown \
 here, but you may choose to pay more.'''}
 user_form_help = {
     'name': ('The name you would like to see on any badges, communication '
-        'from this event, or public ways of referring to you.')
+             'from this event, or public ways of referring to you.')
 }
 
 conference_participation_types = [('Teacher', 'Teacher'),

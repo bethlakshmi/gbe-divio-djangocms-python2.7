@@ -16,7 +16,8 @@ from gbetext import (
 )
 from gbe.models import (
     Conference,
-    UserMessage
+    Profile,
+    UserMessage,
 )
 
 
@@ -33,6 +34,7 @@ class TestEditClass(TestCase):
 
     def get_form(self, submit=True, invalid=False):
         data = {"theclass-teacher": self.teacher.pk,
+                'theclass-phone': '111-222-3333',
                 "theclass-b_title": 'A class',
                 "theclass-b_description": 'a description',
                 "theclass-length_minutes": 60,
@@ -47,24 +49,22 @@ class TestEditClass(TestCase):
         return data
 
     def post_class_edit_submit(self):
-        klass = ClassFactory()
+        klass = ClassFactory(teacher=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
         login_as(klass.teacher.performer_profile, self)
         data = self.get_form()
-        data['theclass-teacher'] = klass.teacher.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
     def post_class_edit_draft(self):
-        klass = ClassFactory()
+        klass = ClassFactory(teacher=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
         login_as(klass.teacher.performer_profile, self)
         data = self.get_form(submit=False)
-        data['theclass-teacher'] = klass.teacher.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
@@ -166,7 +166,8 @@ class TestEditClass(TestCase):
         response, data = self.post_class_edit_submit()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        # should test some change to class
+        profile = Profile.objects.get(pk=self.teacher.performer_profile.pk)
+        self.assertEqual(profile.phone, '111-222-3333')
 
     def test_class_submit_make_message(self):
         '''class_bid, not submitting and no other problems,

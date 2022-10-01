@@ -19,6 +19,7 @@ from gbetext import (
 from gbe_utils.text import no_profile_msg
 from gbe.models import (
     Conference,
+    Profile,
     UserMessage
 )
 
@@ -38,6 +39,7 @@ class TestCreateClass(TestCase):
                        submit=False,
                        invalid=False):
         data = {'theclass-teacher': self.performer.pk,
+                'theclass-phone': '111-222-3333',
                 'theclass-b_title': 'A class',
                 'theclass-b_description': 'a description',
                 'theclass-length_minutes': 60,
@@ -192,6 +194,8 @@ class TestCreateClass(TestCase):
         '''class_bid, not submitting and no other problems,
         should redirect to home'''
         response, data = self.post_bid(submit=False)
+        profile = Profile.objects.get(pk=self.performer.performer_profile.pk)
+        self.assertEqual(profile.phone, '111-222-3333')
         self.assertEqual(200, response.status_code)
         assert_alert_exists(
             response, 'success', 'Success', default_class_draft_msg)

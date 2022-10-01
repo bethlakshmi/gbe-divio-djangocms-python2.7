@@ -60,13 +60,10 @@ class ProfileFactory(DjangoModelFactory):
     class Meta:
         model = conf.Profile
     user_object = SubFactory(UserFactory)
-    address1 = '123 Main St.'
-    address2 = Sequence(lambda n: 'Apt. %d' % n)
     city = 'Smithville'
     state = 'MD'
     zip_code = '12345'
     country = 'USA'
-    phone = '617-282-9268'
     display_name = LazyAttribute(
         lambda a: "%s_%s" % (a.user_object.first_name,
                              a.user_object.last_name))
