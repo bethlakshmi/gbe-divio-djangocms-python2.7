@@ -68,9 +68,9 @@ act_shows_options = [
     (6, 'Saturday, May 6, 7:30PM: The Main Event, not in competition'),
     (7, 'Saturday, May 6, 9PM: The Main Event, competition')]
 old_act_shows_options = [(0, 'The Bordello (Fri. Late)'),
-                     (1, 'The Main Event, in competition'),
-                     (2, 'The Main Event, not in competition'),
-                     (3, 'The Newcomer\'s Showcase')]
+                         (1, 'The Main Event, in competition'),
+                         (2, 'The Main Event, not in competition'),
+                         (3, 'The Newcomer\'s Showcase')]
 act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
  act order before clicking other buttons in this dashboard.<br><br></div>
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
