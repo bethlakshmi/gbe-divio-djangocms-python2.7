@@ -3,10 +3,13 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    ConferenceFactory,
+    ConferenceDayFactory,
     ProfileFactory,
 )
 from tests.functions.gbe_functions import (
     assert_email_template_used,
+    clear_conferences,
     grant_privilege,
     login_as,
 )
@@ -16,6 +19,11 @@ import urllib
 from django.core.files import File
 from gbetext import found_on_list_msg
 from django.conf import settings
+from tests.contexts import StaffAreaContext
+from datetime import (
+    date,
+    datetime,
+)
 
 
 class TestRegister(TestCase):
@@ -30,9 +38,7 @@ class TestRegister(TestCase):
     def get_post_data(self):
         self.counter += 1
         email = "new%d@last.com" % self.counter
-        data = {'username': 'test%d' % self.counter,
-                'first_name': 'new first',
-                'last_name': 'new last',
+        data = {'name': 'new last',
                 'email': email,
                 'password1': 'test',
                 'password2': 'test'}
@@ -62,6 +68,16 @@ class TestRegister(TestCase):
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_register_redirect(self, m_urlopen):
+        clear_conferences()
+        conference = ConferenceFactory()
+        save_the_date = datetime(2016, 2, 6, 12, 0, 0)
+        day = ConferenceDayFactory(
+            conference=conference,
+            day=date(2016, 0o2, 0o6))
+        self.staffcontext = StaffAreaContext(
+            conference=conference,
+            starttime=save_the_date)
+        self.volunteeropp = self.staffcontext.add_volunteer_opp()
         url = "%s?next=%s" % (
             reverse(self.view_name, urlconf='gbe.urls'),
             reverse('volunteer_signup', urlconf='gbe.scheduling.urls'))
@@ -72,9 +88,9 @@ class TestRegister(TestCase):
         m_urlopen.return_value = a
 
         response = self.client.post(url, self.get_post_data(), follow=True)
-        self.assertRedirects(response, "%s?next=%s" % (
-            reverse('profile_update', urlconf='gbe.urls'),
-            reverse('volunteer_signup', urlconf='gbe.scheduling.urls')))
+        self.assertRedirects(response, reverse(
+            'volunteer_signup',
+            urlconf='gbe.scheduling.urls'))
 
     def test_register_post_nothing(self):
         url = reverse(self.view_name,

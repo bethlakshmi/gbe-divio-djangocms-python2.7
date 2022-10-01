@@ -9,7 +9,6 @@ participant_labels = {
     'address1': ('Street Address'),
     'address2': ('Street Address (cont.)'),
     'best_time': ('Best time to call'),
-    'offsite_preferred': ('Offsite phone'),
     'how_heard': "How did you hear about The Expo?",
     'purchase_email': ('BPT Purchase Email'),
 }
@@ -261,21 +260,11 @@ participant_form_help_texts = {
     communications. This defaults to your First and Last Name.'),
     'phone': ('A phone number we can use to reach you when you are at the \
     Expo, such as cell phone.'),
-    'offsite_preferred': ('Your preferred phone number (if different from \
-    above), for communication before the Expo.  Use this if you prefer to \
-    get phone calls at a phone you cannot bring to the Expo.'),
     'legal_name': ('Please provide us with your legal first and last names.\
      This information is only used by the event staff never shared with anyone\
      without your prior permission.\
      Please use your stage name in the Badge Name field.'),
 }
-
-
-phone_validation_error_text = (
-    'If Preferred contact is a Phone call or '
-    'Text, we need your phone number as either an Onsite phone or Offsite '
-    'preferred.')
-
 
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''
@@ -311,10 +300,6 @@ available_time_conflict = \
 
 unavailable_time_conflict = \
     'Unavailable times conflict with Available times.'
-
-phone_error1 = ['Phone number needed here']
-phone_error2 = ['... or here ']
-phone_error3 = ['...or choose a contact method that does not require a phone.']
 
 tech_labels = {
     'track_title': 'Name of Song',
@@ -385,9 +370,6 @@ starting_position_choices = [
     ('In the house', 'In the house')
 ]
 
-bidder_info_phone_error = ('A phone number we can use to reach you '
-                           ' when you are at the Expo, such as cell phone.')
-
 act_length_required = ("Act Length (mm:ss) is required.")
 act_length_too_long = ("The Act Length is too long.")
 
@@ -406,7 +388,8 @@ act_help_texts = {
                     'clean the stage after your act. Please do not leave '
                     'anything on the stage (water, glitter, confetti, etc.)'),
     'performer': ('Select the stage persona or troupe who will be performing.'
-                  ' Hit "create" to create a new persona or troupe.'),
+                  ' Hit "+" to create a new individual or troupe bio, or the '
+                  'pencil to edit the selected item.'),
     'other_performance': ("Don't feel badly if you're not accepted to perform "
                           "in one of the formal shows. We have a ton of other "
                           "ways to get your performance fix! Indicating that "

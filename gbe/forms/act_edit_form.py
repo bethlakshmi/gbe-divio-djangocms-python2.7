@@ -16,6 +16,7 @@ from gbe.models import Act
 from gbe_forms_text import (
     act_help_texts,
     act_bid_labels,
+    participant_form_help_texts,
 )
 from gbetext import (
     act_other_perf_options,
@@ -52,11 +53,14 @@ class ActEditDraftForm(ModelForm):
         label=act_bid_labels['description'],
         help_text=act_help_texts['description'],
         widget=Textarea)
+    phone = CharField(required=True,
+                      help_text=participant_form_help_texts['phone'])
 
     class Meta:
         model = Act
         fields = [
             'performer',
+            'phone',
             'shows_preferences',
             'b_title',
             'track_title',
