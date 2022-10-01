@@ -199,8 +199,7 @@ class TestEditAct(TestCase):
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
-        act = ActFactory(shows_preferences="[u'5']",
-                         other_performance="[u'1', u'3']")
+        act = ActFactory(shows_preferences="[u'5']")
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
@@ -215,25 +214,9 @@ class TestEditAct(TestCase):
             response,
             constraint_selected % (
                 "shows_preferences",
-                0,
+                5,
                 "shows_preferences",
-                0),
-            html=True)
-        self.assertContains(
-            response,
-            constraint_selected % (
-                "other_performance",
-                1,
-                "other_performance",
                 1),
-            html=True)
-        self.assertContains(
-            response,
-            constraint_selected % (
-                "other_performance",
-                3,
-                "other_performance",
-                3),
             html=True)
 
     def test_edit_act_submit_make_message(self):
