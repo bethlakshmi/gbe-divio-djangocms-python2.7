@@ -21,7 +21,7 @@ from gbe.views.act_display_functions import display_invalid_act
 class MakeActView(MakeBidView):
     page_title = 'Act Proposal'
     view_title = 'Propose an Act'
-    draft_fields = ['b_title', 'b_description', 'performer']
+    draft_fields = ['b_title', 'performer']
     submit_fields = ['b_title',
                      'b_description',
                      'shows_preferences',

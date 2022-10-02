@@ -15,9 +15,8 @@ from gbetext import (
     default_class_draft_msg
 )
 from gbe.models import (
-    Class,
     Conference,
-    UserMessage,
+    UserMessage
 )
 
 
@@ -65,8 +64,7 @@ class TestEditClass(TestCase):
                       urlconf='gbe.urls')
         login_as(klass.teacher.performer_profile, self)
         data = self.get_form(submit=False)
-        data['theclass-b_title'] = '"extra quotes"'
-        data["theclass-teacher"] = klass.teacher.pk
+        data['theclass-teacher'] = klass.teacher.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
@@ -106,8 +104,6 @@ class TestEditClass(TestCase):
         response, data = self.post_class_edit_draft()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        self.assertNotContains(response, data['theclass-b_title'])
-        self.assertContains(response, data['theclass-b_title'].strip('\"\''))
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
@@ -119,7 +115,6 @@ class TestEditClass(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Submit a Class')
-        self.assertContains(response, klass.b_title)
 
     def test_edit_bid_verify_info_popup_text(self):
         klass = ClassFactory()
@@ -167,15 +162,19 @@ class TestEditClass(TestCase):
                 2),
             html=True)
 
+    def test_edit_class_post_with_submit(self):
+        response, data = self.post_class_edit_submit()
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        # should test some change to class
+
     def test_class_submit_make_message(self):
         '''class_bid, not submitting and no other problems,
         should redirect to home'''
         response, data = self.post_class_edit_submit()
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_class_submit_msg)
-        self.assertContains(response, "A class")
 
     def test_class_draft_make_message(self):
         '''class_bid, not submitting and no other problems,
@@ -197,6 +196,8 @@ class TestEditClass(TestCase):
             response, 'success', 'Success', msg.description)
 
     def test_class_draft_has_message(self):
+        '''class_bid, not submitting and no other problems,
+        should redirect to home'''
         msg = UserMessageFactory(
             view='MakeClassView',
             code='DRAFT_SUCCESS')

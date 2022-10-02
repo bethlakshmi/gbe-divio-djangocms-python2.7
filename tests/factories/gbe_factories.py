@@ -173,7 +173,7 @@ class ClassFactory(DjangoModelFactory):
     b_title = Sequence(lambda x: "Test Class #%d" % x)
     b_description = LazyAttribute(
         lambda a: "Description for %s" % a.e_title)
-    submitted = False
+
     duration = timedelta(hours=1)
     teacher = SubFactory(PersonaFactory)
     minimum_enrollment = 1
