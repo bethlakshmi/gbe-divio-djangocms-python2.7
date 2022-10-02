@@ -147,7 +147,6 @@ class TestTroupeEdit(TestCase):
         name = '"extra quotes"'
         response, data = self.submit_troupe(name=name)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, data['name'])
         self.assertContains(response, '(Click to edit)')
         self.assertNotContains(response, name)
         self.assertContains(response, name.strip('\"\''))
