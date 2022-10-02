@@ -27,12 +27,6 @@ class TroupeForm(PersonaForm):
         label=troupe_labels['year_started'],
         help_text=persona_help_texts['year_started'])
 
-    def clean(self):
-        cleaned_data = super(TroupeForm, self).clean()
-        if 'name' in cleaned_data:
-            cleaned_data['name'] = cleaned_data['name'].strip('\'\"')
-        return cleaned_data
-
     class Meta:
         model = Troupe
         fields = ['contact',

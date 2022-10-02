@@ -17,7 +17,7 @@ from filer.models.foldermodels import Folder
 from django.contrib.auth.models import User
 
 
-class PersonaForm(ModelForm):
+class PersonaForm (ModelForm):
     use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
@@ -34,12 +34,6 @@ class PersonaForm(ModelForm):
         widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=persona_labels['bio'],
         help_text=persona_help_texts['bio'])
-
-    def clean(self):
-        cleaned_data = super(PersonaForm, self).clean()
-        if 'name' in cleaned_data:
-            cleaned_data['name'] = cleaned_data['name'].strip('\'\"')
-        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
