@@ -51,6 +51,7 @@ class TestReviewClass(TestCase):
         self.assertContains(response, "Review Bids")
         self.assertContains(response, "Bid Control for Coordinator")
         self.assertNotContains(response, 'name="extra_button"')
+        self.assertContains(response, self.performer.year_started)
 
     def test_review_class_w_scheduling(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
