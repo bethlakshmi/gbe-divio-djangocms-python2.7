@@ -32,14 +32,14 @@ class TestPersonaCreate(TestCase):
         self.profile = ProfileFactory()
         ProfileFactory(user_object__username="admin_img")
 
-    def submit_persona(self, image=None):
+    def submit_persona(self, image=None, name=None):
         login_as(self.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
         response = self.client.get(url)
 
         data = {'performer_profile': self.profile.pk,
                 'contact': self.profile.pk,
-                'name': 'persona for %s' % self.profile.display_name,
+                'name': name or 'persona for %s' % self.profile.display_name,
                 'homepage': 'foo.bar.com/~quux',
                 'bio': 'bio bio bio',
                 'year_started': 2003,
@@ -135,9 +135,12 @@ class TestPersonaCreate(TestCase):
                                reverse("troupe-add", urlconf="gbe.urls"))
 
     def test_create_persona_make_message(self):
-        response, persona_count = self.submit_persona()
+        name = '"extra quotes"'
+        response, persona_count = self.submit_persona(name=name)
         assert_alert_exists(
             response, 'success', 'Success', default_create_persona_msg)
+        self.assertNotContains(response, name)
+        self.assertContains(response, name.strip('\"\''))
 
     def test_create_persona_has_message(self):
         msg = UserMessageFactory(
