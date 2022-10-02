@@ -74,7 +74,7 @@ class TestTroupeEdit(TestCase):
         UserMessage.objects.all().delete()
         self.client = Client()
 
-    def submit_troupe(self):
+    def submit_troupe(self, name=None):
         persona = PersonaFactory()
         contact = persona.performer_profile
         troupe = TroupeFactory(contact=contact)
@@ -83,7 +83,7 @@ class TestTroupeEdit(TestCase):
                       urlconf='gbe.urls')
         login_as(contact.profile, self)
         data = {'contact': persona.performer_profile.pk,
-                'name':  "New Troupe",
+                'name':  name or "New Troupe",
                 'homepage': persona.homepage,
                 'bio': "bio",
                 'year_started': 2001,
@@ -144,10 +144,13 @@ class TestTroupeEdit(TestCase):
     def test_edit_troupe(self):
         '''edit_troupe view, edit flow success
         '''
-        response, data = self.submit_troupe()
+        name = '"extra quotes"'
+        response, data = self.submit_troupe(name=name)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, data['name'])
         self.assertContains(response, '(Click to edit)')
+        self.assertNotContains(response, name)
+        self.assertContains(response, name.strip('\"\''))
 
     def test_edit_troupe_bad_data(self):
         '''edit_troupe view, edit flow success
