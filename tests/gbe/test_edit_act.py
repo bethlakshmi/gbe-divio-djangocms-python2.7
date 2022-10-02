@@ -93,6 +93,7 @@ class TestEditAct(TestCase):
         login_as(act.performer.contact, self)
         act_form = self.get_act_form(act)
         act_form['draft'] = True
+        act_form['theact-b_title'] = '"extra quotes"'
         response = self.client.post(url,
                                     act_form,
                                     follow=True)
@@ -196,6 +197,8 @@ class TestEditAct(TestCase):
         response = self.post_edit_paid_act_draft()
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         self.assertContains(response, 'Welcome to GBE')
+        self.assertContains(response, 'extra quotes')
+        self.assertNotContains(response, '"extra quotes"')
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''

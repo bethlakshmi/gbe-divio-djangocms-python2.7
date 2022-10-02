@@ -91,6 +91,12 @@ class ActEditDraftForm(ModelForm):
                 self.initial['other_performance'] = jsonify(
                     obj_data['other_performance'])
 
+    def clean(self):
+        cleaned_data = super(ActEditDraftForm, self).clean()
+        if 'b_title' in cleaned_data:
+            cleaned_data['b_title'] = cleaned_data['b_title'].strip('\'\"')
+        return cleaned_data
+
 
 class ActEditForm(ActEditDraftForm):
     act_duration = DurationField(

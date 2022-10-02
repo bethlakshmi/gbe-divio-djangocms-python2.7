@@ -71,4 +71,5 @@ class MakeClassView(MakeBidView):
             minutes=self.bid_object.length_minutes)
         self.bid_object.b_conference = self.conference
         self.bid_object.e_conference = self.conference
+        self.bid_object.e_title = self.bid_object.b_title
         self.bid_object = self.form.save(commit=True)
