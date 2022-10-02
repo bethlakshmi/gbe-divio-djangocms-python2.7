@@ -91,9 +91,6 @@ class ActEditDraftForm(ModelForm):
             if obj_data['shows_preferences']:
                 self.initial['shows_preferences'] = jsonify(
                     obj_data['shows_preferences'])
-            if obj_data['other_performance']:
-                self.initial['other_performance'] = jsonify(
-                    obj_data['other_performance'])
 
 
 class ActEditForm(ActEditDraftForm):

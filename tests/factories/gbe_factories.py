@@ -53,6 +53,7 @@ class UserFactory(DjangoModelFactory):
     email = Sequence(lambda n: 'John_%s@smith.com' % str(n))
     username = LazyAttribute(lambda a: "%s" % (a.email))
 
+
 class ProfileFactory(DjangoModelFactory):
     class Meta:
         model = conf.Profile

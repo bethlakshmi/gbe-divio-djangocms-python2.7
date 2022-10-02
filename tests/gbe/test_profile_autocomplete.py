@@ -1,10 +1,7 @@
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
-from tests.factories.gbe_factories import (
-    ProfileFactory,
-    UserFactory,
-)
+from tests.factories.gbe_factories import ProfileFactory
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -67,8 +64,7 @@ class TestProfileAutoComplete(TestCase):
 
     def test_list_profile_w_search_by_last_name(self):
         profile1 = ProfileFactory(user_object__last_name="profile1")
-        profile2 = ProfileFactory(user_object=UserFactory(
-            last_name="NOT HERE"))
+        profile2 = ProfileFactory(user_object__last_name="NOT HERE")
         login_as(self.user, self)
         response = self.client.get("%s?q=%s" % (
             self.url,
