@@ -468,7 +468,7 @@ persona_labels = {'name': ('Stage Name'),
                   'homepage': ('Web Site'),
                   'contact': ('Agent/Contact'),
                   'bio': ('Bio'),
-                  'experience': ('Experience'),
+                  'year_started': ('Started In'),
                   'awards': ('Awards'),
                   'promo_image': ('Promo Image'),
                   'puffsheet': ('Press kit/one-sheet'),
@@ -477,7 +477,7 @@ persona_labels = {'name': ('Stage Name'),
 
 troupe_labels = persona_labels.copy()
 troupe_labels['name'] = ('Troupe Name')
-troupe_labels['experience'] = ('Troupe Experience')
+troupe_labels['year_started'] = ('Started In')
 
 persona_help_texts = {
     'name': 'This is the name you will be listed under when performing.',
@@ -491,7 +491,7 @@ persona_help_texts = {
                     'will appear on your performer page.'),
     'puffsheet': ("If you have a one-sheet or other prepared presskit, you "
                   "may upload it, and we'll include it in your promo page. "),
-    'experience': 'Number of years performing burlesque',
+    'year_started': 'First year you performed or taught',
     'awards': ('Other awards and recognition of your work in burlesque, '
                'including festival appearances not listed above.'),
     'festivals': ('If you have appeared in any of these festivals, let '
