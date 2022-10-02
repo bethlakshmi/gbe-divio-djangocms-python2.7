@@ -13,8 +13,8 @@ class PurchasedTicketContext:
         self.conference = conference or ConferenceFactory()
         self.profile = profile or ProfileFactory(
             display_name="",
-            user_object__first_name="first",
-            user_object__last_name="last")
+            user_object__first_name="firstname",
+            user_object__last_name="lastname")
         self.transaction = TransactionFactory(
             ticket_item__ticketing_event__conference=self.conference,
             purchaser__matched_to_user=self.profile.user_object,
