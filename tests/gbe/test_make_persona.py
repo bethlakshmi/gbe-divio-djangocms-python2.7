@@ -135,7 +135,7 @@ class TestPersonaCreate(TestCase):
                                reverse("troupe-add", urlconf="gbe.urls"))
 
     def test_create_persona_make_message(self):
-+        name = '"extra quotes"'
+        name = '"extra quotes"'
         response, persona_count = self.submit_persona(name=name)
         assert_alert_exists(
             response, 'success', 'Success', default_create_persona_msg)
