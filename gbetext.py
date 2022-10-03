@@ -64,7 +64,8 @@ ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete but it has been "
 act_shows_options = [
     (4, mark_safe('Thursday, May 4, 8PM: <b>Star Bras!</b><br><small>Show us '
                   'your space opera! Visitors from any planet (or universe) '
-                  'are welcome, just bring us your best sci-fi acts!</small>')),
+                  'are welcome, just bring us your best sci-fi acts!</small>'
+                  )),
     (5, mark_safe('Friday, May 5, 9:30PM: <b>The Burlesk Bordello</b><br>'
                   '<small>21+. We want your sexiest, raunchiest, kinkiest, '
                   'and most erotic numbers for this intimate, late-night '
