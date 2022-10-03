@@ -26,15 +26,11 @@
 <div class="card card-body gbe-bg-light">
   <h3 class="gbe-subtitle">Email Options</h3>
   {% for field in email_form.visible_fields%}
-  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %}">
+  <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %} pb-3">
     <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
     <div class="col-lg-11 col-md-10 col-xs-10">
-      {{ field.label }}{% if field.help_text %}
-      <span class="dropt" title="Help">
-        <img src= "{% static "img/question.png" %}" alt="?"/>
-          <span style="width:200px;float:right;text-align:left;">
-          {{ field.help_text }}
-          </span></span>{% endif %}</div>
+      {{ field.label }}{% if field.help_text %}<br>
+      <small>{{ field.help_text }}</small>{% endif %}</div>
   </div>
   {% endfor %}
 </div>
