@@ -108,6 +108,8 @@ class TestEditClass(TestCase):
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
         klass = ClassFactory()
+        klass.teacher.performer_profile.phone = "555-666-7777"
+        klass.teacher.performer_profile.save()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -115,6 +117,7 @@ class TestEditClass(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Submit a Class')
+        self.assertContains(response, "555-666-7777")
 
     def test_edit_bid_verify_info_popup_text(self):
         klass = ClassFactory()
