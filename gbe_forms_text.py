@@ -369,9 +369,6 @@ starting_position_choices = [
     ('In the house', 'In the house')
 ]
 
-act_length_required = ("Act Length (mm:ss) is required.")
-act_length_too_long = ("The Act Length is too long.")
-
 act_help_texts = {
     'shows_preferences': 'Check as many as apply to you',
     'act_duration': ('Length of entire act in mm:ss - please include any time '
@@ -434,18 +431,6 @@ act_bid_labels = {
     'video_link': 'URL of Video'
 }
 summer_bid_label = "I am available to perform on"
-
-bio_required = "Performer/Troupe history is required."
-bio_too_long = "The History is too long."
-bio_help_text = 'Please give a brief performer/troupe history.'
-
-act_description_required = "Description of the Act is required."
-act_description_too_long = "The Description  is too long."
-
-promo_required = "Please provide a photo."
-promo_help_text = ('Please_upload a photograph of yourself (photo must '
-                   'be under 10 MB).')
-
 persona_labels = {'name': ('Stage Name'),
                   'homepage': ('Web Site'),
                   'contact': ('Agent/Contact'),
@@ -481,8 +466,6 @@ persona_help_texts = {
                   'your performer page.'),
 }
 
-bid_review_options = ('Accepted', 'Declined', 'Waitlist')
-
 acceptance_labels = {
     'accepted': ('Change Bid State')
 }
@@ -501,22 +484,10 @@ actbid_error_messages = {
         'max_length': ("The title of the act is too long."),
     }}
 
-actbid_name_missing = ['...a name is needed']
 actbid_otherperformers_missing = ['...please describe the other performers.']
 actbid_group_wrong = ['If this is a group... other entries are needed.']
 actbid_group_error = '''The submission says this is a group act, but there are \
 no other performers listed'''
-
-video_error1 = ['Either say that no video is provided.']
-video_error2 = ['... or provide video']
-video_error3 = '''The Video Description suggests a Video Link would be provided, \
-but none was provided.'''
-
-description_required = ("Description is required.")
-description_too_long = ("The Description is too long.")
-description_help_text = '''For use on the The Great Burlesque Expo website, \
-    in advertising and in any schedule of events. The description should be \
-    1-2 paragraphs.'''
 
 avoided_constraints_popup_text = '''<strong>Info!</strong>
     We will do our best to accommodate everyone's requests when scheduling
@@ -601,7 +572,6 @@ class_schedule_options = [('0', 'Friday Afternoon'),
                           ('3', 'Sunday Morning'),
                           ('4', 'Sunday Afternoon')]
 
-space_error1 = ('''A class of workshop type cannot have space choices.''')
 space_type_error1 = ('''A workshop has seating in a ring around the room, \
     other options are not available.''')
 space_error2 = ('''A class of movement type cannot have lecture space \
@@ -630,10 +600,6 @@ panel_help_texts = {
                    'before, either at a convention, or elsewhere. If this '
                    'content has run before, please describe where and when.'),
 }
-
-vendor_description_help_text = ('Please describe your good or services in 250 '
-                                'words or less. We will publish this text on '
-                                'the website.')
 
 vendor_labels = {
     'description': 'Description of Goods or Services',
@@ -678,18 +644,6 @@ vendor_schedule_options = [('VSH0', 'Saturday, 9am to noon'),
                            ('VSH6', 'Sunday, 4pm to 8pm'),
                            ('VSH7', 'Sunday after 8pm')]
 vendor_featured_options = [('Featured', 'Featured')]
-
-help_time_choices = (('Saturday, 9am to noon', 'Saturday, 9am to noon'),
-                     ('Saturday, 12pm to 4pm', 'Saturday, 12p to 4pm'),
-                     ('Saturday, 4pm to 8pm', 'Saturday, 4pm to 8pm'),
-                     ('Saturday after 8pm', 'Saturday after 8pm'),
-                     ('Sunday, 9am to noon', 'Sunday, 9am to noon'),
-                     ('Sunday, 12pm to 4pm', 'Sunday, 12p to 4pm'),
-                     ('Sunday, 4pm to 8pm', 'Sunday, 4pm to 8pm'),
-                     ('Sunday after 8pm', 'Sunday after 8pm'))
-
-#  Would like to be able to insert this into the class proposal form
-#  from upstream
 
 class_proposal_form_text = {
     'header': ("Thanks for your interest in the Great Burlesque Expo. "
