@@ -33,6 +33,7 @@ class TroupeForm(PersonaForm):
             cleaned_data['name'] = cleaned_data['name'].strip('\'\"')
         return cleaned_data
 
+
     class Meta:
         model = Troupe
         fields = ['contact',

@@ -84,6 +84,7 @@ class MakeActView(MakeBidView):
                 'b_title': "%s Act - %s" % (
                     self.owner,
                     self.conference.conference_slug)}
+        initial['phone'] = self.owner.phone
         return initial
 
     def set_valid_form(self, request):

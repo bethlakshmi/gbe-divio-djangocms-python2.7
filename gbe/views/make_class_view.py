@@ -54,6 +54,7 @@ class MakeClassView(MakeBidView):
         if not self.bid_object:
             initial = {'owner': self.owner,
                        'teacher': self.teachers[0]}
+        initial['phone'] = self.owner.phone
         return initial
 
     def set_up_form(self):

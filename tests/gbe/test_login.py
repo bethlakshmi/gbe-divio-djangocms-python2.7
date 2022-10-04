@@ -15,7 +15,7 @@ class TestIndex(TestCase):
         self.url = reverse('home', urlconf='gbe.urls')
 
         # User/Human setup
-        self.profile = ProfileFactory()
+        self.profile = ProfileFactory(user_object__email="different")
 
     def test_login_w_email(self):
         '''Basic test of landing_page view

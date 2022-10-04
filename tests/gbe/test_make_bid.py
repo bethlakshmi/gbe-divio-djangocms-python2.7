@@ -78,6 +78,7 @@ class TestMakeBid(TestCase):
                       urlconf='gbe.urls')
         login_as(self.performer.performer_profile, self)
         data = {'theclass-teacher': self.performer.pk,
+                'theclass-phone': '111-222-3333',
                 'theclass-b_title': 'A class',
                 'theclass-b_description': 'a description',
                 'theclass-length_minutes': 60,

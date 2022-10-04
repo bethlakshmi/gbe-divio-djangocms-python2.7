@@ -1,13 +1,11 @@
 from django.forms import (
     CharField,
     EmailField,
-    ModelForm,
 )
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from gbe_forms_text import (
-    username_help,
-    username_label,
+    user_form_help,
 )
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
@@ -21,10 +19,8 @@ from gbetext import (
 class UserCreateForm(UserCreationForm):
     required_css_class = 'required'
     error_css_class = 'error'
+    name = CharField(required=True, help_text=user_form_help['name'])
     email = EmailField(required=True)
-    username = CharField(label=username_label, help_text=username_help)
-    first_name = CharField(required=True)
-    last_name = CharField(required=True)
     verification = ReCaptchaField(widget=ReCaptchaWidget())
 
     def is_valid(self):
@@ -53,12 +49,17 @@ class UserCreateForm(UserCreationForm):
                 valid = False
         return valid
 
+    def save(self, commit=True):
+        form = super(UserCreateForm, self).save(commit=False)
+        form.username = form.email
+        if commit:
+            form.save()
+        return form
+
     class Meta:
         model = User
-        fields = ['username',
-                  'email',
-                  'first_name',
-                  'last_name',
+        fields = ['email',
+                  'name',
                   'password1',
                   'password2',
                   ]

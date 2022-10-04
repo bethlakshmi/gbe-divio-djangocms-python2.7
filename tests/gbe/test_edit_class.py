@@ -17,6 +17,7 @@ from gbetext import (
 from gbe.models import (
     Class,
     Conference,
+    Profile,
     UserMessage,
 )
 
@@ -34,6 +35,7 @@ class TestEditClass(TestCase):
 
     def get_form(self, submit=True, invalid=False):
         data = {"theclass-teacher": self.teacher.pk,
+                'theclass-phone': '111-222-3333',
                 "theclass-b_title": 'A class',
                 "theclass-b_description": 'a description',
                 "theclass-length_minutes": 60,
@@ -48,18 +50,17 @@ class TestEditClass(TestCase):
         return data
 
     def post_class_edit_submit(self):
-        klass = ClassFactory()
+        klass = ClassFactory(teacher=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
         login_as(klass.teacher.performer_profile, self)
         data = self.get_form()
-        data['theclass-teacher'] = klass.teacher.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
     def post_class_edit_draft(self):
-        klass = ClassFactory()
+        klass = ClassFactory(teacher=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -112,6 +113,8 @@ class TestEditClass(TestCase):
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
         klass = ClassFactory()
+        klass.teacher.performer_profile.phone = "555-666-7777"
+        klass.teacher.performer_profile.save()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -120,6 +123,7 @@ class TestEditClass(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Submit a Class')
         self.assertContains(response, klass.b_title)
+        self.assertContains(response, "555-666-7777")
 
     def test_edit_bid_verify_info_popup_text(self):
         klass = ClassFactory()
@@ -166,6 +170,13 @@ class TestEditClass(TestCase):
                 "avoided_constraints",
                 2),
             html=True)
+
+    def test_edit_class_post_with_submit(self):
+        response, data = self.post_class_edit_submit()
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        profile = Profile.objects.get(pk=self.teacher.performer_profile.pk)
+        self.assertEqual(profile.phone, '111-222-3333')
 
     def test_class_submit_make_message(self):
         '''class_bid, not submitting and no other problems,

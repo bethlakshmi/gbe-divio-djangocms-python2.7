@@ -295,7 +295,8 @@ class TestTransactions(TestCase):
             "%s - Vendor" % old_context.transaction.ticket_item.title)
         self.assertNotContains(response, "- Act")
         self.assertNotContains(response, context.transaction.purchaser.email)
-        self.assertNotContains(response, context.profile.display_name)
+        self.assertNotContains(response,
+                               context.profile.user_object.first_name)
         self.assertNotContains(response, context.transaction.ticket_item.title)
 
     def test_transactions_old_conf_limbo_purchase_user_view(self):
@@ -319,7 +320,8 @@ class TestTransactions(TestCase):
         self.assertNotContains(response, "- Vendor")
         self.assertNotContains(response, "- Act")
         self.assertNotContains(response, context.transaction.purchaser.email)
-        self.assertNotContains(response, context.profile.display_name)
+        self.assertNotContains(response,
+                               context.profile.user_object.first_name)
         self.assertNotContains(response, context.transaction.ticket_item.title)
 
     @patch('urllib.request.urlopen', autospec=True)
