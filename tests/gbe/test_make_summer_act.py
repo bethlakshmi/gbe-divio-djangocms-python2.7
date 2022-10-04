@@ -39,6 +39,7 @@ class TestSummerAct(TestCase):
 
         form_dict = {'theact-shows_preferences': [4],
                      'theact-b_title': 'An act',
+                     'theact-phone': '111-222-3333',
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',

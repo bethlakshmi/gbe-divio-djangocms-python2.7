@@ -15,6 +15,7 @@ from gbe_forms_text import (
     classbid_help_texts,
     classbid_labels,
     class_schedule_options,
+    participant_form_help_texts,
 )
 from gbe.functions import jsonify
 
@@ -38,11 +39,14 @@ class ClassBidDraftForm(ModelForm):
         required=True,
         widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=classbid_labels['b_description'])
+    phone = CharField(required=True,
+                      help_text=participant_form_help_texts['phone'])
 
     class Meta:
         model = Class
         fields = ['b_title',
                   'teacher',
+                  'phone',
                   'b_description',
                   'maximum_enrollment',
                   'type',
