@@ -80,7 +80,7 @@ class PersonaFactory(DjangoModelFactory):
     contact = SubFactory(ProfileFactory)
     performer_profile = LazyAttribute(lambda a: a.contact)
     name = Sequence(lambda n: 'Test Persona %d' % n)
-    experience = 4
+    year_started = 2004
 
 
 class TroupeFactory(DjangoModelFactory):
@@ -88,7 +88,7 @@ class TroupeFactory(DjangoModelFactory):
         model = conf.Troupe
     contact = SubFactory(ProfileFactory)
     name = Sequence(lambda n: 'Test Troupe %d' % n)
-    experience = 4
+    year_started = 2004
 
 
 class TechInfoFactory(DjangoModelFactory):

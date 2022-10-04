@@ -86,7 +86,7 @@ class TestTroupeEdit(TestCase):
                 'name':  "New Troupe",
                 'homepage': persona.homepage,
                 'bio': "bio",
-                'experience': 1,
+                'year_started': 2001,
                 'awards': "many",
                 'membership': [persona.pk]}
         response = self.client.post(
@@ -163,7 +163,7 @@ class TestTroupeEdit(TestCase):
                 'name':  "New Troupe",
                 'homepage': persona.homepage,
                 'bio': "bio",
-                'experience': 'bad',
+                'year_started': 'bad',
                 'awards': "many",
                 'membership': [persona.pk]}
         response = self.client.post(

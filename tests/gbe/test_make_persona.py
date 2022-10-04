@@ -42,7 +42,7 @@ class TestPersonaCreate(TestCase):
                 'name': 'persona for %s' % self.profile.display_name,
                 'homepage': 'foo.bar.com/~quux',
                 'bio': 'bio bio bio',
-                'experience': 3,
+                'year_started': 2003,
                 'awards': 'Generic string here'}
         if image:
             data['upload_img'] = image
@@ -88,7 +88,7 @@ class TestPersonaCreate(TestCase):
                   'name': '',
                   'homepage': 'foo.bar.com/~quux',
                   'bio': 'bio bio bio',
-                  'experience': 3,
+                  'year_started': 2003,
                   'awards': 'Generic string here'
                   })
         self.assertEqual(response.status_code, 200)
@@ -104,7 +104,7 @@ class TestPersonaCreate(TestCase):
                   'name': 'persona name',
                   'homepage': 'foo.bar.com/~quux',
                   'bio': 'bio bio bio',
-                  'experience': 3,
+                  'year_started': 2003,
                   'awards': 'Generic string here',
                   },
             follow=True)
@@ -170,7 +170,7 @@ class TestPersonaEdit(TestCase):
                 'name': new_name,
                 'homepage': self.persona.homepage,
                 'bio': "bio",
-                'experience': 1,
+                'year_started': 2001,
                 'awards': "many"}
         if image:
             data['upload_img'] = image
@@ -256,7 +256,7 @@ class TestPersonaEdit(TestCase):
                 'name': new_name,
                 'homepage': self.persona.homepage,
                 'bio': "bio",
-                'experience': 1,
+                'year_started': 2001,
                 'awards': "many",
                 'upload_img': pic_filename}
 
@@ -289,7 +289,7 @@ class TestPersonaEdit(TestCase):
                   'name': new_name,
                   'homepage': self.persona.homepage,
                   'bio': "bio",
-                  'experience': 1,
+                  'year_started': 2001,
                   'awards': "many"}
         )
         self.assertContains(response, self.expected_string)

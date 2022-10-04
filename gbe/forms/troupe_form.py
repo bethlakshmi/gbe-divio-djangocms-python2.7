@@ -1,4 +1,5 @@
 from django.forms import (
+    IntegerField,
     ModelChoiceField,
     ModelMultipleChoiceField,
 )
@@ -21,6 +22,10 @@ class TroupeForm(PersonaForm):
         queryset=Profile.objects.all(),
         empty_label=None,
         label=troupe_labels['contact'])
+    year_started = IntegerField(
+        required=True,
+        label=troupe_labels['year_started'],
+        help_text=persona_help_texts['year_started'])
 
     class Meta:
         model = Troupe
@@ -30,7 +35,7 @@ class TroupeForm(PersonaForm):
                   'membership',
                   'homepage',
                   'bio',
-                  'experience',
+                  'year_started',
                   'awards',
                   'upload_img',
                   'festivals',

@@ -10,7 +10,6 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     EvaluationCategoryFactory,
     FlexibleEvaluationFactory,
-    PersonaFactory,
     ProfileFactory,
     ShowFactory,
 )
@@ -37,7 +36,6 @@ class TestReviewAct(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
         self.privileged_profile = ProfileFactory()
         self.privileged_user = self.privileged_profile.user_object
         grant_privilege(self.privileged_user, 'Act Reviewers')
@@ -78,11 +76,15 @@ class TestReviewAct(TestCase):
         return self.client.get(url)
 
     def test_review_act_all_well(self):
+        self.act.performer.year_started = 0
+        self.act.performer.experience = 14
+        self.act.performer.save()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Bid Information')
         self.assertContains(response, 'Review Information')
+        self.assertContains(response, self.act.performer.experience)
 
     def test_hidden_fields_are_populated(self):
         login_as(self.privileged_user, self)
