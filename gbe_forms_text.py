@@ -258,8 +258,7 @@ participant_form_help_texts = {
     This can be a stage name, or your real-world name, or anything that you \
     want to have printed on your Expo badge and other official Expo \
     communications. This defaults to your First and Last Name.'),
-    'phone': ('A phone number we can use to reach you when you are at the \
-    Expo, such as cell phone.'),
+    'phone': 'For the Expo only, in case we need to reach you.',
     'legal_name': ('Please provide us with your legal first and last names.\
      This information is only used by the event staff never shared with anyone\
      without your prior permission.\
