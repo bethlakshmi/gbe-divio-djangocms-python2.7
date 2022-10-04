@@ -32,7 +32,8 @@ class Performer (WorkerItem):
     label = CharField(max_length=100, blank=True)
     homepage = URLField(blank=True)
     bio = TextField()
-    experience = PositiveIntegerField()       # in years
+    experience = PositiveIntegerField(null=True)
+    year_started = PositiveIntegerField(null=True)
     awards = TextField(blank=True)
     img = FilerImageField(
         on_delete=CASCADE,

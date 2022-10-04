@@ -201,16 +201,6 @@ answer_types = (("grade", "grade"),
                 ("text", "text"),
                 ("boolean", "boolean"),)
 
-festival_list = (('GBE', 'The Great Burlesque Exposition'),
-                 ('BHOF', 'Miss Exotic World/Burlesque Hall of Fame'),
-                 ('NYBF', 'New York Burlesque Festival'),
-                 ('NOBF', 'New Orleans Burlesque Festival'),
-                 ('TBF', 'Texas Burlesque Festival'))
-
-festival_experience = (('No', 'No'),
-                       ('Yes', 'Yes'),
-                       ('Won', 'Yes - and Won!'))
-
 yesno_options = (("Yes", "Yes"), ("No", "No"))
 yes_no_maybe_options = (("Yes", "Yes"), ("No", "No"), ('Maybe', 'Maybe'))
 boolean_options = ((True, "Yes"), (False, "No"))
@@ -218,13 +208,6 @@ boolean_options = ((True, "Yes"), (False, "No"))
 video_options = (('0', "I don't have any video of myself performing"),
                  ('1', "This is video of me but not the act I'm submitting"),
                  ('2', "This is video of the act I would like to perform"))
-participate_options = (('Yes', 'Yes'), ('No', 'No'), ('Not Sure', 'Not Sure'))
-experience_options = (('0', "I'm not a burlesque performer"),
-                      ('1', "Less than 1 year"),
-                      ('2', "1-2 years"),
-                      ('3', "3-4 years"),
-                      ('4', "5-6 years"),
-                      ('5', "more than 6 years"))
 
 event_options = (('Special', "Special Event"),
                  ('Volunteer', "Volunteer Opportunity"),

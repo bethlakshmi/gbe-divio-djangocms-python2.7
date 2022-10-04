@@ -24,6 +24,7 @@ from gbetext import (
 )
 from gbe.models import (
     Conference,
+    Profile,
     UserMessage,
 )
 from tests.functions.ticketing_functions import setup_fees
@@ -49,6 +50,7 @@ class TestCreateAct(TestCase):
     def get_act_form(self, submit=False, valid=True):
 
         form_dict = {'theact-shows_preferences': [4],
+                     'theact-phone': '111-222-3333',
                      'theact-b_title': 'An act',
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
@@ -255,6 +257,8 @@ class TestCreateAct(TestCase):
             view='MakeActView',
             code='DRAFT_SUCCESS')
         response, data = self.post_unpaid_act_draft()
+        profile = Profile.objects.get(pk=self.performer.performer_profile.pk)
+        self.assertEqual(profile.phone, '111-222-3333')
         self.assertEqual(200, response.status_code)
         assert_alert_exists(
             response, 'success', 'Success', msg.description)

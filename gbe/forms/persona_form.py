@@ -2,6 +2,7 @@ from django.forms import (
     CharField,
     HiddenInput,
     ImageField,
+    IntegerField,
     ModelForm,
     Textarea,
 )
@@ -25,6 +26,10 @@ class PersonaForm (ModelForm):
         label=persona_labels['promo_image'],
         required=False,
     )
+    year_started = IntegerField(
+        required=True,
+        label=persona_labels['year_started'],
+        help_text=persona_help_texts['year_started'])
     bio = CharField(
         widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=persona_labels['bio'],
@@ -71,7 +76,7 @@ class PersonaForm (ModelForm):
                   'label',
                   'homepage',
                   'bio',
-                  'experience',
+                  'year_started',
                   'awards',
                   'performer_profile',
                   'contact',

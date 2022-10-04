@@ -22,7 +22,10 @@ from gbetext import (
     payment_needed_msg,
     payment_details_error,
 )
-from gbe.models import UserMessage
+from gbe.models import (
+    Profile,
+    UserMessage,
+)
 from tests.functions.ticketing_functions import setup_fees
 
 
@@ -39,6 +42,7 @@ class TestEditAct(TestCase):
 
     def get_act_form(self, act, submit=False, invalid=False):
         form_dict = {'theact-performer': act.performer.pk,
+                     'theact-phone': '111-222-3333',
                      'theact-b_title': 'An act',
                      'theact-b_description': 'a description',
                      'theact-length_minutes': 60,
@@ -157,6 +161,8 @@ class TestEditAct(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Act Submission Fee")
         self.assertContains(response, payment_needed_msg)
+        profile = Profile.objects.get(pk=act.performer.performer_profile.pk)
+        self.assertEqual(profile.phone, '111-222-3333')
 
     def test_act_edit_post_form_submit_bad_pay_choice(self):
         act = ActFactory()
@@ -203,7 +209,8 @@ class TestEditAct(TestCase):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
-
+        act.performer.performer_profile.phone = "555-666-7777"
+        act.performer.performer_profile.save()
         login_as(act.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -218,6 +225,7 @@ class TestEditAct(TestCase):
                 "shows_preferences",
                 1),
             html=True)
+        self.assertContains(response, act.performer.performer_profile.phone)
 
     def test_edit_act_submit_make_message(self):
         response = self.post_edit_paid_act_submission()

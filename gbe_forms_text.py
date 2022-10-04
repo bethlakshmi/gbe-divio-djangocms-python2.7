@@ -9,7 +9,6 @@ participant_labels = {
     'address1': ('Street Address'),
     'address2': ('Street Address (cont.)'),
     'best_time': ('Best time to call'),
-    'offsite_preferred': ('Offsite phone'),
     'how_heard': "How did you hear about The Expo?",
     'purchase_email': ('BPT Purchase Email'),
 }
@@ -259,23 +258,12 @@ participant_form_help_texts = {
     This can be a stage name, or your real-world name, or anything that you \
     want to have printed on your Expo badge and other official Expo \
     communications. This defaults to your First and Last Name.'),
-    'phone': ('A phone number we can use to reach you when you are at the \
-    Expo, such as cell phone.'),
-    'offsite_preferred': ('Your preferred phone number (if different from \
-    above), for communication before the Expo.  Use this if you prefer to \
-    get phone calls at a phone you cannot bring to the Expo.'),
+    'phone': 'For the Expo only, in case we need to reach you.',
     'legal_name': ('Please provide us with your legal first and last names.\
      This information is only used by the event staff never shared with anyone\
      without your prior permission.\
      Please use your stage name in the Badge Name field.'),
 }
-
-
-phone_validation_error_text = (
-    'If Preferred contact is a Phone call or '
-    'Text, we need your phone number as either an Onsite phone or Offsite '
-    'preferred.')
-
 
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''
@@ -311,10 +299,6 @@ available_time_conflict = \
 
 unavailable_time_conflict = \
     'Unavailable times conflict with Available times.'
-
-phone_error1 = ['Phone number needed here']
-phone_error2 = ['... or here ']
-phone_error3 = ['...or choose a contact method that does not require a phone.']
 
 tech_labels = {
     'track_title': 'Name of Song',
@@ -385,12 +369,6 @@ starting_position_choices = [
     ('In the house', 'In the house')
 ]
 
-bidder_info_phone_error = ('A phone number we can use to reach you '
-                           ' when you are at the Expo, such as cell phone.')
-
-act_length_required = ("Act Length (mm:ss) is required.")
-act_length_too_long = ("The Act Length is too long.")
-
 act_help_texts = {
     'shows_preferences': 'Check as many as apply to you',
     'act_duration': ('Length of entire act in mm:ss - please include any time '
@@ -406,7 +384,8 @@ act_help_texts = {
                     'clean the stage after your act. Please do not leave '
                     'anything on the stage (water, glitter, confetti, etc.)'),
     'performer': ('Select the stage persona or troupe who will be performing.'
-                  ' Hit "create" to create a new persona or troupe.'),
+                  ' Hit "+" to create a new individual or troupe bio, or the '
+                  'pencil to edit the selected item.'),
     'other_performance': ("Don't feel badly if you're not accepted to perform "
                           "in one of the formal shows. We have a ton of other "
                           "ways to get your performance fix! Indicating that "
@@ -452,23 +431,11 @@ act_bid_labels = {
     'video_link': 'URL of Video'
 }
 summer_bid_label = "I am available to perform on"
-
-bio_required = "Performer/Troupe history is required."
-bio_too_long = "The History is too long."
-bio_help_text = 'Please give a brief performer/troupe history.'
-
-act_description_required = "Description of the Act is required."
-act_description_too_long = "The Description  is too long."
-
-promo_required = "Please provide a photo."
-promo_help_text = ('Please_upload a photograph of yourself (photo must '
-                   'be under 10 MB).')
-
 persona_labels = {'name': ('Stage Name'),
                   'homepage': ('Web Site'),
                   'contact': ('Agent/Contact'),
                   'bio': ('Bio'),
-                  'experience': ('Experience'),
+                  'year_started': ('Started In'),
                   'awards': ('Awards'),
                   'promo_image': ('Promo Image'),
                   'puffsheet': ('Press kit/one-sheet'),
@@ -477,7 +444,7 @@ persona_labels = {'name': ('Stage Name'),
 
 troupe_labels = persona_labels.copy()
 troupe_labels['name'] = ('Troupe Name')
-troupe_labels['experience'] = ('Troupe Experience')
+troupe_labels['year_started'] = ('Started In')
 
 persona_help_texts = {
     'name': 'This is the name you will be listed under when performing.',
@@ -491,15 +458,13 @@ persona_help_texts = {
                     'will appear on your performer page.'),
     'puffsheet': ("If you have a one-sheet or other prepared presskit, you "
                   "may upload it, and we'll include it in your promo page. "),
-    'experience': 'Number of years performing burlesque',
+    'year_started': 'First year you performed or taught',
     'awards': ('Other awards and recognition of your work in burlesque, '
                'including festival appearances not listed above.'),
     'festivals': ('If you have appeared in any of these festivals, let '
                   'us know how you did. This information will appear on '
                   'your performer page.'),
 }
-
-bid_review_options = ('Accepted', 'Declined', 'Waitlist')
 
 acceptance_labels = {
     'accepted': ('Change Bid State')
@@ -519,22 +484,10 @@ actbid_error_messages = {
         'max_length': ("The title of the act is too long."),
     }}
 
-actbid_name_missing = ['...a name is needed']
 actbid_otherperformers_missing = ['...please describe the other performers.']
 actbid_group_wrong = ['If this is a group... other entries are needed.']
 actbid_group_error = '''The submission says this is a group act, but there are \
 no other performers listed'''
-
-video_error1 = ['Either say that no video is provided.']
-video_error2 = ['... or provide video']
-video_error3 = '''The Video Description suggests a Video Link would be provided, \
-but none was provided.'''
-
-description_required = ("Description is required.")
-description_too_long = ("The Description is too long.")
-description_help_text = '''For use on the The Great Burlesque Expo website, \
-    in advertising and in any schedule of events. The description should be \
-    1-2 paragraphs.'''
 
 avoided_constraints_popup_text = '''<strong>Info!</strong>
     We will do our best to accommodate everyone's requests when scheduling
@@ -619,7 +572,6 @@ class_schedule_options = [('0', 'Friday Afternoon'),
                           ('3', 'Sunday Morning'),
                           ('4', 'Sunday Afternoon')]
 
-space_error1 = ('''A class of workshop type cannot have space choices.''')
 space_type_error1 = ('''A workshop has seating in a ring around the room, \
     other options are not available.''')
 space_error2 = ('''A class of movement type cannot have lecture space \
@@ -648,10 +600,6 @@ panel_help_texts = {
                    'before, either at a convention, or elsewhere. If this '
                    'content has run before, please describe where and when.'),
 }
-
-vendor_description_help_text = ('Please describe your good or services in 250 '
-                                'words or less. We will publish this text on '
-                                'the website.')
 
 vendor_labels = {
     'description': 'Description of Goods or Services',
@@ -696,18 +644,6 @@ vendor_schedule_options = [('VSH0', 'Saturday, 9am to noon'),
                            ('VSH6', 'Sunday, 4pm to 8pm'),
                            ('VSH7', 'Sunday after 8pm')]
 vendor_featured_options = [('Featured', 'Featured')]
-
-help_time_choices = (('Saturday, 9am to noon', 'Saturday, 9am to noon'),
-                     ('Saturday, 12pm to 4pm', 'Saturday, 12p to 4pm'),
-                     ('Saturday, 4pm to 8pm', 'Saturday, 4pm to 8pm'),
-                     ('Saturday after 8pm', 'Saturday after 8pm'),
-                     ('Sunday, 9am to noon', 'Sunday, 9am to noon'),
-                     ('Sunday, 12pm to 4pm', 'Sunday, 12p to 4pm'),
-                     ('Sunday, 4pm to 8pm', 'Sunday, 4pm to 8pm'),
-                     ('Sunday after 8pm', 'Sunday after 8pm'))
-
-#  Would like to be able to insert this into the class proposal form
-#  from upstream
 
 class_proposal_form_text = {
     'header': ("Thanks for your interest in the Great Burlesque Expo. "
@@ -828,10 +764,10 @@ ticketing_event_help_text = {
 donation_labels = {'donation': 'Fee (pay what you will)'}
 donation_help_text = {'donation': '''Our fee is set to the minimum shown \
 here, but you may choose to pay more.'''}
-
-username_label = 'Login'
-username_help = ("Required. 30 characters or fewer. Letters, digits and "
-                 "@ . + - _ only.")
+user_form_help = {
+    'name': ('The name you would like to see on any badges, communication '
+             'from this event, or public ways of referring to you.')
+}
 
 conference_participation_types = [('Teacher', 'Teacher'),
                                   ('Moderator', 'Moderator'),

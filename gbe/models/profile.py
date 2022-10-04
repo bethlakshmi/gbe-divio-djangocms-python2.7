@@ -76,7 +76,7 @@ class Profile(WorkerItem):
 
     @property
     def complete(self):
-        return self.display_name and self.phone
+        return self.display_name
 
     def bids_to_review(self):
         from gbe.models import Biddable

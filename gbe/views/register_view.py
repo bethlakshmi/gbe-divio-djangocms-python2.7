@@ -8,7 +8,11 @@ from django.shortcuts import render
 from gbe_logging import log_func
 from gbe.forms import UserCreateForm
 from gbetext import register_msg
-from gbe.models import UserMessage
+from gbe.models import (
+    Profile,
+    ProfilePreferences,
+    UserMessage,
+)
 
 
 @log_func
@@ -21,17 +25,20 @@ def RegisterView(request):
     if request.method == 'POST':
         form = UserCreateForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
+            username = form.cleaned_data['email']
             password = form.clean_password2()
             form.save()
             user = authenticate(username=username,
                                 password=password)
+            profile = Profile(user_object=user,
+                              display_name=form.cleaned_data['name'])
+            profile.save()
+            profile.preferences = ProfilePreferences()
+            profile.preferences.save()
+            profile.save()
             login(request, user)
             if request.GET.get('next', None):
-                return HttpResponseRedirect(
-                    reverse(
-                        'profile_update',
-                        urlconf='gbe.urls') + '?next=' + request.GET['next'])
+                return HttpResponseRedirect(request.GET['next'])
 
             return HttpResponseRedirect(reverse('profile_update',
                                                 urlconf='gbe.urls'))
