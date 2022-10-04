@@ -86,7 +86,7 @@ class TestCreateCostume(TestCase):
         response, data = self.post_costume_submission()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        self.assertContains(response, "Your Account")
+        self.assertContains(response, "Your Dashboard")
         self.assertContains(response, "(Click to view)")
         self.assertContains(response, data['b_title'])
 
@@ -96,7 +96,7 @@ class TestCreateCostume(TestCase):
         response, data = self.post_costume_draft()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        self.assertContains(response, "Your Account")
+        self.assertContains(response, "Your Dashboard")
         self.assertContains(response, "(Click to edit)")
         self.assertContains(response, data['b_title'])
 

@@ -16,7 +16,7 @@ from gbe.special_privileges import special_menu_tree
 
 
 class LoginMenu(Menu):
-    name = _("Your Account")  # give the menu a name this is required.
+    name = _("Your Dashboard")  # give the menu a name this is required.
 
     def get_nodes(self, request):
         """
@@ -24,7 +24,7 @@ class LoginMenu(Menu):
         """
         nodes = []
 
-        nodes.append(NavigationNode(_("Your Account"), "", 1,
+        nodes.append(NavigationNode(_("Your Dashboard"), "", 1,
                                     attr={'visible_for_anonymous': False}))
         nodes.append(NavigationNode(_("Your Expo"),
                                     reverse('gbe:home'), 2, 1,
