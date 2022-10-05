@@ -1,5 +1,4 @@
-# literal text here. Please use good names, meaning short and sensible. Use
-# as much comment as you need to detail where the stuff is used and for what.
+from django.utils.safestring import mark_safe
 
 
 # models
@@ -63,17 +62,21 @@ ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete but it has been "
                                 "submitted for a show.")
 
 act_shows_options = [
-    (4, ('Thursday, May 4, 8PM: Star Bras! - Show us your space opera! '
-         'Visitors from any planet (or universe) are welcome, just bring us '
-         'your best sci-fi acts!')),
-    (5, ('Friday, May 5, 9:30PM: The Burlesk Bordello - 21+. We want your '
-         'sexiest, raunchiest, kinkiest, and most erotic numbers for this '
-         'intimate, late-night Cabaret')),
-    (6, ('Saturday, May 6, 7:30PM: The Main Event, not in competition - An '
-         'amazing opportunity for newer performers or those who want to be '
-         'seen on the big stage without the pressure of competition!')),
-    (7, ('Saturday, May 6, 9PM: The Main Event, competition - Bring us your '
-         'best act to compete for titles, prizes, and cash!'))]
+    (4, mark_safe('Thursday, May 4, 8PM: <b>Star Bras!</b><br><small>Show us '
+                  'your space opera! Visitors from any planet (or universe) '
+                  'are welcome, just bring us your best sci-fi acts!</small>'
+                  )),
+    (5, mark_safe('Friday, May 5, 9:30PM: <b>The Burlesk Bordello</b><br>'
+                  '<small>21+. We want your sexiest, raunchiest, kinkiest, '
+                  'and most erotic numbers for this intimate, late-night '
+                  'Cabaret</small>')),
+    (6, mark_safe('Saturday, May 6, 7:30PM: <b>The Main Event, not in '
+                  'competition</b><br><small>An amazing opportunity for newer '
+                  'performers or those who want to be seen on the big stage '
+                  'without the pressure of competition!</small>')),
+    (7, mark_safe('Saturday, May 6, 9PM: <b>The Main Event, competition</b>'
+                  '<br><small>Bring us your best act to compete for titles, '
+                  'prizes, and cash!</small>'))]
 old_act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                          (1, 'The Main Event, in competition'),
                          (2, 'The Main Event, not in competition'),

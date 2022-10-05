@@ -34,10 +34,7 @@
      </span>
     {% endif %}
     </div>
-    <div class="col-md-8 readonlyform form_field 
-		    {% if field.field.choices|length > 7 and field.value|length %}
-		      long_choice
-  		  {%endif%}">
+    <div class="col-md-8 readonlyform form_field">
           {% if field.value %}
             {% if field.field.widget.input_type == "url" %}
               <a href="{{field.value}}">Go to {{ field.label }}</a>
@@ -49,19 +46,6 @@
 	      {% endif %}
             {% elif field.field.choices %}
               <ul>
-              {% if field.field.choices|length > 7 and field.value|length %}
-                {% for choice_id, choice_label in field.field.choices %}
-                  {% if choice_id != 'SH1' or "u'SH1'" in field.value %}
-                    <li>
-                    {% if choice_id and choice_id in field.value %}
-                      <b>{{ choice_label }}</b>
-                    {% else %}
-                      <i>{{ choice_label }}</i>
-                    {% endif %}
-                    </li>
-                  {% endif %}
-                {% endfor %}
-              {% else %} 
                 {% for choice_id, choice_label in field.field.choices %}
                   {% if choice_id and choice_id in field.value %}
                     {% if choice_id != 'SH1' or "u'SH1'" in field.value %}
@@ -77,7 +61,6 @@
                     {% endfor %}
                   {% endif %}
                 {% endfor %}
-              {% endif %}
               </ul>
             {% else %}
               {{ field.value }}

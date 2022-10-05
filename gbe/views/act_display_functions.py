@@ -10,6 +10,8 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    act_shows_options,
+    old_act_shows_options,
     default_act_title_conflict,
     act_not_unique,
 )
@@ -65,6 +67,8 @@ def get_act_form(act, form, header):
             choices=[(act.video_choice,
                       act.get_video_choice_display())],
             label=act_bid_labels['video_choice'])
+    act_form.fields['shows_preferences'].choices = old_act_shows_options + \
+        act_shows_options
 
     return act_form
 
