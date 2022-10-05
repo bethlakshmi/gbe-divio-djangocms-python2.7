@@ -78,19 +78,8 @@ class ClassBidDraftForm(ModelForm):
                 self.initial['avoided_constraints'] = jsonify(
                     obj_data['avoided_constraints'])
 
-
-class ClassBidForm(ClassBidDraftForm):
-    schedule_constraints = MultipleChoiceField(
-        widget=CheckboxSelectMultiple,
-        choices=class_schedule_options,
-        label=classbid_labels['schedule_constraints'])
-    b_description = CharField(
-        required=True,
-        widget=Textarea(attrs={'id': 'user-tiny-mce'}),
-        label=classbid_labels['b_description'])
-
     def clean(self):
-        cleaned_data = super(ClassBidForm, self).clean()
+        cleaned_data = super(ClassBidDraftForm, self).clean()
         conflict_windows = []
         if ('schedule_constraints' in self.cleaned_data) and (
                 'avoided_constraints' in self.cleaned_data):
@@ -104,4 +93,17 @@ class ClassBidForm(ClassBidDraftForm):
                 available_time_conflict % windows
             self._errors['avoided_constraints'] = \
                 unavailable_time_conflict
+        if 'b_title' in cleaned_data:
+            cleaned_data['b_title'] = cleaned_data['b_title'].strip('\'\"')
         return cleaned_data
+
+
+class ClassBidForm(ClassBidDraftForm):
+    schedule_constraints = MultipleChoiceField(
+        widget=CheckboxSelectMultiple,
+        choices=class_schedule_options,
+        label=classbid_labels['schedule_constraints'])
+    b_description = CharField(
+        required=True,
+        widget=Textarea(attrs={'id': 'user-tiny-mce'}),
+        label=classbid_labels['b_description'])
