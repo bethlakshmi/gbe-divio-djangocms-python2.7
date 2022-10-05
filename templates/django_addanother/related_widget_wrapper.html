@@ -3,7 +3,7 @@
     {{ widget }}
 
     {% if edit_related_url %}
-    <a class="related-widget-wrapper-link change-related btn btn-secondary btn-sm" id="change_id_{{ name }}"
+    <a class="related-widget-wrapper-link change-related btn gbe-btn-secondary btn-sm" id="change_id_{{ name }}"
         href=""
         data-href-template="{{ edit_related_url }}?{{ url_params }}"
         title="{% blocktrans %}Edit related{% endblocktrans %}">
@@ -12,7 +12,7 @@
     {% endif %}
 
     {% if add_related_url %}
-    <a class="related-widget-wrapper-link add-related btn btn-secondary btn-sm" id="add_id_{{ name }}"
+    <a class="related-widget-wrapper-link add-related btn gbe-btn-secondary btn-sm" id="add_id_{{ name }}"
         href="{{ add_related_url }}?{{ url_params }}"
         title="{% blocktrans %}Add another{% endblocktrans %}">
         {% trans 'Add' %}
