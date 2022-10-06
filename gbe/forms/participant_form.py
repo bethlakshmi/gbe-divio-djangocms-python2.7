@@ -14,10 +14,14 @@ from gbe_forms_text import (
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 import re
-from gbe.functions import check_forum_spam
+from gbe.functions import (
+    check_forum_spam,
+    validate_perms_by_profile
+)
 from gbetext import (
     email_in_use_msg,
     found_on_list_msg,
+    required_data_removed_msg,
 )
 
 
@@ -26,20 +30,45 @@ class ParticipantForm(ModelForm):
     error_css_class = 'error'
     email = EmailField(required=True)
     first_name = CharField(
-        required=True,
-        label=participant_labels['legal_first_name'],
-        help_text=participant_form_help_texts['legal_name'])
+        required=False,
+        label=participant_labels['legal_first_name'])
     last_name = CharField(
-        required=True,
+        required=False,
         label=participant_labels['legal_last_name'],
         help_text=participant_form_help_texts['legal_name'])
-    phone = CharField(required=True)
+    phone = CharField(required=False)
 
     how_heard = MultipleChoiceField(
         choices=how_heard_options,
         required=False,
         widget=CheckboxSelectMultiple(),
         label=participant_labels['how_heard'])
+
+    def is_valid(self):
+        from gbe.models import UserMessage
+        valid = super(ParticipantForm, self).is_valid()
+
+        if valid and (not self.cleaned_data['first_name'] or (
+                not self.cleaned_data['last_name']) or (
+                not self.cleaned_data['phone'])):
+            if self.instance.currently_involved() or validate_perms_by_profile(
+                    self.instance):
+                valid = False
+                msg = UserMessage.objects.get_or_create(
+                    view="EditProfileView",
+                    code="MISSING_REQUIRED_BID_DATA",
+                    defaults={
+                        'summary': "User Removed Data Required for Active Bids",
+                        'description': required_data_removed_msg
+                        })[0].description
+                if not self.cleaned_data['first_name']:
+                    self._errors['first_name'] = msg
+                if not self.cleaned_data['last_name']:
+                    self._errors['last_name'] = msg
+                if not self.cleaned_data['phone']:
+                    self._errors['phone'] = msg
+
+        return valid
 
     def clean(self):
         changed = self.changed_data
@@ -92,8 +121,6 @@ class ParticipantForm(ModelForm):
                   'last_name',
                   'display_name',
                   'email',
-                  'address1',
-                  'address2',
                   'city',
                   'state',
                   'zip_code',

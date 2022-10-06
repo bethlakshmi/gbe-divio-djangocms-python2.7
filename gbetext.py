@@ -593,6 +593,8 @@ etc.).'''
 email_in_use_msg = 'That email address is already in use'
 found_on_list_msg = '''This is not an acceptable email.  Please contact us \
 if this is the email you wish to use.'''
+required_data_removed_msg = '''This cannot be removed when you have an 
+application or other active involvement with an upcoming Expo.'''
 send_link_message = '''This site could not verify the email unsubscribe link. \
 Please enter your email and a new link will be mailed to you.'''
 admin_note = '''Use the BPT Purchase Email item to fix cases where the Brown\

@@ -259,10 +259,8 @@ participant_form_help_texts = {
     want to have printed on your Expo badge and other official Expo \
     communications. This defaults to your First and Last Name.'),
     'phone': 'For the Expo only, in case we need to reach you.',
-    'legal_name': ('Please provide us with your legal first and last names.\
-     This information is only used by the event staff never shared with anyone\
-     without your prior permission.\
-     Please use your stage name in the Badge Name field.'),
+    'legal_name': ('We collect this for legal agreements like payments '
+                   'or photo releases'),
 }
 
 troupe_header_text = '''More than 1 person, who will be performing on stage \

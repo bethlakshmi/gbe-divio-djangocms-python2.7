@@ -10,10 +10,7 @@ from django.shortcuts import (
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from gbe_logging import log_func
-from gbe.models import (
-    Biddable,
-    UserMessage,
-)
+from gbe.models import UserMessage
 from gbe.forms import BidStateChangeForm
 from gbe.functions import validate_perms
 from gbe.email.functions import send_bid_state_change_mail
