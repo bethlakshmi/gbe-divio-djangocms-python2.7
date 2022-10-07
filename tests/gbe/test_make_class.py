@@ -27,11 +27,14 @@ from gbe.models import (
 class TestMakeClass(TestCase):
     '''Parent for class testing'''
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         Conference.objects.all().delete()
         UserMessage.objects.all().delete()
+        cls.performer = PersonaFactory()
+
+    def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
 
     def get_form(self, submit=True, invalid=False):
         data = {"theclass-teacher": self.performer.pk,
@@ -44,6 +47,7 @@ class TestMakeClass(TestCase):
                 'theclass-maximum_enrollment': 20,
                 'theclass-fee': 0,
                 'theclass-schedule_constraints': ['0'],
+                'theclass-space_needs': "",
                 }
         if submit:
             data['submit'] = 1
@@ -56,9 +60,10 @@ class TestCreateClass(TestMakeClass):
     '''Tests for create_class view'''
     view_name = 'class_create'
 
-    def setUp(self):
-        super().setUp()
-        self.conference = ConferenceFactory(accepting_bids=True)
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.conference = ConferenceFactory(accepting_bids=True)
 
     def post_bid(self, submit=True):
         url = reverse(self.view_name,
@@ -167,9 +172,10 @@ class TestEditClass(TestMakeClass):
     '''Tests for edit_class view'''
     view_name = 'class_edit'
 
-    def setUp(self):
-        super().setUp()
-        self.teacher = self.performer
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.teacher = cls.performer
 
     def post_class_edit_submit(self):
         klass = ClassFactory(teacher=self.teacher)

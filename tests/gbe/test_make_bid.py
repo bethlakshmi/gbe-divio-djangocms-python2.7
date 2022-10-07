@@ -27,11 +27,14 @@ class TestMakeBid(TestCase):
     '''Tests for the centralized make bid view'''
     view_name = 'class_create'
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         Conference.objects.all().delete()
+        cls.performer = PersonaFactory()
+        cls.conference = ConferenceFactory(accepting_bids=True)
+
+    def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
-        self.conference = ConferenceFactory(accepting_bids=True)
 
     def get_form(self, submit=True, invalid=False):
         data = {"theclass-teacher": self.performer.pk,
@@ -47,8 +50,6 @@ class TestMakeBid(TestCase):
                 }
         if submit:
             data['submit'] = 1
-        if invalid:
-            del(data['theclass-b_title'])
         return data
 
     def post_bid(self, submit=True):

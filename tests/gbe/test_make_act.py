@@ -36,11 +36,14 @@ from datetime import (
 
 
 class TestMakeAct(TestCase):
-    def setUp(self):
+
+    @classmethod
+    def setUpTestData(cls):
         Conference.objects.all().delete()
+        cls.current_conference = ConferenceFactory(accepting_bids=True)
+
+    def setUp(self):
         self.client = Client()
-        self.current_conference = ConferenceFactory(accepting_bids=True)
-        UserMessage.objects.all().delete()
 
     def get_act_form(self, performer, submit=False, valid=True):
 
@@ -67,10 +70,11 @@ class TestCreateAct(TestMakeAct):
     '''Tests for create_act view'''
     view_name = 'act_create'
 
-    def setUp(self):
-        super().setUp()
-        self.url = reverse(self.view_name, urlconf='gbe.urls')
-        self.performer = PersonaFactory()
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse(cls.view_name, urlconf='gbe.urls')
+        cls.performer = PersonaFactory()
 
     def post_paid_act_submission(self, act_form=None):
         if not act_form:
@@ -173,6 +177,7 @@ class TestCreateAct(TestMakeAct):
 
     def test_act_bid_not_post(self):
         '''act_bid, not post, but paid should take us to bid process'''
+        UserMessage.objects.all().delete()
         make_act_app_purchase(self.current_conference,
                               self.performer.performer_profile.user_object)
         msg = UserMessageFactory(
@@ -243,11 +248,6 @@ class TestEditAct(TestMakeAct):
     # this test case should be unnecessary, since edit_act should go away
     # for now, test it.
     view_name = 'act_edit'
-
-    def setUp(self):
-        super().setUp()
-        UserMessage.objects.all().delete()
-        self.client = Client()
 
     def post_edit_paid_act_submission(self, act_form=None):
         act = ActFactory()
