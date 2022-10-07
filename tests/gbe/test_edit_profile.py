@@ -180,7 +180,7 @@ class TestEditProfile(TestCase):
         m_urlopen.return_value = a
 
         response = self.post_profile()
-        self.assertContains(response, "Your Account")
+        self.assertContains(response, "Dashboard")
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         preferences = ProfilePreferences.objects.get(profile=self.profile)
         self.assertTrue(preferences.send_daily_schedule)
