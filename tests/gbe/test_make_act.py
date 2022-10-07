@@ -62,6 +62,7 @@ class TestMakeAct(TestCase):
             del(form_dict['theact-b_description'])
         return form_dict
 
+
 class TestCreateAct(TestMakeAct):
     '''Tests for create_act view'''
     view_name = 'act_create'
@@ -431,24 +432,6 @@ class TestEditAct(TestMakeAct):
         self.assertEqual(200, response.status_code)
         assert_alert_exists(
             response, 'success', 'Success', default_act_draft_msg)
-
-    def test_edit_act_submit_has_message(self):
-        msg = UserMessageFactory(
-            view='MakeActView',
-            code='SUBMIT_SUCCESS')
-        response = self.post_edit_paid_act_submission()
-        self.assertEqual(response.status_code, 200)
-        assert_alert_exists(
-            response, 'success', 'Success', msg.description)
-
-    def test_edit_act_draft_has_message(self):
-        msg = UserMessageFactory(
-            view='MakeActView',
-            code='DRAFT_SUCCESS')
-        response = self.post_edit_paid_act_draft()
-        self.assertEqual(200, response.status_code)
-        assert_alert_exists(
-            response, 'success', 'Success', msg.description)
 
     def test_edit_act_title_collision(self):
         response, original = self.post_title_collision()

@@ -268,6 +268,13 @@ class MakeBidView(View):
         if 'phone' in self.form.cleaned_data:
             self.owner.phone = self.form.cleaned_data['phone']
             self.owner.save()
+        if 'first_name' in self.form.cleaned_data:
+            self.owner.user_object.first_name = \
+                self.form.cleaned_data['first_name']
+        if 'last_name' in self.form.cleaned_data:
+            self.owner.user_object.last_name = \
+                self.form.cleaned_data['last_name']
+        self.owner.user_object.save()
 
         # if this isn't a draft, move forward through process, setting up
         # payment review if payment is needed

@@ -66,6 +66,7 @@ def validate_perms(request, perms, require=True):
         raise PermissionDenied
     return has_perm
 
+
 def validate_perms_by_profile(profile, perms='any'):
     event_roles = ['Technical Director',
                    'Producer',
