@@ -30,8 +30,6 @@ class TestAdminProfile(TestCase):
                 'display_name': 'Display P. Name',
                 'email': 'new@last.com',
                 'purchase_email': 'new@last.com',
-                'address1': '789 Elm St',
-                'address2': 'Apt. e',
                 'city': 'Konigsburg',
                 'state': 'PA',
                 'zip_code': '23456',
@@ -43,7 +41,7 @@ class TestAdminProfile(TestCase):
                 'in_hotel': True,
                 'show_hotel_infobox': False}
         if invalid:
-            del(data['first_name'])
+            del(data['email'])
         return data
 
     def test_admin_profile_no_such_profile(self):

@@ -6,8 +6,6 @@ participant_labels = {
     'legal_first_name': ('Legal First Name'),
     'legal_last_name': ('Legal Last Name'),
     'display_name': ('Badge Name'),
-    'address1': ('Street Address'),
-    'address2': ('Street Address (cont.)'),
     'best_time': ('Best time to call'),
     'how_heard': "How did you hear about The Expo?",
     'purchase_email': ('BPT Purchase Email'),

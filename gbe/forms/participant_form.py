@@ -72,7 +72,7 @@ class ParticipantForm(ModelForm):
 
     def clean(self):
         changed = self.changed_data
-        if self.has_changed() and 'email' in self.changed_data:
+        if self.has_changed() and 'email' in self.cleaned_data:
             from gbe.models import UserMessage
             if User.objects.filter(
                     email__iexact=self.cleaned_data.get('email')).exclude(

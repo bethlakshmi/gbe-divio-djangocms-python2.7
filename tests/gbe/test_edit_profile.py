@@ -49,8 +49,6 @@ class TestEditProfile(TestCase):
                 'display_name': 'Display P. Name',
                 'email': email,
                 'purchase_email': email,
-                'address1': '789 Elm St',
-                'address2': 'Apt. e',
                 'city': 'Konigsburg',
                 'state': 'PA',
                 'zip_code': '23456',
@@ -66,7 +64,7 @@ class TestEditProfile(TestCase):
                 'email_pref-send_role_notifications': False,
                 'email_pref-send_schedule_change_notifications': True, }
         if invalid:
-            del(data['first_name'])
+            del(data['email'])
         return data
 
     def post_profile(self, redirect=None, form=None):
