@@ -3,6 +3,7 @@ from django.test import Client
 from django.urls import reverse
 from tests.contexts import VolunteerContext
 from tests.factories.gbe_factories import (
+    ClassFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
     UserFactory,
@@ -15,6 +16,7 @@ from gbe.models import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    grant_privilege,
     login_as
 )
 from gbetext import (
@@ -27,6 +29,7 @@ from django.core.files import File
 from gbetext import (
     email_in_use_msg,
     found_on_list_msg,
+    required_data_removed_msg,
 )
 from django.conf import settings
 
@@ -183,6 +186,7 @@ class TestEditProfile(TestCase):
         preferences = ProfilePreferences.objects.get(profile=self.profile)
         self.assertTrue(preferences.send_daily_schedule)
         self.assertFalse(preferences.send_bid_notifications)
+        self.assertTrue(preferences.profile.user_object.first_name, "new first")
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_post_valid_form_keep_email(self, m_urlopen):
@@ -233,6 +237,42 @@ class TestEditProfile(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(response, "Your Profile")
         self.assertEqual(response.status_code, 200)
+
+    def test_inactive_user_can_remove_vitals(self):
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(self.profile, self)
+        data = self.get_form()
+        del(data['phone'])
+        del(data['first_name'])
+        del(data['last_name'])
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, "Your Account")
+        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
+
+    def test_active_user_cant_remove_vitals(self):
+        ClassFactory(teacher__contact=self.profile)
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(self.profile, self)
+        data = self.get_form()
+        del(data['phone'])
+        del(data['first_name'])
+        del(data['last_name'])
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, required_data_removed_msg, 3)
+
+    def test_staff_user_cant_remove_vitals(self):
+        grant_privilege(self.profile, 'Registrar')
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(self.profile, self)
+        data = self.get_form()
+        del(data['phone'])
+        del(data['first_name'])
+        del(data['last_name'])
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, required_data_removed_msg, 3)
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_make_message(self, m_urlopen):
