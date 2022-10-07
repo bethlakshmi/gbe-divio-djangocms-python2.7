@@ -28,7 +28,7 @@ class TestIndex(TestCase):
             email=self.profile.user_object.email,
             password='foo')
         response = self.client.get(self.url, follow=True)
-        self.assertContains(response, "Your Dashboard")
+        self.assertContains(response, "Dashboard")
 
     def test_bad_password_w_email(self):
         '''Basic test of landing_page view
@@ -41,7 +41,7 @@ class TestIndex(TestCase):
             email=self.profile.user_object.email,
             password='crap')
         response = self.client.get(self.url, follow=True)
-        self.assertNotContains(response, "Your Dashboard")
+        self.assertNotContains(response, "Dashboard")
 
     def test_bad_user_w_email(self):
         '''Basic test of landing_page view
@@ -54,7 +54,7 @@ class TestIndex(TestCase):
             email=self.profile.user_object.email,
             password='foo')
         response = self.client.get(self.url, follow=True)
-        self.assertNotContains(response, "Your Dashboard")
+        self.assertNotContains(response, "Dashboard")
 
     def test_no_user_w_email(self):
         '''Basic test of landing_page view
@@ -67,4 +67,4 @@ class TestIndex(TestCase):
             email=self.profile.user_object.email,
             password='foo')
         response = self.client.get(self.url, follow=True)
-        self.assertNotContains(response, "Your Dashboard")
+        self.assertNotContains(response, "Dashboard")
