@@ -228,7 +228,7 @@ class TestReports(TestCase):
         '''
         Conference.objects.all().delete()
         context = ClassContext()
-        context.bid.space_needs=5
+        context.bid.space_needs = 5
         context.bid.save()
         one_day = timedelta(1)
         ConferenceDayFactory(conference=context.conference,
