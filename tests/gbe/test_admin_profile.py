@@ -20,9 +20,12 @@ class TestAdminProfile(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Registrar')
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.performer = PersonaFactory()
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Registrar')
 
     def get_form(self, invalid=False):
         data = {'first_name': 'new first',

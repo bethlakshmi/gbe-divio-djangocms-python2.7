@@ -29,12 +29,15 @@ class TestCloneBid(TestCase):
 
     def setUp(self):
         self.client = Client()
+
+    @classmethod
+    def setUpTestData(cls):
         UserMessage.objects.all().delete()
         clear_conferences()
-        self.old_conference = ConferenceFactory(
+        cls.old_conference = ConferenceFactory(
             status="completed",
             accepting_bids=False)
-        self.current_conference = ConferenceFactory(
+        cls.current_conference = ConferenceFactory(
             status="upcoming",
             accepting_bids=True)
 

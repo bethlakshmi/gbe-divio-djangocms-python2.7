@@ -31,22 +31,24 @@ class TestCoordinateAct(TestCase):
     view_name = 'act_coord_create'
 
     def setUp(self):
-        self.url = reverse(self.view_name, urlconf='gbe.urls')
-        Conference.objects.all().delete()
-        self.factory = RequestFactory()
         self.client = Client()
-        self.performer = PersonaFactory()
-        self.current_conference = ConferenceFactory(accepting_bids=True)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse(cls.view_name, urlconf='gbe.urls')
+        Conference.objects.all().delete()
+        cls.factory = RequestFactory()
+        cls.performer = PersonaFactory()
+        cls.current_conference = ConferenceFactory(accepting_bids=True)
         UserMessage.objects.all().delete()
-        self.privileged_user = ProfileFactory.create().user_object
-        grant_privilege(self.privileged_user,
+        cls.privileged_user = ProfileFactory.create().user_object
+        grant_privilege(cls.privileged_user,
                         'Act Coordinator',
                         'assign_act')
-        grant_privilege(self.privileged_user,
+        grant_privilege(cls.privileged_user,
                         'Act Reviewers')
 
     def get_act_form(self, valid=True):
-
         form_dict = {'theact-b_title': 'An act',
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
