@@ -186,7 +186,8 @@ class TestEditProfile(TestCase):
         preferences = ProfilePreferences.objects.get(profile=self.profile)
         self.assertTrue(preferences.send_daily_schedule)
         self.assertFalse(preferences.send_bid_notifications)
-        self.assertTrue(preferences.profile.user_object.first_name, "new first")
+        self.assertTrue(preferences.profile.user_object.first_name,
+                        "new first")
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_post_valid_form_keep_email(self, m_urlopen):

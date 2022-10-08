@@ -70,18 +70,29 @@ class TestMakeBid(TestCase):
                 reverse('register', urlconf='gbe.urls'),
                 url))
 
-    def test_bid_no_profile(self):
+    def test_get_no_profile(self):
         '''when user has no profile, should bounce out to /profile'''
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls')
+        url = reverse(self.view_name, urlconf='gbe.urls')
         user = UserFactory()
         login_as(user, self)
         response = self.client.get(url, )
         self.assertRedirects(
             response,
             '%s?next=%s' % (
-                reverse('profile_update', urlconf='gbe.urls'),
-                reverse('class_create', urlconf='gbe.urls')))
+                reverse('profile_update', urlconf='gbe.urls'), url))
+
+    def test_post_no_profile(self):
+        '''when user has no profile, should bounce out to /profile'''
+        url = reverse("act_create", urlconf='gbe.urls')
+        user = UserFactory()
+        login_as(user, self)
+        # this is class data, not act data, but won't get far enough to care
+        data = self.get_form()
+        response = self.client.post(url, data=data, follow=True)
+        self.assertRedirects(
+            response,
+            '%s?next=%s' % (
+                reverse('profile_update', urlconf='gbe.urls'), url))
 
     def test_create_bad_profile(self):
         url = reverse(self.view_name,
