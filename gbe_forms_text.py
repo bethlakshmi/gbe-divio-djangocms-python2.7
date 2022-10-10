@@ -380,8 +380,8 @@ act_help_texts = {
                     'clean the stage after your act. Please do not leave '
                     'anything on the stage (water, glitter, confetti, etc.)'),
     'performer': ('Select the stage persona or troupe who will be performing.'
-                  ' Hit "+" to create a new individual or troupe bio, or the '
-                  'pencil to edit the selected item.'),
+                  ' Click "Add" to create a new individual or troupe bio, or'
+                  ' "Edit" change the selected item.'),
     'other_performance': ("Don't feel badly if you're not accepted to perform "
                           "in one of the formal shows. We have a ton of other "
                           "ways to get your performance fix! Indicating that "

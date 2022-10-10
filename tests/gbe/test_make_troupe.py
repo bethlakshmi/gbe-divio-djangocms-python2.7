@@ -65,6 +65,8 @@ class TestTroupeCreate(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, str(inactive))
+        self.assertContains(response, 'Manage Troupe')
+        self.assertContains(response, 'Tell Us About Your Troupe')
 
 
 class TestTroupeEdit(TestCase):
