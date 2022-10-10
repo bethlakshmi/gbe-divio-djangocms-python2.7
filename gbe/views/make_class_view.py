@@ -21,7 +21,12 @@ from datetime import timedelta
 class MakeClassView(MakeBidView):
     page_title = "Submit a Class"
     view_title = "Submit a Class"
-    draft_fields = ['b_title', 'teacher', 'b_description']
+    draft_fields = ['b_title',
+                    'teacher',
+                    'b_description',
+                    'first_name',
+                    'last_name',
+                    'phone']
     submit_fields = ['b_title',
                      'teacher',
                      'b_description',
@@ -55,6 +60,9 @@ class MakeClassView(MakeBidView):
             initial = {'owner': self.owner,
                        'teacher': self.teachers[0]}
         initial['phone'] = self.owner.phone
+        initial['first_name'] = self.owner.user_object.first_name
+        initial['last_name'] = self.owner.user_object.last_name
+
         return initial
 
     def set_up_form(self):

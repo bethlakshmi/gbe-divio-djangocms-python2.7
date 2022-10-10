@@ -215,6 +215,13 @@ class TestIndex(TestCase):
             "volunteer_signup",
             urlconf="gbe.scheduling.urls"))
 
+    def test_class_no_event_title(self):
+        weird_class = ClassFactory(e_title="")
+        self.url = reverse('home', urlconf='gbe.urls')
+        login_as(weird_class.teacher.contact, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, weird_class.b_title)
+
     def test_historical_view(self):
         url = reverse('home', urlconf='gbe.urls')
         login_as(self.profile, self)

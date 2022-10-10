@@ -28,22 +28,25 @@ from scheduler.models import Event
 class TestManageVolunteerWizard(TestCase):
     view_name = 'manage_vol'
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = ProfileFactory.create().user_object
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Volunteer Coordinator')
+        cls.room = RoomFactory()
+        # because there was a bug around duplicate room names
+        RoomFactory(name=cls.room.name)
+        cls.context = VolunteerContext()
+        cls.room.conferences.add(cls.context.conference)
+        cls.url = reverse(
+            cls.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[cls.context.conference.conference_slug,
+                  cls.context.sched_event.pk])
+
     def setUp(self):
         self.client = Client()
-        self.user = ProfileFactory.create().user_object
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
-        self.room = RoomFactory()
-        # because there was a bug around duplicate room names
-        RoomFactory(name=self.room.name)
-        self.context = VolunteerContext()
-        self.room.conferences.add(self.context.conference)
-        self.url = reverse(
-            self.view_name,
-            urlconf="gbe.scheduling.urls",
-            args=[self.context.conference.conference_slug,
-                  self.context.sched_event.pk])
 
     def get_new_opp_data(self, context):
         data = {

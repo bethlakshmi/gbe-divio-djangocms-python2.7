@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test.client import RequestFactory
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
@@ -46,16 +45,18 @@ class TestCopyOccurrence(TestGBE):
     view_name = 'copy_event_schedule'
     copy_date_format = "%a, %b %-d, %Y %-I:%M %p"
 
-    def setUp(self):
-        self.context = VolunteerContext()
-        self.url = reverse(
-            self.view_name,
-            args=[self.context.sched_event.pk],
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = VolunteerContext()
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.context.sched_event.pk],
             urlconf='gbe.scheduling.urls')
-        self.factory = RequestFactory()
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
+
+    def setUp(self):
         self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
 
     def assert_good_mode_form(self, response, title, date):
         self.assertEqual(response.status_code, 200)

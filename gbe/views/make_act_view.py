@@ -21,7 +21,12 @@ from gbe.views.act_display_functions import display_invalid_act
 class MakeActView(MakeBidView):
     page_title = 'Act Proposal'
     view_title = 'Propose an Act'
-    draft_fields = ['b_title', 'b_description', 'performer']
+    draft_fields = ['b_title',
+                    'b_description',
+                    'performer',
+                    'first_name',
+                    'last_name',
+                    'phone']
     submit_fields = ['b_title',
                      'b_description',
                      'shows_preferences',
@@ -85,6 +90,9 @@ class MakeActView(MakeBidView):
                     self.owner,
                     self.conference.conference_slug)}
         initial['phone'] = self.owner.phone
+        initial['first_name'] = self.owner.user_object.first_name
+        initial['last_name'] = self.owner.user_object.last_name
+
         return initial
 
     def set_valid_form(self, request):

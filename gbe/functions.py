@@ -56,15 +56,22 @@ def validate_perms(request, perms, require=True):
     '''
     permitted_roles = []
     profile = validate_profile(request, require=False)
-    event_roles = ['Technical Director',
-                   'Producer',
-                   'Stage Manager',
-                   'Staff Lead']
     if not profile:
         if require:
             raise PermissionDenied
         else:
             return False
+    has_perm = validate_perms_by_profile(profile, perms)
+    if not has_perm and require:
+        raise PermissionDenied
+    return has_perm
+
+
+def validate_perms_by_profile(profile, perms='any'):
+    event_roles = ['Technical Director',
+                   'Producer',
+                   'Stage Manager',
+                   'Staff Lead']
     privilege_groups = profile.privilege_groups
     if len(privilege_groups) > 0 and (perms == 'any' or any(
             [perm in privilege_groups for perm in perms])):
@@ -75,9 +82,6 @@ def validate_perms(request, perms, require=True):
         return profile
     elif any([perm in dynamic_roles for perm in perms]):
         return profile
-
-    if require:                # error out if permission is required
-        raise PermissionDenied
     return False               # or just return false if we're just checking
 
 

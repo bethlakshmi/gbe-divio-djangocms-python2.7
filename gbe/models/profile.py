@@ -14,7 +14,10 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.db.models import Q
 from gbe.models import Conference
-from scheduler.models import WorkerItem
+from scheduler.models import (
+    ResourceAllocation,
+    WorkerItem,
+)
 from scheduler.idd import (
     get_roles,
     get_schedule,
@@ -42,11 +45,7 @@ class Profile(WorkerItem):
 
     # used for linking tickets
     purchase_email = CharField(max_length=64, blank=True, default='')
-
-    # contact info - I'd like to split this out to its own object
-    # so we can do real validation
-    # but for now, let's just take what we get
-
+    # address removed from view
     address1 = CharField(max_length=128, blank=True)
     address2 = CharField(max_length=128, blank=True)
     city = CharField(max_length=128, blank=True)
@@ -111,20 +110,8 @@ class Profile(WorkerItem):
 
     @property
     def address(self):
-        address_string = str(self.address1.strip() +
-                             '\n' +
-                             self.address2.strip()).strip()
-        if len(address_string) == 0:
-            return ''
-        if (len(self.city) == 0 or
-                len(self.country) == 0 or
-                len(self.state) == 0 or
-                len(self.zip_code) == 0):
-            return ''
-        return address_string + '\n' + ' '.join((self.city + ',',
-                                                 self.state,
-                                                 self.zip_code,
-                                                 self.country))
+        return ' '.join(
+            (self.city + ',', self.state, self.zip_code, self.country))
 
     @property
     def privilege_groups(self):
@@ -293,6 +280,29 @@ class Profile(WorkerItem):
                 pref = ProfilePreferences(profile=self)
                 pref.save()
         return True
+
+    def currently_involved(self):
+        from gbe.models import Act
+        # right now, only the active conference(s), active bids, and not
+        # volunteering since it is obsolete in the current code
+        active_vendor = self.vendors().exclude(accepted__in=(1, 4, 5)).exists()
+        active_teacher = self.proposed_classes().exclude(
+            accepted__in=(1, 4, 5)).exists()
+        active_performer = Act.objects.filter(performer__contact=self).exclude(
+            b_conference__status="completed", accepted__in=(1, 4, 5)).exists()
+        active_costuming = self.costumes.exclude(
+            accepted__in=(1, 4, 5)).exists()
+        bid_evaluator = self.bidevaluation_set.exclude(
+            bid__accepted__in=(1, 4, 5),
+            bid__b_conference__status="completed").exists()
+        act_evaluator = self.actbidevaluation_set.exclude(
+            bid__accepted__in=(1, 4, 5),
+            bid__b_conference__status="completed").exists()
+
+        if active_teacher or active_performer or active_vendor or (
+                active_costuming) or bid_evaluator or act_evaluator:
+            return True
+        return False
 
     @property
     def describe(self):
