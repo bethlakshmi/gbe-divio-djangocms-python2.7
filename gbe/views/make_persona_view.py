@@ -36,6 +36,7 @@ class PersonaCreate(CreatePopupMixin,
         initial['contact'] = self.request.user.profile
         return initial
 
+
 class PersonaUpdate(UpdatePopupMixin,
                     GbeFormMixin,
                     ProfileRequiredMixin,

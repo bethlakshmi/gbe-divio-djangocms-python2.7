@@ -15,7 +15,7 @@ class SubwayMapMixin(GbeFormMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['subway_map'] = self.get_map(self.__class__.__name__,
-                                              self.get_success_url())
+                                             self.get_success_url())
         return context
 
     def get_map(self, view_name, target_url):
