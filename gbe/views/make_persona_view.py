@@ -36,10 +36,6 @@ class PersonaCreate(CreatePopupMixin,
         initial['contact'] = self.request.user.profile
         return initial
 
-    def get_success_url(self):
-        return self.request.GET.get('next', self.success_url)
-
-
 class PersonaUpdate(UpdatePopupMixin,
                     GbeFormMixin,
                     ProfileRequiredMixin,

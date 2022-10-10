@@ -6,13 +6,13 @@
 {% endblock %}
 
 {% block title %}
-   Register For An Account
+   {{page_title}}
 {% endblock %}
 
 {% block content %}
-<H3 class="gbe-title">Create an Account</H3>
+<H3 class="gbe-title">{{view_title}}</H3>
 
-{{instructions|safe}}
+{{intro_text|safe}}
 
 
   {% if form.errors %}

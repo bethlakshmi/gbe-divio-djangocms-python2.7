@@ -6,7 +6,11 @@ class SubwayMapMixin(GbeFormMixin):
 
     place_in_list = {
         'PersonaCreate': 1,
+        'RegisterView': 0,
     }
+
+    def get_success_url(self):
+        return self.request.GET.get('next', self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
