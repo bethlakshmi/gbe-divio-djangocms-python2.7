@@ -1,19 +1,15 @@
 from django.views.generic import CreateView
-from django.views.decorators.cache import never_cache
 from django.contrib.auth import (
     authenticate,
     login,
 )
-from django.http import HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from gbe_logging import log_func
 from gbe.forms import UserCreateForm
 from gbetext import register_msg
 from gbe.models import (
     Profile,
     ProfilePreferences,
-    UserMessage,
 )
 from gbe_utils.mixins import SubwayMapMixin
 
