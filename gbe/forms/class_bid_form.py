@@ -16,6 +16,7 @@ from gbe_forms_text import (
     classbid_labels,
     class_schedule_options,
     participant_form_help_texts,
+    participant_labels,
 )
 from gbe.functions import jsonify
 
@@ -41,11 +42,20 @@ class ClassBidDraftForm(ModelForm):
         label=classbid_labels['b_description'])
     phone = CharField(required=True,
                       help_text=participant_form_help_texts['phone'])
+    first_name = CharField(
+        required=True,
+        label=participant_labels['legal_first_name'])
+    last_name = CharField(
+        required=True,
+        label=participant_labels['legal_last_name'],
+        help_text=participant_form_help_texts['legal_name'])
 
     class Meta:
         model = Class
         fields = ['b_title',
                   'teacher',
+                  'first_name',
+                  'last_name',
                   'phone',
                   'b_description',
                   'maximum_enrollment',

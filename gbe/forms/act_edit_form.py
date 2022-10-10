@@ -17,6 +17,7 @@ from gbe_forms_text import (
     act_help_texts,
     act_bid_labels,
     participant_form_help_texts,
+    participant_labels,
 )
 from gbetext import (
     act_other_perf_options,
@@ -55,11 +56,20 @@ class ActEditDraftForm(ModelForm):
         widget=Textarea)
     phone = CharField(required=True,
                       help_text=participant_form_help_texts['phone'])
+    first_name = CharField(
+        required=True,
+        label=participant_labels['legal_first_name'])
+    last_name = CharField(
+        required=True,
+        label=participant_labels['legal_last_name'],
+        help_text=participant_form_help_texts['legal_name'])
 
     class Meta:
         model = Act
         fields = [
             'performer',
+            'first_name',
+            'last_name',
             'phone',
             'shows_preferences',
             'b_title',

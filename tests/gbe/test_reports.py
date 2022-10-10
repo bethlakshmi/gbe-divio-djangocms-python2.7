@@ -20,6 +20,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from gbetext import space_options
 
 
 class TestReports(TestCase):
@@ -227,6 +228,8 @@ class TestReports(TestCase):
         '''
         Conference.objects.all().delete()
         context = ClassContext()
+        context.bid.space_needs = 5
+        context.bid.save()
         one_day = timedelta(1)
         ConferenceDayFactory(conference=context.conference,
                              day=context.sched_event.starttime.date())
@@ -246,3 +249,4 @@ class TestReports(TestCase):
             data={'conf_slug': context.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, context.bid.e_title, 2)
+        self.assertContains(response, space_options[1][1][1][1])

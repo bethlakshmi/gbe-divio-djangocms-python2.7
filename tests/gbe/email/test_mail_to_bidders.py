@@ -32,25 +32,29 @@ from post_office.models import Email
 from tests.gbe.email.test_mail_filters import TestMailFilters
 
 
-class TestMailToBidder(TestMailFilters):
+class TestMailToBidders(TestMailFilters):
     view_name = 'mail_to_bidders'
     priv_list = ['Act', 'Class', 'Costume', 'Vendor', 'Volunteer']
     get_param = "?email_disable=send_bid_notifications"
 
-    def setUp(self):
-        Conference.objects.all().delete()
-        self.client = Client()
-        self.privileged_user = User.objects.create_superuser(
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = User.objects.create_superuser(
             'myuser', 'myemail@test.com', "mypassword")
-        self.privileged_profile = ProfileFactory(
-            user_object=self.privileged_user)
-        for priv in self.priv_list:
+        cls.privileged_profile = ProfileFactory(
+            user_object=cls.privileged_user)
+        for priv in cls.priv_list:
             grant_privilege(
-                self.privileged_profile.user_object,
+                cls.privileged_profile.user_object,
                 '%s Coordinator' % priv)
+        cls.url = reverse(cls.view_name, urlconf="gbe.email.urls")
+
+    def setUp(self):
+        self.client = Client()
         self.context = ClassContext()
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.email.urls")
+
+    def tearDown(self):
+        Conference.objects.all().delete()
 
     def reduced_login(self):
         reduced_profile = ProfileFactory()

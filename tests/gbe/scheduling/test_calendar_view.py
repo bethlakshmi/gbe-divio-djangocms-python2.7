@@ -31,29 +31,32 @@ from gbe.models import ConferenceDay
 
 class TestCalendarView(TestCase):
 
-    def setUp(self):
-        self.client = Client()
+    @classmethod
+    def setUpTestData(cls):
         clear_conferences()
         conference = ConferenceFactory()
         save_the_date = datetime(2016, 2, 6, 12, 0, 0)
         day = ConferenceDayFactory(
             conference=conference,
             day=date(2016, 2, 6))
-        self.staffcontext = StaffAreaContext(
+        cls.staffcontext = StaffAreaContext(
             conference=conference,
             starttime=save_the_date)
-        self.showcontext = ShowContext(conference=conference,
-                                       starttime=save_the_date)
-        self.other_conference = ConferenceFactory(
+        cls.showcontext = ShowContext(conference=conference,
+                                      starttime=save_the_date)
+        cls.other_conference = ConferenceFactory(
             status='completed')
-        self.other_conf_day = ConferenceDayFactory(
-            conference=self.other_conference,
+        cls.other_conf_day = ConferenceDayFactory(
+            conference=cls.other_conference,
             day=date(2015, 2, 6))
-        self.other_show = ShowContext(conference=self.other_conference)
-        self.classcontext = ClassContext(
+        cls.other_show = ShowContext(conference=cls.other_conference)
+        cls.classcontext = ClassContext(
             conference=conference,
             starttime=save_the_date)
-        self.volunteeropp = self.staffcontext.add_volunteer_opp()
+        cls.volunteeropp = cls.staffcontext.add_volunteer_opp()
+
+    def setUp(self):
+        self.client = Client()
 
     def test_calendar_generic_w_default_conf(self):
         url = reverse('calendar',
