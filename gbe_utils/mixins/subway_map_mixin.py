@@ -5,8 +5,11 @@ from gbe_utils.mixins import GbeFormMixin
 class SubwayMapMixin(GbeFormMixin):
 
     place_in_list = {
-        'PersonaCreate': 1,
         'RegisterView': 0,
+        'PersonaCreate': 1,
+        'MakeActView': 2,
+        'MakeClassView': 2,
+        'MakeActViewPayment': 3,
     }
 
     def get_success_url(self):
