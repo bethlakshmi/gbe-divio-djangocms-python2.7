@@ -5,6 +5,7 @@ from django.views.generic.edit import (
 from gbe_utils.mixins import (
     GbeFormMixin,
     ProfileRequiredMixin,
+    SubwayMapMixin,
 )
 from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from gbe.models import Persona
@@ -17,7 +18,7 @@ from gbetext import (
 
 
 class PersonaCreate(CreatePopupMixin,
-                    GbeFormMixin,
+                    SubwayMapMixin,
                     ProfileRequiredMixin,
                     CreateView):
     model = Persona

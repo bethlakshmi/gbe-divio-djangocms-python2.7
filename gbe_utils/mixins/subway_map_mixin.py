@@ -1,14 +1,20 @@
 from django.urls import reverse_lazy
+from gbe_utils.mixins import GbeFormMixin
 
 
-class SubwayMapMixin():
+class SubwayMapMixin(GbeFormMixin):
 
     place_in_list = {
         'PersonaCreate': 1,
-        'TroupeCreate': 1,
     }
 
-    def make_map(self, view_name, target_url):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['subway_map'] = self.get_map(self.__class__.__name__,
+                                              self.get_success_url())
+        return context
+
+    def get_map(self, view_name, target_url):
         step_lists = {
             reverse_lazy('act_create', urlconf='gbe.urls'):  [
                 ['Create Account', 'upcoming'],
