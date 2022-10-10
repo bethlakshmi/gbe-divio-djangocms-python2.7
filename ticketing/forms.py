@@ -28,7 +28,6 @@ from gbe_forms_text import (
 from django.forms.widgets import CheckboxSelectMultiple
 from tempus_dominus.widgets import DatePicker
 from dal import autocomplete
-from django.urls import reverse_lazy
 from django.db.models import Q
 
 

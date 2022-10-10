@@ -1,9 +1,10 @@
+{% if subway_map %}
     <div class="subway_container">
-        <ul class="progressbar items_4">
-            <li class="progressbar_completed">Create Account</li>
-            <li class="progressbar_completed">Create Bio</li>
-            <li class="progressbar_active">Apply</li>
-            <li class="progressbar_upcoming">Payment</li>
+        <ul class="progressbar items_{{ subway_map|length }}">
+        {% for item in subway_map %}
+            <li class="progressbar_{{item.1}}">{{item.0}}</li>
+        {% endfor %}
         </ul>
     </div>
 <br>
+{% endif %}

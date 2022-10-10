@@ -1,9 +1,10 @@
+from gbe_utils.mixins import SubwayMapMixin
 from django.views.generic.edit import ModelFormMixin
 from django.contrib import messages
 from gbe.models import UserMessage
 
 
-class GbeFormMixin(ModelFormMixin):
+class GbeFormMixin(SubwayMapMixin, ModelFormMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = UserMessage.objects.get_or_create(
@@ -33,6 +34,8 @@ class GbeFormMixin(ModelFormMixin):
             context['include_troupe'] = int(
                 self.kwargs.get("include_troupe", 1))
         context['return_url'] = self.success_url
+        context['subway_map'] = self.make_map(self.__class__.__name__,
+                                              self.get_success_url())
         return context
 
     def form_valid(self, form):
