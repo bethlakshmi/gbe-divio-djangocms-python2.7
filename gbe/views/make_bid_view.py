@@ -302,7 +302,7 @@ class MakeBidView(SubwayMapMixin, View):
                      'subway_map': self.get_map(
                         self.__class__.__name__ + 'Payment',
                         reverse('%s_create' % self.bid_type.lower(),
-                            urlconf='gbe.urls')),
+                                urlconf='gbe.urls')),
                      'paypal_button': paypal_button})
             else:
                 redirect = self.submit_bid(request)
