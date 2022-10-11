@@ -44,12 +44,25 @@ class TestRegister(TestCase):
                 'password2': 'test'}
         return data
 
+
+    def check_subway_state(self, response, active_state="Create Account"):
+        self.assertContains(
+            response,
+            '<li class="progressbar_active">%s</li>' % active_state,
+            html=True)
+        self.assertNotContains(
+                response,
+                '<li class="progressbar_upcoming">Payment</li>',
+                html=True)
+
     def test_register_get(self):
-        url = reverse(self.view_name,
-                      urlconf='gbe.urls')
+        url = "%s?next=%s" % (
+            reverse(self.view_name, urlconf='gbe.urls'),
+            reverse('class_create', urlconf='gbe.urls'))
 
         response = self.client.get(url, follow=True)
         self.assertContains(response, "Create an Account")
+        self.check_subway_state(response)
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_register_post(self, m_urlopen):
