@@ -248,8 +248,9 @@ class TestEditProfile(TestCase):
         del(data['first_name'])
         del(data['last_name'])
         response = self.client.post(url, data=data, follow=True)
-        self.assertContains(response, "Your Account")
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
+        assert_alert_exists(
+            response, 'success', 'Success', default_update_profile_msg)
 
     def test_active_user_cant_remove_vitals(self):
         ClassFactory(teacher__contact=self.profile)
