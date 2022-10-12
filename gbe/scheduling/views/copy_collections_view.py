@@ -129,10 +129,8 @@ class CopyCollectionsView(View):
 
             for sub_event_id in form.cleaned_data["copied_event"]:
                 response = get_occurrence(sub_event_id)
-                labels = [conference.conference_slug]
-                if response.occurrence.as_subtype.calendar_type:
-                    labels += [response.occurrence.as_subtype.calendar_type]
-
+                labels = [conference.conference_slug,
+                          response.occurrence.as_subtype.calendar_type]
                 response = self.copy_event(
                     response.occurrence,
                     delta,
