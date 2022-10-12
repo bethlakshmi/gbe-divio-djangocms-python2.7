@@ -685,6 +685,57 @@ class TestCopyOccurrence(TestGBE):
                     GBE_DATETIME_FORMAT)))
         self.assertNotContains(response, "approval_needed")
 
+    def test_copy_rehearsal(self):
+        another_day = ConferenceDayFactory()
+        show_context = ShowContext()
+        rehearsal, slot = show_context.make_rehearsal()
+        url = reverse(
+            self.view_name,
+            args=[show_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'include_parent',
+            'copy_to_day': another_day.pk,
+            'copied_event': slot.pk,
+            'room': self.context.room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        max_pk = Event.objects.latest('pk').pk
+        response = self.client.post(url, data=data, follow=True)
+        new_occurrences = []
+        for occurrence in Event.objects.filter(pk__gt=max_pk).order_by('pk'):
+            new_occurrences += [occurrence.pk]
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[another_day.conference.conference_slug]),
+            another_day.conference.conference_slug,
+            another_day.pk,
+            str(new_occurrences).replace(" ", "%20"))
+        self.assertRedirects(response, redirect_url)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                rehearsal.e_title,
+                datetime.combine(
+                    another_day.day,
+                    slot.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                show_context.show.e_title,
+                datetime.combine(
+                    another_day.day,
+                    show_context.sched_event.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
+        self.assertNotContains(response, "approval_needed")
+
     def test_copy_child_not_like_parent(self):
         another_day = ConferenceDayFactory()
         show_context = VolunteerContext()
