@@ -729,7 +729,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                show_context.event.e_title,
+                show_context.show.e_title,
                 datetime.combine(
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
