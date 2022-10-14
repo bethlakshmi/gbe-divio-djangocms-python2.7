@@ -519,15 +519,6 @@ span.opps-errors ul {padding: 0px;}
 .progressbar li:first-child:after{
 content: none;
 }
-li.progressbar_active:before{
-  content: url(/static/img/Navicon_Active.svg);
-}
-li.progressbar_completed:before{
-  content: url(/static/img/Navicon_Completed.svg);
-}
-li.progressbar_upcoming:before{
-  content: url(/static/img/Navicon_Upcoming.svg);
-}
 li.progressbar_active {
   font-weight: bold;
 }

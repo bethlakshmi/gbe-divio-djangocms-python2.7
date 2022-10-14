@@ -1,4 +1,15 @@
+{% load static %}
 {% for selector, properties in selectors.items %}{{ selector | safe }} { {% for property, value in properties.items %}
     {{ property }}: {{ value }};{% endfor %}
 }
 {% endfor %}
+
+li.progressbar_active:before{
+  content: url({% static 'img/Navicon_Active.svg' %});
+}
+li.progressbar_completed:before{
+  content: url({% static 'img/Navicon_Completed.svg' %});
+}
+li.progressbar_upcoming:before{
+  content: url({% static 'img/Navicon_Upcoming.svg' %});
+}
