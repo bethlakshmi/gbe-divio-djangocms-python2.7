@@ -5,11 +5,11 @@
 {% endfor %}
 
 li.progressbar_active:before{
-  content: url({% static 'img/Navicon_Active.png' %});
+  content: url({% static 'img/NavIcon_Active.svg' %});
 }
 li.progressbar_completed:before{
-  content: url({% static 'img/Navicon_Completed.png' %});
+  content: url({% static 'img/NavIcon_Completed.svg' %});
 }
 li.progressbar_upcoming:before{
-  content: url({% static 'img/Navicon_Upcoming.png' %});
+  content: url({% static 'img/NavIcon_Upcoming.svg' %});
 }
