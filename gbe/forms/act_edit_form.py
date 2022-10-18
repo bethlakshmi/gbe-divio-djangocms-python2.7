@@ -12,6 +12,7 @@ from django.forms import (
 from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
 from dal import autocomplete
 from django.urls import reverse_lazy
+from gbe.forms import BasicBidForm
 from gbe.models import Act
 from gbe_forms_text import (
     act_help_texts,
@@ -26,7 +27,7 @@ from gbetext import (
 from gbe.functions import jsonify
 
 
-class ActEditDraftForm(ModelForm):
+class ActEditDraftForm(ModelForm, BasicBidForm):
     required_css_class = 'required'
     error_css_class = 'error'
     act_duration = DurationField(
@@ -54,15 +55,6 @@ class ActEditDraftForm(ModelForm):
         label=act_bid_labels['description'],
         help_text=act_help_texts['description'],
         widget=Textarea)
-    phone = CharField(required=True,
-                      help_text=participant_form_help_texts['phone'])
-    first_name = CharField(
-        required=True,
-        label=participant_labels['legal_first_name'])
-    last_name = CharField(
-        required=True,
-        label=participant_labels['legal_last_name'],
-        help_text=participant_form_help_texts['legal_name'])
 
     class Meta:
         model = Act

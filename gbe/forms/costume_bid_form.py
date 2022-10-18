@@ -9,6 +9,7 @@ from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
 from dal import autocomplete
 from django.urls import reverse_lazy
 from gbe.models import Costume
+from gbe.forms import BasicBidForm
 from gbe_forms_text import (
     costume_proposal_help_texts,
     costume_proposal_labels,
@@ -16,7 +17,7 @@ from gbe_forms_text import (
 from gbetext import boolean_options
 
 
-class CostumeBidDraftForm(ModelForm):
+class CostumeBidDraftForm(ModelForm, BasicBidForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -35,6 +36,9 @@ class CostumeBidDraftForm(ModelForm):
         model = Costume
         fields = ['b_title',
                   'performer',
+                  'first_name',
+                  'last_name',
+                  'phone',
                   'creator',
                   'act_title',
                   'debut_date',

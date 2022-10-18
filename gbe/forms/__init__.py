@@ -22,6 +22,7 @@ from .act_bid_evaluation_form import ActBidEvaluationForm
 from .vendor_state_change_form import VendorStateChangeForm
 
 # bid submit/edit forms
+from .basic_bid_form import BasicBidForm
 from .act_edit_form import (
     ActEditDraftForm,
     ActEditForm,
