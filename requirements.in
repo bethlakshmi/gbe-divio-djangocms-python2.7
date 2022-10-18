@@ -1,5 +1,5 @@
 # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
-https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-addons/2.0.1/75074b5c-4ff7-448b-acf9-412d78472b6b/aldryn-addons-2.0.1.tar.gz#egg=aldryn-addons==2.0.1
+https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-addons/2.1.0/ea070c92-bab4-4d6c-aea0-59b99579885f/aldryn-addons-2.1.0.tar.gz#egg=aldryn-addons==2.1.0
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django/3.0.14.0/36bfd066-908c-496a-bbb0-8f30b7ea7a2b/aldryn-django-3.0.14.0.tar.gz#egg=aldryn-django==3.0.14.0
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-sso/2.0.1/fc74bf76-5ef7-485e-b645-75b747d78ebf/aldryn-sso-2.0.1.tar.gz#egg=aldryn-sso==2.0.1
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.7.4.3/4f837109-2ac0-443d-8dba-0c76c7e86691/aldryn-django-cms-3.7.4.3.tar.gz#egg=aldryn-django-cms==3.7.4.3
