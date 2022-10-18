@@ -26,7 +26,7 @@ from gbetext import (
 class MakeCostumeView(MakeBidView):
     page_title = "Displaying a Costume"
     view_title = "Displaying a Costume"
-    draft_fields = ['b_title', 'creator']
+    draft_fields = ['b_title', 'creator', 'first_name', 'last_name', 'phone']
     submit_fields = [
         'b_title',
         'creator',
@@ -63,10 +63,10 @@ class MakeCostumeView(MakeBidView):
             raise Http404
 
     def get_initial(self):
-        initial = {}
+        initial = super(MakeCostumeView, self).get_initial()
         if not self.bid_object:
-            initial = {'profile': self.owner,
-                       'performer': self.performers[0]}
+            initial.update({'profile': self.owner,
+                            'performer': self.performers[0]})
         return initial
 
     def make_post_forms(self, request, the_form):

@@ -80,6 +80,14 @@ class MakeBidView(SubwayMapMixin, View):
         if self.conference is None:
             raise Http404
 
+    def get_initial(self):
+        initial = {}
+        initial['phone'] = self.owner.phone
+        initial['first_name'] = self.owner.user_object.first_name
+        initial['last_name'] = self.owner.user_object.last_name
+
+        return initial
+
     def make_post_forms(self, request, the_form):
         if self.bid_object:
             self.form = the_form(
