@@ -5,6 +5,7 @@ from django.views.generic.edit import (
 from gbe_utils.mixins import (
     GbeFormMixin,
     ProfileRequiredMixin,
+    SubwayMapMixin,
 )
 from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from gbe.models import Persona
@@ -17,7 +18,7 @@ from gbetext import (
 
 
 class PersonaCreate(CreatePopupMixin,
-                    GbeFormMixin,
+                    SubwayMapMixin,
                     ProfileRequiredMixin,
                     CreateView):
     model = Persona
@@ -34,9 +35,6 @@ class PersonaCreate(CreatePopupMixin,
         initial['performer_profile'] = self.request.user.profile
         initial['contact'] = self.request.user.profile
         return initial
-
-    def get_success_url(self):
-        return self.request.GET.get('next', self.success_url)
 
 
 class PersonaUpdate(UpdatePopupMixin,

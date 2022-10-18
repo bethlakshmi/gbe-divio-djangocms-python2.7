@@ -1,0 +1,10 @@
+{% if subway_map %}
+    <div class="subway_container">
+        <ul class="progressbar items_{{ subway_map|length }}">
+        {% for item in subway_map %}
+            <li class="progressbar_{{item.1}}">{{item.0}}</li>
+        {% endfor %}
+        </ul>
+    </div>
+<br>
+{% endif %}

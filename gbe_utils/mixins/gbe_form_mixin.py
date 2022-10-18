@@ -26,21 +26,25 @@ class GbeFormMixin(ModelFormMixin):
             defaults={
                 'summary': "%s Instructions" % self.__class__.__name__,
                 'description': self.intro_text})[0].description
-        context['mode'] = self.mode
-        if hasattr(self, 'no_tabs'):
-            context['no_tabs'] = self.no_tabs
-        else:
-            context['include_troupe'] = int(
-                self.kwargs.get("include_troupe", 1))
         context['return_url'] = self.success_url
+
+        # this is all unique to performer registration
+        if hasattr(self, 'mode'):
+            context['mode'] = self.mode
+            if hasattr(self, 'no_tabs'):
+                context['no_tabs'] = self.no_tabs
+            else:
+                context['include_troupe'] = int(
+                    self.kwargs.get("include_troupe", 1))
         return context
 
     def form_valid(self, form):
-        msg = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code="SUCCESS",
-            defaults={
-                'summary': "Successful Submission",
-                'description': self.valid_message})
-        messages.success(self.request, msg[0].description)
+        if hasattr(self, 'valid_message'):
+            msg = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="SUCCESS",
+                defaults={
+                    'summary': "Successful Submission",
+                    'description': self.valid_message})
+            messages.success(self.request, msg[0].description)
         return super().form_valid(form)

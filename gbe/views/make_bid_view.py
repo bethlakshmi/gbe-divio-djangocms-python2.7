@@ -2,6 +2,7 @@ from django.views.generic import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from gbe_utils.mixins import SubwayMapMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -34,7 +35,7 @@ from gbe.ticketing_idd_interface import (
 )
 
 
-class MakeBidView(View):
+class MakeBidView(SubwayMapMixin, View):
     form = None
     has_draft = True
     instructions = ''
@@ -134,6 +135,10 @@ class MakeBidView(View):
             'submit_fields': self.submit_fields,
             'fee_paid': paid,
             'view_header_text': instructions[0].description,
+            'subway_map': self.get_map(
+                self.__class__.__name__,
+                reverse('%s_create' % self.bid_type.lower(),
+                        urlconf='gbe.urls')),
             }
         if not paid and not self.coordinated:
             user_message = UserMessage.objects.get_or_create(
@@ -301,6 +306,10 @@ class MakeBidView(View):
                      'page_title': page_title,
                      'cart_items': cart_items,
                      'total': total,
+                     'subway_map': self.get_map(
+                        self.__class__.__name__ + 'Payment',
+                        reverse('%s_create' % self.bid_type.lower(),
+                                urlconf='gbe.urls')),
                      'paypal_button': paypal_button})
             else:
                 redirect = self.submit_bid(request)

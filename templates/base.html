@@ -46,6 +46,7 @@
   {% endif %}
     <div class="card gbe-panel">
         <div class="card-body">
+        {% include "subway_map.tmpl" %}
         {% if messages %}
 	{% for message in messages %}
 	{% if message.tags == "error" %}<div class="alert gbe-alert-danger">{% else %}<div class="alert gbe-alert-{{message.tags}}">{% endif %}
