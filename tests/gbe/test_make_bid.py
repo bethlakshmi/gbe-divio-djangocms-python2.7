@@ -83,7 +83,7 @@ class TestMakeBid(TestCase):
 
     def test_edit_bad_bid_id(self):
         '''Should get 404 if no valid class ID'''
-        url = reverse(self.view_name,
+        url = reverse('class_edit',
                       args=[0],
                       urlconf='gbe.urls')
         login_as(PersonaFactory().performer_profile, self)
