@@ -7,30 +7,29 @@ from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory,
     UserFactory,
-    UserMessageFactory
 )
+from gbe.models import Conference
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    current_conference,
     login_as,
 )
 from gbetext import (
     default_costume_submit_msg,
     default_costume_draft_msg
 )
-from gbe.models import UserMessage
 
 
-class TestEditCostume(TestCase):
-    '''Tests for edit_costume view'''
-    view_name = 'costume_edit'
+class TestMakeCostume(TestCase):
 
-    # this test case should be unnecessary, since edit_costume should go away
-    # for now, test it.
+    @classmethod
+    def setUpTestData(cls):
+        Conference.objects.all().delete()
+        cls.performer = PersonaFactory()
+        current_conference()
 
     def setUp(self):
-        UserMessage.objects.all().delete()
         self.client = Client()
-        self.performer = PersonaFactory()
 
     def get_costume_form(self, submit=False, invalid=False):
         picture = SimpleUploadedFile("file.jpg",
@@ -44,6 +43,9 @@ class TestEditCostume(TestCase):
                 'pasties': False,
                 'dress_size': 10,
                 'picture': picture,
+                'phone': '111-222-3333',
+                'first_name': 'Jane',
+                'last_name': 'Smith',
                 }
         if invalid:
             del(data['b_title'])
@@ -51,6 +53,90 @@ class TestEditCostume(TestCase):
             data['submit'] = 1
 
         return data
+
+class TestCreateCostume(TestMakeCostume):
+    '''Tests for create_costume view'''
+    view_name = 'costume_create'
+
+    def post_costume_submission(self):
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls")
+        login_as(PersonaFactory().contact, self)
+        data = self.get_costume_form(submit=True)
+        response = self.client.post(url, data=data, follow=True)
+        return response, data
+
+    def post_costume_draft(self):
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls")
+        login_as(PersonaFactory().contact, self)
+        data = self.get_costume_form()
+        response = self.client.post(url, data=data, follow=True)
+        return response, data
+
+    def test_costume_bid_post_form_not_valid(self):
+        '''costume_bid, if form not valid, should return to CostumeEditForm'''
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls")
+        login_as(PersonaFactory().contact, self)
+        data = self.get_costume_form(invalid=True)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Displaying a Costume')
+
+    def test_costume_bid_post_with_submit(self):
+        '''costume_bid, submitting and no other problems,
+        should redirect to home'''
+        response, data = self.post_costume_submission()
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        self.assertContains(response, "Dashboard")
+        self.assertContains(response, "(Click to view)")
+        self.assertContains(response, data['b_title'])
+        assert_alert_exists(
+            response, 'success', 'Success', default_costume_submit_msg)
+
+    def test_costume_bid_post_draft(self):
+        '''costume_bid, submit draft and no other problems,
+        should redirect to home'''
+        response, data = self.post_costume_draft()
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        self.assertContains(response, "Dashboard")
+        self.assertContains(response, "(Click to edit)")
+        self.assertContains(response, data['b_title'])
+        assert_alert_exists(
+            response, 'success', 'Success', default_costume_draft_msg)
+
+    def test_costume_bid_not_post(self):
+        '''act_bid, not post, should take us to bid process'''
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls")
+        login_as(self.performer.performer_profile, self)
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, 'Displaying a Costume')
+
+    def test_costume_bid_no_persona(self):
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls")
+        login_as(ProfileFactory(), self)
+        response = self.client.get(url)
+        self.assertEqual(302, response.status_code)
+
+    def test_costume_bid_post_invalid_form_no_submit(self):
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(self.performer.performer_profile, self)
+        data = self.get_costume_form(submit=False, invalid=True)
+        response = self.client.post(url, data=data, follow=True)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, 'Displaying a Costume')
+
+
+class TestEditCostume(TestMakeCostume):
+    '''Tests for edit_costume view'''
+    view_name = 'costume_edit'
 
     def post_edit_costume_submission(self):
         persona = PersonaFactory()
@@ -79,7 +165,7 @@ class TestEditCostume(TestCase):
         return response
 
     def test_edit_costume_no_costume(self):
-        '''Should get 404 if no valid costume ID'''
+        '''Testing redirect from make_bid groundwork through own groundwork'''
         url = reverse(self.view_name,
                       args=[0],
                       urlconf='gbe.urls')
@@ -96,15 +182,6 @@ class TestEditCostume(TestCase):
         login_as(PersonaFactory().performer_profile, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
-
-    def test_edit_costume_no_profile(self):
-        costume = CostumeFactory()
-        url = reverse(self.view_name,
-                      args=[costume.pk],
-                      urlconf='gbe.urls')
-        login_as(UserFactory(), self)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
 
     def test_costume_edit_post_form_not_valid(self):
         '''costume_edit, if form not valid, should return to edit'''
@@ -125,6 +202,8 @@ class TestEditCostume(TestCase):
         response = self.post_edit_costume_draft()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        assert_alert_exists(
+            response, 'success', 'Success', default_costume_draft_msg)
 
     def test_edit_bid_post_submit(self):
         '''edit_costume, not submitting and no other problems,
@@ -132,6 +211,8 @@ class TestEditCostume(TestCase):
         response = self.post_edit_costume_submission()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        assert_alert_exists(
+            response, 'success', 'Success', default_costume_submit_msg)
 
     def test_edit_bid_post_invalid(self):
         '''edit_costume, not submitting and no other problems,
@@ -181,33 +262,3 @@ class TestEditCostume(TestCase):
         expected_text = "Displaying a Costume"
         self.assertContains(response, expected_text)
         self.assertContains(response, costume.b_description)
-
-    def test_costume_submit_make_message(self):
-        response = self.post_edit_costume_submission()
-        self.assertEqual(response.status_code, 200)
-        assert_alert_exists(
-            response, 'success', 'Success', default_costume_submit_msg)
-
-    def test_costume_draft_make_message(self):
-        response = self.post_edit_costume_draft()
-        self.assertEqual(200, response.status_code)
-        assert_alert_exists(
-            response, 'success', 'Success', default_costume_draft_msg)
-
-    def test_costume_submit_has_message(self):
-        msg = UserMessageFactory(
-            view='MakeCostumeView',
-            code='SUBMIT_SUCCESS')
-        response = self.post_edit_costume_submission()
-        self.assertEqual(response.status_code, 200)
-        assert_alert_exists(
-            response, 'success', 'Success', msg.description)
-
-    def test_costume_draft_has_message(self):
-        msg = UserMessageFactory(
-            view='MakeCostumeView',
-            code='DRAFT_SUCCESS')
-        response = self.post_edit_costume_draft()
-        self.assertEqual(200, response.status_code)
-        assert_alert_exists(
-            response, 'success', 'Success', msg.description)

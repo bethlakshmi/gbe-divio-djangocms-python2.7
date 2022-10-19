@@ -65,6 +65,7 @@ class TestMakeClass(TestCase):
                 '<li class="progressbar_upcoming">Payment</li>',
                 html=True)
 
+
 class TestCreateClass(TestMakeClass):
     '''Tests for create_class view'''
     view_name = 'class_create'
@@ -212,15 +213,6 @@ class TestEditClass(TestMakeClass):
         data["theclass-teacher"] = klass.teacher.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
-
-    def test_edit_class_no_class(self):
-        '''Should get 404 if no valid class ID'''
-        url = reverse(self.view_name,
-                      args=[0],
-                      urlconf='gbe.urls')
-        login_as(PersonaFactory().performer_profile, self)
-        response = self.client.get(url, follow=True)
-        self.assertEqual(404, response.status_code)
 
     def test_edit_class_profile_is_not_contact(self):
         klass = ClassFactory()
