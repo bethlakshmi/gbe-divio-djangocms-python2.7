@@ -77,6 +77,11 @@ class Profile(WorkerItem):
     def complete(self):
         return self.display_name
 
+    @property
+    def participation_ready(self):
+        return self.display_name and self.phone and self.first_name and (
+            self.last_name)
+
     def bids_to_review(self):
         from gbe.models import Biddable
         reviews = []
