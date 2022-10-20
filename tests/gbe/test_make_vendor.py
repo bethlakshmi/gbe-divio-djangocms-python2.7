@@ -1,10 +1,8 @@
 from django.urls import reverse
 from django.test import TestCase
-from django.test.client import RequestFactory
 from django.test import Client
 from tests.factories.gbe_factories import (
     BusinessFactory,
-    ConferenceFactory,
     ProfileFactory,
     UserFactory,
     VendorFactory,
@@ -21,7 +19,6 @@ from gbetext import (
     default_vendor_submit_msg,
     default_vendor_draft_msg,
     payment_details_error,
-    payment_needed_msg,
 )
 from gbe.models import (
     Conference,
