@@ -17,8 +17,6 @@ from gbe.models import Act
 from gbe_forms_text import (
     act_help_texts,
     act_bid_labels,
-    participant_form_help_texts,
-    participant_labels,
 )
 from gbetext import (
     act_other_perf_options,

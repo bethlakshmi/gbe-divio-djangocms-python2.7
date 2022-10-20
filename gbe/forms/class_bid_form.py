@@ -16,8 +16,6 @@ from gbe_forms_text import (
     classbid_help_texts,
     classbid_labels,
     class_schedule_options,
-    participant_form_help_texts,
-    participant_labels,
 )
 from gbe.functions import jsonify
 
