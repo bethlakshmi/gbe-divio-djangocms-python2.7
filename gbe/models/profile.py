@@ -79,8 +79,8 @@ class Profile(WorkerItem):
 
     @property
     def participation_ready(self):
-        return self.display_name and self.phone and self.first_name and (
-            self.last_name)
+        return self.display_name and self.user_object.phone and (
+            self.user_object.first_name) and (self.user_object.last_name)
 
     def bids_to_review(self):
         from gbe.models import Biddable
