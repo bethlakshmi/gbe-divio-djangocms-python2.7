@@ -16,7 +16,6 @@ https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-text-ckeditor/3.9.1
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-video/3.0.0/a36bdd84-5189-4d20-9ad9-eab9e64d9e25/djangocms-video-3.0.0.tar.gz#egg=djangocms-video==3.0.0
 https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.2.3/2d33931e-e292-42d8-bda8-ddcdcd4d23ce/django-filer-2.2.3.tar.gz#egg=django-filer==2.2.3
 # </INSTALLED_ADDONS>
-django-treebeard<4.5
 django-tempus-dominus
 django-formtools
 django-post_office
@@ -36,7 +35,6 @@ pytest-cov
 pillow
 tablib
 aldryn-snake
-boto3==1.24.93
 django-paypal
 django-autocomplete-light==3.9.0rc1
 django-addanother
