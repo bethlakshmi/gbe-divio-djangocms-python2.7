@@ -79,7 +79,7 @@ class Profile(WorkerItem):
 
     @property
     def participation_ready(self):
-        return self.display_name and self.user_object.phone and (
+        return self.display_name and self.phone and (
             self.user_object.first_name) and (self.user_object.last_name)
 
     def bids_to_review(self):
