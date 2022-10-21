@@ -20,7 +20,7 @@ aldryn-client==2.3.5
     # via aldryn-django
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-common/1.0.4/1021e5a2-d7d6-4dde-8976-c2db74c52c68/aldryn-common-1.0.4.tar.gz#egg=aldryn-common==1.0.4
     # via -r /workspace/requirements.in
-https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.7.4.3/4f837109-2ac0-443d-8dba-0c76c7e86691/aldryn-django-cms-3.7.4.3.tar.gz#egg=aldryn-django-cms==3.7.4.3
+https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.11.0.1/a6ca94bc-f20d-4a9f-b1c7-e330e34d70b4/aldryn-django-cms-3.11.0.1.tar.gz#egg=aldryn-django-cms==3.11.0.1
     # via -r /workspace/requirements.in
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django/3.2.16.0/08980d9b-eb8c-421e-bcb5-aa9d44b69901/aldryn-django-3.2.16.0.tar.gz#egg=aldryn-django==3.2.16.0
     # via -r /workspace/requirements.in
@@ -88,7 +88,7 @@ django-classy-tags==3.0.1
     # via
     #   django-cms
     #   django-sekizai
-django-cms==3.7.4
+django-cms==3.11.0
     # via
     #   aldryn-django-cms
     #   djangocms-attributes-field
@@ -364,7 +364,6 @@ six==1.16.0
     #   aldryn-common
     #   bleach
     #   django-autocomplete-light
-    #   django-cms
     #   furl
     #   html5lib
     #   orderedmultidict
