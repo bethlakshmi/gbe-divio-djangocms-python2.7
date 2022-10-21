@@ -10,11 +10,10 @@ class Form(forms.BaseForm):
 
     def to_settings(self, data, settings):
         from functools import partial
-
-        from django.urls import reverse_lazy
-
         from aldryn_addons.exceptions import ImproperlyConfigured
-        from aldryn_addons.utils import boolean_ish, djsenv
+        from aldryn_addons.utils import boolean_ish
+        from aldryn_addons.utils import djsenv
+        from django.urls import reverse_lazy
 
         def boolean_ish_or(value, or_values=()):
             if value in or_values:
