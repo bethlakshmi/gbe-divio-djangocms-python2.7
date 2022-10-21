@@ -18,13 +18,16 @@ class TestLimitedPerformerAutoComplete(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.privileged_user = ProfileFactory.create().user_object
-        grant_privilege(self.privileged_user,
+        login_as(self.privileged_user, self)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = ProfileFactory.create().user_object
+        grant_privilege(cls.privileged_user,
                         'Act Coordinator',
                         'view_performer')
-        login_as(self.privileged_user, self)
-        self.persona = PersonaFactory()
-        self.troupe = TroupeFactory()
+        cls.persona = PersonaFactory()
+        cls.troupe = TroupeFactory()
 
     def test_list_performer(self):
         response = self.client.get(self.url)

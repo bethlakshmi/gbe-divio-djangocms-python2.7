@@ -25,12 +25,15 @@ from django.urls import reverse
 class GBEAdminChangeListTests(TestCase):
     def setUp(self):
         self.client = Client()
-        password = 'mypassword'
-        self.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', password)
         self.client.login(
             username=self.privileged_user.username,
-            password=password)
+            password=self.password)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.password = 'mypassword'
+        cls.privileged_user = User.objects.create_superuser(
+            'myuser', 'myemail@test.com', cls.password)
 
     def test_get_event_subclass(self):
         obj = GenericEventFactory()
