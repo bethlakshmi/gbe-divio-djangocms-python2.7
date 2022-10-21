@@ -5,6 +5,7 @@ class Form(forms.BaseForm):
 
     def to_settings(self, data, settings):
         from functools import partial
+
         from aldryn_addons.utils import boolean_ish, djsenv
         from aldryn_django import storage
 
@@ -27,8 +28,6 @@ class Form(forms.BaseForm):
 
         # easy-thumbnails
         settings['THUMBNAIL_QUALITY'] = env('THUMBNAIL_QUALITY', 90)
-        # FIXME: enabling THUMBNAIL_HIGH_RESOLUTION causes timeouts/500!
-        settings['THUMBNAIL_HIGH_RESOLUTION'] = False
         settings['THUMBNAIL_PRESERVE_EXTENSIONS'] = ['png', 'gif']
         settings['THUMBNAIL_PROCESSORS'] = (
             'easy_thumbnails.processors.colorspace',
