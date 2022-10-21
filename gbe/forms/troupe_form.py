@@ -13,6 +13,7 @@ from gbe_forms_text import (
 )
 from gbe.forms import PersonaForm
 from dal import autocomplete
+from django.urls import reverse_lazy
 
 
 class TroupeForm(PersonaForm):
@@ -50,4 +51,4 @@ class TroupeForm(PersonaForm):
         labels = troupe_labels
         widgets = {
             'membership': autocomplete.ModelSelect2Multiple(
-                url='persona-autocomplete')}
+                url=reverse_lazy('persona-autocomplete', urlconf='gbe.urls'))}

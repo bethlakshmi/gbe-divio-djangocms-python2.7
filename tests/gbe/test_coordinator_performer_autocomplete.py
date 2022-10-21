@@ -14,7 +14,7 @@ from gbe.functions import validate_profile
 
 
 class TestLimitedPerformerAutoComplete(TestCase):
-    url = reverse('coordinator-performer-autocomplete')
+    url = reverse('coordinator-performer-autocomplete', urlconf="gbe.urls")
 
     def setUp(self):
         self.client = Client()

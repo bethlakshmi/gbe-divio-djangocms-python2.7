@@ -34,3 +34,6 @@ class Resource(Model):
             return str(allocated_resource)
         else:
             return "Error in resource allocation, no resource"
+
+    class Meta:
+        app_label = "scheduler"
