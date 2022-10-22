@@ -25,6 +25,7 @@ from django.core import mail
 from django.conf import settings
 from django.core.files import File
 from django.contrib.auth.models import User
+from cms.models.permissionmodels import PageUser
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
 from settings import DEFAULT_FROM_EMAIL
@@ -33,7 +34,7 @@ from settings import DEFAULT_FROM_EMAIL
 def _user_for(user_or_profile):
     if type(user_or_profile) == Profile:
         user = user_or_profile.user_object
-    elif type(user_or_profile) == User:
+    elif type(user_or_profile) in (User, PageUser):
         user = user_or_profile
     else:
         raise ValueError("this function requires a Profile or User")
