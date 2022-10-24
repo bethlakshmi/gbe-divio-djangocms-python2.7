@@ -94,7 +94,7 @@ class TestCloneTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_0" checked>''' % (
+            id="id_%s-image_1" checked>''' % (
                 image_style.pk,
                 image_style.image.pk,
                 image_style.pk),
@@ -287,7 +287,7 @@ class TestCloneTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_2" checked>''' % (
                 new_style_image.pk,
                 other_image.pk,
                 new_style_image.pk),
@@ -327,7 +327,7 @@ class TestCloneTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_2" checked>''' % (
                 new_style_image.pk,
                 (image_style.image.pk + 1),
                 new_style_image.pk),
