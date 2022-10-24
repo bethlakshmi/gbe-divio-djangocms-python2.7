@@ -27,22 +27,25 @@ from gbe.models import (
 class TestCloneTheme(TestCase):
     view_name = "clone_theme"
 
-    def setUp(self):
-        self.client = Client()
-        self.user = ProfileFactory().user_object
-        grant_privilege(self.user, u'Theme Editor')
-        self.value = StyleValueFactory()
-        self.url = reverse(
-            self.view_name,
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = ProfileFactory().user_object
+        grant_privilege(cls.user, u'Theme Editor')
+        cls.value = StyleValueFactory()
+        cls.url = reverse(
+            cls.view_name,
             urlconf="gbe.themes.urls",
-            args=[self.value.style_version.pk])
-        self.title = "Clone Styles Settings for {}, version {:.1f}".format(
-            self.value.style_version.name,
-            self.value.style_version.number)
-        self.style_url = reverse(
+            args=[cls.value.style_version.pk])
+        cls.title = "Clone Styles Settings for {}, version {:.1f}".format(
+            cls.value.style_version.name,
+            cls.value.style_version.number)
+        cls.style_url = reverse(
             "theme_style",
             urlconf="gbe.themes.urls",
-            args=[self.value.style_version.pk])
+            args=[cls.value.style_version.pk])
+
+    def setUp(self):
+        self.client = Client()
 
     def get_post(self):
         return {
@@ -91,7 +94,7 @@ class TestCloneTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_0" checked>''' % (
                 image_style.pk,
                 image_style.image.pk,
                 image_style.pk),
@@ -284,7 +287,7 @@ class TestCloneTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_2" checked>''' % (
+            id="id_%s-image_1" checked>''' % (
                 new_style_image.pk,
                 other_image.pk,
                 new_style_image.pk),
@@ -324,7 +327,7 @@ class TestCloneTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_2" checked>''' % (
+            id="id_%s-image_1" checked>''' % (
                 new_style_image.pk,
                 (image_style.image.pk + 1),
                 new_style_image.pk),
