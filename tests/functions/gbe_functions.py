@@ -10,6 +10,8 @@ from django.contrib.auth.models import (
 from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceFactory,
+    ProfileFactory,
+    UserFactory,
 )
 from tests.factories.ticketing_factories import (
     TicketingEventsFactory,
@@ -24,7 +26,6 @@ from post_office.models import (
 from django.core import mail
 from django.conf import settings
 from django.core.files import File
-from django.contrib.auth.models import User
 from cms.models.permissionmodels import PageUser
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
@@ -68,6 +69,22 @@ def grant_privilege(user_or_profile, group, privilege=None):
         if privilege_obj not in g.permissions.all():
             g.permissions.add(privilege_obj)
 
+
+def setup_admin_w_privs(priv_list):
+        privileged_user = User.objects.create_superuser(
+            'myuser', 'myemail@test.com', 'mypassword')
+        UserFactory.reset_sequence(privileged_user.pk+1)
+        ProfileFactory(user_object=privileged_user)
+        if hasattr(privileged_user, 'pageuser'):
+            privileged_user.pageuser.created_by_id = privileged_user.pk
+            privileged_user.pageuser.save()
+        else:
+            PageUser.objects.create(
+                user_ptr=privileged_user,
+                created_by_id=privileged_user.pk)
+        for priv in priv_list:
+            grant_privilege(privileged_user, priv)
+        return privileged_user
 
 def is_login_page(response):
     return b'I forgot my username or password!' in response.content

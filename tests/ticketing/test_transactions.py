@@ -36,6 +36,7 @@ from tests.functions.gbe_functions import (
     assert_alert_exists,
     grant_privilege,
     login_as,
+    setup_admin_w_privs,
 )
 from gbetext import (
     eventbrite_error,
@@ -46,7 +47,6 @@ from gbetext import (
 from tests.contexts import PurchasedTicketContext
 from tests.ticketing.eb_order_list import order_dict
 import eventbrite
-from cms.models.permissionmodels import PageUser
 
 
 class TestTransactions(TestCase):
@@ -54,19 +54,7 @@ class TestTransactions(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.password = 'mypassword'
-        cls.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', cls.password)
-        UserFactory.reset_sequence(cls.privileged_user.pk+1)
-        ProfileFactory(user_object=cls.privileged_user)
-        if hasattr(cls.privileged_user, 'pageuser'):
-            cls.privileged_user.pageuser.created_by_id = cls.privileged_user.pk
-            cls.privileged_user.pageuser.save()
-        else:
-            PageUser.objects.create(
-                user_ptr=cls.privileged_user,
-                created_by_id=cls.privileged_user.pk)
-        grant_privilege(cls.privileged_user, 'Ticketing - Transactions')
+        cls.privileged_user = setup_admin_w_privs(['Ticketing - Transactions'])
         cls.url = reverse('transactions', urlconf='ticketing.urls')
 
     def setUp(self):
@@ -292,6 +280,7 @@ class TestTransactions(TestCase):
         else:
             limbo = UserFactory(username="limbo")
 
+        old_context = PurchasedTicketContext()
         old_context.conference.status = "past"
         old_context.conference.save()
         old_context.transaction.purchaser.matched_to_user = limbo
