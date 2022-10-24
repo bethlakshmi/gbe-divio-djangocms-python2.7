@@ -51,7 +51,6 @@ class GBEAdminChangeListTests(TestCase):
     def test_get_techinfo(self):
         act = ActFactory()
         response = self.client.get('/admin/gbe/techinfo/', follow=True)
-        print(response.content)
         self.assertContains(response, "Techinfo: %s" % act.b_title)
 
     def test_get_techinfo_no_act(self):
