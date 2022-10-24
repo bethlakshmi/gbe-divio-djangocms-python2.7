@@ -271,10 +271,13 @@ def set_image(item=None, folder_name=None):
     if User.objects.filter(username='superuser_for_test').exists():
         superuser = User.objects.get(username='superuser_for_test')
     else:
-        superuser = User.objects.create_superuser(
-            'superuser_for_test',
-            'admin@importimage.com',
-            'secret')
+        superuser = UserFactory(
+            username='superuser_for_test',
+            email='admin@importimage.com',
+            password='secret',
+            is_staff=True,
+            is_superuser=True)
+
     if folder_name:
         folder, created = Folder.objects.get_or_create(
             name=folder_name)

@@ -12,6 +12,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
     login_as,
+    setup_admin_w_privs,
 )
 from gbe.models import (
     ConferenceDay,
@@ -26,16 +27,15 @@ from gbetext import (
 class TestManageConference(TestCase):
     view_name = 'manage_conference'
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = setup_admin_w_privs(['Admins'])
+        cls.profile = cls.privileged_user.profile
+        cls.day = ConferenceDayFactory()
+        cls.url = reverse(cls.view_name, urlconf="gbe.scheduling.urls")
+
     def setUp(self):
         self.client = Client()
-        password = 'mypassword'
-        self.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', password)
-        self.profile = ProfileFactory(user_object=self.privileged_user)
-        grant_privilege(self.profile, 'Admins')
-        self.day = ConferenceDayFactory()
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.scheduling.urls")
 
     def test_no_login_gives_error(self):
         response = self.client.get(self.url, follow=True)
