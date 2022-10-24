@@ -18,7 +18,7 @@ https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.2.3/2d33931e-e
 # </INSTALLED_ADDONS>
 django-tempus-dominus
 django-formtools
-django-post_office
+django-post_office==3.6.1
 django-model-utils
 django-import-export
 django-recaptcha2

@@ -38,9 +38,9 @@ attrs==22.1.0
     # via pytest
 bleach==5.0.1
     # via django-post-office
-boto3==1.24.95
+boto3==1.24.96
     # via django-storages
-botocore==1.27.95
+botocore==1.27.96
     # via
     #   boto3
     #   s3transfer
@@ -136,7 +136,7 @@ django-paypal==2.0
     # via -r /workspace/requirements.in
 django-polymorphic==3.1.0
     # via django-filer
-django-post-office==3.6.2
+django-post_office==3.6.1
     # via -r /workspace/requirements.in
 django-ranged-response==0.2.0
     # via django-simple-captcha

@@ -25,6 +25,8 @@ class TestAdminProfile(TestCase):
     def setUpTestData(cls):
         cls.performer = PersonaFactory()
         cls.privileged_user = ProfileFactory().user_object
+        cls.privileged_user.pageuser.created_by_id = cls.privileged_user.pk
+        cls.privileged_user.pageuser.save()
         grant_privilege(cls.privileged_user, 'Registrar')
 
     def get_form(self, invalid=False):

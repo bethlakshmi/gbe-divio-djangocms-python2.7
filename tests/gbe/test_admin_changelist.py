@@ -23,17 +23,19 @@ from django.urls import reverse
 
 
 class GBEAdminChangeListTests(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.client.login(
-            username=self.privileged_user.username,
-            password=self.password)
-
     @classmethod
     def setUpTestData(cls):
         cls.password = 'mypassword'
         cls.privileged_user = User.objects.create_superuser(
             'myuser', 'myemail@test.com', cls.password)
+        cls.privileged_user.pageuser.created_by_id = cls.privileged_user.pk
+        cls.privileged_user.pageuser.save()
+
+    def setUp(self):
+        self.client = Client()
+        self.client.login(
+            username=self.privileged_user.username,
+            password=self.password)
 
     def test_get_event_subclass(self):
         obj = GenericEventFactory()
@@ -49,6 +51,7 @@ class GBEAdminChangeListTests(TestCase):
     def test_get_techinfo(self):
         act = ActFactory()
         response = self.client.get('/admin/gbe/techinfo/', follow=True)
+        print(response.content)
         self.assertContains(response, "Techinfo: %s" % act.b_title)
 
     def test_get_techinfo_no_act(self):

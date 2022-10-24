@@ -46,17 +46,32 @@ from gbetext import (
 from tests.contexts import PurchasedTicketContext
 from tests.ticketing.eb_order_list import order_dict
 import eventbrite
+from cms.models.permissionmodels import PageUser
 
 
 class TestTransactions(TestCase):
     '''Tests for transactions view'''
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.password = 'mypassword'
+        cls.privileged_user = User.objects.create_superuser(
+            'myuser', 'myemail@test.com', cls.password)
+        UserFactory.reset_sequence(cls.privileged_user.pk+1)
+        ProfileFactory(user_object=cls.privileged_user)
+        if hasattr(cls.privileged_user, 'pageuser'):
+            cls.privileged_user.pageuser.created_by_id = cls.privileged_user.pk
+            cls.privileged_user.pageuser.save()
+        else:
+            PageUser.objects.create(
+                user_ptr=cls.privileged_user,
+                created_by_id=cls.privileged_user.pk)
+        grant_privilege(cls.privileged_user, 'Ticketing - Transactions')
+        cls.url = reverse('transactions', urlconf='ticketing.urls')
+
     def setUp(self):
         self.factory = RequestFactory()
         self.client = Client()
-        self.privileged_user = ProfileFactory()
-        grant_privilege(self.privileged_user, 'Ticketing - Transactions')
-        self.url = reverse('transactions', urlconf='ticketing.urls')
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_ticket_missing(self, m_eventbrite):
@@ -131,7 +146,7 @@ class TestTransactions(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
         test_purchaser = Purchaser.objects.get(pk=purchaser.pk)
-        self.assertEqual(test_purchaser.matched_to_user, user)
+        self.assertEqual(test_purchaser.matched_to_user, user.user_ptr)
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_pagination(self, m_eventbrite):
@@ -272,8 +287,11 @@ class TestTransactions(TestCase):
         nt.assert_equal(response.status_code, 200)
 
     def test_transactions_old_conf_limbo_purchase(self):
-        limbo, created = User.objects.get_or_create(username='limbo')
-        old_context = PurchasedTicketContext()
+        if User.objects.filter(username="limbo").exists():
+            limbo = User.objects.filter(username="limbo")
+        else:
+            limbo = UserFactory(username="limbo")
+
         old_context.conference.status = "past"
         old_context.conference.save()
         old_context.transaction.purchaser.matched_to_user = limbo
@@ -300,7 +318,11 @@ class TestTransactions(TestCase):
         self.assertNotContains(response, context.transaction.ticket_item.title)
 
     def test_transactions_old_conf_limbo_purchase_user_view(self):
-        limbo, created = User.objects.get_or_create(username='limbo')
+        if User.objects.filter(username="limbo").exists():
+            limbo = User.objects.filter(username="limbo")
+        else:
+            limbo = UserFactory(username="limbo")
+
         old_context = PurchasedTicketContext()
         old_context.conference.status = "past"
         old_context.conference.save()
