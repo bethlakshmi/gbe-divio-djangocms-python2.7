@@ -26,23 +26,26 @@ class TestManageTheme(TestCase):
     px_input = ('<input type="number" name="%d-value_%d" value="%d" ' +
                 'class="pixel-input" required id="id_%d-value_%d">')
 
-    def setUp(self):
-        self.client = Client()
-        self.user = ProfileFactory().user_object
-        grant_privilege(self.user, u'Theme Editor')
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = ProfileFactory().user_object
+        grant_privilege(cls.user, u'Theme Editor')
 
-        self.value = StyleValueFactory()
-        self.url = reverse(
-            self.view_name,
+        cls.value = StyleValueFactory()
+        cls.url = reverse(
+            cls.view_name,
             urlconf="gbe.themes.urls",
-            args=[self.value.style_version.pk])
-        self.title = "Manage {}, version {:.1f}".format(
-            self.value.style_version.name,
-            self.value.style_version.number)
-        self.style_url = reverse(
+            args=[cls.value.style_version.pk])
+        cls.title = "Manage {}, version {:.1f}".format(
+            cls.value.style_version.name,
+            cls.value.style_version.number)
+        cls.style_url = reverse(
             "theme_style",
             urlconf="gbe.themes.urls",
-            args=[self.value.style_version.pk])
+            args=[cls.value.style_version.pk])
+
+    def setUp(self):
+        self.client = Client()
 
     def test_no_login(self):
         response = self.client.get(self.url)
@@ -123,7 +126,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_0" checked>''' % (
                 image_style.pk,
                 image_style.image.pk,
                 image_style.pk),
@@ -231,7 +234,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_2" checked>''' % (
+            id="id_%s-image_1" checked>''' % (
                 image_style.pk,
                 other_image.pk,
                 image_style.pk),
@@ -261,7 +264,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_2" checked>''' % (
+            id="id_%s-image_1" checked>''' % (
                 image_style.pk,
                 image_style.image.pk + 1,
                 image_style.pk),
