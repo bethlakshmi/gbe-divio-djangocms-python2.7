@@ -8,6 +8,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
     login_as,
+    setup_admin_w_privs,
 )
 from tests.contexts.class_context import (
     ClassContext,
@@ -25,19 +26,18 @@ class TestMailToPerson(TestCase):
                  'Vendor Coordinator',
                  'Ticketing - Admin']
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = setup_admin_w_privs(['Registrar'])
+        cls.privileged_profile = cls.privileged_user.profile
+        cls.url = reverse(cls.view_name, urlconf="gbe.email.urls")
+        cls.to_profile = ProfileFactory()
+        cls.url = reverse(cls.view_name,
+                          urlconf="gbe.email.urls",
+                          args=[cls.to_profile.resourceitem_id])
+
     def setUp(self):
         self.client = Client()
-        self.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', "mypassword")
-        self.privileged_profile = ProfileFactory(
-            user_object=self.privileged_user)
-        grant_privilege(
-            self.privileged_profile.user_object,
-            'Registrar')
-        self.to_profile = ProfileFactory()
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.email.urls",
-                           args=[self.to_profile.resourceitem_id])
 
     def reduced_login(self):
         reduced_profile = ProfileFactory()
