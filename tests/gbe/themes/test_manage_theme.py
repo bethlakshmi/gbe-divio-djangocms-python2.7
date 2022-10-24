@@ -126,7 +126,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_0" checked>''' % (
+            id="id_%s-image_1" checked>''' % (
                 image_style.pk,
                 image_style.image.pk,
                 image_style.pk),
@@ -234,7 +234,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_2" checked>''' % (
                 image_style.pk,
                 other_image.pk,
                 image_style.pk),
@@ -264,7 +264,7 @@ class TestManageTheme(TestCase):
         self.assertContains(
             response,
             '''<input type="radio" name="%s-image" value="%s"
-            id="id_%s-image_1" checked>''' % (
+            id="id_%s-image_2" checked>''' % (
                 image_style.pk,
                 image_style.image.pk + 1,
                 image_style.pk),
