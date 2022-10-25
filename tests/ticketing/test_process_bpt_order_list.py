@@ -20,6 +20,7 @@ from mock import patch, Mock
 import urllib
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from tests.functions.gbe_functions import get_limbo
 
 
 class TestProcessBPTOrderList(TestCase):
@@ -45,10 +46,7 @@ class TestProcessBPTOrderList(TestCase):
             ticketing_event=event,
             ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
-        if User.objects.filter(username="limbo").exists():
-            limbo = User.objects.filter(username="limbo")
-        else:
-            limbo = UserFactory(username="limbo")
+        limbo = get_limbo()
 
         a = Mock()
         order_filename = open("tests/ticketing/orderlist.xml", 'r')
@@ -190,10 +188,8 @@ class TestProcessBPTOrderList(TestCase):
             ticketing_event=event,
             ticket_id='%s-%s' % (event.event_id, '3255985'))
         BrownPaperSettingsFactory()
-        if User.objects.filter(username="limbo").exists():
-            limbo = User.objects.filter(username="limbo")
-        else:
-            limbo = UserFactory(username="limbo")
+        limbo = get_limbo()
+
         user = UserFactory(email='test@tickets.com')
         profile = ProfileFactory(user_object=user,
                                  purchase_email='nomatch@tickets.com')

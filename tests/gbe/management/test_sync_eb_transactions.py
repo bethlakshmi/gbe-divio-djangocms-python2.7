@@ -15,6 +15,7 @@ from tests.ticketing.eb_ticket_list import (
 from tests.ticketing.eb_order_list import order_dict
 from ticketing.models import TicketingEvents
 from gbetext import import_transaction_message
+from tests.functions.gbe_functions import get_limbo
 
 
 class TestSyncEBTransactions(TestCase):
@@ -26,10 +27,8 @@ class TestSyncEBTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_call_command(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        if User.objects.filter(username="limbo").exists():
-            limbo = User.objects.filter(username="limbo")
-        else:
-            limbo = UserFactory(username="limbo")
+        limbo = get_limbo()
+
         m_eventbrite.side_effect = [event_dict,
                                     ticket_dict1,
                                     ticket_dict2,

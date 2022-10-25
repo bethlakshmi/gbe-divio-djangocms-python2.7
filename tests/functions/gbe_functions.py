@@ -292,3 +292,10 @@ def set_image(item=None, folder_name=None):
         item.img_id = current_img.pk
         item.save()
     return current_img
+
+def get_limbo():
+    if User.objects.filter(username="limbo").exists():
+        limbo = User.objects.filter(username="limbo")
+    else:
+        limbo = UserFactory(username="limbo")
+    return limbo

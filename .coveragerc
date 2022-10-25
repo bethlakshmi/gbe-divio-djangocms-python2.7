@@ -5,3 +5,4 @@ omit =
     gbe/migrations/*
     scheduler/migrations/*
     ticketing/migrations/*
+    test_settings.py
