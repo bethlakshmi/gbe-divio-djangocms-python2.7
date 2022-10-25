@@ -29,7 +29,6 @@ from datetime import datetime
 
 class SchedulerChangeListTests(TestCase):
 
-
     @classmethod
     def setUpTestData(cls):
         cls.privileged_user = setup_admin_w_privs([])

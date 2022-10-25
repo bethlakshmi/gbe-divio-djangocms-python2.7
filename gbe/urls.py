@@ -77,33 +77,28 @@ urlpatterns = [
     # autocompletes
     url(r'^profile-autocomplete/$',
         ProfileAutocomplete.as_view(),
-        name='profile-autocomplete',
-    ),
+        name='profile-autocomplete'),
     url(
         r'^limited-business-autocomplete/$',
         LimitedBusinessAutocomplete.as_view(),
-        name='limited-business-autocomplete',
-    ),
+        name='limited-business-autocomplete'),
     url(
         r'^limited-performer-autocomplete/$',
         LimitedPerformerAutocomplete.as_view(),
-        name='limited-performer-autocomplete',
-    ),
+        name='limited-performer-autocomplete'),
     url(
         r'^limited-persona-autocomplete/$',
         LimitedPersonaAutocomplete.as_view(),
-        name='limited-persona-autocomplete',
-    ),
+        name='limited-persona-autocomplete'),
     url(
         r'^coordinator-performer-autocomplete/$',
         CoordinatorPerformerAutocomplete.as_view(),
-        name='coordinator-performer-autocomplete',
-    ),
+        name='coordinator-performer-autocomplete'),
     url(
         r'^persona-autocomplete/$',
         PersonaAutocomplete.as_view(),
-        name='persona-autocomplete',
-    ),
+        name='persona-autocomplete'),
+
     #  bios
     url(r'^bios/teachers/?$',
         BiosTeachersView, name='bios_teacher'),

@@ -253,8 +253,9 @@ class TestTransactions(TestCase):
 
     def test_transactions_w_privilege_userview_editpriv(self):
         context = PurchasedTicketContext()
-        context.transaction.ticket_item.ticketing_event.act_submission_event = True
-        context.transaction.ticket_item.ticketing_event.save()
+        ticketing_event = context.transaction.ticket_item.ticketing_event
+        ticketing_event.act_submission_event = True
+        ticketing_event.save()
         grant_privilege(self.privileged_user, 'Registrar')
         login_as(self.privileged_user, self)
         response = self.client.get(self.url + "?format=user")

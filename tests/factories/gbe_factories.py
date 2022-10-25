@@ -49,7 +49,7 @@ class WorkerItemFactory(DjangoModelFactory):
 
 
 class UserFactory(DjangoModelFactory):
-    ''' the created_by_id of a Page User is a hack to get to python 3.8, 
+    ''' the created_by_id of a Page User is a hack to get to python 3.8,
     Django CMS > 3.7.  If this is ever really fixed, it can be removed:
     https://github.com/django-cms/django-cms/issues/7225 '''
     class Meta:

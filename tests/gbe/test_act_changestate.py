@@ -69,8 +69,8 @@ class TestActChangestate(TestCase):
     def setUp(self):
         self.client = Client()
         self.data = {'show': self.show.eventitem_id,
-                    'casting': 'Regular Act',
-                    'accepted': '2'}
+                     'casting': 'Regular Act',
+                     'accepted': '2'}
 
     def test_act_accept_to_wait_same_show(self):
         # accepted -> waitlisted

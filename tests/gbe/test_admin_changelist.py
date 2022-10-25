@@ -27,6 +27,7 @@ from django.urls import reverse
 
 
 class GBEAdminChangeListTests(TestCase):
+
     @classmethod
     def setUpTestData(cls):
         cls.privileged_user = setup_admin_w_privs([])

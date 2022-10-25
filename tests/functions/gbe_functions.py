@@ -86,6 +86,7 @@ def setup_admin_w_privs(priv_list):
             grant_privilege(privileged_user, priv)
         return privileged_user
 
+
 def is_login_page(response):
     return b'I forgot my username or password!' in response.content
 
@@ -292,6 +293,7 @@ def set_image(item=None, folder_name=None):
         item.img_id = current_img.pk
         item.save()
     return current_img
+
 
 def get_limbo():
     if User.objects.filter(username="limbo").exists():
