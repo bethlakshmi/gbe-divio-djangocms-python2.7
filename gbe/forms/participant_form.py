@@ -36,6 +36,10 @@ class ParticipantForm(ModelForm):
         required=False,
         label=participant_labels['legal_last_name'],
         help_text=participant_form_help_texts['legal_name'])
+    display_name = CharField(
+        required=True,
+        label=participant_labels['display_name'],
+        help_text=participant_form_help_texts['display_name'])
     phone = CharField(required=False)
 
     how_heard = MultipleChoiceField(
@@ -100,14 +104,11 @@ class ParticipantForm(ModelForm):
         if not self.is_valid():
             return
         partform.user_object.email = self.cleaned_data.get('email')
-        if len(self.cleaned_data['first_name'].strip()) > 0:
-            user.first_name = self.cleaned_data['first_name'].strip()
-        if len(self.cleaned_data['last_name'].strip()) > 0:
-            user.last_name = self.cleaned_data['last_name'].strip()
+        user.first_name = self.cleaned_data['first_name'].strip()
+        user.last_name = self.cleaned_data['last_name'].strip()
         if self.cleaned_data['display_name']:
             display_name = self.cleaned_data['display_name'].strip()
-        else:
-            display_name = "%s %s" % (user.first_name, user.last_name)
+
         partform.display_name = re.sub(' +', ' ', display_name).title()
 
         if commit and self.is_valid():
