@@ -27,6 +27,7 @@ from gbe.models import (
     UserMessage,
 )
 from gbe.functions import (
+    check_user_and_redirect,
     get_current_conference,
     get_conference_days,
     get_conference_by_slug,
@@ -39,6 +40,7 @@ from scheduler.idd import (
 from scheduler.data_transfer import Person
 from gbe.scheduling.views.functions import show_general_status
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
 
 class VolunteerSignupView(View):
@@ -168,6 +170,15 @@ class VolunteerSignupView(View):
         return display_list
 
     def get(self, request, *args, **kwargs):
+        this_url = reverse(
+            'volunteer_signup',
+            urlconf='gbe.scheduling.urls')
+        response = check_user_and_redirect(
+            request,
+            this_url,
+            self.__class__.__name__)
+        if response['error_url']:
+            return HttpResponseRedirect(response['error_url'])
         context = self.process_inputs(request, args, kwargs)
         personal_schedule = []
         if not self.conference or not self.this_day:

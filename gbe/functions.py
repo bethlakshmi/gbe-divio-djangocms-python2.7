@@ -106,7 +106,7 @@ def check_user_and_redirect(request, this_url, source):
             'register', urlconf='gbe.urls') + follow_on
         return response
     response['owner'] = validate_profile(request, require=False)
-    if not response['owner'] or not response['owner'].participation_ready:
+    if not response['owner'] or not response['owner'].complete:
         user_message = UserMessage.objects.get_or_create(
             view=source,
             code="PROFILE_INCOMPLETE",
