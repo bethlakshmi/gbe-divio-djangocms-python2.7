@@ -26,6 +26,7 @@ from gbe.models import (
     StaffArea,
     UserMessage,
 )
+from gbe.forms import InvolvedProfileForm
 from gbe.functions import (
     check_user_and_redirect,
     get_current_conference,
@@ -190,9 +191,7 @@ class VolunteerSignupView(View):
         show_general_status(
             request, response, self.__class__.__name__)
         if len(response.occurrences) > 0:
-            if request.user.is_authenticated and hasattr(
-                    request.user,
-                    'profile'):
+            if request.user.profile.participation_ready:
                 all_roles = []
                 for n, m in role_options:
                     all_roles += [m]
@@ -206,6 +205,11 @@ class VolunteerSignupView(View):
                     public_id=request.user.profile.pk,
                     public_class="Profile")
                 eval_response = get_eval_info(person=person)
+            else:
+                context['complete_profile_form'] = InvolvedProfileForm(
+                    instance=request.user.profile,
+                    initial={'first_name': request.user.first_name,
+                             'last_name': request.user.last_name})
             context['occurrences'] = self.build_occurrence_display(
                 response.occurrences,
                 personal_schedule)

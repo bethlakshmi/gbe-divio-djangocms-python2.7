@@ -1,6 +1,7 @@
 # usermanagement forms
 from .contact_form import ContactForm
 from .participant_form import ParticipantForm
+from .involved_profile_form import InvolvedProfileForm
 from .profile_admin_form import ProfileAdminForm
 from .profile_preferences_form import ProfilePreferencesForm
 from .email_preferences_form import (
