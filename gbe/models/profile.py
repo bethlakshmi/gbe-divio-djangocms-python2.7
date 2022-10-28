@@ -14,10 +14,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.db.models import Q
 from gbe.models import Conference
-from scheduler.models import (
-    ResourceAllocation,
-    WorkerItem,
-)
+from scheduler.models import WorkerItem
 from scheduler.idd import (
     get_roles,
     get_schedule,
@@ -26,6 +23,7 @@ from gbetext import (
     best_time_to_call_options,
     phone_number_format_error,
     profile_alerts,
+    role_options,
     states_options,
 )
 from gbetext import not_scheduled_roles
@@ -288,8 +286,7 @@ class Profile(WorkerItem):
 
     def currently_involved(self):
         from gbe.models import Act
-        # right now, only the active conference(s), active bids, and not
-        # volunteering since it is obsolete in the current code
+
         active_vendor = self.vendors().exclude(accepted__in=(1, 4, 5)).exists()
         active_teacher = self.proposed_classes().exclude(
             accepted__in=(1, 4, 5)).exists()
@@ -307,6 +304,19 @@ class Profile(WorkerItem):
         if active_teacher or active_performer or active_vendor or (
                 active_costuming) or bid_evaluator or act_evaluator:
             return True
+
+        # separated for performance if the queries above show anything, 
+        # this never gets executed
+        all_roles = []
+        for n, m in role_options:
+            all_roles += [m]
+        volunteer_sched = get_schedule(
+            user=self.user_object, 
+            labels=["Volunteer", Conference.current_conf().conference_slug],
+            roles=all_roles)
+        if len(volunteer_sched.schedule_items) > 0:
+            return True
+
         return False
 
     @property
