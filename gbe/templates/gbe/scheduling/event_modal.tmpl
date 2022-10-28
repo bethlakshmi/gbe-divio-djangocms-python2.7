@@ -2,6 +2,7 @@
               <div class="modal" id="Modal{{occurrence.eventitem.pk}}" role="dialog">
               <div class="modal-dialog modal-dialog-centered modal-md">
               <div class="modal-content gbe-modal-content">
+                <form action="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">
                 <div class="modal-header gbe-modal-header">
                     <h4 class="modal-title">{{occurrence.title}}</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -26,11 +27,14 @@
                   {% if occurrence.approval_needed %}<div class="well well-sm">
                     {{ pending_note}}
                   </div>{% endif %}
+                  {% if complete_profile_form %}
                   <div class="pt-4">{% include "form_table.tmpl" with form=complete_profile_form %}</div>
+                  {% endif %}
                 </div>
                 <div class="modal-footer gbe-modal-footer">
-                    <a href="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" class="btn gbe-btn-primary">{% if not occurrence.highlight %}{% if occurrence.approval_needed %}Offer to Help!{% else %}Sign Me Up!{% endif %}{% else %}Withdraw{% endif %}</a>
+                    <input type="submit" value="{% if not occurrence.highlight %}{% if occurrence.approval_needed %}Offer to Help!{% else %}Sign Me Up!{% endif %}{% else %}Withdraw{% endif %}" name="submit_done" class="btn gbe-btn-primary">
                     <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
                 </div>
+                </form>
               </div></div></div>
 <!-- Event Modal End -->
