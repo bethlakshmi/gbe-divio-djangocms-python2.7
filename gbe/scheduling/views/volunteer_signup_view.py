@@ -191,21 +191,20 @@ class VolunteerSignupView(View):
         show_general_status(
             request, response, self.__class__.__name__)
         if len(response.occurrences) > 0:
-            if request.user.profile.participation_ready:
-                all_roles = []
-                for n, m in role_options:
-                    all_roles += [m]
-                sched_response = get_schedule(
-                    request.user,
-                    labels=["Volunteer", self.conference.conference_slug],
-                    roles=all_roles)
-                personal_schedule = sched_response.schedule_items
-                person = Person(
-                    user=request.user,
-                    public_id=request.user.profile.pk,
-                    public_class="Profile")
-                eval_response = get_eval_info(person=person)
-            else:
+            all_roles = []
+            for n, m in role_options:
+                all_roles += [m]
+            sched_response = get_schedule(
+                request.user,
+                labels=["Volunteer", self.conference.conference_slug],
+                roles=all_roles)
+            personal_schedule = sched_response.schedule_items
+            person = Person(
+                user=request.user,
+                public_id=request.user.profile.pk,
+                public_class="Profile")
+            eval_response = get_eval_info(person=person)
+            if not request.user.profile.participation_ready:
                 context['complete_profile_form'] = InvolvedProfileForm(
                     instance=request.user.profile,
                     initial={'first_name': request.user.first_name,
