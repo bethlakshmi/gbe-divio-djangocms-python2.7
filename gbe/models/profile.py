@@ -309,7 +309,7 @@ class Profile(WorkerItem):
         # this never gets executed
         all_roles = []
         for n, m in role_options:
-            if m != "Rejected":
+            if m not in ("Interested", "Rejected"):
                 all_roles += [m]
         volunteer_sched = get_schedule(
             user=self.user_object, 

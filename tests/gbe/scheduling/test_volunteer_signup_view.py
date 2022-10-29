@@ -288,3 +288,13 @@ class TestVolunteerSignupView(TestCase):
             urlconf="gbe.scheduling.urls",
             args=[vol_context.event.pk]))
         self.assertContains(response, "Phone")
+
+    def test_partial_profile(self):
+        ''' profile is incomplete, but does have first/last name '''
+        profile = ProfileFactory(user_object__first_name="Jane",
+                                 user_object__last_name="Jane")
+        login_as(profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, "Phone")
+        self.assertContains(response, "Jane")
+        self.assertContains(response, "Jane")
