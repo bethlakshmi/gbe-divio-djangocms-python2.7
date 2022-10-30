@@ -16,6 +16,7 @@ from gbe.models import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    current_conference,
     grant_privilege,
     login_as
 )
@@ -38,11 +39,15 @@ class TestEditProfile(TestCase):
     '''Tests for update_profile  view'''
     view_name = 'profile_update'
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         UserMessage.objects.all().delete()
+        cls.profile = ProfilePreferencesFactory().profile
+        current_conference()
+
+    def setUp(self):
         self.client = Client()
         self.counter = 0
-        self.profile = ProfilePreferencesFactory().profile
 
     def get_form(self, invalid=False):
         self.counter += 1
@@ -144,22 +149,6 @@ class TestEditProfile(TestCase):
             ' id="id_email_pref-send_bid_notifications" />',
             html=True)
         self.assertContains(response, email_pref_note.replace("'", "&#x27;"))
-
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_update_profile_post_empty_display_name(self, m_urlopen):
-        data = self.get_form()
-        data['display_name'] = ""
-        data['purchase_email'] = ""
-        a = Mock()
-        ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
-        a.read.side_effect = [File(ok_email_filename).read()]
-        m_urlopen.return_value = a
-
-        response = self.post_profile(form=data)
-        self.assertContains(
-            response,
-            "%s %s" % (data['first_name'].title(),
-                       data['last_name'].title()))
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_post_cleanup_display_name(self, m_urlopen):
@@ -264,6 +253,18 @@ class TestEditProfile(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(response, required_data_removed_msg, 3)
 
+    def test_schedule_user_cant_remove_vitals(self):
+        context = VolunteerContext(role="Volunteer")
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(context.profile, self)
+        data = self.get_form()
+        del(data['phone'])
+        del(data['first_name'])
+        del(data['last_name'])
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, required_data_removed_msg, 3)
+
     def test_staff_user_cant_remove_vitals(self):
         grant_privilege(self.profile, 'Registrar')
         url = reverse(self.view_name,
@@ -275,6 +276,21 @@ class TestEditProfile(TestCase):
         del(data['last_name'])
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(response, required_data_removed_msg, 3)
+
+    def test_no_conference_still_works(self):
+        Conference.objects.all().delete()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls')
+        login_as(self.profile, self)
+        data = self.get_form()
+        del(data['phone'])
+        del(data['first_name'])
+        del(data['last_name'])
+        response = self.client.post(url, data=data, follow=True)
+        self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
+        assert_alert_exists(
+            response, 'success', 'Success', default_update_profile_msg)
+        current_conference()
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_make_message(self, m_urlopen):

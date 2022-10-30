@@ -23,7 +23,10 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from django.shortcuts import get_object_or_404
-from gbe.models import Volunteer
+from gbe.models import (
+    Profile,
+    Volunteer,
+)
 from gbetext import (
     no_login_msg,
     full_login_msg,
@@ -31,6 +34,7 @@ from gbetext import (
     unset_volunteer_msg,
     set_pending_msg,
     unset_pending_msg,
+    vol_prof_update_failure,
     volunteer_allocate_email_fail_msg,
 )
 from gbe_utils.text import no_profile_msg
@@ -115,6 +119,37 @@ class TestSetVolunteer(TestCase):
             [self.context.staff_lead.profile.user_object.email],
             outbox_size=2,
             message_index=1)
+
+    def test_incomplete_volunteer_update(self):
+        incomplete = ProfileFactory()
+        login_as(incomplete, self)
+        data = {'first_name': 'new first',
+                'last_name': 'new last',
+                'phone': '111-222-3333'}
+        response = self.client.post(self.url,  data=data, follow=True)
+
+        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            set_volunteer_msg)
+        now_complete = Profile.objects.get(pk=incomplete.pk)
+        self.assertEqual(now_complete.user_object.first_name, "new first")
+        self.assertEqual(now_complete.phone, "111-222-3333")
+
+    def test_volunteer_update_fails(self):
+        incomplete = ProfileFactory()
+        login_as(incomplete, self)
+        data = {'first_name': 'new first',
+                'last_name': 'new last'}
+        response = self.client.post(self.url,  data=data, follow=True)
+        redirect_url = reverse('volunteer_signup',
+                               urlconf="gbe.scheduling.urls")
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, "Phone")
+        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, vol_prof_update_failure)
 
     def test_remove_volunteer(self):
         self.url = reverse(
