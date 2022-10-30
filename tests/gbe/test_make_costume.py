@@ -74,6 +74,19 @@ class TestCreateCostume(TestMakeCostume):
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
+    def test_post_no_profile(self):
+        '''when user has no profile, should bounce out to /profile'''
+        url = reverse(self.view_name, urlconf="gbe.urls")
+        user = UserFactory()
+        login_as(user, self)
+        # this is class data, not act data, but won't get far enough to care
+        data = self.get_costume_form()
+        response = self.client.post(url, data=data, follow=True)
+        self.assertRedirects(
+            response,
+            '%s?next=%s' % (
+                reverse('profile_update', urlconf='gbe.urls'), url))
+
     def test_costume_bid_post_form_not_valid(self):
         '''costume_bid, if form not valid, should return to CostumeEditForm'''
         url = reverse(self.view_name,
