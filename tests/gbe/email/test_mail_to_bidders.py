@@ -14,6 +14,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
     login_as,
+    setup_admin_w_privs,
 )
 from tests.contexts.class_context import (
     ClassContext,
@@ -39,14 +40,11 @@ class TestMailToBidders(TestMailFilters):
 
     @classmethod
     def setUpTestData(cls):
-        cls.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', "mypassword")
-        cls.privileged_profile = ProfileFactory(
-            user_object=cls.privileged_user)
+        grantable = []
         for priv in cls.priv_list:
-            grant_privilege(
-                cls.privileged_profile.user_object,
-                '%s Coordinator' % priv)
+            grantable += ['%s Coordinator' % priv]
+        cls.privileged_user = setup_admin_w_privs(grantable)
+        cls.privileged_profile = cls.privileged_user.profile
         cls.url = reverse(cls.view_name, urlconf="gbe.email.urls")
 
     def setUp(self):
@@ -735,10 +733,12 @@ class TestMailToBidders(TestMailFilters):
             response, 'danger', 'Error', unknown_request)
 
     def test_send_everyone_success_alert_displayed(self):
-        User.objects.exclude(
-            username=self.privileged_profile.user_object.username).delete()
+        User.objects.exclude(pk=self.privileged_user.pk).delete()
         second_super = User.objects.create_superuser(
             'secondsuper', 'secondsuper@test.com', "mypassword")
+        if hasattr(second_super, 'pageuser'):
+            second_super.pageuser.created_by_id = second_super.pk
+            second_super.pageuser.save()
         login_as(self.privileged_profile, self)
         data = {
             'to': [self.privileged_profile.user_object.email,

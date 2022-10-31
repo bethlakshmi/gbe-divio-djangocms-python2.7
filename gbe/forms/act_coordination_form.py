@@ -12,6 +12,7 @@ from gbe_forms_text import (
     act_help_texts,
     act_bid_labels,
 )
+from django.urls import reverse_lazy
 
 
 class ActCoordinationForm(ModelForm):
@@ -47,5 +48,6 @@ class ActCoordinationForm(ModelForm):
         widgets = {
             'b_conference': HiddenInput(),
             'performer': autocomplete.ModelSelect2(
-                url='coordinator-performer-autocomplete'),
+                url=reverse_lazy('coordinator-performer-autocomplete',
+                                 urlconf="gbe.urls")),
             }

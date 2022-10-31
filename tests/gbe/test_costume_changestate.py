@@ -1,6 +1,5 @@
 import nose.tools as nt
 from django.test import TestCase
-from django.test.client import RequestFactory
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
@@ -19,12 +18,14 @@ class TestCostumeChangestate(TestCase):
     view_name = 'costume_changestate'
 
     def setUp(self):
-        self.factory = RequestFactory()
         self.client = Client()
-        self.costume = CostumeFactory()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Costume Coordinator')
-        self.data = {'accepted': '3'}
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.costume = CostumeFactory()
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Costume Coordinator')
+        cls.data = {'accepted': '3'}
 
     def test_costume_changestate_authorized_user(self):
         '''The proper coordinator is changing the state, it works'''

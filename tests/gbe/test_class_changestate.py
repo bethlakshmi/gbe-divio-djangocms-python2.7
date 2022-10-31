@@ -19,10 +19,13 @@ class TestClassChangestate(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.klass = ClassFactory()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Class Coordinator')
-        self.data = {'accepted': '3'}
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.klass = ClassFactory()
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Class Coordinator')
+        cls.data = {'accepted': '3'}
 
     def test_class_changestate_authorized_user(self):
         '''The proper coordinator is changing the state, it works'''

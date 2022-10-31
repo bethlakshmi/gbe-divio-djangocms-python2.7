@@ -34,8 +34,10 @@ from tests.factories.gbe_factories import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    get_limbo,
     grant_privilege,
     login_as,
+    setup_admin_w_privs,
 )
 from gbetext import (
     eventbrite_error,
@@ -51,12 +53,14 @@ import eventbrite
 class TestTransactions(TestCase):
     '''Tests for transactions view'''
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = setup_admin_w_privs(['Ticketing - Transactions'])
+        cls.url = reverse('transactions', urlconf='ticketing.urls')
+
     def setUp(self):
         self.factory = RequestFactory()
         self.client = Client()
-        self.privileged_user = ProfileFactory()
-        grant_privilege(self.privileged_user, 'Ticketing - Transactions')
-        self.url = reverse('transactions', urlconf='ticketing.urls')
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_ticket_missing(self, m_eventbrite):
@@ -96,7 +100,7 @@ class TestTransactions(TestCase):
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
 
-        limbo, created = User.objects.get_or_create(username='limbo')
+        limbo = get_limbo()
         m_eventbrite.return_value = order_dict
 
         login_as(self.privileged_user, self)
@@ -123,7 +127,7 @@ class TestTransactions(TestCase):
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
 
-        limbo, created = User.objects.get_or_create(username='limbo')
+        limbo = get_limbo()
         purchaser = PurchaserFactory(matched_to_user=limbo)
         user = UserFactory(email=purchaser.email)
         m_eventbrite.return_value = order_dict
@@ -131,7 +135,7 @@ class TestTransactions(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
         test_purchaser = Purchaser.objects.get(pk=purchaser.pk)
-        self.assertEqual(test_purchaser.matched_to_user, user)
+        self.assertEqual(test_purchaser.matched_to_user, user.user_ptr)
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_pagination(self, m_eventbrite):
@@ -143,7 +147,7 @@ class TestTransactions(TestCase):
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
 
-        limbo, created = User.objects.get_or_create(username='limbo')
+        limbo = get_limbo()
         continue_order_page = copy.deepcopy(order_dict)
         continue_order_page['pagination']['has_more_items'] = True
         continue_order_page['pagination']['continuation'] = "eyJwYWdlIjogMn0"
@@ -249,8 +253,9 @@ class TestTransactions(TestCase):
 
     def test_transactions_w_privilege_userview_editpriv(self):
         context = PurchasedTicketContext()
-        context.transaction.ticket_item.ticketing_event.act_submission_event = True
-        context.transaction.ticket_item.ticketing_event.save()
+        ticketing_event = context.transaction.ticket_item.ticketing_event
+        ticketing_event.act_submission_event = True
+        ticketing_event.save()
         grant_privilege(self.privileged_user, 'Registrar')
         login_as(self.privileged_user, self)
         response = self.client.get(self.url + "?format=user")
@@ -272,7 +277,8 @@ class TestTransactions(TestCase):
         nt.assert_equal(response.status_code, 200)
 
     def test_transactions_old_conf_limbo_purchase(self):
-        limbo, created = User.objects.get_or_create(username='limbo')
+        limbo = get_limbo()
+
         old_context = PurchasedTicketContext()
         old_context.conference.status = "past"
         old_context.conference.save()
@@ -300,7 +306,8 @@ class TestTransactions(TestCase):
         self.assertNotContains(response, context.transaction.ticket_item.title)
 
     def test_transactions_old_conf_limbo_purchase_user_view(self):
-        limbo, created = User.objects.get_or_create(username='limbo')
+        limbo = get_limbo()
+
         old_context = PurchasedTicketContext()
         old_context.conference.status = "past"
         old_context.conference.save()
@@ -334,7 +341,7 @@ class TestTransactions(TestCase):
             ticketing_event=event,
             ticket_id='%s-%s' % (event.event_id, '3255985'))
 
-        limbo, created = User.objects.get_or_create(username='limbo')
+        limbo = get_limbo()
 
         a = Mock()
         order_filename = open("tests/ticketing/orderlist.xml", 'r')
@@ -355,7 +362,7 @@ class TestTransactions(TestCase):
         nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
         nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
         nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user, limbo)
+        nt.assert_equal(transaction.purchaser.matched_to_user, limbo.user_ptr)
         nt.assert_equal(transaction.purchaser.first_name, 'John')
         nt.assert_equal(transaction.purchaser.last_name, 'Smith')
         assert_alert_exists(response,

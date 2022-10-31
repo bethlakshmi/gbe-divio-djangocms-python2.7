@@ -46,27 +46,31 @@ class TestActChangestate(TestCase):
     '''Tests for act_changestate view'''
     view_name = 'act_changestate'
 
-    def setUp(self):
-        self.client = Client()
-        self.context = ActTechInfoContext()
-        self.show = ShowFactory(e_conference=self.context.conference)
-        self.sched_event = SchedEventFactory(eventitem=self.show.eventitem_ptr)
-        EventLabelFactory(event=self.sched_event,
-                          text=self.context.conference.conference_slug)
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Act Coordinator')
-        grant_privilege(self.privileged_user, 'Act Reviewers')
-        self.data = {'show': self.show.eventitem_id,
-                     'casting': 'Regular Act',
-                     'accepted': '2'}
-        self.url = reverse(self.view_name,
-                           args=[self.context.act.pk],
-                           urlconf='gbe.urls')
-        self.regular_casting = ActCastingOptionFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = ActTechInfoContext()
+        cls.show = ShowFactory(e_conference=cls.context.conference)
+        cls.sched_event = SchedEventFactory(eventitem=cls.show.eventitem_ptr)
+        EventLabelFactory(event=cls.sched_event,
+                          text=cls.context.conference.conference_slug)
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Act Coordinator')
+        grant_privilege(cls.privileged_user, 'Act Reviewers')
+
+        cls.url = reverse(cls.view_name,
+                          args=[cls.context.act.pk],
+                          urlconf='gbe.urls')
+        cls.regular_casting = ActCastingOptionFactory(
             casting="Regular Act",
             show_as_special=False,
             display_header="Check Out these Performers",
             display_order=1)
+
+    def setUp(self):
+        self.client = Client()
+        self.data = {'show': self.show.eventitem_id,
+                     'casting': 'Regular Act',
+                     'accepted': '2'}
 
     def test_act_accept_to_wait_same_show(self):
         # accepted -> waitlisted
@@ -371,19 +375,19 @@ class TestActChangestate(TestCase):
     def test_act_accept_makes_template_per_show(self):
         # waitlisted -> accepted
         # change show, same role
-        self.context = ActTechInfoContext(set_waitlist=True)
-        self.url = reverse(self.view_name,
-                           args=[self.context.act.pk],
-                           urlconf='gbe.urls')
+        new_context = ActTechInfoContext(set_waitlist=True)
+        url = reverse(self.view_name,
+                      args=[new_context.act.pk],
+                      urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         self.data['accepted'] = '3'
-        response = self.client.post(self.url, data=self.data)
+        response = self.client.post(url, data=self.data)
         assert_email_template_create(
             'act accepted - %s' % self.show.e_title.lower(),
             "Your act has been cast in %s" % self.show.e_title
         )
         casting = Ordering.objects.get(
-            class_id=self.context.act.pk,
+            class_id=new_context.act.pk,
             allocation__event=self.sched_event)
         assert(casting.role == "Regular Act")
 
@@ -426,6 +430,7 @@ class TestActChangestate(TestCase):
         self.assertRedirects(response, reverse(
             'act_review_list',
             urlconf='gbe.urls'))
+        data['casting'] = 'Regular Act'
 
     def test_act_accept_and_special_role(self):
         # accepted -> accepted
@@ -451,6 +456,7 @@ class TestActChangestate(TestCase):
             'act accepted - %s' % self.show.e_title.lower(),
             "Your act has been cast in %s" % self.show.e_title
         )
+        data['casting'] = 'Regular Act'
 
     def test_act_bad_role(self):
         UserMessage.objects.all().delete()
@@ -464,6 +470,7 @@ class TestActChangestate(TestCase):
                                     follow=True)
         assert_alert_exists(
             response, 'danger', 'Error', no_casting_msg)
+        data['casting'] = 'Regular Act'
 
     def test_act_no_role(self):
         UserMessage.objects.all().delete()
@@ -481,19 +488,20 @@ class TestActChangestate(TestCase):
                                     follow=True)
         assert_alert_exists(
             response, 'danger', 'Error', no_casting_msg)
+        data['casting'] = 'Regular Act'
 
     def test_act_changestate_stay_waitlisted_act(self):
         # waitlisted -> waitlisted
         # change show
-        self.context = ActTechInfoContext(set_waitlist=True)
+        new_context = ActTechInfoContext(set_waitlist=True)
         self.url = reverse(self.view_name,
-                           args=[self.context.act.pk],
+                           args=[new_context.act.pk],
                            urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data)
         casting = Ordering.objects.get(
-            class_id=self.context.act.pk,
+            class_id=new_context.act.pk,
             allocation__event=self.sched_event)
         assert(casting.role == "Waitlisted")
 

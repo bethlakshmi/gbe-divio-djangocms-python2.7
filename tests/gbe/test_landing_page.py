@@ -2,7 +2,6 @@ from django.test import TestCase
 from datetime import datetime
 import pytz
 from django.test import Client
-from django.test.client import RequestFactory
 from django.urls import reverse
 from tests.factories.gbe_factories import(
     ActFactory,
@@ -50,90 +49,89 @@ from datetime import (
     timedelta,
 )
 from django.core.files.uploadedfile import SimpleUploadedFile
+from easy_thumbnails.files import get_thumbnailer
 
 
 class TestIndex(TestCase):
     '''Tests for index view'''
     view_name = 'home'
 
-    def setUp(self):
-        self.client = Client()
-        # Conference Setup
-        self.factory = RequestFactory()
-        self.current_conf = ConferenceFactory(accepting_bids=True,
-                                              status='upcoming')
-        self.previous_conf = ConferenceFactory(accepting_bids=False,
-                                               status='completed')
+    @classmethod
+    def setUpTestData(cls):
+        cls.current_conf = ConferenceFactory(accepting_bids=True,
+                                             status='upcoming')
+        cls.previous_conf = ConferenceFactory(accepting_bids=False,
+                                              status='completed')
 
         # User/Human setup
-        self.profile = ProfileFactory()
-        self.performer = PersonaFactory(performer_profile=self.profile,
-                                        contact=self.profile,
-                                        label="Test Index Label")
+        cls.profile = ProfileFactory()
+        cls.performer = PersonaFactory(performer_profile=cls.profile,
+                                       contact=cls.profile,
+                                       label="Test Index Label")
         # Bid types previous and current
-        self.current_act = ActFactory(performer=self.performer,
+        cls.current_act = ActFactory(performer=cls.performer,
+                                     submitted=True,
+                                     b_conference=cls.current_conf)
+        cls.previous_act = ActFactory(performer=cls.performer,
                                       submitted=True,
-                                      b_conference=self.current_conf)
-        self.previous_act = ActFactory(performer=self.performer,
-                                       submitted=True,
-                                       b_conference=self.previous_conf)
-        self.current_class = ClassFactory(teacher=self.performer,
+                                      b_conference=cls.previous_conf)
+        cls.current_class = ClassFactory(teacher=cls.performer,
+                                         submitted=True,
+                                         accepted=3,
+                                         b_conference=cls.current_conf,
+                                         e_conference=cls.current_conf)
+        cls.previous_class = ClassFactory(teacher=cls.performer,
                                           submitted=True,
                                           accepted=3,
-                                          b_conference=self.current_conf,
-                                          e_conference=self.current_conf)
-        self.previous_class = ClassFactory(teacher=self.performer,
-                                           submitted=True,
-                                           accepted=3,
-                                           b_conference=self.previous_conf,
-                                           e_conference=self.previous_conf)
+                                          b_conference=cls.previous_conf,
+                                          e_conference=cls.previous_conf)
 
-        self.current_vendor = VendorFactory(
-            business__owners=[self.profile],
+        cls.current_vendor = VendorFactory(
+            business__owners=[cls.profile],
             submitted=True,
-            b_conference=self.current_conf)
-        self.previous_vendor = VendorFactory(
-            business__owners=[self.profile],
+            b_conference=cls.current_conf)
+        cls.previous_vendor = VendorFactory(
+            business__owners=[cls.profile],
             submitted=True,
-            b_conference=self.previous_conf)
+            b_conference=cls.previous_conf)
 
-        self.current_costume = CostumeFactory(
-            profile=self.profile,
+        cls.current_costume = CostumeFactory(
+            profile=cls.profile,
             submitted=True,
-            b_conference=self.current_conf)
-        self.previous_costume = CostumeFactory(
-            profile=self.profile,
+            b_conference=cls.current_conf)
+        cls.previous_costume = CostumeFactory(
+            profile=cls.profile,
             submitted=True,
-            b_conference=self.previous_conf)
+            b_conference=cls.previous_conf)
 
         # Event assignments, previous and current
         current_opportunity = GenericEventFactory(
-            e_conference=self.current_conf,
+            e_conference=cls.current_conf,
             type='Volunteer')
         previous_opportunity = GenericEventFactory(
-            e_conference=self.previous_conf)
+            e_conference=cls.previous_conf)
 
-        self.current_sched = SchedEventFactory(
+        cls.current_sched = SchedEventFactory(
             eventitem=current_opportunity,
             starttime=datetime(2016, 2, 5, 12, 30, 0, 0),
             max_volunteer=10)
-        self.previous_sched = SchedEventFactory(
+        cls.previous_sched = SchedEventFactory(
             eventitem=previous_opportunity,
             starttime=datetime(2015, 2, 25, 12, 30, 0, 0),
             max_volunteer=10)
 
-        self.current_class_sched = SchedEventFactory(
-            eventitem=self.current_class,
+        cls.current_class_sched = SchedEventFactory(
+            eventitem=cls.current_class,
             starttime=datetime(2016, 2, 5, 2, 30, 0, 0),
             max_volunteer=10)
-        self.previous_class_sched = SchedEventFactory(
-            eventitem=self.previous_class,
+        cls.previous_class_sched = SchedEventFactory(
+            eventitem=cls.previous_class,
             starttime=datetime(2015, 2, 25, 2, 30, 0, 0),
             max_volunteer=10)
 
-        worker = WorkerFactory(_item=self.profile, role='Volunteer')
-        for schedule_item in [self.current_sched,
-                              self.previous_sched]:
+        worker = WorkerFactory(_item=cls.profile, role='Volunteer')
+        for schedule_item in [cls.current_sched,
+                              cls.previous_sched]:
             volunteer_assignment = ResourceAllocationFactory(
                 event=schedule_item,
                 resource=worker
@@ -141,14 +139,17 @@ class TestIndex(TestCase):
             LabelFactory(text="label %d" % volunteer_assignment.pk,
                          allocation=volunteer_assignment)
 
-        persona_worker = WorkerFactory(_item=self.performer,
+        persona_worker = WorkerFactory(_item=cls.performer,
                                        role='Teacher')
-        for schedule_item in [self.current_class_sched,
-                              self.previous_class_sched]:
+        for schedule_item in [cls.current_class_sched,
+                              cls.previous_class_sched]:
             volunteer_assignment = ResourceAllocationFactory(
                 event=schedule_item,
                 resource=worker
             )
+
+    def setUp(self):
+        self.client = Client()
 
     def assert_event_is_present(self, response, event):
         ''' test all parts of the event being on the landing page schedule'''
@@ -323,9 +324,13 @@ class TestIndex(TestCase):
     def test_profile_image(self):
         set_image(self.performer)
         response = self.get_landing_page()
+        print(response.content)
         self.assertContains(response, self.performer.name)
         self.assertContains(response, self.performer.label)
-        self.assertContains(response, self.performer.img.url)
+        self.assertContains(
+            response,
+            get_thumbnailer(self.performer.img).get_thumbnail(
+                {'size': (20, 20), 'crop': True, 'upscale': True}).url)
 
     def test_cannot_edit_troupe_if_not_contact(self):
         troupe = TroupeFactory()

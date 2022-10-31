@@ -13,7 +13,7 @@ from tests.gbe.test_gbe import TestGBE
 
 class TestScheduling(TestGBE):
     def assert_good_sched_event_form_wizard(self, response, eventitem):
-        assert response.status_code is 200
+        assert response.status_code == 200
         if eventitem.__class__.__name__ == "Class":
             for label, detail in [
                     (classbid_labels['schedule_constraints'], ', '.join(

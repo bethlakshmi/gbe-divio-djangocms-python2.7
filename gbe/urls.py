@@ -54,6 +54,12 @@ from gbe.views import (
     ViewSummerActView,
     ViewTroupeView,
     ViewVendorView,
+    CoordinatorPerformerAutocomplete,
+    LimitedBusinessAutocomplete,
+    LimitedPerformerAutocomplete,
+    LimitedPersonaAutocomplete,
+    PersonaAutocomplete,
+    ProfileAutocomplete,
 )
 
 # NOTE: in general, url patterns should end with '/?$'. This
@@ -67,6 +73,31 @@ urlpatterns = [
     #  landing page
     url(r'^gbe/?',
         LandingPageView.as_view(), name='home'),
+
+    # autocompletes
+    url(r'^profile-autocomplete/$',
+        ProfileAutocomplete.as_view(),
+        name='profile-autocomplete'),
+    url(
+        r'^limited-business-autocomplete/$',
+        LimitedBusinessAutocomplete.as_view(),
+        name='limited-business-autocomplete'),
+    url(
+        r'^limited-performer-autocomplete/$',
+        LimitedPerformerAutocomplete.as_view(),
+        name='limited-performer-autocomplete'),
+    url(
+        r'^limited-persona-autocomplete/$',
+        LimitedPersonaAutocomplete.as_view(),
+        name='limited-persona-autocomplete'),
+    url(
+        r'^coordinator-performer-autocomplete/$',
+        CoordinatorPerformerAutocomplete.as_view(),
+        name='coordinator-performer-autocomplete'),
+    url(
+        r'^persona-autocomplete/$',
+        PersonaAutocomplete.as_view(),
+        name='persona-autocomplete'),
 
     #  bios
     url(r'^bios/teachers/?$',
@@ -243,5 +274,5 @@ urlpatterns = [
         name='delete_profile'),
     url(r'^profile/landing_page/(?P<profile_id>\d+)/?$',
         LandingPageView.as_view(),
-        name='admin_landing_page')
+        name='admin_landing_page'),
 ]

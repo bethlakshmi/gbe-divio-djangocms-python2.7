@@ -10,6 +10,7 @@ from gbe.models import GenericEvent
 from gbe.forms.common_queries import visible_profiles
 from gbetext import role_options
 from dal import autocomplete
+from django.urls import reverse_lazy
 
 
 class WorkerAllocationForm(Form):
@@ -23,7 +24,7 @@ class WorkerAllocationForm(Form):
         queryset=visible_profiles,
         required=False,
         widget=autocomplete.ModelSelect2(
-            url='profile-autocomplete'))
+            url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls')))
     role = ChoiceField(choices=role_options, initial='Volunteer')
     label = CharField(max_length=100, required=False)
     alloc_id = IntegerField(required=False, widget=HiddenInput())

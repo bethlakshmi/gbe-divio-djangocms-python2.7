@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'aldryn_sso',
     'djangocms_admin_style',
     'django.contrib.admin',
     'django.contrib.staticfiles',

@@ -60,7 +60,9 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
         labels = classbid_labels
         widgets = {
             'teacher': AddAnotherEditSelectedWidgetWrapper(
-                autocomplete.ModelSelect2(url='limited-persona-autocomplete'),
+                autocomplete.ModelSelect2(url=reverse_lazy(
+                    'limited-persona-autocomplete',
+                    urlconf='gbe.urls')),
                 reverse_lazy('persona-add', urlconf='gbe.urls', args=[0]),
                 reverse_lazy('persona-update',
                              urlconf='gbe.urls',

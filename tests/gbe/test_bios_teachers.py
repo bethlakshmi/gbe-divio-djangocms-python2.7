@@ -34,7 +34,10 @@ class TestBiosTeachers(TestCase):
     def setUp(self):
         Conference.objects.all().delete()
         self.client = Client()
-        self.performer = PersonaFactory()
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.performer = PersonaFactory()
 
     def test_bios_teachers_no_conf_slug(self):
         current_context = ClassContext(conference=current_conference())
