@@ -5,7 +5,6 @@ from django.core.management import call_command
 from mock import patch
 from django.contrib.auth.models import User
 from tests.factories.ticketing_factories import EventbriteSettingsFactory
-from tests.factories.gbe_factories import UserFactory
 from tests.ticketing.eb_event_list import event_dict
 from tests.ticketing.eb_ticket_list import (
     ticket_dict1,
