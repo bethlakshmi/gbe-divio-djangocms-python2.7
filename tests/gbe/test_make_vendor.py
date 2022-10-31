@@ -45,7 +45,7 @@ class TestMakeVendor(TestCase):
         form = {'thebiz-business': self.business.pk,
                 'thebiz-phone': '111-222-3333',
                 'thebiz-first_name': 'Jane',
-                'thebiz-last_name': 'Smith',}
+                'thebiz-last_name': 'Smith'}
         if submit:
             form['submit'] = True
         if invalid:
@@ -103,11 +103,13 @@ class TestCreateVendor(TestMakeVendor):
 
         data = self.get_vendor_form(submit=True)
         data['main_ticket'] = tickets[0].pk
+        data['add_ons'] = tickets[1].pk
         response = self.client.post(url,
                                     data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Fee has not been Paid')
+        self.assertContains(response, tickets[1].title)
 
     def test_create_vendor_post_form_not_my_biz(self):
         url = reverse(self.view_name,

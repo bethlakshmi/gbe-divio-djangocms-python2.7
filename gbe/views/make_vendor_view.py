@@ -19,7 +19,7 @@ class MakeVendorView(MakeBidView):
     view_title = 'Vendor Application'
     submit_fields = ['business',
                      'first_name',
-                     'last_name', 
+                     'last_name',
                      'phone'
                      ]
     draft_fields = submit_fields
@@ -59,8 +59,8 @@ class MakeVendorView(MakeBidView):
             initial.update({'help_times': help_times_initial})
         else:
             initial.update({'profile': self.owner,
-                       'business': self.businesses[0],
-                       'physical_address': self.owner.address})
+                            'business': self.businesses[0],
+                            'physical_address': self.owner.address})
         return initial
 
     def set_up_form(self):

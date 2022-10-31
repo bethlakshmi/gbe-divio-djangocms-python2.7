@@ -305,7 +305,7 @@ class Profile(WorkerItem):
                 active_costuming) or bid_evaluator or act_evaluator:
             return True
 
-        # separated for performance if the queries above show anything, 
+        # separated for performance if the queries above show anything,
         # this never gets executed
         current = Conference.current_conf()
         if current is not None:
@@ -314,11 +314,11 @@ class Profile(WorkerItem):
                 if m not in ("Interested", "Rejected"):
                     all_roles += [m]
             volunteer_sched = get_schedule(
-                user=self.user_object, 
+                user=self.user_object,
                 labels=["Volunteer", current.conference_slug],
                 roles=all_roles)
             if len(volunteer_sched.schedule_items) > 0:
-                 return True
+                return True
 
         return False
 

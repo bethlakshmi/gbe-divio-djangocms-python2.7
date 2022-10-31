@@ -54,6 +54,7 @@ class TestMakeCostume(TestCase):
 
         return data
 
+
 class TestCreateCostume(TestMakeCostume):
     '''Tests for create_costume view'''
     view_name = 'costume_create'

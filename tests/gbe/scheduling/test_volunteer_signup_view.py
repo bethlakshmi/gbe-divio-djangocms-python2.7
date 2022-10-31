@@ -39,7 +39,7 @@ class TestVolunteerSignupView(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse('volunteer_signup',
-                           urlconf="gbe.scheduling.urls")
+                          urlconf="gbe.scheduling.urls")
         cls.profile = ProfileFactory(phone="111-222-3333",
                                      user_object__first_name="Firstname",
                                      user_object__last_name="Lastname")

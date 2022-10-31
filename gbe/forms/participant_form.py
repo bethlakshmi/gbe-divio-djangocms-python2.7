@@ -62,7 +62,8 @@ class ParticipantForm(ModelForm):
                     view="EditProfileView",
                     code="MISSING_REQUIRED_BID_DATA",
                     defaults={
-                        'summary': "User Removed Data Required for Active Bids",
+                        'summary': "User Removed Data Required for Active " +
+                        "Bids",
                         'description': required_data_removed_msg
                         })[0].description
                 if not self.cleaned_data['first_name']:
