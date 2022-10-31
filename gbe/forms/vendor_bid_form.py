@@ -42,7 +42,9 @@ class VendorBidForm(ModelForm):
             'accepted': HiddenInput(),
             'submitted': HiddenInput(),
             'business': AddAnotherEditSelectedWidgetWrapper(
-                autocomplete.ModelSelect2(url='limited-business-autocomplete'),
+                autocomplete.ModelSelect2(
+                    url=reverse_lazy('limited-business-autocomplete',
+                                     urlconf='gbe.urls')),
                 reverse_lazy('business-add', urlconf='gbe.urls'),
                 reverse_lazy('business-update',
                              urlconf='gbe.urls',

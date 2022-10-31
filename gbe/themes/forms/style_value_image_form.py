@@ -39,6 +39,7 @@ class StyleValueImageForm(ModelForm):
         required=False,
         label="Current Image",
         empty_label="No Image",
+        blank=True,
         help_text=style_value_help['change_images'])
     add_image = ImageField(
         widget=ClearableFileInput(),

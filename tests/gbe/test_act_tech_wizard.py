@@ -34,6 +34,10 @@ class TestActTechWizard(TestCase):
     '''Tests for edit_act_techinfo view'''
     view_name = 'act_tech_wizard'
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = ActTechInfoContext()
+
     def setUp(self):
         self.client = Client()
 
@@ -76,34 +80,32 @@ class TestActTechWizard(TestCase):
                 selected_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT)))
 
     def test_edit_act_techinfo_unauthorized_user(self):
-        context = ActTechInfoContext()
         random_performer = PersonaFactory()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
-                      args=[context.act.pk])
+                      args=[self.context.act.pk])
         login_as(random_performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(403, response.status_code)
 
     def test_edit_act_techinfo_authorized_user(self):
-        context = ActTechInfoContext()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
+                      args=[self.context.act.pk])
+        login_as(self.context.performer.contact, self)
         response = self.client.get(url)
         self.assertContains(
             response,
-            "Technical Info for %s" % context.act.b_title)
-        self.assertContains(response, "Booked for: %s" % context.show.e_title)
+            "Technical Info for %s" % self.context.act.b_title)
+        self.assertContains(response,
+                            "Booked for: %s" % self.context.show.e_title)
 
     def test_edit_act_techinfo_get_bad_act(self):
-        context = ActTechInfoContext()
         bad_act_id = Act.objects.aggregate(Max('pk'))['pk__max']+1
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[bad_act_id])
-        login_as(context.performer.contact, self)
+        login_as(self.context.performer.contact, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
@@ -117,38 +119,36 @@ class TestActTechWizard(TestCase):
         self.assertEqual(404, response.status_code)
 
     def test_get_act_techinfo_no_profile(self):
-        context = ActTechInfoContext()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
-                      args=[context.act.pk])
+                      args=[self.context.act.pk])
         login_as(UserFactory(), self)
         response = self.client.get(url, follow=True)
         self.assertRedirects(response,
                              reverse("profile_update", urlconf="gbe.urls"))
 
     def test_post_rehearsal_no_profile(self):
-        context = ActTechInfoContext()
-        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal = self.context._schedule_rehearsal(
+            self.context.sched_event)
         extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
             hours=1)
         extra_rehearsal.save()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
-                      args=[context.act.pk])
+                      args=[self.context.act.pk])
         data = {'book': "Book Rehearsal"}
-        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        data['%d-rehearsal' % self.context.sched_event.pk] = extra_rehearsal.pk
         login_as(UserFactory(), self)
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response,
                              reverse("profile_update", urlconf="gbe.urls"))
 
     def test_edit_act_techinfo_rehearsal_ready(self):
-        context = ActTechInfoContext()
-        rehearsal = context._schedule_rehearsal(context.sched_event)
+        rehearsal = self.context._schedule_rehearsal(self.context.sched_event)
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
+                      args=[self.context.act.pk])
+        login_as(self.context.performer.contact, self)
         response = self.client.get(url)
         self.assertContains(response, "Set Rehearsal Time")
         assert_option_state(
@@ -247,17 +247,17 @@ class TestActTechWizard(TestCase):
             response, 'success', 'Success', success_msg)
 
     def test_book_bad_rehearsal(self):
-        context = ActTechInfoContext()
-        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal = self.context._schedule_rehearsal(
+            self.context.sched_event)
         extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
             hours=1)
         extra_rehearsal.save()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
-                      args=[context.act.pk])
-        login_as(context.performer.contact, self)
+                      args=[self.context.act.pk])
+        login_as(self.context.performer.contact, self)
         data = {'book': "Book Rehearsal"}
-        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk + 5
+        data['%d-rehearsal' % self.context.sched_event.pk] = extra_rehearsal.pk + 5
         response = self.client.post(url, data, follow=True)
         self.assertNotContains(response, default_rehearsal_booked)
         self.assertContains(response, "Select a valid choice.")

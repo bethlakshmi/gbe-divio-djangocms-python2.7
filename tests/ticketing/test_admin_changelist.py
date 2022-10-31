@@ -15,21 +15,23 @@ from tests.factories.ticketing_factories import(
 from tests.factories.gbe_factories import ConferenceFactory
 from django.contrib.admin.sites import AdminSite
 from tests.functions.gbe_functions import (
+    login_as,
     make_act_app_purchase,
     make_vendor_app_purchase,
+    setup_admin_w_privs,
 )
 from django.urls import reverse
 
 
 class TicketingChangeListTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = setup_admin_w_privs([])
+
     def setUp(self):
         self.client = Client()
-        password = 'mypassword'
-        self.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', password)
-        self.client.login(
-            username=self.privileged_user.username,
-            password=password)
+        login_as(self.privileged_user, self)
 
     def test_get_ticketitem_active(self):
         ticket = TicketItemFactory(live=True, has_coupon=False)

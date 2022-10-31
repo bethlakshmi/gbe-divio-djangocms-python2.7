@@ -22,6 +22,7 @@ from datetime import (
     timedelta,
 )
 from pytz import utc
+from cms.models.permissionmodels import PageUser
 
 
 class ConferenceFactory(DjangoModelFactory):
@@ -48,10 +49,15 @@ class WorkerItemFactory(DjangoModelFactory):
 
 
 class UserFactory(DjangoModelFactory):
+    ''' the created_by_id of a Page User is a hack to get to python 3.8,
+    Django CMS > 3.7.  If this is ever really fixed, it can be removed:
+    https://github.com/django-cms/django-cms/issues/7225 '''
     class Meta:
-        model = User
+        model = PageUser
+    id = Sequence(lambda n: n)
     email = Sequence(lambda n: 'John_%s@smith.com' % str(n))
     username = LazyAttribute(lambda a: "%s" % (a.email))
+    created_by_id = LazyAttribute(lambda a: a.id)
 
 
 class ProfileFactory(DjangoModelFactory):

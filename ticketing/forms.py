@@ -29,6 +29,7 @@ from django.forms.widgets import CheckboxSelectMultiple
 from tempus_dominus.widgets import DatePicker
 from dal import autocomplete
 from django.db.models import Q
+from django.urls import reverse_lazy
 
 
 class TicketItemForm(forms.ModelForm):
@@ -219,7 +220,8 @@ class CompFeeForm(forms.ModelForm):
             'title'))
     profile = forms.ModelChoiceField(
         queryset=Profile.objects.filter(user_object__is_active=True),
-        widget=autocomplete.ModelSelect2(url='profile-autocomplete'))
+        widget=autocomplete.ModelSelect2(
+            url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls')))
 
     class Meta:
         model = Transaction

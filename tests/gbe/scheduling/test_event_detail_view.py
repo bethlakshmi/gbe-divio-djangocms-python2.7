@@ -28,6 +28,7 @@ from tests.functions.gbe_functions import (
     bad_id_for,
     login_as,
     set_image,
+    setup_admin_w_privs,
 )
 from django.contrib.auth.models import User
 from datetime import (
@@ -39,19 +40,22 @@ from datetime import (
 class TestEventDetailView(TestCase):
     view_name = 'detail_view'
 
-    def setUp(self):
-        self.regular_casting = ActCastingOptionFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.regular_casting = ActCastingOptionFactory(
             casting="Regular Act",
             show_as_special=False,
             display_header="Check Out these Performers",
             display_order=0)
         Conference.objects.all().delete()
-        self.client = Client()
-        self.context = ActTechInfoContext()
-        self.url = reverse(
-            self.view_name,
+        cls.context = ActTechInfoContext()
+        cls.url = reverse(
+            cls.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[self.context.show.eventitem_id])
+            args=[cls.context.show.eventitem_id])
+
+    def setUp(self):
+        self.client = Client()
 
     def test_no_permission_required(self):
         response = self.client.get(self.url)
@@ -155,10 +159,7 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, "Fabulous Performers")
 
     def test_bio_grid_for_admin(self):
-        superuser = User.objects.create_superuser('test_bio_grid_editor',
-                                                  'admin@importimage.com',
-                                                  'secret')
-        ProfileFactory(user_object=superuser)
+        superuser = setup_admin_w_privs([])
         login_as(superuser, self)
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -173,10 +174,7 @@ class TestEventDetailView(TestCase):
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[context.show.eventitem_id])
-        superuser = User.objects.create_superuser('test_feature_editor',
-                                                  'admin@importimage.com',
-                                                  'secret')
-        ProfileFactory(user_object=superuser)
+        superuser = setup_admin_w_privs([])
         set_image(context.performer)
         login_as(superuser, self)
         response = self.client.get(url)
@@ -186,10 +184,7 @@ class TestEventDetailView(TestCase):
             "/admin/gbe/performer/%d" % context.performer.pk)
 
     def test_bio_grid_for_admin_w_image(self):
-        superuser = User.objects.create_superuser('test_bio_grid_img_editor',
-                                                  'admin@importimage.com',
-                                                  'secret')
-        ProfileFactory(user_object=superuser)
+        superuser = setup_admin_w_privs([])
         login_as(superuser, self)
         set_image(self.context.performer)
         response = self.client.get(self.url)
@@ -200,16 +195,15 @@ class TestEventDetailView(TestCase):
                 self.context.performer.img.pk))
 
     def test_feature_grid_for_admin_w_image(self):
+        from cms.models.permissionmodels import PageUser
+
         ActCastingOptionFactory(display_order=1)
         context = ActTechInfoContext(act_role="Hosted by...")
         set_image(context.performer)
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[context.show.eventitem_id])
-        superuser = User.objects.create_superuser('test_feature_img_editor',
-                                                  'admin@importimage.com',
-                                                  'secret')
-        ProfileFactory(user_object=superuser)
+        superuser = setup_admin_w_privs([])
         login_as(superuser, self)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)

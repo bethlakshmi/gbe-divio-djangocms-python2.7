@@ -10,7 +10,7 @@ from gbe.functions import validate_profile
 
 
 class TestLimitedPersonaAutoComplete(TestCase):
-    url = reverse('limited-persona-autocomplete')
+    url = reverse('limited-persona-autocomplete', urlconf='gbe.urls')
 
     def setUp(self):
         self.client = Client()

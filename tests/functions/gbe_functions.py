@@ -10,6 +10,8 @@ from django.contrib.auth.models import (
 from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceFactory,
+    ProfileFactory,
+    UserFactory,
 )
 from tests.factories.ticketing_factories import (
     TicketingEventsFactory,
@@ -24,7 +26,7 @@ from post_office.models import (
 from django.core import mail
 from django.conf import settings
 from django.core.files import File
-from django.contrib.auth.models import User
+from cms.models.permissionmodels import PageUser
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
 from settings import DEFAULT_FROM_EMAIL
@@ -33,7 +35,7 @@ from settings import DEFAULT_FROM_EMAIL
 def _user_for(user_or_profile):
     if type(user_or_profile) == Profile:
         user = user_or_profile.user_object
-    elif type(user_or_profile) == User:
+    elif type(user_or_profile) in (User, PageUser):
         user = user_or_profile
     else:
         raise ValueError("this function requires a Profile or User")
@@ -53,7 +55,11 @@ def grant_privilege(user_or_profile, group, privilege=None):
     '''Add named privilege to user's groups. If group does not exist, create it
     '''
     user = _user_for(user_or_profile)
-    g, _ = Group.objects.get_or_create(name=group)
+    g, created = Group.objects.get_or_create(name=group)
+    if created and hasattr(g, 'pageusergroup'):
+        g.pageusergroup.created_by_id = user.pk
+        g.pageusergroup.save()
+
     if g in user.groups.all():
         return
     else:
@@ -62,6 +68,23 @@ def grant_privilege(user_or_profile, group, privilege=None):
         privilege_obj = Permission.objects.get(codename=privilege)
         if privilege_obj not in g.permissions.all():
             g.permissions.add(privilege_obj)
+
+
+def setup_admin_w_privs(priv_list):
+        privileged_user = User.objects.create_superuser(
+            'myuser', 'myemail@test.com', 'mypassword')
+        UserFactory.reset_sequence(privileged_user.pk+1)
+        ProfileFactory(user_object=privileged_user)
+        if hasattr(privileged_user, 'pageuser'):
+            privileged_user.pageuser.created_by_id = privileged_user.pk
+            privileged_user.pageuser.save()
+        else:
+            PageUser.objects.create(
+                user_ptr=privileged_user,
+                created_by_id=privileged_user.pk)
+        for priv in priv_list:
+            grant_privilege(privileged_user, priv)
+        return privileged_user
 
 
 def is_login_page(response):
@@ -249,10 +272,13 @@ def set_image(item=None, folder_name=None):
     if User.objects.filter(username='superuser_for_test').exists():
         superuser = User.objects.get(username='superuser_for_test')
     else:
-        superuser = User.objects.create_superuser(
-            'superuser_for_test',
-            'admin@importimage.com',
-            'secret')
+        superuser = UserFactory(
+            username='superuser_for_test',
+            email='admin@importimage.com',
+            password='secret',
+            is_staff=True,
+            is_superuser=True)
+
     if folder_name:
         folder, created = Folder.objects.get_or_create(
             name=folder_name)
@@ -267,3 +293,11 @@ def set_image(item=None, folder_name=None):
         item.img_id = current_img.pk
         item.save()
     return current_img
+
+
+def get_limbo():
+    if User.objects.filter(username="limbo").exists():
+        limbo = User.objects.filter(username="limbo")
+    else:
+        limbo = UserFactory(username="limbo")
+    return limbo

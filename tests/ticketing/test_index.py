@@ -3,7 +3,6 @@ from tests.factories.ticketing_factories import (
 )
 from ticketing.models import TicketItem
 from django.test import TestCase
-from django.test.client import RequestFactory
 from django.test import Client
 from ticketing.views import (
     index
@@ -12,7 +11,10 @@ from tests.factories.gbe_factories import (
     UserFactory
 )
 from django.urls import reverse
-from tests.functions.gbe_functions import login_as
+from tests.functions.gbe_functions import (
+    login_as,
+    setup_admin_w_privs,
+)
 from django.contrib.auth.models import User
 from gbetext import purchase_intro_msg
 
@@ -20,11 +22,13 @@ from gbetext import purchase_intro_msg
 class TestTicketingIndex(TestCase):
     '''Tests for ticketing index'''
     def setUp(self):
-        self.factory = RequestFactory()
         self.client = Client()
-        self.url = reverse('index', urlconf='ticketing.urls')
-        self.ticket = TicketItemFactory(live=True,
-                                        ticketing_event__title="Event Title")
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse('index', urlconf='ticketing.urls')
+        cls.ticket = TicketItemFactory(live=True,
+                                       ticketing_event__title="Event Title")
 
     def test_one_ticket(self):
         '''
@@ -67,9 +71,7 @@ class TestTicketingIndex(TestCase):
         self.assertNotContains(response, '<i class="icon-pencil"></i>')
 
     def test_edit_for_superuser(self):
-        superuser = User.objects.create_superuser('ticketing_editor',
-                                                  'admin@ticketing.com',
-                                                  'secret')
+        superuser = setup_admin_w_privs([])
         login_as(superuser, self)
         response = self.client.get(self.url)
         self.assertContains(response, '<i class="icon-pencil"></i>')

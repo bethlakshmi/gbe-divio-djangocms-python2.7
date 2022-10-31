@@ -11,6 +11,7 @@ from gbe.models import (
 )
 from gbe.forms.common_queries import visible_profiles
 from dal import autocomplete
+from django.urls import reverse_lazy
 
 
 class StaffAreaForm(ModelForm):
@@ -24,7 +25,7 @@ class StaffAreaForm(ModelForm):
         queryset=visible_profiles,
         required=False,
         widget=autocomplete.ModelSelect2(
-            url='profile-autocomplete'))
+            url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls')))
 
     class Meta:
         model = StaffArea
