@@ -8,12 +8,5 @@ class ReviewCostumeListView(ReviewBidListView):
     bid_review_list_view_name = 'costume_review_list'
     object_type = Costume
     reviewer_permissions = ('Costume Reviewers', )
-
-    def get_context_dict(self):
-        return {'columns': self.object_type().bid_review_header,
-                'rows': self.rows,
-                'order': 0,
-                'return_link': reverse(self.bid_review_list_view_name,
-                                       urlconf='gbe.urls'),
-                'conference_slugs': self.conference_slugs,
-                'conference': self.conference}
+    page_title = 'Review Costumes'
+    view_title = 'Costume Proposals'

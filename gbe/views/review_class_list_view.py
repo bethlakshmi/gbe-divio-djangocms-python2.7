@@ -10,6 +10,8 @@ class ReviewClassListView(ReviewBidListView):
     bid_review_view_name = 'class_review'
     bid_review_list_view_name = 'class_review_list'
     template = 'gbe/class_review_list.tmpl'
+    page_title = 'Review Classes'
+    view_title = 'Class Proposals'
 
     def set_row_basics(self, bid, review_query):
         bid_row = super(ReviewClassListView, self).set_row_basics(bid,
@@ -25,15 +27,6 @@ class ReviewClassListView(ReviewBidListView):
                 bid_row['extra_button'] = {'url': url,
                                            'text': "Accept & Schedule"}
         return bid_row
-
-    def get_context_dict(self):
-        return {'columns': self.object_type().bid_review_header,
-                'rows': self.rows,
-                'return_link': reverse(self.bid_review_list_view_name,
-                                       urlconf='gbe.urls'),
-                'conference_slugs': self.conference_slugs,
-                'conference': self.conference,
-                'order': 0}
 
     def groundwork(self, request):
         self.can_schedule = validate_perms(request,

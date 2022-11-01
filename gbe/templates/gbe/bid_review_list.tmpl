@@ -1,10 +1,10 @@
 {% extends 'gbe/gbe_table.tmpl' %}
 {% block title %}
-   Review Bids
+   {{page_title}}
 {% endblock %}
 {% block before_table %}
  {% block header %}
-  <h2 class="gbe-title">Bid Information for {{conference}}</h2>
+  <h2 class="gbe-title">{{view_title}} - {{conference}}</h2>
  {% endblock %}
   <br/>
       {% include "conference_picker.tmpl" %}

@@ -47,6 +47,8 @@ class ApproveVolunteerView(View):
                             'Producer')
     review_list_view_name = 'approve_volunteer'
     changed_id = -1
+    page_title = 'Approve Volunteers'
+    view_title = 'Approve Pending Volunteers'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -115,7 +117,9 @@ class ApproveVolunteerView(View):
                         'Action'],
             'rows': rows,
             'conference_slugs': self.conference_slugs,
-            'conference': self.conference}
+            'conference': self.conference,
+            'page_title': self.page_title,
+            'view_title': self.view_title}
 
     def groundwork(self, request):
         self.reviewer = validate_perms(request, self.reviewer_permissions)
@@ -124,6 +128,18 @@ class ApproveVolunteerView(View):
         else:
             self.conference = Conference.current_conf()
         self.conference_slugs = Conference.all_slugs()
+        self.page_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="PAGE_TITLE",
+                defaults={
+                    'summary': "Approve Volunteer Page Title",
+                    'description': self.page_title})[0].description
+        self.view_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="FIRST_HEADER",
+                defaults={
+                    'summary': "Approve Volunteer First Header",
+                    'description': self.view_title})[0].description
 
     def send_notifications(self, request, response, state, person):
         if state == 3:
