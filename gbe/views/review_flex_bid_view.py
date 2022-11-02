@@ -48,6 +48,8 @@ class FlexibleReviewBidView(ReviewBidView):
     review_results = None
     reviewers = None
     notes = None
+    page_title = 'Review Act'
+    view_title = 'Act Proposal'
 
     def create_action_form(self, act):
         self.actionform = self.bid_state_change_form(instance=act)
@@ -110,6 +112,8 @@ class FlexibleReviewBidView(ReviewBidView):
              'review_results': self.review_results,
              'reviewers': self.reviewers,
              'notes': self.notes,
+             'page_title': self.page_title,
+             'view_title': self.view_title,
              })
 
     def post_response_for_form(self, request):

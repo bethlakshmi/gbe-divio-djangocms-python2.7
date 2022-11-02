@@ -19,6 +19,8 @@ class ReviewClassView(ReviewBidView):
     bid_view_name = 'class_view'
     review_list_view_name = 'class_review_list'
     changestate_view_name = 'class_changestate'
+    page_title = 'Review Class'
+    view_title = 'Class Proposal'
 
     def groundwork(self, request, args, kwargs):
         super(ReviewClassView, self).groundwork(request, args, kwargs)

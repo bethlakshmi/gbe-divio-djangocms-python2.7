@@ -11,6 +11,7 @@ from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
     BidEvaluation,
+    UserMessage,
 )
 from gbe.forms import (
     BidEvaluationForm,
@@ -42,7 +43,9 @@ class ReviewBidView(View):
                 'actionform': self.actionform,
                 'actionURL': self.actionURL,
                 'conference': self.b_conference,
-                'old_bid': self.old_bid, }
+                'old_bid': self.old_bid,
+                'page_title': self.page_title,
+                'view_title': self.view_title,}
 
     def bid_review_response(self, request):
         return render(request,
@@ -100,6 +103,18 @@ class ReviewBidView(View):
             self.actionURL = False
         self.b_conference, self.old_bid = get_conf(self.object)
         self.set_bid_eval()
+        self.page_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="PAGE_TITLE",
+                defaults={
+                    'summary': "%s Page Title" % self.bid_evaluation_type,
+                    'description': self.page_title})[0].description
+        self.view_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="FIRST_HEADER",
+                defaults={
+                    'summary': "%s First Header" % self.bid_evaluation_type,
+                    'description': self.view_title})[0].description
 
     @never_cache
     def get(self, request, *args, **kwargs):
