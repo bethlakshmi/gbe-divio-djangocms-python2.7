@@ -54,6 +54,16 @@ class TestMakeCostume(TestCase):
 
         return data
 
+    def check_subway_state(self, response, active_state="Apply"):
+        self.assertContains(
+            response,
+            '<li class="progressbar_active">%s</li>' % active_state,
+            html=True)
+        self.assertNotContains(
+                response,
+                '<li class="progressbar_upcoming">Payment</li>',
+                html=True)
+
 
 class TestCreateCostume(TestMakeCostume):
     '''Tests for create_costume view'''
@@ -97,6 +107,7 @@ class TestCreateCostume(TestMakeCostume):
         response = self.client.post(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Displaying a Costume')
+        self.check_subway_state(response)
 
     def test_costume_bid_post_with_submit(self):
         '''costume_bid, submitting and no other problems,
@@ -130,13 +141,18 @@ class TestCreateCostume(TestMakeCostume):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Displaying a Costume')
+        self.check_subway_state(response)
 
     def test_costume_bid_no_persona(self):
         url = reverse(self.view_name,
                       urlconf="gbe.urls")
         login_as(ProfileFactory(), self)
-        response = self.client.get(url)
-        self.assertEqual(302, response.status_code)
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(
+            response,
+            reverse("persona-add", urlconf='gbe.urls', args=[0]) +
+            "?next=/costume/create")
+        self.check_subway_state(response, active_state="Create Bio")
 
     def test_costume_bid_post_invalid_form_no_submit(self):
         url = reverse(self.view_name,
@@ -244,6 +260,7 @@ class TestEditCostume(TestMakeCostume):
         expected_string = "Costume Information"
         self.assertContains(response, expected_string)
         self.assertEqual(response.status_code, 200)
+        self.check_subway_state(response)
 
     def test_submit_bid_post_invalid(self):
         '''edit_costume, not submitting and no other problems,
@@ -261,6 +278,7 @@ class TestEditCostume(TestMakeCostume):
         login_as(costume.profile, self)
         response = self.client.post(url, data=data)
         self.assertContains(response, 'This field is required.', count=2)
+        self.check_subway_state(response)
 
     def test_edit_bid_not_post(self):
         '''edit_costume, not post, should take us to edit process'''
