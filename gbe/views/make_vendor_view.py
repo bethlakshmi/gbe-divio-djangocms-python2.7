@@ -17,9 +17,10 @@ from gbetext import (
 class MakeVendorView(MakeBidView):
     page_title = 'Vendor Application'
     view_title = 'Vendor Application'
-    submit_fields = ['b_title',
-                     'b_description',
-                     'physical_address',
+    submit_fields = ['business',
+                     'first_name',
+                     'last_name',
+                     'phone'
                      ]
     draft_fields = submit_fields
     bid_type = "Vendor"
@@ -49,17 +50,17 @@ class MakeVendorView(MakeBidView):
             raise Http404
 
     def get_initial(self):
-        initial = {}
+        initial = super(MakeVendorView, self).get_initial()
         if self.bid_object:
             if len(self.bid_object.help_times.strip()) > 0:
                 help_times_initial = eval(self.bid_object.help_times)
             else:
                 help_times_initial = []
-            initial = {'help_times': help_times_initial}
+            initial.update({'help_times': help_times_initial})
         else:
-            initial = {'profile': self.owner,
-                       'business': self.businesses[0],
-                       'physical_address': self.owner.address}
+            initial.update({'profile': self.owner,
+                            'business': self.businesses[0],
+                            'physical_address': self.owner.address})
         return initial
 
     def set_up_form(self):

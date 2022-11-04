@@ -55,14 +55,10 @@ class MakeClassView(MakeBidView):
             raise Http404
 
     def get_initial(self):
-        initial = {}
+        initial = super(MakeClassView, self).get_initial()
         if not self.bid_object:
-            initial = {'owner': self.owner,
-                       'teacher': self.teachers[0]}
-        initial['phone'] = self.owner.phone
-        initial['first_name'] = self.owner.user_object.first_name
-        initial['last_name'] = self.owner.user_object.last_name
-
+            initial.update({'owner': self.owner,
+                            'teacher': self.teachers[0]})
         return initial
 
     def set_up_form(self):

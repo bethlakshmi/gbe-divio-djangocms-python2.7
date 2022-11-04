@@ -23,7 +23,10 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from django.shortcuts import get_object_or_404
-from gbe.models import Volunteer
+from gbe.models import (
+    Profile,
+    Volunteer,
+)
 from gbetext import (
     no_login_msg,
     full_login_msg,
@@ -31,6 +34,7 @@ from gbetext import (
     unset_volunteer_msg,
     set_pending_msg,
     unset_pending_msg,
+    vol_prof_update_failure,
     volunteer_allocate_email_fail_msg,
 )
 from gbe_utils.text import no_profile_msg
@@ -40,10 +44,15 @@ from settings import GBE_DATETIME_FORMAT
 class TestSetVolunteer(TestCase):
     view_name = "set_volunteer"
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfileFactory(phone="111-222-3333",
+                                     user_object__first_name="Firstname",
+                                     user_object__last_name="Lastname")
+        cls.context = StaffAreaContext()
+
     def setUp(self):
         self.client = Client()
-        self.profile = ProfileFactory()
-        self.context = StaffAreaContext()
         self.volunteeropp = self.context.add_volunteer_opp()
         self.url = reverse(
             self.view_name,
@@ -55,7 +64,7 @@ class TestSetVolunteer(TestCase):
             ) + "?email_disable=send_schedule_change_notifications"
 
     def test_no_login_gives_error(self):
-        response = self.client.get(self.url, follow=True)
+        response = self.client.post(self.url, follow=True)
         redirect_url = reverse('register',
                                urlconf='gbe.urls') + "?next=" + self.url
         self.assertRedirects(response, redirect_url)
@@ -71,11 +80,11 @@ class TestSetVolunteer(TestCase):
     def test_unfinished_user(self):
         unfinished = UserFactory()
         login_as(unfinished, self)
-        response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('register',
+        response = self.client.post(self.url, follow=True)
+        redirect_url = reverse('profile_update',
                                urlconf='gbe.urls') + "?next=" + self.url
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, "Create an Account")
+        self.assertContains(response, "Update Your Profile")
         assert_alert_exists(
             response,
             'warning',
@@ -84,8 +93,9 @@ class TestSetVolunteer(TestCase):
 
     def test_volunteer(self):
         login_as(self.profile, self)
-        response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('home', urlconf="gbe.urls")
+        response = self.client.post(self.url, follow=True)
+        redirect_url = reverse('volunteer_signup',
+                               urlconf="gbe.scheduling.urls")
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, self.volunteeropp.eventitem.e_title)
         assert_alert_exists(
@@ -110,6 +120,37 @@ class TestSetVolunteer(TestCase):
             outbox_size=2,
             message_index=1)
 
+    def test_incomplete_volunteer_update(self):
+        incomplete = ProfileFactory()
+        login_as(incomplete, self)
+        data = {'first_name': 'new first',
+                'last_name': 'new last',
+                'phone': '111-222-3333'}
+        response = self.client.post(self.url,  data=data, follow=True)
+
+        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            set_volunteer_msg)
+        now_complete = Profile.objects.get(pk=incomplete.pk)
+        self.assertEqual(now_complete.user_object.first_name, "new first")
+        self.assertEqual(now_complete.phone, "111-222-3333")
+
+    def test_volunteer_update_fails(self):
+        incomplete = ProfileFactory()
+        login_as(incomplete, self)
+        data = {'first_name': 'new first',
+                'last_name': 'new last'}
+        response = self.client.post(self.url,  data=data, follow=True)
+        redirect_url = reverse('volunteer_signup',
+                               urlconf="gbe.scheduling.urls")
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, "Phone")
+        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, vol_prof_update_failure)
+
     def test_remove_volunteer(self):
         self.url = reverse(
             self.view_name,
@@ -121,7 +162,7 @@ class TestSetVolunteer(TestCase):
         redirect_url = reverse('volunteer_signup',
                                urlconf="gbe.scheduling.urls")
         login_as(self.profile, self)
-        response = self.client.get("%s?next=%s" % (
+        response = self.client.post("%s?next=%s" % (
             self.url, redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, self.volunteeropp.eventitem.e_title)
@@ -151,8 +192,11 @@ class TestSetVolunteer(TestCase):
         self.context.book_volunteer(
             volunteer_sched_event=self.volunteeropp,
             volunteer=self.profile)
+        redirect_url = reverse('home', urlconf="gbe.urls")
         login_as(self.profile, self)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.post("%s?next=%s" % (
+            self.url, redirect_url), follow=True)
+        response = self.client.post(self.url, follow=True)
         self.assertContains(response, self.volunteeropp.eventitem.e_title)
         self.assertNotContains(response, set_volunteer_msg)
 
@@ -161,8 +205,10 @@ class TestSetVolunteer(TestCase):
             self.view_name,
             args=[self.volunteeropp.pk, "off"],
             urlconf="gbe.scheduling.urls")
+        redirect_url = reverse('home', urlconf="gbe.urls")
         login_as(self.profile, self)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.post("%s?next=%s" % (
+            self.url, redirect_url), follow=True)
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
         self.assertNotContains(response, unset_volunteer_msg)
 
@@ -172,7 +218,7 @@ class TestSetVolunteer(TestCase):
             args=[self.volunteeropp.pk+100, "on"],
             urlconf="gbe.scheduling.urls")
         login_as(self.profile, self)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.post(self.url, follow=True)
         self.assertContains(
             response,
             "Occurrence id %d not found" % (self.volunteeropp.pk+100))
@@ -180,9 +226,10 @@ class TestSetVolunteer(TestCase):
     def test_volunteer_needs_approval(self):
         self.volunteeropp.approval_needed = True
         self.volunteeropp.save()
-        login_as(self.profile, self)
-        response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf="gbe.urls")
+        login_as(self.profile, self)
+        response = self.client.post("%s?next=%s" % (
+            self.url, redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
         # absent because pending events not on schedule to begin with
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
@@ -206,7 +253,7 @@ class TestSetVolunteer(TestCase):
         redirect_url = reverse('volunteer_signup',
                                urlconf="gbe.scheduling.urls")
         login_as(self.profile, self)
-        response = self.client.get("%s?next=%s" % (
+        response = self.client.post("%s?next=%s" % (
             self.url, redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, self.volunteeropp.eventitem.e_title)
@@ -225,7 +272,7 @@ class TestSetVolunteer(TestCase):
             teacher=PersonaFactory(performer_profile=self.profile),
             starttime=self.volunteeropp.starttime)
         login_as(self.profile, self)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.post(self.url, follow=True)
         redirect_url = reverse('home', urlconf="gbe.urls")
         msg = assert_email_template_used(
             "A change has been made to your Volunteer Schedule!",
@@ -264,7 +311,7 @@ class TestSetVolunteer(TestCase):
             args=[vol_context.opp_event.pk, "on"],
             urlconf="gbe.scheduling.urls")
         login_as(self.profile, self)
-        response = self.client.get(url, follow=True)
+        response = self.client.post(url, follow=True)
         staff_msg = assert_email_template_used(
             "Volunteer Schedule Change",
             outbox_size=2,
@@ -289,7 +336,8 @@ class TestSetVolunteer(TestCase):
             content="{% include 'gbe/email/bad.tmpl' %}"
             )
         login_as(self.profile, self)
-        response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('home', urlconf="gbe.urls")
+        response = self.client.post(self.url, follow=True)
+        redirect_url = reverse('volunteer_signup',
+                               urlconf="gbe.scheduling.urls")
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, volunteer_allocate_email_fail_msg)

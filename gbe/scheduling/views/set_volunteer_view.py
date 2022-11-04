@@ -12,6 +12,7 @@ from scheduler.idd import (
 )
 from gbe.scheduling.views.functions import show_general_status
 from gbe.models import UserMessage
+from gbe.forms import InvolvedProfileForm
 from gbe.functions import (
     check_user_and_redirect,
     validate_perms,
@@ -21,6 +22,7 @@ from gbetext import (
     unset_volunteer_msg,
     set_pending_msg,
     unset_pending_msg,
+    vol_prof_update_failure,
     volunteer_allocate_email_fail_msg,
 )
 from gbe.email.functions import (
@@ -32,15 +34,16 @@ from gbe.email.functions import (
 class SetVolunteerView(View):
 
     @never_cache
-    def get(self, request, *args, **kwargs):
-        if request.GET.get('next', None):
-            redirect_to = request.GET['next']
+    def post(self, request, *args, **kwargs):
+        if request.GET.get("next", False):
+            redirect_to = request.GET.get("next")
         else:
-            redirect_to = reverse('home', urlconf='gbe.urls')
+            redirect_to = reverse('volunteer_signup',
+                                  urlconf='gbe.scheduling.urls')
         this_url = reverse(
-                'set_volunteer',
-                args=[kwargs['occurrence_id'], kwargs['state']],
-                urlconf='gbe.scheduling.urls')
+            'set_volunteer',
+            args=[kwargs['occurrence_id'], kwargs['state']],
+            urlconf='gbe.scheduling.urls')
         response = check_user_and_redirect(
             request,
             this_url,
@@ -48,6 +51,27 @@ class SetVolunteerView(View):
         if response['error_url']:
             return HttpResponseRedirect(response['error_url'])
         self.owner = response['owner']
+        if 'first_name' in request.POST.keys():
+            form = InvolvedProfileForm(
+                request.POST,
+                instance=self.owner,
+                initial={'first_name': request.user.first_name,
+                         'last_name': request.user.last_name})
+            if form.is_valid():
+                form.save()
+            else:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="PROFILE_UPDATE_FAILED",
+                    defaults={
+                        'summary': "Profile Update Failed",
+                        'description': vol_prof_update_failure})
+                messages.error(
+                    request,
+                    user_message[0].description + "status code: ")
+                return HttpResponseRedirect(reverse(
+                    'volunteer_signup',
+                    urlconf='gbe.scheduling.urls'))
         occurrence_id = int(kwargs['occurrence_id'])
         occ_response = get_occurrence(occurrence_id)
         show_general_status(request, occ_response, self.__class__.__name__)

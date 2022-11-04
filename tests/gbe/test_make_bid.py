@@ -81,6 +81,15 @@ class TestMakeBid(TestCase):
             '%s?next=%s' % (
                 reverse('profile_update', urlconf='gbe.urls'), url))
 
+    def test_edit_bad_bid_id(self):
+        '''Should get 404 if no valid class ID'''
+        url = reverse('class_edit',
+                      args=[0],
+                      urlconf='gbe.urls')
+        login_as(PersonaFactory().performer_profile, self)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(404, response.status_code)
+
     def test_post_no_profile(self):
         '''when user has no profile, should bounce out to /profile'''
         url = reverse("act_create", urlconf='gbe.urls')
