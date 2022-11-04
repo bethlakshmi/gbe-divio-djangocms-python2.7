@@ -10,8 +10,6 @@ from django.db.models import Avg
 
 
 class ReviewActListView(ReviewBidListView):
-    page_title = 'Review Acts'
-    view_title = 'Act Proposals'
     reviewer_permissions = ('Act Reviewers', )
     object_type = Act
     bid_evaluation_type = ActBidEvaluation

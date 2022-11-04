@@ -23,8 +23,6 @@ class ReviewCostumeView(ReviewBidView):
     bid_view_name = "costume_view"
     review_list_view_name = 'costume_review_list'
     changestate_view_name = 'costume_changestate'
-    page_title = 'Review Costume'
-    view_title = 'Costume Proposal'
 
     def groundwork(self, request, args, kwargs):
         super(ReviewCostumeView, self).groundwork(request, args, kwargs)

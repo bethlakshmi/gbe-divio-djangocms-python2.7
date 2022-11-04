@@ -10,8 +10,6 @@ class ReviewClassListView(ReviewBidListView):
     bid_review_view_name = 'class_review'
     bid_review_list_view_name = 'class_review_list'
     template = 'gbe/class_review_list.tmpl'
-    page_title = 'Review Classes'
-    view_title = 'Class Proposals'
 
     def set_row_basics(self, bid, review_query):
         bid_row = super(ReviewClassListView, self).set_row_basics(bid,
@@ -29,6 +27,7 @@ class ReviewClassListView(ReviewBidListView):
         return bid_row
 
     def groundwork(self, request):
+        super(ReviewClassListView, self).groundwork(request)
         self.can_schedule = validate_perms(request,
                                            ('Scheduling Mavens',),
                                            False)

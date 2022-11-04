@@ -50,7 +50,7 @@ class TestReviewClass(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Review Class')
         self.assertContains(response, "Class Proposal")
-        self.assertContains(response, "Bid Control for Coordinator")
+        self.assertContains(response, "Set Class State")
         self.assertNotContains(response, 'name="extra_button"')
         self.assertContains(response, self.performer.year_started)
 

@@ -74,18 +74,20 @@ class ReviewBidListView(View):
         self.rows = self.get_rows(bids, review_query)
 
     def groundwork(self, request):
+        bid_string = self.object_type().__class__.__name__
         self.page_title = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="PAGE_TITLE",
                 defaults={
-                    'summary': "%s Page Title" % self.bid_evaluation_type,
-                    'description': self.page_title})[0].description
+                    'summary': "%s Page Title" % bid_string,
+                    'description': 'Review %s'  % bid_string})[0].description
         self.view_title = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="FIRST_HEADER",
                 defaults={
-                    'summary': "%s First Header" % self.bid_evaluation_type,
-                    'description': self.view_title})[0].description
+                    'summary': "%s First Header" % bid_string,
+                    'description': '%s Proposals' % bid_string
+                    })[0].description
 
     def get_context_dict(self):
         context = {
