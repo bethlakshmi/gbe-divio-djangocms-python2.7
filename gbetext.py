@@ -49,7 +49,11 @@ EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
 
 profile_alerts = {'empty_profile': EMPTY_PROFILE,
                   'schedule_rehearsal': SCHEDULE_REHEARSAL}
-
+vol_prof_update_failure = (
+    '''An error occured while updating your information, and your offer to
+    volunteer was not submitted.  Please try again or use the "Update Profile"
+    menu item to enter your first name, last name and phone and then return
+    here to volunteer.''')
 ACT_COMPLETE_NOT_SUBMITTED = ("This act is complete and can be submitted "
                               "whenever you like. "
                               "<a href = \"%s\">"

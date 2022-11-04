@@ -115,7 +115,7 @@ def check_user_and_redirect(request, this_url, source):
                 'description': no_profile_msg})
         messages.warning(request, user_message[0].description)
         response['error_url'] = reverse(
-            'register', urlconf='gbe.urls') + follow_on
+            'profile_update', urlconf='gbe.urls') + follow_on
     return response
 
 

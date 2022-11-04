@@ -26,7 +26,9 @@ from gbe.models import (
     StaffArea,
     UserMessage,
 )
+from gbe.forms import InvolvedProfileForm
 from gbe.functions import (
+    check_user_and_redirect,
     get_current_conference,
     get_conference_days,
     get_conference_by_slug,
@@ -39,6 +41,7 @@ from scheduler.idd import (
 from scheduler.data_transfer import Person
 from gbe.scheduling.views.functions import show_general_status
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
 
 class VolunteerSignupView(View):
@@ -168,6 +171,15 @@ class VolunteerSignupView(View):
         return display_list
 
     def get(self, request, *args, **kwargs):
+        this_url = reverse(
+            'volunteer_signup',
+            urlconf='gbe.scheduling.urls')
+        response = check_user_and_redirect(
+            request,
+            this_url,
+            self.__class__.__name__)
+        if response['error_url']:
+            return HttpResponseRedirect(response['error_url'])
         context = self.process_inputs(request, args, kwargs)
         personal_schedule = []
         if not self.conference or not self.this_day:
@@ -179,22 +191,24 @@ class VolunteerSignupView(View):
         show_general_status(
             request, response, self.__class__.__name__)
         if len(response.occurrences) > 0:
-            if request.user.is_authenticated and hasattr(
-                    request.user,
-                    'profile'):
-                all_roles = []
-                for n, m in role_options:
-                    all_roles += [m]
-                sched_response = get_schedule(
-                    request.user,
-                    labels=["Volunteer", self.conference.conference_slug],
-                    roles=all_roles)
-                personal_schedule = sched_response.schedule_items
-                person = Person(
-                    user=request.user,
-                    public_id=request.user.profile.pk,
-                    public_class="Profile")
-                eval_response = get_eval_info(person=person)
+            all_roles = []
+            for n, m in role_options:
+                all_roles += [m]
+            sched_response = get_schedule(
+                request.user,
+                labels=["Volunteer", self.conference.conference_slug],
+                roles=all_roles)
+            personal_schedule = sched_response.schedule_items
+            person = Person(
+                user=request.user,
+                public_id=request.user.profile.pk,
+                public_class="Profile")
+            eval_response = get_eval_info(person=person)
+            if not request.user.profile.participation_ready:
+                context['complete_profile_form'] = InvolvedProfileForm(
+                    instance=request.user.profile,
+                    initial={'first_name': request.user.first_name,
+                             'last_name': request.user.last_name})
             context['occurrences'] = self.build_occurrence_display(
                 response.occurrences,
                 personal_schedule)

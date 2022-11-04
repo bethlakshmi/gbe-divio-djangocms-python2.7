@@ -11,7 +11,10 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     UserMessageFactory,
 )
-from tests.functions.gbe_functions import clear_conferences
+from tests.functions.gbe_functions import (
+    assert_alert_exists,
+    clear_conferences,
+)
 from datetime import (
     date,
     datetime,
@@ -24,6 +27,8 @@ from gbe.models import (
     UserMessage,
 )
 from gbetext import (
+    full_login_msg,
+    no_login_msg,
     pending_note,
     volunteer_instructions,
 )
@@ -31,20 +36,25 @@ from gbetext import (
 
 class TestVolunteerSignupView(TestCase):
 
-    def setUp(self):
-        self.url = reverse('volunteer_signup',
-                           urlconf="gbe.scheduling.urls")
-        self.client = Client()
-        self.profile = ProfileFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse('volunteer_signup',
+                          urlconf="gbe.scheduling.urls")
+        cls.profile = ProfileFactory(phone="111-222-3333",
+                                     user_object__first_name="Firstname",
+                                     user_object__last_name="Lastname")
         clear_conferences()
-        conference = ConferenceFactory()
-        save_the_date = datetime(2016, 2, 6, 12, 0, 0)
+        cls.conference = ConferenceFactory()
+        cls.save_the_date = datetime(2016, 2, 6, 12, 0, 0)
         day = ConferenceDayFactory(
-            conference=conference,
+            conference=cls.conference,
             day=date(2016, 0o2, 0o6))
-        self.staffcontext = StaffAreaContext(
-            conference=conference,
-            starttime=save_the_date)
+        cls.staffcontext = StaffAreaContext(
+            conference=cls.conference,
+            starttime=cls.save_the_date)
+
+    def setUp(self):
+        self.client = Client()
         self.volunteeropp = self.staffcontext.add_volunteer_opp()
 
     def basic_event_check(self,
@@ -69,9 +79,24 @@ class TestVolunteerSignupView(TestCase):
             args=[occurrence.pk, action],
             urlconf="gbe.scheduling.urls"))
 
+    def test_no_login_gives_error(self):
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('register',
+                               urlconf='gbe.urls') + "?next=" + self.url
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, "Create an Account")
+        assert_alert_exists(
+            response,
+            'warning',
+            'Warning',
+            full_login_msg % (no_login_msg, reverse(
+                'login',
+                urlconf='gbe.urls') + "?next=" + self.url))
+
     def test_signup_w_available_slot(self):
         other_conference = ConferenceFactory(
             status='completed')
+        login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertNotContains(
             response,
@@ -87,6 +112,7 @@ class TestVolunteerSignupView(TestCase):
     def test_signup_w_need_approval_slot(self):
         self.volunteeropp.approval_needed = True
         self.volunteeropp.save()
+        login_as(self.profile, self)
         response = self.client.get(self.url)
         self.basic_event_check(
             response,
@@ -184,6 +210,7 @@ class TestVolunteerSignupView(TestCase):
     def test_no_conference_days(self):
         clear_conferences()
         ConferenceFactory(status='upcoming')
+        login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertContains(
             response,
@@ -192,6 +219,7 @@ class TestVolunteerSignupView(TestCase):
     def test_bad_day(self):
         # There is a day, but that's not the day we're asking for.
         url = "%s?day=02-02-2016" % self.url
+        login_as(self.profile, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
@@ -228,7 +256,7 @@ class TestVolunteerSignupView(TestCase):
         full_opp = self.staffcontext.add_volunteer_opp()
         full_opp.max_volunteer = 0
         full_opp.save()
-
+        login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertNotContains(response, full_opp.eventitem.e_title)
 
@@ -242,6 +270,7 @@ class TestVolunteerSignupView(TestCase):
         self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
 
     def test_slot_with_show(self):
+        ''' tests both show and an incomplete profile '''
         vol_context = VolunteerContext()
         login_as(vol_context.profile, self)
         response = self.client.get("%s?conference=%s" % (
@@ -258,3 +287,14 @@ class TestVolunteerSignupView(TestCase):
             "detail_view",
             urlconf="gbe.scheduling.urls",
             args=[vol_context.event.pk]))
+        self.assertContains(response, "Phone")
+
+    def test_partial_profile(self):
+        ''' profile is incomplete, but does have first/last name '''
+        profile = ProfileFactory(user_object__first_name="Jane",
+                                 user_object__last_name="Jane")
+        login_as(profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, "Phone")
+        self.assertContains(response, "Jane")
+        self.assertContains(response, "Jane")

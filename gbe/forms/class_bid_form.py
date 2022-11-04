@@ -8,6 +8,7 @@ from django.forms import (
 from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
 from dal import autocomplete
 from django.urls import reverse_lazy
+from gbe.forms import BasicBidForm
 from gbe.models import Class
 from gbe_forms_text import (
     available_time_conflict,
@@ -15,13 +16,11 @@ from gbe_forms_text import (
     classbid_help_texts,
     classbid_labels,
     class_schedule_options,
-    participant_form_help_texts,
-    participant_labels,
 )
 from gbe.functions import jsonify
 
 
-class ClassBidDraftForm(ModelForm):
+class ClassBidDraftForm(ModelForm, BasicBidForm):
     use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
@@ -40,15 +39,6 @@ class ClassBidDraftForm(ModelForm):
         required=True,
         widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=classbid_labels['b_description'])
-    phone = CharField(required=True,
-                      help_text=participant_form_help_texts['phone'])
-    first_name = CharField(
-        required=True,
-        label=participant_labels['legal_first_name'])
-    last_name = CharField(
-        required=True,
-        label=participant_labels['legal_last_name'],
-        help_text=participant_form_help_texts['legal_name'])
 
     class Meta:
         model = Class
