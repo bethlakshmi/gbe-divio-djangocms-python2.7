@@ -80,7 +80,7 @@ class ReviewBidListView(View):
                 code="PAGE_TITLE",
                 defaults={
                     'summary': "%s Page Title" % bid_string,
-                    'description': 'Review %s'  % bid_string})[0].description
+                    'description': 'Review %s' % bid_string})[0].description
         self.view_title = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="FIRST_HEADER",
@@ -100,7 +100,7 @@ class ReviewBidListView(View):
             'conference': self.conference,
             'columns': self.object_type().bid_review_header,
             'order': 0,
-            'rows': self.rows,}
+            'rows': self.rows}
         return context
 
     @never_cache
