@@ -62,6 +62,7 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
         redirect = reverse('act_review',
                            urlconf="gbe.urls",
                            args=[self.bid_object.id])
+
         if not self.bid_object.performer.contact.participation_ready:
             redirect = "%s?next=%s" % (
                 reverse('admin_profile',
@@ -76,8 +77,9 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
                     'description': missing_profile_info})
             messages.warning(request, user_message[0].description)
 
-        if 'next' in request.GET:
+        elif 'next' in request.GET:
             redirect = "%s?next=%s" % (redirect, request.GET['next'])
+
         return redirect
 
     def get_invalid_response(self, request):

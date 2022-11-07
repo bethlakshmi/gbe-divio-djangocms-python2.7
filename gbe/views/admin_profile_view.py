@@ -16,7 +16,9 @@ class AdminProfileView(EditProfileView):
     header = "Update User's Profile"
 
     def groundwork(self, request, args, kwargs):
-        admin_profile = validate_perms(request, ('Registrar',))
+        admin_profile = validate_perms(
+            request,
+            ('Registrar', 'Act Coordinator', ))
         profile_id = kwargs.get("profile_id")
 
         self.profile = get_object_or_404(Profile, resourceitem_id=profile_id)

@@ -16,6 +16,7 @@ from tests.functions.gbe_functions import (
 from gbetext import (
     default_act_submit_msg,
     act_coord_instruct,
+    missing_profile_info,
     no_comp_msg,
 )
 from gbe.models import (
@@ -38,7 +39,10 @@ class TestCoordinateAct(TestCase):
         cls.url = reverse(cls.view_name, urlconf='gbe.urls')
         Conference.objects.all().delete()
         cls.factory = RequestFactory()
-        cls.performer = PersonaFactory()
+        cls.performer = PersonaFactory(
+            contact__phone="111-222-3333",
+            contact__user_object__first_name="first",
+            contact__user_object__last_name="last")
         cls.current_conference = ConferenceFactory(accepting_bids=True)
         UserMessage.objects.all().delete()
         cls.privileged_user = ProfileFactory.create().user_object
@@ -48,12 +52,14 @@ class TestCoordinateAct(TestCase):
         grant_privilege(cls.privileged_user,
                         'Act Reviewers')
 
-    def get_act_form(self, valid=True):
+    def get_act_form(self, persona=False, valid=True):
+        if not persona:
+            persona = self.performer
         form_dict = {'theact-b_title': 'An act',
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',
-                     'theact-performer': self.performer.resourceitem_id,
+                     'theact-performer': persona.resourceitem_id,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk,
                      'theact-accepted': 3,
@@ -63,8 +69,8 @@ class TestCoordinateAct(TestCase):
             del(form_dict['theact-b_description'])
         return form_dict
 
-    def post_act_submission(self, next_page=None):
-        act_form = self.get_act_form()
+    def post_act_submission(self, next_page=None, persona=False):
+        act_form = self.get_act_form(persona)
         url = reverse(self.view_name, urlconf='gbe.urls')
         if next_page is not None:
             url = "%s?next=%s" % (url, next_page)
@@ -101,6 +107,25 @@ class TestCoordinateAct(TestCase):
             response, 'success', 'Success', default_act_submit_msg)
         self.assertTrue(Transaction.objects.filter(
             purchaser__matched_to_user=just_made.performer.contact.user_object,
+            ticket_item__ticketing_event__act_submission_event=True,
+            ticket_item__ticketing_event__conference=self.current_conference
+            ).exists())
+
+    def test_act_submit_act_incomplete_profile(self):
+        incomplete_performer = PersonaFactory()
+        tickets = setup_fees(self.current_conference, is_act=True)
+        response, data = self.post_act_submission(persona=incomplete_performer)
+        just_made = incomplete_performer.acts.all().first()
+        data['theact-performer'] = incomplete_performer.resourceitem_id
+        self.assertRedirects(response, "%s?next=%s" % (
+            reverse('admin_profile',
+                    urlconf="gbe.urls",
+                    args=[incomplete_performer.contact.pk]),
+            reverse('act_review', urlconf="gbe.urls", args=[just_made.id])))
+        assert_alert_exists(
+            response, 'warning', 'Warning', missing_profile_info)
+        self.assertTrue(Transaction.objects.filter(
+            purchaser__matched_to_user=incomplete_performer.contact.user_object,
             ticket_item__ticketing_event__act_submission_event=True,
             ticket_item__ticketing_event__conference=self.current_conference
             ).exists())
