@@ -31,15 +31,18 @@ class ParticipantForm(ModelForm):
     email = EmailField(required=True)
     first_name = CharField(
         required=False,
-        label=participant_labels['legal_first_name'])
+        label=participant_labels['legal_first_name'],
+        error_messages={'required': required_data_removed_msg})
     last_name = CharField(
         required=False,
         label=participant_labels['legal_last_name'],
-        help_text=participant_form_help_texts['legal_name'])
+        help_text=participant_form_help_texts['legal_name'],
+        error_messages={'required': required_data_removed_msg})
     display_name = CharField(
         required=True,
         label=participant_labels['display_name'],
-        help_text=participant_form_help_texts['display_name'])
+        help_text=participant_form_help_texts['display_name'],
+        error_messages={'required': required_data_removed_msg})
     phone = CharField(required=False)
 
     how_heard = MultipleChoiceField(
