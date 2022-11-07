@@ -116,6 +116,13 @@ class ParticipantForm(ModelForm):
             partform.save()
             partform.user_object.save()
 
+    def __init__(self, *args, **kwargs):
+        super(ParticipantForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.currently_involved():
+            self.fields['first_name'].required = True
+            self.fields['last_name'].required = True
+            self.fields['phone'].required = True
+
     class Meta:
         model = Profile
         # purchase_email should be display only

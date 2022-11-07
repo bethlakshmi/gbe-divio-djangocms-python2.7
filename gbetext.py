@@ -32,8 +32,10 @@ landing_page_no_profile_alert = ("There's been an issue with your "
                                  "registrar@burlesque-expo.com")
 
 phone_number_format_error = ("Phone numbers must be in a standard US format, "
-                             "such as ###-###-###.")
-
+                             "such as ###-###-####.")
+missing_profile_info = '''The user for this act does not have their first name,
+ last name, or phone in their account.  Please enter it if you know it.'''
+ 
 time_format_error = "Time must be in the format ##:##."
 
 conf_volunteer_save_error = ("There was an error saving your presentation "
