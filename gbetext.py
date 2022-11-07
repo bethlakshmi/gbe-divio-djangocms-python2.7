@@ -35,7 +35,7 @@ phone_number_format_error = ("Phone numbers must be in a standard US format, "
                              "such as ###-###-####.")
 missing_profile_info = '''The user for this act does not have their first name,
  last name, or phone in their account.  Please enter it if you know it.'''
- 
+
 time_format_error = "Time must be in the format ##:##."
 
 conf_volunteer_save_error = ("There was an error saving your presentation "

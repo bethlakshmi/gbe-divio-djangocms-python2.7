@@ -30,4 +30,3 @@ class ViewCostumeView(ViewBidView):
         if self.bid.performer:
             self.performer = self.bid.performer
         return (bid_form, detail_form)
-
