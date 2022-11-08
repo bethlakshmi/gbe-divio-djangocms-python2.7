@@ -89,7 +89,6 @@ class TestReviewCostume(TestCase):
         data = self.get_form(bid, self.coordinator)
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
-        html_tag = '<h2 class="gbe-title">%s</h2>'
         self.assertContains(response, bid.b_conference.conference_name)
 
     def test_review_costume_no_performer(self):
