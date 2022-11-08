@@ -112,20 +112,20 @@ class TestCoordinateAct(TestCase):
             ).exists())
 
     def test_act_submit_act_incomplete_profile(self):
-        incomplete_performer = PersonaFactory()
+        incomplete = PersonaFactory()
         tickets = setup_fees(self.current_conference, is_act=True)
-        response, data = self.post_act_submission(persona=incomplete_performer)
-        just_made = incomplete_performer.acts.all().first()
-        data['theact-performer'] = incomplete_performer.resourceitem_id
+        response, data = self.post_act_submission(persona=incomplete)
+        just_made = incomplete.acts.all().first()
+        data['theact-performer'] = incomplete.resourceitem_id
         self.assertRedirects(response, "%s?next=%s" % (
             reverse('admin_profile',
                     urlconf="gbe.urls",
-                    args=[incomplete_performer.contact.pk]),
+                    args=[incomplete.contact.pk]),
             reverse('act_review', urlconf="gbe.urls", args=[just_made.id])))
         assert_alert_exists(
             response, 'warning', 'Warning', missing_profile_info)
         self.assertTrue(Transaction.objects.filter(
-            purchaser__matched_to_user=incomplete_performer.contact.user_object,
+            purchaser__matched_to_user=incomplete.contact.user_object,
             ticket_item__ticketing_event__act_submission_event=True,
             ticket_item__ticketing_event__conference=self.current_conference
             ).exists())
