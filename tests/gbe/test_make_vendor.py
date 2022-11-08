@@ -52,6 +52,17 @@ class TestMakeVendor(TestCase):
             form['thebiz-business'] = self.business.pk + 10
         return form
 
+    def check_subway_state(self, response, active_state="Apply"):
+        self.assertContains(
+            response,
+            '<li class="progressbar_active">%s</li>' % active_state,
+            html=True)
+        if active_state != "Payment":
+            self.assertContains(
+                response,
+                '<li class="progressbar_upcoming">Payment</li>',
+                html=True)
+
 
 class TestCreateVendor(TestMakeVendor):
     '''Tests for create_vendor view'''
@@ -110,6 +121,7 @@ class TestCreateVendor(TestMakeVendor):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Fee has not been Paid')
         self.assertContains(response, tickets[1].title)
+        self.check_subway_state(response, active_state="Payment")
 
     def test_create_vendor_post_form_not_my_biz(self):
         url = reverse(self.view_name,
@@ -130,6 +142,7 @@ class TestCreateVendor(TestMakeVendor):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Vendor Application')
+        self.check_subway_state(response)
 
     def test_create_vendor_with_no_business(self):
         url = reverse(self.view_name,
@@ -137,6 +150,7 @@ class TestCreateVendor(TestMakeVendor):
         login_as(ProfileFactory(), self)
         response = self.client.get(url, follow=True)
         self.assertContains(response, 'Tell Us About Your Business')
+        self.check_subway_state(response, active_state="Create Business")
 
     def test_create_vendor_post_with_vendor_app_paid(self):
         response, data = self.post_paid_vendor_submission()
@@ -156,6 +170,7 @@ class TestCreateVendor(TestMakeVendor):
             url, data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Select a valid choice.")
+        self.check_subway_state(response)
 
 
 class TestEditVendor(TestMakeVendor):
@@ -236,6 +251,7 @@ class TestEditVendor(TestMakeVendor):
         self.assertContains(
             response,
             "Select a valid choice.")
+        self.check_subway_state(response)
 
     def test_vendor_edit_post_form_valid_submit_no_main_ticket(self):
         vendor = VendorFactory(business=self.business)
@@ -249,6 +265,7 @@ class TestEditVendor(TestMakeVendor):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, payment_details_error)
         self.assertContains(response, "This field is required.")
+        self.check_subway_state(response)
 
     def test_edit_bid_get(self):
         '''edit_bid, not post, should take us to edit process'''
