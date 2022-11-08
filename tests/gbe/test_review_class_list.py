@@ -24,17 +24,20 @@ class TestReviewClassList(TestCase):
     '''Tests for review_class_list view'''
     view_name = 'class_review_list'
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.performer = PersonaFactory()
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Class Reviewers')
+        cls.conference = current_conference()
+        ClassFactory.create_batch(4,
+                                  b_conference=cls.conference,
+                                  e_conference=cls.conference,
+                                  submitted=True)
+
     def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Class Reviewers')
-        self.conference = current_conference()
-        ClassFactory.create_batch(4,
-                                  b_conference=self.conference,
-                                  e_conference=self.conference,
-                                  submitted=True)
 
     def test_review_class_all_well(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -44,7 +47,7 @@ class TestReviewClassList(TestCase):
             data={'conf_slug': self.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Class Proposals')
         self.assertNotContains(response, "Accept &amp; Schedule")
 
     def test_review_class_w_scheduling(self):
@@ -55,7 +58,7 @@ class TestReviewClassList(TestCase):
             url,
             data={'conf_slug': self.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Class Proposals')
         self.assertContains(response, "Accept &amp; Schedule")
 
     def test_review_accepted_class_w_scheduling(self):
@@ -71,7 +74,7 @@ class TestReviewClassList(TestCase):
             url,
             data={'conf_slug': self.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Class Proposals')
         self.assertContains(response, "Add to Schedule")
 
     def test_review_class_bad_user(self):

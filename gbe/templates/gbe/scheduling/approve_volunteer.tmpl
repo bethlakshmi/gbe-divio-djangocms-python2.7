@@ -1,11 +1,12 @@
 {% extends 'gbe/gbe_table.tmpl' %}
 {% block title %}
-  Approve Pending Volunteers
+   {{page_title}}
 {% endblock %}
 {% block before_table %}
 <div>
   <div>
-    <h2>Approve Pending Volunteers - {{ conference.conference_name }}</h2>
+    <h2 class="gbe-title">{{view_title}}</h2>
+    <h3>{{ conference.conference_name }}</h3>
 {% include "conference_picker.tmpl" %}</div>
   # = Number of current volunteers
   <br/>

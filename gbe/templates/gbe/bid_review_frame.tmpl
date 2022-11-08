@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-   Review Bids
+   {{page_title}}
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,8 @@
   {% endif %}
   <p class="vanilla">{{title}} </p>
   <div class="border_box review-pane gbe-bg-light">
-    <h2 class="review-title gbe-title">Bid Information - {{ conference.conference_name }}</h2>
+    <h2 class="review-title gbe-title">{{view_title}}</h2>
+    <h3>{{ conference.conference_name }}</h3>
     {% if old_bid %}
     <h3 class="gbe-subtitle"> This bid is for a conference which has already happened </h3>
     {% endif %}
@@ -35,7 +36,7 @@
     {% block review_results %}
     {% endblock %}
     <div class="border_box gbe-bg-light col-lg-4 col-md-5 col-sm-12">
-      <h2 class="gbe-title">Bid Control for Coordinator</h2>
+      <h2 class="gbe-title">{{controller_heading}}</h2>
         {% if actionform.errors %}
         <p class="gbe-form-error"> There is an error on the form.  </p>
           {% for field in actionform.visible_fields %}
