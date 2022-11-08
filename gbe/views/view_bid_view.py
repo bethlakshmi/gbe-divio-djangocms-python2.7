@@ -72,6 +72,22 @@ class ViewBidView(View):
                     'summary': "Thanks for submitting bid",
                     'description': default_submit_msg})
             context['submit_message'] = user_message[0].description
+        bid_string = self.bid.__class__.__name__
+        context['page_title'] = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="PAGE_TITLE",
+                defaults={
+                    'summary': "%s Page Title" % bid_string,
+                    'description': "Review %s Proposal" % bid_string
+                    })[0].description
+        context['view_title'] = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="FIRST_HEADER",
+                defaults={
+                    'summary': "%s First Header" % bid_string,
+                    'description': "Review %s Proposal" % bid_string
+                    })[0].description
+
         return context
 
     @method_decorator(login_required)

@@ -20,17 +20,13 @@ class ReviewActListView(ReviewBidListView):
     status_index = 3
 
     def get_context_dict(self):
-        return {'columns': self.object_type().bid_review_header,
-                'vertical_columns': EvaluationCategory.objects.filter(
-                    visible=True).order_by('category').values_list(
-                    'category', flat=True),
-                'last_columns': ['Average', 'Action'],
-                'order': 0,
-                'rows': self.rows,
-                'return_link': reverse(self.bid_review_list_view_name,
-                                       urlconf='gbe.urls'),
-                'conference_slugs': self.conference_slugs,
-                'conference': self.conference}
+        context = super(ReviewActListView, self).get_context_dict()
+        context.update(
+            {'vertical_columns': EvaluationCategory.objects.filter(
+                visible=True).order_by('category').values_list(
+                'category', flat=True),
+             'last_columns': ['Average', 'Action']})
+        return context
 
     def get_rows(self, bids, review_query):
         rows = []

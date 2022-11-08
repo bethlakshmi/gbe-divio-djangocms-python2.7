@@ -12,6 +12,7 @@ from gbe.models import (
     Act,
     BidEvaluation,
     Conference,
+    UserMessage,
 )
 
 
@@ -73,7 +74,34 @@ class ReviewBidListView(View):
         self.rows = self.get_rows(bids, review_query)
 
     def groundwork(self, request):
-        pass
+        bid_string = self.object_type().__class__.__name__
+        self.page_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="PAGE_TITLE",
+                defaults={
+                    'summary': "%s Page Title" % bid_string,
+                    'description': 'Review %s' % bid_string})[0].description
+        self.view_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="FIRST_HEADER",
+                defaults={
+                    'summary': "%s First Header" % bid_string,
+                    'description': '%s Proposals' % bid_string
+                    })[0].description
+
+    def get_context_dict(self):
+        context = {
+            'conference': self.conference,
+            'page_title': self.page_title,
+            'view_title': self.view_title,
+            'return_link': reverse(self.bid_review_list_view_name,
+                                   urlconf='gbe.urls'),
+            'conference_slugs': self.conference_slugs,
+            'conference': self.conference,
+            'columns': self.object_type().bid_review_header,
+            'order': 0,
+            'rows': self.rows}
+        return context
 
     @never_cache
     def get(self, request, *args, **kwargs):

@@ -2,7 +2,7 @@
 {% load static %}
 {% block review_form %}
 <div class="col-lg-4 col-md-8 col-sm-12">
-  <h2 class="gbe-title">Review Information</h2>
+    <h2 class="review-title gbe-title">{{view_title}}</h2>
     <form action="" method="post">
       {% csrf_token %}
 <table class="striped_table">

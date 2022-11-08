@@ -15,8 +15,10 @@ class ViewClassView(ViewBidView):
     owner_prefix = 'The Teacher(s)'
 
     def make_context(self):
-        context = {'performer': self.bid.teacher,
-                   'class': self.bid,
-                   'scheduling_info': get_scheduling_info(self.bid),
-                   'display_contact_info': True}
+        context = self.get_messages()
+        context.update({
+            'performer': self.bid.teacher,
+            'class': self.bid,
+            'scheduling_info': get_scheduling_info(self.bid),
+            'display_contact_info': True})
         return context

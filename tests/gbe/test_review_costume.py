@@ -20,15 +20,18 @@ class TestReviewCostume(TestCase):
     '''Tests for review_costume view'''
     view_name = "costume_review"
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.performer = PersonaFactory()
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Costume Reviewers')
+        cls.coordinator = ProfileFactory()
+        grant_privilege(cls.coordinator, 'Costume Reviewers')
+        grant_privilege(cls.coordinator, 'Costume Coordinator')
+
     def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Costume Reviewers')
-        self.coordinator = ProfileFactory()
-        grant_privilege(self.coordinator, 'Costume Reviewers')
-        grant_privilege(self.coordinator, 'Costume Coordinator')
 
     def get_form(self, bid, evaluator):
         data = {'vote': 3,
@@ -44,7 +47,7 @@ class TestReviewCostume(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Costume Proposal')
         self.assertContains(response, self.performer.name)
         self.assertNotContains(response, other_performer.name)
 
@@ -60,7 +63,7 @@ class TestReviewCostume(TestCase):
             reverse('costume_view',
                     urlconf='gbe.urls',
                     args=[costume.pk]))
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Costume Proposal')
         self.assertNotContains(response, 'Review Information')
 
     def test_no_login_redirects_to_login(self):
@@ -86,11 +89,7 @@ class TestReviewCostume(TestCase):
         data = self.get_form(bid, self.coordinator)
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
-        html_tag = '<h2 class="gbe-title">%s</h2>'
-        title_string = ("Bid Information for %s" %
-                        bid.b_conference.conference_name)
-        html_title = html_tag % title_string
-        self.assertContains(response, html_title)
+        self.assertContains(response, bid.b_conference.conference_name)
 
     def test_review_costume_no_performer(self):
         costume = CostumeFactory()
@@ -98,7 +97,8 @@ class TestReviewCostume(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Costume Proposal')
+        self.assertContains(response, 'Review Costume')
 
     def test_view_costume_how_heard(self):
         '''view_costume view, success

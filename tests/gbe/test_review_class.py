@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test.client import RequestFactory
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
@@ -22,14 +21,16 @@ class TestReviewClass(TestCase):
     '''Tests for review_class view'''
     view_name = 'class_review'
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.performer = PersonaFactory()
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Class Reviewers')
+        grant_privilege(cls.privileged_user, 'Class Coordinator')
+
     def setUp(self):
-        self.factory = RequestFactory()
         self.client = Client()
-        self.performer = PersonaFactory()
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Class Reviewers')
-        grant_privilege(self.privileged_user, 'Class Coordinator')
 
     def get_post_data(self, bid, reviewer=None):
         reviewer = reviewer or self.privileged_profile
@@ -47,9 +48,9 @@ class TestReviewClass(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
-        self.assertContains(response, "Review Bids")
-        self.assertContains(response, "Bid Control for Coordinator")
+        self.assertContains(response, 'Review Class')
+        self.assertContains(response, "Class Proposal")
+        self.assertContains(response, "Set Class State")
         self.assertNotContains(response, 'name="extra_button"')
         self.assertContains(response, self.performer.year_started)
 
@@ -74,7 +75,7 @@ class TestReviewClass(TestCase):
         response = self.client.post(url,
                                     data={'accepted': 1})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Review Class')
 
     def test_review_class_post_form_valid_creates_evaluation(self):
         klass = ClassFactory()
@@ -91,7 +92,7 @@ class TestReviewClass(TestCase):
                                     data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Review Class')
         post_execute_count = BidEvaluation.objects.filter(
             evaluator=profile,
             bid=klass).count()
@@ -109,7 +110,7 @@ class TestReviewClass(TestCase):
                                     data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Review Class')
         evaluation = BidEvaluation.objects.filter(
             evaluator=profile,
             bid=klass).last()
@@ -127,7 +128,7 @@ class TestReviewClass(TestCase):
             reverse('class_view',
                     urlconf='gbe.urls',
                     args=[klass.pk]))
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response, 'Review Class')
         self.assertNotContains(response, 'Review Information')
 
     def test_no_login_gives_error(self):
@@ -144,7 +145,7 @@ class TestReviewClass(TestCase):
         login_as(reviewer, self)
         url = reverse(self.view_name, args=[klass.pk], urlconf="gbe.urls")
         response = self.client.get(url)
-        self.assertContains(response, "Review Bids")
+        self.assertContains(response, "Class Proposal")
         assert response.status_code == 200
 
     def test_review_class_no_how_heard(self):
