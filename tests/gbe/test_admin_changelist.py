@@ -36,12 +36,6 @@ class GBEAdminChangeListTests(TestCase):
         self.client = Client()
         login_as(self.privileged_user, self)
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.password = 'mypassword'
-        cls.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', cls.password)
-
     def test_get_event_subclass(self):
         obj = GenericEventFactory()
         response = self.client.get('/admin/gbe/event/', follow=True)
