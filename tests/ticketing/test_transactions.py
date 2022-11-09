@@ -20,10 +20,8 @@ from tests.factories.ticketing_factories import (
     TicketItemFactory,
     TicketingEventsFactory,
 )
-import nose.tools as nt
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django.test.client import RequestFactory
 from django.test import Client
 from ticketing.views import (
     transactions
@@ -59,7 +57,6 @@ class TestTransactions(TestCase):
         cls.url = reverse('transactions', urlconf='ticketing.urls')
 
     def setUp(self):
-        self.factory = RequestFactory()
         self.client = Client()
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
@@ -231,15 +228,15 @@ class TestTransactions(TestCase):
             401,
             "The OAuth token you provided was invalid."))
 
-    @nt.raises(PermissionDenied)
     def test_user_is_not_ticketing(self):
         # The user does not have the right privileges.  Send PermissionDenied
         user = ProfileFactory.create().user_object
-        request = self.factory.get(
+        request = self.client.get(
             reverse('transactions', urlconf='ticketing.urls'),
         )
         request.user = user
-        response = transactions(request)
+        with self.assertRaises(PermissionDenied):
+            response = transactions(request)
 
     def test_transactions_w_privilege(self):
         context = PurchasedTicketContext()
@@ -274,7 +271,7 @@ class TestTransactions(TestCase):
         BrownPaperSettings.objects.all().delete()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_transactions_old_conf_limbo_purchase(self):
         limbo = get_limbo()
@@ -350,21 +347,21 @@ class TestTransactions(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         transaction = get_object_or_404(
             Transaction,
             reference='A12345678')
-        nt.assert_equal(str(transaction.order_date),
+        self.assertEqual(str(transaction.order_date),
                         "2014-08-15 19:26:56")
-        nt.assert_equal(transaction.shipping_method, 'Will Call')
-        nt.assert_equal(transaction.order_notes, 'None')
-        nt.assert_equal(transaction.payment_source, 'Brown Paper Tickets')
-        nt.assert_equal(transaction.purchaser.email, 'test@tickets.com')
-        nt.assert_equal(transaction.purchaser.phone, '111-222-3333')
-        nt.assert_equal(transaction.purchaser.matched_to_user, limbo.user_ptr)
-        nt.assert_equal(transaction.purchaser.first_name, 'John')
-        nt.assert_equal(transaction.purchaser.last_name, 'Smith')
+        self.assertEqual(transaction.shipping_method, 'Will Call')
+        self.assertEqual(transaction.order_notes, 'None')
+        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
+        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
+        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
+        self.assertEqual(transaction.purchaser.matched_to_user, limbo.user_ptr)
+        self.assertEqual(transaction.purchaser.first_name, 'John')
+        self.assertEqual(transaction.purchaser.last_name, 'Smith')
         assert_alert_exists(response,
                             'success',
                             'Success',

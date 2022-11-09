@@ -6,7 +6,6 @@ from tests.factories.gbe_factories import (
     CostumeFactory,
     ProfileFactory
 )
-from django.core.exceptions import PermissionDenied
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,

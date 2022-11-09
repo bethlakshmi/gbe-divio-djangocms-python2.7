@@ -17,8 +17,6 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 
-from django.core.exceptions import PermissionDenied
-
 
 class TestReviewVendorList(TestCase):
     '''Tests for review_vendor_list view'''
