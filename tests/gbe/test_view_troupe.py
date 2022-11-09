@@ -1,7 +1,5 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.urls import reverse
-from django.test.client import RequestFactory
 from django.test import Client
 from gbe.views import ViewTroupeView
 from tests.factories.gbe_factories import (
@@ -19,7 +17,6 @@ from tests.functions.gbe_functions import (
 class TestViewTroupe(TestCase):
     '''Tests for view_troupe view'''
     def setUp(self):
-        self.factory = RequestFactory()
         self.client = Client()
         self.troupe_string = 'Tell Us About Your Troupe'
 
@@ -47,7 +44,7 @@ class TestViewTroupe(TestCase):
             urlconf='gbe.urls')
         login_as(user, self)
         response = self.client.get(url)
-        nt.assert_equal(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_review_class_no_state_in_profile(self):
         troupe = TroupeFactory()

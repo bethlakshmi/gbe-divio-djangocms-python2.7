@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
@@ -15,17 +14,20 @@ class TestViewSummerAct(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.conference = ConferenceFactory(act_style="summer")
-        self.act = ActFactory(b_conference=self.conference)
+        login_as(self.act.performer.performer_profile, self)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.conference = ConferenceFactory(act_style="summer")
+        cls.act = ActFactory(b_conference=cls.conference)
 
     def test_view_act_all_well(self):
         url = reverse(self.view_name,
                       args=[self.act.pk],
                       urlconf='gbe.urls')
-        login_as(self.act.performer.performer_profile, self)
         response = self.client.get(url)
         test_string = 'The Summer Act'
-        nt.assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, test_string)
 
     def test_edit_bid_w_redirect(self):
@@ -34,7 +36,6 @@ class TestViewSummerAct(TestCase):
                       args=[self.act.pk],
                       urlconf="gbe.urls")
 
-        login_as(self.act.performer.performer_profile, self)
         response = self.client.get(url)
         self.assertRedirects(
             response,

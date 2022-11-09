@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from tests.factories.ticketing_factories import (
     RoleEligibilityConditionFactory,
@@ -18,9 +17,10 @@ from gbe.ticketing_idd_interface import get_checklist_items
 class TestGetCheckListItems(TestCase):
     '''Tests for the biggest method to get all types of checklist items'''
 
-    def setUp(self):
-        self.role_condition = RoleEligibilityConditionFactory()
-        self.ticket_condition = TicketingEligibilityConditionFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.role_condition = RoleEligibilityConditionFactory()
+        cls.ticket_condition = TicketingEligibilityConditionFactory()
 
     def test_no_checklist(self):
         '''
@@ -38,8 +38,8 @@ class TestGetCheckListItems(TestCase):
             transaction.ticket_item.ticketing_event.conference,
             no_schedule)
 
-        nt.assert_equal(len(ticket_items), 0)
-        nt.assert_equal(len(role_items), 0)
+        self.assertEqual(len(ticket_items), 0)
+        self.assertEqual(len(role_items), 0)
 
     def test_role_match(self):
         '''
@@ -57,8 +57,8 @@ class TestGetCheckListItems(TestCase):
             teacher.performer_profile,
             conference,
             self.schedule)
-        nt.assert_equal(len(role_items), 1)
-        nt.assert_equal(role_items[self.role_condition.role],
+        self.assertEqual(len(role_items), 1)
+        self.assertEqual(role_items[self.role_condition.role],
                         [self.role_condition.checklistitem])
 
     def test_ticket_match(self):
@@ -80,8 +80,8 @@ class TestGetCheckListItems(TestCase):
             conference,
             self.schedule)
 
-        nt.assert_equal(len(ticket_items), 1)
-        nt.assert_equal(ticket_items[0]['items'],
+        self.assertEqual(len(ticket_items), 1)
+        self.assertEqual(ticket_items[0]['items'],
                         [self.ticket_condition.checklistitem])
 
     def test_both_match(self):
@@ -109,11 +109,11 @@ class TestGetCheckListItems(TestCase):
             teacher.performer_profile,
             conference,
             self.schedule)
-        nt.assert_equal(len(ticket_items), 1)
-        nt.assert_equal(len(role_items), 1)
-        nt.assert_equal(ticket_items[0]['ticket'],
+        self.assertEqual(len(ticket_items), 1)
+        self.assertEqual(len(role_items), 1)
+        self.assertEqual(ticket_items[0]['ticket'],
                         transaction.ticket_item.title)
-        nt.assert_equal(role_items[self.role_condition.role],
+        self.assertEqual(role_items[self.role_condition.role],
                         [self.role_condition.checklistitem])
 
     def tearDown(self):

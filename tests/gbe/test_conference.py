@@ -2,9 +2,7 @@ import pytest
 from tests.factories.gbe_factories import (
     ConferenceFactory
 )
-
 from gbe.models import Conference
-
 import nose.tools as nt
 
 
