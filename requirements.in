@@ -25,7 +25,6 @@ django-recaptcha2
 pytz
 reportlab
 pep8
-django-nose
 coverage
 factory-boy
 mock
