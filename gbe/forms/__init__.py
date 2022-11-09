@@ -1,6 +1,7 @@
 # usermanagement forms
 from .contact_form import ContactForm
 from .participant_form import ParticipantForm
+from .involved_profile_form import InvolvedProfileForm
 from .profile_admin_form import ProfileAdminForm
 from .profile_preferences_form import ProfilePreferencesForm
 from .email_preferences_form import (
@@ -22,6 +23,7 @@ from .act_bid_evaluation_form import ActBidEvaluationForm
 from .vendor_state_change_form import VendorStateChangeForm
 
 # bid submit/edit forms
+from .basic_bid_form import BasicBidForm
 from .act_edit_form import (
     ActEditDraftForm,
     ActEditForm,

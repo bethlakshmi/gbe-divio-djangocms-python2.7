@@ -26,11 +26,14 @@ class TestBusinessCreate(TestCase):
     '''Tests for index view'''
     view_name = 'business-add'
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         UserMessage.objects.all().delete()
-        self.client = Client()
-        self.profile = ProfileFactory()
+        cls.profile = ProfileFactory()
         ProfileFactory(user_object__username="admin_img")
+
+    def setUp(self):
+        self.client = Client()
 
     def submit_business(self, image=None):
         login_as(self.profile, self)
@@ -94,13 +97,15 @@ class TestBusinessCreate(TestCase):
 class TestBusinessEdit(TestCase):
     view_name = 'business-update'
 
-    '''Tests for edit_persona view'''
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         UserMessage.objects.all().delete()
+        cls.expected_string = 'Tell Us About Your Business'
+        cls.business = BusinessFactory()
+        cls.profile = cls.business.owners.all().first()
+
+    def setUp(self):
         self.client = Client()
-        self.expected_string = 'Tell Us About Your Business'
-        self.business = BusinessFactory()
-        self.profile = self.business.owners.all().first()
 
     def submit_business(self, image=None, delete_image=False):
         login_as(self.profile, self)

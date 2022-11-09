@@ -65,6 +65,16 @@ class TestMakeAct(TestCase):
             del(form_dict['theact-b_description'])
         return form_dict
 
+    def check_subway_state(self, response, active_state="Apply"):
+        self.assertContains(
+            response,
+            '<li class="progressbar_active">%s</li>' % active_state,
+            html=True)
+        if active_state != "Payment":
+            self.assertContains(
+                response,
+                '<li class="progressbar_upcoming">Payment</li>',
+                html=True)
 
 class TestCreateAct(TestMakeAct):
     '''Tests for create_act view'''
@@ -102,6 +112,7 @@ class TestCreateAct(TestMakeAct):
         self.assertRedirects(response, "%s?next=%s" % (
             reverse('persona-add', urlconf="gbe.urls", args=[1]),
             self.url))
+        self.check_subway_state(response, active_state="Create Bio")
 
     def test_bid_act_get_with_persona(self):
         '''act_bid, when profile has a personae'''
@@ -111,6 +122,7 @@ class TestCreateAct(TestMakeAct):
         response = self.client.get(url)
         expected_string = "Propose an Act"
         self.assertContains(response, expected_string)
+        self.check_subway_state(response)
 
     def test_act_bid_post_form_not_valid(self):
         login_as(self.performer.performer_profile, self)
@@ -120,6 +132,7 @@ class TestCreateAct(TestMakeAct):
                                     data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
+        self.check_subway_state(response)
 
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
@@ -131,6 +144,7 @@ class TestCreateAct(TestMakeAct):
         response = self.client.post(self.url, data=POST)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Act Submission Fee")
+        self.check_subway_state(response, active_state="Payment")
 
     def test_act_bid_post_no_submit(self):
         '''act_bid, not submitting and no other problems,
@@ -156,6 +170,7 @@ class TestCreateAct(TestMakeAct):
         self.assertContains(response, 'Propose an Act')
         self.assertContains(response, "Fee (pay what you will)")
         self.assertContains(response, 'value="%5.2f"' % tickets[0].cost)
+        self.check_subway_state(response)
 
     def test_act_bid_not_paid_w_fee_outside_date_limit(self):
         '''act_bid, several viable tickets are before and after current day'''
@@ -192,6 +207,7 @@ class TestCreateAct(TestMakeAct):
         self.assertNotContains(response, fee_instructions)
         self.assertContains(response, "Test Bid Instructions Message")
         self.assertContains(response, 'value="Submit For Approval"')
+        self.check_subway_state(response)
 
     def test_act_submit_paid_act(self):
         response, data = self.post_paid_act_submission()
@@ -329,6 +345,7 @@ class TestEditAct(TestMakeAct):
             self.get_act_form(act.performer, valid=False))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
+        self.check_subway_state(response)
 
     def test_act_edit_post_form_submit_unpaid(self):
         act = ActFactory()
@@ -347,6 +364,7 @@ class TestEditAct(TestMakeAct):
         self.assertEqual(profile.phone, '111-222-3333')
         self.assertEqual(profile.user_object.first_name, 'Jane')
         self.assertEqual(profile.user_object.last_name, 'Smith')
+        self.check_subway_state(response, active_state="Payment")
 
     def test_act_edit_post_form_submit_bad_pay_choice(self):
         act = ActFactory()
@@ -363,6 +381,7 @@ class TestEditAct(TestMakeAct):
         self.assertContains(
             response,
             "Ensure this value is greater than or equal to 10.00")
+        self.check_subway_state(response)
 
     def test_act_edit_post_form_submit_paid_other_year(self):
         act = ActFactory()
@@ -381,6 +400,7 @@ class TestEditAct(TestMakeAct):
         response = self.client.post(url, data=act_form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Act Payment')
+        self.check_subway_state(response, active_state="Payment")
 
     def test_edit_bid_post_no_submit(self):
         response = self.post_edit_paid_act_draft()
@@ -420,6 +440,7 @@ class TestEditAct(TestMakeAct):
         self.assertContains(
             response,
             act.performer.performer_profile.user_object.last_name)
+        self.check_subway_state(response)
 
     def test_edit_act_submit_make_message(self):
         response = self.post_edit_paid_act_submission()
@@ -444,6 +465,7 @@ class TestEditAct(TestMakeAct):
             original.b_title)
         assert_alert_exists(
             response, 'danger', 'Error', error_msg)
+        self.check_subway_state(response)
 
     def test_edit_act_title_collision_w_msg(self):
         message_string = "link: %s title: %s"
@@ -461,6 +483,7 @@ class TestEditAct(TestMakeAct):
             original.b_title)
         assert_alert_exists(
             response, 'danger', 'Error', error_msg)
+        self.check_subway_state(response)
 
     def test_edit_act_no_duration(self):
         act = ActFactory()
@@ -469,3 +492,4 @@ class TestEditAct(TestMakeAct):
         response = self.post_edit_paid_act_submission(act_form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This field is required.")
+        self.check_subway_state(response)

@@ -11,6 +11,7 @@ from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
     BidEvaluation,
+    UserMessage,
 )
 from gbe.forms import (
     BidEvaluationForm,
@@ -42,7 +43,10 @@ class ReviewBidView(View):
                 'actionform': self.actionform,
                 'actionURL': self.actionURL,
                 'conference': self.b_conference,
-                'old_bid': self.old_bid, }
+                'old_bid': self.old_bid,
+                'page_title': self.page_title,
+                'view_title': self.view_title,
+                'controller_heading': self.controller_heading}
 
     def bid_review_response(self, request):
         return render(request,
@@ -100,6 +104,28 @@ class ReviewBidView(View):
             self.actionURL = False
         self.b_conference, self.old_bid = get_conf(self.object)
         self.set_bid_eval()
+        bid_string = self.object.__class__.__name__
+        self.page_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="PAGE_TITLE",
+                defaults={
+                    'summary': "%s Page Title" % bid_string,
+                    'description': 'Review %s' % bid_string
+                    })[0].description
+        self.view_title = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="FIRST_HEADER",
+                defaults={
+                    'summary': "%s First Header" % bid_string,
+                    'description': '%s Proposal' % bid_string
+                    })[0].description
+        self.controller_heading = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="CONTROLLER_HEADER",
+                defaults={
+                    'summary': "%s First Header" % bid_string,
+                    'description': "Set %s State" % bid_string
+                    })[0].description
 
     @never_cache
     def get(self, request, *args, **kwargs):

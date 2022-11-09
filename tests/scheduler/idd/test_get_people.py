@@ -26,8 +26,9 @@ class TestGetPeople(TestCase):
         response = get_people(labels=[context.conference.conference_slug],
                               roles=["Performer"])
         target_person = None
+
         for person in response.people:
-            if act.performer.user_object == person.user:
+            if act.performer.user_object.pk == person.user.pk:
                 target_person = person
             else:
                 self.assertNotEqual(person.label, label.text)

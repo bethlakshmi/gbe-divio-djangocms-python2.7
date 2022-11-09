@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -34,7 +33,7 @@ class TestClassChangestate(TestCase):
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=self.data)
-        nt.assert_equal(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_class_changestate_unauthorized_user(self):
         '''A regular user is changing the state, it fails'''
@@ -43,7 +42,7 @@ class TestClassChangestate(TestCase):
                       urlconf='gbe.urls')
         login_as(ProfileFactory(), self)
         response = self.client.post(url, data=self.data)
-        nt.assert_equal(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_class_changestate_clear_schedule(self):
         '''The proper coordinator is changing the state, it works'''
@@ -75,11 +74,12 @@ class TestClassChangestate(TestCase):
                 context.bid.eventitem_id))
 
     def test_class_changestate_bad_data(self):
-        '''The proper coordinator is changing the state, it works'''
         url = reverse(self.view_name,
                       args=[self.klass.pk],
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(url, data={'accepted': '-1'})
         assert response.status_code == 200
-        self.assertContains(response, 'Bid Information')
+        self.assertContains(response,
+                            '<h2 class="review-title gbe-title"></h2>',
+                            html=True)

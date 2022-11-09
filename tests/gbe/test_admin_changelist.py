@@ -18,16 +18,23 @@ from tests.factories.gbe_factories import(
     TechInfoFactory,
     VendorFactory,
 )
+from tests.functions.gbe_functions import (
+    login_as,
+    setup_admin_w_privs,
+)
 from django.contrib.admin.sites import AdminSite
 from django.urls import reverse
 
 
 class GBEAdminChangeListTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = setup_admin_w_privs([])
+
     def setUp(self):
         self.client = Client()
-        self.client.login(
-            username=self.privileged_user.username,
-            password=self.password)
+        login_as(self.privileged_user, self)
 
     @classmethod
     def setUpTestData(cls):

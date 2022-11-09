@@ -472,3 +472,53 @@ span.opps-errors ul {padding: 0px;}
 .gbe_thumb_button{border: solid 2px;}
 .gbe-panel h3.card-title {font-size: 20px; margin:0px;}
 .gbe-panel h3.card-subtitle {font-size: 20px; margin:0px;}
+.subway_container{
+  width: 100%;
+}
+.progressbar {
+  list-style: none;
+  padding-inline-start:  0em;
+  padding-bottom: 50px;
+}
+.progressbar li{
+  float: left;
+  position: relative;
+  text-align: center;
+}
+.progressbar.items_5 li{
+    width: 20%;
+}
+.progressbar.items_4 li{
+    width: 25%;
+}
+.progressbar.items_3 li{
+    width: 33%;
+} 
+.progressbar li:before{
+  width: 30px;
+  height: 30px;
+  display: block;
+  margin: 0 auto 10px auto;
+  border-radius: 50%;
+  line-height: 27px;
+  color: #bebebe;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.progressbar li:after{
+  content: '';
+  position: absolute;
+  width:100%;
+  height: 3px;
+  background: rgba(195,189,191,1);
+  top: 11px;
+  left: -50%;
+  z-index: 0;
+}
+.progressbar li:first-child:after{
+content: none;
+}
+li.progressbar_active {
+  font-weight: bold;
+}

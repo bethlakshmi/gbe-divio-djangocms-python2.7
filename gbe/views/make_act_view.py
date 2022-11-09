@@ -76,23 +76,19 @@ class MakeActView(MakeBidView):
             raise Http404
 
     def get_initial(self):
-        initial = {}
+        initial = super(MakeActView, self).get_initial()
         if self.bid_object:
-            initial = {
+            initial.update({
                 'track_title': self.bid_object.tech.track_title,
                 'track_artist': self.bid_object.tech.track_artist,
-                'act_duration': self.bid_object.tech.duration}
+                'act_duration': self.bid_object.tech.duration})
         else:
-            initial = {
+            initial.update({
                 'performer': self.personae[0],
                 'b_conference': self.conference,
                 'b_title': "%s Act - %s" % (
                     self.owner,
-                    self.conference.conference_slug)}
-        initial['phone'] = self.owner.phone
-        initial['first_name'] = self.owner.user_object.first_name
-        initial['last_name'] = self.owner.user_object.last_name
-
+                    self.conference.conference_slug)})
         return initial
 
     def set_valid_form(self, request):

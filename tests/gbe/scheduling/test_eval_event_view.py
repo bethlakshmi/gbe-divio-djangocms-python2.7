@@ -77,10 +77,10 @@ class TestEvalEventView(TestCase):
         unfinished = UserFactory()
         login_as(unfinished, self)
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('register',
+        redirect_url = reverse('profile_update',
                                urlconf='gbe.urls') + "?next=" + self.url
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, "Create an Account")
+        self.assertContains(response, "Update Your Profile")
         assert_alert_exists(
             response,
             'warning',
@@ -91,10 +91,10 @@ class TestEvalEventView(TestCase):
         unfinished = UserFactory()
         login_as(unfinished, self)
         response = self.client.post(self.url, follow=True)
-        redirect_url = reverse('register',
+        redirect_url = reverse('profile_update',
                                urlconf='gbe.urls') + "?next=" + self.url
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, "Create an Account")
+        self.assertContains(response, "Update Your Profile")
         assert_alert_exists(
             response,
             'warning',

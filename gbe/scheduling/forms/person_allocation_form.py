@@ -12,6 +12,7 @@ from gbe.forms.common_queries import (
     visible_personas,
     visible_profiles,
 )
+from django.urls import reverse_lazy
 
 
 class PersonAllocationForm(Form):
@@ -28,7 +29,7 @@ class PersonAllocationForm(Form):
         required=False,
         label="",
         widget=autocomplete.ModelSelect2(
-                url='profile-autocomplete'))
+            url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls')))
     label = CharField(max_length=100, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -44,4 +45,6 @@ class PersonAllocationForm(Form):
 
         if use_personas:
             self.fields['worker'].queryset = visible_personas
-            self.fields['worker'].widget.url = 'persona-autocomplete'
+            self.fields['worker'].widget.url = reverse_lazy(
+                'persona-autocomplete',
+                urlconf='gbe.urls')

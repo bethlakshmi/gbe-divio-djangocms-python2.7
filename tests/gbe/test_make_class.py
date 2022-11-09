@@ -55,6 +55,16 @@ class TestMakeClass(TestCase):
             del(data['theclass-b_title'])
         return data
 
+    def check_subway_state(self, response, active_state="Apply"):
+        self.assertContains(
+            response,
+            '<li class="progressbar_active">%s</li>' % active_state,
+            html=True)
+        self.assertNotContains(
+                response,
+                '<li class="progressbar_upcoming">Payment</li>',
+                html=True)
+
 
 class TestCreateClass(TestMakeClass):
     '''Tests for create_class view'''
@@ -90,6 +100,7 @@ class TestCreateClass(TestMakeClass):
         title = '<h3 class="gbe-title">Tell Us About Your Stage Persona</h3>'
         self.assertContains(response, title, html=True)
         self.assertNotContains(response, "Create Troupe")
+        self.check_subway_state(response, active_state="Create Bio")
 
     def test_class_bid_post_with_submit_incomplete(self):
         '''class_bid, submit, incomplete form'''
@@ -105,6 +116,7 @@ class TestCreateClass(TestMakeClass):
         self.assertEqual(response.status_code, 200)
         expected_string = "This field is required"
         self.assertContains(response, expected_string)
+        self.check_subway_state(response)
 
     def test_class_bid_post_invalid_form_no_submit(self):
         url = reverse(self.view_name,
@@ -121,6 +133,7 @@ class TestCreateClass(TestMakeClass):
             response,
             'Select a valid choice. That choice is not one of the available' +
             ' choices.')
+        self.check_subway_state(response)
 
     def test_class_bid_verify_avoided_constraints(self):
         url = reverse(self.view_name,
@@ -129,6 +142,7 @@ class TestCreateClass(TestMakeClass):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'I Would Prefer to Avoid')
+        self.check_subway_state(response)
 
     def test_class_submit_make_message(self):
         '''class_bid, not submitting and no other problems,
@@ -152,6 +166,7 @@ class TestCreateClass(TestMakeClass):
         self.assertContains(
             response, "Available times conflict with unavailable times.  " +
             "Conflicts are: Friday Afternoon")
+        self.check_subway_state(response)
 
     def test_class_draft_make_message(self):
         '''class_bid, not submitting and no other problems,
@@ -199,15 +214,6 @@ class TestEditClass(TestMakeClass):
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
-    def test_edit_class_no_class(self):
-        '''Should get 404 if no valid class ID'''
-        url = reverse(self.view_name,
-                      args=[0],
-                      urlconf='gbe.urls')
-        login_as(PersonaFactory().performer_profile, self)
-        response = self.client.get(url, follow=True)
-        self.assertEqual(404, response.status_code)
-
     def test_edit_class_profile_is_not_contact(self):
         klass = ClassFactory()
         url = reverse(self.view_name,
@@ -252,6 +258,7 @@ class TestEditClass(TestMakeClass):
         self.assertContains(response, 'Submit a Class')
         self.assertContains(response, klass.b_title)
         self.assertContains(response, "555-666-7777")
+        self.check_subway_state(response)
 
     def test_edit_bid_verify_info_popup_text(self):
         klass = ClassFactory()
@@ -262,6 +269,7 @@ class TestEditClass(TestMakeClass):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'We will do our best to accommodate')
+        self.check_subway_state(response)
 
     def test_edit_bid_verify_constraints(self):
         klass = ClassFactory(schedule_constraints="[u'0']",

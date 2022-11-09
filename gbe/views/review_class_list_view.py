@@ -26,16 +26,8 @@ class ReviewClassListView(ReviewBidListView):
                                            'text': "Accept & Schedule"}
         return bid_row
 
-    def get_context_dict(self):
-        return {'columns': self.object_type().bid_review_header,
-                'rows': self.rows,
-                'return_link': reverse(self.bid_review_list_view_name,
-                                       urlconf='gbe.urls'),
-                'conference_slugs': self.conference_slugs,
-                'conference': self.conference,
-                'order': 0}
-
     def groundwork(self, request):
+        super(ReviewClassListView, self).groundwork(request)
         self.can_schedule = validate_perms(request,
                                            ('Scheduling Mavens',),
                                            False)

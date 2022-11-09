@@ -14,9 +14,10 @@ from gbe.expoformfields import FriendlyURLInput
 from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
 from dal import autocomplete
 from django.urls import reverse_lazy
+from gbe.forms import BasicBidForm
 
 
-class VendorBidForm(ModelForm):
+class VendorBidForm(ModelForm, BasicBidForm):
     use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
@@ -32,6 +33,9 @@ class VendorBidForm(ModelForm):
     class Meta:
         model = Vendor
         fields = ['business',
+                  'first_name',
+                  'last_name',
+                  'phone',
                   'want_help',
                   'help_description',
                   'help_times',
@@ -42,7 +46,9 @@ class VendorBidForm(ModelForm):
             'accepted': HiddenInput(),
             'submitted': HiddenInput(),
             'business': AddAnotherEditSelectedWidgetWrapper(
-                autocomplete.ModelSelect2(url='limited-business-autocomplete'),
+                autocomplete.ModelSelect2(
+                    url=reverse_lazy('limited-business-autocomplete',
+                                     urlconf='gbe.urls')),
                 reverse_lazy('business-add', urlconf='gbe.urls'),
                 reverse_lazy('business-update',
                              urlconf='gbe.urls',

@@ -13,6 +13,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
     login_as,
+    setup_admin_w_privs,
 )
 from tests.contexts import (
     ClassContext,
@@ -24,8 +25,6 @@ from gbetext import (
     group_filter_note,
     send_email_success_msg,
     to_list_empty_msg,
-    unknown_request,
-    unsubscribe_text,
 )
 from django.contrib.auth.models import User
 from gbe.models import Conference
@@ -48,18 +47,17 @@ class TestMailToRoles(TestMailFilters):
                  "Volunteer"]
     get_param = "?email_disable=send_role_notifications"
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         Conference.objects.all().delete()
+        cls.privileged_user = setup_admin_w_privs(["Schedule Mavens"])
+        cls.privileged_profile = cls.privileged_user.profile
+        cls.url = reverse(cls.view_name, urlconf="gbe.email.urls")
+        cls.context = ClassContext()
+        cls.url = reverse(cls.view_name, urlconf="gbe.email.urls")
+
+    def setUp(self):
         self.client = Client()
-        self.privileged_user = User.objects.create_superuser(
-            'myuser', 'myemail@test.com', "mypassword")
-        self.privileged_profile = ProfileFactory(
-            user_object=self.privileged_user)
-        grant_privilege(self.privileged_profile.user_object,
-                        "Schedule Mavens")
-        self.context = ClassContext()
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.email.urls")
 
     def class_coord_login(self):
         limited_profile = ProfileFactory()

@@ -11,7 +11,7 @@ from gbe.functions import validate_profile
 
 
 class TestLimitedBusinessAutoComplete(TestCase):
-    url = reverse('limited-business-autocomplete')
+    url = reverse('limited-business-autocomplete', urlconf='gbe.urls')
 
     def setUp(self):
         self.client = Client()
