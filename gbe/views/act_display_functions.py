@@ -57,7 +57,10 @@ def get_act_form(act, form, header):
     initial = {
         'track_title': act.tech.track_title,
         'track_artist': act.tech.track_artist,
-        'act_duration': act.tech.duration
+        'act_duration': act.tech.duration,
+        'first_name': act.performer.contact.user_object.first_name,
+        'last_name': act.performer.contact.user_object.last_name,
+        'phone': act.performer.contact.phone,
     }
     act_form = form(
         instance=act,

@@ -31,49 +31,25 @@ class ParticipantForm(ModelForm):
     email = EmailField(required=True)
     first_name = CharField(
         required=False,
-        label=participant_labels['legal_first_name'])
+        label=participant_labels['legal_first_name'],
+        error_messages={'required': required_data_removed_msg})
     last_name = CharField(
         required=False,
         label=participant_labels['legal_last_name'],
-        help_text=participant_form_help_texts['legal_name'])
+        help_text=participant_form_help_texts['legal_name'],
+        error_messages={'required': required_data_removed_msg})
     display_name = CharField(
         required=True,
         label=participant_labels['display_name'],
         help_text=participant_form_help_texts['display_name'])
-    phone = CharField(required=False)
+    phone = CharField(required=False, error_messages={
+        'required': required_data_removed_msg})
 
     how_heard = MultipleChoiceField(
         choices=how_heard_options,
         required=False,
         widget=CheckboxSelectMultiple(),
         label=participant_labels['how_heard'])
-
-    def is_valid(self):
-        from gbe.models import UserMessage
-        valid = super(ParticipantForm, self).is_valid()
-
-        if valid and (not self.cleaned_data['first_name'] or (
-                not self.cleaned_data['last_name']) or (
-                not self.cleaned_data['phone'])):
-            if self.instance.currently_involved() or validate_perms_by_profile(
-                    self.instance):
-                valid = False
-                msg = UserMessage.objects.get_or_create(
-                    view="EditProfileView",
-                    code="MISSING_REQUIRED_BID_DATA",
-                    defaults={
-                        'summary': "User Removed Data Required for Active " +
-                        "Bids",
-                        'description': required_data_removed_msg
-                        })[0].description
-                if not self.cleaned_data['first_name']:
-                    self._errors['first_name'] = msg
-                if not self.cleaned_data['last_name']:
-                    self._errors['last_name'] = msg
-                if not self.cleaned_data['phone']:
-                    self._errors['phone'] = msg
-
-        return valid
 
     def clean(self):
         changed = self.changed_data
@@ -115,6 +91,14 @@ class ParticipantForm(ModelForm):
         if commit and self.is_valid():
             partform.save()
             partform.user_object.save()
+
+    def __init__(self, *args, **kwargs):
+        super(ParticipantForm, self).__init__(*args, **kwargs)
+        if self.instance and (self.instance.currently_involved(
+                ) or validate_perms_by_profile(self.instance)):
+            self.fields['first_name'].required = True
+            self.fields['last_name'].required = True
+            self.fields['phone'].required = True
 
     class Meta:
         model = Profile

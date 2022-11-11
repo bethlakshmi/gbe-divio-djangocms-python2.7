@@ -54,6 +54,9 @@ class ReviewBidView(View):
                       self.make_context())
 
     def create_object_form(self, initial={}):
+        initial['first_name'] = self.object.profiles[0].user_object.first_name
+        initial['last_name'] = self.object.profiles[0].user_object.last_name
+        initial['phone'] = self.object.profiles[0].phone
         self.object_form = self.bid_form_type(instance=self.object,
                                               prefix=self.bid_prefix,
                                               initial=initial)

@@ -5,6 +5,7 @@ from gbe.models import TechInfo
 from gbe.forms import ActCoordinationForm
 from gbetext import (
     act_coord_instruct,
+    missing_profile_info,
     no_comp_msg,
 )
 from gbe.ticketing_idd_interface import comp_act
@@ -57,11 +58,28 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
     def submit_bid(self, request):
         self.bid_object.submitted = True
         self.bid_object.save()
+
         redirect = reverse('act_review',
                            urlconf="gbe.urls",
                            args=[self.bid_object.id])
-        if 'next' in request.GET:
+
+        if not self.bid_object.performer.contact.participation_ready:
+            redirect = "%s?next=%s" % (
+                reverse('admin_profile',
+                        urlconf="gbe.urls",
+                        args=[self.bid_object.performer.contact.pk]),
+                redirect)
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="MISSING_PROFILE_INFO",
+                defaults={
+                    'summary': "No First, Last, Phone",
+                    'description': missing_profile_info})
+            messages.warning(request, user_message[0].description)
+
+        elif 'next' in request.GET:
             redirect = "%s?next=%s" % (redirect, request.GET['next'])
+
         return redirect
 
     def get_invalid_response(self, request):

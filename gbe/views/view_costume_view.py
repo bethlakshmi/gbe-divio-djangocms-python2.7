@@ -18,10 +18,15 @@ class ViewCostumeView(ViewBidView):
     performer_prefix = "The Performer"
 
     def get_display_forms(self):
+        initial = {
+            'first_name': self.bid.profile.user_object.first_name,
+            'last_name': self.bid.profile.user_object.last_name,
+            'phone': self.bid.profile.phone,
+        }
         bid_form = self.object_form_type(instance=self.bid,
-                                         prefix=self.bid_prefix)
+                                         prefix=self.bid_prefix,
+                                         initial=initial)
         detail_form = self.object_detail_form_type(instance=self.bid)
         if self.bid.performer:
             self.performer = self.bid.performer
         return (bid_form, detail_form)
-

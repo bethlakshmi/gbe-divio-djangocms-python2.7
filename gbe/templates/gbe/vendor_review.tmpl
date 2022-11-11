@@ -27,8 +27,13 @@
   <li>{{ help_time }}</li>
 {% endfor %}
   </ul></div>
-  <div class="col-md-4 col-sm-4 col-12 read-only-label">Logo:</h3></div>
-  <div class="col-md-8 col-sm-8 col-12 read-only-info">
+  <div class="col-12"><h3 class="readonlyform gbe-subtitle">Owner(s)</h3></div>
+  {% for owner in vendor.business.owners.all %}
+  <div class="col-md-4 col-sm-4 col-12 read-only-label">{{owner.display_name}}</div>
+  <div class="col-md-8 col-sm-8 col-12 read-only-info">{{owner.phone}}<br>{{owner.user_object.email}}</div>
+  {% endfor %}
+  <div class="col-12"><h3 class="readonlyform gbe-subtitle">Logo</h3></div>
+  <div class="col-12 read-only-info">
   {% if vendor.business.img %}
     <img src="{% thumbnail vendor.business.img 350x350 crop=scale subject_location=vendor.business.img.subject_location %}" class="sched_bio_image">
   {% else %} &nbsp;{% endif %}
