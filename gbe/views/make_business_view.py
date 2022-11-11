@@ -5,6 +5,7 @@ from django.views.generic.edit import (
 from gbe_utils.mixins import (
     GbeFormMixin,
     ProfileRequiredMixin,
+    SubwayMapMixin,
 )
 from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
 from gbe.models import Business
@@ -17,6 +18,7 @@ from gbetext import (
 
 
 class BusinessCreate(CreatePopupMixin,
+                     SubwayMapMixin,
                      GbeFormMixin,
                      ProfileRequiredMixin,
                      CreateView):

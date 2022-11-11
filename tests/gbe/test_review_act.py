@@ -34,18 +34,21 @@ from gbetext import (
 class TestReviewAct(TestCase):
     '''Tests for review_act view'''
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Act Reviewers')
+        grant_privilege(cls.privileged_user, 'Act Coordinator')
+        cls.eval_cat = EvaluationCategoryFactory()
+        cls.eval_cat_invisible = EvaluationCategoryFactory(visible=False)
+        cls.act = ActFactory()
+        cls.url = reverse('act_review',
+                          urlconf='gbe.urls',
+                          args=[cls.act.pk])
+
     def setUp(self):
         self.client = Client()
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Act Reviewers')
-        grant_privilege(self.privileged_user, 'Act Coordinator')
-        self.eval_cat = EvaluationCategoryFactory()
-        self.eval_cat_invisible = EvaluationCategoryFactory(visible=False)
-        self.act = ActFactory()
-        self.url = reverse('act_review',
-                           urlconf='gbe.urls',
-                           args=[self.act.pk])
 
     def get_post_data(self,
                       bid,
@@ -82,8 +85,8 @@ class TestReviewAct(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
-        self.assertContains(response, 'Review Information')
+        self.assertContains(response, 'Act Proposal')
+        self.assertContains(response, 'Review Act')
         self.assertContains(response, self.act.performer.experience)
 
     def test_hidden_fields_are_populated(self):
@@ -115,7 +118,7 @@ class TestReviewAct(TestCase):
         self.assertRedirects(
             response,
             reverse('act_view', urlconf='gbe.urls', args=[act.pk]))
-        self.assertContains(response, 'Review Bids')
+        self.assertContains(response, 'Act Proposal')
 
     def test_review_act_non_privileged_user(self):
         login_as(ProfileFactory(), self)

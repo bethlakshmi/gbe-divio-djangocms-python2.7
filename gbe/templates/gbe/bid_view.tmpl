@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-   Review Bids
+   {{page_title}}
 {% endblock %}
 {% block head %}
 {% if awaiting_payment %}<meta http-equiv="refresh" content="10">{% endif %}
@@ -27,7 +27,7 @@
 <p class="lead text-center">{{ submit_message | safe }}</p>
 {% endif %}
   <div class="review-pane gbe-bg-light">
-    <h2 class="gbe-title">Bid Information</h2>
+    <h2 class="review-title gbe-title">{{view_title}}</h2>
      Submitted proposals cannot be modified, please contact the expo for any issues or concerns.  We'll be in contact during or after our review process.
 <div class="container">
   {% if readonlyform %}

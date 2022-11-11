@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -22,17 +21,20 @@ class TestReviewCostumeList(TestCase):
     '''Tests for review_costume_list view'''
     view_name = "costume_review_list"
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.performer = PersonaFactory()
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Costume Reviewers')
+        cls.conference = current_conference()
+        cls.costumes = CostumeFactory.create_batch(
+            4,
+            b_conference=cls.conference,
+            submitted=True)
+
     def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Costume Reviewers')
-        self.conference = current_conference()
-        self.costumes = CostumeFactory.create_batch(
-            4,
-            b_conference=self.conference,
-            submitted=True)
 
     def test_review_costume_all_well(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -41,8 +43,8 @@ class TestReviewCostumeList(TestCase):
             url,
             data={'conf_slug': self.conference.conference_slug})
 
-        nt.assert_equal(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Costume Proposals')
         for bid in self.costumes:
             self.assertContains(response, bid.b_title)
 
@@ -56,8 +58,8 @@ class TestReviewCostumeList(TestCase):
             url,
             data={'conf_slug': self.conference.conference_slug})
 
-        nt.assert_equal(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Costume Proposals')
         self.assertContains(response, costume.b_title)
         self.assertContains(response, self.performer.name)
 
@@ -67,7 +69,7 @@ class TestReviewCostumeList(TestCase):
         response = self.client.get(
             url,
             data={'conf_slug': self.conference.conference_slug})
-        nt.assert_equal(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_review_costume_no_profile(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -75,14 +77,14 @@ class TestReviewCostumeList(TestCase):
         response = self.client.get(
             url,
             data={'conf_slug': self.conference.conference_slug})
-        nt.assert_equal(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_review_costume_no_conf_slug(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(self.privileged_user, self)
         response = self.client.get(url)
 
-        nt.assert_equal(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         for acostume in self.costumes:
             self.assertContains(response, acostume.b_title)
 

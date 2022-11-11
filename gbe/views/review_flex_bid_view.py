@@ -95,22 +95,18 @@ class FlexibleReviewBidView(ReviewBidView):
         if 'next' in request.GET:
             self.actionURL = "%s?next=%s" % (self.actionURL,
                                              request.GET['next'])
+        context = super(FlexibleReviewBidView, self).make_context()
+        context.update({
+            'performer': self.object.performer,
+            'notes_form': self.notes_form,
+            'review_results': self.review_results,
+            'reviewers': self.reviewers,
+            'notes': self.notes,
+             })
         return render(
             request,
             self.review_template,
-            {'readonlyform': self.readonlyform_pieces,
-             'performer': self.object.performer,
-             'reviewer': self.reviewer,
-             'form': self.form,
-             'notes_form': self.notes_form,
-             'actionform': self.actionform,
-             'actionURL': self.actionURL,
-             'conference': self.b_conference,
-             'old_bid': self.old_bid,
-             'review_results': self.review_results,
-             'reviewers': self.reviewers,
-             'notes': self.notes,
-             })
+            context)
 
     def post_response_for_form(self, request):
         valid = True

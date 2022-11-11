@@ -1,7 +1,5 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.urls import reverse
-from django.test.client import RequestFactory
 from django.test import Client
 from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
@@ -26,29 +24,31 @@ class TestReviewActList(TestCase):
     '''Tests for review_act_list view'''
     view_name = 'act_review'
 
-    def setUp(self):
-        self.url = reverse(
-            self.view_name,
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse(
+            cls.view_name,
             urlconf='gbe.urls')
-        self.factory = RequestFactory()
-        self.client = Client()
-        self.performer = PersonaFactory()
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Act Reviewers')
-        self.conference = current_conference()
-        self.acts = ActFactory.create_batch(
+        cls.performer = PersonaFactory()
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Act Reviewers')
+        cls.conference = current_conference()
+        cls.acts = ActFactory.create_batch(
             4,
-            b_conference=self.conference,
+            b_conference=cls.conference,
             submitted=True)
+
+    def setUp(self):
+        self.client = Client()
 
     def test_review_act_list_all_well(self):
         login_as(self.privileged_user, self)
         response = self.client.get(
             self.url,
             data={'conf_slug': self.conference.conference_slug})
-        nt.assert_equal(response.status_code, 200)
-        self.assertContains(response, 'Bid Information')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Act Proposals')
 
     def test_review_act_list_inactive_user(self):
         inactive = ActFactory(
@@ -64,12 +64,12 @@ class TestReviewActList(TestCase):
     def test_review_act_bad_user(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url)
-        nt.assert_equal(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_review_act_no_profile(self):
         login_as(UserFactory(), self)
         response = self.client.get(self.url)
-        nt.assert_equal(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_review_act_assigned_show(self):
         context = ShowContext()
