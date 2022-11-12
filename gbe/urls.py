@@ -1,11 +1,4 @@
 from django.conf.urls import url
-from django.contrib.auth.views import (
-    LoginView,
-    PasswordResetCompleteView,
-    PasswordResetConfirmView,
-    PasswordResetDoneView,
-    PasswordResetView,
-)
 from gbe.views import (
     ActChangeStateView,
     ActTechWizardView,
@@ -223,11 +216,6 @@ urlpatterns = [
         FashionFaireView, name='fashion_faire'),
 
     #  site utility stuff
-    url(r'^login/?$',
-        LoginView.as_view(),
-        name='login'),
-    url(r'^accounts/login/?$',
-        LoginView.as_view()),
     url(r'^accounts/register/?$',
         RegisterView.as_view(),
         name='register'),
