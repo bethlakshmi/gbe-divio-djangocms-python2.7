@@ -181,6 +181,7 @@ POST_OFFICE = {
     'BATCH_SIZE': 30,
     'THREADS_PER_PROCESS': 1,
 }
+LOGOUT_REDIRECT_URL = "/gbe/"
 
 try:
     MC_API_KEY = os.environ["MC_API_KEY"]
