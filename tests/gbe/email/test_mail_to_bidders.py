@@ -109,8 +109,7 @@ class TestMailToBidders(TestMailFilters):
 
     def test_no_login_gives_error(self):
         response = self.client.get(self.url, follow=True)
-        redirect_url = "%s/?next=/email/mail_to_bidders" % (
-            reverse('login', urlconf='gbe.urls'))
+        redirect_url = "%s/?next=/email/mail_to_bidders" % (reverse('login'))
         self.assertRedirects(response, redirect_url)
         self.assertTrue(is_login_page(response))
 
