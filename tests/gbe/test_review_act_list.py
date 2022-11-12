@@ -16,7 +16,6 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from django.core.exceptions import PermissionDenied
 from gbe.models import EvaluationCategory
 
 

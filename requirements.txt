@@ -38,9 +38,9 @@ attrs==22.1.0
     # via pytest
 bleach==5.0.1
     # via django-post-office
-boto3==1.24.96
+boto3==1.26.5
     # via django-storages
-botocore==1.27.96
+botocore==1.29.5
     # via
     #   boto3
     #   s3transfer
@@ -128,8 +128,6 @@ django-model-utils==4.2.0
     # via -r /workspace/requirements.in
 django-mptt==0.14.0
     # via django-filer
-django-nose==1.4.7
-    # via -r /workspace/requirements.in
 django-parler==2.3
     # via aldryn-django-cms
 django-paypal==2.0
@@ -146,7 +144,7 @@ django-robots==5.0
     # via aldryn-django-cms
 django-sekizai==4.0.0
     # via django-cms
-django-select2==7.10.1
+django-select2==8.0.0
     # via aldryn-django-cms
 django-simple-captcha==0.5.17
     # via aldryn-django-cms
@@ -253,9 +251,11 @@ et-xmlfile==1.1.0
     # via openpyxl
 eventbrite==3.3.5
     # via -r /workspace/requirements.in
+exceptiongroup==1.0.1
+    # via pytest
 factory-boy==3.2.1
     # via -r /workspace/requirements.in
-faker==15.1.1
+faker==15.3.1
     # via factory-boy
 furl==2.1.3
     # via
@@ -286,8 +286,6 @@ markuppy==1.14
     # via tablib
 mock==4.0.3
     # via -r /workspace/requirements.in
-nose==1.3.7
-    # via django-nose
 odfpy==1.4.1
     # via tablib
 openpyxl==3.0.10
@@ -298,7 +296,7 @@ packaging==21.3
     # via pytest
 pep8==1.7.1
     # via -r /workspace/requirements.in
-pillow==9.2.0
+pillow==9.3.0
     # via
     #   -r /workspace/requirements.in
     #   django-simple-captcha
@@ -307,17 +305,15 @@ pillow==9.2.0
     #   reportlab
 pluggy==1.0.0
     # via pytest
-psycopg2==2.9.4
+psycopg2==2.9.5
     # via aldryn-django
-py==1.11.0
-    # via pytest
 pyparsing==3.0.9
     # via packaging
 pytest-cov==4.0.0
     # via -r /workspace/requirements.in
 pytest-django==4.5.2
     # via -r /workspace/requirements.in
-pytest==7.1.3
+pytest==7.2.0
     # via
     #   -r /workspace/requirements.in
     #   pytest-cov
@@ -326,7 +322,7 @@ python-dateutil==2.8.2
     # via
     #   botocore
     #   faker
-pytz==2022.5
+pytz==2022.6
     # via
     #   -r /workspace/requirements.in
     #   django
@@ -336,7 +332,7 @@ pyyaml==6.0
     # via tablib
 rcssmin==1.1.0
     # via django-compressor
-reportlab==3.6.10
+reportlab==3.6.12
     # via
     #   -r /workspace/requirements.in
     #   easy-thumbnails
@@ -392,7 +388,7 @@ urllib3==1.26.12
     #   botocore
     #   requests
     #   sentry-sdk
-uwsgi==2.0.20
+uwsgi==2.0.21
     # via aldryn-django
 webencodings==0.5.1
     # via

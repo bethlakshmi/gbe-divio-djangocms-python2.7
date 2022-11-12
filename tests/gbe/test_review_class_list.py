@@ -17,7 +17,6 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 
-from django.core.exceptions import PermissionDenied
 
 
 class TestReviewClassList(TestCase):

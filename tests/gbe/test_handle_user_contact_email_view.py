@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -24,10 +23,10 @@ class TestHandleUserContactEmailView(TestCase):
         data = self.get_form()
         with self.settings(USER_CONTACT_RECIPIENT_ADDRESSES=['a@b.com']):
             response = self.client.post(url, data=data, follow=True)
-            nt.assert_equal(200, response.status_code)
+            self.assertEqual(200, response.status_code)
 
     def test_user_contact_email_invalid_form(self):
         url = reverse(self.view_name, urlconf='gbe.urls')
         data = self.get_form(invalid=True)
         response = self.client.post(url, data=data, follow=True)
-        nt.assert_equal(200, response.status_code)
+        self.assertEqual(200, response.status_code)

@@ -14,8 +14,6 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 
-from django.core.exceptions import PermissionDenied
-
 
 class TestReviewCostumeList(TestCase):
     '''Tests for review_costume_list view'''
