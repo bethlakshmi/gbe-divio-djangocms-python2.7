@@ -1,5 +1,4 @@
 from django.urls import reverse
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (

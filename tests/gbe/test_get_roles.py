@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
@@ -19,8 +18,9 @@ from tests.functions.scheduler_functions import (
 class TestGetRoles(TestCase):
     '''Tests that a profile will return all the possible roles'''
 
-    def setUp(self):
-        self.conference = ConferenceFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.conference = ConferenceFactory()
 
     def test_basic_profile(self):
         '''
@@ -28,7 +28,7 @@ class TestGetRoles(TestCase):
         '''
         profile = ProfileFactory()
         result = profile.get_roles(self.conference)
-        nt.assert_equal(len(result), 0)
+        self.assertEqual(len(result), 0)
 
     def test_basic_persona(self):
         '''
@@ -36,7 +36,7 @@ class TestGetRoles(TestCase):
         '''
         persona = PersonaFactory()
         result = persona.performer_profile.get_roles(self.conference)
-        nt.assert_equal(len(result), 0)
+        self.assertEqual(len(result), 0)
 
     def test_unbooked_performer(self):
         '''
@@ -45,7 +45,7 @@ class TestGetRoles(TestCase):
         act = ActFactory(b_conference=self.conference)
         profile = act.performer.performer_profile
         result = profile.get_roles(self.conference)
-        nt.assert_equal(len(result), 0)
+        self.assertEqual(len(result), 0)
 
     def test_booked_performer(self):
         '''
@@ -59,7 +59,7 @@ class TestGetRoles(TestCase):
             show)
         profile = act.performer.performer_profile
         result = profile.get_roles(self.conference)
-        nt.assert_equal(result, ["Performer"])
+        self.assertEqual(result, ["Performer"])
 
     def test_teacher(self):
         '''
@@ -71,7 +71,7 @@ class TestGetRoles(TestCase):
             "Teacher")
         result = persona.performer_profile.get_roles(
             booking.event.eventitem.e_conference)
-        nt.assert_equal(result, ["Teacher"])
+        self.assertEqual(result, ["Teacher"])
 
     def test_staff_lead(self):
         '''
@@ -80,7 +80,7 @@ class TestGetRoles(TestCase):
         context = StaffAreaContext()
         result = context.staff_lead.get_roles(
             context.conference)
-        nt.assert_equal(result, ["Staff Lead"])
+        self.assertEqual(result, ["Staff Lead"])
 
     def test_overcommitment_addict(self):
         '''
@@ -107,5 +107,5 @@ class TestGetRoles(TestCase):
 
         result = persona.performer_profile.get_roles(
             self.conference)
-        nt.assert_equal(sorted(result),
-                        ["Performer", "Staff Lead", "Teacher"])
+        self.assertEqual(sorted(result),
+                         ["Performer", "Staff Lead", "Teacher"])

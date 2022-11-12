@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -6,7 +5,6 @@ from tests.factories.gbe_factories import (
     CostumeFactory,
     ProfileFactory
 )
-from django.core.exceptions import PermissionDenied
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -34,7 +32,7 @@ class TestCostumeChangestate(TestCase):
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=self.data)
-        nt.assert_equal(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_costume_changestate_unauthorized_user(self):
         '''A regular user is changing the state, it fails'''
@@ -43,4 +41,4 @@ class TestCostumeChangestate(TestCase):
                       urlconf='gbe.urls')
         login_as(ProfileFactory(), self)
         response = self.client.post(url, data=self.data)
-        nt.assert_equal(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)

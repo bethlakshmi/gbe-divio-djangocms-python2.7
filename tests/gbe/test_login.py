@@ -1,4 +1,3 @@
-import nose.tools as nt
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -12,11 +11,14 @@ class TestIndex(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.url = reverse('home', urlconf='gbe.urls')
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse('home', urlconf='gbe.urls')
 
         # User/Human setup
-        self.profile = ProfileFactory(user_object__email="different",
-                                      user_object__username="something")
+        cls.profile = ProfileFactory(user_object__email="different",
+                                     user_object__username="something")
 
     def test_login_w_email(self):
         '''Basic test of landing_page view

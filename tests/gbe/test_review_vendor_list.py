@@ -1,5 +1,4 @@
 import gbe.models as conf
-import nose.tools as nt
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
@@ -16,8 +15,6 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-
-from django.core.exceptions import PermissionDenied
 
 
 class TestReviewVendorList(TestCase):

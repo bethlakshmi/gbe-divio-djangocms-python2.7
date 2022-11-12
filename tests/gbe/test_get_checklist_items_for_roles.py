@@ -1,5 +1,3 @@
-from django.core.exceptions import PermissionDenied
-import nose.tools as nt
 from django.test import TestCase
 from tests.factories.ticketing_factories import (
     RoleEligibilityConditionFactory,
@@ -19,15 +17,16 @@ from gbe.ticketing_idd_interface import get_checklist_items_for_roles
 class TestGetCheckListForRoles(TestCase):
     '''Tests that checklists are built based on roles'''
 
-    def setUp(self):
-        self.role_condition = RoleEligibilityConditionFactory()
-        self.teacher = PersonaFactory()
-        booking = book_worker_item_for_role(self.teacher,
-                                            self.role_condition.role)
-        self.conference = booking.event.eventitem.get_conference()
-        self.schedule = get_schedule(
-                self.teacher.performer_profile.user_object,
-                labels=[self.conference.conference_slug]).schedule_items
+    @classmethod
+    def setUpTestData(cls):
+        cls.role_condition = RoleEligibilityConditionFactory()
+        cls.teacher = PersonaFactory()
+        booking = book_worker_item_for_role(cls.teacher,
+                                            cls.role_condition.role)
+        cls.conference = booking.event.eventitem.get_conference()
+        cls.schedule = get_schedule(
+                cls.teacher.performer_profile.user_object,
+                labels=[cls.conference.conference_slug]).schedule_items
 
     def test_no_role(self):
         '''
@@ -41,7 +40,7 @@ class TestGetCheckListForRoles(TestCase):
             no_schedule,
             [])
 
-        nt.assert_equal(len(checklist_items), 0)
+        self.assertEqual(len(checklist_items), 0)
 
     def test_no_role_this_conference(self):
         '''
@@ -49,7 +48,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
         checklist_items = get_checklist_items_for_roles([], [])
 
-        nt.assert_equal(len(checklist_items), 0)
+        self.assertEqual(len(checklist_items), 0)
 
     def test_role_match_happens(self):
         '''
@@ -60,8 +59,8 @@ class TestGetCheckListForRoles(TestCase):
             self.schedule,
             [])
 
-        nt.assert_equal(len(checklist_items), 1)
-        nt.assert_equal(checklist_items["Teacher"],
+        self.assertEqual(len(checklist_items), 1)
+        self.assertEqual(checklist_items["Teacher"],
                         [self.role_condition.checklistitem])
 
     def test_multiple_role_match_happens(self):
@@ -85,10 +84,10 @@ class TestGetCheckListForRoles(TestCase):
             self.schedule,
             [])
 
-        nt.assert_equal(len(checklist_items), 2)
-        nt.assert_equal(checklist_items['Teacher'],
+        self.assertEqual(len(checklist_items), 2)
+        self.assertEqual(checklist_items['Teacher'],
                         [self.role_condition.checklistitem])
-        nt.assert_equal(checklist_items["Staff Lead"],
+        self.assertEqual(checklist_items["Staff Lead"],
                         [another_role.checklistitem])
         another_role.delete()
 
@@ -103,8 +102,8 @@ class TestGetCheckListForRoles(TestCase):
             self.schedule,
             [])
 
-        nt.assert_equal(len(checklist_items), 1)
-        nt.assert_equal(checklist_items["Teacher"],
+        self.assertEqual(len(checklist_items), 1)
+        self.assertEqual(checklist_items["Teacher"],
                         [self.role_condition.checklistitem,
                          another_match.checklistitem])
         another_match.delete()
@@ -132,7 +131,4 @@ class TestGetCheckListForRoles(TestCase):
             self.schedule,
             [])
 
-        nt.assert_equal(len(checklist_items), 0)
-
-    def tearDown(self):
-        self.role_condition.delete()
+        self.assertEqual(len(checklist_items), 0)

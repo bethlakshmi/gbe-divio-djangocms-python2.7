@@ -1,6 +1,4 @@
-import nose.tools as nt
 from django.test import TestCase
-
 from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceFactory,
@@ -17,11 +15,12 @@ from tests.functions.scheduler_functions import (
 class TestHasRoleInEvent(TestCase):
     '''Tests that a profile will return all the possible roles'''
 
-    def setUp(self):
-        self.persona = PersonaFactory()
-        self.role = "Teacher"
-        self.booking = book_worker_item_for_role(self.persona,
-                                                 self.role)
+    @classmethod
+    def setUpTestData(cls):
+        cls.persona = PersonaFactory()
+        cls.role = "Teacher"
+        cls.booking = book_worker_item_for_role(cls.persona,
+                                                cls.role)
 
     def test_basic_profile_teacher(self):
         '''
@@ -30,7 +29,7 @@ class TestHasRoleInEvent(TestCase):
         profile = ProfileFactory()
         result = profile.has_role_in_event(self.role,
                                            self.booking.event.eventitem)
-        nt.assert_false(result)
+        self.assertFalse(result)
 
     def test_unbooked_performer(self):
         '''
@@ -40,7 +39,7 @@ class TestHasRoleInEvent(TestCase):
         profile = act.performer.performer_profile
         result = profile.has_role_in_event("Performer",
                                            self.booking)
-        nt.assert_false(result)
+        self.assertFalse(result)
 
     def test_booked_performer(self):
         '''
@@ -54,7 +53,7 @@ class TestHasRoleInEvent(TestCase):
         profile = act.performer.performer_profile
         result = profile.has_role_in_event("Performer",
                                            show)
-        nt.assert_true(result)
+        self.assertTrue(result)
 
     def test_teacher(self):
         '''
@@ -67,4 +66,4 @@ class TestHasRoleInEvent(TestCase):
         result = persona.performer_profile.has_role_in_event(
             "Teacher",
             booking.event.eventitem)
-        nt.assert_true(result)
+        self.assertTrue(result)
