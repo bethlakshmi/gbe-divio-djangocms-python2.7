@@ -47,11 +47,14 @@ def get_participant_form(profile, prefix='Contact Info'):
 # base form to play well with the inheritance in bid review
 def make_show_casting_form(conference, base_form, start, casting):
     choices = []
-    response = get_occurrences(
-        foreign_event_ids=Show.objects.filter(
-            e_conference=conference).values_list('eventitem_id', flat=True))
-    for occurrence in response.occurrences:
-        choices += [(occurrence.eventitem.pk, str(occurrence))]
+    if Show.objects.filter(e_conference=conference).exists():
+        response = get_occurrences(
+            foreign_event_ids=Show.objects.filter(
+                e_conference=conference).values_list('eventitem_id',
+                                                     flat=True),
+            labels=[conference.conference_slug])
+        for occurrence in response.occurrences:
+            choices += [(occurrence.eventitem.pk, str(occurrence))]
     base_form.fields['show'] = ChoiceField(
         choices=choices,
         label='Pick a Show',
