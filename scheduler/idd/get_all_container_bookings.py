@@ -1,7 +1,4 @@
-from scheduler.models import (
-    EventContainer,
-    ResourceAllocation,
-)
+from scheduler.models import ResourceAllocation
 from scheduler.data_transfer import (
     PeopleResponse,
     Person,

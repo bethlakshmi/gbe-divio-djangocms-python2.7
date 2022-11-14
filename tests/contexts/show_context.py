@@ -9,7 +9,6 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.scheduler_factories import (
-    EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
     OrderingFactory,
@@ -117,13 +116,12 @@ class ShowContext:
         slot = SchedEventFactory(
             eventitem=rehearsal.eventitem_ptr,
             starttime=start_time,
-            max_commitments=10)
+            max_commitments=10,
+            parent=self.sched_event)
         if room:
             ResourceAllocationFactory(
                 event=slot,
                 resource=LocationFactory(_item=self.room))
-        EventContainerFactory(parent_event=self.sched_event,
-                              child_event=slot)
         EventLabelFactory(event=slot,
                           text=self.conference.conference_slug)
         return rehearsal, slot

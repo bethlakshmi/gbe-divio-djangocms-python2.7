@@ -138,9 +138,8 @@ class LandingPageView(ProfileRequiredMixin, View):
                         'Producer'):
                     manage_shows += [booking.event]
                 # staff leads often work a volunteer slot in the show
-                elif self.is_staff_lead and hasattr(booking.event,
-                                                    'container_event'):
-                    parent = booking.event.container_event.parent_event
+                elif self.is_staff_lead and hasattr(booking.event, 'parent'):
+                    parent = booking.event.parent
                     if parent not in manage_shows and Show.objects.filter(
                             eventitem_id=parent.eventitem.eventitem_id
                             ).exists() and parent not in manage_shows:

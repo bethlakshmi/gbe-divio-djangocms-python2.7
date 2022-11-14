@@ -28,14 +28,11 @@ class EventItem (Model):
                            'Panelist',
                            'Moderator',
                            'Staff Lead']):
-        from scheduler.models import EventContainer
         try:
-            container = EventContainer.objects.filter(
-                child_event__eventitem=self).first()
             people = Worker.objects.filter(
                 (Q(allocations__event__eventitem=self) &
                  Q(role__in=roles)) |
-                (Q(allocations__event=container.parent_event) &
+                (Q(allocations__event__children__eventitem=self) &
                  Q(role__in=roles))).distinct().order_by(
                 'role', '_item')
         except:
