@@ -101,12 +101,3 @@ class SchedulerChangeListTests(TestCase):
         response = self.client.get('/admin/scheduler/resourceallocation/',
                                    follow=True)
         self.assertContains(response, "No Location Item")
-
-    def test_get_eventcontainer(self):
-        context = ShowContext()
-        rehearsal, slot = context.make_rehearsal()
-        response = self.client.get('/admin/scheduler/eventcontainer/',
-                                   follow=True)
-        self.assertContains(response, rehearsal.e_title)
-        self.assertContains(response, context.show.e_title)
-        self.assertContains(response, context.conference.conference_name)

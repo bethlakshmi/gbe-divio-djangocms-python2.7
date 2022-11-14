@@ -5,7 +5,6 @@ from django.db.models import (
     ForeignKey,
 )
 from gbe.models import Event
-from scheduler.models import EventContainer
 from gbetext import (
     calendar_for_event,
     event_options,

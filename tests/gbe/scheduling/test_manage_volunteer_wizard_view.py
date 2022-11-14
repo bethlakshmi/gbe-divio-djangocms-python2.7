@@ -8,7 +8,6 @@ from tests.factories.gbe_factories import (
 )
 from scheduler.models import (
     Event,
-    EventContainer,
     EventLabel,
 )
 from tests.functions.gbe_functions import (
@@ -115,14 +114,14 @@ class TestManageVolunteerWizard(TestCase):
             self.url,
             data=self.get_new_opp_data(self.context),
             follow=True)
-        opps = EventContainer.objects.filter(
-            parent_event=self.context.sched_event).exclude(
-            child_event=self.context.opp_event)
+        opps = Event.objects.filter(
+            parent=self.context.sched_event).exclude(
+            pk=self.context.opp_event.pk)
         self.assertTrue(opps.exists())
         for opp in opps:
-            self.assertEqual(opp.child_event.eventitem.child().e_title,
+            self.assertEqual(opp.eventitem.child().e_title,
                              'New Volunteer Opportunity')
-            self.assertTrue(opp.child_event.approval_needed)
+            self.assertTrue(opp.approval_needed)
             self.assertRedirects(
                 response,
                 "%s?changed_id=%d&volunteer_open=True" % (
@@ -130,14 +129,14 @@ class TestManageVolunteerWizard(TestCase):
                             urlconf='gbe.scheduling.urls',
                             args=[self.context.conference.conference_slug,
                                   self.context.sched_event.pk]),
-                    opp.child_event.pk))
+                    opp.pk))
             self.assertEqual(EventLabel.objects.filter(
-                text=opp.child_event.eventitem.child(
+                text=opp.eventitem.child(
                     ).e_conference.conference_slug,
-                event=opp.child_event).count(), 1)
+                event=opp).count(), 1)
             self.assertEqual(EventLabel.objects.filter(
                 text="Volunteer",
-                event=opp.child_event).count(), 1)
+                event=opp).count(), 1)
 
         self.assertContains(
             response,
@@ -236,8 +235,8 @@ class TestManageVolunteerWizard(TestCase):
             data=data,
             follow=True)
         self.assertEqual(response.status_code, 200)
-        opps = EventContainer.objects.filter(
-            parent_event=self.context.sched_event).count()
+        opps = Event.objects.filter(
+            parent=self.context.sched_event).count()
         self.assertEqual(opps, 1)
         self.assertContains(
             response,
@@ -252,12 +251,11 @@ class TestManageVolunteerWizard(TestCase):
             self.url,
             data=data,
             follow=True)
-        opps = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
+        opps = Event.objects.filter(parent=self.context.sched_event)
         self.assertTrue(len(opps), 2)
         for opp in opps:
             checked = ""
-            if opp.child_event.approval_needed:
+            if opp.approval_needed:
                 checked = "checked "
             self.assertContains(
                 response,
@@ -268,9 +266,9 @@ class TestManageVolunteerWizard(TestCase):
                 response,
                 ('<input type="text" name="e_title" value="%s" ' +
                  'maxlength="128" required id="id_e_title" />') % (
-                 opp.child_event.eventitem.child().e_title),
+                 opp.eventitem.child().e_title),
                 html=True)
-            if opp.child_event != self.context.opp_event:
+            if opp != self.context.opp_event:
                 self.assertRedirects(
                     response,
                     "%s?changed_id=%d&volunteer_open=True" % (reverse(
@@ -278,7 +276,7 @@ class TestManageVolunteerWizard(TestCase):
                         urlconf='gbe.scheduling.urls',
                         args=[self.context.conference.conference_slug,
                               self.context.sched_event.pk]),
-                                          opp.child_event.pk))
+                                          opp.pk))
 
     def test_edit_opportunity(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -296,10 +294,10 @@ class TestManageVolunteerWizard(TestCase):
                         args=[self.context.conference.conference_slug,
                               self.context.sched_event.pk]),
                 self.context.opp_event.pk))
-        opps = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
+        opps = Event.objects.filter(
+            parent=self.context.sched_event)
         self.assertTrue(len(opps), 1)
-        self.assertTrue(opps[0].child_event.approval_needed)
+        self.assertTrue(opps[0].approval_needed)
         self.assertContains(
             response,
             '<input type="text" name="e_title" value="Modify Volunteer ' +
@@ -321,8 +319,7 @@ class TestManageVolunteerWizard(TestCase):
                         args=[self.context.conference.conference_slug,
                               self.context.sched_event.pk]),
                 self.context.opp_event.pk))
-        opps = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
+        opps = Event.objects.filter(parent=self.context.sched_event)
         self.assertTrue(len(opps), 1)
         self.assertContains(response, self.room.name)
 
@@ -358,9 +355,8 @@ class TestManageVolunteerWizard(TestCase):
             follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Modify Volunteer Opportunity')
-        opps = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
-        self.assertFalse(opps.exists())
+        self.assertFalse(
+            Event.objects.filter(parent=self.context.sched_event).exists())
 
     def test_weird_action(self):
         special_context = VolunteerContext(event=GenericEventFactory())
@@ -394,7 +390,6 @@ class TestManageVolunteerWizard(TestCase):
             follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Modify Volunteer Opportunity')
-        opps = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
-        self.assertTrue(opps.exists())
+        self.assertTrue(
+            Event.objects.filter(parent=self.context.sched_event).exists())
         self.assertContains(response, "Volunteer Allocation")
