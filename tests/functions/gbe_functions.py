@@ -140,6 +140,7 @@ def assert_email_template_used(
         email=settings.DEFAULT_FROM_EMAIL,
         outbox_size=1,
         message_index=0):
+    print(len(mail.outbox))
     assert outbox_size == len(mail.outbox)
     msg = mail.outbox[message_index]
     assert msg.subject == expected_subject
