@@ -35,6 +35,7 @@
                     <input type="submit" value="{% if not occurrence.highlight %}{% if occurrence.approval_needed %}Offer to Help!{% else %}Sign Me Up!{% endif %}{% else %}Withdraw{% endif %}" name="submit_done" class="btn gbe-btn-primary">
                     <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
                 </div>
+                {% csrf_token %}
                 </form>
               </div></div></div>
 <!-- Event Modal End -->
