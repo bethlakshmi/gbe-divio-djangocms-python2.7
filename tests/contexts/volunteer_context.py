@@ -54,7 +54,8 @@ class VolunteerContext():
             self.sched_event = SchedEventFactory(
                 eventitem=self.event.eventitem_ptr,
                 starttime=datetime.combine(self.conf_day.day,
-                                           time(12, 0, 0)))
+                                           time(12, 0, 0)),
+                slug="Show%d" % self.event.pk)
             ResourceAllocationFactory(
                 event=self.sched_event,
                 resource=LocationFactory(_item=self.room))
