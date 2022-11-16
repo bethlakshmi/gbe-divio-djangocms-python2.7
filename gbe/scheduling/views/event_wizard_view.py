@@ -127,7 +127,7 @@ class EventWizardView(View):
             validity = form.is_valid() or validity
         return validity
 
-    def book_event(self, scheduling_form, people_formset, working_class, slug):
+    def book_event(self, scheduling_form, people_formset, working_class):
         start_time = get_start_time(scheduling_form.cleaned_data)
         labels = [self.conference.conference_slug]
         if working_class.calendar_type:
@@ -147,8 +147,7 @@ class EventWizardView(View):
                 people=people,
                 locations=[scheduling_form.cleaned_data['location']],
                 labels=labels,
-                approval=scheduling_form.cleaned_data['approval'],
-                slug=slug)
+                approval=scheduling_form.cleaned_data['approval'])
         return response
 
     def finish_booking(self, request, response, day_pk):

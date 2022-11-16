@@ -176,11 +176,9 @@ class ClassWizardView(EventWizardView):
                     working_class.b_conference = self.conference
 
                 working_class.save()
-                response = self.book_event(
-                    context['scheduling_form'],
-                    context['worker_formset'],
-                    working_class,
-                    context['third_form'].cleaned_data['slug'])
+                response = self.book_event(context['scheduling_form'],
+                                           context['worker_formset'],
+                                           working_class)
                 success = self.finish_booking(
                     request,
                     response,

@@ -15,8 +15,7 @@ def create_occurrence(foreign_event_id,
                       locations=[],
                       parent_event_id=None,
                       labels=[],
-                      approval=False,
-                      slug=None):
+                      approval=False):
     if parent_event_id:
         parent_response = get_occurrence(parent_event_id)
         if parent_response.errors:
@@ -28,8 +27,7 @@ def create_occurrence(foreign_event_id,
         starttime=start_time,
         max_volunteer=max_volunteer,
         max_commitments=max_commitments,
-        approval_needed=approval,
-        slug=slug)
+        approval_needed=approval)
 
     if parent_event_id:
         response.occurrence.parent =  parent_response.occurrence

@@ -32,7 +32,6 @@ class ClassBookingForm(EventBookingForm):
         model = Class
         fields = ['type',
                   'e_title',
-                  'slug',
                   'e_description',
                   'maximum_enrollment',
                   'fee',

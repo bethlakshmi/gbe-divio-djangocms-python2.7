@@ -150,11 +150,9 @@ class TicketedEventWizardView(EventWizardView):
                 minutes=context['scheduling_form'].cleaned_data[
                     'duration']*60)
             new_event.save()
-            response = self.book_event(
-                context['scheduling_form'],
-                context['worker_formset'],
-                new_event,
-                context['second_form'].cleaned_data['slug'])
+            response = self.book_event(context['scheduling_form'],
+                                       context['worker_formset'],
+                                       new_event)
             if context['tickets']:
                 self.setup_ticket_links(request, new_event, context['tickets'])
             success = self.finish_booking(
