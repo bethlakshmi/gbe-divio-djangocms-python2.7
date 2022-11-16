@@ -32,7 +32,7 @@ def create_occurrence(foreign_event_id,
         slug=slug)
 
     if parent_event_id:
-        response.occurrence.parent = parent_response.occurrence
+        response.occurrence.parent =  parent_response.occurrence
 
     response.occurrence.save()
 

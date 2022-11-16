@@ -12,7 +12,6 @@ def migrate_event_inheritance(apps, schema_editor):
             str(relation.child_event),
             str(relation.parent_event)))
 
-
 def reverse_event_inheritance(apps, schema_editor):
     EventContainer = apps.get_model("scheduler", "EventContainer")
     Event = apps.get_model("scheduler", "Event")
@@ -24,7 +23,6 @@ def reverse_event_inheritance(apps, schema_editor):
             print("reverted %s with parent %s" % (
                 str(container.child_event),
                 str(container.parent_event)))
-
 
 class Migration(migrations.Migration):
 
