@@ -14,12 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='parent',
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                to='scheduler.event',
-                related_name='children'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='scheduler.event'),
         ),
         migrations.AddField(
             model_name='event',
