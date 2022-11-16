@@ -16,7 +16,8 @@ def update_occurrence(occurrence_id,
                       locations=None,
                       approval=None,
                       parent_event_id=None,
-                      labels=None):
+                      labels=None,
+                      slug=None):
     response = get_occurrence(occurrence_id)
     if response.errors:
         return response
@@ -30,6 +31,8 @@ def update_occurrence(occurrence_id,
         occurrence.max_commitments = max_commitments
     if approval is not None:
         occurrence.approval_needed = approval
+    if slug is not None:
+        occurrence.slug = slug
 
     if parent_event_id is not None:
         if parent_event_id > -1:
@@ -40,7 +43,7 @@ def update_occurrence(occurrence_id,
         else:
             occurrence.parent = None
 
-    if start_time or max_volunteer or approval or max_commitments or (
+    if start_time or max_volunteer or approval or max_commitments or slug or (
             parent_event_id is not None):
         occurrence.save()
 

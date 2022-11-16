@@ -50,6 +50,7 @@ class EventItemAdmin(admin.ModelAdmin):
 class EventAdmin(ImportExportModelAdmin):
     list_display = ('id',
                     'eventitem',
+                    'slug',
                     'starttime',
                     'max_volunteer',
                     'max_commitments',

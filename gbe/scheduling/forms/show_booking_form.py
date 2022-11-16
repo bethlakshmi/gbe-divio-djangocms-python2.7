@@ -12,7 +12,7 @@ class ShowBookingForm(EventBookingForm):
         model = Show
         fields = [
             'e_title',
-            'cue_sheet',
+            'slug',
             'e_description',
             'e_conference', ]
         help_texts = event_help_texts

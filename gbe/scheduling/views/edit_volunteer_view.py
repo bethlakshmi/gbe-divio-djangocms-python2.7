@@ -162,7 +162,8 @@ class EditVolunteerView(ManageWorkerView):
                     context['scheduling_form'].cleaned_data['location']],
                 approval=context['scheduling_form'].cleaned_data['approval'],
                 labels=labels,
-                parent_event_id=parent_id)
+                parent_event_id=parent_id,
+                slug=context['event_form'].cleaned_data['slug'])
 
             if request.POST.get('edit_event', 0) != "Save and Continue":
                 self.success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
