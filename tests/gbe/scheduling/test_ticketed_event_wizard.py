@@ -64,6 +64,7 @@ class TestTicketedEventWizard(TestScheduling):
             'type': 'Master',
             'e_title': "Test Event Wizard",
             'e_description': 'Description',
+            'slug': "MasterSlug",
             'e_conference': self.current_conference.pk,
             'max_volunteer': 1,
             'day': self.day.pk,
@@ -202,6 +203,7 @@ class TestTicketedEventWizard(TestScheduling):
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['e_title'])
+        self.assertEqual(occurrence.slug, "MasterSlug")
 
     def test_create_master_w_staffing(self):
         login_as(self.privileged_user, self)
@@ -290,7 +292,7 @@ class TestTicketedEventWizard(TestScheduling):
         login_as(self.privileged_user, self)
         data = self.edit_class()
         data['type'] = "Special"
-        data['cue_sheet'] = "Alternate"
+        data['slug'] = "ShowSlug"
         data['alloc_0-role'] = "Producer"
         data['alloc_1-role'] = "Technical Director"
         data['alloc_0-worker'] = self.privileged_user.pk
@@ -319,7 +321,7 @@ class TestTicketedEventWizard(TestScheduling):
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertEqual(
-            new_show.cue_sheet, "Alternate"
+            occurrence.slug, "ShowSlug"
         )
 
     def test_create_special_w_staffing(self):

@@ -315,6 +315,7 @@ class TestCopyStaffArea(TestGBE):
         new_occurrences = []
         for occurrence in Event.objects.filter(pk__gt=max_pk):
             new_occurrences += [occurrence.pk]
+            self.assertEqual(occurrence.slug, self.vol_opp.slug)
         redirect_url = "%s?%s-day=%d&filter=Filter&new=%s&alt_id=%s" % (
             reverse('manage_event_list',
                     urlconf='gbe.scheduling.urls',

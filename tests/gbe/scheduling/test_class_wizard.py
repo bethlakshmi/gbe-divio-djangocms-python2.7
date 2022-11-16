@@ -62,6 +62,7 @@ class TestClassWizard(TestScheduling):
             'type': 'Panel',
             'e_title': "Test Class Wizard #%d" % self.test_class.eventitem_id,
             'e_description': 'Description',
+            'slug': "ClassSlug",
             'maximum_enrollment': 10,
             'fee': 0,
             'max_volunteer': 0,
@@ -263,6 +264,7 @@ class TestClassWizard(TestScheduling):
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['e_title'])
+        self.assertEqual(occurrence[0].slug, "ClassSlug")
 
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)
@@ -297,6 +299,7 @@ class TestClassWizard(TestScheduling):
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['e_title'])
+        self.assertEqual(occurrence.slug, "ClassSlug")
 
     def test_auth_user_create_class_no_teacher(self):
         login_as(self.privileged_user, self)
