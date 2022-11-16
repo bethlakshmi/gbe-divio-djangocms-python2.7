@@ -124,7 +124,7 @@ class ManageEventsView(View):
                     urlconf='gbe.scheduling.urls',
                     args=[self.conference.conference_slug,
                           occurrence.pk])
-            if hasattr(occurrence, 'parent'):
+            if occurrence.parent is not None:
                 parent = occurrence.parent
                 display_item['parent_title'] = parent.eventitem.event.e_title
                 display_item['parent_link'] = reverse(
