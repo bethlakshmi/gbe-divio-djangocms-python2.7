@@ -243,7 +243,7 @@ class ActTechWizardView(View):
             elif GenericEvent.objects.filter(
                     eventitem_id=item.event.eventitem.eventitem_id,
                     type='Rehearsal Slot').exists():
-                show_key = item.event.parent.pk
+                show_key = item.event.container_event.parent_event.pk
                 self.rehearsals[show_key] = item
         if len(self.shows) == 0:
             raise Http404

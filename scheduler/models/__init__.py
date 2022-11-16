@@ -9,6 +9,7 @@ from .event_item import EventItem
 from .event import Event
 from .resource_allocation import ResourceAllocation
 from .event_label import EventLabel
+from .event_container import EventContainer
 from .label import Label
 from .ordering import Ordering
 

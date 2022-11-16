@@ -4,7 +4,6 @@ from django.db.models import (
     DateTimeField,
     ForeignKey,
     PositiveIntegerField,
-    SlugField,
 )
 from scheduler.models import (
     EventItem,
@@ -38,8 +37,6 @@ class Event(Schedulable):
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
     max_commitments = PositiveIntegerField(default=0)
-    parent = ForeignKey("self", on_delete=CASCADE, null=True, blank=True)
-    slug = SlugField(null=True)
 
     def has_commitment_space(self, commitment_class_name):
         from scheduler.models import Ordering

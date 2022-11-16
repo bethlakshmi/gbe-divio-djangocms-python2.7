@@ -8,6 +8,7 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.scheduler_factories import (
+    EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
     OrderingFactory,
@@ -84,8 +85,10 @@ class ActTechInfoContext():
         rehearsal_event = SchedEventFactory(
             eventitem=rehearsal.eventitem_ptr,
             max_commitments=10,
-            starttime=self.sched_event.starttime,
-            parent=s_event)
+            starttime=self.sched_event.starttime)
+        event_container = EventContainerFactory(
+            child_event=rehearsal_event,
+            parent_event=s_event)
         EventLabelFactory(event=rehearsal_event,
                           text=self.conference.conference_slug)
         if act:

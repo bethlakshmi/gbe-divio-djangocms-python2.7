@@ -89,8 +89,9 @@ class ApproveVolunteerView(View):
                 'status': "",
                 'label': pending_person.label,
                 'action_links': action_links}
-            if hasattr(pending_person.occurrence, 'parent'):
-                row['parent_event'] = container.parent
+            if hasattr(pending_person.occurrence, 'container_event'):
+                container = pending_person.occurrence.container_event
+                row['parent_event'] = container.parent_event
             if pending_person.booking_id == self.changed_id:
                 row['status'] = 'gbe-table-success'
             elif not row['volunteer'].is_active:

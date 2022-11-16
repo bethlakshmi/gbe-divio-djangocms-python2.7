@@ -124,8 +124,8 @@ class ManageEventsView(View):
                     urlconf='gbe.scheduling.urls',
                     args=[self.conference.conference_slug,
                           occurrence.pk])
-            if hasattr(occurrence, 'parent'):
-                parent = occurrence.parent
+            if hasattr(occurrence, 'container_event'):
+                parent = occurrence.container_event.parent_event
                 display_item['parent_title'] = parent.eventitem.event.e_title
                 display_item['parent_link'] = reverse(
                     'edit_event',

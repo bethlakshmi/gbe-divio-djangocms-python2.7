@@ -45,7 +45,7 @@ class TicketingChangeListTests(TestCase):
             follow=True)
         self.assertContains(response, str(settings))
 
-    def test_get_conference(self):
+    def test_get_eventcontainer_conference(self):
         ticket = TicketItemFactory()
         response = self.client.get('/admin/ticketing/ticketitem/', follow=True)
         self.assertContains(response, str(ticket.ticketing_event.conference))

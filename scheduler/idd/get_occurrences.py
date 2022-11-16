@@ -31,7 +31,7 @@ def get_occurrences(parent_event_id=None,
         )
     if parent_event_id:
         filter_occurrences = filter_occurrences.filter(
-            parent__pk=parent_event_id)
+            container_event__parent_event__pk=parent_event_id)
     for label in labels:
         filter_occurrences = filter_occurrences.filter(
             eventlabel__text=label

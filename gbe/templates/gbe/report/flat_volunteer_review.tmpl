@@ -19,7 +19,7 @@
       <td>
         {% if conference.status != "completed" %}<a href="{% url 'scheduling:edit_event' conference.conference_slug opp.event.pk %}" class="gbe-table-link" data-toggle="tooltip" title="Edit">{% endif %}
           {{ opp.event.eventitem.event.e_title}}{% if conference.status != "completed" %}</a>{% endif %}</td>
-      <td>{{ opp.event.parent.eventitem.event.e_title}}</td>
+      <td>{{ opp.event.container_event.parent_event.eventitem.event.e_title}}</td>
       <td>{% for area in opp.areas %}{{area}}{% endfor %}</td>
       <td>{{ opp.event.location}}</td>
       <td>{{ opp.event.starttime|date:"M j, Y, g:i A"}}</td>

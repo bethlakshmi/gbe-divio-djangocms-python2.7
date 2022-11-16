@@ -8,6 +8,7 @@ from tests.factories.gbe_factories import (
     ShowFactory,
 )
 from tests.factories.scheduler_factories import (
+    EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
     ResourceAllocationFactory,
@@ -89,12 +90,12 @@ class VolunteerContext():
         opp_event = SchedEventFactory(
             eventitem=opportunity.eventitem_ptr,
             starttime=start_time,
-            max_volunteer=2,
-            parent=self.sched_event)
+            max_volunteer=2)
         ResourceAllocationFactory(
             event=opp_event,
             resource=LocationFactory(_item=self.room))
-
+        EventContainerFactory(parent_event=self.sched_event,
+                              child_event=opp_event)
         EventLabelFactory(event=opp_event,
                           text=self.conference.conference_slug)
         EventLabelFactory(event=opp_event,

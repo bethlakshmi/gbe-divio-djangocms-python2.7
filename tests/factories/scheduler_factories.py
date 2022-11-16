@@ -93,6 +93,14 @@ class LabelFactory(DjangoModelFactory):
         model = sched.Label
 
 
+class EventContainerFactory(DjangoModelFactory):
+    parent_event = SubFactory(SchedEventFactory)
+    child_event = SubFactory(SchedEventFactory)
+
+    class Meta:
+        model = sched.EventContainer
+
+
 class EventLabelFactory(DjangoModelFactory):
     text = Sequence(lambda x: "Label #%d" % x)
     event = SubFactory(SchedEventFactory)

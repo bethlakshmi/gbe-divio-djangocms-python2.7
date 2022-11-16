@@ -7,6 +7,7 @@ from tests.factories.gbe_factories import (
     StaffAreaFactory,
 )
 from tests.factories.scheduler_factories import (
+    EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
     ResourceAllocationFactory,

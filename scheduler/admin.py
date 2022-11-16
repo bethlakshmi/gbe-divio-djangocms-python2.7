@@ -61,6 +61,14 @@ class EventAdmin(ImportExportModelAdmin):
                    'approval_needed', ]
 
 
+class EventContainerAdmin(ImportExportModelAdmin):
+    list_display = ('parent_event', 'child_event', 'child_conf')
+    list_filter = ['parent_event__eventitem__event__e_conference']
+
+    def child_conf(self, obj):
+        return obj.child_event.eventitem.get_conference()
+
+
 class WorkerAdmin(admin.ModelAdmin):
     list_display = ('_item', 'role')
     list_filter = ['role', '_item']
@@ -104,6 +112,7 @@ class EventEvalGradeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Event, EventAdmin)
+admin.site.register(EventContainer, EventContainerAdmin)
 admin.site.register(EventItem, EventItemAdmin)
 admin.site.register(EventLabel, EventLabelAdmin)
 admin.site.register(Location)

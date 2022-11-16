@@ -1,5 +1,6 @@
 from scheduler.models import (
     Event,
+    EventContainer,
     EventItem,
     EventLabel,
 )
@@ -28,12 +29,7 @@ def create_occurrence(foreign_event_id,
         max_volunteer=max_volunteer,
         max_commitments=max_commitments,
         approval_needed=approval)
-
-    if parent_event_id:
-        response.occurrence.parent =  parent_response.occurrence
-
     response.occurrence.save()
-
     if len(locations) > 0:
         response.occurrence.set_locations(locations)
 
@@ -44,5 +40,11 @@ def create_occurrence(foreign_event_id,
     for label in labels:
         label = EventLabel(text=label, event=response.occurrence)
         label.save()
+
+    if parent_event_id:
+        family = EventContainer(
+            parent_event=parent_response.occurrence,
+            child_event=response.occurrence)
+        family.save()
 
     return response

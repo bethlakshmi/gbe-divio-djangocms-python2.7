@@ -14,6 +14,10 @@ from django.urls import reverse
 from scheduler.models import Event as sEvent
 from datetime import datetime, date, time
 import pytz
+from scheduler.models import (
+    Worker,
+    EventContainer
+)
 from tests.factories.scheduler_factories import ResourceAllocationFactory
 from tests.functions.gbe_functions import (
     clear_conferences,

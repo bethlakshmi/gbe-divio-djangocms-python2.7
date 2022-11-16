@@ -50,8 +50,8 @@ class EditVolunteerView(ManageWorkerView):
                 conference=self.item.e_conference,
                 slug__in=self.occurrence.labels).first()
         self.parent_id = -1
-        if hasattr(self.occurrence, 'parent'):
-            self.parent_id = self.occurrence.parent.pk
+        if hasattr(self.occurrence, 'container_event'):
+            self.parent_id = self.occurrence.container_event.parent_event.pk
         self.manage_worker_url = reverse('manage_workers',
                                          urlconf='gbe.scheduling.urls',
                                          args=[self.conference.conference_slug,
