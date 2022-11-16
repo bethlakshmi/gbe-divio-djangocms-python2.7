@@ -2,7 +2,7 @@
 {% load thumbnail %}
 
 {% block title %}
-  {{eventitem.event.e_conference.conference_slug}}: {{eventitem.event.e_title}}
+  Great Burlesque Exposition: {{eventitem.event.e_title}}
 {% endblock %}
 {% block head %}
       {% include "gray_grids_css.tmpl" %}
@@ -14,7 +14,7 @@
 {% endif %}
 
 <div class="mt-5 col-12">
-  <h2 class="gbe-title">{{eventitem}}</h2></div>
+  <h2 class="gbe-title">{{eventitem.event.e_title}}</h2></div>
     <div class="mx-3 col-12">
       {{eventitem.event.e_description |safe}}
         <label class="sched_label">Type:</label>&nbsp;&nbsp;{{eventitem.event.type}}<br>

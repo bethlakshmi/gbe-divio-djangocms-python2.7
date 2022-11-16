@@ -155,7 +155,7 @@ class VolunteerSignupView(View):
                     'staff_areas': StaffArea.objects.filter(
                         conference=self.conference,
                         slug__in=occurrence.labels)}
-                if occurrence.parent is not None:
+                if hasattr(occurrence, 'parent'):
                     occurrence_detail['parent_event'] = occurrence.parent
                 toggle_state = "on"
                 if role:
