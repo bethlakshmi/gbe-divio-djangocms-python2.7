@@ -9,7 +9,10 @@ from gbe.scheduling.forms import (
     CopyEventForm,
     CopyEventPickModeForm,
 )
-from scheduler.idd import get_occurrence
+from scheduler.idd import (
+    create_occurrence,
+    get_occurrence,
+)
 from gbe.scheduling.views.functions import (
     show_scheduling_occurrence_status,
 )

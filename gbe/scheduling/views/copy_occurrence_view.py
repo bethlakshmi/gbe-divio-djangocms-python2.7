@@ -117,8 +117,7 @@ class CopyOccurrenceView(CopyCollectionsView):
             locations=[new_event_room],
             parent_event_id=parent_event_id,
             labels=labels,
-            approval=occurrence.approval_needed,
-            slug=occurrence.slug
+            approval=occurrence.approval_needed
         )
         return response
 

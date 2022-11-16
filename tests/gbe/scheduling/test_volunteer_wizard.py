@@ -51,7 +51,6 @@ class TestVolunteerWizard(TestScheduling):
             'type': 'Volunteer',
             'e_conference': self.current_conference.pk,
             'e_title': "Test Volunteer Wizard #%d" % self.room.pk,
-            'slug': "VolunteerSlug",
             'e_description': 'Description',
             'max_volunteer': 0,
             'day': self.special_volunteer.conf_day.pk,
@@ -203,7 +202,6 @@ class TestVolunteerWizard(TestScheduling):
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['e_title'])
         self.assertTrue(occurrence.approval_needed)
-        self.assertEqual(occurrence.slug, "VolunteerSlug")
 
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)

@@ -57,7 +57,6 @@ class TestEditEventView(TestScheduling):
         data = {
             'type': 'Special',
             'e_title': "Test Event Wizard",
-            'slug': "EditSlug",
             'e_description': 'Description',
             'max_volunteer': 3,
             'day': self.extra_day.pk,
@@ -235,8 +234,6 @@ class TestEditEventView(TestScheduling):
             )
         self.assertContains(response, data['e_title'])
         self.assertContains(response, data['e_description'])
-        self.assertContains(response, data['slug'])
-
         assert_option_state(response,
                             self.extra_day.pk,
                             self.extra_day.day.strftime(GBE_DATE_FORMAT),

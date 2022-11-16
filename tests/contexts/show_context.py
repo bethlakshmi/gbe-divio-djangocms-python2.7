@@ -60,8 +60,7 @@ class ShowContext:
         room = room or self.room
         if starttime:
             sched_event = SchedEventFactory(eventitem=self.show.eventitem_ptr,
-                                            starttime=starttime,
-                                            slug="Show%d" % self.show.pk)
+                                            starttime=starttime)
         else:
             sched_event = SchedEventFactory(
                 eventitem=self.show.eventitem_ptr,

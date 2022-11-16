@@ -782,8 +782,6 @@ class TestCopyOccurrence(TestGBE):
         self.assertEqual(new_vol_opp.max_volunteer, opp_sched.max_volunteer)
         self.assertEqual(new_vol_opp.location, opp_sched.location)
         self.assertTrue(new_vol_opp.approval_needed)
-        self.assertEqual(new_vol_opp.parent.slug,
-                         show_context.sched_event.slug)
 
     def test_copy_only_parent_event(self):
         another_day = ConferenceDayFactory()

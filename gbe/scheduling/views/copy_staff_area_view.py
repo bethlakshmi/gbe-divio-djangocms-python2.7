@@ -170,8 +170,7 @@ class CopyStaffAreaView(CopyCollectionsView):
             max_volunteer=occurrence.max_volunteer,
             locations=[new_event_room],
             labels=labels,
-            approval=occurrence.approval_needed,
-            slug=occurrence.slug
+            approval=occurrence.approval_needed
         )
         return response
 
