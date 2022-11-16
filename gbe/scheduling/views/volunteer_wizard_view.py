@@ -97,9 +97,11 @@ class VolunteerWizardView(EventWizardView):
                     minutes=context['scheduling_form'].cleaned_data[
                         'duration']*60)
                 volunteer_event.save()
-                response = self.book_event(context['scheduling_form'],
-                                           context['worker_formset'],
-                                           volunteer_event)
+                response = self.book_event(
+                    context['scheduling_form'],
+                    context['worker_formset'],
+                    volunteer_event,
+                    context['third_form'].cleaned_data['slug'])
                 success = self.finish_booking(
                     request,
                     response,
