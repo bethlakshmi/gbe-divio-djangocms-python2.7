@@ -43,7 +43,6 @@ class TestRegister(TestCase):
                 'password2': 'test'}
         return data
 
-
     def check_subway_state(self, response, active_state="Create Account"):
         self.assertContains(
             response,

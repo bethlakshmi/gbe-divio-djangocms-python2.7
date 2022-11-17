@@ -89,9 +89,8 @@ class TestVolunteerSignupView(TestCase):
             response,
             'warning',
             'Warning',
-            full_login_msg % (no_login_msg, reverse(
-                'login',
-                urlconf='gbe.urls') + "?next=" + self.url))
+            full_login_msg % (no_login_msg,
+                              reverse('login') + "?next=" + self.url))
 
     def test_signup_w_available_slot(self):
         other_conference = ConferenceFactory(

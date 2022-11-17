@@ -226,7 +226,7 @@ class MakeBidView(SubwayMapMixin, View):
                     'description': no_login_msg})
             full_msg = full_login_msg % (
                 user_message[0].description,
-                reverse('login', urlconf='gbe.urls') + follow_on)
+                reverse('login') + follow_on)
             messages.warning(request, full_msg)
 
             return HttpResponseRedirect(
