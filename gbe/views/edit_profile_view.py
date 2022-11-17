@@ -1,7 +1,6 @@
 from django.views.generic import View
 from django.views.decorators.cache import never_cache
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -24,13 +23,12 @@ from gbetext import (
 )
 
 
-class EditProfileView(View):
+class EditProfileView(LoginRequiredMixin, View):
     profile_form = ParticipantForm
     title = "Update Your Profile"
     button = "Update My Account"
     header = "Update Your Profile"
 
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(EditProfileView, self).dispatch(*args, **kwargs)
 

@@ -353,7 +353,7 @@ class TestTransactions(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date),
-                        "2014-08-15 19:26:56")
+                         "2014-08-15 19:26:56")
         self.assertEqual(transaction.shipping_method, 'Will Call')
         self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
