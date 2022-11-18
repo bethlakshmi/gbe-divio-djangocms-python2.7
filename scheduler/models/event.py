@@ -1,10 +1,13 @@
 from django.db.models import (
     BooleanField,
+    CharField,
     CASCADE,
     DateTimeField,
+    DurationField,
     ForeignKey,
     PositiveIntegerField,
     SlugField,
+    TextField,
 )
 from scheduler.models import (
     EventItem,
@@ -38,6 +41,20 @@ class Event(Schedulable):
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
     max_commitments = PositiveIntegerField(default=0)
+
+    # from Event Item
+    visible = BooleanField(default=True)
+
+    # from gbe.event
+    title = CharField(max_length=128)
+    description = TextField(blank=True, null=True)
+    blurb = TextField(blank=True)
+    length = DurationField()
+
+    event_style = CharField(max_length=128, blank=False)
+    connected_id = PositiveIntegerField(blank=True, null=True)
+    connected_class = CharField(max_length=128, blank=True)
+
     parent = ForeignKey(
         "self",
         on_delete=CASCADE,

@@ -1,5 +1,6 @@
 from model_utils.managers import InheritanceManager
 from django.db.models import (
+    BooleanField,
     CASCADE,
     ForeignKey,
 )
@@ -22,3 +23,4 @@ class ResourceAllocation(Schedulable):
     resource = ForeignKey(Resource,
                           on_delete=CASCADE,
                           related_name="allocations")
+    default = BooleanField(default=False)
