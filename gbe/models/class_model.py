@@ -11,6 +11,7 @@ from django.db.models import (
 from gbe.models import (
     Biddable,
     Conference,
+    Event,
     Persona,
     Profile,
 )
@@ -25,7 +26,7 @@ from ticketing.functions import get_tickets
 from settings import GBE_TABLE_FORMAT
 
 
-class Class(Biddable):
+class Class(Biddable, Event):
     '''
     A Class is an Event where one or a few people
     teach/instruct/guide/mediate and a number of participants

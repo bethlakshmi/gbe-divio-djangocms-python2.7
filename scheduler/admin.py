@@ -15,7 +15,8 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
                     'event_type',
                     'resource',
                     'resource_type')
-    list_filter = ['resource__worker__role',
+    list_filter = ['event__eventitem__event__e_conference',
+                   'resource__worker__role',
                    'resource__location']
 
     def resource_type(self, obj):
@@ -23,13 +24,36 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
         return resource.type
 
     def event_type(self, obj):
-        return str(obj.event.event_style)
+        if str(obj.event.eventitem.child().__class__.__name__
+               ) == 'GenericEvent':
+            return obj.event.eventitem.child().type
+        else:
+            return str(obj.event.eventitem.child().__class__.__name__)
+
+
+class EventItemAdmin(admin.ModelAdmin):
+    list_display = (
+        'eventitem_id', str, 'visible', 'event_type', 'conference')
+    list_filter = ['visible', 'event__e_conference']
+    search_fields = ['event__e_title']
+
+    def event_type(self, obj):
+        if str(obj.child().__class__.__name__) == 'GenericEvent':
+            return obj.child().type
+        else:
+            return str(obj.child().__class__.__name__)
+
+    def conference(self, obj):
+        return obj.get_conference()
 
 
 class EventAdmin(ImportExportModelAdmin):
     list_display = ('id',
+                    'eventitem',
                     'title',
+                    'duration',
                     'length',
+                    'event_type',
                     'event_style',
                     'connected_class',
                     'connected_id',
@@ -42,6 +66,7 @@ class EventAdmin(ImportExportModelAdmin):
                    'starttime',
                    'max_volunteer',
                    'max_commitments',
+                   'eventitem__event__e_conference',
                    'approval_needed', ]
     search_fields = ['title', 'event_style']
 
@@ -89,6 +114,7 @@ class EventEvalGradeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Event, EventAdmin)
+admin.site.register(EventItem, EventItemAdmin)
 admin.site.register(EventLabel, EventLabelAdmin)
 admin.site.register(Location)
 admin.site.register(LocationItem)

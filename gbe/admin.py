@@ -85,6 +85,26 @@ class RoomAdmin(admin.ModelAdmin):
     list_filter = ['conferences']
 
 
+class ShowAdmin(admin.ModelAdmin):
+    list_filter = ['e_conference__conference_slug']
+
+
+class GenericAdmin(ImportExportActionModelAdmin):
+    list_display = ('e_title', 'type')
+    list_filter = ['e_conference', 'type', 'visible']
+    search_fields = ['e_title']
+
+
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('eventitem_id', 'e_title', 'subclass')
+    list_filter = ['e_conference__conference_slug']
+    search_fields = ['e_title']
+
+    def subclass(self, obj):
+        event = Event.objects.get_subclass(event_id=obj.event_id)
+        return str(event.__class__.__name__)
+
+
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('view',
                     'code',
@@ -308,11 +328,14 @@ admin.site.register(Costume, BidAdmin)
 admin.site.register(EmailFrequency, EmailFrequencyAdmin)
 admin.site.register(EvaluationCategory, EvalCategoryAdmin)
 admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
+admin.site.register(Event, EventAdmin)
 admin.site.register(FlexibleEvaluation, FlexAdmin)
+admin.site.register(GenericEvent, GenericAdmin)
 admin.site.register(Performer, PerformerAdmin)
 admin.site.register(Persona, PerformerAdmin)
 admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Show, ShowAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)

@@ -14,8 +14,8 @@ from datetime import (
 def get_occurrences(parent_event_id=None,
                     labels=[],
                     label_sets=[],
-                    event_styles=[],
                     day=None,
+                    foreign_event_ids=None,
                     max_volunteer=None):
     if len(labels) > 0 and len(label_sets) > 0:
         return OccurrencesResponse(
@@ -25,6 +25,10 @@ def get_occurrences(parent_event_id=None,
     response = OccurrencesResponse()
     filter_occurrences = Event.objects.all()
 
+    if foreign_event_ids:
+        filter_occurrences = filter_occurrences.filter(
+            eventitem__eventitem_id__in=foreign_event_ids
+        )
     if parent_event_id:
         filter_occurrences = filter_occurrences.filter(
             parent__pk=parent_event_id)
@@ -39,9 +43,6 @@ def get_occurrences(parent_event_id=None,
     if max_volunteer is not None:
         filter_occurrences = filter_occurrences.filter(
             max_volunteer__gte=max_volunteer)
-    if len(event_styles) > 0:
-        filter_occurrences = filter_occurrences.filter(
-            event_style__in=event_styles)
     if day:
         filter_occurrences = filter_occurrences.filter(
             starttime__range=(
