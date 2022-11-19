@@ -10,7 +10,6 @@ from django.db.models import (
     TextField,
 )
 from scheduler.models import (
-    EventItem,
     Location,
     LocationItem,
     Resource,
@@ -25,7 +24,6 @@ from scheduler.data_transfer import (
     Warning,
     Error,
 )
-from model_utils.managers import InheritanceManager
 from settings import GBE_DATETIME_FORMAT
 
 
@@ -33,10 +31,6 @@ class Event(Schedulable):
     '''
     An Event is a schedulable item with a conference model item as its payload.
     '''
-    objects = InheritanceManager()
-    eventitem = ForeignKey(EventItem,
-                           on_delete=CASCADE,
-                           related_name="scheduler_events")
     starttime = DateTimeField(blank=True)
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
@@ -68,10 +62,6 @@ class Event(Schedulable):
         return (Ordering.objects.filter(
             allocation__event=self,
             class_name=commitment_class_name).count() < self.max_commitments)
-
-    @property
-    def foreign_event_id(self):
-        return self.eventitem.eventitem_id
 
     # New - fits scheduling API refactor
     def set_locations(self, locations):
@@ -196,24 +186,14 @@ class Event(Schedulable):
 
     @property
     def event_type(self):
-        '''
-        Get event's underlying type (ie, conference model)
-        '''
-        return type(self.as_subtype)
-
-    @property
-    def as_subtype(self):
-        '''
-        Get the representation of this Event as its underlying conference type
-        '''
-        return EventItem.objects.get_subclass(eventitem_id=self.eventitem_id)
+        return self.event_style
 
     @property
     def duration(self):
-        return self.eventitem.child().sched_duration
+        return self.length
 
     def __str__(self):
-        return self.eventitem.describe
+        return self.title
 
     @property
     def location(self):
