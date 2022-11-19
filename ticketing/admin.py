@@ -100,7 +100,7 @@ class TicketingEventsAdmin(admin.ModelAdmin):
                        'vendor_submission_event',
                        'include_conference',
                        'include_most',
-                       "linked_events",),
+                       "linked_events"),
             'description': '''Rules for what this ticket gives.  Controls
                 when it's advertised and special actions like act/vendor submit
                 ''',
