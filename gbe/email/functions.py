@@ -1,6 +1,3 @@
-from gbe.models import (
-    EmailTemplateSender,
-)
 from settings import (
     GBE_DATE_FORMAT,
     GBE_DATETIME_FORMAT,
@@ -14,7 +11,8 @@ import os
 from django.contrib.sites.models import Site
 from django.urls import reverse
 from gbe.models import (
-    Show,
+    Conference,
+    EmailTemplateSender,
     StaffArea,
 )
 from gbe.functions import make_warning_msg
@@ -370,19 +368,23 @@ def get_user_email_templates(user):
             'default_subject': "%s Submission Occurred" % priv, }]
         for state in acceptance_states:
             if priv == "act" and state[1] == "Accepted":
-                for show in Show.objects.filter(
-                        e_conference__status__in=('upcoming', 'ongoing')):
+                for show in get_occurrences(
+                        event_styles=['Shows'],
+                        labels=Conference.objects.filter(
+                            status__in=('upcoming', 'ongoing')).values_list(
+                            'conference_slug',
+                            flat=True)):
                     template_set += [{
                         'name': "%s %s - %s" % (priv,
                                                 state[1].lower(),
-                                                show.e_title.lower()),
+                                                show.title.lower()),
                         'description': email_template_desc[
                             "%s %s" % (priv,
-                                       state[1].lower())] % show.e_title,
+                                       state[1].lower())] % show.title,
                         'category': priv,
                         'default_base': "default_bid_status_change",
                         'default_subject': 'Your act has been cast in %s' % (
-                            show.e_title), }]
+                            show.title), }]
             else:
                 template_set += [{
                     'name': "%s %s" % (priv, state[1].lower()),

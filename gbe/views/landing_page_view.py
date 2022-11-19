@@ -13,8 +13,6 @@ from gbe.models import (
     Costume,
     Profile,
     Vendor,
-    Event,
-    Show,
     UserMessage,
 )
 from gbe.ticketing_idd_interface import (
@@ -140,9 +138,8 @@ class LandingPageView(ProfileRequiredMixin, View):
                 # staff leads often work a volunteer slot in the show
                 elif self.is_staff_lead and booking.event.parent is not None:
                     parent = booking.event.parent
-                    if parent not in manage_shows and Show.objects.filter(
-                            eventitem_id=parent.eventitem.eventitem_id
-                            ).exists() and parent not in manage_shows:
+                    if parent not in manage_shows and (
+                            parent.event_style == "Show"):
                         manage_shows += [parent]
             if booking.event.pk not in booking_ids:
                 bookings += [booking_item]

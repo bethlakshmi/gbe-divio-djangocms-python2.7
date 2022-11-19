@@ -142,7 +142,7 @@ class BPTEventForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
     linked_events = forms.ModelMultipleChoiceField(
-        queryset=get_ticketable_gbe_events().order_by('e_title'),
+        queryset=get_ticketable_gbe_events().order_by('title'),
         required=False,
         label=ticketing_event_labels['linked_events'])
     conference = forms.ModelChoiceField(

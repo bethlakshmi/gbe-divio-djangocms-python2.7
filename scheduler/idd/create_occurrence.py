@@ -1,22 +1,26 @@
 from scheduler.models import (
     Event,
-    EventItem,
     EventLabel,
 )
 from scheduler.data_transfer import OccurrenceResponse
 from scheduler.idd import get_occurrence
 
 
-def create_occurrence(foreign_event_id,
+def create_occurrence(title,
+                      description,
+                      length,
+                      event_style,
                       start_time,
                       max_volunteer=0,
                       max_commitments=0,
                       people=[],
                       locations=[],
                       parent_event_id=None,
+                      blurb=None,
                       labels=[],
                       approval=False,
-                      slug=None):
+                      slug=None,
+                      related_object=None):
     if parent_event_id:
         parent_response = get_occurrence(parent_event_id)
         if parent_response.errors:
@@ -24,7 +28,10 @@ def create_occurrence(foreign_event_id,
 
     response = OccurrenceResponse()
     response.occurrence = Event(
-        eventitem=EventItem.objects.get(eventitem_id=foreign_event_id),
+        title=title,
+        description=description,
+        length=length,
+        event_style=event_style,
         starttime=start_time,
         max_volunteer=max_volunteer,
         max_commitments=max_commitments,
@@ -33,6 +40,12 @@ def create_occurrence(foreign_event_id,
 
     if parent_event_id:
         response.occurrence.parent = parent_response.occurrence
+    if blurb:
+        response.occurrence.blurb = blurb
+    if related_object:
+        response.occurrence.connected_id = related_object.pk
+        response.occurrence.connected_class = related_object.__class__.__name__
+
 
     response.occurrence.save()
 

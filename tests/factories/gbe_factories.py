@@ -71,15 +71,6 @@ class ProfileFactory(DjangoModelFactory):
     display_name = Sequence(lambda n: "%s_%s" % (str(n), str(n)))
 
 
-class ShowFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.Show
-    e_title = Sequence(lambda n: 'Test Show%d' % n)
-    e_description = 'Test Description'
-    duration = timedelta(hours=1)
-    e_conference = SubFactory(ConferenceFactory)
-
-
 class PersonaFactory(DjangoModelFactory):
     class Meta:
         model = conf.Persona
@@ -136,31 +127,6 @@ class RoomFactory(DjangoModelFactory):
     name = Sequence(lambda x: "Test Room #%d" % x)
     capacity = 40
     overbook_size = 50
-
-
-class EventFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.Event
-
-    e_title = Sequence(lambda x: "Test Event #%d" % x)
-    e_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
-    blurb = LazyAttribute(
-        lambda a: "Blurb for %s" % a.e_title)
-    duration = timedelta(hours=2)
-    e_conference = SubFactory(ConferenceFactory)
-
-
-class GenericEventFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.GenericEvent
-
-    e_title = Sequence(lambda n: 'Test Generic Event %d' % n)
-    e_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
-    duration = timedelta(hours=1)
-    type = 'Special'
-    e_conference = SubFactory(ConferenceFactory)
 
 
 class ClassFactory(DjangoModelFactory):
@@ -301,14 +267,6 @@ class UserMessageFactory(DjangoModelFactory):
     code = Sequence(lambda x: "CODE_%d" % x)
     summary = Sequence(lambda x: "Message Summary #%d" % x)
     description = Sequence(lambda x: "Description #%d" % x)
-
-
-class ShowVoteFactory(DjangoModelFactory):
-    show = SubFactory(ShowFactory)
-    vote = 3
-
-    class Meta:
-        model = conf.ShowVote
 
 
 class EvaluationCategoryFactory(DjangoModelFactory):
