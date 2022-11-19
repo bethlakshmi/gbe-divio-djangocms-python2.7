@@ -4,8 +4,7 @@ from django.forms import (
     Form,
 )
 from gbe.models import (
-    GenericEvent,
-    Show,
+    Conference,
     StaffArea,
 )
 from scheduler.idd import get_occurrences
@@ -32,13 +31,9 @@ class EventAssociationForm(Form):
         choices = []
         events = None
         super(EventAssociationForm, self).__init__(*args, **kwargs)
-        shows = Show.objects.exclude(e_conference__status="completed")
-        specials = GenericEvent.objects.exclude(
-                e_conference__status="completed").filter(type="Special")
         response = get_occurrences(
-            foreign_event_ids=list(
-                shows.values_list('eventitem_id', flat=True)) +
-            list(specials.values_list('eventitem_id', flat=True)))
+            event_styles=["Show", "Special"],
+            labels=Conference.all_slugs(current=True))
         if response.occurrences:
             for occurrence in response.occurrences:
                 choices += [(occurrence.pk, "%s - %s" % (

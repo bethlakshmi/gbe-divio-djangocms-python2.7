@@ -4,7 +4,6 @@ from django.forms import (
     IntegerField,
     NumberInput,
 )
-from gbe.models import GenericEvent
 from gbe.scheduling.forms import ScheduleBasicForm
 
 
@@ -15,7 +14,7 @@ class RehearsalSlotForm(ScheduleBasicForm):
     opp_sched_id = IntegerField(
         widget=HiddenInput(),
         required=False)
-    type = CharField(
+    event_style = CharField(
         widget=HiddenInput(),
         required=True,
         initial="Rehearsal Slot")
@@ -24,13 +23,12 @@ class RehearsalSlotForm(ScheduleBasicForm):
         required=False)
 
     class Meta:
-        model = GenericEvent
-        fields = ['e_title',
+        fields = ['title',
                   'current_acts',
                   'max_volunteer',
                   'duration',
                   'day',
                   'time',
                   'location',
-                  'type',
+                  'event_style',
                   ]

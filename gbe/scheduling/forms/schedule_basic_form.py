@@ -1,14 +1,11 @@
 from django.forms import (
     ChoiceField,
     FloatField,
-    ModelForm,
+    Form,
     IntegerField,
     ModelChoiceField,
 )
-from gbe.models import (
-    Event,
-    Room
-)
+from gbe.models import Room
 from gbe.functions import get_current_conference
 from datetime import (
   timedelta,
@@ -24,7 +21,7 @@ conference_times = [(time(int(mins/60), mins % 60),
                     for mins in range(time_start, time_stop, 30)]
 
 
-class ScheduleBasicForm(ModelForm):
+class ScheduleBasicForm(Form):
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -38,9 +35,8 @@ class ScheduleBasicForm(ModelForm):
                           required=True)
 
     class Meta:
-        model = Event
-        fields = ['e_title',
-                  'e_description',
+        fields = ['title',
+                  'description',
                   'duration',
                   'max_volunteer',
                   'day',
@@ -49,13 +45,7 @@ class ScheduleBasicForm(ModelForm):
                   ]
 
     def __init__(self, *args, **kwargs):
-        if 'instance' in kwargs:
-            conference = kwargs['instance'].e_conference
-            if 'initial' in kwargs and 'duration' not in kwargs['initial']:
-                kwargs['initial']['duration'] = float(
-                    kwargs['instance'].duration.total_seconds())/3600
-        else:
-            conference = kwargs.pop('conference')
+        conference = kwargs.pop('conference')
         super(ScheduleBasicForm, self).__init__(*args, **kwargs)
         self.fields['day'] = ModelChoiceField(
             queryset=conference.conferenceday_set.all())

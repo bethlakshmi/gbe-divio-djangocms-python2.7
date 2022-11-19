@@ -3,10 +3,7 @@ from django.forms import (
     Form,
     RadioSelect,
 )
-from gbe.models import (
-    Event,
-    StaffArea,
-)
+from gbe.models import StaffArea
 from scheduler.idd import get_occurrences
 from settings import GBE_DATETIME_FORMAT
 
@@ -35,17 +32,13 @@ class PickVolunteerTopicForm(Form):
             }
             staff_choices = []
 
-            response = get_occurrences(labels=[
-                initial['conference'].conference_slug,
-                "General"])
+            response = get_occurrences(
+                labels=[initial['conference'].conference_slug, "General"],
+                event_styles=[event_choices.keys()])
             for item in response.occurrences:
-                event = Event.objects.get_subclass(
-                    eventitem_id=item.foreign_event_id)
-                if event.event_type in list(event_choices.keys()):
-                    event_choices[event.event_type] += [
-                        (item.pk, "%s - %s" % (
-                            event.e_title,
-                            item.start_time.strftime(GBE_DATETIME_FORMAT)))]
+                event_choices[event.event_type] += [(item.pk, "%s - %s" % (
+                    event.e_title,
+                    item.start_time.strftime(GBE_DATETIME_FORMAT)))]
             if len(event_choices['Show']) > 0:
                 complete_choices += [('Shows', event_choices['Show'])]
             if len(event_choices['Special']) > 0:

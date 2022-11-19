@@ -147,8 +147,8 @@ def conference_list():
     return Conference.objects.all()
 
 
-def conference_slugs():
-    return Conference.all_slugs()
+def conference_slugs(current=False):
+    return Conference.all_slugs(current)
 
 
 def make_warning_msg(warning, separator="<br>-", use_user=True):
@@ -172,8 +172,7 @@ def get_ticketable_gbe_events(conference_slug=None):
     if conference_slug:
         labels = [conference_slug]
     else:
-        labels = Conference.objects.filter(
-            status="completed").values_list('conference_slug', flat=True)
+        labels = conference_slugs(current=True)
 
     event_set = get_occurrences(
         event_styles=['Drop-In', 'Master', 'Special', 'Shows'],

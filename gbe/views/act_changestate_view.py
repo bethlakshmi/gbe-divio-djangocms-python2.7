@@ -8,8 +8,6 @@ from gbe.views import BidChangeStateView
 from gbe.models import (
     Act,
     ActCastingOption,
-    GenericEvent,
-    Show,
     UserMessage,
 )
 from gbe.email.functions import send_bid_state_change_mail
@@ -51,12 +49,10 @@ class ActChangeStateView(BidChangeStateView):
         show = None
         rehearsals = []
         for item in schedule_items:
-            if Show.objects.filter(
-                    eventitem_id=item.event.eventitem.eventitem_id).exists():
+            if item.event_style == "Show":
                 show = item
-            elif item.event not in rehearsals and GenericEvent.objects.filter(
-                    eventitem_id=item.event.eventitem.eventitem_id,
-                    type='Rehearsal Slot').exists():
+            elif item.event not in rehearsals and (
+                    item.event_style == 'Rehearsal Slot'):
                 rehearsals += [item]
         return show, rehearsals
 

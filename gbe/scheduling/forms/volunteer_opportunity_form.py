@@ -5,7 +5,6 @@ from django.forms import (
     IntegerField,
     ModelChoiceField,
 )
-from gbe.models import GenericEvent
 from gbe.scheduling.forms import ScheduleBasicForm
 
 
@@ -16,21 +15,20 @@ class VolunteerOpportunityForm(ScheduleBasicForm):
     opp_sched_id = IntegerField(
         widget=HiddenInput(),
         required=False)
-    type = CharField(
+    event_style = CharField(
         widget=HiddenInput(),
         required=True,
         initial="Volunteer")
     approval = BooleanField(initial=False, required=False)
 
     class Meta:
-        model = GenericEvent
-        fields = ['e_title',
+        fields = ['title',
                   'max_volunteer',
                   'approval',
                   'duration',
                   'day',
                   'time',
                   'location',
-                  'type',
+                  'event_style',
                   ]
         hidden_fields = ['opp_event_id', 'e_description']

@@ -12,7 +12,6 @@ from gbe_forms_text import (
     copy_mode_choices,
 )
 from gbe.models import (
-    Event,
     ConferenceDay,
     Room,
 )
