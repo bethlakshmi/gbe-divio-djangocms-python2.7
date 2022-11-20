@@ -66,7 +66,6 @@ class EditVolunteerView(ManageWorkerView):
                         self).make_context(request, errorcontext)
         context, initial_form_info = setup_event_management_form(
             self.item.e_conference,
-            self.item,
             self.occurrence,
             context,
             open_to_public=False)

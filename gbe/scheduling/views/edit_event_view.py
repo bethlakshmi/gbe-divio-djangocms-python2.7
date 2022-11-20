@@ -8,11 +8,8 @@ from django.shortcuts import (
     render,
 )
 from django.urls import reverse
-from gbe.models import (
-    Conference,
-    Event,
-)
-from gbe.views.class_display_functions import get_scheduling_info
+from gbe.models import Conference
+from gbe.views.class_display_functions import get_bid_and_scheduling_info
 from gbe.scheduling.forms import PersonAllocationForm
 from gbe.functions import validate_perms
 from gbe_forms_text import (
@@ -40,18 +37,19 @@ class EditEventView(ManageVolWizardView):
                                 args=[kwargs['conference']])
             return HttpResponseRedirect(error_url)
         else:
-            (self.profile, self.occurrence, self.item) = groundwork_data
-            self.conference = self.item.e_conference
+            (self.profile, self.occurrence) = groundwork_data
+            self.conference = Conference.objects.get(
+                conference_slug__in=self.occurrence.labels)
             self.parent_id = self.occurrence.pk
 
-        if self.item.type == "Show" and "/edit/" in request.path:
+        if self.occurrence.event_style == "Show" and "/edit/" in request.path:
             return HttpResponseRedirect("%s?%s" % (
                 reverse('edit_show',
                         urlconf='gbe.scheduling.urls',
                         args=[self.conference.conference_slug,
                               self.occurrence.pk]),
                 request.GET.urlencode()))
-        elif self.item.type == "Volunteer":
+        elif self.occurrence.event_style == "Volunteer":
             return HttpResponseRedirect("%s?%s" % (
                 reverse('edit_volunteer',
                         urlconf='gbe.scheduling.urls',
@@ -104,16 +102,17 @@ class EditEventView(ManageVolWizardView):
         context = super(EditEventView,
                         self).make_context(request, errorcontext)
         context, initial_form_info = setup_event_management_form(
-            self.item.e_conference,
-            self.item,
+            self.conference,
             self.occurrence,
             context)
         context['edit_title'] = self.title
-        context['scheduling_info'] = get_scheduling_info(self.item)
+        context['scheduling_info'] = get_bid_and_scheduling_info(
+            self.occurrence.connected_class,
+            self.occurrence.connected_id)
 
         if 'worker_formset' not in context:
             context['worker_formset'] = self.make_formset(
-                event_settings[self.item.type.lower()]['roles'])
+                event_settings[occurrence.event_style.lower()]['roles'])
 
         if validate_perms(request,
                           ('Volunteer Coordinator',), require=False):
@@ -151,16 +150,15 @@ class EditEventView(ManageVolWizardView):
         if error_url:
             return error_url
         worker_formset = self.make_formset(
-            event_settings[self.item.type.lower()]['roles'],
+            event_settings[self.occurrence.event_style.lower()]['roles'],
             post=request.POST)
         context, self.success_url, response = process_post_response(
             request,
-            self.conference.conference_slug,
-            self.item,
+            self.conference,
             self.success_url,
             "volunteer_open",
-            self.occurrence.pk,
-            event_settings[self.item.type.lower()]['roles'],
+            self.occurrence,
+            event_settings[self.occurrence.event_style.lower()]['roles'],
             self.is_formset_valid(worker_formset),
             worker_formset)
         context['worker_formset'] = worker_formset

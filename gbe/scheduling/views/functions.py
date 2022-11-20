@@ -28,7 +28,6 @@ from django.contrib import messages
 from gbe.models import (
     ActCastingOption,
     Conference,
-    Event,
     Performer,
     Profile,
     UserMessage,
@@ -133,18 +132,16 @@ def show_scheduling_booking_status(request,
             user_message[0].description)
 
 
-def get_event_display_info(eventitem_id):
+def get_event_display_info(occurrence_id):
     '''
     Helper for displaying a single of event.
     '''
-    try:
-        item = Event.objects.get_subclass(eventitem_id=eventitem_id)
-    except Event.DoesNotExist:
+    response = get_occurrence(occurrence_id)
+    if response.errors and response.errors[0] == "OCCURRENCE_NOT_FOUND":
         raise Http404
     bio_grid_list = {}
     featured_grid_list = []
-    response = get_people(foreign_event_ids=[eventitem_id],
-                          roles=["Performer"])
+    response = get_people(event_ids=[occurrence_id], roles=["Performer"])
     regular_roles = {}
     special_roles = {}
     for casting in ActCastingOption.objects.filter():
@@ -176,7 +173,7 @@ def get_event_display_info(eventitem_id):
         perf_list.sort(key=lambda p: p.name)
 
     booking_response = get_people(
-        foreign_event_ids=[eventitem_id],
+        event_ids=[occurrence_id],
         roles=['Teacher', 'Panelist', 'Moderator', 'Staff Lead'])
     people = []
     if len(booking_response.people) == 0 and (
@@ -196,9 +193,7 @@ def get_event_display_info(eventitem_id):
                 }]
 
     eventitem_view = {
-        'event': item,
-        'scheduled_events': get_occurrences(
-            foreign_event_ids=[eventitem_id]).occurrences,
+        'scheduled_events': response.occurrence,
         'bio_grid_list': bio_grid_list,
         'featured_grid_list': featured_grid_list,
         'people': people}
@@ -229,19 +224,16 @@ def shared_groundwork(request, kwargs, permissions):
             return None
         else:
             occurrence = result.occurrence
-        item = get_object_or_404(
-            Event,
-            eventitem_id=occurrence.foreign_event_id).child()
-    return (profile, occurrence, item)
+
+    return (profile, occurrence)
 
 
 def setup_event_management_form(
         conference,
-        item,
         occurrence,
         context,
         open_to_public=True):
-    duration = float(item.duration.total_seconds())/timedelta(
+    duration = float(occurrence.length.total_seconds())/timedelta(
         hours=1).total_seconds()
     initial_form_info = {
         'duration': duration,
@@ -254,13 +246,13 @@ def setup_event_management_form(
         'occurrence_id': occurrence.pk,
         'approval': occurrence.approval_needed}
     context['event_id'] = occurrence.pk
-    context['eventitem_id'] = item.eventitem_id
 
     # if there was an error in the edit form
     if 'event_form' not in context:
         context['event_form'] = EventBookingForm(
-            instance=item,
-            initial={'slug': occurrence.slug})
+            initial={'slug': occurrence.slug,
+                     'title': occurrence.title,
+                     'description': occurrence.description})
     if 'scheduling_form' not in context:
         context['scheduling_form'] = ScheduleOccurrenceForm(
             conference=conference,
@@ -269,7 +261,8 @@ def setup_event_management_form(
     return (context, initial_form_info)
 
 
-def update_event(scheduling_form,
+def update_event(event_form,
+                 scheduling_form,
                  occurrence_id,
                  roles=None,
                  people_formset=[],
@@ -289,53 +282,49 @@ def update_event(scheduling_form,
         occurrence_id,
         start_time,
         scheduling_form.cleaned_data['max_volunteer'],
+        title=event_form.cleaned_data['title'],
+        description=event_form.cleaned_data['description'],
         people=people,
         roles=roles,
         locations=[scheduling_form.cleaned_data['location']],
         approval=scheduling_form.cleaned_data['approval'],
-        slug=slug)
+        slug=event_form.cleaned_data['slug'])
     return response
 
 
 def process_post_response(request,
-                          slug,
-                          item,
+                          conference,
                           start_success_url,
                           next_step,
-                          occurrence_id,
+                          occurrence,
                           roles=None,
                           additional_validity=True,
                           people_forms=[]):
     success_url = start_success_url
     context = {}
     response = None
-    context['event_form'] = EventBookingForm(request.POST,
-                                             instance=item)
+    context['event_form'] = EventBookingForm(request.POST)
     context['scheduling_form'] = ScheduleOccurrenceForm(
         request.POST,
-        conference=item.e_conference,
-        open_to_public=event_settings[item.type.lower()]['open_to_public'])
+        conference=conference,
+        open_to_public=event_settings[
+            occurrence.event_style.lower()]['open_to_public'])
 
     if context['event_form'].is_valid(
             ) and context['scheduling_form'].is_valid(
             ) and additional_validity:
-        new_event = context['event_form'].save(commit=False)
-        new_event.duration = timedelta(
-            minutes=context['scheduling_form'].cleaned_data[
-                'duration']*60)
-        new_event.save()
 
         response = update_event(
+            context['event_form'],
             context['scheduling_form'],
-            occurrence_id,
+            occurrence.pk,
             roles,
-            people_forms,
-            slug=context['event_form'].cleaned_data['slug'])
+            people_forms)
         if request.POST.get('edit_event', 0) != "Save and Continue":
             success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
-                        args=[slug]),
+                        args=[conference.conference_slug]),
                 slug,
                 context['scheduling_form'].cleaned_data['day'].pk,
                 str([occurrence_id]),)

@@ -4,8 +4,6 @@ from django.urls import reverse
 from django.contrib import messages
 from gbe.models import (
     Conference,
-    Event,
-    GenericEvent,
     StaffArea,
     UserMessage,
 )
@@ -14,7 +12,10 @@ from gbe.email.forms import (
     SecretRoleInfoForm,
     SelectRoleForm,
 )
-from scheduler.idd import get_people
+from scheduler.idd import (
+    get_occurrences,
+    get_people,
+)
 from gbe.email.views import MailToFilterView
 from gbetext import to_list_empty_msg
 from gbe_forms_text import (
@@ -44,27 +45,30 @@ class MailToRolesView(MailToFilterView):
     template = 'gbe/email/mail_to_roles.tmpl'
     email_type = 'role_notifications'
 
-    def setup_event_queryset(self, is_superuser, priv_list, conferences):
+    def setup_event_choices(self, is_superuser, priv_list):
         # build event field based on privs
-        event_queryset = None
+        permitted_styles = []
+        choices = []
         if is_superuser or len(
                 [i for i in ["Schedule Mavens",
                              "Registrar",
                              "Volunteer Coordinator",
                              "Staff Lead"] if i in priv_list]) > 0:
-            event_queryset = Event.objects.filter(
-                e_conference__in=conferences
-                ).filter(
-                Q(genericevent__type__in=["Special", "Master"],) |
-                Q(show__pk__gt=0))
+            permitted_styles = ["Special", "Master", "Show"]
         elif len([i for i in ['Producer',
                               'Technical Director',
                               'Stage Manager',
                               'Act Coordinator'] if i in priv_list]) > 0:
-            event_queryset = Event.objects.filter(
-                    e_conference__in=conferences
-                    ).filter(Q(show__pk__gt=0))
-        return event_queryset
+            permitted_styles = ["Show"]
+
+        if len(permitted_styles) > 0:
+            response = get_occurrences(
+                event_styles=permitted_styles,
+                labels=self.slugs)
+            for occurrence in response.occurrences:
+                choices += [occurrence.pk, occurence.title]
+
+        return choices
 
     def setup_staff_queryset(self, is_superuser, priv_list, conferences):
         staff_queryset = None
@@ -122,13 +126,15 @@ class MailToRolesView(MailToFilterView):
             self.setup_roles()
 
             if self.select_form.is_valid():
+                self.slugs = []
+                for conference in self.select_form.cleaned_data['conference']:
+                    self.slugs += [conference.conference_slug]
                 self.specify_event_form = SelectEventForm(
                     request.POST,
                     prefix="event-select")
-                self.event_queryset = self.setup_event_queryset(
+                self.event_choices = self.setup_event_choices(
                     self.user.user_object.is_superuser,
-                    self.priv_list,
-                    self.select_form.cleaned_data['conference'])
+                    self.priv_list)
                 self.staff_queryset = self.setup_staff_queryset(
                     self.user.user_object.is_superuser,
                     self.priv_list,
@@ -137,10 +143,10 @@ class MailToRolesView(MailToFilterView):
                     self.user.user_object.is_superuser,
                     self.priv_list,
                     self.select_form.cleaned_data['conference'])
-                if self.event_queryset:
+                if len(self.event_choices) > 0:
                     self.specify_event_form.fields[
-                        'events'] = ModelMultipleChoiceField(
-                        queryset=self.event_queryset,
+                        'events'] = MultipleChoiceField(
+                        choices=self.event_choices,
                         widget=CheckboxSelectMultiple(
                             attrs={'class': 'form-check-input'}),
                         required=False)
@@ -189,7 +195,8 @@ class MailToRolesView(MailToFilterView):
             if collection != "Drop-In":
                 limits['labels'] += [collection]
             else:
-                for dropin in GenericEvent.objects.filter(type="Drop-In"):
+                for dropin in get_occurrences(event_styles=['Drop-In'],
+                                              labels=self.slugs):
                     limits['parent_ids'] += [dropin.eventitem_id]
 
         if len(limits['parent_ids']) == 0 and len(limits['labels']) == 0:
@@ -198,11 +205,9 @@ class MailToRolesView(MailToFilterView):
 
     def get_to_list(self):
         to_list = []
-        slugs = []
         people = []
         limits = None
-        for conference in self.select_form.cleaned_data['conference']:
-            slugs += [conference.conference_slug]
+
         if self.specify_event_form:
             limits = self.create_occurrence_limits()
         if self.user.user_object.is_superuser or len(
@@ -214,17 +219,17 @@ class MailToRolesView(MailToFilterView):
                 if len(limits['parent_ids']) > 0:
                     response = get_people(
                         parent_event_ids=limits['parent_ids'],
-                        labels=slugs,
+                        labels=self.slugs,
                         roles=self.select_form.cleaned_data['roles'])
                     people += response.people
                 if len(limits['labels']) > 0:
                     response = get_people(
-                        label_sets=[slugs, limits['labels']],
+                        label_sets=[self.slugs, limits['labels']],
                         roles=self.select_form.cleaned_data['roles'])
                     people += response.people
             else:
                 response = get_people(
-                    labels=slugs,
+                    labels=self.slugs,
                     roles=self.select_form.cleaned_data['roles'])
                 people += response.people
         else:
@@ -238,37 +243,36 @@ class MailToRolesView(MailToFilterView):
                     if len(limits['parent_ids']) > 0:
                         response = get_people(
                             parent_event_ids=limits['parent_ids'],
-                            labels=slugs,
+                            labels=self.slugs,
                             roles=self.select_form.cleaned_data['roles'])
                 else:
-                    # this should be doable from a values_list, isn't
                     parent_items = []
-                    for item in self.event_queryset:
-                        parent_items += [item.eventitem_id]
+                    for item in self.event_choices:
+                        parent_items += [item[0]]
                     response = get_people(
                         parent_event_ids=parent_items,
-                        labels=slugs,
+                        labels=self.slugs,
                         roles=self.select_form.cleaned_data['roles'])
                 if response:
                     people += response.people
             if "Class Coordinator" in self.priv_list:
                 if limits is None or "Conference" in limits['labels']:
                     response = get_people(
-                        label_sets=[slugs, ["Conference", ]],
+                        label_sets=[self.slugs, ["Conference", ]],
                         roles=self.select_form.cleaned_data['roles'])
                     people += response.people
             if "Staff Lead" in self.priv_list:
                 if limits:
                     if len(limits['labels']) > 0:
                         response = get_people(
-                            label_sets=[slugs, limits['labels']],
+                            label_sets=[self.slugs, limits['labels']],
                             roles=self.select_form.cleaned_data['roles'])
                 else:
                     allowed_labels = ["Volunteer", ]
                     for area in self.staff_queryset:
                         allowed_labels += [area.slug]
                     response = get_people(
-                        label_sets=[slugs, allowed_labels],
+                        label_sets=[self.slugs, allowed_labels],
                         roles=self.select_form.cleaned_data['roles'])
                 people += response.people
         for person in people:

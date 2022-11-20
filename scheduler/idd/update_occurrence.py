@@ -8,6 +8,8 @@ from scheduler.idd import get_occurrence
 
 
 def update_occurrence(occurrence_id,
+                      title=None,
+                      description=None,
                       start_time=None,
                       max_volunteer=None,
                       max_commitments=None,
@@ -33,6 +35,10 @@ def update_occurrence(occurrence_id,
         occurrence.approval_needed = approval
     if slug is not None:
         occurrence.slug = slug
+    if title is not None:
+        occurrence.title = title
+    if description is not None:
+        occurrence.description = description
 
     if parent_event_id is not None:
         if parent_event_id > -1:

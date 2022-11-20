@@ -22,8 +22,6 @@ from gbe.forms import (
 )
 from gbe.models import (
     Act,
-    GenericEvent,
-    Show,
     UserMessage,
 )
 from gbetext import (
@@ -66,13 +64,10 @@ class ActTechWizardView(View):
 
     def set_rehearsal_forms(self, request=None):
         rehearsal_forms = []
-        possible_rehearsals = GenericEvent.objects.filter(
-            type='Rehearsal Slot',
-            e_conference=self.act.b_conference).values_list('eventitem_id')
         for show in self.shows:
             response = get_occurrences(
                 labels=[self.act.b_conference.conference_slug],
-                foreign_event_ids=possible_rehearsals,
+                event_styles=['Rehearsal Slot'],
                 parent_event_id=show.pk)
             choices = [(-1, "No rehearsal needed")]
             initial = None
@@ -237,12 +232,10 @@ class ActTechWizardView(View):
 
         for item in response.schedule_items:
             # group acts will have multiple items for same show
-            if item.event not in self.shows and Show.objects.filter(
-                    eventitem_id=item.event.eventitem.eventitem_id).exists():
+            if item.event not in self.shows and (
+                    item.event.event_style == "Show"):
                 self.shows += [item.event]
-            elif GenericEvent.objects.filter(
-                    eventitem_id=item.event.eventitem.eventitem_id,
-                    type='Rehearsal Slot').exists():
+            elif item.event.event_style == 'Rehearsal Slot':
                 show_key = item.event.parent.pk
                 self.rehearsals[show_key] = item
         if len(self.shows) == 0:
