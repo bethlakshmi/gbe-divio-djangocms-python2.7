@@ -8,9 +8,6 @@ from gbe.scheduling.forms import ScheduleBasicForm
 
 
 class RehearsalSlotForm(ScheduleBasicForm):
-    opp_event_id = IntegerField(
-        widget=HiddenInput(),
-        required=False)
     opp_sched_id = IntegerField(
         widget=HiddenInput(),
         required=False)
@@ -31,4 +28,5 @@ class RehearsalSlotForm(ScheduleBasicForm):
                   'time',
                   'location',
                   'event_style',
+                  'opp_sched_id',
                   ]

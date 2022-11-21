@@ -9,9 +9,6 @@ from gbe.scheduling.forms import ScheduleBasicForm
 
 
 class VolunteerOpportunityForm(ScheduleBasicForm):
-    opp_event_id = IntegerField(
-        widget=HiddenInput(),
-        required=False)
     opp_sched_id = IntegerField(
         widget=HiddenInput(),
         required=False)

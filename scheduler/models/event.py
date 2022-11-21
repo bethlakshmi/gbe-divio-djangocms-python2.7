@@ -178,13 +178,6 @@ class Event(Schedulable):
         return participants
 
     @property
-    def event_type_name(self):
-        '''
-        Get event type name. Uses a database call
-        '''
-        return self.event_type.__name__
-
-    @property
     def event_type(self):
         return self.event_style
 

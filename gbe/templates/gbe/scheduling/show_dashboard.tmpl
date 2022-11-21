@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load gbe_tags %}
 {% block title %}
-   Manage {{this_show}}
+   Manage {{this_occurrence.title}}
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
@@ -19,7 +19,7 @@
 {% endif %}
 <div class="row">
   <div class="col-12 col-md-8">
-  <h2 class="review-title gbe-title">{{this_show}} Dashboard</h2>
+  <h2 class="review-title gbe-title">{{this_occurrence.title}} Dashboard</h2>
 </div><div class="col-12 col-md-4 text-right">{% if can_assign_act %}
     <a href="{% url 'gbe:act_coord_create' %}?next={{ request.get_full_path }}" role="button" class="btn gbe-btn-secondary my-2">Create Act</a>{% endif %}
     </div></div>

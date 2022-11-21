@@ -16,8 +16,6 @@ from settings import (
 )
 from gbe.models import (
     ConferenceDay,
-    Event,
-    GenericEvent,
     StaffArea,
 )
 from gbe.functions import (
@@ -85,12 +83,8 @@ class ManageEventsView(View):
 
     def build_occurrence_display(self, occurrences):
         display_list = []
-        events = Event.objects.filter(e_conference=self.conference)
         for occurrence in occurrences:
-            event_type = events.filter(
-                    eventitem_id=occurrence.eventitem.eventitem_id
-                    ).get_subclass().event_type
-            if event_type == "Class":
+            if occurrence.event_style == "Class":
                 copy_link = None
             else:
                 copy_link = reverse('copy_event_schedule',
@@ -99,11 +93,11 @@ class ManageEventsView(View):
             display_item = {
                 'id': occurrence.id,
                 'start':  occurrence.start_time,
-                'title': occurrence.eventitem.event.e_title,
+                'title': occurrence.title,
                 'location': occurrence.location,
-                'duration': occurrence.eventitem.event.duration.total_seconds(
+                'duration': occurrence.length.total_seconds(
                     ) / timedelta(hours=1).total_seconds(),
-                'type': event_type,
+                'type': occurrence.event_style,
                 'current_volunteer': occurrence.role_count("Volunteer"),
                 'current_acts': occurrence.role_count("Performer"),
                 'max_volunteer': occurrence.max_volunteer,
@@ -113,7 +107,7 @@ class ManageEventsView(View):
                 'detail_link': reverse(
                     'detail_view',
                     urlconf='gbe.scheduling.urls',
-                    args=[occurrence.eventitem.event.eventitem_id]),
+                    args=[occurrence.pk]),
                 'delete_link': reverse('delete_occurrence',
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.id]),
@@ -126,7 +120,7 @@ class ManageEventsView(View):
                           occurrence.pk])
             if occurrence.parent is not None:
                 parent = occurrence.parent
-                display_item['parent_title'] = parent.eventitem.event.e_title
+                display_item['parent_title'] = parent.title
                 display_item['parent_link'] = reverse(
                     'edit_event',
                     urlconf='gbe.scheduling.urls',
@@ -135,7 +129,7 @@ class ManageEventsView(View):
                     display_item['parent_link'] = reverse(
                         'detail_view',
                         urlconf='gbe.scheduling.urls',
-                        args=[parent.eventitem.event.eventitem_id])
+                        args=[parent.pk])
             for area in StaffArea.objects.filter(slug__in=occurrence.labels,
                                                  conference=self.conference):
                 display_item['staff_areas'] += [area]

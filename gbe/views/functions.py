@@ -49,7 +49,7 @@ def make_show_casting_form(conference, base_form, start, casting):
     response = get_occurrences(event_styles=['Show'],
                                labels=[conference.conference_slug])
     for occurrence in response.occurrences:
-        choices += [(occurrence.eventitem.pk, str(occurrence))]
+        choices += [(occurrence.pk, str(occurrence))]
     base_form.fields['show'] = ChoiceField(
         choices=choices,
         label='Pick a Show',

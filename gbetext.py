@@ -215,12 +215,6 @@ video_options = (('0', "I don't have any video of myself performing"),
                  ('1', "This is video of me but not the act I'm submitting"),
                  ('2', "This is video of the act I would like to perform"))
 
-event_options = (('Special', "Special Event"),
-                 ('Volunteer', "Volunteer Opportunity"),
-                 ('Master', "Master Class"),
-                 ('Drop-In', "Drop-In Class"),
-                 ('Rehearsal Slot', 'Rehearsal Slot'))
-
 new_event_options = (('Special', "Special Event"),
                      ('Master', "Master Class"),
                      ('Drop-In', "Drop-In Class"),
@@ -365,7 +359,10 @@ calendar_for_event = {
     'Drop-In': "General",
     'Staff Area': None,
     'Rehearsal Slot': None,
-    'Class': 'Conference',
+    'Workshop': 'Conference',
+    'Lecture': 'Conference',
+    'Panel': 'Conference',
+    'Movement': 'Conference',
     'Show': 'General'
 }
 

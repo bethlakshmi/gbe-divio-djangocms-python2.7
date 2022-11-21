@@ -128,9 +128,9 @@ def verify_vendor_app_paid(user_name, conference):
     return vendor_fees_purchased > vendor_apps_submitted
 
 
-def verify_bought_conference(user, conference):
+def verify_bought_conference(user, conference_slugs):
     return TicketItem.objects.filter(
-        Q(ticketing_event__conference=conference),
+        Q(ticketing_event__conference__conference_slug__in=conference_slugs),
         Q(transaction__purchaser__matched_to_user=user),
         Q(ticketing_event__include_conference=True) | Q(
             ticketing_event__include_most=True)

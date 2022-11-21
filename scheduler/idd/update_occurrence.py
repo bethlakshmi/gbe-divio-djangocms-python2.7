@@ -11,6 +11,7 @@ def update_occurrence(occurrence_id,
                       title=None,
                       description=None,
                       start_time=None,
+                      length=None,
                       max_volunteer=None,
                       max_commitments=None,
                       people=None,
@@ -39,6 +40,8 @@ def update_occurrence(occurrence_id,
         occurrence.title = title
     if description is not None:
         occurrence.description = description
+    if length is not None:
+        occurrence.length = length
 
     if parent_event_id is not None:
         if parent_event_id > -1:

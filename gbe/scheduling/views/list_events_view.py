@@ -6,10 +6,7 @@ from django.http import Http404
 from django.urls import reverse
 from gbe.models import (
     Class,
-    Event,
-    GenericEvent,
     Performer,
-    Show,
 )
 from gbe.functions import (
     get_current_conference,
@@ -29,7 +26,7 @@ from gbe_forms_text import (
     list_titles,
 )
 from gbetext import (
-    event_options,
+    calendar_for_event,
     class_options,
     role_options,
 )
@@ -65,41 +62,19 @@ class ListEventsView(View):
 
         return context
 
-    def get_events_list_by_type(self):
-        event_type = self.event_type.lower()
-        items = []
+    def get_styles(self):
+        styles = [self.event_type]
+
         if event_type == "all":
-            return Event.get_all_events(self.conference)
+            styles = None
 
-        event_types = dict(event_options)
-        class_types = dict(class_options)
+        elif event_type == 'Class':
+            styles = ['Lecture', 'Movement', 'Panel', 'Workshop']
 
-        if event_type in [x.lower() for x in list(event_types.keys())]:
-            items = GenericEvent.objects.filter(
-                type__iexact=event_type,
-                visible=True,
-                e_conference=self.conference).order_by('e_title')
-        elif event_type.title() in list(class_types.keys()):
-            items = Class.objects.filter(
-                accepted='3',
-                visible=True,
-                type__iexact=event_type,
-                e_conference=self.conference).order_by('e_title')
-        elif event_type == 'show':
-            items = Show.objects.filter(
-                e_conference=self.conference).order_by('e_title')
-        elif event_type == 'class':
-            items = Class.objects.filter(
-                accepted='3',
-                visible=True,
-                e_conference=self.conference).exclude(
-                    type='Panel').order_by('e_title')
-        return items
+        return styles
 
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
-        items = self.get_events_list_by_type()
-        events = []
         eval_occurrences = []
         all_roles = []
         personal_schedule_items = []
@@ -121,51 +96,48 @@ class ListEventsView(View):
                 eval_occurrences = eval_response.occurrences
             else:
                 eval_occurrences = None
-        for item in items:
-            scheduled_events = []
-            presenters = []
-            response = get_occurrences(
-                foreign_event_ids=[item.eventitem_id])
-            for occurrence in response.occurrences:
-                (favorite_link,
-                 volunteer_link,
-                 evaluate,
-                 highlight,
-                 vol_disable_msg) = build_icon_links(
-                    occurrence,
-                    eval_occurrences,
-                    item.calendar_type,
-                    (self.conference.status == "completed"),
-                    personal_schedule_items)
-                scheduled_events += [{
-                    'occurrence': occurrence,
-                    'favorite_link': favorite_link,
-                    'volunteer_link': volunteer_link,
-                    'highlight': highlight,
-                    'evaluate': evaluate,
-                    'vol_disable_msg': vol_disable_msg,
-                    'approval_needed': occurrence.approval_needed,
-                }]
-                people_response = get_bookings([occurrence.pk], roles=[
-                    "Teacher",
-                    "Moderator",
-                    "Panelist"])
-                for person in people_response.people:
-                    if person.public_class != "Profile":
-                        presenter = Performer.objects.get(pk=person.public_id)
-                        if presenter not in presenters:
-                            presenters += [presenter]
-            if len(presenters) == 0 and item.calendar_type == "Conference":
-                presenters += [item.teacher]
-
-            events += [{
-                'eventitem': item,
-                'scheduled_events': scheduled_events,
+        scheduled_events = []
+        presenters = []
+        response = get_occurrences(event_styles=self.get_styles())
+        for occurrence in response.occurrences:
+            (favorite_link,
+             volunteer_link,
+             evaluate,
+             highlight,
+             vol_disable_msg) = build_icon_links(
+                occurrence,
+                eval_occurrences,
+                calendar_for_event[occurrence.event_style],
+                (self.conference.status == "completed"),
+                personal_schedule_items)
+            people_response = get_bookings([occurrence.pk], roles=[
+                "Teacher",
+                "Moderator",
+                "Panelist"])
+            for person in people_response.people:
+                if person.public_class != "Profile":
+                    presenter = Performer.objects.get(pk=person.public_id)
+                    if presenter not in presenters:
+                        presenters += [presenter]
+            scheduled_events += [{
+                'occurrence': occurrence,
+                'favorite_link': favorite_link,
+                'volunteer_link': volunteer_link,
+                'highlight': highlight,
+                'evaluate': evaluate,
+                'vol_disable_msg': vol_disable_msg,
+                'approval_needed': occurrence.approval_needed,
                 'presenters': presenters,
                 'detail': reverse('detail_view',
                                   urlconf='gbe.scheduling.urls',
-                                  args=[item.eventitem_id])}]
-        context['events'] = events
+                                  args=[occurrence.pk])}]
+        if len(presenters) == 0 and (
+                occurrence.connected_class is not None) and (
+                occurrence.connected_class == "Class"):
+            bid = Class.objects.get(pk=occurrence.connected_id)
+            presenters += [bid.teacher]
+
+        context['events'] = scheduled_events
         return render(request, self.template, context)
 
     def dispatch(self, *args, **kwargs):

@@ -7,7 +7,6 @@ from scheduler.idd import get_occurrence
 
 
 def create_occurrence(title,
-                      description,
                       length,
                       event_style,
                       start_time,
@@ -15,6 +14,7 @@ def create_occurrence(title,
                       max_commitments=0,
                       people=[],
                       locations=[],
+                      description=None,
                       parent_event_id=None,
                       blurb=None,
                       labels=[],

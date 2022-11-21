@@ -22,7 +22,6 @@ from datetime import (
 import pytz
 from gbe.models import (
     ConferenceDay,
-    Event,
     StaffArea,
     UserMessage,
 )
@@ -125,7 +124,6 @@ class VolunteerSignupView(View):
                                  occurrences,
                                  personal_schedule=None):
         display_list = []
-        events = Event.objects.filter(e_conference=self.conference)
         for occurrence in occurrences:
             role = None
             for booking in personal_schedule:
@@ -139,7 +137,6 @@ class VolunteerSignupView(View):
             if (occurrence.extra_volunteers() < 0 and (
                     role is None or role in roles)) or (
                     role is not None and role in roles):
-                event = events.filter(pk=occurrence.eventitem.event.pk).first()
                 occurrence_detail = {
                     'object': occurrence,
                     'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
@@ -147,11 +144,8 @@ class VolunteerSignupView(View):
                     'colspan': (
                         occurrence.duration.total_seconds() * self.col_per_hour
                         )/3600,
-                    'title': event.e_title,
                     'location': occurrence.location,
-                    'description': event.e_description,
                     'approval_needed': occurrence.approval_needed,
-                    'eventitem': occurrence.eventitem,
                     'staff_areas': StaffArea.objects.filter(
                         conference=self.conference,
                         slug__in=occurrence.labels)}
