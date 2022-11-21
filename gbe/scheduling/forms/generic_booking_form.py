@@ -1,8 +1,5 @@
 from django.forms import HiddenInput
-from gbe_forms_text import (
-    event_help_texts,
-    event_labels,
-)
+from gbe_forms_text import event_help_texts
 from gbe.scheduling.forms import EventBookingForm
 
 
@@ -15,6 +12,5 @@ class GenericBookingForm(EventBookingForm):
             'type',
             'conference', ]
         help_texts = event_help_texts
-        labels = event_labels
         widgets = {'type': HiddenInput(),
                    'e_conference': HiddenInput()}

@@ -339,15 +339,6 @@ time_text = (('Start Time', 'Start Time'),
              ('Hard Time', 'Hard Time'),
              ('Soft Time', 'Soft Time'))
 
-event_labels = {'type': 'Type',
-                'fee': 'Materials Fee',
-                'parent_event': 'Part of',
-                'volunteer_category': 'Opportunity Category'
-                }
-
-overlap_location_text = ' (alt)'
-
-
 calendar_type = {0: 'General',
                  1: 'Conference',
                  2: 'Volunteer'}

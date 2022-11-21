@@ -37,7 +37,6 @@ from settings import (
     GBE_DATETIME_FORMAT,
 )
 from django.http import Http404
-from gbetext import event_labels
 from gbe_forms_text import event_settings
 
 
