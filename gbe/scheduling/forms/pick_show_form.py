@@ -31,11 +31,9 @@ class PickShowForm(Form):
                     event_styles=["Show"],
                     labels=[initial['conference'].conference_slug])
                 for occurrence in response.occurrences:
-                    event = Show.objects.get(
-                        eventitem_id=occurrence.foreign_event_id)
                     choices += [
                         (occurrence.pk, "%s - %s" % (
-                            event.e_title,
+                            occurrence.title,
                             occurrence.start_time.strftime(
                                 GBE_DATETIME_FORMAT)))]
             choices += [("", "Make New Show")]

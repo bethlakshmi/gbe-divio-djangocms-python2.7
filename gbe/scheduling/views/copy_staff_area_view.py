@@ -150,14 +150,6 @@ class CopyStaffAreaView(CopyCollectionsView):
                    room,
                    labels,
                    root=None):
-        new_event_room = room
-        gbe_event_copy = occurrence.as_subtype
-        gbe_event_copy.pk = None
-        gbe_event_copy.event_id = None
-        gbe_event_copy.eventitem_ptr_id = None
-        gbe_event_copy.eventitem_id = None
-        gbe_event_copy.e_conference = conference
-        gbe_event_copy.save()
         if root:
             labels += [self.area.slug]
         if occurrence.location.as_subtype.conferences.filter(
@@ -165,10 +157,13 @@ class CopyStaffAreaView(CopyCollectionsView):
             new_event_room = occurrence.location
 
         response = create_occurrence(
-            gbe_event_copy.eventitem_id,
+            occurrence.title,
+            occurrence.duration,
+            occurrence.event_style,
             occurrence.starttime + delta,
             max_volunteer=occurrence.max_volunteer,
             locations=[new_event_room],
+            description=occurrence.duration,
             labels=labels,
             approval=occurrence.approval_needed,
             slug=occurrence.slug

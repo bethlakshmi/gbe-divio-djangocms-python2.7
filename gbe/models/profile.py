@@ -173,19 +173,6 @@ class Profile(WorkerItem):
             acts += performer.acts.exclude(b_conference__status="completed")
         return acts
 
-    def get_shows(self):
-        from gbe.models import Show  # late import, circularity
-        acts = self.get_acts()
-        shows = []
-        for act in acts:
-            if act.accepted == 3 and act.is_current:
-                for item in get_schedule(commitment=act).schedule_items:
-                    for show in Show.objects.filter(
-                            eventitem_id=item.event.eventitem.eventitem_id):
-                        shows += [(show, act)]
-        shows = sorted(shows, key=lambda show: show[0].e_title)
-        return shows
-
     # DEPRECATE, yes it's new.  Deprecate anyway, this hack gets through
     # GBE2018 safely.  Used by get_schedule IDD call.  Treat as private
     # and log any additional use here.

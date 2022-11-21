@@ -12,7 +12,6 @@ from scheduler.idd import (
     get_eval_summary,
 )
 from gbe.models import (
-    Class,
     Performer,
     UserMessage,
 )
@@ -35,21 +34,20 @@ def eval_view(request, occurrence_id=None):
         show_general_status(request, detail_response, "EvaluationDetailView")
         if detail_response.occurrences and len(
                 detail_response.occurrences) > 0:
+            occurrence = detail_response.occurrences[0]
             detail_response.answers.sort(
                 key=lambda answer: (answer.profile.profile.display_name,
                                     answer.question.order))
             details = {
-                'occurrence': detail_response.occurrences[0],
-                'title': detail_response.occurrences[
-                    0].eventitem.event.e_title,
-                'description': detail_response.occurrences[
-                    0].eventitem.event.e_description,
+                'occurrence': occurrence,
+                'title': occurrence.title,
+                'description': occurrence.description,
                 'questions': detail_response.questions,
                 'evaluations': detail_response.answers,
             }
             if not conference:
-                conference = detail_response.occurrences[
-                    0].eventitem.event.e_conference
+                conference = Conference.objects.filter(
+                    conference_slug__in=occurrence.labels)[0]
     if not conference:
         conference = get_current_conference()
 
@@ -58,10 +56,7 @@ def eval_view(request, occurrence_id=None):
 
     display_list = []
     summary_view_data = {}
-    events = Class.objects.filter(e_conference=conference)
     for occurrence in response.occurrences:
-        class_event = events.get(
-                eventitem_id=occurrence.eventitem.eventitem_id)
         teachers = []
         interested = []
         for person in occurrence.people:
@@ -72,9 +67,8 @@ def eval_view(request, occurrence_id=None):
 
         display_item = {
             'id': occurrence.id,
-            'eventitem_id': class_event.eventitem_id,
             'start':  occurrence.start_time.strftime(GBE_TABLE_FORMAT),
-            'title': class_event.e_title,
+            'title': occurrence.title,
             'teachers': teachers,
             'interested': len(interested),
             'eval_count': response.count.get(occurrence.pk, 0),

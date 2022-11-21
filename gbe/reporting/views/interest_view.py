@@ -37,10 +37,8 @@ def interest_view(request):
               'Action']
 
     display_list = []
-    events = Class.objects.filter(e_conference=conference)
     for occurrence in response.occurrences:
-        class_event = events.get(
-                eventitem_id=occurrence.eventitem.eventitem_id)
+        class_event = Class.objects.get(occurrence.connected_id)
         teachers = []
         interested = []
         for person in occurrence.people:
@@ -51,17 +49,16 @@ def interest_view(request):
 
         display_item = {
             'id': occurrence.id,
-            'title': class_event.e_title,
+            'title': occurrence.title,
             'location': occurrence.location,
             'teachers': teachers,
-            'eventitem_id': class_event.eventitem_id,
             'interested': interested,
-            'type': class_event.type,
+            'type': occurrence.event_style,
             'maximum_enrollment': class_event.maximum_enrollment,
             'detail_link': reverse(
                 'detail_view',
                 urlconf='gbe.scheduling.urls',
-                args=[class_event.eventitem_id])}
+                args=[occurrence.pk])}
         display_list += [display_item]
 
     user_message = UserMessage.objects.get_or_create(

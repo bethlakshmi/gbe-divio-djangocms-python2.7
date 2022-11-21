@@ -72,10 +72,6 @@ class Class(Biddable):
         new_class.physical_restrictions = self.physical_restrictions
         new_class.multiple_run = self.multiple_run
         new_class.duration = self.duration
-        new_class.e_title = self.e_title
-        new_class.e_description = self.e_description
-        new_class.e_conference = Conference.objects.filter(
-            status="upcoming").first()
         new_class.b_title = self.b_title
         new_class.b_description = self.b_description
         new_class.b_conference = Conference.objects.filter(
@@ -116,8 +112,6 @@ class Class(Biddable):
         return self.teacher.contact
 
     def __str__(self):
-        if self.e_title and len(self.e_title) > 0:
-            return self.e_title
         return self.b_title
 
     # tickets that apply to class are:

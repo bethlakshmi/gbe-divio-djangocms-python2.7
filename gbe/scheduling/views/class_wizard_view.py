@@ -72,7 +72,7 @@ class ClassWizardView(EventWizardView):
         context = {}
         if working_class is not None:
             context['third_title'] = "Book Class:  %s" % (
-                working_class.e_title)
+                working_class.b_title)
             context['third_form'] = ClassBookingForm(instance=working_class)
             duration = working_class.duration.total_seconds() / timedelta(
                 hours=1).total_seconds()
@@ -97,7 +97,7 @@ class ClassWizardView(EventWizardView):
         if 'accepted_class' in request.GET:
             working_class = get_object_or_404(
                     Class,
-                    eventitem_id=request.GET['accepted_class'])
+                    pk=request.GET['accepted_class'])
             context.update(self.setup_third_form(working_class))
         context['second_form'] = PickClassForm(
             initial={'conference':  self.conference,
@@ -122,13 +122,11 @@ class ClassWizardView(EventWizardView):
             context.update(self.setup_third_form(working_class))
 
         elif 'set_class' in list(request.POST.keys(
-                )) and 'eventitem_id' in list(request.POST.keys()):
-            if request.POST['eventitem_id']:
-                working_class = get_object_or_404(
-                    Class,
-                    eventitem_id=request.POST['eventitem_id'])
+                )) and 'id' in list(request.POST.keys()):
+            if request.POST['id']:
+                working_class = get_object_or_404(Class, id=request.POST['id'])
                 context['third_title'] = "Book Class:  %s" % (
-                    working_class.e_title)
+                    working_class.b_title)
                 context['third_form'] = ClassBookingForm(
                     request.POST,
                     instance=working_class)
@@ -172,7 +170,6 @@ class ClassWizardView(EventWizardView):
                             request,
                             user_message[0].description)
                         return render(request, self.template, context)
-                    working_class.e_conference = self.conference
                     working_class.b_conference = self.conference
 
                 working_class.save()

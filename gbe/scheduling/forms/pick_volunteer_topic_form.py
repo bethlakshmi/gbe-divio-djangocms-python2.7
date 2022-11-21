@@ -37,7 +37,7 @@ class PickVolunteerTopicForm(Form):
                 event_styles=[event_choices.keys()])
             for item in response.occurrences:
                 event_choices[event.event_type] += [(item.pk, "%s - %s" % (
-                    event.e_title,
+                    item.title,
                     item.start_time.strftime(GBE_DATETIME_FORMAT)))]
             if len(event_choices['Show']) > 0:
                 complete_choices += [('Shows', event_choices['Show'])]
