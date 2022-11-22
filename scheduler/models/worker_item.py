@@ -52,5 +52,5 @@ class WorkerItem(ResourceItem):
             resources_allocated__resource__worker__role=role)
         if conference:
             events = events.filter(
-                eventitem__event__e_conference=conference)
+                eventlabel__text=conference.conference_slug)
         return events

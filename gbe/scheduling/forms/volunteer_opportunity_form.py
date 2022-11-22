@@ -28,4 +28,3 @@ class VolunteerOpportunityForm(ScheduleBasicForm):
                   'location',
                   'event_style',
                   ]
-        hidden_fields = ['opp_event_id', 'e_description']

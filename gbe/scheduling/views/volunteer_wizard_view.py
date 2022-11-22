@@ -68,7 +68,7 @@ class VolunteerWizardView(EventWizardView):
             else:
                 context['third_title'] = "Make New Volunteer Opportunity"
                 context['third_form'] = GenericBookingForm(
-                    initial={'e_conference':  self.conference,
+                    initial={'conference':  self.conference,
                              'type': "Volunteer"})
                 context['scheduling_form'] = ScheduleOccurrenceForm(
                     conference=self.conference,

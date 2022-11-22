@@ -139,7 +139,7 @@ class TestEval(TestCase):
         self.assertContains(response, grade2.profile.profile.display_name)
         self.assertContains(response, '<td>4</td>')
         self.assertContains(response, '<td>3</td>')
-        self.assertContains(response, self.context.bid.e_description)
+        self.assertContains(response, self.context.bid.b_description)
 
     def test_bad_details(self):
         interested = []

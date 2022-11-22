@@ -13,4 +13,4 @@ class GenericBookingForm(EventBookingForm):
             'conference', ]
         help_texts = event_help_texts
         widgets = {'type': HiddenInput(),
-                   'e_conference': HiddenInput()}
+                   'conference': HiddenInput()}
