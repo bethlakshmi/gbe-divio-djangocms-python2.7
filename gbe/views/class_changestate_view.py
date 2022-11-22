@@ -18,8 +18,6 @@ class ClassChangeStateView(BidChangeStateView):
             # We have to keep b_ and e_ data consistent somehow
             # this seems like a good point, as bid editing and event
             # editing are quite different
-            self.object.e_title = self.object.b_title
-            self.object.e_description = self.object.b_description
             if int(request.POST['accepted']) == 3 and (
                     'extra_button' in request.POST.keys()):
                 self.next_page = "%s?accepted_class=%d" % (

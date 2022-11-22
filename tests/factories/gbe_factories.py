@@ -132,12 +132,9 @@ class RoomFactory(DjangoModelFactory):
 class ClassFactory(DjangoModelFactory):
     class Meta:
         model = conf.Class
-    e_title = Sequence(lambda x: "Test Class #%d" % x)
-    e_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
     b_title = Sequence(lambda x: "Test Class #%d" % x)
     b_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
+        lambda a: "Description for %s" % a.b_title)
     submitted = False
     duration = timedelta(hours=1)
     teacher = SubFactory(PersonaFactory)
@@ -148,14 +145,14 @@ class ClassFactory(DjangoModelFactory):
     fee = 0
     length_minutes = 60
     history = LazyAttribute(
-        lambda a: "History for test Class %s" % a.e_title)
+        lambda a: "History for test Class %s" % a.b_title)
     run_before = LazyAttribute(
         lambda a:
-        "run_before for test Class %s" % a.e_title)
+        "run_before for test Class %s" % a.b_title)
     schedule_constraints = "[]"
     space_needs = ''
     physical_restrictions = LazyAttribute(
-        lambda a: "physical restrictions for test Class %s" % a.e_title)
+        lambda a: "physical restrictions for test Class %s" % a.b_title)
     multiple_run = 'No'
     b_conference = SubFactory(ConferenceFactory)
     e_conference = SubFactory(ConferenceFactory)

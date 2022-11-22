@@ -18,7 +18,7 @@ from gbetext import (
     no_casting_msg,
 )
 from scheduler.idd import (
-    get_occurrences,
+    get_occurrence,
     get_schedule,
     remove_booking,
     set_person,
@@ -49,7 +49,7 @@ class ActChangeStateView(BidChangeStateView):
         show = None
         rehearsals = []
         for item in schedule_items:
-            if item.event_style == "Show":
+            if item.event.event_style == "Show":
                 show = item
             elif item.event not in rehearsals and (
                     item.event_style == 'Rehearsal Slot'):
@@ -104,7 +104,7 @@ class ActChangeStateView(BidChangeStateView):
 
             same_show = False
             same_role = False
-            if show and show.event.eventitem == self.new_show.eventitem:
+            if show and show.event == self.new_show:
                 same_show = True
                 if casting == show.commitment.role:
                     user_message = UserMessage.objects.get_or_create(
@@ -157,7 +157,7 @@ class ActChangeStateView(BidChangeStateView):
                     self.object.performer.name,
                     self.object.b_title,
                     acceptance_states[int(request.POST['accepted'])][1],
-                    self.new_show.eventitem.child().e_title))
+                    self.new_show.title))
         else:
             self.clear_bookings(request, rehearsals, show)
             user_message = UserMessage.objects.get_or_create(
@@ -211,10 +211,9 @@ class ActChangeStateView(BidChangeStateView):
         elif 'next' in request.GET:
             self.next_page = request.GET['next']
         if self.act_accepted(request):
-            response = get_occurrences(
-                foreign_event_ids=[request.POST['show']])
+            response = get_occurrence(request.POST['show'])
             show_general_status(request, response, self.__class__.__name__)
             if response.occurrences.count() > 0:
-                self.new_show = response.occurrences.first()
+                self.new_show = response.occurrence
             else:
                 raise Http404
