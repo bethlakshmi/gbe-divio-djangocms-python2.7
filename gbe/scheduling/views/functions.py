@@ -136,8 +136,10 @@ def get_event_display_info(occurrence_id):
     Helper for displaying a single of event.
     '''
     response = get_occurrence(occurrence_id)
-    if response.errors and response.errors[0] == "OCCURRENCE_NOT_FOUND":
+    if response.errors and response.errors[0].code == "OCCURRENCE_NOT_FOUND":
         raise Http404
+
+    occurrence = response.occurrence
     bio_grid_list = {}
     featured_grid_list = []
     response = get_people(event_ids=[occurrence_id], roles=["Performer"])
@@ -176,10 +178,11 @@ def get_event_display_info(occurrence_id):
         roles=['Teacher', 'Panelist', 'Moderator', 'Staff Lead'])
     people = []
     if len(booking_response.people) == 0 and (
-            item.__class__.__name__ == "Class"):
+            occurrence.connected_class == "Class"):
+        bid = Class.objects.get(pk=occurrence.connected_id)
         people = [{
             'role': "Presenter",
-            'person': item.teacher, }]
+            'person': bid.teacher, }]
     else:
         id_set = []
         for person in booking_response.people:
@@ -192,7 +195,7 @@ def get_event_display_info(occurrence_id):
                 }]
 
     eventitem_view = {
-        'scheduled_events': response.occurrence,
+        'occurrence': occurrence,
         'bio_grid_list': bio_grid_list,
         'featured_grid_list': featured_grid_list,
         'people': people}
@@ -395,8 +398,11 @@ def build_icon_links(occurrence,
         favorite_link = None
     if calendar_type == 'Volunteer' and occurrence.end_time < datetime.now():
         volunteer_link = None
+    if occurrence.event_style == "Show":
+        volunteer_link = None
     if occurrence.max_volunteer == 0:
         volunteer_link = None
+        raise Exception("aren't we here?")
 
     return (favorite_link,
             volunteer_link,

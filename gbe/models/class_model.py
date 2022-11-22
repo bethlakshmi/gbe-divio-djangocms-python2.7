@@ -21,7 +21,6 @@ from gbetext import (
     space_options,
     yesno_options,
 )
-from ticketing.functions import get_tickets
 from settings import GBE_TABLE_FORMAT
 
 
@@ -113,15 +112,6 @@ class Class(Biddable):
 
     def __str__(self):
         return self.b_title
-
-    # tickets that apply to class are:
-    #   - any ticket that applies to "most"
-    #   - any ticket that applies to the conference
-    #   - any ticket that links this event specifically
-    # but for all tickets - iff the ticket is active
-    #
-    def get_tickets(self):
-        return get_tickets(self, most=True, conference=True)
 
     class Meta:
         verbose_name_plural = 'classes'

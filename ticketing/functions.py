@@ -20,19 +20,23 @@ def import_ticket_items():
                 ("BPT: imported %d tickets" % count, True)]
 
 
-def get_tickets(linked_event, most=False, conference=False):
+def get_tickets(linked_event):
     general_events = []
 
-    if most:
+    if linked_event.event_style in ["Special", "Drop-In", "Show"]:
         general_events = TicketingEvents.objects.filter(
             include_most=True,
-            conference=linked_event.e_conference)
-    if conference:
+            conference__conference_slug__in=linked_event.labels)
+    if linked_event.event_style in ['Lecture',
+                                    'Movement',
+                                    'Panel',
+                                    'Workshop']:
         general_events = list(chain(
             general_events,
             TicketingEvents.objects.filter(
                 include_conference=True,
-                conference=linked_event.e_conference)))
+                conference__conference_slug__in=linked_event.labels)))
+        
 
     general_events = list(chain(
         general_events,

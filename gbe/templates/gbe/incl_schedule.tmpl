@@ -22,11 +22,11 @@
             <i class="fa fa-star" aria-hidden="true"></i></a>
 	    {% endif %}
             {{booking.starttime}}, 
-          <a href="{% url 'scheduling:detail_view' booking.eventitem_id%}" class="gbe-link">
+          <a href="{% url 'scheduling:detail_view' booking.id %}" class="gbe-link">
             {{ booking.title }}</a>
 	    {% if not historical %}
 	      {% if booking.role == "Teacher" or booking.role == "Moderator" %}
-              <a href="#" data-toggle="modal" data-target="#Modal{{booking.eventitem_id}}" data-backdrop="true" title="View Attendee Contact Info">
+              <a href="#" data-toggle="modal" data-target="#Modal{{booking.id}}" data-backdrop="true" title="View Attendee Contact Info">
 		<span class="badge gbe-badge">{{ booking.interested|length }}</span>
 	      </a>
               {% include "gbe/interest_list.tmpl" with class=booking %}
@@ -42,7 +42,7 @@
 <div class="container">
   <div class="row">
     <div class="col text-center">
-      <a class="btn gbe-btn-primary mt-3" role="button" href='{% url 'scheduling:show_dashboard' show.pk%}'>Manage {{ show.eventitem }}</a>
+      <a class="btn gbe-btn-primary mt-3" role="button" href='{% url 'scheduling:show_dashboard' show.pk%}'>Manage {{ show.title }}</a>
     </div>
   </div>
 </div><br>

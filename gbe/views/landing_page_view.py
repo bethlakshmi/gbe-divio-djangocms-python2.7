@@ -10,6 +10,7 @@ from django.db.models import Q
 from gbe.models import (
     Act,
     Class,
+    Conference,
     Costume,
     Profile,
     Vendor,
@@ -22,6 +23,7 @@ from gbe.ticketing_idd_interface import (
 )
 from gbetext import (
     acceptance_states,
+    calendar_for_event,
     current_bid_msg,
     historic_bid_msg,
     interested_explain_msg,
@@ -99,18 +101,20 @@ class LandingPageView(ProfileRequiredMixin, View):
 
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
-            gbe_event = booking.event.eventitem.child()
+            calendar_type = calendar_for_event[booking.event.event_style]
+            conference = Conference.objects.filter(
+                conference_slug__in=booking.event.labels)[0]
             booking_item = {
                 'id': booking.event.pk,
                 'role':  booking.role,
-                'conference': gbe_event.e_conference,
+                'conference': conference,
                 'starttime': booking.event.starttime,
                 'interested': get_bookings(
                     [booking.event.pk],
                     roles=["Interested"]).people,
-                'eventitem_id': gbe_event.eventitem_id,
-                'title': gbe_event.e_title, }
-            if gbe_event.calendar_type == "Conference" and (
+                'title': booking.event.title, }
+
+            if calendar_type == "Conference" and (
                     booking.role not in ("Teacher", "Performer", "Moderator")):
                 eval_check = get_eval_info(booking.event.pk, person)
                 if len(eval_check.questions) > 0:
@@ -121,12 +125,12 @@ class LandingPageView(ProfileRequiredMixin, View):
                             'eval_event',
                             args=[booking.event.pk, ],
                             urlconf='gbe.scheduling.urls')
-            elif gbe_event.calendar_type == "Conference":
+            elif calendar_type == "Conference":
                 classes += [booking_item]
-            if gbe_event.e_conference.status != "completed":
-                if gbe_event.calendar_type == "General" and (
+            if conference.status != "completed":
+                if calendar_type == "General" and (
                         booking.commitment is not None):
-                    shows += [(gbe_event,
+                    shows += [(booking.event,
                                acts.get(id=booking.commitment.class_id))]
 
                 # roles assigned direct to shows

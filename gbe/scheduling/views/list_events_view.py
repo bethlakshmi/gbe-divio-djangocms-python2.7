@@ -65,10 +65,10 @@ class ListEventsView(View):
     def get_styles(self):
         styles = [self.event_type]
 
-        if event_type == "all":
+        if self.event_type == "all":
             styles = None
 
-        elif event_type == 'Class':
+        elif self.event_type == 'Class':
             styles = ['Lecture', 'Movement', 'Panel', 'Workshop']
 
         return styles
@@ -98,7 +98,9 @@ class ListEventsView(View):
                 eval_occurrences = None
         scheduled_events = []
         presenters = []
-        response = get_occurrences(event_styles=self.get_styles())
+        response = get_occurrences(
+            event_styles=self.get_styles(),
+            labels=[self.conference.conference_slug])
         for occurrence in response.occurrences:
             (favorite_link,
              volunteer_link,
@@ -119,6 +121,11 @@ class ListEventsView(View):
                     presenter = Performer.objects.get(pk=person.public_id)
                     if presenter not in presenters:
                         presenters += [presenter]
+            bid = None
+            if (occurrence.connected_class is not None) and (
+                occurrence.connected_class == "Class"):
+                bid = Class.objects.get(pk=occurrence.connected_id)
+
             scheduled_events += [{
                 'occurrence': occurrence,
                 'favorite_link': favorite_link,
@@ -128,15 +135,10 @@ class ListEventsView(View):
                 'vol_disable_msg': vol_disable_msg,
                 'approval_needed': occurrence.approval_needed,
                 'presenters': presenters,
+                'bid': bid,
                 'detail': reverse('detail_view',
                                   urlconf='gbe.scheduling.urls',
                                   args=[occurrence.pk])}]
-        if len(presenters) == 0 and (
-                occurrence.connected_class is not None) and (
-                occurrence.connected_class == "Class"):
-            bid = Class.objects.get(pk=occurrence.connected_id)
-            presenters += [bid.teacher]
-
         context['events'] = scheduled_events
         return render(request, self.template, context)
 

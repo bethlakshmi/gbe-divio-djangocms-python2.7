@@ -16,5 +16,5 @@ def get_occurrence(occurrence_id):
         response = OccurrenceResponse(
             errors=[Error(
                 code="OCCURRENCE_NOT_FOUND",
-                details="Occurrence id %d not found" % occurrence_id), ])
+                details="Occurrence id %s not found" % str(occurrence_id)), ])
     return response
