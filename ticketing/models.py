@@ -371,6 +371,7 @@ class RoleExclusion(Exclusion):
                               on_delete=models.CASCADE,
                               blank=True,
                               null=True)
+
     def __str__(self):
         describe = self.role
         if self.event:
@@ -389,6 +390,6 @@ class RoleExclusion(Exclusion):
                 self.role == booking.role for booking in user_schedule)
         else:
             is_excluded = any((self.role == b.role and (
-                self.event.eventitem_id == b.event.foreign_event_id
+                self.event == b.event
                 )) for b in user_schedule)
         return is_excluded

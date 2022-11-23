@@ -246,12 +246,13 @@ class TestActChangestate(TestCase):
         # accepted -> accepted
         # change show, loose rehearsal
         # same role
+        title = self.sched_event.title.lower()
         rehearsal_event = self.context._schedule_rehearsal(
             self.context.sched_event,
             act=self.context.act)
         EmailTemplateSenderFactory(
             from_email="actemail@notify.com",
-            template__name='act accepted - %s' % self.sched_event.title.lower(),
+            template__name='act accepted - %s' % title,
             template__subject="test template",
             template__content="stuff {{ act_tech_link }} more stuff"
         )
@@ -392,9 +393,10 @@ class TestActChangestate(TestCase):
     def test_act_accept_notification_template_fail(self):
         # accepted -> accepted - error case
         # change show, same role
+        title = self.sched_event.title.lower()
         EmailTemplateSenderFactory(
             from_email="actemail@notify.com",
-            template__name='act accepted - %s' % self.sched_event.title.lower(),
+            template__name='act accepted - %s' % title,
             template__subject="test template {% url 'gbehome' %}"
         )
         login_as(self.privileged_user, self)

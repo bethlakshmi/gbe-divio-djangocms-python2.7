@@ -164,7 +164,7 @@ class TestListTickets(TestCase):
                                     ticket_dict3]
 
         response = self.import_tickets()
-        assert_alert_exists(response, 'success', 'Success',(
+        assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported %d events, %d tickets" % (1, 4)))
         assert_alert_exists(response, 'success', 'Success', (
             "BPT: imported %d tickets") % (0))

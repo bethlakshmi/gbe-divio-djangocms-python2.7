@@ -72,10 +72,7 @@ def migrate_event_inheritance(apps, schema_editor):
                 event.title))
 
         event.save()
-        print("converted %s, pk %s, event type %s" % (
-            event.title,
-            event.pk,
-            event.event_style))
+
 
 def reverse_event_inheritance(apps, schema_editor):
     schedEvent = apps.get_model("scheduler", "Event")
@@ -91,11 +88,11 @@ def reverse_event_inheritance(apps, schema_editor):
             gbe_event = gbeShow()
         else:
             gbe_event = gbeGeneric(type=event.event_style)
-        gbe_event.e_title=event.title
-        gbe_event.e_description=event.description
-        gbe_event.blurb=event.blurb
-        gbe_event.duration=event.length
-        gbe_event.visible=event.visible
+        gbe_event.e_title = event.title
+        gbe_event.e_description = event.description
+        gbe_event.blurb = event.blurb
+        gbe_event.duration = event.length
+        gbe_event.visible = event.visible
         if event.resources_allocated.filter(default=True).exists:
             for alloc in event.resources_allocated.filter(default=True):
                 if Location.objects.filter(pk=alloc.resource.pk).exists():
@@ -109,7 +106,6 @@ def reverse_event_inheritance(apps, schema_editor):
         event.eventitem = gbe_event
         event.save()
 
-        print("converted %s" % (gbe_event.e_title))
 
 class Migration(migrations.Migration):
 

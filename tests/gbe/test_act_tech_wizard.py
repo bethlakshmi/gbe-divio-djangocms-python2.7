@@ -257,7 +257,8 @@ class TestActTechWizard(TestCase):
                       args=[self.context.act.pk])
         login_as(self.context.performer.contact, self)
         data = {'book': "Book Rehearsal"}
-        data['%d-rehearsal' % self.context.sched_event.pk] = extra_rehearsal.pk + 5
+        data['%d-rehearsal' % self.context.sched_event.pk] = \
+            extra_rehearsal.pk + 5
         response = self.client.post(url, data, follow=True)
         self.assertNotContains(response, default_rehearsal_booked)
         self.assertContains(response, "Select a valid choice.")

@@ -18,6 +18,7 @@ from django.forms.utils import ErrorList
 from gbe_forms_text import (
     copy_errors,
 )
+from gbetext import calendar_for_event
 
 
 class CopyCollectionsView(View):

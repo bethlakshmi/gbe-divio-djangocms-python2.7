@@ -20,7 +20,7 @@ def move_to_scheduler_events(apps, schema_editor):
                 eventitem_id=role_exclusion.event.eventitem_id)
         role_exclusion.event_2 = sched_event
         role_exclusion.save()
-        print("moved exclusion for %s" % sched_event.title)
+
 
 def back_to_gbe_events(apps, schema_editor):
     TicketingEvents = apps.get_model("ticketing", "TicketingEvents")
@@ -31,12 +31,11 @@ def back_to_gbe_events(apps, schema_editor):
             event.linked_events.add(gbeEvent.objects.get(
                 eventitem_id=linked_event.eventitem.eventitem_id))
             event.save()
-            print("moved event %s" % linked_event.title)
     for role_exclusion in RoleExclusion.objects.filter(event_2__isnull=False):
         role_exclusion.event = gbeEvent.objects.get(
                 eventitem_id=role_exclusion.event_2.eventitem.eventitem_id)
         role_exclusion.save()
-        print("moved exclusion for %s" % role_exclusion.event_2.title)
+
 
 class Migration(migrations.Migration):
 

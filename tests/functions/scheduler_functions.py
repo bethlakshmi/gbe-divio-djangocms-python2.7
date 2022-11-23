@@ -6,6 +6,7 @@ from tests.factories.scheduler_factories import (
     WorkerFactory
 )
 from tests.factories.gbe_factories import ConferenceFactory
+from gbetext import calendar_for_event
 from datetime import (
     datetime,
     time
@@ -18,9 +19,10 @@ def book_worker_item_for_role(workeritem, role, conference=None, bid=None):
         role=role)
     if bid is not None:
         conference = bid.b_conference
-
-    event = SchedEventFactory(connected_class=bid.__class__.__name__,
-                              connected_id=bid.pk)
+        event = SchedEventFactory(connected_class=bid.__class__.__name__,
+                                  connected_id=bid.pk)
+    else:
+        event = SchedEventFactory()
 
     if conference is not None:
         EventLabelFactory(
@@ -34,7 +36,7 @@ def book_worker_item_for_role(workeritem, role, conference=None, bid=None):
         )
     EventLabelFactory(
         event=event,
-        text=event.eventitem.calendar_type
+        text=calendar_for_event[event.event_style]
     )
     booking = ResourceAllocationFactory.create(
         event=event,

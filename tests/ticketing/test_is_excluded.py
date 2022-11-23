@@ -10,6 +10,7 @@ from tests.factories.ticketing_factories import (
 from tests.factories.gbe_factories import (
     PersonaFactory
 )
+from gbe.models import Conference
 from tests.functions.scheduler_functions import book_worker_item_for_role
 from scheduler.idd import get_schedule
 from tests.functions.gbe_functions import clear_conferences
@@ -28,9 +29,10 @@ class TestIsExcluded(TestCase):
             cls.teacher,
             cls.roleexclusion.role,
             )
-        cls.roleexclusion.event = booking.event.eventitem
+        cls.roleexclusion.event = booking.event
         cls.roleexclusion.save()
-        cls.conference = booking.event.eventitem.get_conference()
+        cls.conference = Conference.objects.filter(
+            conference_slug__in=booking.event.labels)[0]
         cls.schedule = get_schedule(
                 cls.teacher.performer_profile.user_object,
                 labels=[cls.conference.conference_slug]).schedule_items

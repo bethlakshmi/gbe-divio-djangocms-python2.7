@@ -16,7 +16,7 @@ def import_ticket_items():
         msg, is_success = import_eb_ticket_items()
         count = import_bpt_ticket_items()
 
-        return [(msg, is_success), 
+        return [(msg, is_success),
                 ("BPT: imported %d tickets" % count, True)]
 
 
@@ -36,7 +36,6 @@ def get_tickets(linked_event):
             TicketingEvents.objects.filter(
                 include_conference=True,
                 conference__conference_slug__in=linked_event.labels)))
-        
 
     general_events = list(chain(
         general_events,
