@@ -46,7 +46,6 @@ def create_occurrence(title,
         response.occurrence.connected_id = related_object.pk
         response.occurrence.connected_class = related_object.__class__.__name__
 
-
     response.occurrence.save()
 
     if len(locations) > 0:

@@ -74,8 +74,9 @@ class ClassWizardView(EventWizardView):
             context['third_title'] = "Book Class:  %s" % (
                 working_class.b_title)
             context['third_form'] = ClassBookingForm(instance=working_class)
-            duration = working_class.duration.total_seconds() / timedelta(
-                hours=1).total_seconds()
+            duration = timedelta(
+                minutes=working_class.length_minutes
+                ).total_seconds() / timedelta(hours=1).total_seconds()
             context['scheduling_info'] = get_scheduling_info(working_class)
         else:
             context['third_form'] = ClassBookingForm()

@@ -10,6 +10,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from scheduler.models import Event
 
 
 class TestClassChangestate(TestCase):
@@ -52,7 +53,7 @@ class TestClassChangestate(TestCase):
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(url, data={'accepted': '1'})
-        assert not context.bid.scheduler_events.exists()
+        assert not Event.objects.filter(connected_id=context.bid.pk).exists()
 
     def test_class_changestate_immediate_schedule(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -71,7 +72,7 @@ class TestClassChangestate(TestCase):
                 reverse("create_class_wizard",
                         urlconf='gbe.scheduling.urls',
                         args=[context.conference.conference_slug]),
-                context.bid.eventitem_id))
+                context.bid.pk))
 
     def test_class_changestate_bad_data(self):
         url = reverse(self.view_name,

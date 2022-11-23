@@ -71,8 +71,7 @@ class TestCloneBid(TestCase):
         return response, bid
 
     def clone_class(self):
-        bid = ClassFactory(b_conference=self.old_conference,
-                           e_conference=self.old_conference)
+        bid = ClassFactory(b_conference=self.old_conference)
         bid.b_title = "Factory is broken"
         bid.save()
         count = Class.objects.filter(
