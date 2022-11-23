@@ -52,7 +52,7 @@ class ActChangeStateView(BidChangeStateView):
             if item.event.event_style == "Show":
                 show = item
             elif item.event not in rehearsals and (
-                    item.event_style == 'Rehearsal Slot'):
+                    item.event.event_style == 'Rehearsal Slot'):
                 rehearsals += [item]
         return show, rehearsals
 
@@ -213,7 +213,7 @@ class ActChangeStateView(BidChangeStateView):
         if self.act_accepted(request):
             response = get_occurrence(request.POST['show'])
             show_general_status(request, response, self.__class__.__name__)
-            if response.occurrences.count() > 0:
+            if response.occurrence is not None:
                 self.new_show = response.occurrence
             else:
                 raise Http404

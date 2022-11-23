@@ -100,7 +100,7 @@ class TestActChangestate(TestCase):
                 self.context.act.performer.name,
                 self.context.act.b_title,
                 "Wait List",
-                self.context.show.e_title))
+                self.context.sched_event.title))
 
     def test_act_keep_everything(self):
         # accepted -> accepted
