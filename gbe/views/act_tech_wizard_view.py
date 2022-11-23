@@ -99,7 +99,7 @@ class ActTechWizardView(View):
 
             rehearsal_form.fields['rehearsal'].choices = choices
             rehearsal_form.fields['rehearsal'].label = \
-                "Rehearsal for %s" % str(show.eventitem)
+                "Rehearsal for %s" % str(show.title)
             rehearsal_forms += [rehearsal_form]
 
         return rehearsal_forms

@@ -11,12 +11,7 @@ from gbe.models import (
     Conference
 )
 from django.urls import reverse
-from scheduler.models import Event as sEvent
-from datetime import datetime, date, time
-import pytz
-from tests.factories.scheduler_factories import ResourceAllocationFactory
 from tests.functions.gbe_functions import (
-    clear_conferences,
     current_conference,
     login_as,
 )
@@ -77,7 +72,6 @@ class TestBiosTeachers(TestCase):
 
     def test_bios_teachers_unbooked_accepted(self):
         accepted_class = ClassFactory(b_conference=current_conference(),
-                                      e_conference=current_conference(),
                                       accepted=3)
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(ProfileFactory(), self)

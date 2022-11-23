@@ -44,10 +44,11 @@ def BiosTeachersView(request):
                 classes += [{
                     'role': worker.role,
                     'event': commit.event,
-                    'detail_id': commit.event.eventitem.eventitem_id}]
+                    'detail_id': commit.event.pk}]
         for a_class in bid_classes.filter(teacher=performer):
             if len(commits.filter(
-                    event__eventitem__event__class=a_class)) == 0:
+                    event__connected_id=a_class.pk,
+                    event__connected_class=a_class.__class__.__name__)) == 0:
                 classes += [{
                     'role': "Teacher",
                     'event': a_class}]

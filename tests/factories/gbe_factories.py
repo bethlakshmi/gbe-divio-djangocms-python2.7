@@ -136,7 +136,6 @@ class ClassFactory(DjangoModelFactory):
     b_description = LazyAttribute(
         lambda a: "Description for %s" % a.b_title)
     submitted = False
-    duration = timedelta(hours=1)
     teacher = SubFactory(PersonaFactory)
     minimum_enrollment = 1
     maximum_enrollment = 20
@@ -155,7 +154,6 @@ class ClassFactory(DjangoModelFactory):
         lambda a: "physical restrictions for test Class %s" % a.b_title)
     multiple_run = 'No'
     b_conference = SubFactory(ConferenceFactory)
-    e_conference = SubFactory(ConferenceFactory)
 
 
 class BidEvaluationFactory(DjangoModelFactory):

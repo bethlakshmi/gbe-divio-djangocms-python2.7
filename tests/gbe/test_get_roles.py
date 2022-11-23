@@ -88,17 +88,15 @@ class TestGetRoles(TestCase):
         '''
         persona = PersonaFactory()
         this_class = GenericEventFactory(
-            e_conference=self.conference)
+            b_conference=self.conference)
         book_worker_item_for_role(
             persona,
             "Teacher",
-            this_class)
-        event = GenericEventFactory(
-            e_conference=self.conference)
+            bid=this_class)
         book_worker_item_for_role(
             persona.performer_profile,
             "Staff Lead",
-            event)
+            conference=self.conference)
         act = ActFactory(b_conference=self.conference,
                          accepted=3,
                          performer=persona)

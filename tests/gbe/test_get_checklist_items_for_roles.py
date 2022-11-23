@@ -73,8 +73,7 @@ class TestGetCheckListForRoles(TestCase):
         booking = book_worker_item_for_role(
             self.teacher.performer_profile,
             another_role.role,
-            GenericEventFactory(
-                e_conference=self.conference)
+            conference=self.conference
             )
         self.schedule = get_schedule(
                 self.teacher.performer_profile.user_object,
@@ -120,8 +119,7 @@ class TestGetCheckListForRoles(TestCase):
         booking = book_worker_item_for_role(
             self.teacher.performer_profile,
             exclusion.role,
-            GenericEventFactory(
-                e_conference=self.conference)
+            conference=self.conference
             )
         self.schedule = get_schedule(
                 self.teacher.performer_profile.user_object,

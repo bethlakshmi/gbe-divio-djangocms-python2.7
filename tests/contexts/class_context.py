@@ -40,7 +40,6 @@ class ClassContext:
         self.days = self.conference.conferenceday_set.all()
         self.starttime = starttime or noon(self.days[0])
         self.bid = bid or ClassFactory(b_conference=self.conference,
-                                       e_conference=self.conference,
                                        accepted=3,
                                        teacher=self.teacher,
                                        submitted=True)
@@ -57,11 +56,18 @@ class ClassContext:
         room = room or self.room
         teacher = teacher or self.teacher
         if starttime:
-            sched_event = SchedEventFactory(eventitem=self.bid.eventitem_ptr,
-                                            starttime=starttime)
+            sched_event = SchedEventFactory(
+                title=self.bid.b_title,
+                description=self.bid.b_description,
+                connected_id=self.bid.pk,
+                connected_class=self.bid.__class__.__name__,
+                starttime=starttime)
         else:
             sched_event = SchedEventFactory(
-                eventitem=self.bid.eventitem_ptr,
+                title=self.bid.b_title,
+                description=self.bid.b_description,
+                connected_id=self.bid.pk,
+                connected_class=self.bid.__class__.__name__,
                 starttime=noon(self.days[0]))
         ResourceAllocationFactory(
             event=sched_event,

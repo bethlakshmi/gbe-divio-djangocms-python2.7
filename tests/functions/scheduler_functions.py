@@ -5,26 +5,33 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
     WorkerFactory
 )
+from tests.factories.gbe_factories import ConferenceFactory
 from datetime import (
     datetime,
     time
 )
 
 
-def book_worker_item_for_role(workeritem, role, eventitem=None):
+def book_worker_item_for_role(workeritem, role, conference=None, bid=None):
     worker = WorkerFactory.create(
         _item=workeritem,
         role=role)
-    if eventitem:
-        event = SchedEventFactory.create(
-            eventitem=eventitem)
-    else:
-        event = SchedEventFactory.create()
+    if bid is not None:
+        conference = bid.b_conference
 
-    EventLabelFactory(
-        event=event,
-        text=event.eventitem.e_conference.conference_slug
-    )
+    event = SchedEventFactory(connected_class=bid.__class__.__name__,
+                              connected_id=bid.pk)
+
+    if conference is not None:
+        EventLabelFactory(
+            event=event,
+            text=conference.conference_slug
+        )
+    else:
+        EventLabelFactory(
+            event=event,
+            text=ConferenceFactory().conference_slug
+        )
     EventLabelFactory(
         event=event,
         text=event.eventitem.calendar_type

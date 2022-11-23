@@ -106,7 +106,7 @@ class Act (Biddable):
             if self.tech.confirm_no_rehearsal:
                 return True
             for item in get_schedule(commitment=self).schedule_items:
-                if item.event_style == 'Rehearsal Slot':
+                if item.event.event_style == 'Rehearsal Slot':
                     return True
         return False
 
