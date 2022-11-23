@@ -4,18 +4,11 @@ from tests.factories.ticketing_factories import (
 from ticketing.models import TicketItem
 from django.test import TestCase
 from django.test import Client
-from ticketing.views import (
-    index
-)
-from tests.factories.gbe_factories import (
-    UserFactory
-)
 from django.urls import reverse
 from tests.functions.gbe_functions import (
     login_as,
     setup_admin_w_privs,
 )
-from django.contrib.auth.models import User
 from gbetext import purchase_intro_msg
 
 

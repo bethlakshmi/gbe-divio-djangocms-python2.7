@@ -129,7 +129,7 @@ def set_bpt_event_detail(event):
         return None
 
     event.title = html.unescape(event_xml.find('.//title').text)
-    event.description = html.unescape(event_xml.find('.//description').text)
+    event.description = html.unescape(event_xml.find('.//e_description').text)
     event.save()
 
 

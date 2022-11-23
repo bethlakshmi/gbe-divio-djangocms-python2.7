@@ -23,9 +23,6 @@ from tests.factories.ticketing_factories import (
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test import Client
-from ticketing.views import (
-    transactions
-)
 from tests.factories.gbe_factories import (
     ProfileFactory,
     UserFactory,
@@ -229,6 +226,8 @@ class TestTransactions(TestCase):
             "The OAuth token you provided was invalid."))
 
     def test_user_is_not_ticketing(self):
+        from ticketing.views import transactions
+
         # The user does not have the right privileges.  Send PermissionDenied
         user = ProfileFactory.create().user_object
         request = self.client.get(
