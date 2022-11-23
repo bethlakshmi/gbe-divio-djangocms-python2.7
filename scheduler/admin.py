@@ -15,7 +15,9 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
                     'event_type',
                     'resource',
                     'resource_type')
-    list_filter = ['resource__worker__role',
+    list_filter = ['event__event_style',
+                   'event__eventlabel__text',
+                   'resource__worker__role',
                    'resource__location']
 
     def resource_type(self, obj):

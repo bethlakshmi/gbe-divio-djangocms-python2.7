@@ -123,7 +123,7 @@ class ListEventsView(View):
                         presenters += [presenter]
             bid = None
             if (occurrence.connected_class is not None) and (
-                occurrence.connected_class == "Class"):
+                    occurrence.connected_class == "Class"):
                 bid = Class.objects.get(pk=occurrence.connected_id)
 
             scheduled_events += [{

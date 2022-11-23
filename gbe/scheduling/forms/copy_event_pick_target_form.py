@@ -27,6 +27,7 @@ from scheduler.idd import get_occurrences
 from django.db.models.fields import BLANK_CHOICE_DASH
 from gbetext import class_options
 
+
 class TargetDay(ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s - %s" % (
@@ -82,12 +83,12 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
         if 'event_type' in kwargs:
             event_type = kwargs.pop('event_type')
         super(CopyEventPickModeForm, self).__init__(*args, **kwargs)
-        event_styles=[]
+        event_styles = []
         if event_type == "Class":
             for option in class_options:
-              event_styles += [option[0]]
+                event_styles += [option[0]]
         elif event_type != "Staff":
-            event_styles=[event_type]
+            event_styles = [event_type]
 
         if len(event_styles) > 0:
             response = get_occurrences(
