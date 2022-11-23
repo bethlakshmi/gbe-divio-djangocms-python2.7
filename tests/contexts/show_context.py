@@ -2,11 +2,9 @@ from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceDayFactory,
     ConferenceFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
     RoomFactory,
-    ShowFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
@@ -46,7 +44,6 @@ class ShowContext:
                                 accepted=3,
                                 submitted=True)
         self.acts = [act]
-        self.show = ShowFactory(e_conference=self.conference)
         self.room = room or RoomFactory()
         self.room.conferences.add(self.conference)
         self.sched_event = None
@@ -59,12 +56,12 @@ class ShowContext:
                           room=None):
         room = room or self.room
         if starttime:
-            sched_event = SchedEventFactory(eventitem=self.show.eventitem_ptr,
+            sched_event = SchedEventFactory(event_style="Show",
                                             starttime=starttime,
                                             slug="Show%d" % self.show.pk)
         else:
             sched_event = SchedEventFactory(
-                eventitem=self.show.eventitem_ptr,
+                event_style="Show",
                 starttime=noon(self.days[0]))
         EventLabelFactory(event=sched_event,
                           text=self.conference.conference_slug)
@@ -107,15 +104,12 @@ class ShowContext:
         return interested_profile
 
     def make_rehearsal(self, room=True):
-        rehearsal = GenericEventFactory(
-            e_conference=self.conference,
-            type='Rehearsal Slot')
         start_time = datetime.combine(
             self.days[0].day,
             (self.sched_event.start_time - timedelta(hours=4)).time())
 
         slot = SchedEventFactory(
-            eventitem=rehearsal.eventitem_ptr,
+            event_style='Rehearsal Slot',
             starttime=start_time,
             max_commitments=10,
             parent=self.sched_event)
@@ -125,4 +119,4 @@ class ShowContext:
                 resource=LocationFactory(_item=self.room))
         EventLabelFactory(event=slot,
                           text=self.conference.conference_slug)
-        return rehearsal, slot
+        return slot

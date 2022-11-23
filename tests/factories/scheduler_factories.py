@@ -1,13 +1,16 @@
 from factory import (
+    LazyAttribute,
     SubFactory,
     RelatedFactory,
     Sequence
 )
 from factory.django import DjangoModelFactory
 import scheduler.models as sched
-from datetime import datetime
+from datetime import (
+    datetime,
+    timedelta,
+)
 from tests.factories.gbe_factories import (
-    GenericEventFactory,
     ProfileFactory,
 )
 
@@ -52,18 +55,17 @@ class WorkerFactory(DjangoModelFactory):
         model = sched.Worker
 
 
-class EventItemFactory(DjangoModelFactory):
-    visible = True
-
-    class Meta:
-        model = sched.EventItem
-
-
 class SchedEventFactory(DjangoModelFactory):
-    eventitem = SubFactory(GenericEventFactory)
+    title = Sequence(lambda x: "Test Event #%d" % x)
+    description = LazyAttribute(
+        lambda a: "Description for %s" % a.title)
+    blurb = LazyAttribute(
+        lambda a: "Blurb for %s" % a.title)
+    length = timedelta(hours=1)
     starttime = datetime(2015, 2, 4)
     max_volunteer = 0
     max_commitments = 0
+    event_style = "Special"
 
     class Meta:
         model = sched.Event

@@ -1,5 +1,4 @@
 from tests.factories.gbe_factories import (
-    GenericEventFactory,
     ConferenceDayFactory,
     ConferenceFactory,
     ProfileFactory,
@@ -38,10 +37,9 @@ class StaffAreaContext:
                 conference=self.conference)
         else:
             self.conf_day = self.conference.conferenceday_set.first()
-        vol_event = GenericEventFactory(e_conference=self.conference,
-                                        type="Volunteer")
+
         volunteer_sched_event = SchedEventFactory(
-            eventitem=vol_event,
+            event_style="Volunteer",
             max_volunteer=self.area.default_volunteers,
             starttime=noon(self.conf_day),
             slug="VolOpp%d" % vol_event.pk)

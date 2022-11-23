@@ -216,3 +216,6 @@ class Event(Schedulable):
     @property
     def labels(self):
         return self.eventlabel_set.values_list('text', flat=True)
+
+    class Meta:
+        app_label = "scheduler"
