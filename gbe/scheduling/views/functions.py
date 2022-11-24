@@ -402,7 +402,6 @@ def build_icon_links(occurrence,
         volunteer_link = None
     if occurrence.max_volunteer == 0:
         volunteer_link = None
-        raise Exception("aren't we here?")
 
     return (favorite_link,
             volunteer_link,

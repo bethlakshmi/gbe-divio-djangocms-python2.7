@@ -2,7 +2,10 @@ from django.views.generic import View
 from django.shortcuts import (
     render,
 )
-from gbe.models import Conference
+from gbe.models import (
+    Class,
+    Conference,
+)
 from gbe.scheduling.views.functions import (
     build_icon_links,
     get_event_display_info,
@@ -56,8 +59,7 @@ class EventDetailView(View):
                 else:
                     eval_occurrences = None
         conference = Conference.objects.filter(
-            status='completed',
-            conference_slug__in=labels).exists()
+            conference_slug__in=labels)[0]
         (favorite_link,
          volunteer_link,
          evaluate,

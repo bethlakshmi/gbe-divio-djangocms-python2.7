@@ -1,7 +1,10 @@
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.forms import HiddenInput
+from django.forms import (
+    HiddenInput,
+    IntegerField,
+)
 from django.shortcuts import (
     get_object_or_404,
     render,
@@ -90,6 +93,10 @@ class ClassWizardView(EventWizardView):
             initial={'duration': duration, })
         context['scheduling_form'].fields[
             'max_volunteer'].widget = HiddenInput()
+        if working_class is not None:
+            context['scheduling_form'].fields['id'] = IntegerField(
+                initial=working_class.pk,
+                widget=HiddenInput)
         context['worker_formset'] = self.make_formset(working_class)
         return context
 
@@ -111,7 +118,7 @@ class ClassWizardView(EventWizardView):
         response = create_occurrence(
             bid.b_title,
             timedelta(minutes=scheduling_form.cleaned_data['duration']*60),
-            "Class",
+            bid.type,
             start_time,
             scheduling_form.cleaned_data['max_volunteer'],
             people=people,

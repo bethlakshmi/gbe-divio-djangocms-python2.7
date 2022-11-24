@@ -65,14 +65,34 @@ class ListEventsView(View):
     def get_styles(self):
         styles = [self.event_type]
 
-        if self.event_type == "all":
+        if self.event_type == "All":
             styles = None
 
-        elif self.event_type == 'Class':
+        elif self.event_type == 'Class' or self.event_type == 'class':
             styles = ['Lecture', 'Movement', 'Panel', 'Workshop']
 
         return styles
 
+    def get_classes(self, occurrences):
+        class_types = []
+        classes = []
+        scheduled_events = []
+        if self.event_type in ["All", 'Class', 'class']:
+            class_types = ['Lecture', 'Movement', 'Panel', 'Workshop']
+        elif self.event_type in ['Lecture', 'Movement', 'Panel', 'Workshop']:
+            class_types = [self.event_type]
+
+        if len(class_types) > 0:
+            booked_classes = occurrences.exclude(
+                connected_id__isnull=True).values_list('connected_id',
+                                                       flat=True)
+            classes = Class.objects.filter(
+                b_conference=self.conference,
+                type__in=class_types,
+                accepted='3').exclude(
+                pk__in=booked_classes)
+        return classes
+            
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
         eval_occurrences = []
@@ -99,6 +119,7 @@ class ListEventsView(View):
         scheduled_events = []
         presenters = []
         response = get_occurrences(
+            visible=True,
             event_styles=self.get_styles(),
             labels=[self.conference.conference_slug])
         for occurrence in response.occurrences:
@@ -139,7 +160,10 @@ class ListEventsView(View):
                 'detail': reverse('detail_view',
                                   urlconf='gbe.scheduling.urls',
                                   args=[occurrence.pk])}]
+
+        unscheduled_classes = self.get_classes(response.occurrences)
         context['events'] = scheduled_events
+        context['unscheduled'] = unscheduled_classes
         return render(request, self.template, context)
 
     def dispatch(self, *args, **kwargs):

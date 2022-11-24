@@ -15,6 +15,39 @@
    {% include "conference_list.tmpl" %}<br><br>
 </div></div>
 <div class="row"><div class="col-12">
+   {% for bid in unscheduled %}
+   {% if forloop.first %}
+   <h2>Coming soon...</h2>
+   {% endif %}
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      {{ bid.b_title }}
+    </h2>
+  </div>
+  <div class="card-body">
+    <div class="card card-body rounded gbe-bg-light">
+  <div class="row">
+  <div class="col-xs-12 col-sm-2">
+    <label class="sched_detail">Presented by:</label></div>
+    <div class="col-xs-12 col-sm-10">
+    {{bid.teacher.name}}
+  </div></div>
+  {% if bid.fee %}
+  <div class="row">
+  <div class="col-xs-12 col-sm-2">
+    <label class="sched_detail">Materials Fee:</label></div>
+  <div class="col-xs-12 col-sm-10">
+          ${{bid.fee}}</div></div>
+  {% endif %}
+    </div>
+    <br>
+    {{bid.b_description | safe}}
+  </div>
+</div>
+   {% endfor %} 
+</div></div>
+<div class="row"><div class="col-12">
    {% for event in events %}
 <div class="card round gbe-panel-list mx-2 my-4">
   <div class="card-header gbe-bg-dark">

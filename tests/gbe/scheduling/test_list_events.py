@@ -12,12 +12,11 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     PersonaFactory,
     ProfileFactory,
-    ShowFactory,
-    GenericEventFactory,
 )
 from tests.contexts import (
     ClassContext,
     ShowContext,
+    VolunteerContext,
     StaffAreaContext,
 )
 from datetime import (
@@ -36,10 +35,8 @@ class TestViewList(TestCase):
     def test_view_list_given_slug(self):
         other_conf = ConferenceFactory()
         this_class = ClassFactory.create(accepted=3,
-                                         e_conference=self.conf,
                                          b_conference=self.conf)
         that_class = ClassFactory.create(accepted=3,
-                                         e_conference=other_conf,
                                          b_conference=other_conf)
         login_as(ProfileFactory(), self)
         url = reverse("event_list",
@@ -48,8 +45,8 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        self.assertContains(response, this_class.e_title)
-        self.assertNotContains(response, that_class.e_title)
+        self.assertContains(response, this_class.b_title)
+        self.assertNotContains(response, that_class.b_title)
 
     def test_view_list_default_view_current_conf_exists(self):
         '''
@@ -57,26 +54,26 @@ class TestViewList(TestCase):
         conference, assuming a current conference exists
         '''
         other_conf = ConferenceFactory(status='completed')
-        show = ShowFactory(e_conference=self.conf)
-        generic_event = GenericEventFactory(e_conference=self.conf)
+        showcontext = ShowContext(conference=self.conf)
+        specialcontext = VolunteerContext(conference=self.conf,
+                                          event_style="Special")
+        classcontext = ClassContext(conference=self.conf)
         accepted_class = ClassFactory(accepted=3,
-                                      e_conference=self.conf,
                                       b_conference=self.conf)
         previous_class = ClassFactory(accepted=3,
-                                      e_conference=other_conf,
                                       b_conference=other_conf)
         rejected_class = ClassFactory(accepted=1,
-                                      e_conference=self.conf,
                                       b_conference=self.conf)
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls")
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
-        self.assertContains(response, generic_event.e_title)
-        self.assertContains(response, show.e_title)
-        self.assertContains(response, accepted_class.e_title)
-        self.assertNotContains(response, rejected_class.e_title)
-        self.assertNotContains(response, previous_class.e_title)
+        self.assertContains(response, specialcontext.sched_event.title)
+        self.assertContains(response, showcontext.sched_event.title)
+        self.assertContains(response, classcontext.sched_event.title)
+        self.assertContains(response, accepted_class.b_title)
+        self.assertNotContains(response, rejected_class.b_title)
+        self.assertNotContains(response, previous_class.b_title)
 
     def test_no_avail_conf(self):
         clear_conferences()
@@ -100,27 +97,27 @@ class TestViewList(TestCase):
         /scheduler/view_list/ should return all events in the current
         conference, assuming a current conference exists
         '''
-        show = ShowFactory(e_conference=self.conf)
-        generic_event = GenericEventFactory(e_conference=self.conf)
+        show = ShowContext(conference=self.conf)
+        special = VolunteerContext(conference=self.conf,
+                                   event_style="Special")
         accepted_class = ClassFactory(accepted=3,
-                                      e_conference=self.conf,
                                       b_conference=self.conf)
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=['Class'])
         login_as(ProfileFactory(), self)
         response = self.client.get(url)
-        self.assertNotContains(response, show.e_title)
-        self.assertNotContains(response, generic_event.e_title)
-        self.assertContains(response, accepted_class.e_title)
+        self.assertNotContains(response, show.sched_event.title)
+        self.assertNotContains(response, special.sched_event.title)
+        self.assertContains(response, accepted_class.b_title)
 
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=['class'])
         response = self.client.get(url)
-        self.assertNotContains(response, show.e_title)
-        self.assertNotContains(response, generic_event.e_title)
-        self.assertContains(response, accepted_class.e_title)
+        self.assertNotContains(response, show.sched_event.title)
+        self.assertNotContains(response, special.sched_event.title)
+        self.assertContains(response, accepted_class.b_title)
 
     def test_interested_in_event(self):
         context = ShowContext(conference=self.conf)
@@ -165,11 +162,9 @@ class TestViewList(TestCase):
 
     def test_view_panels(self):
         this_class = ClassFactory.create(accepted=3,
-                                         e_conference=self.conf,
                                          b_conference=self.conf,
                                          type="Panel")
         that_class = ClassFactory.create(accepted=3,
-                                         e_conference=self.conf,
                                          b_conference=self.conf)
         login_as(ProfileFactory(), self)
         url = reverse("event_list",
@@ -178,13 +173,12 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        self.assertContains(response, this_class.e_title)
-        self.assertNotContains(response, that_class.e_title)
+        self.assertContains(response, this_class.b_title)
+        self.assertNotContains(response, that_class.b_title)
         self.assertContains(response, this_class.teacher.name)
 
     def test_view_volunteers(self):
         this_class = ClassFactory.create(accepted=3,
-                                         e_conference=self.conf,
                                          b_conference=self.conf)
         staff_context = StaffAreaContext(conference=self.conf)
         opportunity = staff_context.add_volunteer_opp()
@@ -200,11 +194,11 @@ class TestViewList(TestCase):
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon"')
-        self.assertNotContains(response, this_class.e_title)
+        self.assertNotContains(response, this_class.b_title)
         self.assertNotContains(response, 'fa-star')
         self.assertNotContains(response, 'fa-star-o')
 
@@ -224,7 +218,7 @@ class TestViewList(TestCase):
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(
           response,
           'This event has all the volunteers it needs.')
@@ -241,7 +235,7 @@ class TestViewList(TestCase):
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertNotContains(response, vol_link)
         self.assertNotContains(response, 'class="volunteer-icon"')
 
@@ -262,7 +256,7 @@ class TestViewList(TestCase):
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'off'],
                            urlconf='gbe.scheduling.urls')
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
         self.assertContains(response, 'awaiting_approval.gif')
 
@@ -279,7 +273,7 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response, "You were not accepted for this shift.")
 
     def test_view_volunteers_already_committed(self):
@@ -295,7 +289,7 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response, 'You are a teacher')
 
     def test_view_volunteers_waitlisted(self):
@@ -311,7 +305,7 @@ class TestViewList(TestCase):
         response = self.client.get(
             url,
             data={"conference": self.conf.conference_slug})
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response, "You were waitlisted for this shift.")
 
     def test_disabled_eval(self):

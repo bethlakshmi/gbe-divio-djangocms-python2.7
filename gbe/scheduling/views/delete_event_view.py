@@ -46,18 +46,11 @@ class DeleteEventView(View):
 
         title = str(self.occurrence)
         start_time = self.occurrence.start_time
-        gbe_event = self.occurrence.eventitem
 
         result = delete_occurrence(self.occurrence.pk)
         show_general_status(request, result, self.__class__.__name__)
 
         if len(result.errors) == 0:
-            result = get_occurrences(
-                foreign_event_ids=[self.occurrence.foreign_event_id])
-            if len(result.occurrences) == 0:
-                gbe_event.visible = False
-                gbe_event.save()
-
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="DELETE_SUCCESS",

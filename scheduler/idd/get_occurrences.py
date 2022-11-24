@@ -15,6 +15,7 @@ def get_occurrences(parent_event_id=None,
                     labels=[],
                     label_sets=[],
                     event_styles=[],
+                    visible=None,
                     day=None,
                     max_volunteer=None):
     if len(labels) > 0 and len(label_sets) > 0:
@@ -28,6 +29,9 @@ def get_occurrences(parent_event_id=None,
     if parent_event_id:
         filter_occurrences = filter_occurrences.filter(
             parent__pk=parent_event_id)
+    if visible:
+        filter_occurrences = filter_occurrences.filter(
+            visible=visible)
     for label in labels:
         filter_occurrences = filter_occurrences.filter(
             eventlabel__text=label
@@ -39,7 +43,7 @@ def get_occurrences(parent_event_id=None,
     if max_volunteer is not None:
         filter_occurrences = filter_occurrences.filter(
             max_volunteer__gte=max_volunteer)
-    if len(event_styles) > 0:
+    if event_styles is not None and len(event_styles) > 0:
         filter_occurrences = filter_occurrences.filter(
             event_style__in=event_styles)
     if day:

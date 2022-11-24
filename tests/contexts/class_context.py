@@ -59,6 +59,7 @@ class ClassContext:
             sched_event = SchedEventFactory(
                 title=self.bid.b_title,
                 description=self.bid.b_description,
+                event_style=self.bid.type,
                 connected_id=self.bid.pk,
                 connected_class=self.bid.__class__.__name__,
                 starttime=starttime)
@@ -67,6 +68,7 @@ class ClassContext:
                 title=self.bid.b_title,
                 description=self.bid.b_description,
                 connected_id=self.bid.pk,
+                event_style=self.bid.type,
                 connected_class=self.bid.__class__.__name__,
                 starttime=noon(self.days[0]))
         ResourceAllocationFactory(

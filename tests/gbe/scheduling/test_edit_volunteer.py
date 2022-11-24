@@ -4,7 +4,6 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
 )
@@ -30,7 +29,7 @@ class TestEditVolunteer(TestGBE):
     view_name = 'edit_volunteer'
 
     def setUp(self):
-        self.context = VolunteerContext(event=GenericEventFactory())
+        self.context = VolunteerContext(event_style="Special")
         self.context.sched_event.max_volunteer = 7
         self.context.sched_event.save()
         self.context.event.duration = timedelta(hours=1, minutes=30)

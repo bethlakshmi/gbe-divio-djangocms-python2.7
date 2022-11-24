@@ -4,7 +4,6 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     ConferenceFactory,
     ProfileFactory,
-    ShowFactory,
 )
 from tests.factories.scheduler_factories import (
     LabelFactory,
@@ -23,7 +22,6 @@ from tests.contexts import (
     StaffAreaContext,
 )
 from gbe.models import Conference
-from scheduler.models import EventItem
 from tests.functions.gbe_functions import (
     bad_id_for,
     login_as,
@@ -52,7 +50,7 @@ class TestEventDetailView(TestCase):
         cls.url = reverse(
             cls.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[cls.context.show.eventitem_id])
+            args=[cls.context.sched_event.pk])
 
     def setUp(self):
         self.client = Client()
@@ -60,13 +58,13 @@ class TestEventDetailView(TestCase):
     def test_no_permission_required(self):
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
-        self.assertContains(response, self.context.show.e_title)
+        self.assertContains(response, self.context.sched_event.title)
 
     def test_bad_id_raises_404(self):
         bad_url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[bad_id_for(EventItem)])
+            args=[bad_id_for(Event)])
         response = self.client.get(bad_url, follow=True)
         self.assertEqual(response.status_code, 404)
 
@@ -75,15 +73,14 @@ class TestEventDetailView(TestCase):
         response = self.client.get(reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[bid_class.eventitem_id]))
+            args=[bid_class.pk]))
         self.assertEqual(200, response.status_code)
         self.assertContains(response, bid_class.teacher.name, 1)
 
     def test_repeated_lead_shows_once(self):
-        show = ShowFactory()
         sched_events = [
             SchedEventFactory.create(
-                eventitem=show.eventitem_ptr) for i in range(2)]
+                event_style="Show") for i in range(2)]
         staff_lead = ProfileFactory()
         lead_worker = WorkerFactory(_item=staff_lead.workeritem_ptr,
                                     role="Staff Lead")
@@ -93,7 +90,7 @@ class TestEventDetailView(TestCase):
         response = self.client.get(reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[show.eventitem_id]))
+            args=[sched_events[0].pk]))
         self.assertEqual(200, response.status_code)
         self.assertContains(response, staff_lead.display_name, 1)
 
@@ -125,7 +122,7 @@ class TestEventDetailView(TestCase):
         context = ActTechInfoContext(act_role="Hosted by...")
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[context.show.eventitem_id])
+                      args=[context.sched_event.pk])
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, context.performer.name)
@@ -140,7 +137,7 @@ class TestEventDetailView(TestCase):
             conference=context.conference)
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[context.show.eventitem_id])
+                      args=[context.sched_event.pk])
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, context.performer.name)
@@ -152,7 +149,7 @@ class TestEventDetailView(TestCase):
         context = ActTechInfoContext(act_role="")
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[context.show.eventitem_id])
+                      args=[context.sched_event.pk])
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, context.performer.name)
@@ -173,7 +170,7 @@ class TestEventDetailView(TestCase):
         context = ActTechInfoContext(act_role="Hosted by...")
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[context.show.eventitem_id])
+                      args=[context.sched_event.pk])
         superuser = setup_admin_w_privs([])
         set_image(context.performer)
         login_as(superuser, self)
@@ -202,7 +199,7 @@ class TestEventDetailView(TestCase):
         set_image(context.performer)
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[context.show.eventitem_id])
+                      args=[context.sched_event.pk])
         superuser = setup_admin_w_privs([])
         login_as(superuser, self)
         response = self.client.get(url)
@@ -218,7 +215,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.show.eventitem_id])
+            args=[context.sched_event.pk])
         login_as(interested_profile, self)
         response = self.client.get(url)
         set_fav_link = reverse(
@@ -235,7 +232,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.show.eventitem_id])
+            args=[context.sched_event.pk])
         login_as(interested_profile, self)
         response = self.client.get(url)
         set_fav_link = reverse(
@@ -252,7 +249,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.show.eventitem_id])
+            args=[context.sched_event.pk])
         login_as(context.performer.performer_profile, self)
         response = self.client.get(url)
         self.assertContains(
@@ -265,7 +262,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.show.eventitem_id])
+            args=[context.sched_event.pk])
         login_as(context.performer.performer_profile, self)
         response = self.client.get(url)
         self.assertNotContains(response, 'fa-star')
@@ -277,7 +274,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.bid.eventitem_id])
+            args=[context.bid.pk])
         response = self.client.get(url)
         eval_link = reverse(
             "eval_event",
@@ -294,7 +291,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.bid.eventitem_id])
+            args=[context.bid.pk])
         response = self.client.get(url)
         eval_link = reverse(
             "eval_event",
@@ -312,7 +309,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.bid.eventitem_id])
+            args=[context.bid.pk])
         response = self.client.get(url)
         self.assertNotContains(response, "fa-tachometer")
 
@@ -326,12 +323,12 @@ class TestEventDetailView(TestCase):
         login_as(volunteer, self)
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[opportunity.eventitem_id])
+                      args=[opportunity.pk])
         response = self.client.get(url)
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'off'],
                            urlconf='gbe.scheduling.urls')
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
         self.assertContains(response, 'awaiting_approval.gif')
 
@@ -342,12 +339,12 @@ class TestEventDetailView(TestCase):
         opportunity.save()
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
-                      args=[opportunity.eventitem_id])
+                      args=[opportunity.pk])
         response = self.client.get(url)
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon-large"')
