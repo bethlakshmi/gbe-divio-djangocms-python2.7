@@ -181,7 +181,6 @@ def get_ticketable_gbe_events(conference_slug=None):
     return event_set
 
 
-
 def check_forum_spam(email):
     from gbe.email.functions import notify_admin_on_error
     activity = "Email Spam Check"

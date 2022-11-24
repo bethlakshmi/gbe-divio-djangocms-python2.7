@@ -26,15 +26,14 @@ class PickShowForm(Form):
             initial = kwargs.pop('initial')
             choices = []
 
-            if len(show_pks) > 0:
-                response = get_occurrences(
-                    event_styles=["Show"],
-                    labels=[initial['conference'].conference_slug])
-                for occurrence in response.occurrences:
-                    choices += [
-                        (occurrence.pk, "%s - %s" % (
-                            occurrence.title,
-                            occurrence.start_time.strftime(
-                                GBE_DATETIME_FORMAT)))]
+            response = get_occurrences(
+                event_styles=["Show"],
+                labels=[initial['conference'].conference_slug])
+            for occurrence in response.occurrences:
+                choices += [
+                    (occurrence.pk, "%s - %s" % (
+                        occurrence.title,
+                        occurrence.start_time.strftime(
+                            GBE_DATETIME_FORMAT)))]
             choices += [("", "Make New Show")]
             self.fields['show'].choices = choices

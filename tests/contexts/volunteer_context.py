@@ -26,7 +26,8 @@ class VolunteerContext():
                  sched_event=None,
                  opportunity=None,
                  role=None,
-                 conference=None):
+                 conference=None,
+                 event_style="Show"):
         self.conference = conference or ConferenceFactory()
 
         if ConferenceDay.objects.filter(conference=self.conference).exists():
@@ -44,7 +45,7 @@ class VolunteerContext():
 
         if not sched_event:
             self.sched_event = SchedEventFactory(
-                event_style="Show",
+                event_style=event_style,
                 starttime=datetime.combine(self.conf_day.day,
                                            time(12, 0, 0)),
                 slug="Show%d" % self.profile.pk)

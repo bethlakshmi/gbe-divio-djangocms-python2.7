@@ -22,6 +22,9 @@ from gbe_forms_text import (
     classbid_labels,
     class_schedule_options,
 )
+from gbe.scheduling.views.functions import get_start_time
+from scheduler.data_transfer import Person
+from scheduler.idd import create_occurrence
 
 
 class ClassWizardView(EventWizardView):
@@ -89,6 +92,36 @@ class ClassWizardView(EventWizardView):
             'max_volunteer'].widget = HiddenInput()
         context['worker_formset'] = self.make_formset(working_class)
         return context
+
+    def book_event(self,
+                   bid,
+                   scheduling_form,
+                   people_formset):
+        start_time = get_start_time(scheduling_form.cleaned_data)
+        labels = [self.conference.conference_slug]
+        labels += ["Conference"]
+        people = []
+        for assignment in people_formset:
+            if assignment.is_valid() and assignment.cleaned_data['worker']:
+                people += [Person(
+                    user=assignment.cleaned_data[
+                        'worker'].workeritem.as_subtype.user_object,
+                    public_id=assignment.cleaned_data['worker'].workeritem.pk,
+                    role=assignment.cleaned_data['role'])]
+        response = create_occurrence(
+            bid.b_title,
+            timedelta(minutes=scheduling_form.cleaned_data['duration']*60),
+            "Class",
+            start_time,
+            scheduling_form.cleaned_data['max_volunteer'],
+            people=people,
+            locations=[scheduling_form.cleaned_data['location']],
+            description=bid.b_description,
+            labels=labels,
+            approval=scheduling_form.cleaned_data['approval'],
+            connected_class=bid.__class__.__name__,
+            connected_id=bid.pk)
+        return response
 
     @never_cache
     @method_decorator(login_required)
@@ -175,10 +208,9 @@ class ClassWizardView(EventWizardView):
 
                 working_class.save()
                 response = self.book_event(
-                    context['scheduling_form'],
-                    context['worker_formset'],
                     working_class,
-                    context['third_form'].cleaned_data['slug'])
+                    context['scheduling_form'],
+                    context['worker_formset'])
                 success = self.finish_booking(
                     request,
                     response,

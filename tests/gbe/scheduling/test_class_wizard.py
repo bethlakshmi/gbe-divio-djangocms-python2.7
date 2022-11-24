@@ -34,7 +34,6 @@ class TestClassWizard(TestScheduling):
         self.day = ConferenceDayFactory(conference=self.current_conference)
         self.room.conferences.add(self.current_conference)
         self.test_class = ClassFactory(b_conference=self.current_conference,
-                                       e_conference=self.current_conference,
                                        accepted=3,
                                        teacher=self.teacher,
                                        submitted=True)
@@ -56,13 +55,12 @@ class TestClassWizard(TestScheduling):
 
     def edit_class(self):
         data = {
+            'id': self.test_class.pk,
             'accepted': 3,
             'submitted': True,
-            'eventitem_id': self.test_class.eventitem_id,
             'type': 'Panel',
-            'e_title': "Test Class Wizard #%d" % self.test_class.eventitem_id,
-            'e_description': 'Description',
-            'slug': "ClassSlug",
+            'b_title': "Test Class Wizard #%d" % self.test_class.pk,
+            'b_description': 'Description',
             'maximum_enrollment': 10,
             'fee': 0,
             'max_volunteer': 0,
@@ -104,7 +102,7 @@ class TestClassWizard(TestScheduling):
         login_as(self.privileged_user, self)
         response = self.client.get("%s?accepted_class=%d" % (
             self.url,
-            self.test_class.eventitem_id))
+            self.test_class.pk))
         self.assertContains(
             response,
             ('<input type="radio" name="accepted_class" value="%d" ' +
@@ -210,7 +208,6 @@ class TestClassWizard(TestScheduling):
 
     def test_auth_user_load_panel(self):
         panel = ClassFactory(b_conference=self.current_conference,
-                             e_conference=self.current_conference,
                              type="Panel",
                              accepted=3,
                              teacher=self.teacher,
@@ -242,7 +239,7 @@ class TestClassWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        occurrence = Event.objects.filter(eventitem=self.test_class)
+        occurrence = Event.objects.filter(connected_id=self.test_class.pk)
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -257,27 +254,24 @@ class TestClassWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['b_title'],
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
-        self.assertEqual(occurrence[0].slug, "ClassSlug")
+            '<td>%s</td>' % data['b_title'])
 
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()
-        data['eventitem_id'] = ""
         response = self.client.post(
             self.url,
             data=data,
             follow=True)
-        new_class = Class.objects.get(e_title=data['e_title'])
+        new_class = Class.objects.get(b_title=data['b_title'])
         self.assertEqual(new_class.teacher, self.teacher)
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_class.eventitem_id)
+        occurrence = Event.objects.get(connected_id=new_class.pk)
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -292,24 +286,24 @@ class TestClassWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['b_title'],
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
-        self.assertEqual(occurrence.slug, "ClassSlug")
+            '<td>%s</td>' % data['b_title'])
 
     def test_auth_user_create_class_no_teacher(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()
-        data['eventitem_id'] = ""
+        data['id'] = ""
         data['alloc_0-worker'] = ""
         response = self.client.post(
             self.url,
             data=data,
             follow=True)
+        print(response.content)
         assert_alert_exists(
             response,
             'danger',

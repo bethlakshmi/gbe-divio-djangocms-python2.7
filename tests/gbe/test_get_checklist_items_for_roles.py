@@ -5,7 +5,6 @@ from tests.factories.ticketing_factories import (
 )
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory
 )

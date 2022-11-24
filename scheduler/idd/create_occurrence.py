@@ -20,7 +20,9 @@ def create_occurrence(title,
                       labels=[],
                       approval=False,
                       slug=None,
-                      related_object=None):
+                      related_object=None,
+                      connected_class="",
+                      connected_id=None):
     if parent_event_id:
         parent_response = get_occurrence(parent_event_id)
         if parent_response.errors:
@@ -36,7 +38,9 @@ def create_occurrence(title,
         max_volunteer=max_volunteer,
         max_commitments=max_commitments,
         approval_needed=approval,
-        slug=slug)
+        slug=slug,
+        connected_class=connected_class,
+        connected_id=connected_id)
 
     if parent_event_id:
         response.occurrence.parent = parent_response.occurrence

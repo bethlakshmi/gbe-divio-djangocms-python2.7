@@ -11,7 +11,6 @@ from gbe.scheduling.forms import (
 )
 from gbe.scheduling.views import EventWizardView
 from django.forms.widgets import CheckboxInput
-from datetime import timedelta
 
 
 class VolunteerWizardView(EventWizardView):
@@ -92,16 +91,11 @@ class VolunteerWizardView(EventWizardView):
             if context['third_form'].is_valid(
                     ) and context['scheduling_form'].is_valid(
                     ) and self.is_formset_valid(context['worker_formset']):
-                volunteer_event = context['third_form'].save(commit=False)
-                volunteer_event.duration = timedelta(
-                    minutes=context['scheduling_form'].cleaned_data[
-                        'duration']*60)
-                volunteer_event.save()
                 response = self.book_event(
+                    context['third_form'],
                     context['scheduling_form'],
                     context['worker_formset'],
-                    volunteer_event,
-                    context['third_form'].cleaned_data['slug'])
+                    "Volunteer")
                 success = self.finish_booking(
                     request,
                     response,

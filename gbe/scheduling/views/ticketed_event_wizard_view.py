@@ -21,7 +21,6 @@ from gbetext import (
     no_tickets_found_msg,
 )
 from gbe_forms_text import event_settings
-from datetime import timedelta
 
 
 class TicketedEventWizardView(EventWizardView):
@@ -145,18 +144,16 @@ class TicketedEventWizardView(EventWizardView):
                 ) and context['scheduling_form'].is_valid(
                 ) and self.is_formset_valid(context['worker_formset']) and (
                 not context['tickets'] or context['tickets'].is_valid()):
-            new_event = context['second_form'].save(commit=False)
-            new_event.duration = timedelta(
-                minutes=context['scheduling_form'].cleaned_data[
-                    'duration']*60)
-            new_event.save()
             response = self.book_event(
+                context['second_form'],
                 context['scheduling_form'],
                 context['worker_formset'],
-                new_event,
-                context['second_form'].cleaned_data['slug'])
+                context['event_type'].replace(" Class",
+                                              "").replace(" Event", ""))
             if context['tickets']:
-                self.setup_ticket_links(request, new_event, context['tickets'])
+                self.setup_ticket_links(request,
+                                        response.occurrence,
+                                        context['tickets'])
             success = self.finish_booking(
                 request,
                 response,

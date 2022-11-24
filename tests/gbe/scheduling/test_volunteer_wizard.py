@@ -4,7 +4,6 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
     RoomFactory,
@@ -33,8 +32,8 @@ class TestVolunteerWizard(TestScheduling):
         self.current_conference = self.show_volunteer.conference
         self.room.conferences.add(self.current_conference)
         self.special_volunteer = VolunteerContext(
-            event=GenericEventFactory(
-                e_conference=self.current_conference))
+            event_style="Special",
+            conference=self.current_conference)
         self.staff_area = StaffAreaContext(
             conference=self.current_conference)
         self.url = reverse(
@@ -49,10 +48,10 @@ class TestVolunteerWizard(TestScheduling):
     def create_opp(self):
         data = {
             'type': 'Volunteer',
-            'e_conference': self.current_conference.pk,
-            'e_title': "Test Volunteer Wizard #%d" % self.room.pk,
+            'conference': self.current_conference.pk,
+            'title': "Test Volunteer Wizard #%d" % self.room.pk,
             'slug': "VolunteerSlug",
-            'e_description': 'Description',
+            'description': 'Description',
             'max_volunteer': 0,
             'day': self.special_volunteer.conf_day.pk,
             'time': '11:00:00',
@@ -68,11 +67,13 @@ class TestVolunteerWizard(TestScheduling):
     def test_authorized_user_can_access(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
+        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assert_event_was_picked_in_wizard(response, "volunteer")
-        self.assertContains(response, str(self.show_volunteer.event.e_title))
         self.assertContains(response,
-                            str(self.special_volunteer.event.e_title))
+                            str(self.show_volunteer.sched_event.title))
+        self.assertContains(response,
+                            str(self.special_volunteer.sched_event.title))
         self.assertContains(response, str(self.staff_area.area.title))
         self.assertContains(response,
                             "Make a Volunteer Opportunity with no topic")
@@ -86,9 +87,9 @@ class TestVolunteerWizard(TestScheduling):
             urlconf='gbe.scheduling.urls')
         response = self.client.get(self.url)
         self.assertNotContains(response,
-                               str(self.show_volunteer.event.e_title))
+                               str(self.show_volunteer.sched_event.title))
         self.assertNotContains(response,
-                               str(self.special_volunteer.event.e_title))
+                               str(self.special_volunteer.sched_event.title))
         self.assertNotContains(response, str(self.staff_area.area.title))
         self.assertContains(response,
                             "Make a Volunteer Opportunity with no topic")
@@ -195,13 +196,13 @@ class TestVolunteerWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.special_volunteer.conf_day.day.strftime(
                     GBE_DATE_FORMAT)))
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
+            '<td>%s</td>' % data['title'])
         self.assertTrue(occurrence.approval_needed)
         self.assertEqual(occurrence.slug, "VolunteerSlug")
 
@@ -230,7 +231,7 @@ class TestVolunteerWizard(TestScheduling):
     def test_auth_user_bad_booking_assign(self):
         login_as(self.privileged_user, self)
         data = self.create_opp()
-        data['e_title'] = ""
+        data['title'] = ""
         response = self.client.post(
             self.url,
             data=data,

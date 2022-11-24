@@ -3,7 +3,6 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
 )
@@ -41,7 +40,8 @@ class TestRehearsalWizard(TestScheduling):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assert_event_was_picked_in_wizard(response, "rehearsal")
-        self.assertContains(response, str(self.show_volunteer.event.e_title))
+        self.assertContains(response,
+                            str(self.show_volunteer.sched_event.title))
         self.assertContains(response,
                             "Make New Show")
 
@@ -54,7 +54,7 @@ class TestRehearsalWizard(TestScheduling):
             urlconf='gbe.scheduling.urls')
         response = self.client.get(self.url)
         self.assertNotContains(response,
-                               str(self.show_volunteer.event.e_title))
+                               str(self.show_volunteer.sched_event.title))
         self.assertContains(response,
                             "Make New Show")
 

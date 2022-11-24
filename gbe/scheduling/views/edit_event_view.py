@@ -112,7 +112,7 @@ class EditEventView(ManageVolWizardView):
 
         if 'worker_formset' not in context:
             context['worker_formset'] = self.make_formset(
-                event_settings[occurrence.event_style.lower()]['roles'])
+                event_settings[self.occurrence.event_style.lower()]['roles'])
 
         if validate_perms(request,
                           ('Volunteer Coordinator',), require=False):
