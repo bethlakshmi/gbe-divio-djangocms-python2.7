@@ -4,13 +4,11 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     PersonaFactory,
     ProfileFactory,
-    ShowFactory
 )
-from tests.functions.scheduler_functions import (
-    book_act_item_for_show,
-    book_worker_item_for_role,
+from tests.functions.scheduler_functions import book_worker_item_for_role
+from tests.contexts import (
+    ShowContext,
 )
-
 
 class TestHasRoleInEvent(TestCase):
     '''Tests that a profile will return all the possible roles'''
@@ -28,7 +26,7 @@ class TestHasRoleInEvent(TestCase):
         '''
         profile = ProfileFactory()
         result = profile.has_role_in_event(self.role,
-                                           self.booking.event.eventitem)
+                                           self.booking.event)
         self.assertFalse(result)
 
     def test_unbooked_performer(self):
@@ -38,21 +36,17 @@ class TestHasRoleInEvent(TestCase):
         act = ActFactory()
         profile = act.performer.performer_profile
         result = profile.has_role_in_event("Performer",
-                                           self.booking)
+                                           self.booking.event)
         self.assertFalse(result)
 
     def test_booked_performer(self):
         '''
            has the role of performer from being booked in a show
         '''
-        act = ActFactory(accepted=3)
-        show = ShowFactory()
-        booking = book_act_item_for_show(
-            act,
-            show)
-        profile = act.performer.performer_profile
+        context = ShowContext()
+        profile = context.acts[0].performer.performer_profile
         result = profile.has_role_in_event("Performer",
-                                           show)
+                                           context.sched_event)
         self.assertTrue(result)
 
     def test_teacher(self):
@@ -65,5 +59,5 @@ class TestHasRoleInEvent(TestCase):
             "Teacher")
         result = persona.performer_profile.has_role_in_event(
             "Teacher",
-            booking.event.eventitem)
+            booking.event)
         self.assertTrue(result)

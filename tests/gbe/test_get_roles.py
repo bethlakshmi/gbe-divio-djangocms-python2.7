@@ -1,18 +1,18 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
-from tests.contexts import StaffAreaContext
+from tests.contexts import (
+    ClassContext,
+    ShowContext,
+    StaffAreaContext,
+)
 from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
-    ShowFactory
 )
-from tests.functions.scheduler_functions import (
-    book_act_item_for_show,
-    book_worker_item_for_role)
+from tests.functions.scheduler_functions import book_worker_item_for_role
 
 
 class TestGetRoles(TestCase):
@@ -51,13 +51,8 @@ class TestGetRoles(TestCase):
         '''
            has the role of performer from being booked in a show
         '''
-        act = ActFactory(b_conference=self.conference,
-                         accepted=3)
-        show = ShowFactory(e_conference=self.conference)
-        booking = book_act_item_for_show(
-            act,
-            show)
-        profile = act.performer.performer_profile
+        context = ShowContext(conference=self.conference)
+        profile = context.acts[0].performer.performer_profile
         result = profile.get_roles(self.conference)
         self.assertEqual(result, ["Performer"])
 
@@ -68,9 +63,10 @@ class TestGetRoles(TestCase):
         persona = PersonaFactory()
         booking = book_worker_item_for_role(
             persona,
-            "Teacher")
+            "Teacher",
+            conference=self.conference)
         result = persona.performer_profile.get_roles(
-            booking.event.eventitem.e_conference)
+            self.conference)
         self.assertEqual(result, ["Teacher"])
 
     def test_staff_lead(self):
@@ -87,12 +83,8 @@ class TestGetRoles(TestCase):
            1 of every permutation possible to link people to roles
         '''
         persona = PersonaFactory()
-        this_class = GenericEventFactory(
-            b_conference=self.conference)
-        book_worker_item_for_role(
-            persona,
-            "Teacher",
-            bid=this_class)
+        this_class = ClassContext(conference=self.conference,
+                                  teacher=persona)
         book_worker_item_for_role(
             persona.performer_profile,
             "Staff Lead",
@@ -100,8 +92,7 @@ class TestGetRoles(TestCase):
         act = ActFactory(b_conference=self.conference,
                          accepted=3,
                          performer=persona)
-        show = ShowFactory(e_conference=self.conference)
-        booking = book_act_item_for_show(act, show)
+        showcontext = ShowContext(act=act, conference=self.conference)
 
         result = persona.performer_profile.get_roles(
             self.conference)

@@ -234,6 +234,16 @@ class Profile(WorkerItem):
             classes = classes.exclude(b_conference__status="completed")
         return classes
 
+    def get_shows(self):
+        acts = self.get_acts()
+        shows = []
+        for act in acts:
+            if act.accepted == 3 and act.is_current:
+                for item in get_schedule(commitment=act).schedule_items:
+                    if item.event.event_style == "Show":
+                        shows += [(item.event, act)]
+        return shows
+
     def has_role_in_event(self, role, event):
         '''
         Returns True if this person has the
@@ -246,13 +256,10 @@ class Profile(WorkerItem):
                     doing_it = True
         elif not doing_it:
             performers = self.get_performers()
-            for person in event.roles([role]):
-                if self.pk == person._item.pk:
+            for person in event.people:
+                if person.role == role and (
+                        self.user_object.pk == person.user.pk):
                     doing_it = True
-                else:
-                    for perf in performers:
-                        if perf.pk == person._item.pk:
-                            doing_it = True
         return doing_it
 
     def email_allowed(self, email_type):
