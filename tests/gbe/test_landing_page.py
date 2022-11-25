@@ -77,13 +77,11 @@ class TestIndex(TestCase):
         cls.current_class = ClassFactory(teacher=cls.performer,
                                          submitted=True,
                                          accepted=3,
-                                         b_conference=cls.current_conf,
-                                         e_conference=cls.current_conf)
+                                         b_conference=cls.current_conf)
         cls.previous_class = ClassFactory(teacher=cls.performer,
                                           submitted=True,
                                           accepted=3,
-                                          b_conference=cls.previous_conf,
-                                          e_conference=cls.previous_conf)
+                                          b_conference=cls.previous_conf)
 
         cls.current_vendor = VendorFactory(
             business__owners=[cls.profile],
@@ -111,26 +109,26 @@ class TestIndex(TestCase):
         EventLabelFactory(event=cls.current_sched,
                           text=cls.current_conf.conference_slug)
         cls.previous_sched = SchedEventFactory(
-            event_style='Special'
+            event_style='Special',
             starttime=datetime(2015, 2, 25, 12, 30, 0, 0),
             max_volunteer=10)
         EventLabelFactory(event=cls.previous_sched,
                           text=cls.previous_conf.conference_slug)
 
         cls.current_class_sched = SchedEventFactory(
-            connected_id=cls.current_class,
+            connected_id=cls.current_class.pk,
             connected_class=cls.current_class.__class__.__name__,
             starttime=datetime(2016, 2, 5, 2, 30, 0, 0),
             max_volunteer=10)
         EventLabelFactory(event=cls.current_class_sched,
                           text=cls.current_conf.conference_slug)
         cls.previous_class_sched = SchedEventFactory(
-            connected_id=cls.previous_class,
+            connected_id=cls.previous_class.pk,
             connected_class=cls.previous_class.__class__.__name__,
             starttime=datetime(2015, 2, 25, 2, 30, 0, 0),
             max_volunteer=10)
         EventLabelFactory(event=cls.previous_class_sched,
-                          text=cls.current_conf.conference_slug)
+                          text=cls.previous_conf.conference_slug)
 
         worker = WorkerFactory(_item=cls.profile, role='Volunteer')
         for schedule_item in [cls.current_sched,
@@ -156,24 +154,24 @@ class TestIndex(TestCase):
 
     def assert_event_is_present(self, response, event):
         ''' test all parts of the event being on the landing page schedule'''
-        self.assertContains(response, event.eventitem.e_title)
+        self.assertContains(response, event.title)
         self.assertContains(response,
                             date_format(event.start_time, "DATETIME_FORMAT"))
         self.assertContains(response, reverse(
             'detail_view',
             urlconf="gbe.scheduling.urls",
-            args=[event.eventitem.eventitem_id]))
+            args=[event.pk]))
 
     def assert_event_is_not_present(self, response, event):
         ''' test all parts of the event being on the landing page schedule'''
-        self.assertNotContains(response, event.eventitem.e_title)
+        self.assertNotContains(response, event.title)
         self.assertNotContains(
             response,
             date_format(event.start_time, "DATETIME_FORMAT"))
         self.assertNotContains(response, reverse(
             'detail_view',
             urlconf="gbe.scheduling.urls",
-            args=[event.eventitem.eventitem_id]))
+            args=[event.pk]))
 
     def get_landing_page(self):
         self.url = reverse('home', urlconf='gbe.urls')
@@ -218,13 +216,6 @@ class TestIndex(TestCase):
         self.assertContains(response, reverse(
             "volunteer_signup",
             urlconf="gbe.scheduling.urls"))
-
-    def test_class_no_event_title(self):
-        weird_class = ClassFactory(e_title="")
-        self.url = reverse('home', urlconf='gbe.urls')
-        login_as(weird_class.teacher.contact, self)
-        response = self.client.get(self.url)
-        self.assertContains(response, weird_class.b_title)
 
     def test_historical_view(self):
         url = reverse('home', urlconf='gbe.urls')
@@ -296,8 +287,7 @@ class TestIndex(TestCase):
         grant_privilege(staff_profile, "Class Reviewers")
         login_as(staff_profile, self)
         klass = ClassFactory(submitted=True,
-                             b_conference=self.current_conf,
-                             e_conference=self.current_conf)
+                             b_conference=self.current_conf)
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertContains(response, klass.b_title)
@@ -327,7 +317,6 @@ class TestIndex(TestCase):
     def test_profile_image(self):
         set_image(self.performer)
         response = self.get_landing_page()
-        print(response.content)
         self.assertContains(response, self.performer.name)
         self.assertContains(response, self.performer.label)
         self.assertContains(
@@ -403,11 +392,11 @@ class TestIndex(TestCase):
         second_act_context = ActTechInfoContext(
             performer=self.performer,
             conference=self.current_conf,
-            show=current_act_context.show,
             sched_event=current_act_context.sched_event)
         self.current_act.accepted = 3
         self.current_act.save()
         response = self.client.get(url)
+        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
                             second_act_context.act.b_title,
@@ -416,7 +405,7 @@ class TestIndex(TestCase):
                             current_act_context.act.b_title,
                             count=3)
         self.assertContains(response,
-                            second_act_context.show.e_title,
+                            second_act_context.sched_event.title,
                             count=2)
 
     def test_interest(self):
@@ -595,8 +584,7 @@ class TestIndex(TestCase):
 
     def test_staff_lead_button(self):
         show_context = ActTechInfoContext(schedule_rehearsal=True)
-        vol_context = VolunteerContext(event=show_context.show,
-                                       sched_event=show_context.sched_event)
+        vol_context = VolunteerContext(sched_event=show_context.sched_event)
         context = StaffAreaContext(conference=show_context.conference)
         EventLabelFactory(event=vol_context.opp_event,
                           text=context.area.slug)

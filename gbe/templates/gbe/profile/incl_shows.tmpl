@@ -2,14 +2,13 @@
   {% if shows %}
   <span class='sched_detail'>Shows {{ profile.display_name }} is appearing in:</span><br>
     {% for show, act in shows %}
-      {% if show.is_current %}{% ifchanged show %}
+      {% ifchanged show %}
         {% if not forloop.first %}</ul></div>{% endif %}
         <div> 
-           <a class="gbe-link" href="{% url 'scheduling:detail_view' show.eventitem_id%}">
+           <a class="gbe-link" href="{% url 'scheduling:detail_view' show.pk %}">
             {{ show }}</a>
            <ul>{% endifchanged %}
         <li>{{ act }}</li>
-      {% endif%}
     {% endfor %}
     </ul></div>
   {% else %}

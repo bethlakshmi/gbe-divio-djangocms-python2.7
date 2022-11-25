@@ -132,7 +132,6 @@ class LandingPageView(ProfileRequiredMixin, View):
                         booking.commitment is not None):
                     shows += [(booking.event,
                                acts.get(id=booking.commitment.class_id))]
-
                 # roles assigned direct to shows
                 if booking.role in (
                         'Stage Manager',
