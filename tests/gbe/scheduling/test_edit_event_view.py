@@ -4,14 +4,10 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
-    GenericEventFactory,
     RoomFactory,
     ProfileFactory,
 )
 from scheduler.models import Event
-from gbe.models import (
-    GenericEvent,
-)
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_option_state,
@@ -32,11 +28,10 @@ class TestEditEventView(TestScheduling):
     view_name = 'edit_event'
 
     def setUp(self):
-        self.context = VolunteerContext(event=GenericEventFactory())
+        self.context = VolunteerContext(event_style="Special")
         self.context.sched_event.max_volunteer = 7
+        self.context.sched_event.length = timedelta(hours=1, minutes=30)
         self.context.sched_event.save()
-        self.context.event.duration = timedelta(hours=1, minutes=30)
-        self.context.event.save()
         self.room = self.context.room
         # because there was a bug around duplicate room names
         RoomFactory(name=self.room.name)
@@ -56,9 +51,9 @@ class TestEditEventView(TestScheduling):
     def edit_event(self):
         data = {
             'type': 'Special',
-            'e_title': "Test Event Wizard",
+            'title': "Test Event Wizard",
             'slug': "EditSlug",
-            'e_description': 'Description',
+            'description': 'Description',
             'max_volunteer': 3,
             'day': self.extra_day.pk,
             'time': '11:00:00',
@@ -81,8 +76,8 @@ class TestEditEventView(TestScheduling):
         self.assert_role_choice(response, "Staff Lead")
         self.assertNotContains(response, "Volunteer Management")
         self.assertContains(response, "Finish")
-        self.assertContains(response, self.context.event.e_title)
-        self.assertContains(response, self.context.event.e_description)
+        self.assertContains(response, self.context.sched_event.title)
+        self.assertContains(response, self.context.sched_event.description)
         assert_option_state(
             response,
             self.context.conf_day.pk,
@@ -118,7 +113,7 @@ class TestEditEventView(TestScheduling):
 
     def test_authorized_user_can_access_rehearsal(self):
         self.context = ShowContext()
-        rehearsal, slot = self.context.make_rehearsal()
+        slot = self.context.make_rehearsal()
         self.url = reverse(
             self.view_name,
             args=[self.context.conference.conference_slug,
@@ -129,7 +124,7 @@ class TestEditEventView(TestScheduling):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Finish")
-        self.assertContains(response, rehearsal.e_title)
+        self.assertContains(response, slot.title)
         self.assertNotContains(response, 'Display Staff')
 
     def test_vol_opp_present(self):
@@ -145,11 +140,6 @@ class TestEditEventView(TestScheduling):
                   vol_context.sched_event.pk],
             urlconf='gbe.scheduling.urls')
         response = self.client.get(self.url, follow=True)
-        self.assertContains(
-            response,
-            'type="hidden" name="opp_event_id" value="%d"' % (
-                vol_context.opportunity.pk)
-        )
         self.assertContains(
             response,
             'type="hidden" name="opp_sched_id" value="%d"' % (
@@ -205,13 +195,13 @@ class TestEditEventView(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
+            '<td>%s</td>' % data['title'])
 
     def test_edit_event_and_continue(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
@@ -230,11 +220,11 @@ class TestEditEventView(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
-        self.assertContains(response, data['e_title'])
-        self.assertContains(response, data['e_description'])
+        self.assertContains(response, data['title'])
+        self.assertContains(response, data['description'])
         self.assertContains(response, data['slug'])
 
         assert_option_state(response,
@@ -286,7 +276,7 @@ class TestEditEventView(TestScheduling):
     def test_auth_user_bad_generic_booking_assign(self):
         login_as(self.privileged_user, self)
         data = self.edit_event()
-        data['e_title'] = ""
+        data['title'] = ""
         response = self.client.post(
             self.url,
             data=data,

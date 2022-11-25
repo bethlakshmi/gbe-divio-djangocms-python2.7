@@ -43,7 +43,7 @@ class CopyOccurrenceView(CopyCollectionsView):
         if not response.occurrence:
             raise Http404
         self.occurrence = response.occurrence
-        if calendar_for_event[self.occurrence.event_style] == "Class":
+        if calendar_for_event[self.occurrence.event_style] == "Conference":
             return HttpResponseForbidden("Class copy is not yet available")
         self.start_day = self.occurrence.starttime.date()
         response = get_occurrences(parent_event_id=self.occurrence_id)

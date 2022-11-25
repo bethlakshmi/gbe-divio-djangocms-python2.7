@@ -282,10 +282,12 @@ def update_event(event_form,
         people = None
     response = update_occurrence(
         occurrence_id,
+        event_form.cleaned_data['title'],
+        event_form.cleaned_data['description'],
         start_time,
-        scheduling_form.cleaned_data['max_volunteer'],
-        title=event_form.cleaned_data['title'],
-        description=event_form.cleaned_data['description'],
+        length=timedelta(
+            minutes=scheduling_form.cleaned_data['duration']*60),
+        max_volunteer=scheduling_form.cleaned_data['max_volunteer'],
         people=people,
         roles=roles,
         locations=[scheduling_form.cleaned_data['location']],
@@ -327,9 +329,9 @@ def process_post_response(request,
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',
                         args=[conference.conference_slug]),
-                slug,
+                conference.conference_slug,
                 context['scheduling_form'].cleaned_data['day'].pk,
-                str([occurrence_id]),)
+                str([occurrence.pk]),)
         else:
             success_url = "%s?%s=True" % (success_url, next_step)
     else:

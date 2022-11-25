@@ -9,11 +9,7 @@ from tests.factories.gbe_factories import (
     RoomFactory,
 )
 from scheduler.models import Event
-from gbe.models import (
-    GenericEvent,
-    Profile,
-    Show,
-)
+from gbe.models import Profile
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_option_state,
@@ -111,13 +107,7 @@ class TestEditStaffAreaView(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
             response,
-            'name="opp_event_id" value="%d"' % (
-                vol_opp.eventitem.event_id)
-        )
-        self.assertContains(
-            response,
-            'name="opp_sched_id" value="%d"' % (
-                vol_opp.pk)
+            'name="opp_sched_id" value="%d"' % (vol_opp.pk)
         )
         assert_option_state(
             response,
