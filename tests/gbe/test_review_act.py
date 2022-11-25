@@ -10,7 +10,6 @@ from tests.factories.gbe_factories import (
     EvaluationCategoryFactory,
     FlexibleEvaluationFactory,
     ProfileFactory,
-    ShowFactory,
 )
 from tests.functions.gbe_functions import (
     assert_option_state,
@@ -51,7 +50,6 @@ class TestReviewAct(TestCase):
 
     def get_post_data(self,
                       bid,
-                      show=None,
                       reviewer=None,
                       invalid=False):
         reviewer = reviewer or self.privileged_profile
@@ -328,7 +326,6 @@ class TestReviewAct(TestCase):
             evaluator=self.privileged_profile,
             category=self.eval_cat
         )
-        show = ShowFactory()
         login_as(self.privileged_user, self)
         url = reverse('act_review',
                       urlconf='gbe.urls',
@@ -336,7 +333,6 @@ class TestReviewAct(TestCase):
         data = self.get_post_data(
             eval.bid,
             reviewer=self.privileged_profile,
-            show=show
             )
         response = self.client.post(url,
                                     data,
@@ -355,7 +351,6 @@ class TestReviewAct(TestCase):
 
     def test_review_act_update_notes(self):
         notes = ActBidEvaluationFactory()
-        show = ShowFactory()
         login_as(self.privileged_user, self)
         url = reverse('act_review',
                       urlconf='gbe.urls',
@@ -363,7 +358,6 @@ class TestReviewAct(TestCase):
         data = self.get_post_data(
             notes.bid,
             reviewer=self.privileged_profile,
-            show=show
             )
         response = self.client.post(url,
                                     data,

@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.test import Client
-from gbe.views import ViewTroupeView
 from tests.factories.gbe_factories import (
     TroupeFactory,
     PersonaFactory,

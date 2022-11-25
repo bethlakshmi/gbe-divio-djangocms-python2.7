@@ -10,13 +10,13 @@ from gbe.functions import validate_profile
 
 
 class TestProfileAutoComplete(TestCase):
-    url = reverse('profile-autocomplete', urlconf='gbe.urls')
 
     @classmethod
     def setUpTestData(cls):
         cls.user = ProfileFactory().user_object
         grant_privilege(cls.user, 'Scheduling Mavens')
         cls.profile = ProfileFactory()
+        cls.url = reverse('profile-autocomplete', urlconf='gbe.urls')
 
     def setUp(self):
         self.client = Client()

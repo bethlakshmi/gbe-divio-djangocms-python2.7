@@ -7,7 +7,6 @@ from tests.functions.gbe_functions import (
         grant_privilege,
         login_as
 )
-from gbe.special_privileges import special_menu_tree
 from gbe.models import Conference
 
 
@@ -43,6 +42,7 @@ class TestSpecialMenu(TestCase):
         ''' each privilege should get the right lowest
             level menus URLs
         '''
+        from gbe.special_privileges import special_menu_tree
         for privilege in self.special_roles:
             privileged_profile = ProfileFactory()
             grant_privilege(privileged_profile.user_object, privilege)
@@ -61,6 +61,7 @@ class TestSpecialMenu(TestCase):
         ''' each privilege should get the right parent menu
             these don't have urls, only titles
         '''
+        from gbe.special_privileges import special_menu_tree
         for privilege in self.special_roles:
             privileged_profile = ProfileFactory()
             grant_privilege(privileged_profile.user_object, privilege)
@@ -78,6 +79,7 @@ class TestSpecialMenu(TestCase):
     def test_regular_users_get_nothing(self):
         ''' no group privilege, no special menus
         '''
+        from gbe.special_privileges import special_menu_tree
         unprivileged_profile = ProfileFactory()
         login_as(unprivileged_profile, self)
         response = self.client.get(self.url)
@@ -99,6 +101,7 @@ class TestSpecialMenu(TestCase):
         ''' each privilege should get the right lowest
             level menus URLs
         '''
+        from gbe.special_privileges import special_menu_tree
         Conference.objects.all().delete()
         privilege = "Staff Lead"
         context = StaffAreaContext()
@@ -122,6 +125,7 @@ class TestSpecialMenu(TestCase):
     def test_old_staff_lead_get_nothing(self):
         ''' no group privilege, no special menus
         '''
+        from gbe.special_privileges import special_menu_tree
         Conference.objects.all().delete()
         privilege = "Staff Lead"
         context = StaffAreaContext()
