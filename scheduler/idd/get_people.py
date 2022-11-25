@@ -24,10 +24,9 @@ def get_people(parent_event_ids=[],
     for label_set in label_sets:
         bookings = bookings.filter(event__eventlabel__text__in=label_set)
     if len(parent_event_ids) > 0:
-        bookings = bookings.filter(Q(
-            event__parent__eventitem__eventitem_id__in=(
-                parent_event_ids)) |
-            Q(event__eventitem__eventitem_id__in=parent_event_ids))
+        bookings = bookings.filter(
+            Q(event__parent__pk__in=(parent_event_ids)) |
+            Q(event__pk__in=parent_event_ids))
     if len(event_ids) > 0:
         bookings = bookings.filter(
             event__id__in=event_ids)

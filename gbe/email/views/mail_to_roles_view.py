@@ -66,8 +66,7 @@ class MailToRolesView(MailToFilterView):
                 event_styles=permitted_styles,
                 labels=self.slugs)
             for occurrence in response.occurrences:
-                choices += [occurrence.pk, occurence.title]
-
+                choices += [(occurrence.pk, occurrence.title)]
         return choices
 
     def setup_staff_queryset(self, is_superuser, priv_list, conferences):
@@ -187,7 +186,7 @@ class MailToRolesView(MailToFilterView):
             'labels': [],
         }
         for event in self.specify_event_form.cleaned_data['events']:
-            limits['parent_ids'] += [event.eventitem_id]
+            limits['parent_ids'] += [event]
         for area in self.specify_event_form.cleaned_data['staff_areas']:
             limits['labels'] += [area.slug]
         for collection in self.specify_event_form.cleaned_data[
@@ -196,8 +195,8 @@ class MailToRolesView(MailToFilterView):
                 limits['labels'] += [collection]
             else:
                 for dropin in get_occurrences(event_styles=['Drop-In'],
-                                              labels=self.slugs):
-                    limits['parent_ids'] += [dropin.eventitem_id]
+                                              labels=self.slugs).occurrences:
+                    limits['parent_ids'] += [dropin.pk]
 
         if len(limits['parent_ids']) == 0 and len(limits['labels']) == 0:
             limits = None

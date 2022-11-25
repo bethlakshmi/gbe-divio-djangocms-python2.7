@@ -32,9 +32,10 @@ def get_occurrences(parent_event_id=None,
     if visible:
         filter_occurrences = filter_occurrences.filter(
             visible=visible)
-    for label in labels:
+    # edited during event refactor was concatenating filters
+    if len(labels) > 0:
         filter_occurrences = filter_occurrences.filter(
-            eventlabel__text=label
+            eventlabel__text__in=labels
         )
     for label_set in label_sets:
         filter_occurrences = filter_occurrences.filter(

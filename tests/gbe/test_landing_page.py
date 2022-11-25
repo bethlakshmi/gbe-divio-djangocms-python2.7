@@ -9,7 +9,6 @@ from tests.factories.gbe_factories import(
     ConferenceFactory,
     CostumeFactory,
     FlexibleEvaluationFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
     TechInfoFactory,
@@ -105,29 +104,33 @@ class TestIndex(TestCase):
             b_conference=cls.previous_conf)
 
         # Event assignments, previous and current
-        current_opportunity = GenericEventFactory(
-            e_conference=cls.current_conf,
-            type='Volunteer')
-        previous_opportunity = GenericEventFactory(
-            e_conference=cls.previous_conf)
-
         cls.current_sched = SchedEventFactory(
-            eventitem=current_opportunity,
+            event_style='Volunteer',
             starttime=datetime(2016, 2, 5, 12, 30, 0, 0),
             max_volunteer=10)
+        EventLabelFactory(event=cls.current_sched,
+                          text=cls.current_conf.conference_slug)
         cls.previous_sched = SchedEventFactory(
-            eventitem=previous_opportunity,
+            event_style='Special'
             starttime=datetime(2015, 2, 25, 12, 30, 0, 0),
             max_volunteer=10)
+        EventLabelFactory(event=cls.previous_sched,
+                          text=cls.previous_conf.conference_slug)
 
         cls.current_class_sched = SchedEventFactory(
-            eventitem=cls.current_class,
+            connected_id=cls.current_class,
+            connected_class=cls.current_class.__class__.__name__,
             starttime=datetime(2016, 2, 5, 2, 30, 0, 0),
             max_volunteer=10)
+        EventLabelFactory(event=cls.current_class_sched,
+                          text=cls.current_conf.conference_slug)
         cls.previous_class_sched = SchedEventFactory(
-            eventitem=cls.previous_class,
+            connected_id=cls.previous_class,
+            connected_class=cls.previous_class.__class__.__name__,
             starttime=datetime(2015, 2, 25, 2, 30, 0, 0),
             max_volunteer=10)
+        EventLabelFactory(event=cls.previous_class_sched,
+                          text=cls.current_conf.conference_slug)
 
         worker = WorkerFactory(_item=cls.profile, role='Volunteer')
         for schedule_item in [cls.current_sched,

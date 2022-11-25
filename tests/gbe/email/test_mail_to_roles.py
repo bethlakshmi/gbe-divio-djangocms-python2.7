@@ -2,7 +2,6 @@ from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
-    GenericEventFactory,
     ConferenceFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
@@ -275,14 +274,14 @@ class TestMailToRoles(TestMailFilters):
 
     def test_pick_performer_reduced_priv(self):
         showcontext = ShowContext()
-        showcontext.show.e_title = "0 Pick Perf"
-        showcontext.show.save()
+        showcontext.sched_event.title = "0 Pick Perf"
+        showcontext.sched_event.save()
         producer = showcontext.set_producer()
         anothershowcontext = ShowContext(
             conference=showcontext.conference,
         )
-        anothershowcontext.show.e_title = "1 Pick Perf"
-        anothershowcontext.show.save()
+        anothershowcontext.sched_event.title = "1 Pick Perf"
+        anothershowcontext.sched_event.save()
         login_as(producer, self)
         data = {
             'email-select-conference': [showcontext.conference.pk,
@@ -304,16 +303,16 @@ class TestMailToRoles(TestMailFilters):
             response,
             "events",
             0,
-            showcontext.show.pk,
-            showcontext.show.e_title,
+            showcontext.sched_event.pk,
+            showcontext.sched_event.title,
             checked=False,
             prefix="event-select")
         self.assert_checkbox(
             response,
             "events",
             1,
-            anothershowcontext.show.pk,
-            anothershowcontext.show.e_title,
+            anothershowcontext.sched_event.pk,
+            anothershowcontext.sched_event.title,
             checked=False,
             prefix="event-select")
 
@@ -322,17 +321,17 @@ class TestMailToRoles(TestMailFilters):
         anothershowcontext = ShowContext(
             conference=showcontext.conference,
         )
-        showcontext.show.e_title = "AAAAAAAA"
-        showcontext.show.save()
-        anothershowcontext.show.e_title = "ZZZZZZ"
-        anothershowcontext.show.save()
+        showcontext.sched_event.title = "AAAAAAAA"
+        showcontext.sched_event.save()
+        anothershowcontext.sched_event.title = "ZZZZZZ"
+        anothershowcontext.sched_event.save()
         producer = showcontext.set_producer()
         login_as(producer, self)
         data = {
             'email-select-conference': [showcontext.conference.pk,
                                         self.context.conference.pk],
             'email-select-roles': ['Performer', ],
-            'event-select-events': showcontext.show.pk,
+            'event-select-events': showcontext.sched_event.pk,
             'refine': True,
         }
         response = self.client.post(self.url, data=data, follow=True)
@@ -346,15 +345,15 @@ class TestMailToRoles(TestMailFilters):
             response,
             "events",
             0,
-            showcontext.show.pk,
-            showcontext.show.e_title,
+            showcontext.sched_event.pk,
+            showcontext.sched_event.title,
             prefix="event-select")
         self.assert_checkbox(
             response,
             "events",
             1,
-            anothershowcontext.show.pk,
-            anothershowcontext.show.e_title,
+            anothershowcontext.sched_event.pk,
+            anothershowcontext.sched_event.title,
             checked=False,
             prefix="event-select")
 
@@ -366,21 +365,20 @@ class TestMailToRoles(TestMailFilters):
         data = {
             'email-select-conference': [anothershowcontext.conference.pk],
             'email-select-roles': ['Performer', ],
-            'event-select-events': showcontext.show.pk,
+            'event-select-events': showcontext.sched_event.pk,
             'refine': True,
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            "%d is not one of the available choices." % showcontext.show.pk)
+            "%d is not one of the available choices." % showcontext.sched_event.pk)
 
     def test_pick_staff_area_reduced_priv(self):
         staffcontext = StaffAreaContext()
         volunteer, booking = staffcontext.book_volunteer()
-        special = GenericEventFactory(
-            e_conference=staffcontext.conference)
         specialstaffcontext = VolunteerContext(
-            event=special,
+            event_style="Special",
+            conference=staffcontext.conference,
         )
         login_as(staffcontext.staff_lead, self)
         data = {
@@ -402,8 +400,8 @@ class TestMailToRoles(TestMailFilters):
             response,
             "events",
             0,
-            special.pk,
-            special.e_title,
+            specialstaffcontext.sched_event.pk,
+            specialstaffcontext.sched_event.title,
             checked=False,
             prefix="event-select")
         self.assert_checkbox(
@@ -426,16 +424,15 @@ class TestMailToRoles(TestMailFilters):
     def test_pick_special_reduced_priv(self):
         staffcontext = StaffAreaContext()
         volunteer, booking = staffcontext.book_volunteer()
-        special = GenericEventFactory(
-            e_conference=staffcontext.conference)
         specialstaffcontext = VolunteerContext(
-            event=special,
+            event_style="Special",
+            conference=staffcontext.conference,
         )
         login_as(staffcontext.staff_lead, self)
         data = {
             'email-select-conference': [staffcontext.conference.pk, ],
             'email-select-roles': ['Volunteer', ],
-            'event-select-events': special.pk,
+            'event-select-events': specialstaffcontext.sched_event.pk,
             'refine': True,
         }
         response = self.client.post(self.url, data=data, follow=True)
@@ -452,8 +449,8 @@ class TestMailToRoles(TestMailFilters):
             response,
             "events",
             0,
-            special.pk,
-            special.e_title,
+            specialstaffcontext.sched_event.pk,
+            specialstaffcontext.sched_event.title,
             prefix="event-select")
         self.assert_checkbox(
             response,
@@ -473,12 +470,10 @@ class TestMailToRoles(TestMailFilters):
             prefix="event-select")
 
     def test_pick_drop_in(self):
-        special = GenericEventFactory(
-            e_conference=self.context.conference,
-            type="Drop-In")
         specialstaffcontext = VolunteerContext(
-            event=special,
-            role="Teacher"
+            event_style="Drop-In",
+            role="Teacher",
+            conference=self.context.conference
         )
         limited_profile = ProfileFactory()
         grant_privilege(limited_profile.user_object, "Registrar")
@@ -498,7 +493,7 @@ class TestMailToRoles(TestMailFilters):
             specialstaffcontext.profile.user_object.email)
         self.assertNotContains(
             response,
-            special.e_title)
+            specialstaffcontext.sched_event.title)
         self.assert_checkbox(
             response,
             "event_collections",
@@ -510,10 +505,9 @@ class TestMailToRoles(TestMailFilters):
     def test_pick_area_reduced_priv(self):
         staffcontext = StaffAreaContext()
         volunteer, booking = staffcontext.book_volunteer()
-        special = GenericEventFactory(
-            e_conference=staffcontext.conference)
         specialstaffcontext = VolunteerContext(
-            event=special,
+            event_style="Special",
+            conference=staffcontext.conference
         )
         login_as(staffcontext.staff_lead, self)
         data = {
@@ -536,8 +530,8 @@ class TestMailToRoles(TestMailFilters):
             response,
             "events",
             0,
-            special.pk,
-            special.e_title,
+            specialstaffcontext.sched_event.pk,
+            specialstaffcontext.sched_event.title,
             checked=False,
             prefix="event-select")
         self.assert_checkbox(
@@ -559,10 +553,9 @@ class TestMailToRoles(TestMailFilters):
     def test_pick_all_vol_reduced_priv(self):
         staffcontext = StaffAreaContext()
         volunteer, booking = staffcontext.book_volunteer()
-        special = GenericEventFactory(
-            e_conference=staffcontext.conference)
         specialstaffcontext = VolunteerContext(
-            event=special,
+            event_style="Special",
+            conference=staffcontext.conference
         )
         login_as(staffcontext.staff_lead, self)
         data = {
@@ -585,8 +578,8 @@ class TestMailToRoles(TestMailFilters):
             response,
             "events",
             0,
-            special.pk,
-            special.e_title,
+            specialstaffcontext.sched_event.pk,
+            specialstaffcontext.sched_event.title,
             checked=False,
             prefix="event-select")
         self.assert_checkbox(
@@ -650,7 +643,7 @@ class TestMailToRoles(TestMailFilters):
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-roles': ["Volunteer", ],
-            'event-select-events': showcontext.show.pk,
+            'event-select-events': showcontext.sched_event.pk,
             'event-select-staff_areas': staffcontext.area.pk,
             'event-select-event_collections': "Volunteer",
             'send': True
@@ -679,7 +672,7 @@ class TestMailToRoles(TestMailFilters):
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-roles': ["Interested", ],
-            'event-select-events': showcontext.show.pk,
+            'event-select-events': showcontext.sched_event.pk,
             'event-select-staff_areas': staffcontext.area.pk,
             'event-select-event_collections': "Volunteer",
             'send': True
@@ -701,8 +694,8 @@ class TestMailToRoles(TestMailFilters):
             response,
             "events",
             0,
-            showcontext.show.pk,
-            showcontext.show.e_title,
+            showcontext.sched_event.pk,
+            showcontext.sched_event.title,
             prefix="event-select")
         self.assert_checkbox(
             response,

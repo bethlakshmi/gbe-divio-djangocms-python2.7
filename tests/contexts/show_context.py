@@ -58,11 +58,12 @@ class ShowContext:
         if starttime:
             sched_event = SchedEventFactory(event_style="Show",
                                             starttime=starttime,
-                                            slug="Show%d" % self.show.pk)
+                                            slug="Show%d" % self.room.pk)
         else:
             sched_event = SchedEventFactory(
                 event_style="Show",
-                starttime=noon(self.days[0]))
+                starttime=noon(self.days[0]),
+                slug="Show%d" % self.room.pk)
         EventLabelFactory(event=sched_event,
                           text=self.conference.conference_slug)
         EventLabelFactory(event=sched_event,
