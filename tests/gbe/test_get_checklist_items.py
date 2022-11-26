@@ -6,12 +6,12 @@ from tests.factories.ticketing_factories import (
     TransactionFactory
 )
 from tests.factories.gbe_factories import (
+    ConferenceFactory,
     PersonaFactory,
     ProfileFactory
 )
 from scheduler.idd import get_schedule
 from tests.functions.scheduler_functions import book_worker_item_for_role
-from gbe.ticketing_idd_interface import get_checklist_items
 
 
 class TestGetCheckListItems(TestCase):
@@ -26,6 +26,7 @@ class TestGetCheckListItems(TestCase):
         '''
             profile matches no conditions
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items
         no_match_profile = ProfileFactory()
         transaction = TransactionFactory()
         conf = transaction.ticket_item.ticketing_event.conference
@@ -45,10 +46,12 @@ class TestGetCheckListItems(TestCase):
         '''
             profile has a role match condition
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items
         teacher = PersonaFactory()
+        conference = ConferenceFactory()
         booking = book_worker_item_for_role(teacher,
-                                            self.role_condition.role)
-        conference = booking.event.eventitem.get_conference()
+                                            self.role_condition.role,
+                                            conference=conference)
         self.schedule = get_schedule(
                 teacher.performer_profile.user_object,
                 labels=[conference.conference_slug]).schedule_items
@@ -65,6 +68,7 @@ class TestGetCheckListItems(TestCase):
         '''
             profile has a ticket match condition
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items
         transaction = TransactionFactory()
         purchaser = ProfileFactory(
             user_object=transaction.purchaser.matched_to_user)
@@ -88,11 +92,12 @@ class TestGetCheckListItems(TestCase):
         '''
             profile meets role and ticket
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items
         teacher = PersonaFactory()
+        conference = ConferenceFactory()
         booking = book_worker_item_for_role(teacher,
-                                            self.role_condition.role)
-        conference = booking.event.eventitem.get_conference()
-
+                                            self.role_condition.role,
+                                            conference=conference)
         purchaser = PurchaserFactory(
             matched_to_user=teacher.performer_profile.user_object)
         transaction = TransactionFactory(

@@ -8,7 +8,6 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory
 )
-from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
 
 
 class TestGetCheckListForTickets(TestCase):
@@ -26,6 +25,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
             purchaser tickets have no conditions
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         checklist_items = get_checklist_items_for_tickets(
             self.purchaser,
             self.conference,
@@ -36,6 +36,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
             list of tickets is empty, so there should be no match
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         checklist_items = get_checklist_items_for_tickets(
             self.purchaser,
             self.conference,
@@ -46,6 +47,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
             feeding in the matching ticket, gives an item
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         match_condition = TicketingEligibilityConditionFactory(
             tickets=[self.transaction.ticket_item])
 
@@ -64,6 +66,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
             feeding in the matching ticket, gives an item
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         match_condition = TicketingEligibilityConditionFactory(
             tickets=[self.transaction.ticket_item])
         another_transaction = TransactionFactory(
@@ -86,6 +89,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
             two conditions match this circumstance
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         match_condition = TicketingEligibilityConditionFactory(
             tickets=[self.transaction.ticket_item])
         another_match = TicketingEligibilityConditionFactory(
@@ -107,6 +111,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
             there's a match, but also an exclusion
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         match_condition = TicketingEligibilityConditionFactory(
             tickets=[self.transaction.ticket_item])
         exclusion = TicketingExclusionFactory(
