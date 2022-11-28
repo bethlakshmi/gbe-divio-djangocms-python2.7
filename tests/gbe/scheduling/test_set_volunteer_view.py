@@ -96,7 +96,7 @@ class TestSetVolunteer(TestCase):
         redirect_url = reverse('volunteer_signup',
                                urlconf="gbe.scheduling.urls")
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, self.volunteeropp.title)
         assert_alert_exists(
             response,
             'success',
@@ -113,7 +113,7 @@ class TestSetVolunteer(TestCase):
             "Volunteer Schedule Change",
             outbox_size=2,
             message_index=1)
-        assert(self.volunteeropp.eventitem.e_title in staff_msg.body)
+        assert(self.volunteeropp.title in staff_msg.body)
         assert_email_recipient(
             [self.context.staff_lead.profile.user_object.email],
             outbox_size=2,
@@ -127,7 +127,7 @@ class TestSetVolunteer(TestCase):
                 'phone': '111-222-3333'}
         response = self.client.post(self.url,  data=data, follow=True)
 
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, self.volunteeropp.title)
         assert_alert_exists(
             response,
             'success',
@@ -147,7 +147,7 @@ class TestSetVolunteer(TestCase):
                                urlconf="gbe.scheduling.urls")
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, "Phone")
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, self.volunteeropp.title)
         self.assertContains(response, vol_prof_update_failure)
 
     def test_remove_volunteer(self):
@@ -164,7 +164,7 @@ class TestSetVolunteer(TestCase):
         response = self.client.post("%s?next=%s" % (
             self.url, redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, self.volunteeropp.title)
         assert_alert_exists(
             response,
             'success',
@@ -181,7 +181,7 @@ class TestSetVolunteer(TestCase):
             "Volunteer Schedule Change",
             outbox_size=2,
             message_index=1)
-        assert(self.volunteeropp.eventitem.e_title in staff_msg.body)
+        assert(self.volunteeropp.title in staff_msg.body)
         assert_email_recipient(
             [self.context.staff_lead.profile.user_object.email],
             outbox_size=2,
@@ -196,7 +196,7 @@ class TestSetVolunteer(TestCase):
         response = self.client.post("%s?next=%s" % (
             self.url, redirect_url), follow=True)
         response = self.client.post(self.url, follow=True)
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, self.volunteeropp.title)
         self.assertNotContains(response, set_volunteer_msg)
 
     def test_remove_interest_duplicate(self):
@@ -208,7 +208,7 @@ class TestSetVolunteer(TestCase):
         login_as(self.profile, self)
         response = self.client.post("%s?next=%s" % (
             self.url, redirect_url), follow=True)
-        self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertNotContains(response, self.volunteeropp.title)
         self.assertNotContains(response, unset_volunteer_msg)
 
     def test_show_interest_bad_event(self):
@@ -231,7 +231,7 @@ class TestSetVolunteer(TestCase):
             self.url, redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
         # absent because pending events not on schedule to begin with
-        self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertNotContains(response, self.volunteeropp.title)
         assert_alert_exists(
             response,
             'success',
@@ -255,7 +255,7 @@ class TestSetVolunteer(TestCase):
         response = self.client.post("%s?next=%s" % (
             self.url, redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertContains(response, self.volunteeropp.title)
         assert_alert_exists(
             response,
             'success',
@@ -284,11 +284,11 @@ class TestSetVolunteer(TestCase):
             "Volunteer Schedule Change",
             outbox_size=2,
             message_index=1)
-        assert(self.volunteeropp.eventitem.e_title in staff_msg.body)
+        assert(self.volunteeropp.title in staff_msg.body)
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
-            class_context.bid.e_title,
+            class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
-        assert(class_context.bid.e_title in staff_msg.body)
+        assert(class_context.bid.b_title in staff_msg.body)
         assert_email_recipient(
             [self.privileged_user.email,
              self.context.staff_lead.profile.user_object.email],
@@ -315,11 +315,11 @@ class TestSetVolunteer(TestCase):
             "Volunteer Schedule Change",
             outbox_size=2,
             message_index=1)
-        assert(vol_context.opportunity.e_title in staff_msg.body)
+        assert(vol_context.opp_event.title in staff_msg.body)
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
-            class_context.bid.e_title,
+            class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
-        assert(class_context.bid.e_title in staff_msg.body)
+        assert(class_context.bid.b_title in staff_msg.body)
         assert_email_recipient(
             [lead.user_object.email],
             outbox_size=2,

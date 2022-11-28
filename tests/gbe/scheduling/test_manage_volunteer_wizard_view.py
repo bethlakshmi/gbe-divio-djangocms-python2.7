@@ -20,7 +20,6 @@ from tests.contexts import (
 )
 from django.utils.formats import date_format
 from django.db.models import Max
-from scheduler.models import Event
 
 
 class TestManageVolunteerWizard(TestCase):

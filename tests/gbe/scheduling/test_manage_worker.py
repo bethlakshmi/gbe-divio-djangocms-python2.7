@@ -33,24 +33,28 @@ class TestManageWorker(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = ProfileFactory.create().user_object
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
-        self.context = StaffAreaContext()
-        self.volunteer_opp = self.context.add_volunteer_opp()
-        self.volunteer, self.alloc = self.context.book_volunteer(
-            self.volunteer_opp)
-        self.url = reverse(
-            self.view_name,
-            args=[self.context.conference.conference_slug,
-                  self.volunteer_opp.pk],
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = ProfileFactory.create().user_object
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Volunteer Coordinator')
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
+        cls.context = StaffAreaContext()
+        cls.conference = cls.context.conference
+        cls.volunteer_opp = cls.context.add_volunteer_opp()
+        cls.volunteer, cls.alloc = cls.context.book_volunteer(
+            cls.volunteer_opp)
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.context.conference.conference_slug,
+                  cls.volunteer_opp.pk],
             urlconf="gbe.scheduling.urls")
-        self.unsub_link = Site.objects.get_current().domain + reverse(
+        cls.unsub_link = Site.objects.get_current().domain + reverse(
             'email_update',
             urlconf='gbe.urls',
-            args=[self.volunteer.user_object.email])
+            args=[cls.volunteer.user_object.email])
 
     def get_edit_data(self):
         data = self.get_either_data()
@@ -70,6 +74,7 @@ class TestManageWorker(TestCase):
 
     def assert_post_contents(self,
                              response,
+                             conference,
                              volunteer_opp,
                              volunteer,
                              alloc,
@@ -106,11 +111,12 @@ class TestManageWorker(TestCase):
             '<form method="POST" action="%s' % (reverse(
                 'manage_workers',
                 urlconf='gbe.scheduling.urls',
-                args=[volunteer_opp.eventitem.e_conference.conference_slug,
+                args=[conference.conference_slug,
                       volunteer_opp.pk])))
 
     def assert_good_post(self,
                          response,
+                         conference,
                          volunteer_opp,
                          volunteer,
                          alloc,
@@ -123,10 +129,11 @@ class TestManageWorker(TestCase):
                 reverse(
                     'edit_volunteer',
                     urlconf='gbe.scheduling.urls',
-                    args=[volunteer_opp.eventitem.e_conference.conference_slug,
+                    args=[conference.conference_slug,
                           volunteer_opp.pk]),
                 alloc.pk))
         self.assert_post_contents(response,
+                                  conference,
                                   volunteer_opp,
                                   volunteer,
                                   alloc,
@@ -167,6 +174,7 @@ class TestManageWorker(TestCase):
         self.assertIsNotNone(alloc)
         self.assert_good_post(
             response,
+            context.conference,
             volunteer_opp,
             volunteer,
             alloc,
@@ -183,6 +191,7 @@ class TestManageWorker(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assert_good_post(
             response,
+            self.conference,
             self.volunteer_opp,
             new_volunteer,
             self.alloc,
@@ -199,6 +208,7 @@ class TestManageWorker(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assert_good_post(
             response,
+            self.conference,
             self.volunteer_opp,
             new_volunteer,
             self.alloc,
@@ -217,6 +227,7 @@ class TestManageWorker(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assert_good_post(
             response,
+            self.conference,
             self.volunteer_opp,
             new_volunteer,
             self.alloc,
@@ -238,6 +249,7 @@ class TestManageWorker(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assert_post_contents(
             response,
+            self.conference,
             self.volunteer_opp,
             self.volunteer,
             self.alloc,
@@ -257,6 +269,7 @@ class TestManageWorker(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assert_post_contents(
             response,
+            self.conference,
             self.volunteer_opp,
             self.volunteer,
             self.alloc,
@@ -289,6 +302,7 @@ class TestManageWorker(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assert_post_contents(
             response,
+            self.conference,
             self.volunteer_opp,
             self.volunteer,
             self.alloc,
@@ -476,7 +490,7 @@ class TestManageWorker(TestCase):
             'SCHEDULE_CONFLICT  <br>- Affected user: %s<br>- ' % (
                 self.volunteer.display_name) +
             'Conflicting booking: %s, Start Time: %s' % (
-                self.volunteer_opp.eventitem.e_title,
+                self.volunteer_opp.title,
                 'Fri, Feb 5 12:00 PM')
             )
 
@@ -501,6 +515,6 @@ class TestManageWorker(TestCase):
             'SCHEDULE_CONFLICT  <br>- Affected user: %s<br>- ' % (
                 self.volunteer.display_name) +
             'Conflicting booking: %s, Start Time: %s' % (
-                overbook_opp.eventitem.e_title,
+                overbook_opp.title,
                 'Fri, Feb 5 12:00 PM')
             )
