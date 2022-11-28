@@ -85,6 +85,7 @@ class TestShowDashboard(TestCase):
         '''
         login_as(self.profile, self)
         response = self.client.get(self.url)
+        print(response.content)
         self.assertContains(
             response,
             "var table = $('#gbe-table').DataTable({",
@@ -205,13 +206,13 @@ class TestShowDashboard(TestCase):
     def test_show_volunteer(self):
         '''staff_area view should load
         '''
-        vol_context = VolunteerContext(event=self.context.show,
-                                       sched_event=self.context.sched_event)
+        vol_context = VolunteerContext(sched_event=self.context.sched_event,
+                                       conference=self.context.conference)
         self.profile = ProfileFactory()
         grant_privilege(self.profile, 'Scheduling Mavens')
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertContains(response, vol_context.opportunity.e_title)
+        self.assertContains(response, vol_context.opp_event.title)
         self.assertContains(response, reverse(
             'mail_to_individual',
             urlconf='gbe.email.urls',
@@ -219,7 +220,7 @@ class TestShowDashboard(TestCase):
         self.assertContains(response, reverse(
             'detail_view',
             urlconf='gbe.scheduling.urls',
-            args=[vol_context.opp_event.eventitem_id]))
+            args=[vol_context.opp_event.pk]))
 
     def test_show_with_inactive(self):
         ''' view should load
@@ -228,12 +229,12 @@ class TestShowDashboard(TestCase):
             display_name="Inactive User",
             user_object__is_active=False
         )
-        context = VolunteerContext(event=self.context.show,
-                                   sched_event=self.context.sched_event,
+        context = VolunteerContext(sched_event=self.context.sched_event,
+                                   conference=self.context.conference,
                                    profile=inactive)
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertContains(response, context.opportunity.e_title)
+        self.assertContains(response, context.opp_event.title)
         self.assertContains(
             response,
             '<div class="gbe-form-error">')
@@ -271,18 +272,18 @@ class TestShowDashboard(TestCase):
             '<i class="fas fa-check-circle gbe-text-success"></i>')
 
     def test_show_approval_needed_event(self):
-        context = VolunteerContext(event=self.context.show,
-                                   sched_event=self.context.sched_event)
+        context = VolunteerContext(sched_event=self.context.sched_event,
+                                   conference=self.context.conference)
         context.opp_event.approval_needed = True
         context.opp_event.save()
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertContains(response, context.opportunity.e_title)
+        self.assertContains(response, context.opp_event.title)
         self.assertContains(response, 'class="approval_needed"')
 
     def test_staff_area_role_display(self):
-        vol_context = VolunteerContext(event=self.context.show,
-                                       sched_event=self.context.sched_event)
+        vol_context = VolunteerContext(sched_event=self.context.sched_event,
+                                       conference=self.context.conference)
         context = StaffAreaContext(conference=self.context.conference)
         EventLabelFactory(event=vol_context.opp_event,
                           text=context.area.slug)
@@ -326,7 +327,7 @@ class TestShowDashboard(TestCase):
             follow=True)
         self.assertContains(response, act_order_submit_success)
         self.assertContains(response,
-                            "%s Dashboard" % self.context.show.e_title)
+                            "%s Dashboard" % self.context.sched_event.title)
 
     def test_post_invalid(self):
         login_as(self.profile, self)
@@ -336,7 +337,7 @@ class TestShowDashboard(TestCase):
             follow=True)
         self.assertContains(response, act_order_form_invalid)
         self.assertContains(response,
-                            "%s Dashboard" % self.context.show.e_title)
+                            "%s Dashboard" % self.context.sched_event.title)
 
     def test_good_user_post_bad_show(self):
         login_as(self.profile, self)

@@ -182,9 +182,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                 self.__class__.__name__)
             for item in sched_response.schedule_items:
                 if item not in rehearsals and (
-                        item.event_style == "Rehearsal Slot"):
+                        item.event.event_style == "Rehearsal Slot"):
                     rehearsals += [item]
-                elif item.event_style == "Show":
+                elif item.event.event_style == "Show":
                     order = item.commitment.order
             if request.POST:
                 form = ActScheduleBasics(

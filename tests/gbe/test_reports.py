@@ -248,5 +248,5 @@ class TestReports(TestCase):
             reverse('room_setup', urlconf='gbe.reporting.urls'),
             data={'conf_slug': context.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, context.bid.e_title, 2)
+        self.assertContains(response, context.bid.b_title, 2)
         self.assertContains(response, space_options[1][1][1][1])

@@ -214,9 +214,6 @@ def room_setup(request):
         day_events = []
         current_day = None
         for booking in room.get_bookings:
-            booking_class = sched.EventItem.objects.get_subclass(
-                eventitem_id=booking.eventitem.eventitem_id)
-
             if not current_day:
                 current_day = booking.start_time.date()
             if current_day != booking.start_time.date():
@@ -226,9 +223,13 @@ def room_setup(request):
                                   'bookings': day_events}]
                 current_day = booking.start_time.date()
                 day_events = []
-            if booking_class.__class__.__name__ == 'Class':
+            if booking.event_style in ['Lecture',
+                                       'Movement',
+                                       'Panel',
+                                       'Workshop']:
                 day_events += [{'event': booking,
-                                'class': booking_class}]
+                                'class': conf.Class.objects.get(
+                                    pk=booking.connected_id)}]
         if (current_day in conf_days and len(day_events) > 0):
             room_set += [{'room': room,
                           'date': current_day,

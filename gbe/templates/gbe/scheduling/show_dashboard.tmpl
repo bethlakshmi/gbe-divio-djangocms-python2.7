@@ -12,7 +12,7 @@
 <div class="container review">
  <ul class="nav nav-tabs" id="inner">
   {% for show in other_shows %}
-  <li role="presentation"><a href="{% url 'scheduling:show_dashboard' show.pk%}" class="{% if this_occurrence.pk == show.pk %}gbe-tab-active{% else %}gbe-tab{% endif %}">{{show.eventitem}}</a></li>
+  <li role="presentation"><a href="{% url 'scheduling:show_dashboard' show.pk%}" class="{% if this_occurrence.pk == show.pk %}gbe-tab-active{% else %}gbe-tab{% endif %}">{{show.title}}</a></li>
   {% endfor %}
  </ul>
  <div class="gbe-tab-area">
