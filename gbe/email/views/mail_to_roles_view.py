@@ -64,7 +64,7 @@ class MailToRolesView(MailToFilterView):
         if len(permitted_styles) > 0:
             response = get_occurrences(
                 event_styles=permitted_styles,
-                labels=self.slugs)
+                label_sets=[self.slugs])
             for occurrence in response.occurrences:
                 choices += [(occurrence.pk, occurrence.title)]
         return choices

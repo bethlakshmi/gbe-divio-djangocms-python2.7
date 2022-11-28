@@ -10,6 +10,7 @@ from tests.contexts import (
     ShowContext,
 )
 
+
 class TestHasRoleInEvent(TestCase):
     '''Tests that a profile will return all the possible roles'''
 

@@ -371,7 +371,8 @@ class TestMailToRoles(TestMailFilters):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            "%d is not one of the available choices." % showcontext.sched_event.pk)
+            "%d is not one of the available choices." % (
+                showcontext.sched_event.pk))
 
     def test_pick_staff_area_reduced_priv(self):
         staffcontext = StaffAreaContext()

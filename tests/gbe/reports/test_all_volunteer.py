@@ -20,7 +20,6 @@ class TestAllVolunteer(TestCase):
         cls.url = reverse('all_volunteers', urlconf="gbe.reporting.urls")
         cls.context = VolunteerContext()
 
-
     def setUp(self):
         self.client = Client()
 

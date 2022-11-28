@@ -92,7 +92,7 @@ class ListEventsView(View):
                 accepted='3').exclude(
                 pk__in=booked_classes)
         return classes
-            
+
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
         eval_occurrences = []

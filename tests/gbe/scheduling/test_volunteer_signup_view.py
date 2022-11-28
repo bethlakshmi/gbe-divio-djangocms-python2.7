@@ -66,7 +66,7 @@ class TestVolunteerSignupView(TestCase):
         self.assertContains(
             response,
             conference.conference_name)
-        self.assertContains(response, occurrence.eventitem.child().e_title)
+        self.assertContains(response, occurrence.title)
         self.assertContains(
             response,
             occurrence.start_time.strftime("%-I:%M %p"))
@@ -249,7 +249,7 @@ class TestVolunteerSignupView(TestCase):
         self.assertContains(
             response,
             staffcontext.conference.conference_name)
-        self.assertContains(response, volunteeropp.eventitem.e_title)
+        self.assertContains(response, volunteeropp.title)
 
     def test_no_space_in_event(self):
         full_opp = self.staffcontext.add_volunteer_opp()
@@ -257,7 +257,7 @@ class TestVolunteerSignupView(TestCase):
         full_opp.save()
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertNotContains(response, full_opp.eventitem.e_title)
+        self.assertNotContains(response, full_opp.title)
 
     def test_user_is_rejected(self):
         self.staffcontext.book_volunteer(
@@ -266,7 +266,7 @@ class TestVolunteerSignupView(TestCase):
             role="Rejected")
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertNotContains(response, self.volunteeropp.title)
 
     def test_slot_with_show(self):
         ''' tests both show and an incomplete profile '''
@@ -281,11 +281,11 @@ class TestVolunteerSignupView(TestCase):
             vol_context.opp_event,
             "volunteered.gif",
             action="off")
-        self.assertContains(response, vol_context.event.e_title)
+        self.assertContains(response, vol_context.sched_event.title)
         self.assertContains(response, reverse(
             "detail_view",
             urlconf="gbe.scheduling.urls",
-            args=[vol_context.event.pk]))
+            args=[vol_context.sched_event.pk]))
         self.assertContains(response, "Phone")
 
     def test_partial_profile(self):

@@ -31,7 +31,6 @@ class TestReviewClassList(TestCase):
         cls.conference = current_conference()
         ClassFactory.create_batch(4,
                                   b_conference=cls.conference,
-                                  e_conference=cls.conference,
                                   submitted=True)
 
     def setUp(self):
@@ -63,7 +62,6 @@ class TestReviewClassList(TestCase):
         ClassFactory(
             accepted=3,
             b_conference=self.conference,
-            e_conference=self.conference,
             submitted=True)
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -95,7 +93,6 @@ class TestReviewClassList(TestCase):
         ClassFactory(
             teacher__contact__user_object__is_active=False,
             b_conference=self.conference,
-            e_conference=self.conference,
             submitted=True)
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(self.privileged_user, self)

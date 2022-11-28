@@ -141,6 +141,8 @@ class VolunteerSignupView(View):
                     'object': occurrence,
                     'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
                     'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
+                    'title': occurrence.title,
+                    'description': occurrence.description,
                     'colspan': (
                         occurrence.duration.total_seconds() * self.col_per_hour
                         )/3600,
