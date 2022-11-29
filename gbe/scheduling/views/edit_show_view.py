@@ -10,6 +10,7 @@ from scheduler.idd import (
     get_bookings,
     get_occurrences,
     create_occurrence,
+    delete_occurrence,
     update_occurrence,
 )
 from datetime import timedelta
@@ -77,6 +78,7 @@ class EditShowView(EditEventView):
                         roles=["Performer"])
                     actionform.append(
                         RehearsalSlotForm(
+                            conference=conference,
                             initial={'opp_sched_id': rehearsal_slot.pk,
                                      'title': rehearsal_slot.title,
                                      'duration': rehearsal_slot.duration,
@@ -171,15 +173,15 @@ class EditShowView(EditEventView):
                         roles=["Performer"])
             self.event_form = RehearsalSlotForm(
                 request.POST,
+                conference=self.conference,
                 initial={'current_acts': len(casting_response.people)})
             if self.event_form.is_valid():
                 data = self.get_basic_form_settings()
                 response = update_occurrence(
                     data['opp_sched_id'],
-                    title=self.event_form['title'],
+                    title=data['title'],
                     start_time=self.start_time,
-                    length=self.event_form['duration'],
-                    max_volunteer=self.max_volunteer,
+                    length=data['duration'],
                     max_commitments=self.max_volunteer,
                     locations=[self.room])
             else:
@@ -200,9 +202,7 @@ class EditShowView(EditEventView):
                         'description': rehearsal_delete_msg})
                 messages.success(
                     request,
-                    '%s<br>Title: %s' % (
-                        user_message[0].description,
-                        title))
+                    '%s' % user_message[0].description)
                 return HttpResponseRedirect(self.success_url)
         return self.check_success_and_return(
             request,

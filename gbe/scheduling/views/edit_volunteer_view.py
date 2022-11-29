@@ -141,10 +141,8 @@ class EditVolunteerView(ManageWorkerView):
         if context['event_form'].is_valid(
                 ) and context['scheduling_form'].is_valid(
                 ) and context['association_form'].is_valid():
-            new_event = context['event_form'].save(commit=False)
-            new_event.duration = timedelta(
+            duration = timedelta(
                 minutes=context['scheduling_form'].cleaned_data['duration']*60)
-            new_event.save()
             labels = [calendar_for_event[self.occurrence.event_style],
                       self.conference.conference_slug]
             if context['association_form'].cleaned_data['staff_area']:
@@ -157,8 +155,12 @@ class EditVolunteerView(ManageWorkerView):
                     context['association_form'].cleaned_data['parent_event'])
             response = update_occurrence(
                 self.occurrence.pk,
-                get_start_time(context['scheduling_form'].cleaned_data),
-                context['scheduling_form'].cleaned_data['max_volunteer'],
+                title=context['event_form'].cleaned_data['title'],
+                description=context['event_form'].cleaned_data['description'],
+                length=duration,
+                start_time=get_start_time(
+                    context['scheduling_form'].cleaned_data),
+                max_volunteer=context['scheduling_form'].cleaned_data['max_volunteer'],
                 people=None,
                 roles=None,
                 locations=[

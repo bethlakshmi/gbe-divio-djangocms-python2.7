@@ -218,7 +218,7 @@ class ManageVolWizardView(View):
             self.approval = False
         if self.create:
             data['labels'] = self.labels + [self.conference.conference_slug]
-            if data['event_style'] in calendar_for_event.keys():
+            if calendar_for_event[data['event_style']]:
                 data['labels'] += [calendar_for_event[data['event_style']]]
         return data
 

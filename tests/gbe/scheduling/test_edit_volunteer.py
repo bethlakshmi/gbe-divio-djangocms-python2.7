@@ -29,32 +29,34 @@ class TestEditVolunteer(TestGBE):
     view_name = 'edit_volunteer'
 
     def setUp(self):
-        self.context = VolunteerContext(event_style="Special")
-        self.context.sched_event.max_volunteer = 7
-        self.context.sched_event.save()
-        self.context.event.duration = timedelta(hours=1, minutes=30)
-        self.context.event.save()
-        self.room = self.context.room
-        self.staff_lead = self.context.set_staff_lead()
-        self.extra_day = ConferenceDayFactory(
-            conference=self.context.conference,
-            day=self.context.conf_day.day + timedelta(days=1))
-        self.url = reverse(
-            self.view_name,
-            args=[self.context.conference.conference_slug,
-                  self.context.opp_event.pk],
-            urlconf='gbe.scheduling.urls')
         self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = VolunteerContext(event_style="Special")
+        cls.context.sched_event.max_volunteer = 7
+        cls.context.sched_event.length = timedelta(hours=1, minutes=30)
+        cls.context.sched_event.save()
+        cls.room = cls.context.room
+        cls.staff_lead = cls.context.set_staff_lead()
+        cls.extra_day = ConferenceDayFactory(
+            conference=cls.context.conference,
+            day=cls.context.conf_day.day + timedelta(days=1))
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.context.conference.conference_slug,
+                  cls.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
 
     def edit_event(self):
         data = {
             'approval': True,
             'type': 'Volunteer',
-            'e_title': "Test Event Wizard",
+            'title': "Test Event Wizard",
             'slug': "EditVolSlug",
-            'e_description': 'Description',
+            'description': 'Description',
             'max_volunteer': 3,
             'parent_event': '',
             'staff_area': '',
@@ -88,13 +90,13 @@ class TestEditVolunteer(TestGBE):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Manage Volunteers")
         self.assertContains(response, "Finish")
-        self.assertContains(response, self.context.opportunity.e_title)
-        self.assertContains(response, self.context.opportunity.e_description)
+        self.assertContains(response, self.context.opp_event.title)
+        self.assertContains(response, self.context.opp_event.description)
         self.assertContains(
             response,
             '<option value="%d" selected>%s - %s</option>' % (
                 self.context.sched_event.pk,
-                self.context.event.e_title,
+                self.context.sched_event.title,
                 self.context.sched_event.start_time.strftime(
                     GBE_DATETIME_FORMAT)),
             html=True)
@@ -177,13 +179,13 @@ class TestEditVolunteer(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
+            '<td>%s</td>' % data['title'])
 
     def test_edit_event_and_continue(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
@@ -202,11 +204,11 @@ class TestEditVolunteer(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
-        self.assertContains(response, data['e_title'])
-        self.assertContains(response, data['e_description'])
+        self.assertContains(response, data['title'])
+        self.assertContains(response, data['description'])
         self.assertContains(response, data['slug'])
         assert_option_state(
             response,
@@ -232,7 +234,7 @@ class TestEditVolunteer(TestGBE):
             response,
             '<option value="%d">%s - %s</option>' % (
                 self.context.sched_event.pk,
-                self.context.event.e_title,
+                self.context.sched_event.title,
                 self.context.sched_event.start_time.strftime(
                     GBE_DATETIME_FORMAT)),
             html=True)
@@ -255,7 +257,7 @@ class TestEditVolunteer(TestGBE):
             response,
             '<option value="%d" selected>%s - %s</option>' % (
                 other_context.sched_event.pk,
-                other_context.event.e_title,
+                other_context.sched_event.title,
                 other_context.sched_event.start_time.strftime(
                     GBE_DATETIME_FORMAT)),
             html=True)

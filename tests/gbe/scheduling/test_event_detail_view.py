@@ -69,23 +69,6 @@ class TestEventDetailView(TestCase):
         response = self.client.get(bad_url, follow=True)
         self.assertEqual(response.status_code, 404)
 
-    def test_repeated_lead_shows_once(self):
-        sched_events = [
-            SchedEventFactory.create(
-                event_style="Show") for i in range(2)]
-        staff_lead = ProfileFactory()
-        lead_worker = WorkerFactory(_item=staff_lead.workeritem_ptr,
-                                    role="Staff Lead")
-        for se in sched_events:
-            ResourceAllocationFactory.create(event=se,
-                                             resource=lead_worker)
-        response = self.client.get(reverse(
-            self.view_name,
-            urlconf="gbe.scheduling.urls",
-            args=[sched_events[0].pk]))
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, staff_lead.display_name, 1)
-
     def test_location_full_room_display(self):
         self.context.room.address = "The place where I live"
         self.context.room.map_embed = \
