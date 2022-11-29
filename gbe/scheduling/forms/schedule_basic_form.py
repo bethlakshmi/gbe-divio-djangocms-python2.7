@@ -1,7 +1,9 @@
 from django.forms import (
+    CharField,
     ChoiceField,
     FloatField,
     Form,
+    HiddenInput,
     IntegerField,
     ModelChoiceField,
 )
@@ -25,24 +27,25 @@ class ScheduleBasicForm(Form):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    day = ChoiceField(choices=['No Days Specified'])
-    time = ChoiceField(choices=conference_times)
-    location = ModelChoiceField(
-        queryset=Room.objects.all().order_by('name'))
+    title = CharField(required=True, max_length=128)
+    current_acts = IntegerField(
+        widget=HiddenInput(),
+        required=False)
     max_volunteer = IntegerField(required=True)
     duration = FloatField(min_value=0.5,
                           max_value=12,
                           required=True)
-
-    class Meta:
-        fields = ['title',
-                  'description',
-                  'duration',
-                  'max_volunteer',
-                  'day',
-                  'time',
-                  'location',
-                  ]
+    day = ChoiceField(choices=['No Days Specified'])
+    time = ChoiceField(choices=conference_times)
+    location = ModelChoiceField(
+        queryset=Room.objects.all().order_by('name'))
+    opp_sched_id = IntegerField(
+        widget=HiddenInput(),
+        required=False)
+    event_style = CharField(
+        widget=HiddenInput(),
+        required=True,
+        initial="Rehearsal Slot")
 
     def __init__(self, *args, **kwargs):
         conference = kwargs.pop('conference')

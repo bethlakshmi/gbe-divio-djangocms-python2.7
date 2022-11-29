@@ -160,11 +160,11 @@ class ManageVolWizardView(View):
 
         actionheaders = ['Title',
                          '#',
-                         'Approve',
                          'Duration',
                          'Day',
                          'Time',
-                         'Location']
+                         'Location',
+                         'Approve']
         context.update({'createform': createform,
                         'actionheaders': actionheaders,
                         'manage_vol_url': manage_vol_info}),
@@ -269,15 +269,15 @@ class ManageVolWizardView(View):
 
         elif 'edit' in list(request.POST.keys()):
             self.event_form = VolunteerOpportunityForm(
-                request.POST)
+                request.POST,
+                conference=self.conference)
             if self.event_form.is_valid():
                 data = self.get_basic_form_settings()
-                self.event_form.save()
                 response = update_occurrence(
                     data['opp_sched_id'],
-                    title=self.event_form['title'],
+                    title=data['title'],
                     start_time=self.start_time,
-                    length=self.event_form['duration'],
+                    length=data['duration'],
                     max_volunteer=self.max_volunteer,
                     locations=[self.room],
                     approval=self.approval)
