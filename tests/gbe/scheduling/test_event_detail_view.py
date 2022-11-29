@@ -22,6 +22,7 @@ from tests.contexts import (
     StaffAreaContext,
 )
 from gbe.models import Conference
+from scheduler.models import Event
 from tests.functions.gbe_functions import (
     bad_id_for,
     login_as,
@@ -67,15 +68,6 @@ class TestEventDetailView(TestCase):
             args=[bad_id_for(Event)])
         response = self.client.get(bad_url, follow=True)
         self.assertEqual(response.status_code, 404)
-
-    def test_unsched_class(self):
-        bid_class = ClassFactory()
-        response = self.client.get(reverse(
-            self.view_name,
-            urlconf="gbe.scheduling.urls",
-            args=[bid_class.pk]))
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, bid_class.teacher.name, 1)
 
     def test_repeated_lead_shows_once(self):
         sched_events = [
@@ -274,7 +266,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.bid.pk])
+            args=[context.sched_event.pk])
         response = self.client.get(url)
         eval_link = reverse(
             "eval_event",
@@ -291,7 +283,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.bid.pk])
+            args=[context.sched_event.pk])
         response = self.client.get(url)
         eval_link = reverse(
             "eval_event",
@@ -309,7 +301,7 @@ class TestEventDetailView(TestCase):
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
-            args=[context.bid.pk])
+            args=[context.sched_event.pk])
         response = self.client.get(url)
         self.assertNotContains(response, "fa-tachometer")
 

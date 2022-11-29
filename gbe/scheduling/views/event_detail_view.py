@@ -68,7 +68,7 @@ class EventDetailView(View):
             eventitem_view['occurrence'],
             eval_occurrences,
             cal_type,
-            conference,
+            conference.status == "completed",
             personal_schedule_items)
 
         schedule_items += [{
