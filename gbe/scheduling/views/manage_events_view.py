@@ -29,7 +29,10 @@ from gbe.scheduling.forms import (
     HiddenSelectEventForm,
     SelectEventForm,
 )
-from gbetext import calendar_type as calendar_type_options
+from gbetext import (
+    calendar_for_event,
+    calendar_type,
+)
 
 
 class ManageEventsView(View):
@@ -84,7 +87,7 @@ class ManageEventsView(View):
     def build_occurrence_display(self, occurrences):
         display_list = []
         for occurrence in occurrences:
-            if occurrence.event_style == "Class":
+            if calendar_for_event[occurrence.event_style] in "Conference":
                 copy_link = None
             else:
                 copy_link = reverse('copy_event_schedule',
@@ -143,7 +146,7 @@ class ManageEventsView(View):
         if len(select_form.cleaned_data['calendar_type']) > 0:
             cal_types = []
             for cal_type in select_form.cleaned_data['calendar_type']:
-                cal_types += [calendar_type_options[int(cal_type)]]
+                cal_types += [calendar_type[int(cal_type)]]
             label_set += [cal_types]
         if len(select_form.cleaned_data['staff_area']) > 0:
             staff_areas = []
