@@ -41,6 +41,11 @@
       </td>
     {% for hidden in flex_eval_form.hidden_fields %}
     {{ hidden }}
+      {% if hidden.errors %}
+      <tr class="striped_table_row"><td>
+      <font class="gbe-form-error">{{hidden.label_tag}}:  {{ hidden.errors }}</font>
+      </td></tr>
+       {% endif %}
     {% endfor %}
     </tr>
       {% if field.errors %}

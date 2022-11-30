@@ -376,7 +376,7 @@ class TestReviewAct(TestCase):
 
     def test_review_act_no_review(self):
         login_as(self.privileged_user, self)
-        data = self.get_post_data(self.act, self.privileged_user)
+        data = self.get_post_data(self.act, self.privileged_profile)
         del data[str(self.eval_cat.pk) + '-ranking']
         response = self.client.post(self.url,
                                     data,

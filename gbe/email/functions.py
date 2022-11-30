@@ -22,7 +22,10 @@ from gbetext import (
     unique_email_templates,
 )
 from gbe_utils.text import no_profile_msg
-from scheduler.idd import get_all_container_bookings
+from scheduler.idd import (
+    get_all_container_bookings,
+    get_occurrences,
+)
 from django.core.signing import (
     TimestampSigner,
     BadSignature,
@@ -370,10 +373,10 @@ def get_user_email_templates(user):
             if priv == "act" and state[1] == "Accepted":
                 for show in get_occurrences(
                         event_styles=['Shows'],
-                        labels=Conference.objects.filter(
+                        label_sets=[Conference.objects.filter(
                             status__in=('upcoming', 'ongoing')).values_list(
                             'conference_slug',
-                            flat=True)):
+                            flat=True)]).occurrences:
                     template_set += [{
                         'name': "%s %s - %s" % (priv,
                                                 state[1].lower(),

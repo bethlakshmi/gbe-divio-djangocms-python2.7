@@ -84,14 +84,14 @@ class TestEditEmailTemplate(TestCase):
         grant_privilege(self.privileged_profile.user_object,
                         'Act Coordinator')
         login_as(self.privileged_profile, self)
-        response = self.client.get(
-            reverse(self.view_name,
-                    urlconf="gbe.email.urls",
-                    args=["act accepted - %s" % context.show.e_title.lower()]))
+        response = self.client.get(reverse(
+            self.view_name,
+            urlconf="gbe.email.urls",
+            args=["act accepted - %s" % context.sched_event.title.lower()]))
 
         self.assertContains(response, settings.DEFAULT_FROM_EMAIL)
         self.assertContains(response, 'Your act has been cast in %s' % (
-            context.show.e_title))
+            context.sched_event.title))
         self.assertContains(
             response,
             'Be sure to fill out your Act Tech Info Page ASAP')
