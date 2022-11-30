@@ -372,7 +372,7 @@ def get_user_email_templates(user):
         for state in acceptance_states:
             if priv == "act" and state[1] == "Accepted":
                 for show in get_occurrences(
-                        event_styles=['Shows'],
+                        event_styles=['Show'],
                         label_sets=[Conference.objects.filter(
                             status__in=('upcoming', 'ongoing')).values_list(
                             'conference_slug',
