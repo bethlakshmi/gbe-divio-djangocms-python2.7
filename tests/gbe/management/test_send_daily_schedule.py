@@ -33,6 +33,6 @@ class TestSendDailySchedule(TestCase):
             from_email=settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 1)
-        self.assertTrue(context.bid.e_title in queued_email[0].html_message)
+        self.assertTrue(context.bid.b_title in queued_email[0].html_message)
         self.assertTrue(
             context.teacher.user_object.email in queued_email[0].to)
