@@ -84,7 +84,7 @@ class TestWelcomeLetter(TestCase):
             str(context.teacher.performer_profile))
         self.assertContains(
             response,
-            context.bid.e_title)
+            context.bid.b_title)
         self.assertContains(
             response,
             str(context.room))
@@ -112,7 +112,7 @@ class TestWelcomeLetter(TestCase):
             str(profile))
         self.assertContains(
             response,
-            context.bid.e_title,
+            context.bid.b_title,
             2)
         self.assertContains(response, "interested-sched")
 
@@ -164,7 +164,7 @@ class TestWelcomeLetter(TestCase):
             str(teacher.performer_profile))
         self.assertNotContains(
             response,
-            context.bid.e_title)
+            context.bid.b_title)
 
     def test_ticket_purchase_solo_profile(self):
         '''a ticket purchaser gets a checklist item

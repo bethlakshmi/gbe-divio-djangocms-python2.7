@@ -12,6 +12,7 @@ from scheduler.idd import (
     get_eval_summary,
 )
 from gbe.models import (
+    Conference,
     Performer,
     UserMessage,
 )

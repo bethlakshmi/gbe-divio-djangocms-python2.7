@@ -130,13 +130,13 @@ class TestReports(TestCase):
         ticket_context = PurchasedTicketContext()
         profile = ticket_context.profile
         grant_privilege(profile, 'Registrar')
-        transaction = ticket_context.transaction
+        t = ticket_context.transaction
         login_as(profile, self)
         response = self.client.get(reverse(
             'env_stuff',
             urlconf="gbe.reporting.urls",
             args=[
-                transaction.ticket_item.ticketing_event.conference.conference_slug]))
+                t.ticket_item.ticketing_event.conference.conference_slug]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=env_stuff.csv")
@@ -146,10 +146,10 @@ class TestReports(TestCase):
             "Staff Lead,Volunteering,Presenter,Show")
         self.assertContains(
             response,
-            transaction.purchaser.matched_to_user.first_name)
+            t.purchaser.matched_to_user.first_name)
         self.assertContains(
             response,
-            transaction.ticket_item.title)
+            t.ticket_item.title)
 
     def test_room_schedule_fail(self):
         '''room_schedule view should load for privileged users,

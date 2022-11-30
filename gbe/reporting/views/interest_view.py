@@ -38,7 +38,7 @@ def interest_view(request):
 
     display_list = []
     for occurrence in response.occurrences:
-        class_event = Class.objects.get(occurrence.connected_id)
+        class_event = Class.objects.get(pk=occurrence.connected_id)
         teachers = []
         interested = []
         for person in occurrence.people:
