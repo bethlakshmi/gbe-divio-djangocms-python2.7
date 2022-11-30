@@ -7,7 +7,7 @@
   </tr>
   {% for booking in bookings %}
   <tr {% if booking.role != 'Interested' %}style="font-weight: bold;"{% endif %}>
-    <td><a href="http://{{ site }}{% url 'scheduling:detail_view' booking.event.eventitem.eventitem_id %}">
+    <td><a href="http://{{ site }}{% url 'scheduling:detail_view' booking.event.pk %}">
       {{ booking.event }}</a></td>
     <td>{{booking.role}} </td>    
     <td>{{booking.event.location}} </td>    
