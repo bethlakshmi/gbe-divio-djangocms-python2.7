@@ -77,7 +77,7 @@ class TestReviewActList(TestCase):
             self.url,
             data={'conf_slug': context.conference.conference_slug})
         self.assertContains(response, context.acts[0].b_title)
-        self.assertContains(response, context.show.e_title)
+        self.assertContains(response, context.sched_event.title)
 
     def test_review_act_assigned_show_role(self):
         context = ShowContext(act_role="Hosted By...")
@@ -85,7 +85,7 @@ class TestReviewActList(TestCase):
         response = self.client.get(
             self.url,
             data={'conf_slug': context.conference.conference_slug})
-        self.assertContains(response, context.show.e_title)
+        self.assertContains(response, context.sched_event.title)
         self.assertContains(response, "Hosted By...")
 
     def test_review_act_assigned_two_shows(self):
@@ -98,8 +98,8 @@ class TestReviewActList(TestCase):
             self.url,
             data={'conf_slug': context.conference.conference_slug})
         self.assertContains(response, context.acts[0].b_title)
-        self.assertContains(response, context.show.e_title)
-        self.assertContains(response, context2.show.e_title)
+        self.assertContains(response, context.sched_event.title)
+        self.assertContains(response, context2.sched_event.title)
 
     def test_review_act_has_reviews(self):
         flex_eval = FlexibleEvaluationFactory(
