@@ -87,7 +87,7 @@ class ManageEventsView(View):
     def build_occurrence_display(self, occurrences):
         display_list = []
         for occurrence in occurrences:
-            if calendar_for_event[occurrence.event_style] in "Conference":
+            if calendar_for_event[occurrence.event_style] == "Conference":
                 copy_link = None
             else:
                 copy_link = reverse('copy_event_schedule',

@@ -150,6 +150,7 @@ class CopyStaffAreaView(CopyCollectionsView):
                    room,
                    labels,
                    root=None):
+        new_event_room = room
         if root:
             labels += [self.area.slug]
         if occurrence.location.as_subtype.conferences.filter(

@@ -93,7 +93,7 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
         if len(event_styles) > 0:
             response = get_occurrences(
                 event_styles=event_styles,
-                labels=Conference.all_slugs(current=True))
+                label_sets=[Conference.all_slugs(current=True)])
             if response.occurrences:
                 for occurrence in response.occurrences:
                     choices += [(occurrence.pk, "%s - %s" % (
@@ -142,7 +142,7 @@ class CopyEventSoloPickModeForm(CopyEventPickModeForm):
         super(CopyEventSoloPickModeForm, self).__init__(*args, **kwargs)
         response = get_occurrences(
             event_styles=['Show', 'Special'],
-            labels=Conference.all_slugs(current=True))
+            label_sets=[Conference.all_slugs(current=True)])
         if response.occurrences:
             for occurrence in response.occurrences:
                 choices += [(occurrence.pk, "%s - %s" % (

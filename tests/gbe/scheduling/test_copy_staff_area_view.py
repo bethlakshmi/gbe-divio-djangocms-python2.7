@@ -175,7 +175,7 @@ class TestCopyStaffArea(TestGBE):
                 target_context.area.pk))
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
-            self.vol_opp.eventitem.e_title,
+            self.vol_opp.title,
             (self.vol_opp.start_time + delta).strftime(
                         self.copy_date_format)))
         self.assert_hidden_value(response, "id_room", "room", new_room.pk)
@@ -200,7 +200,7 @@ class TestCopyStaffArea(TestGBE):
                 target_context.area.pk))
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
-            self.vol_opp.eventitem.e_title,
+            self.vol_opp.title,
             self.vol_opp.start_time.strftime(self.copy_date_format)))
 
     def test_copy_child_event(self):
@@ -336,7 +336,7 @@ class TestCopyStaffArea(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                self.vol_opp.eventitem.e_title,
+                self.vol_opp.title,
                 datetime.combine(
                     another_day.day,
                     self.vol_opp.starttime.time()).strftime(
@@ -378,7 +378,7 @@ class TestCopyStaffArea(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                self.vol_opp.eventitem.e_title,
+                self.vol_opp.title,
                 datetime.combine(
                     self.context.conf_day.day,
                     self.vol_opp.starttime.time()).strftime(

@@ -575,7 +575,6 @@ class TestCopyOccurrence(TestGBE):
         }
         login_as(self.privileged_user, self)
         response = self.client.post(url, data=data, follow=True)
-        print(response.context)
         self.assertContains(response, copy_errors['room_target_mismatch'])
 
     def test_copy_child_event_preserve_room(self):
