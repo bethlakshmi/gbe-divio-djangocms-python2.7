@@ -85,7 +85,6 @@ class TestShowDashboard(TestCase):
         '''
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        print(response.content)
         self.assertContains(
             response,
             "var table = $('#gbe-table').DataTable({",
@@ -270,6 +269,12 @@ class TestShowDashboard(TestCase):
         self.assertContains(
             response,
             '<i class="fas fa-check-circle gbe-text-success"></i>')
+        self.assertContains(
+            response, 
+            ('<input type="hidden" name="event-select-events" ' +
+             'value="%d" id="id_event-select-events_0">') % (
+             complete_act_context.sched_event.pk),
+            html=True)
 
     def test_show_approval_needed_event(self):
         context = VolunteerContext(sched_event=self.context.sched_event,

@@ -86,12 +86,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
             prefix="event-select",
             initial={'events': [self.occurrence.pk]})
 
-        choices = []
-        response = get_occurrences(
-                event_styles=['Show'],
-                labels=[self.conference])
-        for occurrence in response.occurrences:
-            choices += [occurrence.pk, occurence.title]
+        choices = [self.occurrence.pk, self.occurrence.title]
         event_form['events'].choices = choices
         event_form['staff_areas'].queryset = None
         event_form['event_collections'].queryset = None
