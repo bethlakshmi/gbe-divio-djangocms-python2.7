@@ -224,7 +224,7 @@ class_options = (('Lecture', "Lecture"),
                  ('Movement', "Movement"),
                  ('Panel', "Panel"),
                  ('Workshop', "Workshop"))
-
+class_styles = ['Lecture', 'Movement', 'Panel', 'Workshop']
 length_options = ((30, "30"),
                   (60, "60"),
                   (90, "90"),

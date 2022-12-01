@@ -6,7 +6,7 @@ from ticketing.models import (
 )
 from ticketing.eventbrite import import_eb_ticket_items
 from ticketing.brown_paper import import_bpt_ticket_items
-
+from gbetext import class_styles
 
 def import_ticket_items():
         # Since Eventbrite autosyncs events, we would only need to manually
@@ -26,10 +26,7 @@ def get_tickets(linked_event):
         general_events = TicketingEvents.objects.filter(
             include_most=True,
             conference__conference_slug__in=linked_event.labels)
-    if linked_event.event_style in ['Lecture',
-                                    'Movement',
-                                    'Panel',
-                                    'Workshop']:
+    if linked_event.event_style in class_styles:
         general_events = list(chain(
             general_events,
             TicketingEvents.objects.filter(

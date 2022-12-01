@@ -265,6 +265,7 @@ class TestClassWizard(TestScheduling):
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()
+        data['id'] = ""
         response = self.client.post(
             self.url,
             data=data,
@@ -303,7 +304,6 @@ class TestClassWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        print(response.content)
         assert_alert_exists(
             response,
             'danger',

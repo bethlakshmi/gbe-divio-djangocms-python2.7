@@ -27,7 +27,7 @@ from gbe_forms_text import (
 )
 from gbetext import (
     calendar_for_event,
-    class_options,
+    class_styles,
     role_options,
 )
 
@@ -69,7 +69,7 @@ class ListEventsView(View):
             styles = None
 
         elif self.event_type == 'Class' or self.event_type == 'class':
-            styles = ['Lecture', 'Movement', 'Panel', 'Workshop']
+            styles = class_styles
 
         return styles
 
@@ -78,8 +78,8 @@ class ListEventsView(View):
         classes = []
         scheduled_events = []
         if self.event_type in ["All", 'Class', 'class']:
-            class_types = ['Lecture', 'Movement', 'Panel', 'Workshop']
-        elif self.event_type in ['Lecture', 'Movement', 'Panel', 'Workshop']:
+            class_types = class_styles
+        elif self.event_type in class_styles:
             class_types = [self.event_type]
 
         if len(class_types) > 0:

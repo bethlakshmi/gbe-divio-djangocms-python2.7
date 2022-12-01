@@ -20,7 +20,6 @@ def create_occurrence(title,
                       labels=[],
                       approval=False,
                       slug=None,
-                      related_object=None,
                       connected_class="",
                       connected_id=None):
     if parent_event_id:
@@ -46,9 +45,6 @@ def create_occurrence(title,
         response.occurrence.parent = parent_response.occurrence
     if blurb:
         response.occurrence.blurb = blurb
-    if related_object:
-        response.occurrence.connected_id = related_object.pk
-        response.occurrence.connected_class = related_object.__class__.__name__
 
     response.occurrence.save()
 

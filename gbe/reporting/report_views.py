@@ -12,7 +12,7 @@ import ticketing.models as tix
 import os as os
 import csv
 from reportlab.pdfgen import canvas
-
+from gbetext import class_styles
 from gbe.functions import (
     conference_slugs,
     get_current_conference,
@@ -223,10 +223,7 @@ def room_setup(request):
                                   'bookings': day_events}]
                 current_day = booking.start_time.date()
                 day_events = []
-            if booking.event_style in ['Lecture',
-                                       'Movement',
-                                       'Panel',
-                                       'Workshop']:
+            if booking.event_style in class_styles:
                 day_events += [{'event': booking,
                                 'class': conf.Class.objects.get(
                                     pk=booking.connected_id)}]
