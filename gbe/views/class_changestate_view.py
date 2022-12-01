@@ -3,6 +3,7 @@ from gbe_logging import log_func
 from gbe.views import BidChangeStateView
 from gbe.models import Class
 from scheduler.idd import delete_occurrences
+from gbe.scheduling.views.functions import show_general_status
 
 
 class ClassChangeStateView(BidChangeStateView):
@@ -16,10 +17,9 @@ class ClassChangeStateView(BidChangeStateView):
         if request.POST['accepted'] not in ('2', '3'):
             response = delete_occurrences(self.object_type.__name__,
                                           self.object.pk)
+            show_general_status(request, response, self.__class__.__name__)
+
         else:
-            # We have to keep b_ and e_ data consistent somehow
-            # this seems like a good point, as bid editing and event
-            # editing are quite different
             if int(request.POST['accepted']) == 3 and (
                     'extra_button' in request.POST.keys()):
                 self.next_page = "%s?accepted_class=%d" % (

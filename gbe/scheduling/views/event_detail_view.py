@@ -30,7 +30,7 @@ class EventDetailView(View):
     def get(self, request, *args, **kwargs):
         from ticketing.functions import get_tickets
 
-        occurrence_id = kwargs['eventitem_id']
+        occurrence_id = kwargs['occurrence_id']
         schedule_items = []
         personal_schedule_items = []
         eventitem_view = get_event_display_info(occurrence_id)

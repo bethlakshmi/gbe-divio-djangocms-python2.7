@@ -177,22 +177,14 @@ def get_event_display_info(occurrence_id):
         event_ids=[occurrence_id],
         roles=['Teacher', 'Panelist', 'Moderator', 'Staff Lead'])
     people = []
-    if len(booking_response.people) == 0 and (
-            occurrence.connected_class == "Class"):
-        bid = Class.objects.get(pk=occurrence.connected_id)
-        people = [{
-            'role': "Presenter",
-            'person': bid.teacher, }]
-    else:
-        id_set = []
-        for person in booking_response.people:
-            if person.public_id not in id_set:
-                id_set += [person.public_id]
-                people += [{
-                    'role': person.role,
-                    'person': eval(person.public_class).objects.get(
-                        pk=person.public_id),
-                }]
+    id_set = []
+    for person in booking_response.people:
+        if person.public_id not in id_set:
+            id_set += [person.public_id]
+            people += [{
+                'role': person.role,
+                'person': eval(person.public_class).objects.get(
+                    pk=person.public_id)}]
 
     eventitem_view = {
         'occurrence': occurrence,

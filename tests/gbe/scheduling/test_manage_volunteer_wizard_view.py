@@ -11,6 +11,7 @@ from scheduler.models import (
 )
 from tests.functions.gbe_functions import (
     assert_option_state,
+    bad_id_for,
     grant_privilege,
     login_as,
 )
@@ -352,6 +353,21 @@ class TestManageVolunteerWizard(TestCase):
         self.assertNotContains(response, 'Modify Volunteer Opportunity')
         self.assertFalse(
             Event.objects.filter(parent=self.context.sched_event).exists())
+
+    def test_delete_opportunity_bad_id(self):
+        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        login_as(self.privileged_profile, self)
+        bad_id = bad_id_for(Event)
+        data = self.get_basic_action_data(self.context, 'delete')
+        data['opp_sched_id'] = bad_id
+        # number of volunteers is missing, it's required
+        response = self.client.post(
+            self.url,
+            data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "Occurrence id %d not found" % bad_id)
 
     def test_weird_action(self):
         special_context = VolunteerContext(event_style="Special")

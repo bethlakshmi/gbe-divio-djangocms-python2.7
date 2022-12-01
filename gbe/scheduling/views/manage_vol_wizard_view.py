@@ -108,42 +108,39 @@ class ManageVolWizardView(View):
                 self.request.GET.get('changed_id', None))
 
         for vol_occurence in response.occurrences:
-            try:
-                if (errorcontext and 'error_opp_form' in errorcontext and
-                        errorcontext['error_opp_form'].cleaned_data['opp_sched_id'] == vol_occurence.pk):
-                    actionform.append(errorcontext['error_opp_form'])
-                else:
-                    num_volunteers = vol_occurence.max_volunteer
-                    date = vol_occurence.start_time.date()
+            if (errorcontext and 'error_opp_form' in errorcontext and
+                    errorcontext['error_opp_form'].cleaned_data['opp_sched_id'] == vol_occurence.pk):
+                actionform.append(errorcontext['error_opp_form'])
+            else:
+                num_volunteers = vol_occurence.max_volunteer
+                date = vol_occurence.start_time.date()
 
-                    time = vol_occurence.start_time.time
-                    day = get_conference_day(
-                        conference=self.conference,
-                        date=date)
-                    location = vol_occurence.location
-                    if location:
-                        room = location.room
-                    elif self.occurrence.location:
-                        room = self.occurrence.location.room
+                time = vol_occurence.start_time.time
+                day = get_conference_day(
+                    conference=self.conference,
+                    date=date)
+                location = vol_occurence.location
+                if location:
+                    room = location.room
+                elif self.occurrence.location:
+                    room = self.occurrence.location.room
 
-                    actionform.append(
-                        VolunteerOpportunityForm(
-                            conference=conference,
-                            initial={'opp_sched_id': vol_occurence.pk,
-                                     'max_volunteer': num_volunteers,
-                                     'title': vol_occurence.title,
-                                     'duration': vol_occurence.length,
-                                     'event_style': vol_occurence.event_style,
-                                     'day': day,
-                                     'time': time,
-                                     'location': room,
-                                     'type': "Volunteer",
-                                     'approval': vol_occurence.approval_needed,
-                                     },
-                            )
+                actionform.append(
+                    VolunteerOpportunityForm(
+                        conference=conference,
+                        initial={'opp_sched_id': vol_occurence.pk,
+                                 'max_volunteer': num_volunteers,
+                                 'title': vol_occurence.title,
+                                 'duration': vol_occurence.length,
+                                 'event_style': vol_occurence.event_style,
+                                 'day': day,
+                                 'time': time,
+                                 'location': room,
+                                 'type': "Volunteer",
+                                 'approval': vol_occurence.approval_needed,
+                                 },
                         )
-            except:
-                pass
+                    )
         context['actionform'] = actionform
         if staff_area_id is not None:
             context['report_url'] = reverse('staff_area',
@@ -234,7 +231,6 @@ class ManageVolWizardView(View):
         self.create = False
         response = None
         context = None
-
         if ('create' in list(request.POST.keys())) or (
                 'duplicate' in list(request.POST.keys())):
             self.create = True
@@ -304,7 +300,7 @@ class ManageVolWizardView(View):
             else:
                 return render(request,
                               self.template,
-                              self.make_context(request, errorcontext))
+                              self.make_context(request))
         elif 'allocate' in list(request.POST.keys()):
             response = get_occurrence(request.POST['opp_sched_id'])
             return HttpResponseRedirect(

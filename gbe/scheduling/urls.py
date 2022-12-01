@@ -116,6 +116,6 @@ urlpatterns = [
         ListEventsView.as_view(), name='event_list'),
     url(r'^scheduling/view_list/(?P<event_type>[-\w]+)/?$',
         ListEventsView.as_view(), name='event_list'),
-    url(r'^scheduling/details/(?P<eventitem_id>\d+)/?$',
+    url(r'^scheduling/details/(?P<occurrence_id>\d+)/?$',
         EventDetailView.as_view(), name='detail_view'),
 ]
