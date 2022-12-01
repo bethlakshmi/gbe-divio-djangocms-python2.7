@@ -43,8 +43,6 @@ def create_occurrence(title,
 
     if parent_event_id:
         response.occurrence.parent = parent_response.occurrence
-    if blurb:
-        response.occurrence.blurb = blurb
 
     response.occurrence.save()
 

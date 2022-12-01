@@ -9,7 +9,7 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from gbe.models import Conference
-from gbe.views.class_display_functions import get_bid_and_scheduling_info
+from gbe.views.class_display_functions import get_scheduling_info
 from gbe.scheduling.forms import PersonAllocationForm
 from gbe.functions import validate_perms
 from gbe_forms_text import (
@@ -106,9 +106,9 @@ class EditEventView(ManageVolWizardView):
             self.occurrence,
             context)
         context['edit_title'] = self.title
-        context['scheduling_info'] = get_bid_and_scheduling_info(
-            self.occurrence.connected_class,
-            self.occurrence.connected_id)
+        if self.occurrence.connected_class == 'Class':
+            context['scheduling_info'] = get_scheduling_info(
+                Class.objects.get(pk=self.occurrence.connected_id))
 
         if 'worker_formset' not in context:
             context['worker_formset'] = self.make_formset(

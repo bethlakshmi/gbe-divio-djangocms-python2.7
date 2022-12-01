@@ -269,6 +269,7 @@ class TestShowDashboard(TestCase):
         self.assertContains(
             response,
             '<i class="fas fa-check-circle gbe-text-success"></i>')
+        # test that email links choose event correctly
         self.assertContains(
             response, 
             ('<input type="hidden" name="event-select-events" ' +
