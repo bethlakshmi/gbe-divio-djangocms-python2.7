@@ -1,6 +1,9 @@
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import never_cache
-from django.http import HttpResponseRedirect
+from django.http import (
+    Http404,
+    HttpResponseRedirect,
+)
 from django.urls import reverse
 from ticketing.models import TicketingEvents
 from gbe.functions import validate_perms
@@ -19,8 +22,9 @@ def set_ticket_to_event(request, event_id, state, gbe_eventitem_id):
     validate_perms(request, ('Ticketing - Admin', ))
     ticketing_event = get_object_or_404(TicketingEvents, event_id=event_id)
     response = get_occurrence(gbe_eventitem_id)
-    if response.errors and response.errors[0] == "OCCURRENCE_NOT_FOUND":
+    if response.errors and response.errors[0].code == "OCCURRENCE_NOT_FOUND":
         raise Http404
+
     gbe_event = response.occurrence
     if state == "on" and not ticketing_event.linked_events.filter(
             id=gbe_eventitem_id).exists():

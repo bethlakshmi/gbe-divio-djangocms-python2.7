@@ -14,6 +14,7 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
     WorkerFactory,
 )
+from tests.factories.ticketing_factories import TicketItemFactory
 import pytz
 from tests.functions.scheduler_functions import noon
 from datetime import (
@@ -121,3 +122,16 @@ class ShowContext:
         EventLabelFactory(event=slot,
                           text=self.conference.conference_slug)
         return slot
+
+    def setup_tickets(self):
+        package = TicketItemFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__include_most=True,
+            live=True,
+            has_coupon=False)
+        this_show = TicketItemFactory(
+            ticketing_event__conference=self.conference,
+            live=True,
+            has_coupon=False)
+        this_show.ticketing_event.linked_events.add(self.sched_event)
+        return package, this_show

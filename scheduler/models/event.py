@@ -178,10 +178,6 @@ class Event(Schedulable):
         return participants
 
     @property
-    def event_type(self):
-        return self.event_style
-
-    @property
     def duration(self):
         return self.length
 

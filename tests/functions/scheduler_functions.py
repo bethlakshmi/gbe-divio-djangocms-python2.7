@@ -13,16 +13,11 @@ from datetime import (
 )
 
 
-def book_worker_item_for_role(workeritem, role, conference=None, bid=None):
+def book_worker_item_for_role(workeritem, role, conference=None):
     worker = WorkerFactory.create(
         _item=workeritem,
         role=role)
-    if bid is not None:
-        conference = bid.b_conference
-        event = SchedEventFactory(connected_class=bid.__class__.__name__,
-                                  connected_id=bid.pk)
-    else:
-        event = SchedEventFactory()
+    event = SchedEventFactory()
 
     if conference is not None:
         EventLabelFactory(

@@ -186,6 +186,7 @@ class TestEventDetailView(TestCase):
 
     def test_interested_in_event(self):
         context = ShowContext()
+        package, this_show = context.setup_tickets()
         interested_profile = context.set_interest()
         url = reverse(
             self.view_name,
@@ -200,6 +201,9 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, "%s?next=%s" % (
             set_fav_link,
             url))
+        print(response.content)
+        self.assertContains(response, package.ticketing_event.title)
+        self.assertContains(response, this_show.ticketing_event.title)
 
     def test_not_really_interested_in_event(self):
         context = ShowContext()
@@ -246,6 +250,7 @@ class TestEventDetailView(TestCase):
     def test_eval_class(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))
         context.setup_eval()
+        package, this_class = context.setup_tickets()
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
@@ -258,6 +263,8 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, "%s?next=%s" % (
             eval_link,
             url))
+        self.assertContains(response, package.ticketing_event.title)
+        self.assertContains(response, this_class.ticketing_event.title)
 
     def test_class_already_evaled(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))

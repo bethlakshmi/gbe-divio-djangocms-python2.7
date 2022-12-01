@@ -22,7 +22,6 @@ def import_ticket_items():
 
 def get_tickets(linked_event):
     general_events = []
-
     if linked_event.event_style in ["Special", "Drop-In", "Show"]:
         general_events = TicketingEvents.objects.filter(
             include_most=True,

@@ -20,6 +20,7 @@ from tests.factories.scheduler_factories import (
 from gbe.models import Class
 from datetime import timedelta
 from tests.functions.scheduler_functions import noon
+from tests.factories.ticketing_factories import TicketItemFactory
 
 
 class ClassContext:
@@ -100,3 +101,16 @@ class ClassContext:
         answer = EventEvalGradeFactory(profile=eval_profile,
                                        event=self.sched_event)
         return eval_profile
+
+    def setup_tickets(self):
+        package = TicketItemFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__include_conference=True,
+            live=True,
+            has_coupon=False)
+        this_class = TicketItemFactory(
+            ticketing_event__conference=self.conference,
+            live=True,
+            has_coupon=False)
+        this_class.ticketing_event.linked_events.add(self.sched_event)
+        return package, this_class
