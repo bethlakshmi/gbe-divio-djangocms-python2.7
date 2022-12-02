@@ -90,20 +90,8 @@ def setup_admin_w_privs(priv_list):
 def is_login_page(response):
     return b'I forgot my username or password!' in response.content
 
-
-def current_conference():
-    current_confs = Conference.objects.filter(
-        status__in=('upcoming', 'ongoing'),
-        accepting_bids=True)
-    if current_confs.exists():
-        return current_confs.first()
-    return ConferenceFactory(status='upcoming',
-                             accepting_bids=True)
-
-
 def clear_conferences():
     Conference.objects.all().delete()
-
 
 def assert_alert_exists(response, tag, label, text):
     alert_html = '<div class="alert gbe-alert-%s">\n' + \
@@ -296,8 +284,4 @@ def set_image(item=None, folder_name=None):
 
 
 def get_limbo():
-    if User.objects.filter(username="limbo").exists():
-        limbo = User.objects.filter(username="limbo")
-    else:
-        limbo = UserFactory(username="limbo")
-    return limbo
+    return UserFactory(username="limbo")

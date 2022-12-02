@@ -176,7 +176,6 @@ class TestVolunteerWizard(TestScheduling):
     def test_auth_user_create_opp(self):
         login_as(self.privileged_user, self)
         data = self.create_opp()
-        data['eventitem_id'] = ""
         response = self.client.post(
             self.url,
             data=data,

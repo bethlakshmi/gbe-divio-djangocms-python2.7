@@ -18,16 +18,16 @@ from scheduler.idd import get_occurrence
 
 
 @never_cache
-def set_ticket_to_event(request, event_id, state, gbe_eventitem_id):
+def set_ticket_to_event(request, event_id, state, gbe_event_id):
     validate_perms(request, ('Ticketing - Admin', ))
     ticketing_event = get_object_or_404(TicketingEvents, event_id=event_id)
-    response = get_occurrence(gbe_eventitem_id)
+    response = get_occurrence(gbe_event_id)
     if response.errors and response.errors[0].code == "OCCURRENCE_NOT_FOUND":
         raise Http404
 
     gbe_event = response.occurrence
     if state == "on" and not ticketing_event.linked_events.filter(
-            id=gbe_eventitem_id).exists():
+            id=gbe_event_id).exists():
         ticketing_event.linked_events.add(gbe_event)
         ticketing_event.save()
         success_msg = UserMessage.objects.get_or_create(
@@ -43,7 +43,7 @@ def set_ticket_to_event(request, event_id, state, gbe_eventitem_id):
                 ticketing_event.title,
                 gbe_event.title))
     elif state == "off" and ticketing_event.linked_events.filter(
-            id=gbe_eventitem_id).exists():
+            id=gbe_event_id).exists():
         ticketing_event.linked_events.remove(gbe_event)
         success_msg = UserMessage.objects.get_or_create(
             view="LinkEventToTicket",

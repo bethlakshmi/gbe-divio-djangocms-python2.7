@@ -12,7 +12,6 @@ from tests.factories.gbe_factories import (
 )
 from tests.contexts import ShowContext
 from tests.functions.gbe_functions import (
-    current_conference,
     grant_privilege,
     login_as,
 )
@@ -32,7 +31,8 @@ class TestReviewActList(TestCase):
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Act Reviewers')
-        cls.conference = current_conference()
+        cls.conference = ConferenceFactory(status='upcoming', 
+                                           accepting_bids=True)
         cls.acts = ActFactory.create_batch(
             4,
             b_conference=cls.conference,

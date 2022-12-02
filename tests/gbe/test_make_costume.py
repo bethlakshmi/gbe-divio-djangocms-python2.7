@@ -3,6 +3,7 @@ from django.test import Client
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    ConferenceFactory,
     CostumeFactory,
     PersonaFactory,
     ProfileFactory,
@@ -11,7 +12,6 @@ from tests.factories.gbe_factories import (
 from gbe.models import Conference
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    current_conference,
     login_as,
 )
 from gbetext import (
@@ -26,7 +26,8 @@ class TestMakeCostume(TestCase):
     def setUpTestData(cls):
         Conference.objects.all().delete()
         cls.performer = PersonaFactory()
-        current_conference()
+        cls.conference = ConferenceFactory(status='upcoming', 
+                                           accepting_bids=True)
 
     def setUp(self):
         self.client = Client()

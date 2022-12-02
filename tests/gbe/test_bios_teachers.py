@@ -11,10 +11,7 @@ from gbe.models import (
     Conference
 )
 from django.urls import reverse
-from tests.functions.gbe_functions import (
-    current_conference,
-    login_as,
-)
+from tests.functions.gbe_functions import login_as
 
 
 class TestBiosTeachers(TestCase):
@@ -28,9 +25,11 @@ class TestBiosTeachers(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.performer = PersonaFactory()
+        cls.conference = ConferenceFactory(status='upcoming', 
+                                           accepting_bids=True)
 
     def test_bios_teachers_no_conf_slug(self):
-        current_context = ClassContext(conference=current_conference())
+        current_context = ClassContext(conference=cls.conference)
         other_conference = ConferenceFactory(status="ended")
         other_context = ClassContext(conference=other_conference)
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -71,7 +70,7 @@ class TestBiosTeachers(TestCase):
         # assert other_context.bid.title not in response.content
 
     def test_bios_teachers_unbooked_accepted(self):
-        accepted_class = ClassFactory(b_conference=current_conference(),
+        accepted_class = ClassFactory(b_conference=cls.conference,
                                       accepted=3)
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(ProfileFactory(), self)

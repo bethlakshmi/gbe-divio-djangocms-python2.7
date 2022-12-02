@@ -14,7 +14,6 @@ from tests.factories.gbe_factories import (
 from tests.functions.gbe_functions import (
     assert_option_state,
     clear_conferences,
-    current_conference,
     grant_privilege,
     login_as,
 )
@@ -130,7 +129,6 @@ class TestReviewAct(TestCase):
         clear_conferences()
         conference = ConferenceFactory(accepting_bids=True,
                                        status='upcoming')
-        # conference = current_conference()
         act = ActFactory(accepted=1,
                          b_conference=conference)
         profile = ProfileFactory()
