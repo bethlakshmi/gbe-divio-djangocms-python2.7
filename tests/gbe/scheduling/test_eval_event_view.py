@@ -69,9 +69,8 @@ class TestEvalEventView(TestCase):
             response,
             'warning',
             'Warning',
-            full_login_msg % (no_login_msg, reverse(
-                'login',
-                urlconf='gbe.urls') + "?next=" + self.url))
+            full_login_msg % (no_login_msg,
+                              reverse('login') + "?next=" + self.url))
 
     def test_get_unfinished_user(self):
         unfinished = UserFactory()

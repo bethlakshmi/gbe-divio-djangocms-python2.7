@@ -31,7 +31,7 @@ class TestActivateTheme(TestCase):
     def test_no_login(self):
         response = self.client.get(self.url)
         self.assertRedirects(response,
-                             "/login/?next=%s" % self.url,
+                             "%s?next=%s" % (reverse('login'), self.url),
                              fetch_redirect_response=False)
 
     def test_unauthorized_user(self):
