@@ -16,6 +16,7 @@ from tests.functions.gbe_functions import (
 )
 from settings import GBE_DATE_FORMAT
 from tests.contexts import (
+    ClassContext,
     ShowContext,
     VolunteerContext,
 )
@@ -155,6 +156,19 @@ class TestEditEventView(TestScheduling):
         self.assertContains(
             response,
             'name="duration" value="1.0"')
+
+    def test_edit_class(self):
+        class_context = ClassContext()
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[class_context.conference.conference_slug,
+                  class_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, class_context.sched_event.title)
+        self.assertContains(response, "Booking Information")
 
     def test_bad_occurrence_id(self):
         login_as(self.privileged_user, self)

@@ -8,7 +8,10 @@ from django.shortcuts import (
     render,
 )
 from django.urls import reverse
-from gbe.models import Conference
+from gbe.models import (
+    Class,
+    Conference,
+)
 from gbe.views.class_display_functions import get_scheduling_info
 from gbe.scheduling.forms import PersonAllocationForm
 from gbe.functions import validate_perms
