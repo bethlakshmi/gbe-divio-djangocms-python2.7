@@ -48,8 +48,8 @@ class TestEditEmailTemplate(TestCase):
 
     def test_no_login_gives_error(self):
         response = self.client.get(self.url, follow=True)
-        redirect_url = "%s/?next=/email/edit_template/%s" % (
-            reverse('login', urlconf='gbe.urls'),
+        redirect_url = "%s?next=/email/edit_template/%s" % (
+            reverse('login'),
             "volunteer%2520schedule%2520update")
         self.assertRedirects(response, redirect_url)
         self.assertTrue(is_login_page(response))

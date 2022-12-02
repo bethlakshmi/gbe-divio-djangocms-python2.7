@@ -16,6 +16,7 @@ from django.urls import include, path
 
 urlpatterns = [
     # add your own patterns here
+    path('accounts/', include('django.contrib.auth.urls')),
     url(r'^', include('gbe.urls')),
     url(r'^', include('ticketing.urls')),
     url(r'^', include('gbe.email.urls')),
