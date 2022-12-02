@@ -1,5 +1,6 @@
 from django.forms import (
     BooleanField,
+    ChoiceField,
     IntegerField,
     HiddenInput,
     ModelForm,
@@ -10,6 +11,7 @@ from gbe_forms_text import (
     classbid_labels,
 )
 from gbe.models import Class
+from gbetext import class_options
 
 
 class ClassBookingForm(ModelForm):
@@ -20,6 +22,7 @@ class ClassBookingForm(ModelForm):
         initial=3,
         widget=HiddenInput)
     submitted = BooleanField(widget=HiddenInput, initial=True)
+    type = ChoiceField(choices=class_options)
 
     class Meta:
         model = Class
