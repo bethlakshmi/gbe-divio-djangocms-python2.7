@@ -104,10 +104,6 @@ class TestReviewAct(TestCase):
             self.eval_cat.pk)
         self.assertContains(response, bid_id_input, html=True)
         self.assertContains(response, evaluator_input, html=True)
-        self.assertContains(
-            response,
-            '<select name="show" id="id_show"></select>',
-            html=True)
 
     def test_review_act_old_act(self):
         conference = ConferenceFactory(status="completed",
