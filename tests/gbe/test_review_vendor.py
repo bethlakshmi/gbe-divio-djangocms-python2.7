@@ -114,7 +114,7 @@ class TestReviewVendor(TestCase):
     def test_no_login_gives_error(self):
         url = reverse(self.view_name, args=[1], urlconf="gbe.urls")
         response = self.client.get(url, follow=True)
-        redirect_url = reverse('login') + "?next=" + url
+        redirect_url = reverse('login', urlconf='gbe.urls') + "/?next=" + url
         self.assertRedirects(response, redirect_url)
         self.assertTrue(is_login_page(response))
 

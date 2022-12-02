@@ -50,8 +50,9 @@ class TestSetFavorite(TestCase):
             response,
             'warning',
             'Warning',
-            full_login_msg % (no_login_msg,
-                              reverse('login') + "?next=" + self.url))
+            full_login_msg % (no_login_msg, reverse(
+                'login',
+                urlconf='gbe.urls') + "?next=" + self.url))
 
     def test_unfinished_user(self):
         unfinished = UserFactory()

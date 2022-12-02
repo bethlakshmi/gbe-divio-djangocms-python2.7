@@ -50,7 +50,7 @@ class TestManageTheme(TestCase):
     def test_no_login(self):
         response = self.client.get(self.url)
         self.assertRedirects(response,
-                             "%s?next=%s" % (reverse('login'), self.url),
+                             "/login/?next=%s" % self.url,
                              fetch_redirect_response=False)
 
     def test_unauthorized_user(self):

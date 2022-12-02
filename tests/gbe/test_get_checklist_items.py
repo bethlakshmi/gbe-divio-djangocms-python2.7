@@ -59,7 +59,7 @@ class TestGetCheckListItems(TestCase):
             self.schedule)
         self.assertEqual(len(role_items), 1)
         self.assertEqual(role_items[self.role_condition.role],
-                         [self.role_condition.checklistitem])
+                        [self.role_condition.checklistitem])
 
     def test_ticket_match(self):
         '''
@@ -82,7 +82,7 @@ class TestGetCheckListItems(TestCase):
 
         self.assertEqual(len(ticket_items), 1)
         self.assertEqual(ticket_items[0]['items'],
-                         [self.ticket_condition.checklistitem])
+                        [self.ticket_condition.checklistitem])
 
     def test_both_match(self):
         '''
@@ -112,9 +112,9 @@ class TestGetCheckListItems(TestCase):
         self.assertEqual(len(ticket_items), 1)
         self.assertEqual(len(role_items), 1)
         self.assertEqual(ticket_items[0]['ticket'],
-                         transaction.ticket_item.title)
+                        transaction.ticket_item.title)
         self.assertEqual(role_items[self.role_condition.role],
-                         [self.role_condition.checklistitem])
+                        [self.role_condition.checklistitem])
 
     def tearDown(self):
         self.role_condition.delete()

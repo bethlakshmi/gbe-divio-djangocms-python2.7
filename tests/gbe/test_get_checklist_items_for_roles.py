@@ -61,7 +61,7 @@ class TestGetCheckListForRoles(TestCase):
 
         self.assertEqual(len(checklist_items), 1)
         self.assertEqual(checklist_items["Teacher"],
-                         [self.role_condition.checklistitem])
+                        [self.role_condition.checklistitem])
 
     def test_multiple_role_match_happens(self):
         '''
@@ -86,9 +86,9 @@ class TestGetCheckListForRoles(TestCase):
 
         self.assertEqual(len(checklist_items), 2)
         self.assertEqual(checklist_items['Teacher'],
-                         [self.role_condition.checklistitem])
+                        [self.role_condition.checklistitem])
         self.assertEqual(checklist_items["Staff Lead"],
-                         [another_role.checklistitem])
+                        [another_role.checklistitem])
         another_role.delete()
 
     def test_role_match_two_conditions(self):
@@ -104,7 +104,7 @@ class TestGetCheckListForRoles(TestCase):
 
         self.assertEqual(len(checklist_items), 1)
         self.assertEqual(checklist_items["Teacher"],
-                         [self.role_condition.checklistitem,
+                        [self.role_condition.checklistitem,
                          another_match.checklistitem])
         another_match.delete()
 

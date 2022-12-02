@@ -49,7 +49,9 @@ class TestMailToPerson(TestCase):
 
     def test_no_login_gives_error(self):
         response = self.client.get(self.url, follow=True)
-        redirect_url = "%s?next=%s" % (reverse('login'), self.url)
+        redirect_url = "%s/?next=%s" % (
+            reverse('login', urlconf='gbe.urls'),
+            self.url)
         self.assertRedirects(response, redirect_url)
         self.assertTrue(is_login_page(response))
 
