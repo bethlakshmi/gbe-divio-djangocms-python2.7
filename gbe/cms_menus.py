@@ -32,11 +32,8 @@ class LoginMenu(Menu):
         nodes.append(NavigationNode(_("Update Profile"),
                                     reverse('gbe:profile_update'), 3, 1,
                                     attr={'visible_for_anonymous': False}))
-        nodes.append(NavigationNode(_("Change Password"),
-                                    reverse('password_change'), 4, 1,
-                                    attr={'visible_for_anonymous': False}))
         nodes.append(NavigationNode(_("Logout"),
-                                    reverse('logout'), 5, 1,
+                                    reverse('gbe:logout'), 4, 1,
                                     attr={'visible_for_anonymous': False}))
         return nodes
 

@@ -18,6 +18,7 @@ from tests.functions.gbe_functions import (
 )
 
 
+
 class TestReviewClassList(TestCase):
     '''Tests for review_class_list view'''
     view_name = 'class_review_list'

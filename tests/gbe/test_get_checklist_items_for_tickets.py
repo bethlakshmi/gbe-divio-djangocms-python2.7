@@ -78,9 +78,9 @@ class TestGetCheckListForTickets(TestCase):
         self.assertEqual(len(checklist_items), 1)
         self.assertEqual(checklist_items[0]['count'], 2)
         self.assertEqual(checklist_items[0]['ticket'],
-                         self.transaction.ticket_item.title)
+                        self.transaction.ticket_item.title)
         self.assertEqual(checklist_items[0]['items'],
-                         [match_condition.checklistitem])
+                        [match_condition.checklistitem])
 
     def test_ticket_match_two_conditions(self):
         '''
@@ -98,9 +98,9 @@ class TestGetCheckListForTickets(TestCase):
         self.assertEqual(len(checklist_items), 1)
         self.assertEqual(checklist_items[0]['count'], 1)
         self.assertEqual(checklist_items[0]['ticket'],
-                         self.transaction.ticket_item.title)
+                        self.transaction.ticket_item.title)
         self.assertEqual(checklist_items[0]['items'],
-                         [match_condition.checklistitem,
+                        [match_condition.checklistitem,
                          another_match.checklistitem])
 
     def test_ticket_is_excluded(self):

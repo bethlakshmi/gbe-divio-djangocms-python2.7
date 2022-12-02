@@ -1,4 +1,11 @@
 from django.conf.urls import url
+from django.contrib.auth.views import (
+    LoginView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
 from gbe.views import (
     ActChangeStateView,
     ActTechWizardView,
@@ -17,6 +24,7 @@ from gbe.views import (
     FashionFaireView,
     HandleUserContactEmailView,
     LandingPageView,
+    LogoutView,
     MakeActView,
     MakeClassView,
     MakeCostumeView,
@@ -216,6 +224,14 @@ urlpatterns = [
         FashionFaireView, name='fashion_faire'),
 
     #  site utility stuff
+    url(r'^login/?$',
+        LoginView.as_view(),
+        name='login'),
+    url(r'^logout/?$',
+        LogoutView, name='logout'),
+    url(r'^accounts/login/?$',
+        LoginView.as_view()),
+    url(r'^accounts/logout/?$', LogoutView),
     url(r'^accounts/register/?$',
         RegisterView.as_view(),
         name='register'),
@@ -223,6 +239,22 @@ urlpatterns = [
         EditEmailView.as_view(), name='email_update'),
     url(r'update_profile/?$',
         EditProfileView.as_view(), name='profile_update'),
+
+    #  password reset
+    url(r'^accounts/password/reset/?$',
+        PasswordResetView.as_view(
+            success_url='/accounts/password/reset/done/'),
+        name="password_reset"),
+    url(r'^accounts/password/reset/done/?$',
+        PasswordResetDoneView.as_view(),
+        name='password_reset_done'),
+    url(r'^accounts/password/confirm/'
+        r'(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
+        PasswordResetConfirmView.as_view(
+            success_url='/accounts/password/reset/complete/'),
+        name="password_reset_confirm"),
+    url(r'^accounts/password/reset/complete/?$',
+        PasswordResetCompleteView.as_view()),
 
     #  registration & user management
     url(r'^user_contact/?$',
