@@ -265,7 +265,7 @@ class TestClassWizard(TestScheduling):
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()
-        data['id'] = ""
+        del data['id']
         response = self.client.post(
             self.url,
             data=data,

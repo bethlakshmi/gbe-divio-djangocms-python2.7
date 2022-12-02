@@ -714,7 +714,7 @@ ticket_item_help_text = {
 }
 link_event_labels = {
     'ticketing_events': "Choose from existing tickets",
-    'event_id': "New BPT Event Id",
+    'event_id': "Ticket Event Id",
     'display_icon': "Display Icon"
 }
 link_event_help_text = {
@@ -754,15 +754,6 @@ user_form_help = {
     'name': ('The name you would like to see on any badges, communication '
              'from this event, or public ways of referring to you.')
 }
-
-conference_participation_types = [('Teacher', 'Teacher'),
-                                  ('Moderator', 'Moderator'),
-                                  ('Panelist', 'Panelist'),
-                                  ('Any of the Above', 'Any of the Above')]
-
-panel_participation_types = [('Moderator', 'Moderator'),
-                             ('Panelist', 'Panelist'),
-                             ('Any of the Above', 'Any of the Above')]
 
 list_titles = {
     'class': '''Class Descriptions at GBE''',

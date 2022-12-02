@@ -162,9 +162,8 @@ class ClassWizardView(EventWizardView):
                     'accepted_class']
             context.update(self.setup_third_form(working_class))
 
-        elif 'set_class' in list(request.POST.keys(
-                )) and 'id' in list(request.POST.keys()):
-            if request.POST['id']:
+        elif 'set_class' in list(request.POST.keys()):
+            if 'id' in list(request.POST.keys()) and request.POST['id']:
                 working_class = get_object_or_404(Class, id=request.POST['id'])
                 context['third_title'] = "Book Class:  %s" % (
                     working_class.b_title)
@@ -224,4 +223,5 @@ class ClassWizardView(EventWizardView):
                     context['scheduling_form'].cleaned_data['day'].pk)
                 if success:
                     return success
+
         return render(request, self.template, context)

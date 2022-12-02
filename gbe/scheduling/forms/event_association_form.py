@@ -33,7 +33,7 @@ class EventAssociationForm(Form):
         super(EventAssociationForm, self).__init__(*args, **kwargs)
         response = get_occurrences(
             event_styles=["Show", "Special"],
-            labels=Conference.all_slugs(current=True))
+            label_sets=[Conference.all_slugs(current=True)])
         if response.occurrences:
             for occurrence in response.occurrences:
                 choices += [(occurrence.pk, "%s - %s" % (

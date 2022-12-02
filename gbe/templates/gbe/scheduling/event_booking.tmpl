@@ -56,13 +56,13 @@ Changing fields in this section will change them in all calendar items.</p>
   <div class="form-row">
     <div class="col-12 ml-auto">
     <h3>Associations</h3>
-    <p>This options connect the volunteer slot to a show or special event (parent) 
+    <p>These options connect the volunteer slot to a show or special event (parent) 
     and/or a staff area.  This lets leaders of these things see and manage their 
     volunteer time blocks.  NOTE:  Setting either option to blank ("-----") will remove 
     any previous associations.</p>
     <div class="form-row">
-    {% include "gbe/scheduling/event_booking_field.tmpl" with field=association_form.parent_event header_size="col-lg-2 col-md-3 col-12" field_size="col-lg-5 col-md-9 col-12" %}
-    {% include "gbe/scheduling/event_booking_field.tmpl" with field=association_form.staff_area header_size="col-lg-2 col-md-3 col-12" field_size="col-lg-3 col-md-9 col-12" %}
+    {% include "gbe/scheduling/event_booking_field.tmpl" with field=association_form.parent_event header_size="col-lg-2 col-md-3 col-12" field_size="col-lg-4 col-md-9 col-12" %}
+    {% include "gbe/scheduling/event_booking_field.tmpl" with field=association_form.staff_area header_size="col-lg-2 col-md-3 col-12" field_size="col-lg-4 col-md-9 col-12" %}
   </div></div></div>
   {% endif %}
   <div class="form-row">

@@ -175,8 +175,8 @@ def get_ticketable_gbe_events(conference_slug=None):
         labels = Conference.all_slugs(current=True)
 
     event_set = get_occurrences(
-        event_styles=['Drop-In', 'Master', 'Special', 'Shows'],
-        labels=labels).occurrences
+        event_styles=['Drop-In', 'Master', 'Special', 'Show'],
+        label_sets=[labels]).occurrences
 
     return event_set
 
