@@ -258,7 +258,9 @@ def setup_event_management_form(
 
     # if there was an error in the edit form
     if 'event_form' not in context:
-        context['event_form'] = EventBookingForm(instance=item)
+        context['event_form'] = EventBookingForm(
+            instance=item,
+            initial={'slug': occurrence.slug})
     if 'scheduling_form' not in context:
         context['scheduling_form'] = ScheduleOccurrenceForm(
             conference=conference,
@@ -270,7 +272,8 @@ def setup_event_management_form(
 def update_event(scheduling_form,
                  occurrence_id,
                  roles=None,
-                 people_formset=[]):
+                 people_formset=[],
+                 slug=None):
     start_time = get_start_time(scheduling_form.cleaned_data)
     people = []
     for assignment in people_formset:
@@ -289,7 +292,8 @@ def update_event(scheduling_form,
         people=people,
         roles=roles,
         locations=[scheduling_form.cleaned_data['location']],
-        approval=scheduling_form.cleaned_data['approval'])
+        approval=scheduling_form.cleaned_data['approval'],
+        slug=slug)
     return response
 
 
@@ -320,10 +324,13 @@ def process_post_response(request,
             minutes=context['scheduling_form'].cleaned_data[
                 'duration']*60)
         new_event.save()
-        response = update_event(context['scheduling_form'],
-                                occurrence_id,
-                                roles,
-                                people_forms)
+
+        response = update_event(
+            context['scheduling_form'],
+            occurrence_id,
+            roles,
+            people_forms,
+            slug=context['event_form'].cleaned_data['slug'])
         if request.POST.get('edit_event', 0) != "Save and Continue":
             success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
                 reverse('manage_event_list',

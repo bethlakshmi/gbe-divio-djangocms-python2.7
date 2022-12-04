@@ -1,6 +1,7 @@
 from django.forms import (
     CharField,
     ModelForm,
+    SlugField,
     Textarea,
 )
 from gbe.models import Event
@@ -17,11 +18,14 @@ class EventBookingForm(ModelForm):
     e_description = CharField(
         widget=Textarea(attrs={'id': 'admin-tiny-mce'}),
         label=event_labels['e_description'])
+    slug = SlugField(help_text=event_help_texts['slug'],
+                     required=False)
 
     class Meta:
         model = Event
         fields = [
             'e_title',
+            'slug',
             'e_description']
         help_texts = event_help_texts
         labels = event_labels

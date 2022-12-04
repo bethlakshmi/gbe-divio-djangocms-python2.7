@@ -6,7 +6,7 @@ from tests.factories.gbe_factories import (
     RoomFactory
 )
 from scheduler.models import (
-    EventContainer,
+    Event,
     EventLabel,
     ResourceAllocation,
 )
@@ -176,11 +176,11 @@ class TestEditShowWizard(TestCase):
         self.assertContains(
             response,
             '<div id="collapse3" class="panel-collapse collapse show">')
-        slots = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
+        slots = Event.objects.filter(
+            parent=self.context.sched_event)
         self.assertTrue(slots.exists())
         for slot in slots:
-            self.assertEqual(slot.child_event.eventitem.child().e_title,
+            self.assertEqual(slot.eventitem.child().e_title,
                              'New Rehearsal Slot')
             self.assertRedirects(
                 response,
@@ -189,13 +189,13 @@ class TestEditShowWizard(TestCase):
                             urlconf='gbe.scheduling.urls',
                             args=[self.context.conference.conference_slug,
                                   self.context.sched_event.pk]),
-                    slot.child_event.pk))
+                    slot.pk))
             self.assertEqual(EventLabel.objects.filter(
-                text=slot.child_event.eventitem.child(
+                text=slot.eventitem.child(
                     ).e_conference.conference_slug,
-                event=slot.child_event).count(), 1)
+                event=slot).count(), 1)
             self.assertEqual(EventLabel.objects.filter(
-                event=slot.child_event).count(), 1)
+                event=slot).count(), 1)
 
         self.assertContains(
             response,
@@ -216,9 +216,8 @@ class TestEditShowWizard(TestCase):
         self.assertContains(
             response,
             '<div id="collapse3" class="panel-collapse collapse show">')
-        slots = EventContainer.objects.filter(
-            parent_event=self.context.sched_event).count()
-        self.assertEqual(slots, 0)
+        self.assertFalse(
+            Event.objects.filter(parent=self.context.sched_event).exists())
         self.assertContains(
             response,
             '<ul class="errorlist"><li>This field is required.</li></ul>')
@@ -234,14 +233,12 @@ class TestEditShowWizard(TestCase):
         self.assertContains(
             response,
             '<div id="collapse3" class="panel-collapse collapse show">')
-        slots = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
+        slots = Event.objects.filter(parent=self.context.sched_event)
         self.assertTrue(len(slots), 1)
         for slot in slots:
             self.assertContains(
                 response,
-                self.title_field % (
-                    slot.child_event.eventitem.child().e_title),
+                self.title_field % (slot.eventitem.child().e_title),
                 html=True)
             self.assertRedirects(
                 response,
@@ -251,7 +248,7 @@ class TestEditShowWizard(TestCase):
                         urlconf='gbe.scheduling.urls',
                         args=[self.context.conference.conference_slug,
                               self.context.sched_event.pk]),
-                    slot.child_event.pk))
+                    slot.pk))
 
     def test_edit_slot(self):
         login_as(self.privileged_profile, self)
@@ -269,8 +266,7 @@ class TestEditShowWizard(TestCase):
                         args=[self.context.conference.conference_slug,
                               self.context.sched_event.pk]),
                 slot.pk))
-        slots = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
+        slots = Event.objects.filter(parent=self.context.sched_event)
         self.assertTrue(len(slots), 1)
         self.assertContains(
             response,
@@ -310,6 +306,5 @@ class TestEditShowWizard(TestCase):
             follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Modify Rehearsal Slot')
-        slots = EventContainer.objects.filter(
-            parent_event=self.context.sched_event)
-        self.assertFalse(slots.exists())
+        self.assertFalse(Event.objects.filter(
+            parent=self.context.sched_event).exists())

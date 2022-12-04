@@ -12,6 +12,7 @@ class GenericBookingForm(EventBookingForm):
         model = GenericEvent
         fields = [
             'e_title',
+            'slug',
             'e_description',
             'type',
             'e_conference', ]

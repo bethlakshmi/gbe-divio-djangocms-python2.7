@@ -1,7 +1,4 @@
-from scheduler.models import (
-    EventContainer,
-    ResourceAllocation,
-)
+from scheduler.models import ResourceAllocation
 from scheduler.data_transfer import (
     PeopleResponse,
     Person,
@@ -13,7 +10,7 @@ def get_all_container_bookings(occurrence_ids, roles=[]):
     people = []
     bookings = ResourceAllocation.objects.filter(
         Q(event__pk__in=occurrence_ids) |
-        Q(event__contained_events__child_event__pk__in=occurrence_ids)
+        Q(event__children__pk__in=occurrence_ids)
         ).distinct()
     if len(roles) > 0:
         bookings = bookings.filter(resource__worker__role__in=roles)

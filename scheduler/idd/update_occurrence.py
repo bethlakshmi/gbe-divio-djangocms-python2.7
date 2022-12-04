@@ -1,6 +1,5 @@
 from scheduler.models import (
     Event,
-    EventContainer,
     EventLabel,
     Worker,
 )
@@ -17,7 +16,8 @@ def update_occurrence(occurrence_id,
                       locations=None,
                       approval=None,
                       parent_event_id=None,
-                      labels=None):
+                      labels=None,
+                      slug=None):
     response = get_occurrence(occurrence_id)
     if response.errors:
         return response
@@ -31,21 +31,25 @@ def update_occurrence(occurrence_id,
         occurrence.max_commitments = max_commitments
     if approval is not None:
         occurrence.approval_needed = approval
-    if start_time or max_volunteer or approval or max_commitments:
-        occurrence.save()
-    if locations is not None:
-        occurrence.set_locations(locations)
+    if slug is not None:
+        occurrence.slug = slug
+
     if parent_event_id is not None:
-        if hasattr(occurrence, 'container_event'):
-            occurrence.container_event.delete()
         if parent_event_id > -1:
             parent = get_occurrence(parent_event_id)
             if parent.errors:
                 return parent
-            family = EventContainer(
-                child_event=response.occurrence,
-                parent_event=parent.occurrence)
-            family.save()
+            occurrence.parent = parent.occurrence
+        else:
+            occurrence.parent = None
+
+    if start_time or max_volunteer or approval or max_commitments or slug or (
+            parent_event_id is not None):
+        occurrence.save()
+
+    if locations is not None:
+        occurrence.set_locations(locations)
+
     if labels is not None:
         occurrence.eventlabel_set.all().delete()
         for label in labels:

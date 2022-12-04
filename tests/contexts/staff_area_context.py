@@ -7,7 +7,6 @@ from tests.factories.gbe_factories import (
     StaffAreaFactory,
 )
 from tests.factories.scheduler_factories import (
-    EventContainerFactory,
     EventLabelFactory,
     LocationFactory,
     ResourceAllocationFactory,
@@ -44,7 +43,8 @@ class StaffAreaContext:
         volunteer_sched_event = SchedEventFactory(
             eventitem=vol_event,
             max_volunteer=self.area.default_volunteers,
-            starttime=noon(self.conf_day))
+            starttime=noon(self.conf_day),
+            slug="VolOpp%d" % vol_event.pk)
         room = self.get_room()
 
         ResourceAllocationFactory(

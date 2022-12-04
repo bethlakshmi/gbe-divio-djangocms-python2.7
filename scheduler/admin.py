@@ -50,6 +50,7 @@ class EventItemAdmin(admin.ModelAdmin):
 class EventAdmin(ImportExportModelAdmin):
     list_display = ('id',
                     'eventitem',
+                    'slug',
                     'starttime',
                     'max_volunteer',
                     'max_commitments',
@@ -59,14 +60,6 @@ class EventAdmin(ImportExportModelAdmin):
                    'max_commitments',
                    'eventitem__event__e_conference',
                    'approval_needed', ]
-
-
-class EventContainerAdmin(ImportExportModelAdmin):
-    list_display = ('parent_event', 'child_event', 'child_conf')
-    list_filter = ['parent_event__eventitem__event__e_conference']
-
-    def child_conf(self, obj):
-        return obj.child_event.eventitem.get_conference()
 
 
 class WorkerAdmin(admin.ModelAdmin):
@@ -112,7 +105,6 @@ class EventEvalGradeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Event, EventAdmin)
-admin.site.register(EventContainer, EventContainerAdmin)
 admin.site.register(EventItem, EventItemAdmin)
 admin.site.register(EventLabel, EventLabelAdmin)
 admin.site.register(Location)
