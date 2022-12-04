@@ -76,7 +76,6 @@ class TestEventDetailView(TestCase):
             self.view_name,
             urlconf="gbe.scheduling.urls",
             args=[bid_class.eventitem_id]))
-        print(response.content)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, bid_class.teacher.name, 1)
 
@@ -95,7 +94,6 @@ class TestEventDetailView(TestCase):
             self.view_name,
             urlconf="gbe.scheduling.urls",
             args=[show.eventitem_id]))
-        print(response.content)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, staff_lead.display_name, 1)
 
