@@ -201,7 +201,6 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, "%s?next=%s" % (
             set_fav_link,
             url))
-        print(response.content)
         self.assertContains(response, package.ticketing_event.title)
         self.assertContains(response, this_show.ticketing_event.title)
 

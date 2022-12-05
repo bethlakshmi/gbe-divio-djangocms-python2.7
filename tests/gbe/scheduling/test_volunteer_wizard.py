@@ -67,7 +67,6 @@ class TestVolunteerWizard(TestScheduling):
     def test_authorized_user_can_access(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assert_event_was_picked_in_wizard(response, "volunteer")
         self.assertContains(response,

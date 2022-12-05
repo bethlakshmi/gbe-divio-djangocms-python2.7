@@ -396,7 +396,6 @@ class TestIndex(TestCase):
         self.current_act.accepted = 3
         self.current_act.save()
         response = self.client.get(url)
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
                             second_act_context.act.b_title,
