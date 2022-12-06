@@ -22,7 +22,7 @@ def import_ticket_items():
 
 def get_tickets(linked_event):
     general_events = []
-    if linked_event.event_style in ["Special", "Drop-In", "Show"]:
+    if linked_event.event_style not in ["Master", "Volunteer"]:
         general_events = TicketingEvents.objects.filter(
             include_most=True,
             conference__conference_slug__in=linked_event.labels)
