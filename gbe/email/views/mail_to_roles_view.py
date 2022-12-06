@@ -65,7 +65,7 @@ class MailToRolesView(MailToFilterView):
             response = get_occurrences(
                 event_styles=permitted_styles,
                 label_sets=[self.slugs])
-            for occurrence in response.occurrences:
+            for occurrence in response.occurrences.order_by('title'):
                 choices += [(occurrence.pk, occurrence.title)]
         return choices
 
@@ -288,6 +288,11 @@ class MailToRolesView(MailToFilterView):
                                             prefix="email-select")
         event_info = SelectEventForm(request.POST,
                                      prefix="event-select")
+        event_info.fields['events'] = MultipleChoiceField(
+            choices=self.event_choices,
+            widget=CheckboxSelectMultiple(
+                attrs={'class': 'form-check-input'}),
+            required=False)
         return to_list, [recipient_info, event_info]
 
     def filter_emails(self, request):
@@ -311,6 +316,11 @@ class MailToRolesView(MailToFilterView):
                                             prefix="email-select")
         event_info = SelectEventForm(request.POST,
                                      prefix="event-select")
+        event_info.fields['events'] = MultipleChoiceField(
+            choices=self.event_choices,
+            widget=CheckboxSelectMultiple(
+                attrs={'class': 'form-check-input'}),
+            required=False)
         context = self.get_select_forms()
         context["email_form"] = email_form
         context["recipient_info"] = [recipient_info, event_info]
