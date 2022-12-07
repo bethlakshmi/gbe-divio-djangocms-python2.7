@@ -373,7 +373,8 @@ def get_user_email_templates(user):
             if priv == "act" and state[1] == "Accepted":
                 for show in get_occurrences(
                         event_styles=['Show'],
-                        label_sets=[Conference.all_slugs(current=True)]).occurrences:
+                        label_sets=[Conference.all_slugs(current=True)]
+                        ).occurrences:
                     template_set += [{
                         'name': "%s %s - %s" % (priv,
                                                 state[1].lower(),
