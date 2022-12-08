@@ -55,6 +55,7 @@ class TestViewList(TestCase):
         '''
         other_conf = ConferenceFactory(status='completed')
         showcontext = ShowContext(conference=self.conf)
+        rehearsal = showcontext.make_rehearsal()
         specialcontext = VolunteerContext(conference=self.conf,
                                           event_style="Special")
         classcontext = ClassContext(conference=self.conf)
@@ -74,6 +75,7 @@ class TestViewList(TestCase):
         self.assertContains(response, accepted_class.b_title)
         self.assertNotContains(response, rejected_class.b_title)
         self.assertNotContains(response, previous_class.b_title)
+        self.assertNotContains(response, rehearsal.title)
 
     def test_no_avail_conf(self):
         clear_conferences()
