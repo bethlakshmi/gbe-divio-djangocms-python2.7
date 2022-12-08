@@ -47,7 +47,6 @@ def migrate_event_inheritance(apps, schema_editor):
             continue
 
         # port all shows, generic events, and *accepted* classes
-        event.visible = child.visible
         event.title = child.e_title
         event.description = child.e_description
         event.blurb = child.blurb
@@ -92,7 +91,6 @@ def reverse_event_inheritance(apps, schema_editor):
         gbe_event.e_description = event.description
         gbe_event.blurb = event.blurb
         gbe_event.duration = event.length
-        gbe_event.visible = event.visible
         if event.resources_allocated.filter(default=True).exists:
             for alloc in event.resources_allocated.filter(default=True):
                 if Location.objects.filter(pk=alloc.resource.pk).exists():

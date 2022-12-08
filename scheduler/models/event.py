@@ -43,9 +43,6 @@ class Event(Schedulable):
         related_name="children")
     slug = SlugField(null=True)
 
-    # from Event Item
-    visible = BooleanField(default=True)
-
     # from gbe.event
     title = CharField(max_length=128)
     description = TextField(blank=True, null=True)

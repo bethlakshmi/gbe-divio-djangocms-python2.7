@@ -122,7 +122,6 @@ class ListEventsView(View):
         scheduled_events = []
         presenters = []
         response = get_occurrences(
-            visible=True,
             event_styles=self.get_styles(),
             labels=[self.conference.conference_slug])
         for occurrence in response.occurrences:
