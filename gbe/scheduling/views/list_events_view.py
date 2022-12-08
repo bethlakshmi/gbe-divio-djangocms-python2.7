@@ -66,7 +66,10 @@ class ListEventsView(View):
         styles = [self.event_type]
 
         if self.event_type == "All":
-            styles = None
+            styles = []
+            for style, calendar in calendar_for_event.items():
+                if calendar is not None:
+                    styles += [style]
 
         elif self.event_type == 'Class' or self.event_type == 'class':
             styles = class_styles
