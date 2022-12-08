@@ -76,12 +76,15 @@ class EditShowView(EditEventView):
                     response = get_bookings(
                         [rehearsal_slot.pk],
                         roles=["Performer"])
+                    duration = float(
+                        rehearsal_slot.length.total_seconds())/timedelta(
+                        hours=1).total_seconds()
                     actionform.append(
                         RehearsalSlotForm(
                             conference=conference,
                             initial={'opp_sched_id': rehearsal_slot.pk,
                                      'title': rehearsal_slot.title,
-                                     'duration': rehearsal_slot.duration,
+                                     'duration': duration,
                                      'event_style': rehearsal_slot.event_style,
                                      'current_acts': len(response.people),
                                      'max_volunteer': max_commitments,

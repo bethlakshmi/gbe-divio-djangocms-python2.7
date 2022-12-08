@@ -133,6 +133,8 @@ class TestEditEventView(TestScheduling):
         vol_context.sched_event.max_volunteer = 7
         vol_context.sched_event.save()
         vol_context.opp_event.set_locations([])
+        vol_context.opp_event.length = timedelta(hours=7, minutes=30)
+        vol_context.opp_event.save()
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         login_as(self.privileged_user, self)
         self.url = reverse(
@@ -155,7 +157,9 @@ class TestEditEventView(TestScheduling):
             'name="max_volunteer" value="2"')
         self.assertContains(
             response,
-            'name="duration" value="1.0"')
+            '<input type="number" name="duration" value="7.5" min="0.5" ' +
+            'max="12" step="any" required id="id_duration">',
+            html=True)
 
     def test_edit_class(self):
         class_context = ClassContext()

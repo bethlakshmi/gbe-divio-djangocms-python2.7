@@ -25,6 +25,7 @@ from gbe.functions import get_conference_day
 from django.contrib import messages
 from gbe.models import UserMessage
 from gbetext import calendar_for_event
+from datetime import timedelta
 
 
 class ManageVolWizardView(View):
@@ -99,7 +100,8 @@ class ManageVolWizardView(View):
         context = {}
         if occurrence_id is not None or len(labels) > 0:
             response = get_occurrences(parent_event_id=occurrence_id,
-                                       labels=labels)
+                                       labels=labels,
+                                       event_styles=["Volunteer"])
         else:
             return None
 
@@ -124,14 +126,16 @@ class ManageVolWizardView(View):
                     room = location.room
                 elif self.occurrence.location:
                     room = self.occurrence.location.room
-
+                duration = float(
+                    vol_occurence.length.total_seconds())/timedelta(
+                    hours=1).total_seconds()
                 actionform.append(
                     VolunteerOpportunityForm(
                         conference=conference,
                         initial={'opp_sched_id': vol_occurence.pk,
                                  'max_volunteer': num_volunteers,
                                  'title': vol_occurence.title,
-                                 'duration': vol_occurence.length,
+                                 'duration': duration,
                                  'event_style': vol_occurence.event_style,
                                  'day': day,
                                  'time': time,

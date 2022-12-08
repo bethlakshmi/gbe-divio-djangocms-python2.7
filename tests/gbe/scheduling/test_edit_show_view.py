@@ -19,6 +19,7 @@ from tests.contexts import (
     ShowContext,
 )
 from django.utils.formats import date_format
+from datetime import timedelta
 
 
 class TestEditShowWizard(TestCase):
@@ -96,6 +97,8 @@ class TestEditShowWizard(TestCase):
         act_techinfo_context = ActTechInfoContext(
             sched_event=self.context.sched_event,
             schedule_rehearsal=True)
+        act_techinfo_context.rehearsal.length = timedelta(hours=7, minutes=30)
+        act_techinfo_context.rehearsal.save()
         self.url = reverse(
             "edit_show",
             urlconf="gbe.scheduling.urls",
@@ -108,6 +111,11 @@ class TestEditShowWizard(TestCase):
             '<input type="number" name="current_acts" value="1" ' +
             'readonly="readonly" id="id_current_acts" />',
             html=True)
+        self.assertContains(
+            response,
+            '<input type="number" name="duration" value="7.5" min="0.5" ' +
+            'max="12" step="any" required id="id_duration">',
+            html=True)
 
     def test_good_user_get_empty_room_rehearsal(self):
         not_this_room = RoomFactory()
@@ -119,7 +127,7 @@ class TestEditShowWizard(TestCase):
             '<option value="%d" selected>%s</option>' % (
                 self.context.room.pk,
                 str(self.context.room)),
-            5)
+            4)
         self.assertNotContains(response, str(not_this_room))
         slot.delete()
 
