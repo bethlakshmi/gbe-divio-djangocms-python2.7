@@ -26,7 +26,7 @@ class TestMakeCostume(TestCase):
     def setUpTestData(cls):
         Conference.objects.all().delete()
         cls.performer = PersonaFactory()
-        cls.conference = ConferenceFactory(status='upcoming', 
+        cls.conference = ConferenceFactory(status='upcoming',
                                            accepting_bids=True)
 
     def setUp(self):

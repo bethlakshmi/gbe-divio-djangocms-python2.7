@@ -90,8 +90,10 @@ def setup_admin_w_privs(priv_list):
 def is_login_page(response):
     return b'I forgot my username or password!' in response.content
 
+
 def clear_conferences():
     Conference.objects.all().delete()
+
 
 def assert_alert_exists(response, tag, label, text):
     alert_html = '<div class="alert gbe-alert-%s">\n' + \

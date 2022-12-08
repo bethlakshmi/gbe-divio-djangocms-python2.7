@@ -31,7 +31,7 @@ class TestReviewActList(TestCase):
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Act Reviewers')
-        cls.conference = ConferenceFactory(status='upcoming', 
+        cls.conference = ConferenceFactory(status='upcoming',
                                            accepting_bids=True)
         cls.acts = ActFactory.create_batch(
             4,

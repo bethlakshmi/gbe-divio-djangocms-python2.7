@@ -111,7 +111,8 @@ class ManageVolWizardView(View):
 
         for vol_occurence in response.occurrences:
             if (errorcontext and 'error_opp_form' in errorcontext and
-                    errorcontext['error_opp_form'].cleaned_data['opp_sched_id'] == vol_occurence.pk):
+                    errorcontext['error_opp_form'].cleaned_data[
+                        'opp_sched_id'] == vol_occurence.pk):
                 actionform.append(errorcontext['error_opp_form'])
             else:
                 num_volunteers = vol_occurence.max_volunteer

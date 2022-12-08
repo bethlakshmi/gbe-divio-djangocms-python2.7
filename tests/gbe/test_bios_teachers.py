@@ -24,7 +24,7 @@ class TestBiosTeachers(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.performer = PersonaFactory()
-        cls.conference = ConferenceFactory(status='upcoming', 
+        cls.conference = ConferenceFactory(status='upcoming',
                                            accepting_bids=True)
 
     def test_bios_teachers_no_conf_slug(self):

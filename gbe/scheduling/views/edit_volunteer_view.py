@@ -160,7 +160,8 @@ class EditVolunteerView(ManageWorkerView):
                 length=duration,
                 start_time=get_start_time(
                     context['scheduling_form'].cleaned_data),
-                max_volunteer=context['scheduling_form'].cleaned_data['max_volunteer'],
+                max_volunteer=context[
+                    'scheduling_form'].cleaned_data['max_volunteer'],
                 people=None,
                 roles=None,
                 locations=[

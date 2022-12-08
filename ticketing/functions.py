@@ -8,6 +8,7 @@ from ticketing.eventbrite import import_eb_ticket_items
 from ticketing.brown_paper import import_bpt_ticket_items
 from gbetext import class_styles
 
+
 def import_ticket_items():
         # Since Eventbrite autosyncs events, we would only need to manually
         # import BPT

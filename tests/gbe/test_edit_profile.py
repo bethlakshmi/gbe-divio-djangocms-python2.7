@@ -43,7 +43,7 @@ class TestEditProfile(TestCase):
     def setUpTestData(cls):
         UserMessage.objects.all().delete()
         cls.profile = ProfilePreferencesFactory().profile
-        cls.conference = ConferenceFactory(status='upcoming', 
+        cls.conference = ConferenceFactory(status='upcoming',
                                            accepting_bids=True)
 
     def setUp(self):
@@ -291,7 +291,7 @@ class TestEditProfile(TestCase):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
-        self.conference = ConferenceFactory(status='upcoming', 
+        self.conference = ConferenceFactory(status='upcoming',
                                             accepting_bids=True)
 
     @patch('urllib.request.urlopen', autospec=True)

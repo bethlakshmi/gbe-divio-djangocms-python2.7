@@ -271,7 +271,7 @@ class TestShowDashboard(TestCase):
             '<i class="fas fa-check-circle gbe-text-success"></i>')
         # test that email links choose event correctly
         self.assertContains(
-            response, 
+            response,
             ('<input type="hidden" name="event-select-events" ' +
              'value="%d" id="id_event-select-events_0">') % (
              complete_act_context.sched_event.pk),
