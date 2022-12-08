@@ -315,7 +315,9 @@ def process_post_response(request,
             context['scheduling_form'],
             occurrence.pk,
             roles,
-            people_forms)
+            people_forms,
+            slug=context['event_form'].cleaned_data['slug'])
+
         if request.POST.get('edit_event', 0) != "Save and Continue":
             success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
                 reverse('manage_event_list',

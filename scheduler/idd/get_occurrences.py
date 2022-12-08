@@ -33,6 +33,7 @@ def get_occurrences(parent_event_id=None,
         filter_occurrences = filter_occurrences.filter(
             visible=visible)
     # edited during event refactor was concatenating filters
+
     for label in labels:
         filter_occurrences = filter_occurrences.filter(
             eventlabel__text=label

@@ -41,7 +41,8 @@ class StaffAreaContext:
         volunteer_sched_event = SchedEventFactory(
             event_style="Volunteer",
             max_volunteer=self.area.default_volunteers,
-            starttime=noon(self.conf_day))
+            starttime=noon(self.conf_day),
+            slug="VolOpp%d" % vol_event.pk)
         room = self.get_room()
 
         ResourceAllocationFactory(

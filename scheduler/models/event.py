@@ -35,6 +35,13 @@ class Event(Schedulable):
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
     max_commitments = PositiveIntegerField(default=0)
+    parent = ForeignKey(
+        "self",
+        on_delete=CASCADE,
+        null=True,
+        blank=True,
+        related_name="children")
+    slug = SlugField(null=True)
 
     # from Event Item
     visible = BooleanField(default=True)
