@@ -44,11 +44,6 @@ class Migration(migrations.Migration):
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='resourceallocation',
-            name='default',
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name='event',
             name='length',
             field=models.DurationField(default=timedelta(minutes=0)),

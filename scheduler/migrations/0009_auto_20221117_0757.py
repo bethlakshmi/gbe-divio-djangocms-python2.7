@@ -51,25 +51,6 @@ def migrate_event_inheritance(apps, schema_editor):
         event.description = child.e_description
         event.blurb = child.blurb
         event.length = child.duration
-        if child.default_location:
-            # make resource alloc with "default" location
-            if Location.objects.filter(
-                    _item__pk=child.default_location.pk).exists():
-                loc = Location.objects.get(_item__pk=child.default_location.pk)
-                print("found location %s" % child.default_location.name)
-            else:
-                loc = Location(_item=child.default_location)
-                loc.save()
-                print("made location %s" % child.default_location.name)
-            booking = ResourceAllocation(
-                default=True,
-                event=event,
-                resource=loc)
-            booking.save()
-            print("made default room %s for %s" % (
-                child.default_location.name,
-                event.title))
-
         event.save()
 
 
@@ -91,15 +72,6 @@ def reverse_event_inheritance(apps, schema_editor):
         gbe_event.e_description = event.description
         gbe_event.blurb = event.blurb
         gbe_event.duration = event.length
-        if event.resources_allocated.filter(default=True).exists:
-            for alloc in event.resources_allocated.filter(default=True):
-                if Location.objects.filter(pk=alloc.resource.pk).exists():
-                    loc = Location.objects.get(pk=alloc.resource.pk)
-                    room = Room.objects.get(pk=loc._item.pk)
-                    gbe_event.default_room = room
-                    print("set default room %s for event %s" % (
-                        gbe_event.default_room.name,
-                        gbe_event.e_title))
         gbe_event.save()
         event.eventitem = gbe_event
         event.save()
