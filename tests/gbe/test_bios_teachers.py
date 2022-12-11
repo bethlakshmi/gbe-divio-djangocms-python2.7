@@ -11,15 +11,7 @@ from gbe.models import (
     Conference
 )
 from django.urls import reverse
-from scheduler.models import Event as sEvent
-from datetime import datetime, date, time
-import pytz
-from tests.factories.scheduler_factories import ResourceAllocationFactory
-from tests.functions.gbe_functions import (
-    clear_conferences,
-    current_conference,
-    login_as,
-)
+from tests.functions.gbe_functions import login_as
 
 
 class TestBiosTeachers(TestCase):
@@ -27,16 +19,17 @@ class TestBiosTeachers(TestCase):
     view_name = 'bios_teacher'
 
     def setUp(self):
-        Conference.objects.all().delete()
         self.client = Client()
 
     @classmethod
     def setUpTestData(cls):
         cls.performer = PersonaFactory()
+        cls.conference = ConferenceFactory(status='upcoming',
+                                           accepting_bids=True)
 
     def test_bios_teachers_no_conf_slug(self):
-        current_context = ClassContext(conference=current_conference())
-        other_conference = ConferenceFactory(status="ended")
+        current_context = ClassContext(conference=self.conference)
+        other_conference = ConferenceFactory(status="completed")
         other_context = ClassContext(conference=other_conference)
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(ProfileFactory(), self)
@@ -44,15 +37,8 @@ class TestBiosTeachers(TestCase):
         assert response.status_code == 200
         self.assertContains(response, current_context.teacher.name)
         self.assertContains(response, current_context.bid.b_title)
-
-        # the following assertions should work, but currently
-        # do not. This is possibly an issue with multiple
-        # inheritance and factory boy, but that is not clear
-        # to me.
-        # Leaving them commented out to encourage us to
-        # fix (still broken - 1/12/17)
-        # assert other_context.teacher.name not in response.content
-        # assert other_context.bid.title not in response.content
+        self.assertNotContains(response, other_context.teacher.name)
+        self.assertNotContains(response, other_context.bid.b_title)
 
     def test_bios_teachers_specific_conference(self):
         first_context = ClassContext()
@@ -76,8 +62,7 @@ class TestBiosTeachers(TestCase):
         # assert other_context.bid.title not in response.content
 
     def test_bios_teachers_unbooked_accepted(self):
-        accepted_class = ClassFactory(b_conference=current_conference(),
-                                      e_conference=current_conference(),
+        accepted_class = ClassFactory(b_conference=self.conference,
                                       accepted=3)
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(ProfileFactory(), self)

@@ -2,14 +2,15 @@ from gbe.scheduling.views import EditEventView
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from gbe.models import GenericEvent
 from gbe.scheduling.forms import RehearsalSlotForm
+from gbe.scheduling.views.functions import show_general_status
 from gbe.functions import get_conference_day
 from gbetext import rehearsal_delete_msg
 from scheduler.idd import (
     get_bookings,
     get_occurrences,
     create_occurrence,
+    delete_occurrence,
     update_occurrence,
 )
 from datetime import timedelta
@@ -54,13 +55,7 @@ class EditShowView(EditEventView):
 
         for rehearsal_slot in response.occurrences:
             rehearsal = None
-            try:
-                rehearsal = GenericEvent.objects.get(
-                        eventitem_id=rehearsal_slot.foreign_event_id,
-                        type="Rehearsal Slot")
-            except:
-                pass
-            if rehearsal is not None:
+            if rehearsal_slot.event_style == "Rehearsal Slot":
                 if (errorcontext and 'error_slot_form' in errorcontext and
                         errorcontext['error_slot_occurrence_id'
                                      ] == int(rehearsal_slot.pk)):
@@ -71,7 +66,7 @@ class EditShowView(EditEventView):
 
                     time = rehearsal_slot.start_time.time
                     day = get_conference_day(
-                        conference=rehearsal.e_conference,
+                        conference=conference,
                         date=date)
                     location = rehearsal_slot.location
                     if location:
@@ -81,11 +76,16 @@ class EditShowView(EditEventView):
                     response = get_bookings(
                         [rehearsal_slot.pk],
                         roles=["Performer"])
+                    duration = float(
+                        rehearsal_slot.length.total_seconds())/timedelta(
+                        hours=1).total_seconds()
                     actionform.append(
                         RehearsalSlotForm(
-                            instance=rehearsal,
-                            initial={'opp_event_id': rehearsal.event_id,
-                                     'opp_sched_id': rehearsal_slot.pk,
+                            conference=conference,
+                            initial={'opp_sched_id': rehearsal_slot.pk,
+                                     'title': rehearsal_slot.title,
+                                     'duration': duration,
+                                     'event_style': rehearsal_slot.event_style,
                                      'current_acts': len(response.people),
                                      'max_volunteer': max_commitments,
                                      'day': day,
@@ -158,10 +158,10 @@ class EditShowView(EditEventView):
                     conference=self.conference)
             if self.event_form.is_valid():
                 data = self.get_basic_form_settings()
-                self.event.e_conference = self.conference
-                self.event.save()
                 response = create_occurrence(
-                    self.event.eventitem_id,
+                    data['title'],
+                    data['duration'],
+                    data['event_style'],
                     self.start_time,
                     max_commitments=self.max_volunteer,
                     locations=[self.room],
@@ -171,22 +171,20 @@ class EditShowView(EditEventView):
                 context = {'createslotform': self.event_form,
                            'rehearsal_open': True}
         elif 'edit_slot' in list(request.POST.keys()):
-            self.event = get_object_or_404(
-                GenericEvent,
-                event_id=request.POST['opp_event_id'])
             casting_response = get_bookings(
                         [int(request.POST['opp_sched_id'])],
                         roles=["Performer"])
             self.event_form = RehearsalSlotForm(
                 request.POST,
-                instance=self.event,
+                conference=self.conference,
                 initial={'current_acts': len(casting_response.people)})
             if self.event_form.is_valid():
                 data = self.get_basic_form_settings()
-                self.event_form.save()
                 response = update_occurrence(
                     data['opp_sched_id'],
-                    self.start_time,
+                    title=data['title'],
+                    start_time=self.start_time,
+                    length=data['duration'],
                     max_commitments=self.max_volunteer,
                     locations=[self.room])
             else:
@@ -196,23 +194,19 @@ class EditShowView(EditEventView):
                         request.POST['opp_sched_id']),
                     'rehearsal_open': True}
         elif 'delete_slot' in list(request.POST.keys()):
-            opp = get_object_or_404(
-                GenericEvent,
-                event_id=request.POST['opp_event_id'])
-            title = opp.e_title
-            opp.delete()
-            user_message = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="DELETE_REHEARSAL_SUCCESS",
-                defaults={
-                    'summary': "Rehearsal Slot Deleted",
-                    'description': rehearsal_delete_msg})
-            messages.success(
-                request,
-                '%s<br>Title: %s' % (
-                    user_message[0].description,
-                    title))
-            return HttpResponseRedirect(self.success_url)
+            response = delete_occurrence(request.POST['opp_sched_id'])
+            show_general_status(request, response, self.__class__.__name__)
+            if not response.errors:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="DELETE_REHEARSAL_SUCCESS",
+                    defaults={
+                        'summary': "Rehearsal Slot Deleted",
+                        'description': rehearsal_delete_msg})
+                messages.success(
+                    request,
+                    '%s' % user_message[0].description)
+                return HttpResponseRedirect(self.success_url)
         return self.check_success_and_return(
             request,
             response=response,

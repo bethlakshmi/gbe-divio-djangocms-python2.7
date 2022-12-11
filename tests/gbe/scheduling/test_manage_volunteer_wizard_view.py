@@ -2,7 +2,6 @@ from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
-    GenericEventFactory,
     ProfileFactory,
     RoomFactory
 )
@@ -12,6 +11,7 @@ from scheduler.models import (
 )
 from tests.functions.gbe_functions import (
     assert_option_state,
+    bad_id_for,
     grant_privilege,
     login_as,
 )
@@ -21,7 +21,6 @@ from tests.contexts import (
 )
 from django.utils.formats import date_format
 from django.db.models import Max
-from scheduler.models import Event
 
 
 class TestManageVolunteerWizard(TestCase):
@@ -50,8 +49,8 @@ class TestManageVolunteerWizard(TestCase):
     def get_new_opp_data(self, context):
         data = {
             'create': 'create',
-            'new_opp-e_title': 'New Volunteer Opportunity',
-            'new_opp-type': "Volunteer",
+            'new_opp-title': 'New Volunteer Opportunity',
+            'new_opp-event_style': "Volunteer",
             'new_opp-max_volunteer': '1',
             'new_opp-approval': True,
             'new_opp-duration': '1.0',
@@ -63,8 +62,8 @@ class TestManageVolunteerWizard(TestCase):
     def get_basic_data(self, context):
         data = {
             'approval': True,
-            'e_title': 'Copied Volunteer Opportunity',
-            'type': 'Volunteer',
+            'title': 'Copied Volunteer Opportunity',
+            'event_style': 'Volunteer',
             'max_volunteer': '1',
             'duration': '1.0',
             'day': self.context.conf_day.pk,
@@ -74,8 +73,7 @@ class TestManageVolunteerWizard(TestCase):
 
     def get_basic_action_data(self, context, action):
         data = self.get_basic_data(context)
-        data['e_title'] = 'Modify Volunteer Opportunity'
-        data['opp_event_id'] = self.context.opportunity.event_id
+        data['title'] = 'Modify Volunteer Opportunity'
         data['opp_sched_id'] = self.context.opp_event.pk
         data[action] = action
         return data
@@ -119,7 +117,7 @@ class TestManageVolunteerWizard(TestCase):
             pk=self.context.opp_event.pk)
         self.assertTrue(opps.exists())
         for opp in opps:
-            self.assertEqual(opp.eventitem.child().e_title,
+            self.assertEqual(opp.title,
                              'New Volunteer Opportunity')
             self.assertTrue(opp.approval_needed)
             self.assertRedirects(
@@ -131,8 +129,7 @@ class TestManageVolunteerWizard(TestCase):
                                   self.context.sched_event.pk]),
                     opp.pk))
             self.assertEqual(EventLabel.objects.filter(
-                text=opp.eventitem.child(
-                    ).e_conference.conference_slug,
+                text=self.context.conference.conference_slug,
                 event=opp).count(), 1)
             self.assertEqual(EventLabel.objects.filter(
                 text="Volunteer",
@@ -140,8 +137,8 @@ class TestManageVolunteerWizard(TestCase):
 
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="New Volunteer ' +
-            'Opportunity" maxlength="128" required id="id_e_title" />',
+            '<input type="text" name="title" value="New Volunteer ' +
+            'Opportunity" maxlength="128" required id="id_title" />',
             html=True)
         self.assertContains(
             response,
@@ -164,7 +161,7 @@ class TestManageVolunteerWizard(TestCase):
         opps = Event.objects.filter(eventlabel__text=staff_context.area.slug)
         self.assertTrue(opps.exists())
         for opp in opps:
-            self.assertEqual(opp.eventitem.child().e_title,
+            self.assertEqual(opp.title,
                              'New Volunteer Opportunity')
             self.assertTrue(opp.approval_needed)
 
@@ -176,16 +173,15 @@ class TestManageVolunteerWizard(TestCase):
                             args=[staff_context.area.pk]),
                     opp.pk))
             self.assertEqual(EventLabel.objects.filter(
-                text=opp.eventitem.child(
-                    ).e_conference.conference_slug,
+                text=self.context.conference.conference_slug,
                 event=opp).count(), 1)
             self.assertEqual(EventLabel.objects.filter(
                 text="Volunteer",
                 event=opp).count(), 1)
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="New Volunteer ' +
-            'Opportunity" maxlength="128" required id="id_e_title" />',
+            '<input type="text" name="title" value="New Volunteer ' +
+            'Opportunity" maxlength="128" required id="id_title" />',
             html=True)
         self.assertContains(
             response,
@@ -264,9 +260,9 @@ class TestManageVolunteerWizard(TestCase):
                 html=True)
             self.assertContains(
                 response,
-                ('<input type="text" name="e_title" value="%s" ' +
-                 'maxlength="128" required id="id_e_title" />') % (
-                 opp.eventitem.child().e_title),
+                ('<input type="text" name="title" value="%s" ' +
+                 'maxlength="128" required id="id_title" />') % (
+                 opp.title),
                 html=True)
             if opp != self.context.opp_event:
                 self.assertRedirects(
@@ -300,8 +296,8 @@ class TestManageVolunteerWizard(TestCase):
         self.assertTrue(opps[0].approval_needed)
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="Modify Volunteer ' +
-            'Opportunity" maxlength="128" required id="id_e_title" />',
+            '<input type="text" name="title" value="Modify Volunteer ' +
+            'Opportunity" maxlength="128" required id="id_title" />',
             html=True)
 
     def test_edit_opportunity_change_room(self):
@@ -337,8 +333,8 @@ class TestManageVolunteerWizard(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<input type="text" name="e_title" value="Modify Volunteer ' +
-            'Opportunity" maxlength="128" required id="id_e_title" />',
+            '<input type="text" name="title" value="Modify Volunteer ' +
+            'Opportunity" maxlength="128" required id="id_title" />',
             html=True)
         self.assertContains(
             response,
@@ -358,8 +354,23 @@ class TestManageVolunteerWizard(TestCase):
         self.assertFalse(
             Event.objects.filter(parent=self.context.sched_event).exists())
 
+    def test_delete_opportunity_bad_id(self):
+        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        login_as(self.privileged_profile, self)
+        bad_id = bad_id_for(Event)
+        data = self.get_basic_action_data(self.context, 'delete')
+        data['opp_sched_id'] = bad_id
+        # number of volunteers is missing, it's required
+        response = self.client.post(
+            self.url,
+            data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "Occurrence id %d not found" % bad_id)
+
     def test_weird_action(self):
-        special_context = VolunteerContext(event=GenericEventFactory())
+        special_context = VolunteerContext(event_style="Special")
         self.url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",

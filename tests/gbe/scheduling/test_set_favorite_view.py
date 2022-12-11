@@ -72,7 +72,7 @@ class TestSetFavorite(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, self.context.bid.e_title)
+        self.assertContains(response, self.context.bid.b_title)
         assert_alert_exists(
             response,
             'success',
@@ -91,7 +91,7 @@ class TestSetFavorite(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')
         self.assertRedirects(response, redirect_url)
-        self.assertNotContains(response, self.context.bid.e_title)
+        self.assertNotContains(response, self.context.bid.b_title)
         assert_alert_exists(
             response,
             'success',
@@ -106,7 +106,7 @@ class TestSetFavorite(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')
         self.assertRedirects(response, redirect_url)
-        self.assertContains(response, self.context.bid.e_title)
+        self.assertContains(response, self.context.bid.b_title)
         self.assertNotContains(response, set_favorite_msg)
 
     def test_remove_interest_duplicate(self):
@@ -118,7 +118,7 @@ class TestSetFavorite(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')
         self.assertRedirects(response, redirect_url)
-        self.assertNotContains(response, self.context.bid.e_title)
+        self.assertNotContains(response, self.context.bid.b_title)
         self.assertNotContains(response, unset_favorite_msg)
 
     def test_show_interest_bad_event(self):
@@ -138,7 +138,7 @@ class TestSetFavorite(TestCase):
         login_as(self.profile, self)
         redirect_url = reverse(
             'detail_view',
-            args=[self.context.bid.eventitem_id],
+            args=[self.context.sched_event.pk],
             urlconf='gbe.scheduling.urls')
         response = self.client.get("%s?next=%s" % (self.url, redirect_url),
                                    follow=True)
@@ -163,7 +163,7 @@ class TestSetFavorite(TestCase):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')
         self.assertRedirects(response, redirect_url)
-        self.assertNotContains(response, self.context.bid.e_title)
+        self.assertNotContains(response, self.context.bid.b_title)
         assert_alert_exists(
             response,
             'success',

@@ -12,7 +12,6 @@ from tests.functions.gbe_functions import (
     setup_admin_w_privs,
 )
 from tests.factories.scheduler_factories import(
-    EventItemFactory,
     LocationFactory,
     ResourceAllocationFactory,
     ResourceFactory,
@@ -44,20 +43,7 @@ class SchedulerChangeListTests(TestCase):
         self.assertContains(response, str(context.performer))
         self.assertContains(response, "Featured")
 
-    def test_get_eventitem_genericevent(self):
-        context = VolunteerContext()
-        response = self.client.get('/admin/scheduler/eventitem/',
-                                   follow=True)
-        self.assertContains(response, "Volunteer")
-        self.assertContains(response, str(context.conference))
-
-    def test_get_eventitem_class_type(self):
-        context = ClassContext()
-        response = self.client.get('/admin/scheduler/eventitem/',
-                                   follow=True)
-        self.assertContains(response, "Class")
-
-    def test_get_allocation_eventitem_no_resource(self):
+    def test_get_allocation_no_resource(self):
         allocation = ResourceAllocationFactory(
             resource=ResourceFactory())
         response = self.client.get('/admin/scheduler/resourceallocation/',
@@ -66,21 +52,13 @@ class SchedulerChangeListTests(TestCase):
                             "Error in resource allocation, no resource")
         self.assertContains(response, "Resource (no child)")
 
-    def test_get_allocation_eventitem_no_child_workeritem_no_child(self):
-        allocation = ResourceAllocationFactory(
-            event__eventitem=EventItemFactory())
-        response = self.client.get('/admin/scheduler/resourceallocation/',
-                                   follow=True)
-        self.assertContains(response, "no child")
-        self.assertContains(response, "Worker Item (no child_event)")
-
     def test_get_allocation_resource_type(self):
         context = VolunteerContext()
         response = self.client.get('/admin/scheduler/resourceallocation/',
                                    follow=True)
         self.assertContains(response, str("Profile"))
         self.assertContains(response, "Volunteer")
-        self.assertContains(response, str(context.conference))
+        self.assertContains(response, str(context.conference.conference_slug))
 
     def test_get_allocation_class_type(self):
         context = ClassContext()

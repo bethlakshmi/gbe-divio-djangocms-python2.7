@@ -2,6 +2,10 @@ from django.views.generic import View
 from django.shortcuts import (
     render,
 )
+from gbe.models import (
+    Class,
+    Conference,
+)
 from gbe.scheduling.views.functions import (
     build_icon_links,
     get_event_display_info,
@@ -12,7 +16,10 @@ from scheduler.idd import (
 )
 from scheduler.data_transfer import Person
 from django.urls import reverse
-from gbetext import role_options
+from gbetext import (
+    calendar_for_event,
+    role_options,
+)
 
 
 class EventDetailView(View):
@@ -21,12 +28,17 @@ class EventDetailView(View):
     details in a template
     '''
     def get(self, request, *args, **kwargs):
-        eventitem_id = kwargs['eventitem_id']
+        from ticketing.functions import get_tickets
+
+        occurrence_id = kwargs['occurrence_id']
         schedule_items = []
         personal_schedule_items = []
-        eventitem_view = get_event_display_info(eventitem_id)
+        eventitem_view = get_event_display_info(occurrence_id)
         person = None
         eval_occurrences = []
+        cal_type = calendar_for_event[
+            eventitem_view['occurrence'].event_style]
+        labels = eventitem_view['occurrence'].labels
         if request.user.is_authenticated and hasattr(request.user, 'profile'):
             person = Person(
                 user=request.user,
@@ -37,47 +49,51 @@ class EventDetailView(View):
                 all_roles += [m]
             personal_schedule_items = get_schedule(
                 request.user,
-                labels=[
-                    eventitem_view['event'].calendar_type,
-                    eventitem_view['event'].e_conference.conference_slug],
+                labels=labels,
                 roles=all_roles,
                 ).schedule_items
-            if eventitem_view['event'].calendar_type == "Conference":
+            if cal_type == "Conference":
                 eval_response = get_eval_info(person=person)
                 if len(eval_response.questions) > 0:
                     eval_occurrences = eval_response.occurrences
                 else:
                     eval_occurrences = None
+        conference = Conference.objects.filter(
+            conference_slug__in=labels)[0]
+        (favorite_link,
+         volunteer_link,
+         evaluate,
+         highlight,
+         vol_disable_msg) = build_icon_links(
+            eventitem_view['occurrence'],
+            eval_occurrences,
+            cal_type,
+            conference.status == "completed",
+            personal_schedule_items)
 
-        for occurrence in eventitem_view['scheduled_events']:
-            (favorite_link,
-             volunteer_link,
-             evaluate,
-             highlight,
-             vol_disable_msg) = build_icon_links(
-                occurrence,
-                eval_occurrences,
-                eventitem_view['event'].calendar_type,
-                (eventitem_view['event'].e_conference.status == "completed"),
-                personal_schedule_items)
-
-            schedule_items += [{
-                'occurrence': occurrence,
-                'favorite_link': favorite_link,
-                'volunteer_link': volunteer_link,
-                'highlight': highlight,
-                'evaluate': evaluate,
-                'approval_needed': occurrence.approval_needed,
-                'vol_disable_msg': vol_disable_msg,
+        schedule_items += [{
+            'favorite_link': favorite_link,
+            'volunteer_link': volunteer_link,
+            'highlight': highlight,
+            'evaluate': evaluate,
+            'approval_needed': eventitem_view['occurrence'].approval_needed,
+            'vol_disable_msg': vol_disable_msg,
             }]
         template = 'gbe/scheduling/event_detail.tmpl'
-        return render(request,
-                      template,
-                      {'eventitem': eventitem_view,
-                       'show_tickets': True,
-                       'tickets': eventitem_view['event'].get_tickets,
-                       'user_id': request.user.id,
-                       'schedule_items': schedule_items})
+        bid = None
+        if (eventitem_view['occurrence'].connected_class is not None) and (
+                eventitem_view['occurrence'].connected_class == "Class"):
+            bid = Class.objects.get(
+                pk=eventitem_view['occurrence'].connected_id)
+
+        return render(request, template, {
+            'eventitem': eventitem_view,
+            'conference': conference,
+            'show_tickets': True,
+            'tickets': get_tickets(eventitem_view['occurrence']),
+            'user_id': request.user.id,
+            'bid': bid,
+            'schedule_items': schedule_items})
 
     def dispatch(self, *args, **kwargs):
         return super(EventDetailView, self).dispatch(*args, **kwargs)

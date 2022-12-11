@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-6"><h2 class="gbe-subtitle">Volunteer Management</h2></div>
+  <div class="col-md-6"><h3 class="gbe-title">Volunteer Management</h3></div>
     {% if report_url %}
       <div class="col-md-6 text-right"><a href="{{report_url}}" role="button" class="btn gbe-btn-primary">Display Staff</a></div>{% endif %}
 </div>
@@ -20,8 +20,7 @@
     </tr>
     {% for form in actionform %}
     <tr class="{% if changed_id == form.opp_sched_id.value %}gbe-table-success {% endif %}striped_table_row">
-      <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
-      	    enctype="multipart/form-data">
+      <form method="POST" action="{{ manage_vol_url }}" enctype="multipart/form-data">
         {% csrf_token %}
 	{% for field in form.visible_fields %}
 	  <td>
@@ -51,8 +50,7 @@
     </tr>
     {% endfor %}
     <tr class="striped_table_row">
-      <form method="POST" action="{% if manage_vol_url %}{{ manage_vol_url }}{% else %}{% url 'scheduling:manage_opps' event_type eventitem_id event_id %}{% endif %}" 
-      	    enctype="multipart/form-data">
+      <form method="POST" action="{{ manage_vol_url }}" enctype="multipart/form-data">
 	{% csrf_token %}
 	{% for field in createform.visible_fields %}
 	  <td>

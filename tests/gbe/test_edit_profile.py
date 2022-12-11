@@ -3,6 +3,7 @@ from django.test import Client
 from django.urls import reverse
 from tests.contexts import VolunteerContext
 from tests.factories.gbe_factories import (
+    ConferenceFactory,
     ClassFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
@@ -16,7 +17,6 @@ from gbe.models import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    current_conference,
     grant_privilege,
     login_as
 )
@@ -43,7 +43,8 @@ class TestEditProfile(TestCase):
     def setUpTestData(cls):
         UserMessage.objects.all().delete()
         cls.profile = ProfilePreferencesFactory().profile
-        current_conference()
+        cls.conference = ConferenceFactory(status='upcoming',
+                                           accepting_bids=True)
 
     def setUp(self):
         self.client = Client()
@@ -290,7 +291,8 @@ class TestEditProfile(TestCase):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
-        current_conference()
+        self.conference = ConferenceFactory(status='upcoming',
+                                            accepting_bids=True)
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_make_message(self, m_urlopen):

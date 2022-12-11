@@ -12,7 +12,7 @@ import ticketing.models as tix
 import os as os
 import csv
 from reportlab.pdfgen import canvas
-
+from gbetext import class_styles
 from gbe.functions import (
     conference_slugs,
     get_current_conference,
@@ -57,9 +57,9 @@ def env_stuff(request, conference_choice=None):
     tickets = tix.Transaction.objects.filter(
         ticket_item__ticketing_event__conference=conference)
     roles = sched.Worker.objects.filter(
-        Q(allocations__event__eventitem__event__e_conference=conference))
+        Q(allocations__event__eventlabel__text=conference.conference_slug))
     commits = sched.ResourceAllocation.objects.filter(
-        Q(event__eventitem__event__e_conference=conference))
+        Q(event__eventlabel__text=conference.conference_slug))
 
     header = ['Badge Name',
               'First',
@@ -90,11 +90,11 @@ def env_stuff(request, conference_choice=None):
 
         for lead in roles.filter(role="Staff Lead", _item=person):
             for commit in commits.filter(resource=lead):
-                staff_lead_list += str(commit.event.eventitem)+', '
+                staff_lead_list += str(commit.event)+', '
 
         for volunteer in roles.filter(role="Volunteer", _item=person):
             for commit in commits.filter(resource=volunteer):
-                volunteer_list += str(commit.event.eventitem)+', '
+                volunteer_list += str(commit.event)+', '
 
         for performer in person.get_performers():
             personae_list += str(performer) + ', '
@@ -105,13 +105,13 @@ def env_stuff(request, conference_choice=None):
                 for commit in commits.filter(resource=teacher):
                     class_list += (teacher.role +
                                    ': ' +
-                                   str(commit.event.eventitem) +
+                                   str(commit.event) +
                                    ', ')
             act_ids = acts.filter(
                 performer=performer).values_list('pk', flat=True)
             for commit in commits.filter(ordering__class_id__in=act_ids,
                                          event__eventlabel__text="General"):
-                show_list += str(commit.event.eventitem)+', '
+                show_list += str(commit.event)+', '
 
         person_details.append(
             [person.get_badge_name().encode('utf-8').strip(),
@@ -214,9 +214,6 @@ def room_setup(request):
         day_events = []
         current_day = None
         for booking in room.get_bookings:
-            booking_class = sched.EventItem.objects.get_subclass(
-                eventitem_id=booking.eventitem.eventitem_id)
-
             if not current_day:
                 current_day = booking.start_time.date()
             if current_day != booking.start_time.date():
@@ -226,9 +223,10 @@ def room_setup(request):
                                   'bookings': day_events}]
                 current_day = booking.start_time.date()
                 day_events = []
-            if booking_class.__class__.__name__ == 'Class':
+            if booking.event_style in class_styles:
                 day_events += [{'event': booking,
-                                'class': booking_class}]
+                                'class': conf.Class.objects.get(
+                                    pk=booking.connected_id)}]
         if (current_day in conf_days and len(day_events) > 0):
             room_set += [{'room': room,
                           'date': current_day,

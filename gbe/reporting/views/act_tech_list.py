@@ -13,10 +13,7 @@ from gbe.scheduling.views.functions import (
     show_general_status,
 )
 from django.shortcuts import get_object_or_404
-from gbe.models import (
-    Act,
-    Show,
-)
+from gbe.models import Act
 
 
 class ActTechList(View):
@@ -38,7 +35,7 @@ class ActTechList(View):
                                 urlconf='gbe.urls')
             return HttpResponseRedirect(error_url)
         else:
-            (self.profile, self.occurrence, self.item) = groundwork_data
+            (self.profile, self.occurrence) = groundwork_data
 
     @never_cache
     def get(self, request, *args, **kwargs):
@@ -66,7 +63,7 @@ class ActTechList(View):
                   'Track Artist',
                   'Mic Options']
         tech_info = []
-        response = get_people(foreign_event_ids=[self.item.eventitem_id],
+        response = get_people(event_ids=[self.occurrence.pk],
                               roles=["Performer"])
         show_general_status(request, response, self.__class__.__name__)
 
@@ -90,9 +87,7 @@ class ActTechList(View):
                                 sched_response,
                                 self.__class__.__name__)
             for item in sched_response.schedule_items:
-                if Show.objects.filter(
-                        eventitem_id=item.event.eventitem.eventitem_id
-                        ).exists():
+                if item.event.event_style == "Show":
                     order = item.commitment.order
             if act.tech.prop_setup:
                 for item in act.tech.prop_setup_list:
@@ -148,7 +143,8 @@ class ActTechList(View):
                 ])
 
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s_tech.csv' % (str(self.item))
+        response['Content-Disposition'] = 'attachment; filename=%s_tech.csv' % (
+            str(self.occurrence))
         writer = csv.writer(response)
         writer.writerow(header)
         for row in tech_info:

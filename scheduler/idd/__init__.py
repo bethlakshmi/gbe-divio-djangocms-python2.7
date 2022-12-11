@@ -14,3 +14,4 @@ from .get_eval_summary import get_eval_summary
 from .get_eval_info import get_eval_info
 from .set_eval_info import set_eval_info
 from .delete_occurrence import delete_occurrence
+from .delete_occurrences import delete_occurrences

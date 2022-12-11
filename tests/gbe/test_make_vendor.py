@@ -4,13 +4,13 @@ from django.test import Client
 from tests.factories.gbe_factories import (
     BusinessFactory,
     ProfileFactory,
+    ConferenceFactory,
     UserFactory,
     VendorFactory,
     UserMessageFactory
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
-    current_conference,
     login_as,
     make_vendor_app_purchase,
     make_vendor_app_ticket,
@@ -36,7 +36,8 @@ class TestMakeVendor(TestCase):
         UserMessage.objects.all().delete()
         cls.profile = ProfileFactory()
         cls.business = BusinessFactory(owners=[cls.profile])
-        cls.conference = current_conference()
+        cls.conference = ConferenceFactory(status='upcoming',
+                                           accepting_bids=True)
 
     def setUp(self):
         self.client = Client()

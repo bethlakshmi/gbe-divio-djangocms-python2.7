@@ -35,11 +35,9 @@ class SetVolunteerView(View):
 
     @never_cache
     def post(self, request, *args, **kwargs):
-        if request.GET.get("next", False):
-            redirect_to = request.GET.get("next")
-        else:
-            redirect_to = reverse('volunteer_signup',
-                                  urlconf='gbe.scheduling.urls')
+        redirect_to = request.GET.get(
+            "next", reverse('volunteer_signup',
+                            urlconf='gbe.scheduling.urls'))
         this_url = reverse(
             'set_volunteer',
             args=[kwargs['occurrence_id'], kwargs['state']],

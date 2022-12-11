@@ -10,21 +10,17 @@ from .troupe import Troupe
 from .tech_info import TechInfo
 from .biddable import Biddable
 from .act import Act
-from .event import Event
-from .show import Show
 from .staff_area import StaffArea
 from .class_model import Class
 from .costume import Costume
 from .business import Business
 from .vendor import Vendor
 from .volunteer import Volunteer
-from .generic_event import GenericEvent
 from .profile_preferences import ProfilePreferences
 from .user_message import UserMessage
 
 # staff evaluations, pre-acceptance
 from .bid_evaluation import BidEvaluation
-from .show_vote import ShowVote
 from .act_bid_evaluation import ActBidEvaluation
 from .email_frequency import EmailFrequency
 from .email_template_sender import EmailTemplateSender

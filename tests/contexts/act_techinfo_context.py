@@ -1,11 +1,9 @@
 from tests.factories.gbe_factories import (
     ActFactory,
     ConferenceFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory,
     RoomFactory,
-    ShowFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
@@ -22,18 +20,13 @@ class ActTechInfoContext():
     def __init__(self,
                  performer=None,
                  act=None,
-                 show=None,
                  sched_event=None,
                  conference=None,
                  room_name=None,
                  schedule_rehearsal=False,
                  act_role="Regular Act",
                  set_waitlist=False):
-        if conference:
-            self.show = show or ShowFactory(e_conference=conference)
-        else:
-            self.show = show or ShowFactory()
-        self.conference = conference or self.show.e_conference
+        self.conference = conference or ConferenceFactory()
         self.performer = performer or PersonaFactory()
         self.act = act or ActFactory(performer=self.performer,
                                      b_conference=self.conference,
@@ -52,9 +45,11 @@ class ActTechInfoContext():
             self.sched_event = sched_event
         else:
             self.sched_event = SchedEventFactory(
-                eventitem=self.show.eventitem_ptr)
+                event_style="Show")
             EventLabelFactory(event=self.sched_event,
                               text=self.conference.conference_slug)
+            EventLabelFactory(event=self.sched_event,
+                              text="General")
         room_name = room_name or "Dining Room"
         self.room = RoomFactory(name=room_name)
         self.room.conferences.add(self.conference)
@@ -79,10 +74,8 @@ class ActTechInfoContext():
                 self.act)
 
     def _schedule_rehearsal(self, s_event, act=None):
-        rehearsal = GenericEventFactory(type="Rehearsal Slot",
-                                        e_conference=self.conference)
         rehearsal_event = SchedEventFactory(
-            eventitem=rehearsal.eventitem_ptr,
+            event_style="Rehearsal Slot",
             max_commitments=10,
             starttime=self.sched_event.starttime,
             parent=s_event)

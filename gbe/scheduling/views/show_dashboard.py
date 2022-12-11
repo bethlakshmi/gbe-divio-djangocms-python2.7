@@ -25,8 +25,7 @@ from gbe.scheduling.views.functions import (
 )
 from gbe.models import (
     Act,
-    GenericEvent,
-    Show,
+    Conference,
     StaffArea,
     UserMessage,
 )
@@ -80,13 +79,15 @@ class ShowDashboard(ProfileRequiredMixin, View):
 
     def setup_email_forms(self):
         role_form = SecretRoleInfoForm(
-            initial={'conference': [self.item.e_conference],
+            initial={'conference': [self.conference],
                      'roles': None},
             prefix="email-select")
         event_form = SelectEventForm(
             prefix="event-select",
-            initial={'events': [self.item]})
-        event_form['events'].queryset = Show.objects.filter(pk=self.item.pk)
+            initial={'events': [self.occurrence.pk]})
+
+        choices = [self.occurrence.pk, self.occurrence.title]
+        event_form['events'].choices = choices
         event_form['staff_areas'].queryset = None
         event_form['event_collections'].queryset = None
         return [role_form, event_form]
@@ -101,7 +102,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                 urlconf='gbe.urls')
             return HttpResponseRedirect(error_url)
         else:
-            (self.profile, self.occurrence, self.item) = groundwork_data
+            (self.profile, self.occurrence) = groundwork_data
+        self.conference = Conference.objects.filter(
+            conference_slug__in=self.occurrence.labels)[0]
         self.can_schedule_acts = validate_perms(request,
                                                 self.schedule_act_perm,
                                                 require=False)
@@ -123,10 +126,8 @@ class ShowDashboard(ProfileRequiredMixin, View):
                           self.cross_show_scope,
                           require=False):
             self.show_scope = get_occurrences(
-                foreign_event_ids=Show.objects.filter(
-                    e_conference=self.item.e_conference).values_list(
-                    'eventitem_id',
-                    flat=True)).occurrences
+                event_styles=['Show'],
+                labels=self.occurrence.labels).occurrences
         else:
             check_scope = False
             for item in get_schedule(
@@ -156,10 +157,10 @@ class ShowDashboard(ProfileRequiredMixin, View):
                    'Rehearsal',
                    'Music',
                    'Action']
-        conference = self.item.e_conference
+        conference = self.conference
 
         # Setup act pane
-        response = get_people(foreign_event_ids=[self.item.eventitem_id],
+        response = get_people(event_ids=[self.occurrence.pk],
                               roles=["Performer"])
         show_general_status(request, response, self.__class__.__name__)
         for performer in response.people:
@@ -175,14 +176,10 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                 sched_response,
                                 self.__class__.__name__)
             for item in sched_response.schedule_items:
-                if item.event not in rehearsals and (
-                        GenericEvent.objects.filter(
-                            eventitem_id=item.event.eventitem.eventitem_id,
-                            type='Rehearsal Slot').exists()):
-                    rehearsals += [item.event]
-                elif Show.objects.filter(
-                        eventitem_id=item.event.eventitem.eventitem_id
-                        ).exists():
+                if item not in rehearsals and (
+                        item.event.event_style == "Rehearsal Slot"):
+                    rehearsals += [item]
+                elif item.event.event_style == "Show":
                     order = item.commitment.order
             if request.POST:
                 form = ActScheduleBasics(
@@ -200,7 +197,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 widget=HiddenInput())
             rebook_form = make_show_casting_form(conference,
                                                  rebook_form,
-                                                 self.item.eventitem_id,
+                                                 self.occurrence.pk,
                                                  performer.commitment.role)
             acts += [{
                 'act': act,
@@ -238,8 +235,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
             defaults={
                 'summary': "Instructions at top of Volunteer Panel",
                 'description': volunteer_panel_instr})
-        return {'this_show': self.item,
-                'email_forms': self.setup_email_forms(),
+        return {'email_forms': self.setup_email_forms(),
                 'this_occurrence': self.occurrence,
                 'acts': acts,
                 'all_valid': all_valid,

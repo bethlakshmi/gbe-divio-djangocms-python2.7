@@ -2,7 +2,6 @@ from django.shortcuts import render
 from gbe.models import (
     Conference,
     StaffArea,
-    Show,
 )
 from gbe.functions import (
     conference_slugs,

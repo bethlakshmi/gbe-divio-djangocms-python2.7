@@ -8,7 +8,10 @@ from scheduler.idd import get_occurrence
 
 
 def update_occurrence(occurrence_id,
+                      title=None,
+                      description=None,
                       start_time=None,
+                      length=None,
                       max_volunteer=None,
                       max_commitments=None,
                       people=None,
@@ -33,6 +36,12 @@ def update_occurrence(occurrence_id,
         occurrence.approval_needed = approval
     if slug is not None:
         occurrence.slug = slug
+    if title is not None:
+        occurrence.title = title
+    if description is not None:
+        occurrence.description = description
+    if length is not None:
+        occurrence.length = length
 
     if parent_event_id is not None:
         if parent_event_id > -1:
@@ -58,12 +67,8 @@ def update_occurrence(occurrence_id,
 
     warnings = []
     if people is not None:
-        if roles == "All":
-            Worker.objects.filter(
-                allocations__event=occurrence).delete()
-        else:
-            Worker.objects.filter(allocations__event=occurrence,
-                                  role__in=roles).delete()
+        Worker.objects.filter(allocations__event=occurrence,
+                              role__in=roles).delete()
         for person in people:
             warnings += occurrence.allocate_person(
                 person).warnings

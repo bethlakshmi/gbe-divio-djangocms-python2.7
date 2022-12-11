@@ -18,13 +18,15 @@ class TestInterest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.priv_profile = ProfileFactory()
-        self.context = ClassContext()
-        self.old_conference = ConferenceFactory(status="completed")
-        self.old_context = ClassContext(conference=self.old_conference)
-        grant_privilege(self.priv_profile, 'Class Coordinator')
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.reporting.urls")
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.priv_profile = ProfileFactory()
+        cls.context = ClassContext()
+        cls.old_conference = ConferenceFactory(status="completed")
+        cls.old_context = ClassContext(conference=cls.old_conference)
+        grant_privilege(cls.priv_profile, 'Class Coordinator')
+        cls.url = reverse(cls.view_name, urlconf="gbe.reporting.urls")
 
     def test_interest_not_visible_without_permission(self):
         login_as(ProfileFactory(), self)
@@ -35,8 +37,8 @@ class TestInterest(TestCase):
         login_as(self.priv_profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.context.bid.e_title)
-        self.assertNotContains(response, self.old_context.bid.e_title)
+        self.assertContains(response, self.context.bid.b_title)
+        self.assertNotContains(response, self.old_context.bid.b_title)
         self.assertContains(response, self.context.teacher.name)
         self.assertNotContains(response, self.old_context.teacher.name)
         self.assertContains(response, self.context.room.name)

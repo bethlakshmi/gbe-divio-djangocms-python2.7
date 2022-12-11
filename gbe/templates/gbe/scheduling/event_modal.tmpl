@@ -1,5 +1,5 @@
 <!-- Event Modal Start -->
-              <div class="modal" id="Modal{{occurrence.eventitem.pk}}" role="dialog">
+              <div class="modal" id="Modal{{occurrence.pk}}" role="dialog">
               <div class="modal-dialog modal-dialog-centered modal-md">
               <div class="modal-content gbe-modal-content">
                 <form action="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">
@@ -22,7 +22,7 @@
                   {% endfor %}
                   {% if occurrence.parent_event %}<br>
                   <i>This opportunity is in support of 
-<a href="{% url 'scheduling:detail_view' occurrence.parent_event.eventitem.pk%}" class="gbe-link">
+<a href="{% url 'scheduling:detail_view' occurrence.parent_event.pk%}" class="gbe-link">
 {{occurrence.parent_event}}</a></i>{% endif %}
                   {% if occurrence.approval_needed %}<div class="well well-sm">
                     {{ pending_note}}

@@ -1,6 +1,3 @@
-from gbe.models import (
-    EmailTemplateSender,
-)
 from settings import (
     GBE_DATE_FORMAT,
     GBE_DATETIME_FORMAT,
@@ -14,7 +11,8 @@ import os
 from django.contrib.sites.models import Site
 from django.urls import reverse
 from gbe.models import (
-    Show,
+    Conference,
+    EmailTemplateSender,
     StaffArea,
 )
 from gbe.functions import make_warning_msg
@@ -24,7 +22,10 @@ from gbetext import (
     unique_email_templates,
 )
 from gbe_utils.text import no_profile_msg
-from scheduler.idd import get_all_container_bookings
+from scheduler.idd import (
+    get_all_container_bookings,
+    get_occurrences,
+)
 from django.core.signing import (
     TimestampSigner,
     BadSignature,
@@ -370,19 +371,21 @@ def get_user_email_templates(user):
             'default_subject': "%s Submission Occurred" % priv, }]
         for state in acceptance_states:
             if priv == "act" and state[1] == "Accepted":
-                for show in Show.objects.filter(
-                        e_conference__status__in=('upcoming', 'ongoing')):
+                for show in get_occurrences(
+                        event_styles=['Show'],
+                        label_sets=[Conference.all_slugs(current=True)]
+                        ).occurrences:
                     template_set += [{
                         'name': "%s %s - %s" % (priv,
                                                 state[1].lower(),
-                                                show.e_title.lower()),
+                                                show.title.lower()),
                         'description': email_template_desc[
                             "%s %s" % (priv,
-                                       state[1].lower())] % show.e_title,
+                                       state[1].lower())] % show.title,
                         'category': priv,
                         'default_base': "default_bid_status_change",
                         'default_subject': 'Your act has been cast in %s' % (
-                            show.e_title), }]
+                            show.title), }]
             else:
                 template_set += [{
                     'name': "%s %s" % (priv, state[1].lower()),

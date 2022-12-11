@@ -1,7 +1,10 @@
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.forms import HiddenInput
+from django.forms import (
+    HiddenInput,
+    IntegerField,
+)
 from django.shortcuts import (
     get_object_or_404,
     render,
@@ -22,6 +25,9 @@ from gbe_forms_text import (
     classbid_labels,
     class_schedule_options,
 )
+from gbe.scheduling.views.functions import get_start_time
+from scheduler.data_transfer import Person
+from scheduler.idd import create_occurrence
 
 
 class ClassWizardView(EventWizardView):
@@ -72,10 +78,11 @@ class ClassWizardView(EventWizardView):
         context = {}
         if working_class is not None:
             context['third_title'] = "Book Class:  %s" % (
-                working_class.e_title)
+                working_class.b_title)
             context['third_form'] = ClassBookingForm(instance=working_class)
-            duration = working_class.duration.total_seconds() / timedelta(
-                hours=1).total_seconds()
+            duration = timedelta(
+                minutes=working_class.length_minutes
+                ).total_seconds() / timedelta(hours=1).total_seconds()
             context['scheduling_info'] = get_scheduling_info(working_class)
         else:
             context['third_form'] = ClassBookingForm()
@@ -86,8 +93,42 @@ class ClassWizardView(EventWizardView):
             initial={'duration': duration, })
         context['scheduling_form'].fields[
             'max_volunteer'].widget = HiddenInput()
+        if working_class is not None:
+            context['scheduling_form'].fields['id'] = IntegerField(
+                initial=working_class.pk,
+                widget=HiddenInput)
         context['worker_formset'] = self.make_formset(working_class)
         return context
+
+    def book_event(self,
+                   bid,
+                   scheduling_form,
+                   people_formset):
+        start_time = get_start_time(scheduling_form.cleaned_data)
+        labels = [self.conference.conference_slug]
+        labels += ["Conference"]
+        people = []
+        for assignment in people_formset:
+            if assignment.is_valid() and assignment.cleaned_data['worker']:
+                people += [Person(
+                    user=assignment.cleaned_data[
+                        'worker'].workeritem.as_subtype.user_object,
+                    public_id=assignment.cleaned_data['worker'].workeritem.pk,
+                    role=assignment.cleaned_data['role'])]
+        response = create_occurrence(
+            bid.b_title,
+            timedelta(minutes=scheduling_form.cleaned_data['duration']*60),
+            bid.type,
+            start_time,
+            scheduling_form.cleaned_data['max_volunteer'],
+            people=people,
+            locations=[scheduling_form.cleaned_data['location']],
+            description=bid.b_description,
+            labels=labels,
+            approval=scheduling_form.cleaned_data['approval'],
+            connected_class=bid.__class__.__name__,
+            connected_id=bid.pk)
+        return response
 
     @never_cache
     @method_decorator(login_required)
@@ -97,7 +138,7 @@ class ClassWizardView(EventWizardView):
         if 'accepted_class' in request.GET:
             working_class = get_object_or_404(
                     Class,
-                    eventitem_id=request.GET['accepted_class'])
+                    pk=request.GET['accepted_class'])
             context.update(self.setup_third_form(working_class))
         context['second_form'] = PickClassForm(
             initial={'conference':  self.conference,
@@ -121,14 +162,11 @@ class ClassWizardView(EventWizardView):
                     'accepted_class']
             context.update(self.setup_third_form(working_class))
 
-        elif 'set_class' in list(request.POST.keys(
-                )) and 'eventitem_id' in list(request.POST.keys()):
-            if request.POST['eventitem_id']:
-                working_class = get_object_or_404(
-                    Class,
-                    eventitem_id=request.POST['eventitem_id'])
+        elif 'set_class' in list(request.POST.keys()):
+            if 'id' in list(request.POST.keys()) and request.POST['id']:
+                working_class = get_object_or_404(Class, id=request.POST['id'])
                 context['third_title'] = "Book Class:  %s" % (
-                    working_class.e_title)
+                    working_class.b_title)
                 context['third_form'] = ClassBookingForm(
                     request.POST,
                     instance=working_class)
@@ -172,19 +210,18 @@ class ClassWizardView(EventWizardView):
                             request,
                             user_message[0].description)
                         return render(request, self.template, context)
-                    working_class.e_conference = self.conference
                     working_class.b_conference = self.conference
 
                 working_class.save()
                 response = self.book_event(
-                    context['scheduling_form'],
-                    context['worker_formset'],
                     working_class,
-                    context['third_form'].cleaned_data['slug'])
+                    context['scheduling_form'],
+                    context['worker_formset'])
                 success = self.finish_booking(
                     request,
                     response,
                     context['scheduling_form'].cleaned_data['day'].pk)
                 if success:
                     return success
+
         return render(request, self.template, context)

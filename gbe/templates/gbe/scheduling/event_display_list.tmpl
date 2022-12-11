@@ -15,11 +15,44 @@
    {% include "conference_list.tmpl" %}<br><br>
 </div></div>
 <div class="row"><div class="col-12">
+   {% for bid in unscheduled %}
+   {% if forloop.first %}
+   <h2>Coming soon...</h2>
+   {% endif %}
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">
+      {{ bid.b_title }}
+    </h2>
+  </div>
+  <div class="card-body">
+    <div class="card card-body rounded gbe-bg-light">
+  <div class="row">
+  <div class="col-xs-12 col-sm-2">
+    <label class="sched_detail">Presented by:</label></div>
+    <div class="col-xs-12 col-sm-10">
+    {{bid.teacher.name}}
+  </div></div>
+  {% if bid.fee %}
+  <div class="row">
+  <div class="col-xs-12 col-sm-2">
+    <label class="sched_detail">Materials Fee:</label></div>
+  <div class="col-xs-12 col-sm-10">
+          ${{bid.fee}}</div></div>
+  {% endif %}
+    </div>
+    <br>
+    {{bid.b_description | safe}}
+  </div>
+</div>
+   {% endfor %} 
+</div></div>
+<div class="row"><div class="col-12">
    {% for event in events %}
 <div class="card round gbe-panel-list mx-2 my-4">
   <div class="card-header gbe-bg-dark">
     <h2 class="card-title">
-      <a href='{{event.detail}}' class="gbe-panel-link">{{ event.eventitem.e_title }}</a>
+      <a href='{{event.detail}}' class="gbe-panel-link">{{ event.occurrence.title }}</a>
       <div class="pull-right">
 	<a href='{{event.detail}}' class="detail_link" title="More information">
           <i class="fa fa-info-circle fa-lg" aria-hidden="true"></i>
@@ -38,31 +71,27 @@
 	  {% endfor %}
 	</div></div>
 	{% endif %}
-	{% if event.scheduled_events|length > 0%}
 	<div class="row">
 	<div class="col-xs-12 col-sm-2">
 	  <label class="sched_detail">Time/Place:</label></div>
  	  <div class="col-xs-12 col-sm-10">
-	  {% for sched_event in event.scheduled_events %}
-      {% include "gbe/scheduling/favorite_star.tmpl"%}
-      {% include "gbe/scheduling/volunteer_link_display.tmpl" with icon_class="volunteer-icon" %}
-      {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=sched_event.evaluate %}
-      {{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT") }} -
-	    {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT") }} - {{ sched_event.occurrence.location }}
+      {% include "gbe/scheduling/favorite_star.tmpl" with sched_event=event%}
+      {% include "gbe/scheduling/volunteer_link_display.tmpl" with icon_class="volunteer-icon" sched_event=event %}
+      {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=event.evaluate %}
+      {{ event.occurrence.start_time|date:_("DATETIME_FORMAT") }} -
+	    {{ event.occurrence.end_time|date:_("TIME_FORMAT") }} - {{ event.occurrence.location }}
 	  <br/>
-	  {% endfor %}
           </div></div>
-	{% endif %}
-	{% if event.eventitem.fee %}
+	{% if event.bid and event.bid.fee %}
 	<div class="row">
 	<div class="col-xs-12 col-sm-2">
 	  <label class="sched_detail">Materials Fee:</label></div>
  	<div class="col-xs-12 col-sm-10">
-          ${{event.eventitem.fee}}</div></div>
+          ${{event.bid.fee}}</div></div>
 	{% endif %}
     </div>
     <br>
-    {{event.eventitem.e_description | safe}}
+    {{event.occurrence.description | safe}}
   </div>
 </div>
    {% empty %}

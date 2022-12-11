@@ -215,12 +215,6 @@ video_options = (('0', "I don't have any video of myself performing"),
                  ('1', "This is video of me but not the act I'm submitting"),
                  ('2', "This is video of the act I would like to perform"))
 
-event_options = (('Special', "Special Event"),
-                 ('Volunteer', "Volunteer Opportunity"),
-                 ('Master', "Master Class"),
-                 ('Drop-In', "Drop-In Class"),
-                 ('Rehearsal Slot', 'Rehearsal Slot'))
-
 new_event_options = (('Special', "Special Event"),
                      ('Master', "Master Class"),
                      ('Drop-In', "Drop-In Class"),
@@ -230,7 +224,7 @@ class_options = (('Lecture', "Lecture"),
                  ('Movement', "Movement"),
                  ('Panel', "Panel"),
                  ('Workshop', "Workshop"))
-
+class_styles = ['Lecture', 'Movement', 'Panel', 'Workshop']
 length_options = ((30, "30"),
                   (60, "60"),
                   (90, "90"),
@@ -345,15 +339,6 @@ time_text = (('Start Time', 'Start Time'),
              ('Hard Time', 'Hard Time'),
              ('Soft Time', 'Soft Time'))
 
-event_labels = {'type': 'Type',
-                'fee': 'Materials Fee',
-                'parent_event': 'Part of',
-                'volunteer_category': 'Opportunity Category'
-                }
-
-overlap_location_text = ' (alt)'
-
-
 calendar_type = {0: 'General',
                  1: 'Conference',
                  2: 'Volunteer'}
@@ -365,7 +350,10 @@ calendar_for_event = {
     'Drop-In': "General",
     'Staff Area': None,
     'Rehearsal Slot': None,
-    'Class': 'Conference',
+    'Workshop': 'Conference',
+    'Lecture': 'Conference',
+    'Panel': 'Conference',
+    'Movement': 'Conference',
     'Show': 'General'
 }
 

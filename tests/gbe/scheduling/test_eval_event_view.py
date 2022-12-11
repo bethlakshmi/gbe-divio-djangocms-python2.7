@@ -18,7 +18,6 @@ from scheduler.models import (
     EventEvalGrade,
     EventEvalComment,
     EventEvalBoolean,
-    EventItem,
 )
 from tests.factories.gbe_factories import (
     ProfileFactory,
@@ -109,7 +108,7 @@ class TestEvalEventView(TestCase):
                                       help_text="unhelpful")
         login_as(self.profile, self)
         response = self.client.get(self.url, follow=True)
-        self.assertContains(response, self.context.bid.e_title)
+        self.assertContains(response, self.context.bid.b_title)
         self.assertContains(response, self.context.teacher)
         self.assertContains(response, q1.question)
         self.assertContains(response, q2.question)
@@ -264,7 +263,7 @@ class TestEvalEventView(TestCase):
         redirect = reverse(
             "detail_view",
             urlconf="gbe.scheduling.urls",
-            args=[self.context.bid.eventitem_id])
+            args=[self.context.sched_event.pk])
         response = self.client.post(
             "%s?next=%s" % (self.url, redirect),
             data={'question%d' % self.q0.pk: 2, },

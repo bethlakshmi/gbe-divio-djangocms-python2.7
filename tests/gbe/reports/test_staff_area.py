@@ -4,10 +4,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.factories.gbe_factories import (
-    ProfileFactory,
-    ShowFactory,
-)
+from tests.factories.gbe_factories import ProfileFactory
 from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,

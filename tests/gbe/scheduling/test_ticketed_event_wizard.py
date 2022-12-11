@@ -18,10 +18,6 @@ from tests.factories.ticketing_factories import (
     BrownPaperSettingsFactory,
 )
 from scheduler.models import Event
-from gbe.models import (
-    GenericEvent,
-    Show,
-)
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     grant_privilege,
@@ -62,10 +58,10 @@ class TestTicketedEventWizard(TestScheduling):
     def edit_class(self):
         data = {
             'type': 'Master',
-            'e_title': "Test Event Wizard",
-            'e_description': 'Description',
+            'title': "Test Event Wizard",
+            'description': 'Description',
             'slug': "MasterSlug",
-            'e_conference': self.current_conference.pk,
+            'conference': self.current_conference.pk,
             'max_volunteer': 1,
             'day': self.day.pk,
             'time': '11:00:00',
@@ -178,10 +174,8 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_class = GenericEvent.objects.get(e_title=data['e_title'])
-        self.assertEqual(new_class.type, "Master")
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_class.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
+        self.assertEqual(occurrence.event_style, "Master")
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -196,13 +190,13 @@ class TestTicketedEventWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
+            '<td>%s</td>' % data['title'])
         self.assertEqual(occurrence.slug, "MasterSlug")
 
     def test_create_master_w_staffing(self):
@@ -214,9 +208,7 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_class = GenericEvent.objects.get(e_title=data['e_title'])
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_class.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -231,13 +223,13 @@ class TestTicketedEventWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
+            '<td>%s</td>' % data['title'])
 
     def test_create_dropin_w_staffing(self):
         self.url = reverse(
@@ -257,10 +249,8 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_class = GenericEvent.objects.get(e_title=data['e_title'])
-        self.assertEqual(new_class.type, "Drop-In")
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_class.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
+        self.assertEqual(occurrence.event_style, "Drop-In")
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -275,13 +265,13 @@ class TestTicketedEventWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertContains(
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
-            '<td>%s</td>' % data['e_title'])
+            '<td>%s</td>' % data['title'])
 
     def test_create_show_w_staffing(self):
         self.url = reverse(
@@ -302,9 +292,7 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_show = Show.objects.get(e_title=data['e_title'])
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_show.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
         self.assertRedirects(
             response,
             "%s?volunteer_open=True&rehearsal_open=True" % reverse(
@@ -317,7 +305,7 @@ class TestTicketedEventWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
         self.assertEqual(
@@ -341,10 +329,8 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_event = GenericEvent.objects.get(e_title=data['e_title'])
-        self.assertEqual(new_event.type, "Special")
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_event.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
+        self.assertEqual(occurrence.event_style, "Special")
         self.assertRedirects(
             response,
             "%s?volunteer_open=True&rehearsal_open=True" % reverse(
@@ -357,7 +343,7 @@ class TestTicketedEventWizard(TestScheduling):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
-                data['e_title'],
+                data['title'],
                 self.day.day.strftime(GBE_DATE_FORMAT))
             )
 
@@ -387,7 +373,7 @@ class TestTicketedEventWizard(TestScheduling):
     def test_auth_user_bad_generic_booking_assign(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()
-        data['e_title'] = ""
+        data['title'] = ""
         response = self.client.post(
             self.url,
             data=data,
@@ -417,10 +403,8 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_class = GenericEvent.objects.get(e_title=data['e_title'])
-        self.assertEqual(new_class.type, "Master")
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_class.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
+        self.assertEqual(occurrence.event_style, "Master")
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -459,10 +443,8 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_class = GenericEvent.objects.get(e_title=data['e_title'])
-        self.assertEqual(new_class.type, "Master")
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_class.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
+        self.assertEqual(occurrence.event_style, "Master")
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -511,10 +493,8 @@ class TestTicketedEventWizard(TestScheduling):
             self.url,
             data=data,
             follow=True)
-        new_class = GenericEvent.objects.get(e_title=data['e_title'])
-        self.assertEqual(new_class.type, "Master")
-        occurrence = Event.objects.get(
-            eventitem__eventitem_id=new_class.eventitem_id)
+        occurrence = Event.objects.get(title=data['title'])
+        self.assertEqual(occurrence.event_style, "Master")
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (

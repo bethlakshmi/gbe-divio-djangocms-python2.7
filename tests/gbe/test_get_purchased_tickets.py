@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test import Client
-from gbe.ticketing_idd_interface import get_purchased_tickets
 from tests.factories.gbe_factories import ProfileFactory
 from tests.factories.ticketing_factories import TransactionFactory
 import mock
@@ -13,6 +12,7 @@ class TestGetPurchasedTickets(TestCase):
     def test_no_purchases(self):
         '''should get no tickets, this person never purchased any
         '''
+        from gbe.ticketing_idd_interface import get_purchased_tickets
         elcheapo = ProfileFactory().user_object
         ticket_set = get_purchased_tickets(elcheapo)
 
@@ -21,6 +21,7 @@ class TestGetPurchasedTickets(TestCase):
     def test_buys_each_year(self):
         '''should get current and upcoming conference tickets, including fees
         '''
+        from gbe.ticketing_idd_interface import get_purchased_tickets
         purchase = TransactionFactory()
         purchase.ticket_item.title = "ZZZZ Last Title"
         purchase.ticket_item.save()

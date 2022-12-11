@@ -1,44 +1,39 @@
 from django.forms import (
     BooleanField,
+    ChoiceField,
     IntegerField,
     HiddenInput,
+    ModelForm,
     TextInput,
 )
-from gbe.models import Class
 from gbe_forms_text import (
     classbid_help_texts,
     classbid_labels,
 )
-from gbe.scheduling.forms import EventBookingForm
+from gbe.models import Class
+from gbetext import class_options
 
 
-class ClassBookingForm(EventBookingForm):
+class ClassBookingForm(ModelForm):
+    use_required_attribute = False
+    required_css_class = 'required'
+    error_css_class = 'error'
     accepted = IntegerField(
         initial=3,
         widget=HiddenInput)
-    eventitem_id = IntegerField(
-        widget=HiddenInput,
-        required=False)
     submitted = BooleanField(widget=HiddenInput, initial=True)
-
-    def save(self, commit=True):
-        this_class = super(ClassBookingForm, self).save(commit=False)
-        this_class.b_title = this_class.e_title
-        if commit:
-            this_class.save()
-        return this_class
+    type = ChoiceField(choices=class_options)
 
     class Meta:
         model = Class
         fields = ['type',
-                  'e_title',
-                  'slug',
-                  'e_description',
+                  'b_title',
+                  'b_description',
                   'maximum_enrollment',
                   'fee',
                   'accepted',
                   'submitted',
-                  'eventitem_id',
+                  'id',
                   ]
         help_texts = classbid_help_texts
         labels = classbid_labels

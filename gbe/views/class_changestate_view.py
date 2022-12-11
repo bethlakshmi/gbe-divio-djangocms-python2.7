@@ -2,6 +2,8 @@ from django.urls import reverse
 from gbe_logging import log_func
 from gbe.views import BidChangeStateView
 from gbe.models import Class
+from scheduler.idd import delete_occurrences
+from gbe.scheduling.views.functions import show_general_status
 
 
 class ClassChangeStateView(BidChangeStateView):
@@ -13,18 +15,16 @@ class ClassChangeStateView(BidChangeStateView):
     def bid_state_change(self, request):
         # if the class has been rejected/no decision, clear any schedule items.
         if request.POST['accepted'] not in ('2', '3'):
-            self.object.scheduler_events.all().delete()
+            response = delete_occurrences(self.object_type.__name__,
+                                          self.object.pk)
+            show_general_status(request, response, self.__class__.__name__)
+
         else:
-            # We have to keep b_ and e_ data consistent somehow
-            # this seems like a good point, as bid editing and event
-            # editing are quite different
-            self.object.e_title = self.object.b_title
-            self.object.e_description = self.object.b_description
             if int(request.POST['accepted']) == 3 and (
                     'extra_button' in request.POST.keys()):
                 self.next_page = "%s?accepted_class=%d" % (
                     reverse("create_class_wizard",
                             urlconf='gbe.scheduling.urls',
                             args=[self.object.b_conference.conference_slug]),
-                    self.object.eventitem_id)
+                    self.object.pk)
         return super(ClassChangeStateView, self).bid_state_change(request)

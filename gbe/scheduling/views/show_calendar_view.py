@@ -19,7 +19,6 @@ from datetime import (
 import pytz
 from gbe.models import (
     ConferenceDay,
-    Event,
     Performer,
 )
 from gbe.functions import (
@@ -121,28 +120,26 @@ class ShowCalendarView(View):
                                  personal_schedule=None,
                                  eval_occurrences=None):
         display_list = []
-        events = Event.objects.filter(e_conference=self.conference)
         hour_block_size = {}
         for occurrence in occurrences:
             role = None
             for booking in personal_schedule:
                 if booking.event == occurrence:
                     role = booking.role
-            event = events.filter(pk=occurrence.eventitem.event.pk).first()
             hour = occurrence.start_time.strftime("%-I:00 %p")
             occurrence_detail = {
                 'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
                 'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
-                'title': event.e_title,
+                'title': occurrence.title,
                 'location': occurrence.location,
                 'hour': hour,
                 'approval_needed': occurrence.approval_needed,
                 'detail_link': reverse('detail_view',
                                        urlconf='gbe.scheduling.urls',
-                                       args=[occurrence.eventitem.pk]),
+                                       args=[occurrence.pk]),
                 'teachers': [],
             }
-            if self.can_edit_show and occurrence.event_type_name == "Show":
+            if self.can_edit_show and occurrence.event_style == "Show":
                 occurrence_detail['show_dashboard'] = reverse(
                     'show_dashboard',
                     urlconf='gbe.scheduling.urls',

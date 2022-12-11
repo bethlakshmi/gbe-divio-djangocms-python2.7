@@ -7,11 +7,9 @@ from django.forms import (
     RadioSelect,
 )
 from gbe.models import (
+    Conference,
     ConferenceDay,
-    Class,
-    GenericEvent,
     Room,
-    Show,
     StaffArea,
 )
 from settings import (
@@ -27,6 +25,7 @@ from gbe_forms_text import (
 )
 from scheduler.idd import get_occurrences
 from django.db.models.fields import BLANK_CHOICE_DASH
+from gbetext import class_styles
 
 
 class TargetDay(ModelChoiceField):
@@ -84,19 +83,16 @@ class CopyEventPickModeForm(CopyEventPickDayForm):
         if 'event_type' in kwargs:
             event_type = kwargs.pop('event_type')
         super(CopyEventPickModeForm, self).__init__(*args, **kwargs)
-        if event_type == "Show":
-            events = Show.objects.exclude(
-                e_conference__status="completed")
-        elif event_type == "Class":
-            events = Class.objects.exclude(
-                e_conference__status="completed")
+        event_styles = []
+        if event_type in class_styles:
+            event_styles += class_styles
         elif event_type != "Staff":
-            events = GenericEvent.objects.exclude(
-                e_conference__status="completed").filter(type=event_type)
-        if events:
+            event_styles = [event_type]
+
+        if len(event_styles) > 0:
             response = get_occurrences(
-                foreign_event_ids=events.values_list('eventitem_id',
-                                                     flat=True))
+                event_styles=event_styles,
+                label_sets=[Conference.all_slugs(current=True)])
             if response.occurrences:
                 for occurrence in response.occurrences:
                     choices += [(occurrence.pk, "%s - %s" % (
@@ -143,13 +139,9 @@ class CopyEventSoloPickModeForm(CopyEventPickModeForm):
         choices = []
         events = None
         super(CopyEventSoloPickModeForm, self).__init__(*args, **kwargs)
-        shows = Show.objects.exclude(e_conference__status="completed")
-        specials = GenericEvent.objects.exclude(
-                e_conference__status="completed").filter(type="Special")
         response = get_occurrences(
-            foreign_event_ids=list(
-                shows.values_list('eventitem_id', flat=True)) +
-            list(specials.values_list('eventitem_id', flat=True)))
+            event_styles=['Show', 'Special'],
+            label_sets=[Conference.all_slugs(current=True)])
         if response.occurrences:
             for occurrence in response.occurrences:
                 choices += [(occurrence.pk, "%s - %s" % (

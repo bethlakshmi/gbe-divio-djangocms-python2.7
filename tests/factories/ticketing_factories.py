@@ -8,10 +8,10 @@ import ticketing.models as tickets
 import gbe.models as conf
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    ClassFactory,
     UserFactory
 )
 from django.utils import timezone
+from tests.factories.scheduler_factories import SchedEventFactory
 
 
 class TicketingEventsFactory(DjangoModelFactory):
@@ -140,7 +140,7 @@ class RoleExclusionFactory(DjangoModelFactory):
 
     condition = SubFactory(RoleEligibilityConditionFactory)
     role = "Teacher"
-    event = SubFactory(ClassFactory)
+    event = SubFactory(SchedEventFactory)
 
 
 class NoEventRoleExclusionFactory(DjangoModelFactory):

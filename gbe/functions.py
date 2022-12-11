@@ -2,14 +2,12 @@ from gbe.models import (
     Class,
     Conference,
     ConferenceDay,
-    Event,
-    GenericEvent,
     Profile,
-    Show,
     StaffArea,
     UserMessage,
     Volunteer,
 )
+from scheduler.idd import get_occurrences
 from django.http import Http404
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied
@@ -149,8 +147,8 @@ def conference_list():
     return Conference.objects.all()
 
 
-def conference_slugs():
-    return Conference.all_slugs()
+def conference_slugs(current=False):
+    return Conference.all_slugs(current)
 
 
 def make_warning_msg(warning, separator="<br>-", use_user=True):
@@ -170,16 +168,17 @@ def make_warning_msg(warning, separator="<br>-", use_user=True):
 
 
 def get_ticketable_gbe_events(conference_slug=None):
-    shows = Show.objects.all()
-    genericevents = GenericEvent.objects.filter(
-        type__in=('Drop-In', 'Master', 'Special'))
-    event_set = Event.objects.filter(
-        Q(show__in=shows) |
-        Q(genericevent__in=genericevents))
+    labels = []
     if conference_slug:
-        return event_set.filter(e_conference__conference_slug=conference_slug)
+        labels = [conference_slug]
     else:
-        return event_set.exclude(e_conference__status="completed")
+        labels = Conference.all_slugs(current=True)
+
+    event_set = get_occurrences(
+        event_styles=['Drop-In', 'Master', 'Special', 'Show'],
+        label_sets=[labels]).occurrences
+
+    return event_set
 
 
 def check_forum_spam(email):

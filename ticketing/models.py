@@ -80,8 +80,7 @@ class TicketingEvents(models.Model):
                                                verbose_name='Act Fee')
     vendor_submission_event = models.BooleanField(default=False,
                                                   verbose_name='Vendor Fee')
-    linked_events = models.ManyToManyField('gbe.Event',
-                                           related_name='ticketing_item',
+    linked_events = models.ManyToManyField('scheduler.Event',
                                            blank=True)
     include_conference = models.BooleanField(default=False)
     include_most = models.BooleanField(default=False)
@@ -368,7 +367,7 @@ class RoleExclusion(Exclusion):
     '''
     role = models.CharField(max_length=25,
                             choices=role_options)
-    event = models.ForeignKey('gbe.Event',
+    event = models.ForeignKey('scheduler.Event',
                               on_delete=models.CASCADE,
                               blank=True,
                               null=True)
@@ -391,6 +390,6 @@ class RoleExclusion(Exclusion):
                 self.role == booking.role for booking in user_schedule)
         else:
             is_excluded = any((self.role == b.role and (
-                self.event.eventitem_id == b.event.foreign_event_id
+                self.event == b.event
                 )) for b in user_schedule)
         return is_excluded

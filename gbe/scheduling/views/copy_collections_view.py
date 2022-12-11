@@ -18,6 +18,7 @@ from django.forms.utils import ErrorList
 from gbe_forms_text import (
     copy_errors,
 )
+from gbetext import calendar_for_event
 
 
 class CopyCollectionsView(View):
@@ -127,8 +128,9 @@ class CopyCollectionsView(View):
             for sub_event_id in form.cleaned_data["copied_event"]:
                 response = get_occurrence(sub_event_id)
                 labels = [conference.conference_slug]
-                if response.occurrence.as_subtype.calendar_type:
-                    labels += [response.occurrence.as_subtype.calendar_type]
+                if calendar_for_event[response.occurrence.event_style]:
+                    labels += [calendar_for_event[
+                        response.occurrence.event_style]]
 
                 response = self.copy_event(
                     response.occurrence,

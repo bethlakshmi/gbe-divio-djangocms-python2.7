@@ -5,7 +5,6 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     ConferenceFactory,
     ConferenceDayFactory,
-    GenericEventFactory,
     ProfileFactory,
     RoomFactory,
 )
@@ -93,7 +92,7 @@ class TestCopyOccurrence(TestGBE):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Copying - %s: %s" % (
-            self.context.event.e_title,
+            self.context.sched_event.title,
             self.context.sched_event.starttime.strftime(
                 self.copy_date_format)))
 
@@ -111,7 +110,7 @@ class TestCopyOccurrence(TestGBE):
             self.context.conf_day.day.strftime(GBE_DATE_FORMAT))
         self.assertContains(response, copy_mode_solo_choices[0][1])
         self.assertContains(response, staff.area.title)
-        self.assertContains(response, self.context.event.e_title)
+        self.assertContains(response, self.context.sched_event.title)
 
     def test_authorized_user_get_set_staff_area(self):
         staff = StaffAreaContext()
@@ -155,7 +154,7 @@ class TestCopyOccurrence(TestGBE):
         response = self.client.get(self.url)
         self.assert_good_mode_form(
             response,
-            target_event.event.e_title,
+            target_event.sched_event.title,
             target_event.sched_event.start_time)
         assert_option_state(
             response,
@@ -163,10 +162,8 @@ class TestCopyOccurrence(TestGBE):
             target_event.room.name)
 
     def test_authorized_user_get_w_child_events_special(self):
-        original_event = GenericEventFactory(type='Special')
-        target_event = GenericEventFactory(type='Special')
-        target_context = VolunteerContext(event=target_event)
-        original_context = VolunteerContext(event=original_event)
+        target_context = VolunteerContext(event_style='Special')
+        original_context = VolunteerContext(event_style='Special')
         original_context.add_opportunity()
         url = reverse(
             self.view_name,
@@ -176,13 +173,13 @@ class TestCopyOccurrence(TestGBE):
         response = self.client.get(url)
         self.assert_good_mode_form(
             response,
-            target_context.event.e_title,
+            target_context.sched_event.title,
             target_context.sched_event.start_time)
         assert_option_state(
             response,
             target_context.room.pk,
             target_context.room.name)
-        self.assertContains(response, target_event.e_title)
+        self.assertContains(response, target_context.sched_event.title)
 
     def test_bad_occurrence(self):
         url = reverse(
@@ -204,12 +201,16 @@ class TestCopyOccurrence(TestGBE):
         response = self.client.get(url)
         self.assert_good_mode_form(
             response,
-            target_context.show.e_title,
+            target_context.sched_event.title,
             target_context.sched_event.start_time)
 
     def test_authorized_user_get_class(self):
         copy_class = ClassFactory()
-        vol_context = VolunteerContext(event=copy_class)
+        vol_context = VolunteerContext(conference=copy_class.b_conference,
+                                       event_style=copy_class.type)
+        vol_context.sched_event.connected_class = copy_class.__class__.__name__
+        vol_context.sched_event.connected_id = copy_class.pk
+        vol_context.sched_event.save()
         target_context = ClassContext()
         url = reverse(
             self.view_name,
@@ -245,7 +246,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                self.context.opportunity.e_title,
+                self.context.opp_event.title,
                 datetime.combine(
                     another_day.day,
                     self.context.opp_event.starttime.time()).strftime(
@@ -277,7 +278,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                self.context.opportunity.e_title,
+                self.context.opp_event.title,
                 datetime.combine(
                     another_day.day,
                     self.context.opp_event.starttime.time()).strftime(
@@ -336,7 +337,7 @@ class TestCopyOccurrence(TestGBE):
             str([max_pk]),)
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, self.context.room.name, 3)
-        self.assertContains(response, self.context.event.e_title, 3)
+        self.assertContains(response, self.context.sched_event.title, 3)
 
     def test_copy_single_no_delta(self):
         data, another_day, other_room = self.get_solo_data()
@@ -469,7 +470,7 @@ class TestCopyOccurrence(TestGBE):
             self.context.room.pk)
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
-            show_context.opportunity.e_title,
+            show_context.opp_event.title,
             (show_context.opp_event.start_time + delta).strftime(
                         self.copy_date_format)))
 
@@ -555,7 +556,7 @@ class TestCopyOccurrence(TestGBE):
                 target_context.sched_event.pk))
         self.assertContains(response, "Choose Sub-Events to be copied")
         self.assertContains(response, "%s - %s" % (
-            show_context.opportunity.e_title,
+            show_context.opp_event.title,
             (show_context.opp_event.start_time + delta).strftime(
                         self.copy_date_format)))
 
@@ -608,7 +609,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                show_context.opportunity.e_title,
+                show_context.opp_event.title,
                 datetime.combine(
                     target_context.days[0].day,
                     show_context.opp_event.starttime.time()).strftime(
@@ -668,7 +669,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                show_context.opportunity.e_title,
+                show_context.opp_event.title,
                 datetime.combine(
                     another_day.day,
                     show_context.opp_event.starttime.time()).strftime(
@@ -678,7 +679,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                show_context.event.e_title,
+                show_context.sched_event.title,
                 datetime.combine(
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
@@ -688,7 +689,7 @@ class TestCopyOccurrence(TestGBE):
     def test_copy_rehearsal(self):
         another_day = ConferenceDayFactory()
         show_context = ShowContext()
-        rehearsal, slot = show_context.make_rehearsal()
+        slot = show_context.make_rehearsal()
         url = reverse(
             self.view_name,
             args=[show_context.sched_event.pk],
@@ -719,7 +720,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                rehearsal.e_title,
+                slot.title,
                 datetime.combine(
                     another_day.day,
                     slot.starttime.time()).strftime(
@@ -729,7 +730,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                show_context.show.e_title,
+                show_context.sched_event.title,
                 datetime.combine(
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
@@ -739,7 +740,7 @@ class TestCopyOccurrence(TestGBE):
     def test_copy_child_not_like_parent(self):
         another_day = ConferenceDayFactory()
         show_context = VolunteerContext()
-        opportunity, opp_sched = show_context.add_opportunity(
+        opp_sched = show_context.add_opportunity(
             start_time=show_context.sched_event.starttime + timedelta(1.3))
         opp_sched.approval_needed = True
         opp_sched.save()
@@ -773,7 +774,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                opportunity.e_title,
+                opp_sched.title,
                 datetime.combine(
                     another_day.day + timedelta(1),
                     opp_sched.starttime.time()).strftime(
@@ -814,7 +815,7 @@ class TestCopyOccurrence(TestGBE):
             'success',
             'Success',
             'Occurrence has been updated.<br>%s, Start Time: %s' % (
-                show_context.event.e_title,
+                show_context.sched_event.title,
                 datetime.combine(
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(

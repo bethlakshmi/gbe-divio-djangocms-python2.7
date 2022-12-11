@@ -10,6 +10,6 @@ def get_scheduled_events_by_role(conference, roles):
     given conference
     '''
     commits = ResourceAllocation.objects.filter(
-        event__eventitem__event__e_conference=conference)
+        event__eventlabel__text=conference.conference_slug)
     workers = Worker.objects.filter(role__in=roles)
     return workers, commits

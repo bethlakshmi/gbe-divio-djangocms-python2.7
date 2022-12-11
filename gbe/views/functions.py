@@ -12,7 +12,6 @@ from gbetext import (
     states_options,
 )
 from scheduler.idd import get_occurrences
-from gbe.models import Show
 from gbe.views.act_display_functions import get_act_casting
 
 
@@ -47,14 +46,10 @@ def get_participant_form(profile, prefix='Contact Info'):
 # base form to play well with the inheritance in bid review
 def make_show_casting_form(conference, base_form, start, casting):
     choices = []
-    if Show.objects.filter(e_conference=conference).exists():
-        response = get_occurrences(
-            foreign_event_ids=Show.objects.filter(
-                e_conference=conference).values_list('eventitem_id',
-                                                     flat=True),
-            labels=[conference.conference_slug])
-        for occurrence in response.occurrences:
-            choices += [(occurrence.eventitem.pk, str(occurrence))]
+    response = get_occurrences(event_styles=['Show'],
+                               labels=[conference.conference_slug])
+    for occurrence in response.occurrences:
+        choices += [(occurrence.pk, str(occurrence))]
     base_form.fields['show'] = ChoiceField(
         choices=choices,
         label='Pick a Show',

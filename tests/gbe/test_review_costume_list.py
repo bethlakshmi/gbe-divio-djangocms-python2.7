@@ -9,7 +9,6 @@ from tests.factories.gbe_factories import (
     UserFactory,
     )
 from tests.functions.gbe_functions import (
-    current_conference,
     grant_privilege,
     login_as,
 )
@@ -25,7 +24,8 @@ class TestReviewCostumeList(TestCase):
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Costume Reviewers')
-        cls.conference = current_conference()
+        cls.conference = ConferenceFactory(status='upcoming',
+                                           accepting_bids=True)
         cls.costumes = CostumeFactory.create_batch(
             4,
             b_conference=cls.conference,

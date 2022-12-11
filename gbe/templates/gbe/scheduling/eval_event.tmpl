@@ -3,13 +3,13 @@
 {% load thumbnail %}
 
 {% block title %}
-  Evaluate: {{ event.e_title }}
+  Evaluate: {{ occurrence.title }}
 {% endblock %}
 
 {% block content %} 
 <div class="col-12">
-  <H1 class="gbe-title">{{event.e_title}}</H1>
-  {{event.e_description |safe}}<br><br>
+  <H1 class="gbe-title">{{occurrence.title}}</H1>
+  {{occurrence.description |safe}}<br><br>
   <div class="sched_times gbe-bg-dark container">
   <div class="col-12 sched-sub-box">
     <div class="col-11 ">

@@ -11,7 +11,9 @@ from gbe.functions import validate_profile
 
 
 class TestLimitedPerformerAutoComplete(TestCase):
-    url = reverse('limited-performer-autocomplete', urlconf='gbe.urls')
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse('limited-performer-autocomplete', urlconf='gbe.urls')
 
     def setUp(self):
         self.client = Client()

@@ -71,15 +71,6 @@ class ProfileFactory(DjangoModelFactory):
     display_name = Sequence(lambda n: "%s_%s" % (str(n), str(n)))
 
 
-class ShowFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.Show
-    e_title = Sequence(lambda n: 'Test Show%d' % n)
-    e_description = 'Test Description'
-    duration = timedelta(hours=1)
-    e_conference = SubFactory(ConferenceFactory)
-
-
 class PersonaFactory(DjangoModelFactory):
     class Meta:
         model = conf.Persona
@@ -138,42 +129,13 @@ class RoomFactory(DjangoModelFactory):
     overbook_size = 50
 
 
-class EventFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.Event
-
-    e_title = Sequence(lambda x: "Test Event #%d" % x)
-    e_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
-    blurb = LazyAttribute(
-        lambda a: "Blurb for %s" % a.e_title)
-    duration = timedelta(hours=2)
-    e_conference = SubFactory(ConferenceFactory)
-
-
-class GenericEventFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.GenericEvent
-
-    e_title = Sequence(lambda n: 'Test Generic Event %d' % n)
-    e_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
-    duration = timedelta(hours=1)
-    type = 'Special'
-    e_conference = SubFactory(ConferenceFactory)
-
-
 class ClassFactory(DjangoModelFactory):
     class Meta:
         model = conf.Class
-    e_title = Sequence(lambda x: "Test Class #%d" % x)
-    e_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
     b_title = Sequence(lambda x: "Test Class #%d" % x)
     b_description = LazyAttribute(
-        lambda a: "Description for %s" % a.e_title)
+        lambda a: "Description for %s" % a.b_title)
     submitted = False
-    duration = timedelta(hours=1)
     teacher = SubFactory(PersonaFactory)
     minimum_enrollment = 1
     maximum_enrollment = 20
@@ -182,17 +144,16 @@ class ClassFactory(DjangoModelFactory):
     fee = 0
     length_minutes = 60
     history = LazyAttribute(
-        lambda a: "History for test Class %s" % a.e_title)
+        lambda a: "History for test Class %s" % a.b_title)
     run_before = LazyAttribute(
         lambda a:
-        "run_before for test Class %s" % a.e_title)
+        "run_before for test Class %s" % a.b_title)
     schedule_constraints = "[]"
     space_needs = ''
     physical_restrictions = LazyAttribute(
-        lambda a: "physical restrictions for test Class %s" % a.e_title)
+        lambda a: "physical restrictions for test Class %s" % a.b_title)
     multiple_run = 'No'
     b_conference = SubFactory(ConferenceFactory)
-    e_conference = SubFactory(ConferenceFactory)
 
 
 class BidEvaluationFactory(DjangoModelFactory):
@@ -301,14 +262,6 @@ class UserMessageFactory(DjangoModelFactory):
     code = Sequence(lambda x: "CODE_%d" % x)
     summary = Sequence(lambda x: "Message Summary #%d" % x)
     description = Sequence(lambda x: "Description #%d" % x)
-
-
-class ShowVoteFactory(DjangoModelFactory):
-    show = SubFactory(ShowFactory)
-    vote = 3
-
-    class Meta:
-        model = conf.ShowVote
 
 
 class EvaluationCategoryFactory(DjangoModelFactory):

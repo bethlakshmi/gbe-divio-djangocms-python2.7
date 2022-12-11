@@ -67,16 +67,16 @@ class TestCalendarView(TestCase):
             response,
             '<div class="col-lg-12">%s' % (
                 self.showcontext.conference.conference_name))
-        self.assertContains(response, self.showcontext.show.e_title)
+        self.assertContains(response, self.showcontext.sched_event.title)
         self.assertContains(
             response,
             self.showcontext.sched_event.starttime.strftime("%-I:%M %p"))
         self.assertContains(
             response,
             self.showcontext.sched_event.end_time.strftime("%-I:%M %p"))
-        self.assertNotContains(response, self.other_show.show.e_title)
-        self.assertNotContains(response, self.classcontext.bid.e_title)
-        self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertNotContains(response, self.other_show.sched_event.title)
+        self.assertNotContains(response, self.classcontext.bid.b_title)
+        self.assertNotContains(response, self.volunteeropp.title)
         self.assertNotContains(response, reverse(
             'show_dashboard',
             urlconf='gbe.scheduling.urls',
@@ -90,7 +90,7 @@ class TestCalendarView(TestCase):
                       urlconf="gbe.scheduling.urls",
                       args=['General'])
         response = self.client.get(url)
-        self.assertContains(response, self.showcontext.show.e_title)
+        self.assertContains(response, self.showcontext.sched_event.title)
         self.assertContains(response, reverse(
             'show_dashboard',
             urlconf='gbe.scheduling.urls',
@@ -105,12 +105,12 @@ class TestCalendarView(TestCase):
             response,
             '<div class="col-lg-12">%s' % (
                 self.showcontext.conference.conference_name))
-        self.assertNotContains(response, self.showcontext.show.e_title)
-        self.assertNotContains(response, self.other_show.show.e_title)
-        self.assertContains(response, self.classcontext.bid.e_title)
+        self.assertNotContains(response, self.showcontext.sched_event.title)
+        self.assertNotContains(response, self.other_show.sched_event.title)
+        self.assertContains(response, self.classcontext.bid.b_title)
         self.assertContains(response, "Teacher:  %s" % (
             self.classcontext.bid.teacher.name))
-        self.assertNotContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertNotContains(response, self.volunteeropp.title)
 
     def test_calendar_volunteer_w_default_conf(self):
         url = reverse('calendar',
@@ -121,10 +121,10 @@ class TestCalendarView(TestCase):
             response,
             '<div class="col-lg-12">%s' % (
                 self.showcontext.conference.conference_name))
-        self.assertNotContains(response, self.showcontext.show.e_title)
-        self.assertNotContains(response, self.other_show.show.e_title)
-        self.assertNotContains(response, self.classcontext.bid.e_title)
-        self.assertContains(response, self.volunteeropp.eventitem.e_title)
+        self.assertNotContains(response, self.showcontext.sched_event.title)
+        self.assertNotContains(response, self.other_show.sched_event.title)
+        self.assertNotContains(response, self.classcontext.bid.b_title)
+        self.assertContains(response, self.volunteeropp.title)
 
     def test_calendar_conference_w_default_conf_public_days(self):
         conference_day = ConferenceDayFactory(
@@ -164,8 +164,8 @@ class TestCalendarView(TestCase):
                       args=['General'])
         data = {'conference': self.other_conference.conference_slug}
         response = self.client.get(url, data=data)
-        self.assertNotContains(response, self.showcontext.show.e_title)
-        self.assertContains(response, self.other_show.show.e_title)
+        self.assertNotContains(response, self.showcontext.sched_event.title)
+        self.assertContains(response, self.other_show.sched_event.title)
 
     def test_no_conference_days(self):
         clear_conferences()
@@ -298,7 +298,7 @@ class TestCalendarView(TestCase):
             response,
             '<div class="col-lg-6 col-md-6 col-sm-6 col-12">',
             2)
-        self.assertContains(response, two_opp.eventitem.e_title)
+        self.assertContains(response, two_opp.title)
 
     def test_calendar_3_event_per_hour(self):
         self.staffcontext.add_volunteer_opp()
@@ -408,7 +408,7 @@ class TestCalendarView(TestCase):
                       args=['General'])
         data = {'conference': self.other_conference.conference_slug}
         response = self.client.get(url, data=data)
-        self.assertNotContains(response, self.showcontext.show.e_title)
+        self.assertNotContains(response, self.showcontext.sched_event.title)
         set_fav_link = reverse(
             "set_favorite",
             args=[self.showcontext.sched_event.pk, "off"],
@@ -467,7 +467,7 @@ class TestCalendarView(TestCase):
                       args=['Volunteer'])
         response = self.client.get(url, data={
             'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(response,
                             'class="volunteer-icon" alt="You\'ve signed up"/>')
 
@@ -484,7 +484,7 @@ class TestCalendarView(TestCase):
                       args=['Volunteer'])
         response = self.client.get(url, data={
             'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
-        self.assertContains(response, opportunity.eventitem.e_title)
+        self.assertContains(response, opportunity.title)
         self.assertContains(
           response,
           'This event has all the volunteers it needs.')

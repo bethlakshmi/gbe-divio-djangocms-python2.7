@@ -10,12 +10,10 @@ from tests.factories.gbe_factories import (
     EvaluationCategoryFactory,
     FlexibleEvaluationFactory,
     ProfileFactory,
-    ShowFactory,
 )
 from tests.functions.gbe_functions import (
     assert_option_state,
     clear_conferences,
-    current_conference,
     grant_privilege,
     login_as,
 )
@@ -51,7 +49,6 @@ class TestReviewAct(TestCase):
 
     def get_post_data(self,
                       bid,
-                      show=None,
                       reviewer=None,
                       invalid=False):
         reviewer = reviewer or self.privileged_profile
@@ -132,7 +129,6 @@ class TestReviewAct(TestCase):
         clear_conferences()
         conference = ConferenceFactory(accepting_bids=True,
                                        status='upcoming')
-        # conference = current_conference()
         act = ActFactory(accepted=1,
                          b_conference=conference)
         profile = ProfileFactory()
@@ -328,7 +324,6 @@ class TestReviewAct(TestCase):
             evaluator=self.privileged_profile,
             category=self.eval_cat
         )
-        show = ShowFactory()
         login_as(self.privileged_user, self)
         url = reverse('act_review',
                       urlconf='gbe.urls',
@@ -336,7 +331,6 @@ class TestReviewAct(TestCase):
         data = self.get_post_data(
             eval.bid,
             reviewer=self.privileged_profile,
-            show=show
             )
         response = self.client.post(url,
                                     data,
@@ -355,7 +349,6 @@ class TestReviewAct(TestCase):
 
     def test_review_act_update_notes(self):
         notes = ActBidEvaluationFactory()
-        show = ShowFactory()
         login_as(self.privileged_user, self)
         url = reverse('act_review',
                       urlconf='gbe.urls',
@@ -363,7 +356,6 @@ class TestReviewAct(TestCase):
         data = self.get_post_data(
             notes.bid,
             reviewer=self.privileged_profile,
-            show=show
             )
         response = self.client.post(url,
                                     data,
@@ -382,7 +374,7 @@ class TestReviewAct(TestCase):
 
     def test_review_act_no_review(self):
         login_as(self.privileged_user, self)
-        data = self.get_post_data(self.act, self.privileged_user)
+        data = self.get_post_data(self.act, self.privileged_profile)
         del data[str(self.eval_cat.pk) + '-ranking']
         response = self.client.post(self.url,
                                     data,

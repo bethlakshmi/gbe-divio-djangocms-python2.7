@@ -11,7 +11,6 @@ from django.db.models import (
 from gbe.models import (
     Biddable,
     Conference,
-    Event,
     Persona,
     Profile,
 )
@@ -22,11 +21,10 @@ from gbetext import (
     space_options,
     yesno_options,
 )
-from ticketing.functions import get_tickets
 from settings import GBE_TABLE_FORMAT
 
 
-class Class(Biddable, Event):
+class Class(Biddable):
     '''
     A Class is an Event where one or a few people
     teach/instruct/guide/mediate and a number of participants
@@ -72,11 +70,6 @@ class Class(Biddable, Event):
         new_class.space_needs = self.space_needs
         new_class.physical_restrictions = self.physical_restrictions
         new_class.multiple_run = self.multiple_run
-        new_class.duration = self.duration
-        new_class.e_title = self.e_title
-        new_class.e_description = self.e_description
-        new_class.e_conference = Conference.objects.filter(
-            status="upcoming").first()
         new_class.b_title = self.b_title
         new_class.b_description = self.b_description
         new_class.b_conference = Conference.objects.filter(
@@ -117,18 +110,7 @@ class Class(Biddable, Event):
         return self.teacher.contact
 
     def __str__(self):
-        if self.e_title and len(self.e_title) > 0:
-            return self.e_title
         return self.b_title
-
-    # tickets that apply to class are:
-    #   - any ticket that applies to "most"
-    #   - any ticket that applies to the conference
-    #   - any ticket that links this event specifically
-    # but for all tickets - iff the ticket is active
-    #
-    def get_tickets(self):
-        return get_tickets(self, most=True, conference=True)
 
     class Meta:
         verbose_name_plural = 'classes'

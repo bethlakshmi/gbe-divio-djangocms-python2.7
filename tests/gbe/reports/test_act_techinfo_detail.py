@@ -38,13 +38,16 @@ class TestReviewActTechInfo(TestCase):
         self.context.act.tech.save()
 
     def setUp(self):
-        self.context = ActTechInfoContext(schedule_rehearsal=True)
         self.client = Client()
-        self.profile = ProfileFactory()
-        grant_privilege(self.profile, 'Tech Crew')
-        self.url = reverse(self.view_name,
-                           urlconf='gbe.reporting.urls',
-                           args=[self.context.act.id])
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = ActTechInfoContext(schedule_rehearsal=True)
+        cls.profile = ProfileFactory()
+        grant_privilege(cls.profile, 'Tech Crew')
+        cls.url = reverse(cls.view_name,
+                          urlconf='gbe.reporting.urls',
+                          args=[cls.context.act.id])
 
     def test_review_act_techinfo_fail(self):
         '''review_act_techinfo view should load for Tech Crew
@@ -78,7 +81,7 @@ class TestReviewActTechInfo(TestCase):
         self.assertContains(response, str(self.context.act.performer))
         self.assertContains(response, str(
             self.context.act.performer.contact.user_object.email))
-        self.assertContains(response, str(self.context.show))
+        self.assertContains(response, self.context.sched_event.title)
         self.assertContains(response, self.context.act.tech.introduction_text)
         self.assertContains(response, self.context.act.tech.feel_of_act)
         self.assertContains(response, "Read this exacty")
@@ -191,5 +194,5 @@ class TestReviewActTechInfo(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, self.context.act.b_title)
         self.assertContains(response, str(self.context.act.performer))
-        self.assertContains(response, str(self.context.show))
+        self.assertContains(response, self.context.sched_event.title)
         self.assertContains(response, self.context.act.tech.introduction_text)

@@ -56,8 +56,8 @@ class FlexibleReviewBidView(ReviewBidView):
         for item in get_schedule(
                 commitment=act,
                 roles=["Performer", "Waitlisted"]).schedule_items:
-            if item.event.event_type_name == "Show":
-                start = item.event.eventitem.pk
+            if item.event.event_style == "Show":
+                start = item.event.pk
                 casting = item.commitment.role
         self.actionform = make_show_casting_form(act.b_conference,
                                                  self.actionform,

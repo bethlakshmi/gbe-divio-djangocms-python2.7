@@ -4,10 +4,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from tests.factories.gbe_factories import (
-    ProfileFactory,
-    ShowFactory,
-)
+from tests.factories.gbe_factories import ProfileFactory
 from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
@@ -16,13 +13,17 @@ from gbetext import role_commit_map
 
 
 class TestAllVolunteer(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfileFactory()
+        cls.url = reverse('all_volunteers', urlconf="gbe.reporting.urls")
+        cls.context = VolunteerContext()
+
     def setUp(self):
         self.client = Client()
-        self.profile = ProfileFactory()
-        self.url = reverse('all_volunteers', urlconf="gbe.reporting.urls")
 
     def test_review_not_visible_without_permission(self):
-        show = ShowFactory()
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
@@ -30,56 +31,55 @@ class TestAllVolunteer(TestCase):
     def test_show_volunteer(self):
         '''staff_area view should load
         '''
-        show = ShowFactory()
-        context = VolunteerContext(event=show)
         grant_privilege(self.profile, 'Act Coordinator')
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertContains(response, show.e_title)
-        self.assertContains(response, context.opportunity.e_title)
+        self.assertContains(response, self.context.sched_event.title)
+        self.assertContains(response, self.context.opp_event.title)
         self.assertContains(response, reverse(
             'mail_to_individual',
             urlconf='gbe.email.urls',
-            args=[context.profile.resourceitem_id]))
+            args=[self.context.profile.resourceitem_id]))
         self.assertContains(response, reverse(
             'edit_event',
             urlconf='gbe.scheduling.urls',
-            args=[context.conference.conference_slug, context.opp_event.pk]))
+            args=[self.context.conference.conference_slug,
+                  self.context.opp_event.pk]))
 
     def test_show_with_inactive(self):
         ''' view should load
         '''
-        show = ShowFactory()
         inactive = ProfileFactory(
             display_name="Inactive User",
             user_object__is_active=False
         )
-        context = VolunteerContext(event=show, profile=inactive)
+        context = VolunteerContext(profile=inactive,
+                                   conference=self.context.conference)
         grant_privilege(self.profile, 'Act Reviewers')
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertContains(response, show.e_title)
-        self.assertContains(response, context.opportunity.e_title)
+        self.assertContains(response, context.sched_event.title)
+        self.assertContains(response, context.opp_event.title)
         self.assertContains(
             response,
             '<div class="gbe-form-error">')
         self.assertContains(response, inactive.display_name)
 
     def test_show_approval_needed_event(self):
-        show = ShowFactory()
-        context = VolunteerContext(event=show)
-        context.opp_event.approval_needed = True
-        context.opp_event.save()
+        self.context.opp_event.approval_needed = True
+        self.context.opp_event.save()
         grant_privilege(self.profile, 'Act Reviewers')
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertContains(response, context.opportunity.e_title)
+        self.assertContains(response, self.context.opp_event.title)
         self.assertContains(response, 'class="approval_needed"')
+        self.context.opp_event.approval_needed = False
+        self.context.opp_event.save()
 
     def test_staff_area_role_display(self):
         '''staff_area view should load only the actually assigned volunteer
         '''
-        context = StaffAreaContext()
+        context = StaffAreaContext(conference=self.context.conference)
         vol1, opp1 = context.book_volunteer()
         vol2, opp2 = context.book_volunteer(role="Pending Volunteer")
         vol3, opp3 = context.book_volunteer(role="Waitlisted")

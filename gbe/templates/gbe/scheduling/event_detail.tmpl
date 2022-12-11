@@ -2,7 +2,7 @@
 {% load thumbnail %}
 
 {% block title %}
-  {{eventitem.event.e_conference.conference_slug}}: {{eventitem.event.e_title}}
+  {{conference.conference_slug}}: {{eventitem.occurrence.title}}
 {% endblock %}
 {% block head %}
       {% include "gray_grids_css.tmpl" %}
@@ -14,41 +14,41 @@
 {% endif %}
 
 <div class="mt-5 col-12">
-  <h2 class="gbe-title">{{eventitem.event.e_title}}</h2></div>
+  <h2 class="gbe-title">{{eventitem.occurrence.title}}</h2></div>
     <div class="mx-3 col-12">
-      {{eventitem.event.e_description |safe}}
-        <label class="sched_label">Type:</label>&nbsp;&nbsp;{{eventitem.event.type}}<br>
-	      {% if eventitem.event.fee %}
-          <label class="sched_label">Materials Fee:</label>&nbsp;&nbsp;${{eventitem.event.fee}}<br>
+      {{eventitem.occurrence.description |safe}}
+        <label class="sched_label">Type:</label>&nbsp;&nbsp;{{eventitem.occurrence.event_style}}<br>
+	      {% if bid and bid.fee %}
+          <label class="sched_label">Materials Fee:</label>&nbsp;&nbsp;${{bid.fee}}<br>
         {% endif %}
       </div>
-      {% if eventitem.scheduled_events %}
+      {% if schedule_items %}
 <div class="m-3 sched_times gbe-bg-dark container">
 	{% for sched_event in schedule_items %}
 	<div class="row px-4">
-	  <div class="col-1 col-sm-2 col-lg-1 pt-3 pr-3">
+	  <div class="col-1 col-sm-2 col-md-3 col-lg-1 pt-3 pr-3">
       {% include "gbe/scheduling/favorite_star.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable"%}
       {% include "gbe/scheduling/volunteer_link_display.tmpl" with size="fa-2x" icon_class="volunteer-icon-large" disable_style="detail_link-detail_disable" %}
       {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
-	  <div class="col-11 col-sm-10 col-lg-5">
+	  <div class="col-11 col-sm-10 col-md-9 col-lg-4">
       <div class="row">
         <div class="col-3"><label class="sched_label">Time:</label></div>
-        <div class="col-8">{{ sched_event.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
-        {{ sched_event.occurrence.end_time|date:_("TIME_FORMAT")}}</div>
+        <div class="col-8">{{ eventitem.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
+        {{ eventitem.occurrence.end_time|date:_("TIME_FORMAT")}}</div>
       </div>
       <div class="row">
 	      <div class="col-3"><label class="sched_label">Location:</label></div>
-        <div class="col-8">{{ sched_event.occurrence.location }}
-          {% if sched_event.occurrence.location.as_subtype.address %}
-            <br>{{sched_event.occurrence.location.as_subtype.address | safe}}<br><br>
+        <div class="col-8">{{ eventitem.occurrence.location }}
+          {% if eventitem.occurrence.location.as_subtype.address %}
+            <br>{{eventitem.occurrence.location.as_subtype.address | safe}}<br><br>
           {% endif %}
         </div>
 	    </div>
     </div>
-    {% if sched_event.occurrence.location.as_subtype.map_embed %}
-    <div class="col-12 col-md-9 col-lg-6 text-center sched-sub-box">
-      {{sched_event.occurrence.location.as_subtype.map_embed | safe}}
+    {% if eventitem.occurrence.location.as_subtype.map_embed %}
+    <div class="col-12 col-lg-7 text-center sched-sub-box">
+      {{eventitem.occurrence.location.as_subtype.map_embed | safe}}
     </div>
     {% endif %}
 	</div>

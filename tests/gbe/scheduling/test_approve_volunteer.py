@@ -44,13 +44,16 @@ class TestApproveVolunteer(TestCase):
     approve_name = 'approve_volunteer'
 
     def setUp(self):
-        Conference.objects.all().delete()
         self.client = Client()
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
-        self.context = VolunteerContext()
-        self.url = reverse(self.view_name, urlconf='gbe.scheduling.urls')
+
+    @classmethod
+    def setUpTestData(cls):
+        Conference.objects.all().delete()
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Volunteer Coordinator')
+        cls.context = VolunteerContext()
+        cls.url = reverse(cls.view_name, urlconf='gbe.scheduling.urls')
 
     def assert_volunteer_state(self, response, booking, disabled_action=""):
         self.assertContains(response,
@@ -313,7 +316,7 @@ class TestApproveVolunteer(TestCase):
                 self.context.opp_event.starttime.strftime(
                     GBE_DATETIME_FORMAT))
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
-            class_context.bid.e_title,
+            class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
         self.assertContains(response, conflict_msg)
 
@@ -322,7 +325,7 @@ class TestApproveVolunteer(TestCase):
             outbox_size=2,
             message_index=1)
         assert(conflict_msg in staff_msg.body)
-        assert(class_context.bid.e_title in staff_msg.body)
+        assert(class_context.bid.b_title in staff_msg.body)
         assert_email_recipient(
             [self.privileged_user.email],
             outbox_size=2,
@@ -354,7 +357,7 @@ class TestApproveVolunteer(TestCase):
                 self.context.opp_event.starttime.strftime(
                     GBE_DATETIME_FORMAT))
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
-            class_context.bid.e_title,
+            class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
         self.assertContains(response, conflict_msg)
 
@@ -384,7 +387,7 @@ class TestApproveVolunteer(TestCase):
                 self.context.opp_event.starttime.strftime(
                     GBE_DATETIME_FORMAT))
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
-            class_context.bid.e_title,
+            class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
         self.assertContains(response, conflict_msg)
 

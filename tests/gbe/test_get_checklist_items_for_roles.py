@@ -5,13 +5,11 @@ from tests.factories.ticketing_factories import (
 )
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    GenericEventFactory,
     PersonaFactory,
     ProfileFactory
 )
 from scheduler.idd import get_schedule
 from tests.functions.scheduler_functions import book_worker_item_for_role
-from gbe.ticketing_idd_interface import get_checklist_items_for_roles
 
 
 class TestGetCheckListForRoles(TestCase):
@@ -21,9 +19,10 @@ class TestGetCheckListForRoles(TestCase):
     def setUpTestData(cls):
         cls.role_condition = RoleEligibilityConditionFactory()
         cls.teacher = PersonaFactory()
+        cls.conference = ConferenceFactory()
         booking = book_worker_item_for_role(cls.teacher,
-                                            cls.role_condition.role)
-        cls.conference = booking.event.eventitem.get_conference()
+                                            cls.role_condition.role,
+                                            conference=cls.conference)
         cls.schedule = get_schedule(
                 cls.teacher.performer_profile.user_object,
                 labels=[cls.conference.conference_slug]).schedule_items
@@ -32,6 +31,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
             purchaser has no roles
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_roles
         no_match_profile = ProfileFactory()
         no_schedule = get_schedule(
                 no_match_profile.user_object,
@@ -46,6 +46,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
             purchaser has no roles in this conference
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_roles
         checklist_items = get_checklist_items_for_roles([], [])
 
         self.assertEqual(len(checklist_items), 0)
@@ -54,7 +55,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
             the profile fits the role, item is given
         '''
-
+        from gbe.ticketing_idd_interface import get_checklist_items_for_roles
         checklist_items = get_checklist_items_for_roles(
             self.schedule,
             [])
@@ -67,14 +68,14 @@ class TestGetCheckListForRoles(TestCase):
         '''
             profile meets 2 role conditions
         '''
+        from gbe.ticketing_idd_interface import get_checklist_items_for_roles
         another_role = RoleEligibilityConditionFactory(
             role="Staff Lead")
 
         booking = book_worker_item_for_role(
             self.teacher.performer_profile,
             another_role.role,
-            GenericEventFactory(
-                e_conference=self.conference)
+            conference=self.conference
             )
         self.schedule = get_schedule(
                 self.teacher.performer_profile.user_object,
@@ -95,7 +96,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
             two conditions match this circumstance
         '''
-
+        from gbe.ticketing_idd_interface import get_checklist_items_for_roles
         another_match = RoleEligibilityConditionFactory()
 
         checklist_items = get_checklist_items_for_roles(
@@ -112,7 +113,7 @@ class TestGetCheckListForRoles(TestCase):
         '''
             a condition matches this circumstance, but is excluded
         '''
-
+        from gbe.ticketing_idd_interface import get_checklist_items_for_roles
         exclusion = NoEventRoleExclusionFactory(
             condition=self.role_condition,
             role="Staff Lead")
@@ -120,8 +121,7 @@ class TestGetCheckListForRoles(TestCase):
         booking = book_worker_item_for_role(
             self.teacher.performer_profile,
             exclusion.role,
-            GenericEventFactory(
-                e_conference=self.conference)
+            conference=self.conference
             )
         self.schedule = get_schedule(
                 self.teacher.performer_profile.user_object,

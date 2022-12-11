@@ -1,11 +1,9 @@
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ConferenceDayFactory,
-    GenericEventFactory,
     ProfilePreferencesFactory,
     ProfileFactory,
     RoomFactory,
-    ShowFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
@@ -25,15 +23,12 @@ from datetime import (
 class VolunteerContext():
     def __init__(self,
                  profile=None,
-                 event=None,
                  sched_event=None,
                  opportunity=None,
                  role=None,
-                 conference=None):
-        if not event:
-            self.conference = conference or ConferenceFactory()
-        else:
-            self.conference = event.e_conference
+                 conference=None,
+                 event_style="Show"):
+        self.conference = conference or ConferenceFactory()
 
         if ConferenceDay.objects.filter(conference=self.conference).exists():
             self.conf_day = ConferenceDay.objects.filter(
@@ -47,15 +42,13 @@ class VolunteerContext():
         self.role = role or "Volunteer"
         self.room = RoomFactory()
         self.room.conferences.add(self.conference)
-        self.event = event or ShowFactory(
-            e_conference=self.conference)
 
         if not sched_event:
             self.sched_event = SchedEventFactory(
-                eventitem=self.event.eventitem_ptr,
+                event_style=event_style,
                 starttime=datetime.combine(self.conf_day.day,
                                            time(12, 0, 0)),
-                slug="Show%d" % self.event.pk)
+                slug="Show%d" % self.profile.pk)
             ResourceAllocationFactory(
                 event=self.sched_event,
                 resource=LocationFactory(_item=self.room))
@@ -67,7 +60,7 @@ class VolunteerContext():
             self.sched_event = sched_event
         self.worker = WorkerFactory(_item=self.profile.workeritem,
                                     role=self.role)
-        self.opportunity, self.opp_event = self.add_opportunity(opportunity)
+        self.opp_event = self.add_opportunity(opportunity)
         self.allocation = ResourceAllocationFactory(resource=self.worker,
                                                     event=self.opp_event)
 
@@ -79,16 +72,13 @@ class VolunteerContext():
                                     role="Staff Lead"))
         return staff_lead
 
-    def add_opportunity(self, opportunity=None, start_time=None):
-        opportunity = opportunity or GenericEventFactory(
-            e_conference=self.conference,
-            type='Volunteer')
+    def add_opportunity(self, start_time=None):
         start_time = start_time or datetime.combine(
             self.conf_day.day,
             time(12, 0, 0))
 
         opp_event = SchedEventFactory(
-            eventitem=opportunity.eventitem_ptr,
+            event_style='Volunteer',
             starttime=start_time,
             max_volunteer=2,
             parent=self.sched_event)
@@ -100,4 +90,4 @@ class VolunteerContext():
                           text=self.conference.conference_slug)
         EventLabelFactory(event=opp_event,
                           text="Volunteer")
-        return opportunity, opp_event
+        return opp_event

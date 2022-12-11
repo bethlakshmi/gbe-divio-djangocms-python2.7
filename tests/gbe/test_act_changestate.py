@@ -10,7 +10,6 @@ from tests.factories.gbe_factories import (
     EmailTemplateSenderFactory,
     PersonaFactory,
     ProfileFactory,
-    ShowFactory,
     TroupeFactory,
 )
 from tests.factories.scheduler_factories import (
@@ -49,8 +48,7 @@ class TestActChangestate(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.context = ActTechInfoContext()
-        cls.show = ShowFactory(e_conference=cls.context.conference)
-        cls.sched_event = SchedEventFactory(eventitem=cls.show.eventitem_ptr)
+        cls.sched_event = SchedEventFactory(event_style="Show")
         EventLabelFactory(event=cls.sched_event,
                           text=cls.context.conference.conference_slug)
         cls.privileged_user = ProfileFactory().user_object
@@ -68,7 +66,7 @@ class TestActChangestate(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.data = {'show': self.show.eventitem_id,
+        self.data = {'show': self.sched_event.pk,
                      'casting': 'Regular Act',
                      'accepted': '2'}
 
@@ -82,7 +80,7 @@ class TestActChangestate(TestCase):
         data = {
             'casting': "",
             'accepted': 2,
-            'show': self.context.show.eventitem_id,
+            'show': self.context.sched_event.pk,
         }
         response = self.client.post(self.url,
                                     data=data,
@@ -102,7 +100,7 @@ class TestActChangestate(TestCase):
                 self.context.act.performer.name,
                 self.context.act.b_title,
                 "Wait List",
-                self.context.show.e_title))
+                self.context.sched_event.title))
 
     def test_act_keep_everything(self):
         # accepted -> accepted
@@ -114,7 +112,7 @@ class TestActChangestate(TestCase):
         data = {
             'casting': "Regular Act",
             'accepted': 3,
-            'show': self.context.show.eventitem_id,
+            'show': self.context.sched_event.pk,
         }
         response = self.client.post(self.url,
                                     data=data,
@@ -139,7 +137,7 @@ class TestActChangestate(TestCase):
         data = {
             'casting': "Hosted by...",
             'accepted': 3,
-            'show': self.context.show.eventitem_id,
+            'show': self.context.sched_event.pk,
         }
         response = self.client.post(self.url,
                                     data=data,
@@ -248,12 +246,13 @@ class TestActChangestate(TestCase):
         # accepted -> accepted
         # change show, loose rehearsal
         # same role
+        title = self.sched_event.title.lower()
         rehearsal_event = self.context._schedule_rehearsal(
             self.context.sched_event,
             act=self.context.act)
         EmailTemplateSenderFactory(
             from_email="actemail@notify.com",
-            template__name='act accepted - %s' % self.show.e_title.lower(),
+            template__name='act accepted - %s' % title,
             template__subject="test template",
             template__content="stuff {{ act_tech_link }} more stuff"
         )
@@ -277,7 +276,7 @@ class TestActChangestate(TestCase):
                 self.context.act.performer.name,
                 self.context.act.b_title,
                 "Accepted",
-                self.show.e_title))
+                self.sched_event.title))
 
     def test_act_changestate_authorized_user(self):
         # No decision -> waitlist
@@ -383,8 +382,8 @@ class TestActChangestate(TestCase):
         self.data['accepted'] = '3'
         response = self.client.post(url, data=self.data)
         assert_email_template_create(
-            'act accepted - %s' % self.show.e_title.lower(),
-            "Your act has been cast in %s" % self.show.e_title
+            'act accepted - %s' % self.sched_event.title.lower(),
+            "Your act has been cast in %s" % self.sched_event.title
         )
         casting = Ordering.objects.get(
             class_id=new_context.act.pk,
@@ -394,9 +393,10 @@ class TestActChangestate(TestCase):
     def test_act_accept_notification_template_fail(self):
         # accepted -> accepted - error case
         # change show, same role
+        title = self.sched_event.title.lower()
         EmailTemplateSenderFactory(
             from_email="actemail@notify.com",
-            template__name='act accepted - %s' % self.show.e_title.lower(),
+            template__name='act accepted - %s' % title,
             template__subject="test template {% url 'gbehome' %}"
         )
         login_as(self.privileged_user, self)
@@ -453,8 +453,8 @@ class TestActChangestate(TestCase):
             'act_review_list',
             urlconf='gbe.urls'))
         assert_email_template_create(
-            'act accepted - %s' % self.show.e_title.lower(),
-            "Your act has been cast in %s" % self.show.e_title
+            'act accepted - %s' % self.sched_event.title.lower(),
+            "Your act has been cast in %s" % self.sched_event.title
         )
         data['casting'] = 'Regular Act'
 
@@ -510,7 +510,7 @@ class TestActChangestate(TestCase):
         # change show, change role
         login_as(self.privileged_user, self)
         data = self.data
-        data['show'] = self.show.eventitem_id + 1
+        data['show'] = self.sched_event.pk + 1
         response = self.client.post(self.url,
                                     data=data,
                                     follow=True)

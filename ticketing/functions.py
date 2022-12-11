@@ -6,6 +6,7 @@ from ticketing.models import (
 )
 from ticketing.eventbrite import import_eb_ticket_items
 from ticketing.brown_paper import import_bpt_ticket_items
+from gbetext import class_styles
 
 
 def import_ticket_items():
@@ -16,23 +17,22 @@ def import_ticket_items():
         msg, is_success = import_eb_ticket_items()
         count = import_bpt_ticket_items()
 
-        return [(msg, is_success), 
+        return [(msg, is_success),
                 ("BPT: imported %d tickets" % count, True)]
 
 
-def get_tickets(linked_event, most=False, conference=False):
+def get_tickets(linked_event):
     general_events = []
-
-    if most:
+    if linked_event.event_style not in ["Master", "Volunteer"]:
         general_events = TicketingEvents.objects.filter(
             include_most=True,
-            conference=linked_event.e_conference)
-    if conference:
+            conference__conference_slug__in=linked_event.labels)
+    if linked_event.event_style in class_styles:
         general_events = list(chain(
             general_events,
             TicketingEvents.objects.filter(
                 include_conference=True,
-                conference=linked_event.e_conference)))
+                conference__conference_slug__in=linked_event.labels)))
 
     general_events = list(chain(
         general_events,

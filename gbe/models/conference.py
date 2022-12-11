@@ -36,8 +36,12 @@ class Conference(Model):
             return cls.current_conf()
 
     @classmethod
-    def all_slugs(cls):
-        return cls.objects.order_by('-conference_slug').values_list(
+    def all_slugs(cls, current=False):
+        slug_filter = cls.objects
+        if current:
+            slug_filter = slug_filter.exclude(status="completed")
+
+        return slug_filter.order_by('-conference_slug').values_list(
             'conference_slug', flat=True)
 
     class Meta:

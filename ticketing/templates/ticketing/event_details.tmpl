@@ -3,7 +3,7 @@
   <div class="col-6">
     <b>Linked Events for this Ticket Type:</b><ul>
     {% for cal_event in event.linked_events.all %}
-    <li><a href="{% url 'scheduling:detail_view' cal_event.eventitem_id  %}" class="gbe-link">{{ cal_event }}</a></li>
+    <li><a href="{% url 'scheduling:detail_view' cal_event.pk  %}" class="gbe-link">{{ cal_event.title }}</a></li>
     {% endfor %}
   </ul></div>{% endif %}
 <div class="col-6">

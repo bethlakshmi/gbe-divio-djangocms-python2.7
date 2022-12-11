@@ -84,15 +84,15 @@ class Act (Biddable):
         for item in get_schedule(commitment=self,
                                  roles=["Performer", "Waitlisted"]
                                  ).schedule_items:
-            if item.event.event_type_name == "Show" and (
-                    item.event.eventitem.pk not in cast_shows):
+            if item.event.event_style == "Show" and (
+                    item.event.pk not in cast_shows):
                 if len(castings) > 0:
-                    castings += ", %s" % str(item.event.eventitem)
+                    castings += ", %s" % str(item.event.title)
                 else:
-                    castings += str(item.event.eventitem)
+                    castings += str(item.event.title)
                 if item.commitment.role and len(item.commitment.role) > 0:
                     castings += ' - %s' % item.commitment.role
-                cast_shows += [item.event.eventitem.pk]
+                cast_shows += [item.event.pk]
 
         return [self.performer.name,
                 self.b_title,
@@ -106,7 +106,7 @@ class Act (Biddable):
             if self.tech.confirm_no_rehearsal:
                 return True
             for item in get_schedule(commitment=self).schedule_items:
-                if item.event.event_type_name == 'GenericEvent':
+                if item.event.event_style == 'Rehearsal Slot':
                     return True
         return False
 

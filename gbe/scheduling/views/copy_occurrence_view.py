@@ -25,7 +25,10 @@ from gbe_forms_text import (
     copy_mode_solo_choices,
 )
 from gbe.scheduling.forms import CopyEventSoloPickModeForm
-from gbetext import copy_solo_intro
+from gbetext import (
+    calendar_for_event,
+    copy_solo_intro,
+)
 
 
 class CopyOccurrenceView(CopyCollectionsView):
@@ -40,7 +43,7 @@ class CopyOccurrenceView(CopyCollectionsView):
         if not response.occurrence:
             raise Http404
         self.occurrence = response.occurrence
-        if self.occurrence.as_subtype.__class__.__name__ == "Class":
+        if calendar_for_event[self.occurrence.event_style] == "Conference":
             return HttpResponseForbidden("Class copy is not yet available")
         self.start_day = self.occurrence.starttime.date()
         response = get_occurrences(parent_event_id=self.occurrence_id)
@@ -50,9 +53,9 @@ class CopyOccurrenceView(CopyCollectionsView):
     def make_context(self, request, post=None):
         context = {
             'first_title': "Copying - %s: %s" % (
-                self.occurrence.eventitem.event.e_title,
+                self.occurrence.title,
                 self.occurrence.starttime.strftime(self.copy_date_format)),
-            'event_type': self.occurrence.as_subtype.event_type,
+            'event_type': self.occurrence.event_style,
             'room': self.occurrence.location.as_subtype}
         return super(CopyOccurrenceView, self).make_context(request,
                                                             context,
@@ -81,12 +84,13 @@ class CopyOccurrenceView(CopyCollectionsView):
     def get_copy_target(self, context):
         response = get_occurrence(
             context['copy_mode'].cleaned_data['target_event'])
-        event = response.occurrence.eventitem.event
+        conference = Conference.objects.filter(
+            conference_slug__in=response.occurrence.labels)[0]
         second_title = "Destination is %s: %s" % (
-            event.e_conference.conference_slug,
-            event.e_title)
+            conference.conference_slug,
+            response.occurrence.title)
         delta = response.occurrence.starttime.date() - self.start_day
-        return second_title, delta, event.e_conference
+        return second_title, delta, conference
 
     def copy_event(self,
                    occurrence,
@@ -101,20 +105,16 @@ class CopyOccurrenceView(CopyCollectionsView):
                 occurrence.location.as_subtype.conferences.filter(
                 pk=conference.pk).exists():
             new_event_room = occurrence.location
-        gbe_event_copy = occurrence.as_subtype
-        gbe_event_copy.pk = None
-        gbe_event_copy.event_id = None
-        gbe_event_copy.eventitem_ptr_id = None
-        gbe_event_copy.eventitem_id = None
-        gbe_event_copy.e_conference = conference
-        gbe_event_copy.save()
 
         response = create_occurrence(
-            gbe_event_copy.eventitem_id,
+            occurrence.title,
+            occurrence.duration,
+            occurrence.event_style,
             occurrence.starttime + delta,
             max_volunteer=occurrence.max_volunteer,
             max_commitments=occurrence.max_commitments,
             locations=[new_event_room],
+            description=occurrence.duration,
             parent_event_id=parent_event_id,
             labels=labels,
             approval=occurrence.approval_needed,
@@ -125,7 +125,7 @@ class CopyOccurrenceView(CopyCollectionsView):
     def copy_root(self, request, delta, conference, room):
         new_occurrence = None
         labels = [conference.conference_slug,
-                  self.occurrence.as_subtype.calendar_type]
+                  calendar_for_event[self.occurrence.event_style]]
         for area in StaffArea.objects.filter(
                 conference=conference,
                 slug__in=self.occurrence.labels):
@@ -160,10 +160,11 @@ class CopyOccurrenceView(CopyCollectionsView):
                 'target_event'])
             if delta is None:
                 delta = resp.occurrence.starttime.date() - self.start_day
-                conference = resp.occurrence.eventitem.event.e_conference
+                conference = Conference.objects.filter(
+                    conference_slug__in=resp.occurrence.labels)[0]
 
         labels = [conference.conference_slug,
-                  self.occurrence.as_subtype.calendar_type]
+                  calendar_for_event[self.occurrence.event_style]]
         if copy_mode_solo_choices[1][0] in copy_mode:
             labels += [context['copy_solo_mode'].cleaned_data['area'].slug]
 
@@ -183,7 +184,7 @@ class CopyOccurrenceView(CopyCollectionsView):
         if response.occurrence:
             target_day = ConferenceDay.objects.filter(
                 day=response.occurrence.starttime.date(),
-                conference=response.occurrence.eventitem.event.e_conference
+                conference=conference
                 ).first()
             return HttpResponseRedirect(
                 "%s?%s-day=%d&filter=Filter&new=%s" % (
@@ -197,12 +198,13 @@ class CopyOccurrenceView(CopyCollectionsView):
     def get_child_copy_settings(self, form):
         response = get_occurrence(
             form.cleaned_data['target_event'])
+        conference = Conference.objects.filter(
+            conference_slug__in=response.occurrence.labels)[0]
         target_day = ConferenceDay.objects.filter(
             day=response.occurrence.starttime.date(),
-            conference=response.occurrence.eventitem.event.e_conference
-        ).first()
+            conference=conference
+            ).first()
         delta = response.occurrence.starttime.date(
             ) - self.start_day
-        conference = response.occurrence.eventitem.event.e_conference
         new_root = response.occurrence
         return (new_root, target_day, delta, conference)

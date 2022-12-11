@@ -30,7 +30,7 @@
   {% for opp in opps%}
     <tr class="gbe-table-row{% for contact in opp.event.people%}{% if contact.role == 'Pending Volunteer' %} gbe-table-info{% endif %}{% endfor %}{% if opp.event.max_volunteer == opp.event.people|length%} gbe-table-success{% endif %}" >
       <td>
-        <a href="{% url 'scheduling:detail_view' opp.event.eventitem_id %}" class="gbe-table-link" data-toggle="tooltip" title="Edit">{{ opp.event.eventitem.event.e_title}}</a></td>
+        <a href="{% url 'scheduling:detail_view' opp.event.pk %}" class="gbe-table-link" data-toggle="tooltip" title="Edit">{{ opp.event.title}}</a></td>
       <td>{% for area in opp.areas %}{{area}}{% endfor %}</td>
       <td>{{ opp.event.location}}</td>
       <td>{{ opp.event.starttime|date:"M j, Y, g:i A"}}</td>

@@ -8,11 +8,7 @@ from gbe.functions import (
     validate_perms,
     validate_profile,
 )
-from gbe.models import (
-    Act,
-    GenericEvent,
-    Show,
-)
+from gbe.models import Act
 from scheduler.idd import get_schedule
 from gbe.scheduling.views.functions import show_general_status
 from gbetext import acceptance_states
@@ -45,13 +41,12 @@ def act_techinfo_detail(request, act_id):
                                 commitment=act)
         show_general_status(request, response, "ActTechinfoDetail")
         for item in response.schedule_items:
-            if item.event not in shows and Show.objects.filter(
-                    eventitem_id=item.event.eventitem.eventitem_id).exists():
+            if item.event not in shows and (
+                    item.event.event_style == 'Show'):
                 shows += [item.event]
                 order = item.commitment.order
-            elif item.event not in rehearsals and GenericEvent.objects.filter(
-                    eventitem_id=item.event.eventitem.eventitem_id,
-                    type='Rehearsal Slot').exists():
+            elif item.event not in rehearsals and (
+                    item.event.event_style == 'Rehearsal Slot'):
                 rehearsals += [item.event]
 
     return render(request,

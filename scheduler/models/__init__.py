@@ -5,7 +5,6 @@ from .location import Location
 from .worker_item import WorkerItem
 from .worker import Worker
 from .schedulable import Schedulable
-from .event_item import EventItem
 from .event import Event
 from .resource_allocation import ResourceAllocation
 from .event_label import EventLabel

@@ -98,7 +98,7 @@ class TestActTechWizard(TestCase):
             response,
             "Technical Info for %s" % self.context.act.b_title)
         self.assertContains(response,
-                            "Booked for: %s" % self.context.show.e_title)
+                            "Booked for: %s" % self.context.sched_event.title)
 
     def test_edit_act_techinfo_get_bad_act(self):
         bad_act_id = Act.objects.aggregate(Max('pk'))['pk__max']+1
@@ -257,7 +257,8 @@ class TestActTechWizard(TestCase):
                       args=[self.context.act.pk])
         login_as(self.context.performer.contact, self)
         data = {'book': "Book Rehearsal"}
-        data['%d-rehearsal' % self.context.sched_event.pk] = extra_rehearsal.pk + 5
+        data['%d-rehearsal' % self.context.sched_event.pk] = \
+            extra_rehearsal.pk + 5
         response = self.client.post(url, data, follow=True)
         self.assertNotContains(response, default_rehearsal_booked)
         self.assertContains(response, "Select a valid choice.")

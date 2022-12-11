@@ -20,9 +20,10 @@ from tests.factories.ticketing_factories import (
     TicketItemFactory,
     TicketingEventsFactory,
 )
-from tests.factories.gbe_factories import (
-    ProfileFactory,
-    ShowFactory,
+from tests.factories.gbe_factories import ProfileFactory
+from tests.factories.scheduler_factories import (
+    EventLabelFactory,
+    SchedEventFactory,
 )
 from gbetext import (
     eventbrite_error,
@@ -163,7 +164,7 @@ class TestListTickets(TestCase):
                                     ticket_dict3]
 
         response = self.import_tickets()
-        assert_alert_exists(response, 'success', 'Success',(
+        assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported %d events, %d tickets" % (1, 4)))
         assert_alert_exists(response, 'success', 'Success', (
             "BPT: imported %d tickets") % (0))
@@ -560,8 +561,10 @@ class TestListTickets(TestCase):
         active_ticket = TicketItemFactory(
             live=True,
             ticketing_event__include_most=True)
-        gbe_event = ShowFactory(
-            e_conference=active_ticket.ticketing_event.conference)
+        event = SchedEventFactory()
+        EventLabelFactory(
+            event=event,
+            text=active_ticket.ticketing_event.conference.conference_slug)
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
@@ -570,7 +573,7 @@ class TestListTickets(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "All Conference Classes")
-        self.assertContains(response, gbe_event.e_title)
+        self.assertContains(response, event.title)
         self.assertContains(response, "fas fa-check", 2)
         self.assertNotContains(response, "set_ticket_to_event")
         self.assertContains(
@@ -585,9 +588,11 @@ class TestListTickets(TestCase):
 
     def test_ticket_linked_event(self):
         active_ticket = TicketItemFactory(live=True)
-        gbe_event = ShowFactory(
-            e_conference=active_ticket.ticketing_event.conference)
-        active_ticket.ticketing_event.linked_events.add(gbe_event)
+        event = SchedEventFactory()
+        EventLabelFactory(
+            event=event,
+            text=active_ticket.ticketing_event.conference.conference_slug)
+        active_ticket.ticketing_event.linked_events.add(event)
         active_ticket.ticketing_event.save()
         url = reverse(
             self.view_name,

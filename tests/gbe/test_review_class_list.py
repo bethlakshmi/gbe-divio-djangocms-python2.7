@@ -12,7 +12,6 @@ from tests.factories.gbe_factories import (
     UserFactory,
     )
 from tests.functions.gbe_functions import (
-    current_conference,
     grant_privilege,
     login_as,
 )
@@ -28,10 +27,10 @@ class TestReviewClassList(TestCase):
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Class Reviewers')
-        cls.conference = current_conference()
+        cls.conference = ConferenceFactory(status='upcoming',
+                                           accepting_bids=True)
         ClassFactory.create_batch(4,
                                   b_conference=cls.conference,
-                                  e_conference=cls.conference,
                                   submitted=True)
 
     def setUp(self):
@@ -63,7 +62,6 @@ class TestReviewClassList(TestCase):
         ClassFactory(
             accepted=3,
             b_conference=self.conference,
-            e_conference=self.conference,
             submitted=True)
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
         url = reverse(self.view_name, urlconf="gbe.urls")
@@ -95,7 +93,6 @@ class TestReviewClassList(TestCase):
         ClassFactory(
             teacher__contact__user_object__is_active=False,
             b_conference=self.conference,
-            e_conference=self.conference,
             submitted=True)
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(self.privileged_user, self)

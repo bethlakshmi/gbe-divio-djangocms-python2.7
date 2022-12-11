@@ -1,7 +1,10 @@
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
-from tests.contexts import ClassContext
+from tests.contexts import (
+    ClassContext,
+    VolunteerContext,
+)
 from tests.factories.gbe_factories import (
     ClassFactory,
     ProfileFactory
@@ -10,6 +13,8 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from scheduler.models import Event
+from gbetext import parent_event_delete_warning
 
 
 class TestClassChangestate(TestCase):
@@ -52,7 +57,7 @@ class TestClassChangestate(TestCase):
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(url, data={'accepted': '1'})
-        assert not context.bid.scheduler_events.exists()
+        assert not Event.objects.filter(connected_id=context.bid.pk).exists()
 
     def test_class_changestate_immediate_schedule(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
@@ -71,7 +76,7 @@ class TestClassChangestate(TestCase):
                 reverse("create_class_wizard",
                         urlconf='gbe.scheduling.urls',
                         args=[context.conference.conference_slug]),
-                context.bid.eventitem_id))
+                context.bid.pk))
 
     def test_class_changestate_bad_data(self):
         url = reverse(self.view_name,
@@ -83,3 +88,17 @@ class TestClassChangestate(TestCase):
         self.assertContains(response,
                             '<h2 class="review-title gbe-title"></h2>',
                             html=True)
+
+    def test_class_booked_with_parent(self):
+        '''Unusual case where booked class is a parent to another class'''
+        parent_context = ClassContext()
+        vol_context = VolunteerContext(conference=parent_context.conference,
+                                       sched_event=parent_context.sched_event)
+        url = reverse(self.view_name,
+                      args=[parent_context.bid.pk],
+                      urlconf='gbe.urls')
+        grant_privilege(self.privileged_user, 'Class Reviewers')
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data={'accepted': '1'}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, parent_event_delete_warning)

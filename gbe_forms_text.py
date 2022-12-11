@@ -283,10 +283,6 @@ event_help_texts = {
     'slug': '''Short name for the event, this is displayed with any child
     events to show what they are a part of.'''}
 
-event_labels = {
-    'e_title': 'Title',
-    'e_description': 'Description'}
-
 available_time_conflict = \
     'Available times conflict with unavailable times.  Conflicts are: %s'
 
@@ -516,8 +512,6 @@ classbid_labels = {
     'length_minutes': ('Length in Minutes'),
     'b_title': 'Title',
     'b_description': 'Description',
-    'e_title': 'Title',
-    'e_description': 'Description',
 }
 
 classdisplay_labels = {
@@ -526,7 +520,6 @@ classdisplay_labels = {
     'history': ('Have You Taught This Class Before?'),
     'other_teachers': ('Fellow Teachers'),
     'run_before': 'Has the Class been run Before?',
-    'fee': 'Materials Fee',
     'space_needs': 'Room Preferences',
     'schedule_constraints': 'Preferred Teaching Times',
     'avoided_constraints': 'I Would Prefer to Avoid',
@@ -721,7 +714,7 @@ ticket_item_help_text = {
 }
 link_event_labels = {
     'ticketing_events': "Choose from existing tickets",
-    'event_id': "New BPT Event Id",
+    'event_id': "Ticket Event Id",
     'display_icon': "Display Icon"
 }
 link_event_help_text = {
@@ -761,15 +754,6 @@ user_form_help = {
     'name': ('The name you would like to see on any badges, communication '
              'from this event, or public ways of referring to you.')
 }
-
-conference_participation_types = [('Teacher', 'Teacher'),
-                                  ('Moderator', 'Moderator'),
-                                  ('Panelist', 'Panelist'),
-                                  ('Any of the Above', 'Any of the Above')]
-
-panel_participation_types = [('Moderator', 'Moderator'),
-                             ('Panelist', 'Panelist'),
-                             ('Any of the Above', 'Any of the Above')]
 
 list_titles = {
     'class': '''Class Descriptions at GBE''',
@@ -849,22 +833,6 @@ list_text = {
         choice but to call them "Special Events".</p> '''
 }
 
-# stop gap for refactoring - BB 4/28/2017
-scheduling_help_texts = {
-    'description': "Note, this will change the description for all bookings \
-        of this event",
-    'title': "Note, this will change the title for all bookings of this event",
-    'e_description': "Note, this will change the description for all bookings \
-        of this event",
-    'e_title': "Note, this will change the title for all bookings of this \
-        event",
-    'duration': "Enter duration as HH:MM:SS"
-}
-
-scheduling_labels = {
-    'e_title': 'Title',
-    'e_description': 'Description',
-}
 schedule_occurrence_labels = {
     'duration': 'Duration (Hours)',
 }

@@ -3,10 +3,7 @@ from django.test import (
     Client,
     TestCase,
 )
-from tests.factories.gbe_factories import (
-    ProfileFactory,
-)
-from scheduler.models import EventItem
+from tests.factories.gbe_factories import ProfileFactory
 from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
@@ -78,10 +75,9 @@ class TestDeleteSchedule(TestCase):
                              redirect_to)
         self.assertNotContains(
             response,
-            '<td>%s</td>' % self.context.bid.e_title)
+            '<td>%s</td>' % self.context.bid.b_title)
         self.assertContains(response, "This event has been deleted.")
-        check_class = Class.objects.get(pk=self.context.bid.pk)
-        self.assertFalse(check_class.visible)
+        self.assertTrue(Class.objects.filter(pk=self.context.bid.pk).exists())
 
     def test_good_user_get_success_keep_gbe_event(self):
         second_class = self.context.schedule_instance(
@@ -98,11 +94,10 @@ class TestDeleteSchedule(TestCase):
             follow=True)
         self.assertContains(
             response,
-            '<td>%s</td>' % self.context.bid.e_title)
+            '<td>%s</td>' % self.context.bid.b_title)
         self.assertContains(response, "This event has been deleted.")
         self.assertTrue(Event.objects.filter(pk=second_class.pk).exists())
-        check_class = Class.objects.get(pk=self.context.bid.pk)
-        self.assertTrue(check_class.visible)
+        self.assertTrue(Class.objects.filter(pk=self.context.bid.pk).exists())
 
     def test_delete_w_parent(self):
         vol_context = VolunteerContext()

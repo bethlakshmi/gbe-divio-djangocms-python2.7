@@ -17,7 +17,7 @@ def delete_occurrence(occurrence_id):
     if not Event.objects.filter(pk=occurrence_id).exists():
         response.errors = [Error(
             code="OCCURRENCE_NOT_FOUND",
-            details="Occurrence id %d not found" % occurrence_id), ]
+            details="Occurrence id %s not found" % str(occurrence_id)), ]
     else:
         Event.objects.filter(pk=occurrence_id).delete()
 

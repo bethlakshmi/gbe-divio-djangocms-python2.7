@@ -21,6 +21,8 @@ from gbe.scheduling.views.functions import (
     show_scheduling_occurrence_status,
 )
 from gbe_forms_text import role_map
+from gbetext import calendar_for_event
+from datetime import timedelta
 
 
 class EventWizardView(View):
@@ -127,11 +129,15 @@ class EventWizardView(View):
             validity = form.is_valid() or validity
         return validity
 
-    def book_event(self, scheduling_form, people_formset, working_class, slug):
+    def book_event(self,
+                   event_form,
+                   scheduling_form,
+                   people_formset,
+                   event_style):
         start_time = get_start_time(scheduling_form.cleaned_data)
         labels = [self.conference.conference_slug]
-        if working_class.calendar_type:
-                labels += [working_class.calendar_type]
+        if calendar_for_event[event_style]:
+                labels += [calendar_for_event[event_style]]
         people = []
         for assignment in people_formset:
             if assignment.is_valid() and assignment.cleaned_data['worker']:
@@ -141,14 +147,17 @@ class EventWizardView(View):
                     public_id=assignment.cleaned_data['worker'].workeritem.pk,
                     role=assignment.cleaned_data['role'])]
         response = create_occurrence(
-                working_class.eventitem_id,
-                start_time,
-                scheduling_form.cleaned_data['max_volunteer'],
-                people=people,
-                locations=[scheduling_form.cleaned_data['location']],
-                labels=labels,
-                approval=scheduling_form.cleaned_data['approval'],
-                slug=slug)
+            event_form.cleaned_data['title'],
+            timedelta(minutes=scheduling_form.cleaned_data['duration']*60),
+            event_style,
+            start_time,
+            scheduling_form.cleaned_data['max_volunteer'],
+            people=people,
+            locations=[scheduling_form.cleaned_data['location']],
+            description=event_form.cleaned_data['description'],
+            labels=labels,
+            approval=scheduling_form.cleaned_data['approval'],
+            slug=event_form.cleaned_data['slug'])
         return response
 
     def finish_booking(self, request, response, day_pk):

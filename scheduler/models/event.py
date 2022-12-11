@@ -1,13 +1,15 @@
 from django.db.models import (
     BooleanField,
+    CharField,
     CASCADE,
     DateTimeField,
+    DurationField,
     ForeignKey,
     PositiveIntegerField,
     SlugField,
+    TextField,
 )
 from scheduler.models import (
-    EventItem,
     Location,
     LocationItem,
     Resource,
@@ -22,7 +24,6 @@ from scheduler.data_transfer import (
     Warning,
     Error,
 )
-from model_utils.managers import InheritanceManager
 from settings import GBE_DATETIME_FORMAT
 
 
@@ -30,14 +31,28 @@ class Event(Schedulable):
     '''
     An Event is a schedulable item with a conference model item as its payload.
     '''
-    objects = InheritanceManager()
-    eventitem = ForeignKey(EventItem,
-                           on_delete=CASCADE,
-                           related_name="scheduler_events")
     starttime = DateTimeField(blank=True)
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
     max_commitments = PositiveIntegerField(default=0)
+    parent = ForeignKey(
+        "self",
+        on_delete=CASCADE,
+        null=True,
+        blank=True,
+        related_name="children")
+    slug = SlugField(null=True)
+
+    # from gbe.event
+    title = CharField(max_length=128)
+    description = TextField(blank=True, null=True)
+    blurb = TextField(blank=True)
+    length = DurationField()
+
+    event_style = CharField(max_length=128, blank=False)
+    connected_id = PositiveIntegerField(blank=True, null=True)
+    connected_class = CharField(max_length=128, blank=True)
+
     parent = ForeignKey(
         "self",
         on_delete=CASCADE,
@@ -51,10 +66,6 @@ class Event(Schedulable):
         return (Ordering.objects.filter(
             allocation__event=self,
             class_name=commitment_class_name).count() < self.max_commitments)
-
-    @property
-    def foreign_event_id(self):
-        return self.eventitem.eventitem_id
 
     # New - fits scheduling API refactor
     def set_locations(self, locations):
@@ -171,32 +182,11 @@ class Event(Schedulable):
         return participants
 
     @property
-    def event_type_name(self):
-        '''
-        Get event type name. Uses a database call
-        '''
-        return self.event_type.__name__
-
-    @property
-    def event_type(self):
-        '''
-        Get event's underlying type (ie, conference model)
-        '''
-        return type(self.as_subtype)
-
-    @property
-    def as_subtype(self):
-        '''
-        Get the representation of this Event as its underlying conference type
-        '''
-        return EventItem.objects.get_subclass(eventitem_id=self.eventitem_id)
-
-    @property
     def duration(self):
-        return self.eventitem.child().sched_duration
+        return self.length
 
     def __str__(self):
-        return self.eventitem.describe
+        return self.title
 
     @property
     def location(self):
@@ -226,3 +216,6 @@ class Event(Schedulable):
     @property
     def labels(self):
         return self.eventlabel_set.values_list('text', flat=True)
+
+    class Meta:
+        app_label = "scheduler"

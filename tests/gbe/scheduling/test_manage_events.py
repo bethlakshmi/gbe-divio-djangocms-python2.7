@@ -224,12 +224,12 @@ class TestManageEventList(TestCase):
         self.assertNotContains(
             response,
             '<i class="fa fa-plus" aria-hidden="true">')
-        self.assertContains(response, vol_context.opportunity.e_title)
+        self.assertContains(response, vol_context.opp_event.title)
         self.assertContains(response, reverse(
             'detail_view',
             urlconf='gbe.scheduling.urls',
-            args=[vol_context.event.eventitem_id]))
-        self.assertContains(response, vol_context.event.e_title)
+            args=[vol_context.sched_event.pk]))
+        self.assertContains(response, vol_context.sched_event.title)
         self.assertNotContains(response, reverse(
             "edit_staff",
             urlconf="gbe.scheduling.urls",
@@ -243,7 +243,7 @@ class TestManageEventList(TestCase):
         }
         response = self.client.get(self.url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.class_context.bid.e_title)
+        self.assertContains(response, self.class_context.bid.b_title)
         self.assert_visible_input_selected(
             response,
             self.day.conference.conference_slug,
@@ -286,12 +286,12 @@ class TestManageEventList(TestCase):
         }
         response = self.client.get(self.url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.class_context.bid.e_title)
-        self.assertContains(response, self.show_context.show.e_title)
-        self.assertContains(response, self.vol_opp.event.eventitem.e_title)
+        self.assertContains(response, self.class_context.bid.b_title)
+        self.assertContains(response, self.show_context.sched_event.title)
+        self.assertContains(response, self.vol_opp.event.title)
         self.assertContains(response, '<td>Volunteer</td>')
         self.assertContains(response,
-                            self.volunteer_context.opportunity.e_title)
+                            self.volunteer_context.opp_event.title)
         self.assertContains(
             response,
             ('<a href="%s" class="gbe-table-link" data-toggle="tooltip" ' +
@@ -300,7 +300,7 @@ class TestManageEventList(TestCase):
                         urlconf='gbe.scheduling.urls',
                         args=[self.day.conference.conference_slug,
                               self.volunteer_context.sched_event.pk]),
-                self.volunteer_context.event.e_title),
+                self.volunteer_context.sched_event.title),
             html=True)
         for value in range(0, 2):
             self.assert_visible_input_selected(
@@ -318,8 +318,8 @@ class TestManageEventList(TestCase):
         }
         response = self.client.get(self.url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.show_context.show.e_title)
-        self.assertContains(response, self.class_context.bid.e_title)
+        self.assertContains(response, self.show_context.sched_event.title)
+        self.assertContains(response, self.class_context.bid.b_title)
         counter = 0
         for day in self.day.conference.conferenceday_set.all().order_by('day'):
             self.assert_visible_input_selected(
@@ -349,8 +349,8 @@ class TestManageEventList(TestCase):
         }
         response = self.client.get(self.url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, self.show_context.show.e_title)
-        self.assertNotContains(response, self.class_context.bid.e_title)
+        self.assertNotContains(response, self.show_context.sched_event.title)
+        self.assertNotContains(response, self.class_context.bid.b_title)
         counter = 0
         for day in self.day.conference.conferenceday_set.all().order_by('day'):
             self.assert_visible_input_selected(
@@ -374,7 +374,7 @@ class TestManageEventList(TestCase):
         }
         response = self.client.get(self.url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.vol_opp.event.eventitem.e_title)
+        self.assertContains(response, self.vol_opp.event.title)
         self.assertContains(
             response,
             ('<a href="%s" class="gbe-table-link" data-toggle="tooltip" ' +
@@ -416,8 +416,8 @@ class TestManageEventList(TestCase):
         }
         response = self.client.get(url, data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, self.show_context.show.e_title)
-        self.assertNotContains(response, self.class_context.bid.e_title)
+        self.assertNotContains(response, self.show_context.sched_event.title)
+        self.assertNotContains(response, self.class_context.bid.b_title)
         for day in self.day.conference.conferenceday_set.all().order_by('day'):
             self.assert_hidden_input_selected(
                 response,

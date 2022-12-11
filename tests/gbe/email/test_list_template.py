@@ -58,7 +58,7 @@ class TestTemplateList(TestCase):
         login_as(self.privileged_profile, self)
         response = self.client.get(self.url)
 
-        templates = ["act accepted - %s" % context.show.e_title.lower(),
+        templates = ["act accepted - %s" % context.sched_event.title.lower(),
                      "act duplicate",
                      "act no decision",
                      "act reject",

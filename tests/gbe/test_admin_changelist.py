@@ -3,12 +3,9 @@ from django.test import (
     TestCase
 )
 from django.contrib.auth.models import User
-from gbe.models import Event
 from tests.factories.gbe_factories import(
     ActFactory,
     BusinessFactory,
-    EventFactory,
-    GenericEventFactory,
     ProfileFactory,
     StyleElementFactory,
     StyleGroupFactory,
@@ -35,17 +32,6 @@ class GBEAdminChangeListTests(TestCase):
     def setUp(self):
         self.client = Client()
         login_as(self.privileged_user, self)
-
-    def test_get_event_subclass(self):
-        obj = GenericEventFactory()
-        response = self.client.get('/admin/gbe/event/', follow=True)
-        self.assertContains(response, "GenericEvent")
-
-    def test_get_event_no_subclass(self):
-        obj = EventFactory()
-        response = self.client.get('/admin/gbe/event/', follow=True)
-        self.assertContains(response, "Event")
-        self.assertContains(response, str(obj))
 
     def test_get_techinfo(self):
         act = ActFactory()
