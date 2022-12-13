@@ -1,5 +1,5 @@
 <!-- Event Modal Start -->
-              <div class="modal" id="Modal{{occurrence.pk}}" role="dialog">
+              <div class="modal" id="Modal{{occurrence.object.pk}}" role="dialog">
               <div class="modal-dialog modal-dialog-centered modal-md">
               <div class="modal-content gbe-modal-content">
                 <form action="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">
