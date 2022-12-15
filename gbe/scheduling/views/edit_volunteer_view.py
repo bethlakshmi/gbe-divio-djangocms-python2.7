@@ -75,9 +75,10 @@ class EditVolunteerView(ManageWorkerView):
             context,
             open_to_public=False)
 
-        context['association_form'] = EventAssociationForm(initial={
-            'staff_area': self.area,
-            'parent_event': self.parent_id})
+        if 'association_form' not in context:
+            context['association_form'] = EventAssociationForm(initial={
+              'staff_area': self.area,
+              'parent_event': self.parent_id})
         context['edit_title'] = self.title
         context['scheduling_form'].fields['approval'].widget = CheckboxInput()
 
