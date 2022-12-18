@@ -104,6 +104,14 @@ class LandingPageView(ProfileRequiredMixin, View):
             calendar_type = calendar_for_event[booking.event.event_style]
             conference = Conference.objects.filter(
                 conference_slug__in=booking.event.labels)[0]
+            title = booking.event.title
+            long_title = None
+            if booking.event.parent is not None:
+                long_title = "%s: %s" % (booking.event.parent.title,
+                                         booking.event.title)
+                if booking.event.parent.slug is not None:
+                    title = "%s: %s" % (booking.event.parent.slug,
+                                        booking.event.title)
             booking_item = {
                 'id': booking.event.pk,
                 'role':  booking.role,
@@ -112,7 +120,8 @@ class LandingPageView(ProfileRequiredMixin, View):
                 'interested': get_bookings(
                     [booking.event.pk],
                     roles=["Interested"]).people,
-                'title': booking.event.title, }
+                'title': title,
+                'long': long_title}
 
             if calendar_type == "Conference" and (
                     booking.role not in ("Teacher", "Performer", "Moderator")):
