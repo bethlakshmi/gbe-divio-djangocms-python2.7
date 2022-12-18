@@ -25,7 +25,7 @@
     <th class='printable-header'>Time</th>
   {% for booking in schedule.bookings %}
   <tr class='printable-table {% if booking.role == 'Interested' %}interested-sched{% else %}dedicated-sched{% endif %}'>
-    <td class='printable-table'>{{ booking.event | safe }}</td>
+    <td class='printable-table'>{% if booking.event.parent %}{{ booking.event.parent.title | safe}}: {% endif %}{{ booking.event | safe }}</td>
     <td class='printable-table'>{{booking.role|title}} </td>    
     <td class='printable-table'>{{booking.event.location}} </td>    
     <td class='printable-table'>{{booking.event.starttime.date}} </td>
