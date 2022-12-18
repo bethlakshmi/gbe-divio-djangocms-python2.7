@@ -52,7 +52,7 @@
 <div class="card round gbe-panel-list mx-2 my-4">
   <div class="card-header gbe-bg-dark">
     <h2 class="card-title">
-      <a href='{{event.detail}}' class="gbe-panel-link">{{ event.occurrence.title }}</a>
+      <a href='{{event.detail}}' class="gbe-panel-link">{% if event.occurrence.parent %}{{ event.occurrence.parent.title | safe}}: {% endif %}{{ event.occurrence.title }}</a>
       <div class="pull-right">
 	<a href='{{event.detail}}' class="detail_link" title="More information">
           <i class="fa fa-info-circle fa-lg" aria-hidden="true"></i>
