@@ -262,6 +262,30 @@ class TestEditVolunteer(TestGBE):
                     GBE_DATETIME_FORMAT)),
             html=True)
 
+    def test_edit_event_error_w_change_parent(self):
+        other_context = VolunteerContext(conference=self.context.conference)
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['title'] = ""
+        data['parent_event'] = other_context.sched_event.pk
+        data['edit_event'] = "Save and Continue"
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertContains(
+            response,
+            "This field is required.")
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s - %s</option>' % (
+                other_context.sched_event.pk,
+                other_context.sched_event.title,
+                other_context.sched_event.start_time.strftime(
+                    GBE_DATETIME_FORMAT)),
+            html=True)
+
     def test_edit_event_set_area(self):
         other_context = StaffAreaContext(conference=self.context.conference)
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')

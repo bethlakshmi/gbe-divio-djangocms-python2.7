@@ -278,7 +278,9 @@ class TestCalendarView(TestCase):
             response,
             "There are no general events scheduled for this day.")
 
-    def test_calendar_1_event_per_hour(self):
+    def test_calendar_1_event_per_hour_w_parent(self):
+        self.volunteeropp.parent = self.showcontext.sched_event
+        self.volunteeropp.save()
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
                       args=['Volunteer'])
@@ -287,9 +289,16 @@ class TestCalendarView(TestCase):
             response,
             '<div class="col-lg-12 col-md-12 col-sm-12 col-12">',
             1)
+        self.assertContains(response, self.showcontext.sched_event.slug)
+        self.assertNotContains(response, self.showcontext.sched_event.title)
 
     def test_calendar_2_event_per_hour(self):
+        other_show = ShowContext(conference=self.other_conference)
+        other_show.sched_event.slug = None
+        other_show.sched_event.save()
         two_opp = self.staffcontext.add_volunteer_opp()
+        two_opp.parent = other_show.sched_event
+        two_opp.save()
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
                       args=['Volunteer'])
@@ -299,6 +308,7 @@ class TestCalendarView(TestCase):
             '<div class="col-lg-6 col-md-6 col-sm-6 col-12">',
             2)
         self.assertContains(response, two_opp.title)
+        self.assertContains(response, other_show.sched_event.title)
 
     def test_calendar_3_event_per_hour(self):
         self.staffcontext.add_volunteer_opp()
