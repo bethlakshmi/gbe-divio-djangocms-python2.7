@@ -5,6 +5,10 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from tests.factories.gbe_factories import ProfileFactory
+from tests.factories.scheduler_factories import (
+    EventLabelFactory,
+    SchedEventFactory,
+)
 from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,
@@ -63,6 +67,14 @@ class TestStaffArea(TestCase):
         '''
         context = StaffAreaContext()
         vol1, opp1 = context.book_volunteer()
+        show = SchedEventFactory(
+            event_style="show",
+            starttime=opp1.event.starttime)
+        EventLabelFactory(event=show, text="General")
+        EventLabelFactory(event=show,
+                          text=context.conference.conference_slug)
+        opp1.event.parent = show
+        opp1.event.save()
         vol2, opp2 = context.book_volunteer(role="Pending Volunteer")
         vol3, opp3 = context.book_volunteer(role="Waitlisted")
         vol4, opp4 = context.book_volunteer(role="Rejected")
@@ -78,6 +90,8 @@ class TestStaffArea(TestCase):
         self.assertNotContains(response, str(vol2))
         self.assertNotContains(response, str(vol3))
         self.assertNotContains(response, str(vol4))
+        self.assertContains(response, "%s: %s" % (show.title,
+                                                  opp1.event.title))
         self.assertContains(response, "?filter=Potential")
         self.assertContains(response, reverse("edit_staff",
                                               urlconf='gbe.scheduling.urls',
