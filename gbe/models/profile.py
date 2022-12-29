@@ -21,12 +21,12 @@ from scheduler.idd import (
 )
 from gbetext import (
     best_time_to_call_options,
+    not_scheduled_roles,
     phone_number_format_error,
     profile_alerts,
     role_options,
     states_options,
 )
-from gbetext import not_scheduled_roles
 
 
 phone_regex = '(\d{3}[-\.]?\d{3}[-\.]?\d{4})'
