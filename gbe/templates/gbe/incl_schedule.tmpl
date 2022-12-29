@@ -22,7 +22,7 @@
             <i class="fa fa-star" aria-hidden="true"></i></a>
 	    {% endif %}
             {{booking.starttime}}, 
-          <a href="{% url 'scheduling:detail_view' booking.id %}" class="gbe-link">
+          <a href="{% url 'scheduling:detail_view' booking.id %}" class="gbe-link" {% if booking.long %}title="{{booking.long}}"{% endif %}>
             {{ booking.title }}</a>
 	    {% if not historical %}
 	      {% if booking.role == "Teacher" or booking.role == "Moderator" %}

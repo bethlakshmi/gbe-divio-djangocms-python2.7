@@ -15,7 +15,10 @@ from tests.factories.ticketing_factories import (
     TransactionFactory,
     TicketingEligibilityConditionFactory
 )
-from tests.contexts import ClassContext
+from tests.contexts import (
+    ClassContext,
+    VolunteerContext,
+)
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as
@@ -89,6 +92,22 @@ class TestWelcomeLetter(TestCase):
             response,
             str(context.room))
         self.assertContains(response, "dedicated-sched")
+
+    def test_personal_schedule_volunteer_w_slug(self):
+        '''a teacher booked into a class, with an active role condition
+           should have a booking
+        '''
+        context = VolunteerContext()
+
+        login_as(self.priv_profile, self)
+        response = self.client.get(
+            self.url,
+            data={"conf_slug": context.conference.conference_slug})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, str(context.profile))
+        self.assertContains(response, "%s: %s" % (
+            context.sched_event.title,
+            context.opp_event.title))
 
     def test_personal_schedule_interest_booking(self):
         '''a teacher booked into a class, with an active role condition
