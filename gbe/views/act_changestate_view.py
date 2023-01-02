@@ -82,31 +82,16 @@ class ActChangeStateView(BidChangeStateView):
         if self.act_accepted(request):
             # Cast the act into the show by adding it to the schedule
             # resource time
-            if ('casting' not in request.POST) or (
-                    request.POST[
-                        'casting'] != '' and ActCastingOption.objects.filter(
-                        casting=request.POST['casting']).count() == 0):
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="INVALID_CASTING",
-                    defaults={
-                        'summary': "Casting Role Incorrect",
-                        'description': no_casting_msg})
-                messages.error(request, user_message[0].description)
-
-                return HttpResponseRedirect(reverse(
-                    "act_review", urlconf='gbe.urls', args=[self.object.pk]))
-            casting = request.POST['casting']
             role = "Performer"
             if request.POST['accepted'] == '2':
-                casting = "Waitlisted"
+                self.casting = "Waitlisted"
                 role = "Waitlisted"
 
             same_show = False
             same_role = False
             if show and show.event == self.new_show:
                 same_show = True
-                if casting == show.commitment.role:
+                if self.casting == show.commitment.role:
                     user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
                         code="ACT_NO_CHANGE",
@@ -124,7 +109,7 @@ class ActChangeStateView(BidChangeStateView):
 
             person = Person(public_id=self.object.performer.pk,
                             role=role,
-                            commitment=Commitment(role=casting,
+                            commitment=Commitment(role=self.casting,
                                                   decorator_class=self.object))
             profiles = self.object.get_performer_profiles()
             if len(profiles) > 1:
@@ -189,11 +174,13 @@ class ActChangeStateView(BidChangeStateView):
 
     def notify_bidder(self, request):
         email_show = None
+        email_casting = None
         if (str(self.object.accepted) != request.POST['accepted']) or (
                 request.POST['accepted'] == '3'):
-            # only send the show when act is accepted
+            # only send the show & role when act is accepted
             if request.POST['accepted'] == '3':
                 email_show = self.new_show
+                email_casting = self.casting
             for bidder in self.object.profiles:
                 email_status = send_bid_state_change_mail(
                     str(self.object_type.__name__).lower(),
@@ -201,7 +188,8 @@ class ActChangeStateView(BidChangeStateView):
                     bidder.get_badge_name(),
                     self.object,
                     int(request.POST['accepted']),
-                    show=email_show)
+                    show=email_show,
+                    casting=email_casting)
                 self.check_email_status(request, email_status)
 
     def prep_bid(self, request, args, kwargs):
@@ -217,3 +205,17 @@ class ActChangeStateView(BidChangeStateView):
                 self.new_show = response.occurrence
             else:
                 raise Http404
+
+            if ('casting' not in request.POST) or (
+                    request.POST[
+                        'casting'] != '' and ActCastingOption.objects.filter(
+                        casting=request.POST['casting']).count() == 0):
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="INVALID_CASTING",
+                    defaults={
+                        'summary': "Casting Role Incorrect",
+                        'description': no_casting_msg})
+                messages.error(request, user_message[0].description)
+                raise Http404
+            self.casting = request.POST['casting']

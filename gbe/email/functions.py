@@ -116,7 +116,8 @@ def send_bid_state_change_mail(
         badge_name,
         bid,
         status,
-        show=None):
+        show=None,
+        casting=None):
     site = Site.objects.get_current()
     context = {
         'name': badge_name,
@@ -125,6 +126,8 @@ def send_bid_state_change_mail(
         'status': acceptance_states[status][1],
         'site': site.domain,
         'site_name': site.name}
+    if casting:
+        context['casting'] = casting
     if show:
         name = '%s %s - %s' % (
             bid_type.lower(),
