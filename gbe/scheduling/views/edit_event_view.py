@@ -99,6 +99,8 @@ class EditEventView(ManageVolWizardView):
         validity = False
         for form in formset:
             validity = form.is_valid() or validity
+        if len(formset) == 0:
+            validity = True
         return validity
 
     def make_context(self, request, errorcontext=None):
