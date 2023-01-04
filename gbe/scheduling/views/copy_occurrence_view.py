@@ -114,7 +114,7 @@ class CopyOccurrenceView(CopyCollectionsView):
             max_volunteer=occurrence.max_volunteer,
             max_commitments=occurrence.max_commitments,
             locations=[new_event_room],
-            description=occurrence.duration,
+            description=occurrence.description,
             parent_event_id=parent_event_id,
             labels=labels,
             approval=occurrence.approval_needed,

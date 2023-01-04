@@ -221,6 +221,39 @@ class TestEditEventView(TestScheduling):
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['title'])
 
+    def test_edit_event_without_staffing(self):
+        login_as(self.privileged_user, self)
+        show_context = ShowContext(conference=self.context.conference)
+        slot = show_context.make_rehearsal()
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.conference.conference_slug,
+                  slot.pk],
+            urlconf='gbe.scheduling.urls')
+        data = self.edit_event()
+        del(data['alloc_0-role'])
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertRedirects(
+            response,
+            "%s?%s-day=%d&filter=Filter&new=[%d]" % (
+                reverse('manage_event_list',
+                        urlconf='gbe.scheduling.urls',
+                        args=[self.context.conference.conference_slug]),
+                self.context.conference.conference_slug,
+                self.extra_day.pk,
+                slot.pk))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s 11:00 AM' % (
+                data['title'],
+                self.extra_day.day.strftime(GBE_DATE_FORMAT))
+            )
+
     def test_edit_event_and_continue(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         login_as(self.privileged_user, self)
