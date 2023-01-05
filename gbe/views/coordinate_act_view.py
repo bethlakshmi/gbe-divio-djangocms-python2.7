@@ -1,5 +1,8 @@
 from gbe.views import MakeActView
-from django.urls import reverse
+from django.urls import (
+    reverse,
+    reverse_lazy,
+)
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from gbe.models import TechInfo
 from gbe.forms import ActCoordinationForm
@@ -16,11 +19,13 @@ from django.contrib import messages
 class CoordinateActView(PermissionRequiredMixin, MakeActView):
     page_title = 'Create Act for Coordinator'
     view_title = 'Book an Act'
-    has_draft = False
+    has_draft = True
     permission_required = 'gbe.assign_act'
     submit_form = ActCoordinationForm
+    draft_form = ActCoordinationForm
     coordinated = True
     instructions = act_coord_instruct
+    normal_redirect = reverse_lazy('act_review', urlconf='gbe.urls')
 
     def groundwork(self, request, args, kwargs):
         # do the basic bid stuff, but NOT the regular act stuff
@@ -52,7 +57,7 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
 
     def make_context(self, request):
         context = super(MakeActView, self).make_context(request)
-        context['nodraft'] = "Submit & Proceed to Casting"
+        context['submit_button'] = "Submit & Review"
         return context
 
     def submit_bid(self, request):
