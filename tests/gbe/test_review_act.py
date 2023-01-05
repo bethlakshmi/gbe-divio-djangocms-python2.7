@@ -84,6 +84,9 @@ class TestReviewAct(TestCase):
         self.assertContains(response, 'Act Proposal')
         self.assertContains(response, 'Review Act')
         self.assertContains(response, self.act.performer.experience)
+        self.assertContains(
+            response,
+            self.act.performer.performer_profile.user_object.email)
 
     def test_hidden_fields_are_populated(self):
         login_as(self.privileged_user, self)
