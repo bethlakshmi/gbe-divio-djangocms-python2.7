@@ -25,7 +25,7 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
     draft_form = ActCoordinationForm
     coordinated = True
     instructions = act_coord_instruct
-    normal_redirect = reverse_lazy('act_review', urlconf='gbe.urls')
+    normal_redirect = reverse_lazy('act_review_list', urlconf='gbe.urls')
 
     def groundwork(self, request, args, kwargs):
         # do the basic bid stuff, but NOT the regular act stuff

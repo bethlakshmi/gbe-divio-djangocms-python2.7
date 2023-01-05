@@ -36,7 +36,7 @@
      {% if fee_paid %}
      <input type="submit" name="submit" value="{% if submit_button %}{{submit_button}}{% else %}Submit For Approval{% endif %}" class="btn gbe-btn-primary">
      {% else %}
-     <input type="submit" name="submit" formnovalidate value="Proceed to Payment" class="btn gbe-btn-primary">
+     <input type="submit" name="submit" formnovalidate value="{% if submit_button %}{{submit_button}}{% else %}Proceed to Payment{% endif %}" class="btn gbe-btn-primary">
      {% endif %}
    {% endif %}
    </form>
