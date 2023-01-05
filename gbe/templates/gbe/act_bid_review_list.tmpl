@@ -4,7 +4,13 @@
     <h2 class="gbe-title">{{view_title}}</h2>
     <h3>{{conference}}</h3>
    </div><div class="col-md-4 text-right">
-    {% if perms.gbe.assign_act %}<a href="{% url 'gbe:act_coord_create' %}" role="button" class="btn gbe-btn-primary">Create Approved Act</a>{% endif %}
+    {% if perms.gbe.assign_act %}
+    <div class="dropdown show">
+      <a class="btn gbe-btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Comp Act Options</a>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <a class="dropdown-item" href="{% url 'gbe:act_coord_create' %}">Create & Comp Act</a>
+        <a class="dropdown-item" href="#">Send a Comp</a>
+      </div></div>{% endif %}
   </div></div>
  {% endblock %}
 {% block tbody %}
