@@ -26,7 +26,7 @@ class ReviewBidListView(View):
     def dispatch(self, *args, **kwargs):
         return super(ReviewBidListView, self).dispatch(*args, **kwargs)
 
-    def get_bids(self):
+    def get_bids(self, request=None):
         return self.object_type.objects.filter(
             submitted=True,
             b_conference=self.conference).order_by(*self.bid_order_fields)
@@ -68,12 +68,13 @@ class ReviewBidListView(View):
             rows.append(bid_row)
         return rows
 
-    def get_bid_list(self):
-        bids = self.get_bids()
+    def get_bid_list(self, request=None):
+        bids = self.get_bids(request)
         review_query = self.review_query(bids)
         self.rows = self.get_rows(bids, review_query)
 
     def groundwork(self, request):
+        self.reviewer = validate_perms(request, self.reviewer_permissions)
         bid_string = self.object_type().__class__.__name__
         self.page_title = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
@@ -88,6 +89,12 @@ class ReviewBidListView(View):
                     'summary': "%s First Header" % bid_string,
                     'description': '%s Proposals' % bid_string
                     })[0].description
+        self.user = request.user
+        if request.GET.get('conf_slug'):
+            self.conference = Conference.by_slug(request.GET['conf_slug'])
+        else:
+            self.conference = Conference.current_conf()
+        self.conference_slugs = Conference.all_slugs()
 
     def get_context_dict(self):
         context = {
@@ -105,13 +112,7 @@ class ReviewBidListView(View):
 
     @never_cache
     def get(self, request, *args, **kwargs):
-        self.reviewer = validate_perms(request, self.reviewer_permissions)
         self.groundwork(request)
-        self.user = request.user
-        if request.GET.get('conf_slug'):
-            self.conference = Conference.by_slug(request.GET['conf_slug'])
-        else:
-            self.conference = Conference.current_conf()
 
         if request.GET.get('changed_id'):
             self.changed_id = int(request.GET['changed_id'])
@@ -119,11 +120,23 @@ class ReviewBidListView(View):
             self.changed_id = -1
 
         try:
+            self.get_bid_list(request)
+        except IndexError:
+            return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
+
+        return render(request,
+                      self.template,
+                      self.get_context_dict())
+
+    @never_cache
+    def post(self, request, *args, **kwargs):
+        self.groundwork(request)
+
+        try:
             self.get_bid_list()
         except IndexError:
             return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
 
-        self.conference_slugs = Conference.all_slugs()
         return render(request,
                       self.template,
                       self.get_context_dict())

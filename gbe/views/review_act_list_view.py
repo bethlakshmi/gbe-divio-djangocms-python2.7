@@ -1,12 +1,16 @@
 from django.urls import reverse
+from gbe.forms import ActFilterForm
 from gbe.models import (
     Act,
     ActBidEvaluation,
     EvaluationCategory,
     FlexibleEvaluation,
+    UserMessage,
 )
 from gbe.views import ReviewBidListView
 from django.db.models import Avg
+from django.contrib import messages
+from gbetext import no_filter_msg
 
 
 class ReviewActListView(ReviewBidListView):
@@ -19,6 +23,27 @@ class ReviewActListView(ReviewBidListView):
     bid_order_fields = ('accepted', 'performer')
     status_index = 3
 
+    def get_bids(self, request=None):
+        if request and 'filter' in list(request.POST.keys()):
+            form = ActFilterForm(request.POST)
+            if form.is_valid():
+                return self.object_type.objects.filter(
+                    submitted=True,
+                    b_conference=self.conference,
+                    shows_preferences__in=form.cleaned_data[shows_preferences]
+                    ).order_by(*self.bid_order_fields)
+            else:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="FILTER_FORM_ERROR",
+                    defaults={
+                        'summary': "Problem with Filter",
+                        'description': no_filter_msg})
+                messages.warning(request, user_message[0].description)
+        return self.object_type.objects.filter(
+            submitted=True,
+            b_conference=self.conference).order_by(*self.bid_order_fields)
+
     def get_context_dict(self):
         context = super(ReviewActListView, self).get_context_dict()
         context.update(
@@ -26,6 +51,9 @@ class ReviewActListView(ReviewBidListView):
                 visible=True).order_by('category').values_list(
                 'category', flat=True),
              'last_columns': ['Average', 'Action']})
+
+        if self.conference.status in ('upcoming', 'ongoing'):
+            context['filter_form'] = ActFilterForm
         return context
 
     def get_rows(self, bids, review_query):

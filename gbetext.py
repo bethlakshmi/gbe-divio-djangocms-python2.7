@@ -66,7 +66,8 @@ ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete and cannot be "
                                 "submitted for a show.")
 ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete but it has been "
                                 "submitted for a show.")
-
+no_filter_msg = ("The filter applied to this list did not work.  All "
+                 "results are displayed.")
 act_shows_options = [
     (4, mark_safe('Thursday, May 4, 8PM: <b>Star Bras!</b><br><small>Show us '
                   'your space opera! Visitors from any planet (or universe) '
@@ -83,6 +84,13 @@ act_shows_options = [
     (7, mark_safe('Saturday, May 6, 9PM: <b>The Main Event, competition</b>'
                   '<br><small>Bring us your best act to compete for titles, '
                   'prizes, and cash!</small>'))]
+act_shows_options_short = [
+    (4, mark_safe('<b>Star Bras!</b><br>Thursday, May 4, 8PM')),
+    (5, mark_safe('<b>The Burlesk Bordello</b><br>Friday, May 5, 9:30PM')),
+    (6, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
+                  'May 6, 7:30PM')),
+    (7, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
+                  'May 6, 9PM'))]
 old_act_shows_options = [(0, 'The Bordello (Fri. Late)'),
                          (1, 'The Main Event, in competition'),
                          (2, 'The Main Event, not in competition'),
