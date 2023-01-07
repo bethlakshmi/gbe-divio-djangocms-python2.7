@@ -5,7 +5,10 @@ from django.views.decorators.cache import never_cache
 from gbe_utils.mixins import SubwayMapMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import (
+    reverse,
+    reverse_lazy,
+)
 from django.http import Http404
 from django.shortcuts import (
     get_object_or_404,
@@ -41,6 +44,7 @@ class MakeBidView(SubwayMapMixin, View):
     instructions = ''
     payment_form = None
     coordinated = False
+    normal_redirect = reverse_lazy('home', urlconf='gbe.urls')
 
     def groundwork(self, request, args, kwargs):
         self.owner = validate_profile(request, require=False)
@@ -324,7 +328,7 @@ class MakeBidView(SubwayMapMixin, View):
 
         messages.success(request, user_message[0].description)
         return HttpResponseRedirect(
-            redirect or reverse('home', urlconf='gbe.urls'))
+            redirect or self.normal_redirect)
 
     def dispatch(self, *args, **kwargs):
         return super(MakeBidView, self).dispatch(*args, **kwargs)
