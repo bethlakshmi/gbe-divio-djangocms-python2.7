@@ -11,6 +11,7 @@ from gbe.views import ReviewBidListView
 from django.db.models import Avg
 from django.contrib import messages
 from gbetext import no_filter_msg
+from django.db.models import Q
 
 
 class ReviewActListView(ReviewBidListView):
@@ -22,15 +23,21 @@ class ReviewActListView(ReviewBidListView):
     bid_review_list_view_name = 'act_review_list'
     bid_order_fields = ('accepted', 'performer')
     status_index = 3
+    filter_form = None
 
     def get_bids(self, request=None):
         if request and 'filter' in list(request.POST.keys()):
-            form = ActFilterForm(request.POST)
-            if form.is_valid():
+            self.filter_form = ActFilterForm(request.POST)
+            if self.filter_form.is_valid():
+                query = Q(shows_preferences__exact='')
+                for choice in self.filter_form.cleaned_data[
+                        'shows_preferences']:
+                    query = query | Q(shows_preferences__contains=choice)
+
                 return self.object_type.objects.filter(
+                    query,
                     submitted=True,
                     b_conference=self.conference,
-                    shows_preferences__in=form.cleaned_data[shows_preferences]
                     ).order_by(*self.bid_order_fields)
             else:
                 user_message = UserMessage.objects.get_or_create(
@@ -53,7 +60,10 @@ class ReviewActListView(ReviewBidListView):
              'last_columns': ['Average', 'Action']})
 
         if self.conference.status in ('upcoming', 'ongoing'):
-            context['filter_form'] = ActFilterForm
+            if self.filter_form is not None:
+                context['filter_form'] = self.filter_form
+            else:
+                context['filter_form'] = ActFilterForm
         return context
 
     def get_rows(self, bids, review_query):

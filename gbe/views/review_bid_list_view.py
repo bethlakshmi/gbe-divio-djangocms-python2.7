@@ -21,6 +21,7 @@ class ReviewBidListView(View):
     template = 'gbe/bid_review_list.tmpl'
     bid_order_fields = ('accepted', 'b_title')
     status_index = 4
+    changed_id = -1
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -116,11 +117,9 @@ class ReviewBidListView(View):
 
         if request.GET.get('changed_id'):
             self.changed_id = int(request.GET['changed_id'])
-        else:
-            self.changed_id = -1
 
         try:
-            self.get_bid_list(request)
+            self.get_bid_list()
         except IndexError:
             return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
 
@@ -133,7 +132,7 @@ class ReviewBidListView(View):
         self.groundwork(request)
 
         try:
-            self.get_bid_list()
+            self.get_bid_list(request)
         except IndexError:
             return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
 
