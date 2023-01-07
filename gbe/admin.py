@@ -49,6 +49,7 @@ class ActAdmin(BidAdmin):
                     'b_title',
                     'submitted',
                     'accepted',
+                    'shows_preferences',
                     'created_at',
                     'updated_at')
     search_fields = ['b_title', 'performer__name']

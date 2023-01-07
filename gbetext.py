@@ -68,6 +68,10 @@ ACT_INCOMPLETE_NOT_SUBMITTED = ("This act is not complete but it has been "
                                 "submitted for a show.")
 no_filter_msg = ("The filter applied to this list did not work.  All "
                  "results are displayed.")
+clear_filter_msg = ("The filter has been cleared (no choices made = all "
+                    "options are shown)")
+apply_filter_msg = ("Results have been filtered.  Note, entries with an " +
+                    "empty value are included in all search resulrts.")
 act_shows_options = [
     (4, mark_safe('Thursday, May 4, 8PM: <b>Star Bras!</b><br><small>Show us '
                   'your space opera! Visitors from any planet (or universe) '
