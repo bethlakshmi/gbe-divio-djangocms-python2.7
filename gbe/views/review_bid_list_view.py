@@ -25,7 +25,10 @@ class ReviewBidListView(View):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ReviewBidListView, self).dispatch(*args, **kwargs)
+        try:
+            return super(ReviewBidListView, self).dispatch(*args, **kwargs)
+        except IndexError:
+            return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
 
     def get_bids(self, request=None):
         return self.object_type.objects.filter(
@@ -118,10 +121,7 @@ class ReviewBidListView(View):
         if request.GET.get('changed_id'):
             self.changed_id = int(request.GET['changed_id'])
 
-        try:
-            self.get_bid_list()
-        except IndexError:
-            return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
+        self.get_bid_list()
 
         return render(request,
                       self.template,
@@ -130,12 +130,7 @@ class ReviewBidListView(View):
     @never_cache
     def post(self, request, *args, **kwargs):
         self.groundwork(request)
-
-        try:
-            self.get_bid_list(request)
-        except IndexError:
-            return HttpResponseRedirect(reverse('home', urlconf='gbe.urls'))
-
+        self.get_bid_list(request)
         return render(request,
                       self.template,
                       self.get_context_dict())
