@@ -28,7 +28,9 @@ class CreateTransaction(GbeFormMixin, RoleRequiredMixin, CreateView):
     view_permissions = ('Ticketing - Transactions', )
 
     def get_success_url(self):
-        return "%s?changed_id=%d" % (self.success_url, self.object.pk)
+        return "%s?changed_id=%d" % (
+            self.request.GET.get('next', self.success_url),
+            self.object.pk)
 
     def form_valid(self, form):
         form.instance.amount = 0
