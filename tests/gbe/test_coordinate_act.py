@@ -14,6 +14,7 @@ from tests.functions.gbe_functions import (
     assert_alert_exists,
 )
 from gbetext import (
+    default_act_draft_msg,
     default_act_submit_msg,
     act_coord_instruct,
     missing_profile_info,
@@ -51,6 +52,7 @@ class TestCoordinateAct(TestCase):
                         'assign_act')
         grant_privilege(cls.privileged_user,
                         'Act Reviewers')
+        cls.url = reverse(cls.view_name, urlconf='gbe.urls')
 
     def get_act_form(self, persona=False, valid=True):
         if not persona:
@@ -62,7 +64,6 @@ class TestCoordinateAct(TestCase):
                      'theact-performer': persona.resourceitem_id,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk,
-                     'theact-accepted': 3,
                      'submit': 1,
                      }
         if not valid:
@@ -71,7 +72,7 @@ class TestCoordinateAct(TestCase):
 
     def post_act_submission(self, next_page=None, persona=False):
         act_form = self.get_act_form(persona)
-        url = reverse(self.view_name, urlconf='gbe.urls')
+        url = self.url
         if next_page is not None:
             url = "%s?next=%s" % (url, next_page)
         login_as(self.privileged_user, self)
@@ -79,18 +80,16 @@ class TestCoordinateAct(TestCase):
         return response, act_form
 
     def test_bid_act_get_form(self):
-        '''act_bid, when profile has a personae'''
-        url = reverse(self.view_name, urlconf='gbe.urls')
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertContains(response, "Create Act for Coordinator")
         self.assertContains(response, act_coord_instruct)
+        self.assertContains(response, "Submit &amp; Review")
 
     def test_act_bid_post_form_not_valid(self):
         login_as(self.privileged_user, self)
-        url = reverse(self.view_name, urlconf='gbe.urls')
         data = self.get_act_form(valid=False)
-        response = self.client.post(url, data=data)
+        response = self.client.post(self.url, data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Create Act for Coordinator")
         self.assertContains(response, "This field is required.")
@@ -105,6 +104,24 @@ class TestCoordinateAct(TestCase):
         self.assertContains(response, just_made.b_title)
         assert_alert_exists(
             response, 'success', 'Success', default_act_submit_msg)
+        self.assertTrue(Transaction.objects.filter(
+            purchaser__matched_to_user=just_made.performer.contact.user_object,
+            ticket_item__ticketing_event__act_submission_event=True,
+            ticket_item__ticketing_event__conference=self.current_conference
+            ).exists())
+
+    def test_act_submit_draft(self):
+        tickets = setup_fees(self.current_conference, is_act=True)
+        act_form = self.get_act_form()
+        del(act_form['submit'])
+        act_form['draft'] = 1
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data=act_form, follow=True)
+        just_made = self.performer.acts.all().first()
+        self.assertRedirects(response, reverse('act_review_list',
+                                               urlconf="gbe.urls"))
+        assert_alert_exists(
+            response, 'success', 'Success', default_act_draft_msg)
         self.assertTrue(Transaction.objects.filter(
             purchaser__matched_to_user=just_made.performer.contact.user_object,
             ticket_item__ticketing_event__act_submission_event=True,
@@ -157,19 +174,17 @@ class TestCoordinateAct(TestCase):
 
     def test_bad_priv(self):
         login_as(self.performer.performer_profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls')
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
 
     def test_act_title_collision(self):
-        url = reverse(self.view_name, urlconf='gbe.urls')
         data = self.get_act_form()
         original = ActFactory(
             b_conference=self.current_conference,
             performer=self.performer)
         data['theact-b_title'] = original.b_title
         login_as(self.privileged_user, self)
-        response = self.client.post(url, data=data, follow=True)
+        response = self.client.post(self.url, data=data, follow=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "The act has the same title")

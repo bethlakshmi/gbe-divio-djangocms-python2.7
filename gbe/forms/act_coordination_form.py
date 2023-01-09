@@ -25,7 +25,6 @@ class ActCoordinationForm(ModelForm):
     track_artist = CharField(required=False)
     track_title = CharField(required=False)
     b_conference = HiddenInput()
-    accepted = IntegerField(widget=HiddenInput(), initial=3)
     b_description = CharField(
         required=True,
         label=act_bid_labels['description'],
@@ -41,8 +40,7 @@ class ActCoordinationForm(ModelForm):
             'track_artist',
             'act_duration',
             'b_description',
-            'b_conference',
-            'accepted']
+            'b_conference']
         labels = act_bid_labels
         help_texts = act_help_texts
         widgets = {

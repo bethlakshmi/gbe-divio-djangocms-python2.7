@@ -92,6 +92,16 @@ class TestEditShowWizard(TestCase):
             response,
             'class="panel-collapse collapse show"',
             3)
+        self.assertContains(
+            response,
+            '<input type="hidden" name="new_opp-event_style" value="Volunteer"'
+            ' id="id_new_opp-event_style">',
+            html=True)
+        self.assertContains(
+            response,
+            '<input type="hidden" name="new_slot-event_style" value='
+            '"Rehearsal Slot" id="id_new_slot-event_style">',
+            html=True)
 
     def test_good_user_get_rehearsal_w_acts(self):
         act_techinfo_context = ActTechInfoContext(
