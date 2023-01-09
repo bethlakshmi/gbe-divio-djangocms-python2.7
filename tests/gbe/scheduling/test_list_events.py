@@ -183,6 +183,7 @@ class TestViewList(TestCase):
         this_class = ClassFactory.create(accepted=3,
                                          b_conference=self.conf)
         staff_context = StaffAreaContext(conference=self.conf)
+        volunteer_context = VolunteerContext(conference=self.conf)
         opportunity = staff_context.add_volunteer_opp()
         opportunity.starttime = datetime.now() + timedelta(days=1)
         opportunity.save()
@@ -198,6 +199,9 @@ class TestViewList(TestCase):
                            urlconf='gbe.scheduling.urls')
         self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
+        self.assertContains(response, "%s: %s" % (
+            volunteer_context.sched_event.title,
+            volunteer_context.opp_event.title))
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon"')
         self.assertNotContains(response, this_class.b_title)

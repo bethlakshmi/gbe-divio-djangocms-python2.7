@@ -385,6 +385,7 @@ class TestActChangestate(TestCase):
             'act accepted - %s' % self.sched_event.title.lower(),
             "Your act has been cast in %s" % self.sched_event.title
         )
+        assert_email_contents("Regular Act")
         casting = Ordering.objects.get(
             class_id=new_context.act.pk,
             allocation__event=self.sched_event)

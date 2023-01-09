@@ -1,8 +1,6 @@
 Dear {{ name }},
 
-The status of your {{ bid_type }} - {{ bid }} - has been changed to {{ status }}. You can
-always check the status of your submissions or your schedule by visiting
-your personal pane on {{site}}.
+The status of your {{ bid_type }} - {{ bid }} - has been changed to {{ status }}. {% if casting %}Your role is {{ casting }}{% endif %}.  You can always check the status of your submissions or your schedule by visiting your personal pane on {{site}}.
 
 {% if show %}
 Congratulations!  Your act, {{ bid }} was cast in {{ show }}.  We've posted you as one of

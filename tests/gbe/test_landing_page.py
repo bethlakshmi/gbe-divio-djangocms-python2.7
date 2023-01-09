@@ -583,6 +583,8 @@ class TestIndex(TestCase):
 
     def test_staff_lead_button(self):
         show_context = ActTechInfoContext(schedule_rehearsal=True)
+        show_context.sched_event.slug = "Iamashowslug"
+        show_context.sched_event.save()
         vol_context = VolunteerContext(sched_event=show_context.sched_event)
         context = StaffAreaContext(conference=show_context.conference)
         EventLabelFactory(event=vol_context.opp_event,
@@ -597,6 +599,14 @@ class TestIndex(TestCase):
             'show_dashboard',
             urlconf='gbe.scheduling.urls',
             args=[show_context.sched_event.pk]))
+        self.assertContains(
+            response,
+            "%s: %s" % (show_context.sched_event.title,
+                        vol_context.opp_event.title))
+        self.assertContains(
+            response,
+            "%s: %s" % (show_context.sched_event.slug,
+                        vol_context.opp_event.title))
 
     def test_no_act_tech_alert(self):
         current_act_context = ActTechInfoContext(

@@ -282,6 +282,9 @@ class TestVolunteerSignupView(TestCase):
             "volunteered.gif",
             action="off")
         self.assertContains(response, vol_context.sched_event.title)
+        self.assertContains(response, "%s: %s" % (
+            vol_context.sched_event.slug,
+            vol_context.opp_event.title))
         self.assertContains(response, reverse(
             "detail_view",
             urlconf="gbe.scheduling.urls",

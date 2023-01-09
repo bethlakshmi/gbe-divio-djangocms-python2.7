@@ -102,6 +102,7 @@ class FlexibleReviewBidView(ReviewBidView):
             'review_results': self.review_results,
             'reviewers': self.reviewers,
             'notes': self.notes,
+            'display_contact_info': True,
              })
         return render(
             request,

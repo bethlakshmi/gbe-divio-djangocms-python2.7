@@ -26,7 +26,8 @@
 {% for opp in opps%}
 <div class="card round gbe-panel-list mx-2 my-4">
   <div class="card-header gbe-bg-dark">
-    <h2 class="card-title">{{ opp.starttime}} - {{ opp.title}}
+    <h2 class="card-title">{{ opp.starttime}}<br>
+      {% if opp.parent %}{{opp.parent.title}}: {% endif %}{{ opp.title}}
     {% if conference.status != "completed" %}<a href="{% url 'scheduling:edit_event' conference.conference_slug opp.pk %}" role="button" class="btn gbe-btn-primary float-right">Edit</a>{% endif %}</h2></div>
   <div class="card-body"><b>Location:</b>  {{opp.location}}<br>{% if opp.role_count %}Max people: {{opp.role_count}}{% endif %}</div>
   <table class="table gbe-panel-table">

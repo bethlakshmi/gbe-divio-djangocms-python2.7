@@ -127,10 +127,16 @@ class ShowCalendarView(View):
                 if booking.event == occurrence:
                     role = booking.role
             hour = occurrence.start_time.strftime("%-I:00 %p")
+            title = occurrence.title
+            if occurrence.parent is not None:
+                title = "%s: %s" % (occurrence.parent.title, occurrence.title)
+                if occurrence.parent.slug is not None:
+                    title = "%s: %s" % (occurrence.parent.slug,
+                                        occurrence.title)
             occurrence_detail = {
                 'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
                 'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
-                'title': occurrence.title,
+                'title': title,
                 'location': occurrence.location,
                 'hour': hour,
                 'approval_needed': occurrence.approval_needed,
