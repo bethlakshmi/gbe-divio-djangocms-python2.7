@@ -3,7 +3,7 @@ from django.views.generic.edit import (
     UpdateView,
 )
 from gbe_utils.mixins import (
-    GbeFormMixin,
+    SocialLinkMixin,
     ProfileRequiredMixin,
     SubwayMapMixin,
 )
@@ -29,6 +29,7 @@ class PersonaCreate(CreatePopupMixin,
     view_title = 'Tell Us About Your Stage Persona'
     mode = "performer"
     valid_message = default_create_persona_msg
+    social_links = True
 
     def get_initial(self):
         initial = super().get_initial()
@@ -38,7 +39,7 @@ class PersonaCreate(CreatePopupMixin,
 
 
 class PersonaUpdate(UpdatePopupMixin,
-                    GbeFormMixin,
+                    SocialLinkMixin,
                     ProfileRequiredMixin,
                     UpdateView):
     model = Persona
@@ -49,6 +50,7 @@ class PersonaUpdate(UpdatePopupMixin,
     view_title = 'Tell Us About Your Stage Persona'
     mode = "update"
     valid_message = default_edit_persona_msg
+    social_links = True
 
     def get_queryset(self):
         return self.model.objects.filter(

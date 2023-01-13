@@ -12,15 +12,33 @@ from django.core.validators import (
     MaxValueValidator
 )
 from gbe.models import Performer
-from gbetext import social_options
+
 
 class SocialLink(Model):
+    social_options = [
+        ('Cash App', 'Cash App'),
+        ('Facebook', 'Facebook'),
+        ('Instagram', 'Instagram'),
+        ('Paypal', 'Paypal'),
+        ('TikTok', 'TikTok'),
+        ('Venmo', 'Venmo'),
+        ('Website', 'Website'),
+        ('YouTube', 'YouTube'),
+    ]
+    link_template = {
+        'Cash App': 'Cash App',
+        'Instagram': 'Instagram',
+        'Paypal': 'Paypal',
+        'TikTok': 'TikTok',
+        'Venmo': 'Venmo',
+        'YouTube': 'YouTube',
+    }
     performer = ForeignKey(Performer,
                            on_delete=CASCADE,
                            related_name='links')
     link = URLField(null=True)
     username = CharField(null=True, max_length=100)
-    socal_network = CharField(max_length=5,
+    socal_network = CharField(max_length=40,
                               choices=social_options,
                               blank=True)
     order = PositiveIntegerField(validators=[MinValueValidator(0),

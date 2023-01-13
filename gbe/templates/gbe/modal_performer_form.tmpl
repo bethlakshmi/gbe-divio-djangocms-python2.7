@@ -23,6 +23,9 @@
   <form action="" method="post" enctype="multipart/form-data" name="perf_form">
    <p><font class="gbe-form-error">*</font> indicates a required field</p>
     {% include "form_table.tmpl" %}
+    {% if sociallinkformset %}
+      {{sociallinkformset}}<br>
+    {% endif %}
   {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> {% if delete_url %}<a href="#" data-toggle="modal" data-target="#DeleteModal" data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>{% endif %}{% endif %}
   <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary">
   </form>

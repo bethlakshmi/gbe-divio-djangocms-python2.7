@@ -14,6 +14,7 @@ from .user_create_form import UserCreateForm
 # performer forms
 from .persona_form import PersonaForm
 from .troupe_form import TroupeForm
+from .social_link_form import SocialLinkForm
 
 # bid eval forms
 from .bid_evaluation_form import BidEvaluationForm
