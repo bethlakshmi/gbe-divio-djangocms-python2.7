@@ -24,7 +24,11 @@
    <p><font class="gbe-form-error">*</font> indicates a required field</p>
     {% include "form_table.tmpl" %}
     {% if sociallinkformset %}
-      {{sociallinkformset}}<br>
+    <ul class="dragable_list" id="mySortable">
+      {% for form in sociallinkformset %}
+      <li draggable="true">{{form}}</li>
+      {% endfor %}
+    </ul>
     {% endif %}
   {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> {% if delete_url %}<a href="#" data-toggle="modal" data-target="#DeleteModal" data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>{% endif %}{% endif %}
   <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary">
@@ -55,6 +59,8 @@
 &nbsp;<br>
 {% addtoblock "js" %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
  {{ form.media.js }}
 <script>
 (function($) {
@@ -75,6 +81,21 @@
         newTable.slideDown()
     })
 })($)
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var list = $('#mySortable'),
+      updatePosition = function() {
+        list.children().each(function(i, e){
+          $(this).children('input[class="drag_change"]').val(++i);
+        });
+      };
+
+  list.sortable({
+    placeholder: "ui-state-highlight",
+    update: updatePosition
+  });
+});
 </script>
 {% endaddtoblock %}
 {% endblock content %}

@@ -20,3 +20,4 @@ class SocialLinkForm(ModelForm):
                   'username',
                   'order',
                   ]
+        widgets = {'order': HiddenInput(attrs={'class':'drag_change'})}
