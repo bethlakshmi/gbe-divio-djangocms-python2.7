@@ -15,7 +15,7 @@ class SocialLinkForm(ModelForm):
 
     class Meta:
         model = SocialLink
-        fields = ['socal_network',
+        fields = ['social_network',
                   'link',
                   'username',
                   'order',

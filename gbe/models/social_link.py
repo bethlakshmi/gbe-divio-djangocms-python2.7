@@ -36,9 +36,9 @@ class SocialLink(Model):
     performer = ForeignKey(Performer,
                            on_delete=CASCADE,
                            related_name='links')
-    link = URLField(null=True)
-    username = CharField(null=True, max_length=100)
-    socal_network = CharField(max_length=40,
+    link = URLField(null=True, blank=True)
+    username = CharField(null=True, blank=True, max_length=100)
+    social_network = CharField(max_length=40,
                               choices=social_options,
                               blank=True)
     order = PositiveIntegerField(validators=[MinValueValidator(0),
@@ -47,4 +47,5 @@ class SocialLink(Model):
     class Meta:
         ordering = ['performer', 'order']
         app_label = "gbe"
-        unique_together = [['socal_network', 'link']]
+        unique_together = [['social_network', 'link'],
+                           ['social_network', 'username']]
