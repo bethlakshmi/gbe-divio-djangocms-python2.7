@@ -3,7 +3,7 @@ from django.views.generic.edit import (
     UpdateView,
 )
 from gbe_utils.mixins import (
-    SocialLinkMixin,
+    GbeFormMixin,
     ProfileRequiredMixin,
     SubwayMapMixin,
 )
@@ -39,7 +39,7 @@ class PersonaCreate(CreatePopupMixin,
 
 
 class PersonaUpdate(UpdatePopupMixin,
-                    SocialLinkMixin,
+                    GbeFormMixin,
                     ProfileRequiredMixin,
                     UpdateView):
     model = Persona

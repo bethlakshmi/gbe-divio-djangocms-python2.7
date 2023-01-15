@@ -41,8 +41,8 @@ class SocialLink(Model):
     social_network = CharField(max_length=40,
                               choices=social_options,
                               blank=True)
-    order = PositiveIntegerField(validators=[MinValueValidator(0),
-                                             MaxValueValidator(4)])
+    order = PositiveIntegerField(validators=[MinValueValidator(1),
+                                             MaxValueValidator(5)])
 
     class Meta:
         ordering = ['performer', 'order']

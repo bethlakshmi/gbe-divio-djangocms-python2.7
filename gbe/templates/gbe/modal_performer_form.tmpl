@@ -23,10 +23,11 @@
   <form action="" method="post" enctype="multipart/form-data" name="perf_form">
    <p><font class="gbe-form-error">*</font> indicates a required field</p>
     {% include "form_table.tmpl" %}
-    {% if sociallinkformset %}
+    {% if form.formset %}
+    {{ form.formset.management_form }}
     <ul class="dragable_list" id="mySortable">
-      {% for form in sociallinkformset %}
-      <li draggable="true">{{form}}</li>
+      {% for subform in form.formset %}
+      <li draggable="true">{{subform}}</li>
       {% endfor %}
     </ul>
     {% endif %}

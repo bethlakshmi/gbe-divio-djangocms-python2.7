@@ -15,6 +15,7 @@ from gbe.expoformfields import FriendlyURLInput
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
 from django.contrib.auth.models import User
+from gbe.forms import SocialLinkFormSet
 
 
 class PersonaForm(ModelForm):
@@ -42,7 +43,13 @@ class PersonaForm(ModelForm):
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
-        super(PersonaForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        kwargs['initial'] = [{'order': 1},
+                             {'order': 2},
+                             {'order': 3},
+                             {'order': 4},
+                             {'order': 5}]
+        self.formset = SocialLinkFormSet(*args, **kwargs)
         if 'instance' in kwargs and kwargs.get('instance') is not None:
             self.fields['upload_img'] = ImageField(
                 help_text=persona_help_texts['promo_image'],
@@ -51,8 +58,14 @@ class PersonaForm(ModelForm):
                 required=False,
             )
 
+    def is_valid(self):
+        valid = super().is_valid()
+        valid = valid and self.formset.is_valid()
+        return valid
+
     def save(self, commit=True):
         performer = super(PersonaForm, self).save(commit=False)
+
         if commit and self['upload_img'] and (
                 self['upload_img'].value() != performer.img):
             if self['upload_img'].value():
@@ -71,7 +84,10 @@ class PersonaForm(ModelForm):
             else:
                 performer.img = None
         if commit:
+            # on create performer must go first
             performer.save()
+            self.formset.instance = performer
+            self.formset.save()
             self.save_m2m()
 
         return performer
