@@ -32,8 +32,8 @@
         {% for hidden in subform.hidden_fields %}{{ hidden }}{% endfor %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.social_network header_size="" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.link header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
-        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.username header_size="" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
-        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
+        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.username header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
+        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1" field_size="col-1" %}
         </div>
       {% endfor %}
     </div>
@@ -110,8 +110,8 @@ $(document).ready(function () {
         start_row = Number($(this).attr("name").replace(/\D+/g, ""));
         const link_id = '#id_links-' + start_row + '-link'
         const username_id = '#id_links-' + start_row + '-username'
-        link_values.has($(this).val()) ? ($(link_id).show(), $(username_id).hide()) 
-            : ($(link_id).hide(), $(username_id).show())
+        link_values.has($(this).val()) ? ($(link_id).parent().show(), $(username_id).parent().hide()) 
+            : ($(link_id).parent().hide(), $(username_id).parent().show())
     });
 });
 </script>
