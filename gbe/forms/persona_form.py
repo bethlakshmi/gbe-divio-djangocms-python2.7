@@ -6,7 +6,10 @@ from django.forms import (
     ModelForm,
     Textarea,
 )
-from gbe.models import Persona
+from gbe.models import (
+    Persona,
+    SocialLink,
+)
 from gbe_forms_text import (
     persona_help_texts,
     persona_labels,
@@ -44,12 +47,8 @@ class PersonaForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        kwargs['initial'] = [{'order': 1},
-                             {'order': 2},
-                             {'order': 3},
-                             {'order': 4},
-                             {'order': 5}]
-        self.formset = SocialLinkFormSet(*args, **kwargs)
+
+        formset_initial = []
         if 'instance' in kwargs and kwargs.get('instance') is not None:
             self.fields['upload_img'] = ImageField(
                 help_text=persona_help_texts['promo_image'],
@@ -57,6 +56,16 @@ class PersonaForm(ModelForm):
                 initial=kwargs.get('instance').img,
                 required=False,
             )
+            for i in range(1, 6):
+                if not SocialLink.objects.filter(
+                        performer=kwargs.get('instance'),order=i).exists():
+                    formset_initial += [{'order': i}]
+        else:
+            for i in range(1, 6):
+                formset_initial += [{'order': i}]
+
+        kwargs['initial'] = formset_initial
+        self.formset = SocialLinkFormSet(*args, **kwargs)
 
     def is_valid(self):
         valid = super().is_valid()

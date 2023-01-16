@@ -1,11 +1,9 @@
 from django.forms import (
-    CharField,
     HiddenInput,
-    ImageField,
     inlineformset_factory,
-    IntegerField,
     ModelForm,
-    Textarea,
+    TextInput,
+    URLInput,
 )
 from gbe.models import (
     Performer,
@@ -24,7 +22,13 @@ class SocialLinkForm(ModelForm):
                   'username',
                   'order',
                   ]
-        widgets = {'order': HiddenInput(attrs={'class':'drag_change'})}
+        widgets = {'order': HiddenInput(attrs={'class':'drag_change'}),
+                   'link': URLInput(attrs={'placeholder': 'http://',
+                                           'size': 60}),
+                   'username': TextInput(attrs={'placeholder': 'yourusername'})}
+        labels = {'social_network': '',
+                  'link': '',
+                  'username': ''}
 
 SocialLinkFormSet = inlineformset_factory(Performer,
                                           SocialLink,

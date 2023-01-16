@@ -522,11 +522,11 @@ content: none;
 li.progressbar_active {
   font-weight: bold;
 }
-ul.dragable_list{
+div.dragable_list{
   list-style-type: none;
   padding-left: 0;
 }
-ul.dragable_list > li,
+div.dragable_list > div,
 .ui-state-highlight {
   font-size: 16px;
   line-height: 18px;

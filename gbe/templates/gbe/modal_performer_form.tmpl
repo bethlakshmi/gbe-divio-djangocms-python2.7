@@ -20,16 +20,23 @@
 <div class="gbe-tab-area">
   <h3 class="gbe-title">{{view_title}}</h3>
   {% if intro_text != "&nbsp;" %}<p>{{intro_text | safe}}</p>{% endif %}
-  <form action="" method="post" enctype="multipart/form-data" name="perf_form">
+  <form action="" method="post" enctype="multipart/form-data" name="perf_form" id="perf_form">
    <p><font class="gbe-form-error">*</font> indicates a required field</p>
     {% include "form_table.tmpl" %}
     {% if form.formset %}
     {{ form.formset.management_form }}
-    <ul class="dragable_list" id="mySortable">
+    <div class="dragable_list container" id="mySortable">
       {% for subform in form.formset %}
-      <li draggable="true">{{subform}}</li>
+      <div class="form-row row" draggable="true">
+        <div class="btn btn-xs p-0"><i class="fas fa-bars"></i></div>
+        {% for hidden in subform.hidden_fields %}{{ hidden }}{% endfor %}
+        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.social_network header_size="" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
+        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.link header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
+        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.username header_size="" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
+        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
+        </div>
       {% endfor %}
-    </ul>
+    </div>
     {% endif %}
   {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> {% if delete_url %}<a href="#" data-toggle="modal" data-target="#DeleteModal" data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>{% endif %}{% endif %}
   <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary">
@@ -96,6 +103,16 @@ $(document).ready(function(){
     placeholder: "ui-state-highlight",
     update: updatePosition
   });
+});
+$(document).ready(function () {
+    $('#perf_form select[name$="social_network"]').change(function () {
+        const link_values = new Set(["Website", "Facebook", ""]);
+        start_row = Number($(this).attr("name").replace(/\D+/g, ""));
+        const link_id = '#id_links-' + start_row + '-link'
+        const username_id = '#id_links-' + start_row + '-username'
+        link_values.has($(this).val()) ? ($(link_id).show(), $(username_id).hide()) 
+            : ($(link_id).hide(), $(username_id).show())
+    });
 });
 </script>
 {% endaddtoblock %}
