@@ -33,6 +33,7 @@
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.social_network header_size="" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.link header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.username header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
+        <div class="col-lg-7 col-md-3 col-sm-3 col-7" id="{{forloop.counter0}}_no_network_choice"><i>Choose an option from drop down to enter publicity details</i></div>
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1" field_size="col-1" %}
         </div>
       {% endfor %}
@@ -106,12 +107,28 @@ $(document).ready(function(){
 });
 $(document).ready(function () {
     $('#perf_form select[name$="social_network"]').change(function () {
-        const link_values = new Set(["Website", "Facebook", ""]);
+        const link_values = new Set(["Website", "Facebook"]);
+        const username_values = new Set(["Cash App", "Instagram", "Paypal", "TikTok", "Venmo", "YouTube"]);
         start_row = Number($(this).attr("name").replace(/\D+/g, ""));
         const link_id = '#id_links-' + start_row + '-link'
         const username_id = '#id_links-' + start_row + '-username'
-        link_values.has($(this).val()) ? ($(link_id).parent().show(), $(username_id).parent().hide()) 
-            : ($(link_id).parent().hide(), $(username_id).parent().show())
+        const no_net_div = '#' + start_row + '_no_network_choice'
+        if (link_values.has($(this).val())) { 
+            $(link_id).parent().show()
+            $(username_id).parent().hide()
+            $(no_net_div).hide()
+        } else {
+            if (username_values.has($(this).val())) { 
+                $(link_id).parent().hide()
+                $(username_id).parent().show()
+                $(no_net_div).hide()
+            } else {
+                $(link_id).parent().hide()
+                $(username_id).parent().hide()
+                $(no_net_div).show()
+            }
+        }
+        alert($(this).val())
     });
 });
 </script>

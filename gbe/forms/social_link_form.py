@@ -1,4 +1,5 @@
 from django.forms import (
+    ChoiceField,
     HiddenInput,
     inlineformset_factory,
     ModelForm,
@@ -14,6 +15,10 @@ from gbe.models import (
 class SocialLinkForm(ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
+    social_network = ChoiceField(
+        choices=([('', '(pick an option)'), ] + SocialLink.social_options),
+                 required=False,
+                 label='')
 
     class Meta:
         model = SocialLink
@@ -26,8 +31,7 @@ class SocialLinkForm(ModelForm):
                    'link': URLInput(attrs={'placeholder': 'http://',
                                            'size': 60}),
                    'username': TextInput(attrs={'placeholder': 'yourusername'})}
-        labels = {'social_network': '',
-                  'link': '',
+        labels = {'link': '',
                   'username': ''}
 
 SocialLinkFormSet = inlineformset_factory(Performer,
