@@ -98,6 +98,12 @@ class PersonaForm(ModelForm):
             self.formset.instance = performer
             self.formset.save()
             self.save_m2m()
+            i = 1
+            for link in performer.links.all():
+                if link.order != i:
+                    link.order = i
+                    link.save()
+                i = i + 1
 
         return performer
 
