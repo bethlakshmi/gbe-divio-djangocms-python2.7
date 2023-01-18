@@ -66,6 +66,7 @@ class PersonaForm(ModelForm):
 
         kwargs['initial'] = formset_initial
         self.formset = SocialLinkFormSet(*args, **kwargs)
+        self.link_template = SocialLink.link_template
 
     def is_valid(self):
         valid = super().is_valid()

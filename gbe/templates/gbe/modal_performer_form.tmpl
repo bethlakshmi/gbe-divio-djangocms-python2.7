@@ -91,40 +91,36 @@
     })
 })($)
 </script>
+{% if form.link_template %}
 <script type="text/javascript">
-const link_values = new Set(["Website", "Facebook"]);
-const username_links = {
-    "Cash App": "http://www.cashapp.com",
-    "Instagram": "http://www.instagram.com",
-    "Paypal": "http://www.paypal.com",
-    "TikTok": "http://www.tiktok.com",
-    "Venmo": "http://www.venmo.com",
-    "YouTube": "http://www.youtube.com"};
+const username_links = {{% for key, link in form.link_template.items %}
+    "{{ key }}": "{{ link }}",
+    {% endfor %}};
 
 function socialLinkSetup(start_row) {
     const network_id = '#id_links-' + start_row + '-social_network'
     const link_id = '#id_links-' + start_row + '-link'
     const username_id = '#id_links-' + start_row + '-username'
     const no_net_div = '#' + start_row + '-no_network_choice'
-    if (link_values.has($(network_id).val())) { 
-        $(link_id).parent().show()
-        $(username_id).parent().hide()
+
+    // always clear link text, cause it's changing
+    $('#' + start_row + '-link_text').remove();
+    if ($(network_id).val() in username_links) {
+        $(link_id).parent().hide()
+        $(username_id).parent().show()
+        $(username_id).parent().prepend(
+            '<span id="' + start_row + '-link_text">' + 
+            username_links[$(network_id).val()] + '</span>')
         $(no_net_div).hide()
-        $('#' + start_row + '-link_text').remove();
     } else {
-        if ($(network_id).val() in username_links) {
-            $('#' + start_row + '-link_text').remove();
-            $(link_id).parent().hide()
-            $(username_id).parent().show()
-            $(username_id).parent().prepend(
-                '<span id="' + start_row + '-link_text">' + 
-                username_links[$(network_id).val()] + '</span>')
+        $(username_id).parent().hide()
+        if ($(network_id).val().length > 0) {
+            $(link_id).parent().show()
             $(no_net_div).hide()
-        } else {
+        }
+        else {
             $(link_id).parent().hide()
-            $(username_id).parent().hide()
             $(no_net_div).show()
-            $('#' + start_row + '-link_text').remove();
         }
     }
 }
@@ -153,5 +149,6 @@ $(window).on('load', function () {
     };
 });
 </script>
+{% endif %}
 {% endaddtoblock %}
 {% endblock content %}

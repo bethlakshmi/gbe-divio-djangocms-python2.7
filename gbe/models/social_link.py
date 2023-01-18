@@ -26,12 +26,12 @@ class SocialLink(Model):
         ('YouTube', 'YouTube'),
     ]
     link_template = {
-        'Cash App': 'Cash App',
-        'Instagram': 'Instagram',
-        'Paypal': 'Paypal',
-        'TikTok': 'TikTok',
-        'Venmo': 'Venmo',
-        'YouTube': 'YouTube',
+        'Cash App': 'https://cash.app/$',
+        'Instagram': 'https://www.instagram.com/',
+        'Paypal': 'https://paypal.me/',
+        'TikTok': 'https://www.tiktok.com/@',
+        'Venmo': 'https://venmo.com/',
+        'YouTube': 'https://www.youtube.com/c/',
     }
     performer = ForeignKey(Performer,
                            on_delete=CASCADE,
