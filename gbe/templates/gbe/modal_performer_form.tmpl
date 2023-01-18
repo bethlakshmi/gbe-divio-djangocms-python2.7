@@ -34,7 +34,7 @@
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.link header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.username header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
         <div class="col-lg-7 col-md-3 col-sm-3 col-7" id="{{forloop.counter0}}-no_network_choice"><i>Choose an option from drop down to enter publicity details</i></div>
-        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1" field_size="col-1" %}
+        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1 text-right" field_size="col-1" %}
         </div>
       {% endfor %}
     </div>
@@ -93,7 +93,14 @@
 </script>
 <script type="text/javascript">
 const link_values = new Set(["Website", "Facebook"]);
-const username_values = new Set(["Cash App", "Instagram", "Paypal", "TikTok", "Venmo", "YouTube"]);
+const username_links = {
+    "Cash App": "http://www.cashapp.com",
+    "Instagram": "http://www.instagram.com",
+    "Paypal": "http://www.paypal.com",
+    "TikTok": "http://www.tiktok.com",
+    "Venmo": "http://www.venmo.com",
+    "YouTube": "http://www.youtube.com"};
+
 function socialLinkSetup(start_row) {
     const network_id = '#id_links-' + start_row + '-social_network'
     const link_id = '#id_links-' + start_row + '-link'
@@ -103,15 +110,21 @@ function socialLinkSetup(start_row) {
         $(link_id).parent().show()
         $(username_id).parent().hide()
         $(no_net_div).hide()
+        $('#' + start_row + '-link_text').remove();
     } else {
-        if (username_values.has($(network_id).val())) { 
+        if ($(network_id).val() in username_links) {
+            $('#' + start_row + '-link_text').remove();
             $(link_id).parent().hide()
             $(username_id).parent().show()
+            $(username_id).parent().prepend(
+                '<span id="' + start_row + '-link_text">' + 
+                username_links[$(network_id).val()] + '</span>')
             $(no_net_div).hide()
         } else {
             $(link_id).parent().hide()
             $(username_id).parent().hide()
             $(no_net_div).show()
+            $('#' + start_row + '-link_text').remove();
         }
     }
 }
