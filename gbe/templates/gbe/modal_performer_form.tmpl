@@ -27,13 +27,13 @@
     {{ form.formset.management_form }}
     <div class="dragable_list container" id="mySortable">
       {% for subform in form.formset %}
-      <div class="form-row row" draggable="true">
+      <div class="form-row row gbe-bg-light" draggable="true">
         <div class="btn btn-xs p-0"><i class="fas fa-bars"></i></div>
         {% for hidden in subform.hidden_fields %}{{ hidden }}{% endfor %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.social_network header_size="" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.link header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.username header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
-        <div class="col-lg-7 col-md-3 col-sm-3 col-7" id="{{forloop.counter0}}-no_network_choice"><i>Choose an option from drop down to enter publicity details</i></div>
+        <div class="col-lg-7 col-md-3 col-sm-3 col-7 gbe-text-secondary" id="{{forloop.counter0}}-no_network_choice"><i>Choose an option from drop down to enter publicity details</i></div>
         {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1 text-right" field_size="col-1" %}
         </div>
       {% endfor %}
