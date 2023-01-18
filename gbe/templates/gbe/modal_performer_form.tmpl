@@ -106,20 +106,23 @@ function socialLinkSetup(start_row) {
     // always clear link text, cause it's changing
     $('#' + start_row + '-link_text').remove();
     if ($(network_id).val() in username_links) {
-        $(link_id).parent().hide()
+        $(link_id).parent().hide();
+        $(link_id).val('').attr('value','');
         $(username_id).parent().show()
         $(username_id).parent().prepend(
             '<span id="' + start_row + '-link_text">' + 
             username_links[$(network_id).val()] + '</span>')
         $(no_net_div).hide()
     } else {
-        $(username_id).parent().hide()
+        $(username_id).parent().hide();
+        $(username_id).val('').attr('value','');
         if ($(network_id).val().length > 0) {
             $(link_id).parent().show()
             $(no_net_div).hide()
         }
         else {
             $(link_id).parent().hide()
+            $(link_id).val('').attr('value','')
             $(no_net_div).show()
         }
     }
