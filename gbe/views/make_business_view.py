@@ -32,9 +32,6 @@ class BusinessCreate(CreatePopupMixin,
     valid_message = default_create_business_msg
     no_tabs = True
 
-    def get_success_url(self):
-        return self.request.GET.get('next', self.success_url)
-
     def form_valid(self, form):
         response = super().form_valid(form)
         self.object.owners.add(self.request.user.profile)
