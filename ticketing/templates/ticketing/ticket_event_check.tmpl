@@ -57,8 +57,7 @@
   <script>
   $(document).ready(function() {
     var table = $('#ticket_check').DataTable({
-        "paging": false,
-        "columnDefs": [{"targets": [ 2 ], "visible": false },]});
+        "paging": false});
 
     $('a.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
