@@ -24,18 +24,27 @@
    <p><font class="gbe-form-error">*</font> indicates a required field</p>
     {% include "form_table.tmpl" %}
     {% if form.formset %}
+    <font class="gbe-form-error">
+        {% if form.formset.non_form_errors %}{{ form.formset.non_form_errors }}<br>{% endif %}
+        {% for subform in form.formset.forms %}
+        {% if subform.non_form_errors %}{{ subform.non_field_errors }}<br>{% endif %}{% endfor %}</font>
     {{ form.formset.management_form }}
     <div class="dragable_list container pb-4" id="mySortable">
       {% for subform in form.formset %}
-      <div class="form-row row gbe-bg-light" draggable="true">
-        <div class="pt-1 pr-1"><i class="fas fa-bars"></i></div>
-        {% for hidden in subform.hidden_fields %}{{ hidden }}{% endfor %}
-        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.social_network header_size="" field_size="col-lg-2 col-md-3 col-sm-3 col-7" %}
-        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.link header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
-        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.username header_size="" field_size="col-lg-7 col-md-3 col-sm-3 col-7" %}
-        <div class="col-lg-7 col-md-3 col-sm-3 col-7 gbe-text-secondary" id="{{forloop.counter0}}-no_network_choice"><i>Choose an option from drop down to enter publicity details</i></div>
-        {% include "gbe/scheduling/event_booking_field.tmpl" with field=subform.DELETE header_size="col-1 text-right" field_size="col-1" %}
+      <div class="form-row row gbe-bg-light py-1 justify-content-between" draggable="true">
+        <div class="col-auto pt-1 pr-1 mt-1"><i class="fas fa-bars"></i></div>
+        <div class="col-md-10 col-9 row">
+          {% include "gbe/dragable_field.tmpl" with field=subform.social_network field_size="col-auto px-0" %}
+          {% include "gbe/dragable_field.tmpl" with field=subform.link field_size="col-lg-10 col-md-12 col-12 px-0" %}
+          {% include "gbe/dragable_field.tmpl" with field=subform.username field_size="col-lg-8 col-md-8 px-1 col-12" %}
+          <div class="col-lg-8 col-md-8 col-12 px-1 mt-1 gbe-text-secondary" id="{{forloop.counter0}}-no_network_choice"><i>Choose an option from drop down to enter publicity details</i></div>
         </div>
+        {% include "gbe/dragable_field.tmpl" with field=subform.DELETE field_size="col-auto text-right" %}
+        {% for hidden in subform.hidden_fields %}{{ hidden }}{% if hidden.errors %}
+          <div class="col-12 gbe-form-error">{{hidden.label}}:&nbsp;&nbsp;
+          {% for error in hidden.errors %}{{ error }}{% endfor %}</div>
+        {% endif %}{% endfor %}
+      </div>
       {% endfor %}
     </div>
     {% endif %}

@@ -534,8 +534,6 @@ div.dragable_list > div,
   padding: 0.5em 1em;
   margin-bottom: 0.25em;
   box-sizing: border-box;
-  height: 2.5em;
-  max-width: 100%;
 }
 .ui-state-highlight{
   display: block;
