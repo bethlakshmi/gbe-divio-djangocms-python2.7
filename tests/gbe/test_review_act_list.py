@@ -16,6 +16,12 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from gbe.models import EvaluationCategory
+from gbetext import (
+    act_shows_options_short,
+    apply_filter_msg,
+    clear_filter_msg,
+    no_filter_msg,
+)
 
 
 class TestReviewActList(TestCase):
@@ -36,7 +42,8 @@ class TestReviewActList(TestCase):
         cls.acts = ActFactory.create_batch(
             4,
             b_conference=cls.conference,
-            submitted=True)
+            submitted=True,
+            shows_preferences=['4', '5'])
 
     def setUp(self):
         self.client = Client()
@@ -48,6 +55,8 @@ class TestReviewActList(TestCase):
             data={'conf_slug': self.conference.conference_slug})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Act Proposals')
+        for choice in act_shows_options_short:
+            self.assertContains(response, choice[1])
 
     def test_review_act_list_inactive_user(self):
         inactive = ActFactory(
@@ -175,3 +184,50 @@ class TestReviewActList(TestCase):
         self.assertContains(response, "5.0", 1)
         self.assertContains(response, "3.0", 1)
         self.assertContains(response, "2.67", 1)
+
+    def test_review_act_list_filter(self):
+        other_show = ActFactory(
+            b_conference=self.conference,
+            submitted=True,
+            shows_preferences=['5'])
+        no_pref_show = ActFactory(
+            b_conference=self.conference,
+            submitted=True,
+            shows_preferences=[])
+        login_as(self.privileged_user, self)
+        response = self.client.post(
+            self.url,
+            data={'shows_preferences': ['4'],
+                  'filter': "Filter Interest"})
+        self.assertContains(response, apply_filter_msg)
+        self.assertContains(response, self.acts[0].b_title)
+        self.assertNotContains(response, other_show.b_title)
+        self.assertNotContains(response, no_pref_show.b_title)
+
+    def test_review_act_list_clear_filter(self):
+        other_show = ActFactory(
+            b_conference=self.conference,
+            submitted=True,
+            shows_preferences=['5'])
+        login_as(self.privileged_user, self)
+        response = self.client.post(
+            self.url,
+            data={'shows_preferences': [],
+                  'filter': "Filter Interest"})
+        self.assertContains(response, clear_filter_msg)
+        self.assertContains(response, self.acts[0].b_title)
+        self.assertContains(response, other_show.b_title)
+
+    def test_review_act_list_bad_filter(self):
+        other_show = ActFactory(
+            b_conference=self.conference,
+            submitted=True,
+            shows_preferences=['5'])
+        login_as(self.privileged_user, self)
+        response = self.client.post(
+            self.url,
+            data={'shows_preferences': ['27'],
+                  'filter': "Filter Interest"})
+        self.assertContains(response, no_filter_msg)
+        self.assertContains(response, self.acts[0].b_title)
+        self.assertContains(response, other_show.b_title)

@@ -17,8 +17,23 @@
   <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
   press "Shift" to sort a secondary column.</div>
   <br/>
+  {% if filter_form %}
+  <div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-light">
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in filter_form.visible_fields %}
+    <div class="row email-select">
+      {% include "gbe/email/filter_checkbox_horizontal.tmpl" %}
+    </div>
+    <div>
+    <input type="submit" class="btn gbe-btn-secondary float-right" name="filter" value="Filter Interest">
+    </div>
+    {% endfor %} 
+  </form></div></div>
+  {% endif %}
   <div>
-    Toggle column(s):
+    <b>Toggle column(s):</b>
     {% for column in columns %}
     <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ forloop.counter0 }}">{{column}}</button>
     {% endfor %}

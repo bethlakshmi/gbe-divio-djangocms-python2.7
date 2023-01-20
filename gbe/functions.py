@@ -21,7 +21,6 @@ from gbe_utils.text import no_profile_msg
 import json
 import urllib
 from settings import GBE_DATETIME_FORMAT
-from django.db.models import Q
 import xml.etree.ElementTree as et
 import html
 from gbe_logging import logger
