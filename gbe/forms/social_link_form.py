@@ -28,9 +28,11 @@ class SocialLinkForm(ModelForm):
                   'order',
                   ]
         widgets = {'order': HiddenInput(attrs={'class':'drag_change'}),
-                   'link': URLInput(attrs={'placeholder': 'http://',
-                                           'size': 60}),
-                   'username': TextInput(attrs={'placeholder': 'yourusername'})}
+                   'link': URLInput(
+                        attrs={'placeholder': 'http://',
+                               'style': "width: 98%;box-sizing:border-box"}),
+                   'username': TextInput(
+                        attrs={'placeholder': 'yourusername'})}
         labels = {'link': '',
                   'username': ''}
 
