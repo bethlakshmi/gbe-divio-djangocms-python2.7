@@ -1,4 +1,4 @@
-<div class='gbe-medium-light gbe-no-border'>
+<div class='gbe-medium-light gbe-no-border pb-1'>
   {% if proposed_classes %} 
   <span class='sched_detail'>Class Bids</span><br>
     {% for class in proposed_classes %}
@@ -25,12 +25,4 @@
   {% else %}
     {{ profile.display_name }} has not proposed any classes<br>
   {% endif %}
-<br>
-<div class="container">
-  <div class="row">
-    <div class="col text-center">
-      <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:class_create' %}'>Apply to Teach</a>
-    </div>
-  </div>
-</div><br>
 </div>

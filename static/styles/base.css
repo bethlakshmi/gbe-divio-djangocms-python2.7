@@ -459,7 +459,7 @@ span.opps-errors ul {padding: 0px;}
   height: 30px;
   text-decoration-line: none;
 }
-.gbe-tab {padding:10px 15px;}
+.gbe-tab {padding:10px 15px; font-weight: bold;}
 .gbe-tab:hover {text-decoration-line: none;}
 .gbe-tab-area {padding: 15px;}
 .errorlist{padding: 0;font-weight: normal;}
