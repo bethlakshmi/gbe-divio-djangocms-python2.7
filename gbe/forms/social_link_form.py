@@ -20,6 +20,17 @@ class SocialLinkForm(ModelForm):
                  required=False,
                  label='')
 
+    def clean(self):
+        cleaned_data = super(SocialLinkForm, self).clean()
+        if 'social_network' in cleaned_data:
+            if cleaned_data['social_network'] in SocialLink.link_template:
+                if not cleaned_data['username']:
+                    self.add_error('username', "This field is required.")
+            elif len(cleaned_data['social_network']) > 0:
+                if not cleaned_data['link']:
+                    self.add_error('link', "This field is required.")
+        return cleaned_data
+
     class Meta:
         model = SocialLink
         fields = ['social_network',
