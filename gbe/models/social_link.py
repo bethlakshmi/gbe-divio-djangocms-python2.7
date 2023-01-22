@@ -39,8 +39,8 @@ class SocialLink(Model):
     link = URLField(null=True, blank=True)
     username = CharField(null=True, blank=True, max_length=100)
     social_network = CharField(max_length=40,
-                              choices=social_options,
-                              blank=True)
+                               choices=social_options,
+                               blank=True)
     order = PositiveIntegerField(validators=[MinValueValidator(1),
                                              MaxValueValidator(5)])
 

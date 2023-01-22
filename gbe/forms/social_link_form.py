@@ -17,8 +17,8 @@ class SocialLinkForm(ModelForm):
     error_css_class = 'error'
     social_network = ChoiceField(
         choices=([('', '(pick an option)'), ] + SocialLink.social_options),
-                 required=False,
-                 label='')
+        required=False,
+        label='')
 
     def clean(self):
         cleaned_data = super(SocialLinkForm, self).clean()
@@ -38,7 +38,7 @@ class SocialLinkForm(ModelForm):
                   'username',
                   'order',
                   ]
-        widgets = {'order': HiddenInput(attrs={'class':'drag_change'}),
+        widgets = {'order': HiddenInput(attrs={'class': 'drag_change'}),
                    'link': URLInput(
                         attrs={'placeholder': 'http://',
                                'style': "width: 98%;box-sizing:border-box"}),
