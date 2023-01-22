@@ -1,5 +1,5 @@
 
-<div class='gbe-bg-dark gbe-no-border'>
+<div class='gbe-bg-dark gbe-no-border pb-1'>
 {% if acts %}
     <span class='sched_detail'>
       <b>Act Bids</b>
@@ -34,12 +34,5 @@
     {% endfor %}
 {% else %}
   {{ profile.display_name }} has no acts listed.	   
-  {% endif %}
-<div class="container">
-  <div class="row">
-    <div class="col text-center">
-      <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:act_create' %}'>Apply to Perform</a>
-    </div>
-  </div>
-</div><br>
+{% endif %}
 </div>

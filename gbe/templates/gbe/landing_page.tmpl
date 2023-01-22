@@ -7,8 +7,19 @@
 {% endblock %}
 {% block content %}
 <div class="container three-column-container">
+  <div class="row mb-2">
+    <div class="ml-auto col-sm-auto col-4 text-center">
+     <a href="{% url 'scheduling:volunteer_signup' %}" class="btn gbe-btn-primary h-100 text-center d-inline-flex align-items-center" role="button">Volunteer</a>
+    </div>
+    <div class="col-sm-auto col-4 text-center">
+      <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:class_create' %}'>Apply to Teach</a>
+    </div>
+    <div class="col-sm-auto col-4 text-center">
+      <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:act_create' %}'>Apply to Perform</a>
+    </div>
+  </div>
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs device-small landing-tabs" role="tablist">
+    <ul class="nav nav-tabs device-small landing-tabs pt-3" role="tablist">
         <li role="presentation">
 	  <a class="gbe-tab" href="#news" aria-controls="home" role="tab" data-toggle="tab">News</a>
 	</li>

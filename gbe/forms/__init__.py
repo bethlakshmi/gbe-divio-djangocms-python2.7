@@ -34,6 +34,7 @@ from .act_edit_form import (
     ActEditForm,
 )
 from .act_coordination_form import ActCoordinationForm
+from .act_filter_form import ActFilterForm
 from .class_bid_form import (
     ClassBidDraftForm,
     ClassBidForm,

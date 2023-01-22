@@ -26,7 +26,7 @@ class GbeFormMixin(ModelFormMixin):
             defaults={
                 'summary': "%s Instructions" % self.__class__.__name__,
                 'description': self.intro_text})[0].description
-        context['return_url'] = self.success_url
+        context['return_url'] = self.request.GET.get('next', self.success_url)
 
         # this is all unique to performer registration
         if hasattr(self, 'mode'):
