@@ -100,6 +100,7 @@ class PersonaForm(ModelForm):
             self.formset.save()
             self.save_m2m()
             i = 1
+            performer.links.filter(social_network__exact='').delete()
             for link in performer.links.all():
                 if link.order != i:
                     link.order = i
