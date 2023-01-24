@@ -52,6 +52,7 @@ formset_data = {
     'links-MAX_NUM_FORMS': 5,
 }
 
+
 class TestTroupeCreate(TestCase):
     '''Tests for edit_troupe view'''
 
@@ -98,12 +99,13 @@ class TestTroupeCreate(TestCase):
         self.assertNotContains(response, str(inactive))
         self.assertContains(response, 'Manage Troupe')
         self.assertContains(response, 'Tell Us About Your Troupe')
-        for i in range(0,5):
+        for i in range(0, 5):
             self.assertContains(
                 response,
                 ('<input type="hidden" name="links-%d-id" id=' +
-                '"id_links-%d-id">') % (i, i),
+                 '"id_links-%d-id">') % (i, i),
                 html=True)
+
 
 class TestTroupeEdit(TestCase):
     view_name = 'troupe-update'
@@ -126,7 +128,7 @@ class TestTroupeEdit(TestCase):
                 'bio': "bio",
                 'year_started': 2001,
                 'awards': "many",
-                'membership': [persona.pk],}
+                'membership': [persona.pk], }
         data.update(formset_data)
         data['links-0-id'] = link0.pk
         data['links-0-performer'] = troupe.pk

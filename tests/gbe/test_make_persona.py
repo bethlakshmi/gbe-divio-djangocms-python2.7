@@ -49,6 +49,7 @@ formset_data = {
     'links-MAX_NUM_FORMS': 5,
 }
 
+
 class TestPersonaCreate(TestCase):
     '''Tests for index view'''
     view_name = 'persona-add'
@@ -90,11 +91,11 @@ class TestPersonaCreate(TestCase):
             '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
             'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
             html=True)
-        for i in range(0,5):
+        for i in range(0, 5):
             self.assertContains(
                 response,
                 ('<input type="hidden" name="links-%d-id" id=' +
-                '"id_links-%d-id">') % (i, i),
+                 '"id_links-%d-id">') % (i, i),
                 html=True)
 
     def test_register_persona_w_image(self):
@@ -108,12 +109,12 @@ class TestPersonaCreate(TestCase):
         login_as(self.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
         response = self.client.get(url)
-        data={'performer_profile': self.profile.pk,
-              'contact': self.profile.pk,
-              'name': '',
-              'bio': 'bio bio bio',
-              'year_started': 2003,
-              'awards': 'Generic string here'}
+        data = {'performer_profile': self.profile.pk,
+                'contact': self.profile.pk,
+                'name': '',
+                'bio': 'bio bio bio',
+                'year_started': 2003,
+                'awards': 'Generic string here'}
         data.update(formset_data)
         persona_count = self.profile.personae.count()
         response = self.client.post(url, data)
@@ -123,12 +124,12 @@ class TestPersonaCreate(TestCase):
     def test_redirect(self):
         login_as(self.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
-        data={'performer_profile': self.profile.pk,
-              'contact': self.profile.pk,
-              'name': 'persona name',
-              'bio': 'bio bio bio',
-              'year_started': 2003,
-              'awards': 'Generic string here'}
+        data = {'performer_profile': self.profile.pk,
+                'contact': self.profile.pk,
+                'name': 'persona name',
+                'bio': 'bio bio bio',
+                'year_started': 2003,
+                'awards': 'Generic string here'}
         data.update(formset_data)
         response = self.client.post(
             url + '?next=%s' % reverse("troupe-add", urlconf='gbe.urls'),
@@ -265,17 +266,17 @@ class TestPersonaEdit(TestCase):
              'placeholder="yourusername" maxlength="100" ' +
              'id="id_links-1-username">') % self.link1.username,
             html=True)
-        for i in range(2,5):
+        for i in range(2, 5):
             self.assertContains(
                 response,
                 ('<input type="hidden" name="links-%d-id" id=' +
-                '"id_links-%d-id">') % (i, i),
+                 '"id_links-%d-id">') % (i, i),
                 html=True)
-        for i in range(0,5):
+        for i in range(0, 5):
             self.assertContains(
                 response,
                 ('<input type="hidden" name="links-%d-performer" id="id_' +
-                'links-%d-performer" value="%d">') % (i, i, self.persona.pk),
+                 'links-%d-performer" value="%d">') % (i, i, self.persona.pk),
                 html=True)
 
     def test_edit_persona_load_img(self):
@@ -306,7 +307,7 @@ class TestPersonaEdit(TestCase):
 
     def test_edit_persona_change_image(self):
         ''' - image is changed
-            - the data sent should erase both links 
+            - the data sent should erase both links
         '''
         ProfileFactory(user_object__username="admin_img")
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
@@ -394,12 +395,12 @@ class TestPersonaEdit(TestCase):
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
                       args=[self.persona.resourceitem_id, 1])
-        data={'performer_profile': self.persona.pk,
-              'contact': self.persona.pk,
-              'name': new_name,
-              'bio': "bio",
-              'year_started': 2001,
-              'awards': "many"}
+        data = {'performer_profile': self.persona.pk,
+                'contact': self.persona.pk,
+                'name': new_name,
+                'bio': "bio",
+                'year_started': 2001,
+                'awards': "many"}
         data.update(formset_data)
         response = self.client.post(url, data=data)
         self.assertContains(response, self.expected_string)

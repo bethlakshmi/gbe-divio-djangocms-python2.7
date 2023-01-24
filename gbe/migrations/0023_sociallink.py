@@ -15,12 +15,33 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SocialLink',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('link', models.URLField(blank=True, null=True)),
-                ('username', models.CharField(blank=True, max_length=100, null=True)),
-                ('social_network', models.CharField(blank=True, choices=[('Cash App', 'Cash App'), ('Facebook', 'Facebook'), ('Instagram', 'Instagram'), ('Paypal', 'Paypal'), ('TikTok', 'TikTok'), ('Venmo', 'Venmo'), ('Website', 'Website'), ('YouTube', 'YouTube')], max_length=40)),
-                ('order', models.PositiveIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
-                ('performer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='links', to='gbe.performer')),
+                ('username', models.CharField(blank=True,
+                                              max_length=100,
+                                              null=True)),
+                ('social_network', models.CharField(
+                    blank=True,
+                    choices=[('Cash App', 'Cash App'),
+                             ('Facebook', 'Facebook'),
+                             ('Instagram', 'Instagram'),
+                             ('Paypal', 'Paypal'),
+                             ('TikTok', 'TikTok'),
+                             ('Venmo', 'Venmo'),
+                             ('Website', 'Website'),
+                             ('YouTube', 'YouTube')],
+                    max_length=40)),
+                ('order', models.PositiveIntegerField(
+                    validators=[django.core.validators.MinValueValidator(1),
+                                django.core.validators.MaxValueValidator(5)])),
+                ('performer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='links',
+                    to='gbe.performer')),
             ],
             options={
                 'ordering': ['performer', 'order'],
