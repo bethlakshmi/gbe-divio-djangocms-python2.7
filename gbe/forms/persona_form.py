@@ -113,7 +113,6 @@ class PersonaForm(ModelForm):
         model = Persona
         fields = ['name',
                   'label',
-                  'homepage',
                   'bio',
                   'year_started',
                   'awards',
@@ -124,5 +123,4 @@ class PersonaForm(ModelForm):
         labels = persona_labels
         widgets = {'performer_profile': HiddenInput(),
                    'contact': HiddenInput(),
-                   'homepage': FriendlyURLInput,
                    }

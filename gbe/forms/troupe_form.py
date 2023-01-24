@@ -40,7 +40,6 @@ class TroupeForm(PersonaForm):
                   'name',
                   'label',
                   'membership',
-                  'homepage',
                   'bio',
                   'year_started',
                   'awards',
