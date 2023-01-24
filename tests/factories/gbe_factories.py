@@ -88,6 +88,14 @@ class TroupeFactory(DjangoModelFactory):
     year_started = 2004
 
 
+class SocialLinkFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.SocialLink
+    performer = SubFactory(PersonaFactory)
+    social_network = 'Website'
+    link = Sequence(lambda n: '"http://www.foo%d.com"' % n)
+    order = 1
+
 class TechInfoFactory(DjangoModelFactory):
     class Meta:
         model = conf.TechInfo
