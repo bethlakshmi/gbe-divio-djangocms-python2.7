@@ -196,7 +196,6 @@ class TestPersonaEdit(TestCase):
 
     def submit_persona(self, image=None, delete_image=False):
         login_as(self.persona.performer_profile, self)
-        old_name = self.persona.name
         new_name = "Fifi"
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
@@ -315,11 +314,14 @@ class TestPersonaEdit(TestCase):
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(str(persona_reloaded.img), "gbe_pagebanner.png")
         self.assertEqual(persona_reloaded.links.count(), 0)
+        assert_alert_exists(
+            response, 'success', 'Success', default_edit_persona_msg)
 
     def test_change_image_foreign_char(self):
         '''
          - compatible w. foreign character
          - links are changed & new one is made
+         - checks that order is resorted in sequential order
         '''
         ProfileFactory(user_object__username="admin_img")
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
@@ -373,6 +375,8 @@ class TestPersonaEdit(TestCase):
         self.assertEqual(reload_link2.order, 2)
         self.assertEqual(reload_link2.social_network, 'Facebook')
         self.assertEqual(reload_link2.link, 'http://www.facebook.com/somepage')
+        assert_alert_exists(
+            response, 'success', 'Success', default_edit_persona_msg)
 
     def test_edit_persona_remove_image(self):
         set_image(self.persona)
@@ -380,6 +384,8 @@ class TestPersonaEdit(TestCase):
         response, new_name = self.submit_persona(delete_image=True)
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(persona_reloaded.img, None)
+        assert_alert_exists(
+            response, 'success', 'Success', default_edit_persona_msg)
 
     def test_edit_persona_invalid_post(self):
         login_as(self.persona.performer_profile, self)
@@ -400,10 +406,59 @@ class TestPersonaEdit(TestCase):
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(persona_reloaded.name, old_name)
 
-    def test_edit_persona_make_message(self):
-        response, new_name = self.submit_persona()
-        assert_alert_exists(
-            response, 'success', 'Success', default_edit_persona_msg)
+    def test_edit_persona_delete_link(self):
+        login_as(self.persona.performer_profile, self)
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls",
+                      args=[self.persona.resourceitem_id, 1])
+        data = {'performer_profile': self.persona.performer_profile.pk,
+                'contact': self.persona.performer_profile.pk,
+                'name': "Fifi",
+                'bio': "bio",
+                'year_started': 2001,
+                'awards': "many"}
+        data.update(formset_data)
+        data['links-0-id'] = self.link0.pk
+        data['links-1-id'] = self.link1.pk
+        data['links-1-social_network'] = self.link1.social_network
+        data['links-1-username'] = self.link1.username
+        data['links-0-performer'] = self.persona.pk
+        data['links-1-performer'] = self.persona.pk
+        data['links-INITIAL_FORMS'] = 2
+        data['links-0-DELETE'] = 1
+        response = self.client.post(
+            url,
+            data,
+            follow=True
+        )
+        self.assertEqual(self.persona.links.count(), 1)
+
+    def test_edit_persona_invalid_links(self):
+        login_as(self.persona.performer_profile, self)
+        url = reverse(self.view_name,
+                      urlconf="gbe.urls",
+                      args=[self.persona.resourceitem_id, 1])
+        data = {'performer_profile': self.persona.performer_profile.pk,
+                'contact': self.persona.performer_profile.pk,
+                'name': "Fifi",
+                'bio': "bio",
+                'year_started': 2001,
+                'awards': "many"}
+        data.update(formset_data)
+        data['links-0-id'] = self.link0.pk
+        data['links-1-id'] = self.link1.pk
+        data['links-0-social_network'] = 'Venmo'
+        data['links-1-social_network'] = 'Website'
+        data['links-0-performer'] = self.persona.pk
+        data['links-1-performer'] = self.persona.pk
+        data['links-INITIAL_FORMS'] = 2
+        response = self.client.post(
+            url,
+            data,
+            follow=True
+        )
+        self.assertContains(response, self.expected_string)
+        self.assertContains(response, "This field is required.", 2)
 
     def test_edit_persona_has_message(self):
         msg = UserMessageFactory(
