@@ -308,7 +308,9 @@ class ActTechWizardView(View):
                                           instance=self.act.tech)
             if basic_form.is_valid():
                 basic_form.save()
-                self.act.performer.pronouns = basic_form.cleaned_data['pronouns']
+                self.act.performer.pronouns = basic_form.cleaned_data[
+                    'pronouns']
+                self.act.performer.save()
 
                 # fix or remove
                 # call_command('sync_audio_downloads', unsync_all=True)
