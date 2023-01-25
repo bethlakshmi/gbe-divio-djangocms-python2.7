@@ -7,12 +7,14 @@ from django.forms import (
     TypedChoiceField,
 )
 from gbe_forms_text import (
+    pronoun_choices,
     prop_choices,
     starting_position_choices,
     tech_labels,
     tech_help_texts,
 )
 from gbe.models import TechInfo
+from gbe.forms import ChoiceWithOtherField
 from django.forms.widgets import CheckboxSelectMultiple
 from django.core.exceptions import ValidationError
 
@@ -41,13 +43,15 @@ class BasicActTechForm(ModelForm):
                             help_text=tech_help_texts['feel_of_act'],
                             required=True,
                             widget=Textarea)
-    pronouns = CharField(label=tech_labels['pronouns'],
-                         required=True)
+    pronouns = ChoiceWithOtherField(
+        label=tech_labels['pronouns'],
+        choices=pronoun_choices,
+        required=True)
     introduction_text = CharField(
-      label=tech_labels['introduction_text'],
-      help_text=tech_help_texts['introduction_text'],
-      required=True,
-      widget=Textarea)
+        label=tech_labels['introduction_text'],
+        help_text=tech_help_texts['introduction_text'],
+        required=True,
+        widget=Textarea)
 
     class Meta:
         model = TechInfo

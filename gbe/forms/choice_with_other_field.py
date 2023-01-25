@@ -1,103 +1,69 @@
-from django import forms
-from django.utils.encoding import force_text
+from django.forms import (
+    CharField,
+    ChoiceField,
+    MultiValueField,
+    MultiWidget,
+    RadioSelect,
+    TextInput,
+    ValidationError
+)
 
 
-class ChoiceWithOtherRenderer(forms.RadioSelect):
-    """RadioFieldRenderer that renders its last choice with a placeholder."""
-    def __init__(self, *args, **kwargs):
-        super(ChoiceWithOtherRenderer, self).__init__(*args, **kwargs)
-        self.choices, self.other = self.choices[:-1], self.choices[-1]
+class ChoiceWithOtherWidget(MultiWidget):
+    '''MultiWidget for use with ChoiceWithOtherField.'''
+    template_name = 'gbe/choice_with_other_widget.tmpl'
 
-    def __iter__(self):
-        for input in super(ChoiceWithOtherRenderer, self).__iter__():
-            yield input
-        id = '%s_%s' % (self.attrs['id'], self.other[0]) if 'id' in self.attrs else ''
-        label_for = ' for="%s"' % id if id else ''
-        checked = '' if not force_text(self.other[0]) == self.value else 'checked="true" '
-        yield '<label%s><input type="radio" id="%s" value="%s" name="%s" %s/> %s</label> %%s' % (
-            label_for, id, self.other[0], self.name, checked, self.other[1])
-
-
-class ChoiceWithOtherWidget(forms.MultiWidget):
-    """MultiWidget for use with ChoiceWithOtherField."""
     def __init__(self, choices):
-        widgets = [
-            forms.RadioSelect(choices=choices, renderer=ChoiceWithOtherRenderer),
-            forms.TextInput
-        ]
+        widgets = [RadioSelect(choices=choices), TextInput()]
         super(ChoiceWithOtherWidget, self).__init__(widgets)
 
     def decompress(self, value):
+        ''' Fill form with value - if it's in the choice set, the right
+            choice is set.  Else, the choice is the last one and box gets the
+            data
+        '''
         if not value:
             return [None, None]
         for choice, display in self.widgets[0].choices:
             if choice == value:
                 return [value, None]
-        return [None, value]
+        return ['', value]
 
 
-
-class ChoiceWithOtherField(forms.MultiValueField):
-    """
-    ChoiceField with an option for a user-submitted "other" value.
-
-    The last item in the choices array passed to __init__ is expected to be a choice for "other". This field's
-    cleaned data is a tuple consisting of the choice the user made, and the "other" field typed in if the choice
-    made was the last one.
-
-    >>> class AgeForm(forms.Form):
-    ...     age = ChoiceWithOtherField(choices=[
-    ...         (0, '15-29'),
-    ...         (1, '30-44'),
-    ...         (2, '45-60'),
-    ...         (3, 'Other, please specify:')
-    ...     ])
-    ...
-    >>> # rendered as a RadioSelect choice field whose last choice has a text input
-    ... print AgeForm()['age']
-    <ul>
-    <li><label for="id_age_0_0"><input type="radio" id="id_age_0_0" value="0" name="age_0" /> 15-29</label></li>
-    <li><label for="id_age_0_1"><input type="radio" id="id_age_0_1" value="1" name="age_0" /> 30-44</label></li>
-    <li><label for="id_age_0_2"><input type="radio" id="id_age_0_2" value="2" name="age_0" /> 45-60</label></li>
-    <li><label for="id_age_0_3"><input type="radio" id="id_age_0_3" value="3" name="age_0" /> Other, please \\
-specify:</label> <input type="text" name="age_1" id="id_age_1" /></li>
-    </ul>
-    >>> form = AgeForm({'age_0': 2})
-    >>> form.is_valid()
-    True
-    >>> form.cleaned_data
-    {'age': (u'2', u'')}
-    >>> form = AgeForm({'age_0': 3, 'age_1': 'I am 10 years old'})
-    >>> form.is_valid()
-    True
-    >>> form.cleaned_data
-    {'age': (u'3', u'I am 10 years old')}
-    >>> form = AgeForm({'age_0': 1, 'age_1': 'This is bogus text which is ignored since I didn\\\\'t pick "other"'})
-    >>> form.is_valid()
-    True
-    >>> form.cleaned_data
-    {'age': (u'1', u'')}
-    """
+class ChoiceWithOtherField(MultiValueField):
+    ''' Given a list of choices, this sets up a set of radio buttons and
+        a text box on the last line for "other" entries.
+        Requires a list of choices with the last one being an empty string
+        value.
+        Returns a single string - either one of the first n-1 choices, or
+        the value of the text box if other is chosen.
+    '''
     def __init__(self, *args, **kwargs):
+        self._was_required = kwargs.pop('required', True)
         fields = [
-            forms.ChoiceField(widget=forms.RadioSelect(renderer=ChoiceWithOtherRenderer), *args, **kwargs),
-            forms.CharField(required=False)
+            ChoiceField(widget=RadioSelect, required=False, *args, **kwargs),
+            CharField(required=False)
         ]
         widget = ChoiceWithOtherWidget(choices=kwargs['choices'])
         kwargs.pop('choices')
-        self._was_required = kwargs.pop('required', True)
-        kwargs['required'] = False
-        super(ChoiceWithOtherField, self).__init__(widget=widget, fields=fields, *args, **kwargs)
+        kwargs['required'] = self._was_required
+        super().__init__(widget=widget,
+                         fields=fields,
+                         require_all_fields=False,
+                         *args,
+                         **kwargs)
 
     def compress(self, value):
-        if self._was_required and not value or value[0] in (None, ''):
-            raise forms.ValidationError(self.error_messages['required'])
+        ''' Verify form post and present data - returns either one of the
+            first n-1 values or if the last is chosen, the text field.
+            If it's a required field - one of the two must be chosen.
+        '''
+        if self._was_required and not value or (
+                value[0] in (None, '') and value[1] in (None, '')):
+            raise ValidationError(self.error_messages['required'])
         if not value:
-            return [None, u'']
-        # Patch to override model specific other choice and return CharField value instead of choice tuple
-        if value[0] == 'Other':
+            return None
+        if value[0] == '':
             return value[1]
         else:
             return value[0]
-        # Use this for field to return tuple
-        #return value[0], value[1] if force_text(value[0]) == force_text(self.fields[0].choices[-1][0]) else u''
