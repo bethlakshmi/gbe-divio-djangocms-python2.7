@@ -1,10 +1,16 @@
 from django.forms import (
     CharField,
+    ChoiceField,
     HiddenInput,
     ImageField,
     IntegerField,
     ModelForm,
+    MultiValueField,
+    MultiWidget,
+    RadioSelect,
     Textarea,
+    TextInput,
+    ValidationError
 )
 from gbe.models import (
     Persona,
@@ -13,12 +19,57 @@ from gbe.models import (
 from gbe_forms_text import (
     persona_help_texts,
     persona_labels,
+    pronoun_choices,
 )
 from gbe.expoformfields import FriendlyURLInput
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
 from django.contrib.auth.models import User
 from gbe.forms import SocialLinkFormSet
+
+
+class ChoiceWithOtherWidget(MultiWidget):
+    """MultiWidget for use with ChoiceWithOtherField."""
+    template_name = 'gbe/choice_with_other_widget.tmpl'
+
+    def __init__(self, choices):
+        widgets = [RadioSelect(choices=choices), TextInput()]
+        super(ChoiceWithOtherWidget, self).__init__(widgets)
+
+    def decompress(self, value):
+        if not value:
+            return [None, None]
+        for choice, display in self.widgets[0].choices:
+            if choice == value:
+                return [value, None]
+        return ['', value]
+
+
+class ChoiceWithOtherField(MultiValueField):
+
+    def __init__(self, *args, **kwargs):
+        self._was_required = kwargs.pop('required', True)
+        fields = [
+            ChoiceField(widget=RadioSelect, required=False, *args, **kwargs),
+            CharField(required=False)
+        ]
+        widget = ChoiceWithOtherWidget(choices=kwargs['choices'])
+        kwargs.pop('choices')
+        kwargs['required'] = False
+        super().__init__(widget=widget, fields=fields, require_all_fields=False, *args, **kwargs)
+
+    def compress(self, value):
+        if self._was_required and not value or (value[0] in (None, '') and value[1] in (None, '')):
+            raise ValidationError(self.error_messages['required'])
+        if not value:
+            return [None, u'']
+        # Patch to override model specific other choice and return CharField value instead of choice tuple
+        if value[0] == '':
+            return value[1]
+        else:
+            return value[0]
+        # Use this for field to return tuple
+        #return value[0], value[1] if force_text(value[0]) == force_text(self.fields[0].choices[-1][0]) else u''
 
 
 class PersonaForm(ModelForm):
@@ -38,6 +89,9 @@ class PersonaForm(ModelForm):
         widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=persona_labels['bio'],
         help_text=persona_help_texts['bio'])
+    pronouns = ChoiceWithOtherField(
+        label=persona_labels['pronouns'],
+        choices=pronoun_choices)
 
     def clean(self):
         cleaned_data = super(PersonaForm, self).clean()
@@ -113,6 +167,7 @@ class PersonaForm(ModelForm):
         model = Persona
         fields = ['name',
                   'label',
+                  'pronouns',
                   'bio',
                   'year_started',
                   'awards',

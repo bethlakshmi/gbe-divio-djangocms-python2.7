@@ -1,0 +1,7 @@
+{% spaceless %}
+{% with widget=widget.subwidgets.0 main_widget=widget %}<div{% if id %} id="{{ id }}"{% endif %}{% if widget.attrs.class %} class="{{ widget.attrs.class }}"{% endif %}>{% for group, options, index in widget.optgroups %}{% if group %}
+  <div><label>{{ group }}</label>{% endif %}{% for option in options %}<div>
+    {% include option.template_name with widget=option %}{% if forloop.parentloop.last %}&nbsp;&nbsp;{% include main_widget.subwidgets.1.template_name with widget=main_widget.subwidgets.1 %}{% endif %}</div>{% endfor %}{% if group %}
+  </div>{% endif %}{% endfor %}
+</div>{% endwith %}
+{% endspaceless %}

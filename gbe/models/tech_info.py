@@ -58,7 +58,6 @@ class TechInfo(Model):
                     self.starting_position and
                     self.primary_color and
                     self.feel_of_act and
-                    self.pronouns and
                     audio_complete and
                     self.introduction_text)
 

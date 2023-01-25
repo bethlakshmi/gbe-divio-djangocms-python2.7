@@ -425,6 +425,7 @@ persona_labels = {'name': ('Stage Name'),
                   'bio': ('Bio'),
                   'year_started': ('Started In'),
                   'awards': ('Awards'),
+                  'pronouns': ('Preferred Pronouns'),
                   'promo_image': ('Promo Image'),
                   'puffsheet': ('Press kit/one-sheet'),
                   'festivals': ('Festival Appearances and Honors'),
@@ -434,6 +435,10 @@ troupe_labels = persona_labels.copy()
 troupe_labels['name'] = ('Troupe Name')
 troupe_labels['year_started'] = ('Started In')
 
+pronoun_choices = [("she/her", "She/her"),
+                   ("he/him", "He/him"),
+                   ("they/them", "They/them"),
+                   ("", "Other")]
 persona_help_texts = {
     'name': 'This is the name you will be listed under when performing.',
     'label': '''Reminder for when you use this bio.  Helps to manage multiple

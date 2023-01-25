@@ -62,7 +62,6 @@ class BasicActTechForm(ModelForm):
                   'crew_instruct',
                   'introduction_text',
                   'read_exact',
-                  'pronouns',
                   'feel_of_act',
                   'primary_color',
                   'secondary_color',
