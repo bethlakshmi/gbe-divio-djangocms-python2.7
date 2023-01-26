@@ -17,11 +17,15 @@ class TestGBE(TestCase):
                            name,
                            button_id,
                            value,
-                           checked=False):
+                           checked=False,
+                           required=False):
         checked_state = ""
         if checked:
             checked_state = "checked "
+        required_state = ""
+        if required:
+            required_state = "required "
         checked_button = (
-            '<input type="radio" name="%s" value="%s" id="%s" %s/>' % (
-                        name, value, button_id, checked_state))
+            '<input type="radio" name="%s" value="%s" %sid="%s" %s/>' % (
+                        name, value, required_state, button_id, checked_state))
         self.assertContains(response, checked_button, html=True)

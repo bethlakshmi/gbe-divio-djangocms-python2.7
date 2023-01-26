@@ -8,6 +8,7 @@ from tests.factories.gbe_factories import (
     UserFactory,
 )
 from tests.contexts import ActTechInfoContext
+from tests.gbe.test_gbe import TestGBE
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_option_state,
@@ -24,13 +25,16 @@ from gbetext import (
 from django.utils.formats import date_format
 from settings import GBE_DATETIME_FORMAT
 from datetime import timedelta
-from gbe.models import Act
+from gbe.models import (
+    Act,
+    Performer,
+)
 from scheduler.models import (
     ResourceAllocation,
 )
 
 
-class TestActTechWizard(TestCase):
+class TestActTechWizard(TestGBE):
     '''Tests for edit_act_techinfo view'''
     view_name = 'act_tech_wizard'
 
@@ -52,7 +56,7 @@ class TestActTechWizard(TestCase):
             'crew_instruct': 'Crew Instructions',
             'introduction_text': 'intro act',
             'read_exact': True,
-            'pronouns': 'she/her',
+            'pronouns_0': 'she/her',
             'feel_of_act': "*I'll* feel your act. Heh.",
             'primary_color': "Blush",
             'secondary_color': "Bashful",
@@ -312,6 +316,16 @@ class TestActTechWizard(TestCase):
             True)
         self.assertNotContains(response,
                                'Advanced Technical Information (Optional)')
+        self.assert_radio_state(response,
+                                'pronouns_0',
+                                'id_pronouns_0_3',
+                                '',
+                                checked=True,
+                                required=True)
+        self.assertContains(
+            response,
+            '<input type="text" name="pronouns_1" id="id_pronouns_0">',
+            html=True)
 
     def test_book_no_rehearsal_and_continue(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -417,6 +431,8 @@ class TestActTechWizard(TestCase):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_act_tech_basic_submit)
+        reload_performer = Performer.objects.get(pk=context.performer.pk)
+        self.assertEqual('she/her', reload_performer.pronouns)
 
     def test_edit_act_wout_music_and_continue(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -445,13 +461,14 @@ class TestActTechWizard(TestCase):
         context.act.tech.feel_of_act = "feel"
         context.act.tech.starting_position = "Onstage"
         context.act.tech.primary_color = "Red"
-        context.act.tech.pronouns = "Me/Myself"
+        context.act.performer.pronouns = "Me/Myself"
         context.act.tech.duration = timedelta(minutes=2)
         context.act.tech.introduction_text = "Yo this is an intro"
         context.act.tech.start_blackout = True
         context.act.tech.end_blackout = True
         context.act.tech.special_lighting_cue = "so special!"
         context.act.tech.save()
+        context.act.performer.save()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[context.act.pk])
@@ -481,6 +498,17 @@ class TestActTechWizard(TestCase):
                             mic_options[2][0],
                             mic_options[2][1],
                             True)
+        self.assert_radio_state(response,
+                                'pronouns_0',
+                                'id_pronouns_0_3',
+                                '',
+                                checked=True,
+                                required=True)
+        self.assertContains(
+            response,
+            '<input type="text" name="pronouns_1" id="id_pronouns_0" ' +
+            'value="Me/Myself">',
+            html=True)
 
     def test_post_good_advanced(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
@@ -491,9 +519,9 @@ class TestActTechWizard(TestCase):
         context.act.tech.feel_of_act = "feel"
         context.act.tech.starting_position = "Onstage"
         context.act.tech.primary_color = "Red"
-        context.act.tech.pronouns = "Me/Myself"
         context.act.tech.duration = timedelta(minutes=2)
         context.act.tech.introduction_text = "Yo this is an intro"
+        context.act.tech.save()
         data = {
             'mic_choice': mic_options[2],
             'follow_spot_color': 'red',
@@ -521,9 +549,9 @@ class TestActTechWizard(TestCase):
         context.act.tech.feel_of_act = "feel"
         context.act.tech.starting_position = "Onstage"
         context.act.tech.primary_color = "Red"
-        context.act.tech.pronouns = "Me/Myself"
         context.act.tech.duration = timedelta(minutes=2)
         context.act.tech.introduction_text = "Yo this is an intro"
+        context.act.tech.save()
         data = {
             'mic_choice': "These are bad",
             'follow_spot_color': 'red',

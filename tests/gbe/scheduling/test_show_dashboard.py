@@ -250,7 +250,6 @@ class TestShowDashboard(TestCase):
             starting_position="Onstage",
             primary_color="text",
             feel_of_act="text",
-            pronouns="text",
             introduction_text="text")
         complete_act_context.act.accepted = 3
         complete_act_context.act.save()
