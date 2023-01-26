@@ -61,6 +61,7 @@ class ChoiceWithOtherField(MultiValueField):
         if self._was_required and not value or (
                 value[0] in (None, '') and value[1] in (None, '')):
             raise ValidationError(self.error_messages['required'])
+
         if not value:
             return None
         if value[0] == '':
