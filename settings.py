@@ -59,6 +59,8 @@ try:
 except:
     DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
 
+DEFAULT_FROM_NAME = 'Team BurlExpo'
+
 try:
     if os.environ['STAGE'] == 'local':
         EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

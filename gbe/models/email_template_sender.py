@@ -1,5 +1,6 @@
 from django.db.models import (
     CASCADE,
+    CharField,
     EmailField,
     Model,
     OneToOneField,
@@ -12,6 +13,7 @@ class EmailTemplateSender(Model):
                              on_delete=CASCADE,
                              related_name="sender")
     from_email = EmailField()
+    from_name = CharField(max_length=150)
 
     class Meta:
         ordering = ['template__name']

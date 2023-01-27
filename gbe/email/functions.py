@@ -103,7 +103,8 @@ def get_or_create_template(name, base, subject):
     except:
         sender = EmailTemplateSender.objects.create(
             template=template,
-            from_email=settings.DEFAULT_FROM_EMAIL
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_name=settings.DEFAULT_FROM_NAME,
         )
         sender.save()
 
