@@ -84,11 +84,8 @@ class TestEventDetailView(TestCase):
         another_context = ActTechInfoContext(
             sched_event=self.context.sched_event,
             conference=self.context.conference)
-        self.context.performer.homepage = "www.testhomepage.com"
-        self.context.performer.save()
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
-        self.assertContains(response, self.context.performer.homepage)
         self.assertContains(response, self.regular_casting.display_header)
         self.assertContains(response, another_context.performer.name)
 

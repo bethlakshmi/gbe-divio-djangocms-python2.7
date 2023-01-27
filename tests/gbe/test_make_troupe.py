@@ -4,6 +4,7 @@ from django.test import Client
 from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory,
+    SocialLinkFactory,
     TroupeFactory,
     UserFactory,
     UserMessageFactory
@@ -18,7 +19,38 @@ from gbetext import (
     troupe_header_text,
 )
 from gbe_utils.text import no_profile_msg
-from gbe.models import UserMessage
+from gbe.models import (
+    SocialLink,
+    UserMessage,
+)
+
+
+formset_data = {
+    'links-0-social_network': '',
+    'links-0-order': 1,
+    'links-0-link': '',
+    'links-0-username': '',
+    'links-1-social_network': '',
+    'links-1-order': 2,
+    'links-1-link': '',
+    'links-1-username': '',
+    'links-2-social_network': '',
+    'links-2-order': 3,
+    'links-2-link': '',
+    'links-2-username': '',
+    'links-3-social_network': '',
+    'links-3-order': 4,
+    'links-3-link': '',
+    'links-3-username': '',
+    'links-4-social_network': '',
+    'links-4-order': 5,
+    'links-4-link': '',
+    'links-4-username': '',
+    'links-TOTAL_FORMS': 5,
+    'links-INITIAL_FORMS': 0,
+    'links-MIN_NUM_FORMS': 0,
+    'links-MAX_NUM_FORMS': 5,
+}
 
 
 class TestTroupeCreate(TestCase):
@@ -67,6 +99,12 @@ class TestTroupeCreate(TestCase):
         self.assertNotContains(response, str(inactive))
         self.assertContains(response, 'Manage Troupe')
         self.assertContains(response, 'Tell Us About Your Troupe')
+        for i in range(0, 5):
+            self.assertContains(
+                response,
+                ('<input type="hidden" name="links-%d-id" id=' +
+                 '"id_links-%d-id">') % (i, i),
+                html=True)
 
 
 class TestTroupeEdit(TestCase):
@@ -80,17 +118,21 @@ class TestTroupeEdit(TestCase):
         persona = PersonaFactory()
         contact = persona.performer_profile
         troupe = TroupeFactory(contact=contact)
+        link0 = SocialLinkFactory(performer=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
         login_as(contact.profile, self)
         data = {'contact': persona.performer_profile.pk,
                 'name':  name or "New Troupe",
-                'homepage': persona.homepage,
                 'bio': "bio",
                 'year_started': 2001,
                 'awards': "many",
-                'membership': [persona.pk]}
+                'membership': [persona.pk], }
+        data.update(formset_data)
+        data['links-0-id'] = link0.pk
+        data['links-0-performer'] = troupe.pk
+        data['links-INITIAL_FORMS'] = 1
         response = self.client.post(
             url,
             data=data,
@@ -105,6 +147,7 @@ class TestTroupeEdit(TestCase):
         persona = PersonaFactory()
         contact = persona.performer_profile
         troupe = TroupeFactory(contact=contact)
+        link0 = SocialLinkFactory(performer=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
@@ -116,6 +159,18 @@ class TestTroupeEdit(TestCase):
             response,
             '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
             'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
+            html=True)
+        self.assertContains(
+            response,
+            ('<input type="hidden" name="links-0-id" id="id_links-0-id" ' +
+             'value="%d">') % link0.pk,
+            html=True)
+        self.assertContains(
+            response,
+            '<input type="url" name="links-0-link" ' +
+            'value="' + link0.link.replace('"', '&quot;') +
+            '" placeholder="http://" style="width: 98%;box-sizing:' +
+            'border-box" maxlength="200" id="id_links-0-link">',
             html=True)
 
     def test_edit_wrong_user(self):
@@ -144,7 +199,7 @@ class TestTroupeEdit(TestCase):
         self.assertContains(response, no_profile_msg)
 
     def test_edit_troupe(self):
-        '''edit_troupe view, edit flow success
+        ''' successful edit, and social link is removed
         '''
         name = '"extra quotes"'
         response, data = self.submit_troupe(name=name)
@@ -152,6 +207,8 @@ class TestTroupeEdit(TestCase):
         self.assertContains(response, '(Click to edit)')
         self.assertNotContains(response, name)
         self.assertContains(response, name.strip('\"\''))
+        self.assertFalse(SocialLink.objects.filter(
+            pk=data['links-0-id']).exists())
 
     def test_edit_troupe_bad_data(self):
         '''edit_troupe view, edit flow success
@@ -165,11 +222,11 @@ class TestTroupeEdit(TestCase):
         login_as(contact.profile, self)
         data = {'contact': persona.performer_profile.pk,
                 'name':  "New Troupe",
-                'homepage': persona.homepage,
                 'bio': "bio",
                 'year_started': 'bad',
                 'awards': "many",
                 'membership': [persona.pk]}
+        data.update(formset_data)
         response = self.client.post(
             url,
             data=data,

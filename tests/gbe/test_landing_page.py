@@ -245,9 +245,6 @@ class TestIndex(TestCase):
         self.assert_event_is_not_present(response, self.current_sched)
         self.assert_event_is_present(response, self.previous_class_sched)
         self.assert_event_is_not_present(response, self.current_class_sched)
-        self.assertNotContains(response, reverse(
-            "volunteer_signup",
-            urlconf="gbe.scheduling.urls"))
 
     def test_as_privileged_user(self):
         staff_profile = ProfileFactory()

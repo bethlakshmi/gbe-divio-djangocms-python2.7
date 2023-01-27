@@ -30,7 +30,6 @@ class Performer (WorkerItem):
                          related_name='contact')
     name = CharField(max_length=100)
     label = CharField(max_length=100, blank=True)
-    homepage = URLField(blank=True)
     bio = TextField()
     experience = PositiveIntegerField(null=True)
     year_started = PositiveIntegerField(null=True)

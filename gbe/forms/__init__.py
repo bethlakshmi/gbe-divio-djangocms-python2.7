@@ -12,8 +12,13 @@ from .send_email_link_form import SendEmailLinkForm
 from .user_create_form import UserCreateForm
 
 # performer forms
+from .social_link_form import (
+    SocialLinkForm,
+    SocialLinkFormSet,
+)
 from .persona_form import PersonaForm
 from .troupe_form import TroupeForm
+
 
 # bid eval forms
 from .bid_evaluation_form import BidEvaluationForm

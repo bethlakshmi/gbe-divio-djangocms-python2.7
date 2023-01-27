@@ -1,0 +1,9 @@
+      <div class="{{field_size}} mt-1">{% if field.errors %}
+            <font class="gbe-form-error">
+          {% endif %} 
+          {{ field.label_tag }}
+          {% if field.errors %}</font>{% endif %}{{ field }}
+        {% if field.errors %}<br><label>
+	      <font class="gbe-form-error gbe-flat-list">{{ field.errors }}</font>
+        </label>{% endif %}
+      </div>

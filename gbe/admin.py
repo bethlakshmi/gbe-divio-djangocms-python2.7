@@ -171,6 +171,22 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
                      'style_property']
 
 
+class SocialLinkAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'performer',
+        'order',
+        'social_network',
+        'link',
+        'username')
+    list_filter = [
+        'social_network',
+        ]
+    search_fields = ['performer__name',
+                     'performer__contact__display_name',
+                     ]
+
+
 class StyleValueAdmin(ImportExportActionModelAdmin):
     list_display = (
         'pk',
@@ -318,6 +334,7 @@ admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)
 admin.site.register(Business, BusinessAdmin)
 admin.site.register(Troupe, TroupeAdmin)
+admin.site.register(SocialLink, SocialLinkAdmin)
 admin.site.register(UserMessage, MessageAdmin)
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Volunteer, BidAdmin)
