@@ -24,10 +24,12 @@ class MailView(View):
     def setup_email_form(self, request, to_list):
         email_form = AdHocEmailForm(initial={
             'sender': self.user.user_object.email,
+            'sender_name': self.user.display_name,
             'to': [c[0] for c in to_list]})
         email_form.fields['to'].choices = to_list
         if not request.user.is_superuser:
             email_form.fields['sender'].widget = HiddenInput()
+            email_form.fields['sender_name'].widget = HiddenInput()
         return email_form
 
     def send_mail(self, request, to_list):
@@ -35,14 +37,19 @@ class MailView(View):
         mail_form.fields['to'].choices = to_list
         if not request.user.is_superuser:
             mail_form.fields['sender'].widget = HiddenInput()
+            mail_form.fields['sender_name'].widget = HiddenInput()
         if mail_form.is_valid():
             email_batch = []
             recipient_string = ""
             if request.user.is_superuser:
                 sender = mail_form.cleaned_data['sender']
+                sender_name = mail_form.cleaned_data['sender_name']
             else:
                 sender = request.user.email
+                sender_name = request.user.profile.display_name
 
+            from_complete = "%s <%s>" % (sender_name, DEFAULT_FROM_EMAIL)
+            reply_to = "%s <%s>" % (sender_name, sender)
             for email in mail_form.cleaned_data['to']:
                 if self.email_type != "individual":
                     footer = unsubscribe_text % (
@@ -60,11 +67,11 @@ class MailView(View):
                     subject = "TO: %s - %s" % (email, subject)
                     target = sender
                 email_batch += [{
-                    'sender': DEFAULT_FROM_EMAIL,
+                    'sender': from_complete,
                     'recipients': [target],
                     'subject': subject,
                     'html_message': message,
-                    'headers': {'Reply-to': sender}, }]
+                    'headers': {'Reply-to': reply_to}, }]
                 if len(recipient_string) > 0:
                     recipient_string = "%s, %s" % (recipient_string, email)
                 else:
