@@ -21,7 +21,6 @@ from .social_link_form import (
 from .persona_form import PersonaForm
 from .troupe_form import TroupeForm
 
-
 # bid eval forms
 from .bid_evaluation_form import BidEvaluationForm
 from .flexible_evaluation_form import FlexibleEvaluationForm
