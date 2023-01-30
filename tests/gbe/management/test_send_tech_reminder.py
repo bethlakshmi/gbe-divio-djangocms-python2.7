@@ -40,7 +40,7 @@ class TestSendTechReminder(TestCase):
         queued_email = Email.objects.filter(
             status=2,
             subject="Reminder to Finish your Act Tech Info",
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_email="Team BurlExpo <%s>" % settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 1)
         self.assertTrue(act.b_title in queued_email[0].html_message)

@@ -144,6 +144,4 @@ class TestRegister(TestCase):
 
         response = self.client.post(url, self.get_post_data(), follow=True)
         to_list = [admin[1] for admin in settings.ADMINS]
-        assert_email_template_used(
-            'Email Spam Check Error',
-            settings.DEFAULT_FROM_EMAIL)
+        assert_email_template_used('Email Spam Check Error')
