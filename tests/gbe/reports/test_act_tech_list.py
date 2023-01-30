@@ -29,13 +29,14 @@ class TestReviewActTechInfo(TestCase):
             'set before my number', u'I will leave props or set pieces ' + \
             'on-stage that will need to be cleared']"
         self.context.act.tech.crew_instruct = "crew instruct"
-        self.context.act.tech.pronouns = "these are my pronouns"
+        self.context.act.performer.pronouns = "they/them"
         self.context.act.tech.primary_color = "reds"
         self.context.act.tech.secondary_color = "black"
         self.context.act.tech.track = SimpleUploadedFile(
             "file.mp3",
             b"file_content")
         self.context.act.tech.save()
+        self.context.act.performer.save()
 
     def setUp(self):
         self.context = ActTechInfoContext(schedule_rehearsal=True)
@@ -81,10 +82,9 @@ class TestReviewActTechInfo(TestCase):
             'I will leave props or set pieces on-stage that will need to ' +
             'be cleared')
         self.assertContains(response, self.context.act.tech.crew_instruct)
-        self.assertContains(response, self.context.act.tech.pronouns)
+        self.assertContains(response, self.context.act.performer.pronouns)
         self.assertContains(response, self.context.act.tech.primary_color)
         self.assertContains(response, self.context.act.tech.secondary_color)
-        self.assertContains(response, self.context.act.tech.pronouns)
         self.assertContains(response, 'OFF')
 
     def test_review_act_tech_advanced(self):

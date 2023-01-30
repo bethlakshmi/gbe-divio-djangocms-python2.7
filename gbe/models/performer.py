@@ -39,6 +39,7 @@ class Performer (WorkerItem):
         null=True,
         related_name="image_performer")
     festivals = TextField(blank=True)     # placeholder only
+    pronouns = CharField(max_length=128, blank=True)
 
     def get_profiles(self):
         '''

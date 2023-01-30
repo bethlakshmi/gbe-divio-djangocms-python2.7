@@ -39,6 +39,7 @@ class TroupeForm(PersonaForm):
         fields = ['contact',
                   'name',
                   'label',
+                  'pronouns',
                   'membership',
                   'bio',
                   'year_started',

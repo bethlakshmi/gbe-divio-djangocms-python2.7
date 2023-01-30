@@ -363,7 +363,6 @@ class TestIndex(TestCase):
             starting_position="Onstage",
             primary_color="text",
             feel_of_act="text",
-            pronouns="text",
             introduction_text="text")
         act.tech.save()
         event_id = make_act_app_ticket(self.current_conf)
@@ -618,7 +617,6 @@ class TestIndex(TestCase):
             starting_position="Onstage",
             primary_color="text",
             feel_of_act="text",
-            pronouns="text",
             introduction_text="text")
         self.current_act.accepted = 3
         self.current_act.save()

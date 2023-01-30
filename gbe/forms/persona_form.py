@@ -13,12 +13,16 @@ from gbe.models import (
 from gbe_forms_text import (
     persona_help_texts,
     persona_labels,
+    pronoun_choices,
 )
 from gbe.expoformfields import FriendlyURLInput
 from filer.models.imagemodels import Image
 from filer.models.foldermodels import Folder
 from django.contrib.auth.models import User
-from gbe.forms import SocialLinkFormSet
+from gbe.forms import (
+    ChoiceWithOtherField,
+    SocialLinkFormSet,
+)
 
 
 class PersonaForm(ModelForm):
@@ -38,6 +42,9 @@ class PersonaForm(ModelForm):
         widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=persona_labels['bio'],
         help_text=persona_help_texts['bio'])
+    pronouns = ChoiceWithOtherField(
+        label=persona_labels['pronouns'],
+        choices=pronoun_choices)
 
     def clean(self):
         cleaned_data = super(PersonaForm, self).clean()
@@ -113,6 +120,7 @@ class PersonaForm(ModelForm):
         model = Persona
         fields = ['name',
                   'label',
+                  'pronouns',
                   'bio',
                   'year_started',
                   'awards',

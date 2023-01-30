@@ -23,6 +23,7 @@ from gbe.models import (
     SocialLink,
     UserMessage,
 )
+from tests.gbe.test_gbe import TestGBE
 
 
 formset_data = {
@@ -53,7 +54,7 @@ formset_data = {
 }
 
 
-class TestTroupeCreate(TestCase):
+class TestTroupeCreate(TestGBE):
     '''Tests for edit_troupe view'''
 
     view_name = 'troupe-add'
@@ -83,6 +84,11 @@ class TestTroupeCreate(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.troupe_string)
         self.assertContains(response, troupe_header_text)
+        self.assert_radio_state(response,
+                                'pronouns_0',
+                                'id_pronouns_0_2',
+                                'they/them',
+                                checked=True)
         self.assertNotContains(
             response,
             '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
@@ -128,6 +134,8 @@ class TestTroupeEdit(TestCase):
                 'bio': "bio",
                 'year_started': 2001,
                 'awards': "many",
+                'pronouns_0': '',
+                'pronouns_1': 'custom/pronouns',
                 'membership': [persona.pk], }
         data.update(formset_data)
         data['links-0-id'] = link0.pk

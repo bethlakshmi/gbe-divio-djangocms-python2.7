@@ -21,6 +21,35 @@ from gbe.models import (
     Persona,
     UserMessage,
 )
+from tests.gbe.test_gbe import TestGBE
+
+
+formset_data = {
+    'links-0-social_network': '',
+    'links-0-order': 1,
+    'links-0-link': '',
+    'links-0-username': '',
+    'links-1-social_network': '',
+    'links-1-order': 2,
+    'links-1-link': '',
+    'links-1-username': '',
+    'links-2-social_network': '',
+    'links-2-order': 3,
+    'links-2-link': '',
+    'links-2-username': '',
+    'links-3-social_network': '',
+    'links-3-order': 4,
+    'links-3-link': '',
+    'links-3-username': '',
+    'links-4-social_network': '',
+    'links-4-order': 5,
+    'links-4-link': '',
+    'links-4-username': '',
+    'links-TOTAL_FORMS': 5,
+    'links-INITIAL_FORMS': 0,
+    'links-MIN_NUM_FORMS': 0,
+    'links-MAX_NUM_FORMS': 5,
+}
 
 formset_data = {
     'links-0-social_network': '',
@@ -70,6 +99,8 @@ class TestPersonaCreate(TestCase):
                 'bio': 'bio bio bio',
                 'year_started': 2003,
                 'awards': 'Generic string here',
+                'pronouns_0': '',
+                'pronouns_1': 'custom/pronouns',
                 }
         data.update(formset_data)
         if image:
@@ -99,19 +130,29 @@ class TestPersonaCreate(TestCase):
                 html=True)
 
     def test_register_persona_w_image(self):
+        ''' using an image and making a custom success message
+        '''
+        msg = UserMessageFactory(
+            view='PersonaCreate',
+            code='SUCCESS')
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
         response, persona_count = self.submit_persona(pic_filename)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "gbe_pagebanner.png")
         self.assertEqual(1, self.profile.personae.count()-persona_count)
+        assert_alert_exists(
+            response, 'success', 'Success', msg.description)
+        self.assertEqual(
+            'custom/pronouns',
+            self.profile.personae.order_by('pk').last().pronouns)
 
     def test_register_persona_invalid_post(self):
+        # no pronoun values supplied in either field
         login_as(self.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
-        response = self.client.get(url)
         data = {'performer_profile': self.profile.pk,
                 'contact': self.profile.pk,
-                'name': '',
+                'name': 'persona name',
                 'bio': 'bio bio bio',
                 'year_started': 2003,
                 'awards': 'Generic string here'}
@@ -119,7 +160,7 @@ class TestPersonaCreate(TestCase):
         persona_count = self.profile.personae.count()
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "This field is required.")
+        self.assertContains(response, "This field is required.", 1)
 
     def test_redirect(self):
         login_as(self.profile, self)
@@ -129,6 +170,8 @@ class TestPersonaCreate(TestCase):
                 'name': 'persona name',
                 'bio': 'bio bio bio',
                 'year_started': 2003,
+                'pronouns_0': '',
+                'pronouns_1': 'custom/pronouns',
                 'awards': 'Generic string here'}
         data.update(formset_data)
         response = self.client.post(
@@ -169,16 +212,8 @@ class TestPersonaCreate(TestCase):
         self.assertNotContains(response, name)
         self.assertContains(response, name.strip('\"\''))
 
-    def test_create_persona_has_message(self):
-        msg = UserMessageFactory(
-            view='PersonaCreate',
-            code='SUCCESS')
-        response, persona_count = self.submit_persona()
-        assert_alert_exists(
-            response, 'success', 'Success', msg.description)
 
-
-class TestPersonaEdit(TestCase):
+class TestPersonaEdit(TestGBE):
     view_name = 'persona-update'
 
     '''Tests for edit_persona view'''
@@ -206,6 +241,8 @@ class TestPersonaEdit(TestCase):
                 'name': new_name,
                 'bio': "bio",
                 'year_started': 2001,
+                'pronouns_0': 'he/him',
+                'pronouns_1': 'test',
                 'awards': "many"}
         data.update(formset_data)
         data['links-0-id'] = self.link0.pk
@@ -278,6 +315,11 @@ class TestPersonaEdit(TestCase):
                 ('<input type="hidden" name="links-%d-performer" id="id_' +
                  'links-%d-performer" value="%d">') % (i, i, self.persona.pk),
                 html=True)
+        self.assert_radio_state(response,
+                                'pronouns_0',
+                                'id_pronouns_0_3',
+                                '',
+                                checked=True)
 
     def test_edit_persona_load_img(self):
         set_image(self.persona)
@@ -304,6 +346,7 @@ class TestPersonaEdit(TestCase):
         response, new_name = self.submit_persona()
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(persona_reloaded.name, new_name)
+        self.assertEqual(persona_reloaded.pronouns, 'he/him')
 
     def test_edit_persona_change_image(self):
         ''' - image is changed
@@ -339,6 +382,8 @@ class TestPersonaEdit(TestCase):
                 'year_started': 2001,
                 'awards': "many",
                 'upload_img': pic_filename,
+                'pronouns_0': '',
+                'pronouns_1': 'custom/pronouns',
                 'links-0-performer': self.persona.pk,
                 'links-1-performer': self.persona.pk,
                 'links-2-performer': self.persona.pk,
@@ -364,6 +409,7 @@ class TestPersonaEdit(TestCase):
         )
         persona_reloaded = Persona.objects.get(pk=self.persona.pk)
         self.assertEqual(str(persona_reloaded.img), "gbe_pagebanner.png")
+        self.assertEqual(persona_reloaded.pronouns, 'custom/pronouns')
         reload_link0 = persona_reloaded.links.get(pk=self.link0.pk)
         reload_link1 = persona_reloaded.links.get(pk=self.link1.pk)
         reload_link2 = persona_reloaded.links.latest('pk')
@@ -416,6 +462,8 @@ class TestPersonaEdit(TestCase):
                 'contact': self.persona.performer_profile.pk,
                 'name': "Fifi",
                 'bio': "bio",
+                'pronouns_0': '',
+                'pronouns_1': 'custom/pronouns',
                 'year_started': 2001,
                 'awards': "many"}
         data.update(formset_data)
@@ -444,6 +492,8 @@ class TestPersonaEdit(TestCase):
                 'name': "Fifi",
                 'bio': "bio",
                 'year_started': 2001,
+                'pronouns_0': '',
+                'pronouns_1': 'custom/pronouns',
                 'awards': "many"}
         data.update(formset_data)
         data['links-0-id'] = self.link0.pk
