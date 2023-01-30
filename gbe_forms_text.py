@@ -421,7 +421,6 @@ act_bid_labels = {
 }
 summer_bid_label = "I am available to perform on"
 persona_labels = {'name': ('Stage Name'),
-                  'homepage': ('Web Site'),
                   'contact': ('Agent/Contact'),
                   'bio': ('Bio'),
                   'year_started': ('Started In'),
@@ -441,7 +440,6 @@ persona_help_texts = {
     bios.''',
     'contact': ('The person GBE should contact about Expo  performances. \
         Usually, this will be you.'),
-    'homepage': 'This will be listed on your performer page.',
     'bio': 'This will be listed on your performer page.',
     'promo_image': ('This may be used by GBE for promotional purposes, and '
                     'will appear on your performer page.'),

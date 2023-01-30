@@ -20,9 +20,34 @@
 <div class="gbe-tab-area">
   <h3 class="gbe-title">{{view_title}}</h3>
   {% if intro_text != "&nbsp;" %}<p>{{intro_text | safe}}</p>{% endif %}
-  <form action="" method="post" enctype="multipart/form-data" name="perf_form">
+  <form action="" method="post" enctype="multipart/form-data" name="perf_form" id="perf_form">
    <p><font class="gbe-form-error">*</font> indicates a required field</p>
     {% include "form_table.tmpl" %}
+    {% if form.formset %}
+    <font class="gbe-form-error">
+        {% if form.formset.non_form_errors %}{{ form.formset.non_form_errors }}<br>{% endif %}
+        {% for subform in form.formset.forms %}
+        {% if subform.non_form_errors %}{{ subform.non_field_errors }}<br>{% endif %}{% endfor %}</font>
+    {{ form.formset.management_form }}
+    <div class="dragable_list container pb-4" id="mySortable">
+      {% for subform in form.formset %}
+      <div class="form-row row gbe-bg-light py-1 justify-content-between" draggable="true">
+        <div class="col-auto pt-1 pr-1 mt-1"><i class="fas fa-bars"></i></div>
+        <div class="col-md-10 col-9 row">
+          {% include "gbe/dragable_field.tmpl" with field=subform.social_network field_size="col-auto px-0" %}
+          {% include "gbe/dragable_field.tmpl" with field=subform.link field_size="col-lg-10 col-md-12 col-12 px-0" %}
+          {% include "gbe/dragable_field.tmpl" with field=subform.username field_size="col-lg-8 col-md-8 px-1 col-12" %}
+          <div class="col-lg-8 col-md-8 col-12 px-1 mt-1 gbe-text-secondary" id="{{forloop.counter0}}-no_network_choice"><i>Choose an option from drop down to enter publicity details</i></div>
+        </div>
+        {% include "gbe/dragable_field.tmpl" with field=subform.DELETE field_size="col-auto text-right" %}
+        {% for hidden in subform.hidden_fields %}{{ hidden }}{% if hidden.errors %}
+          <div class="col-12 gbe-form-error">{{hidden.label}}:&nbsp;&nbsp;
+          {% for error in hidden.errors %}{{ error }}{% endfor %}</div>
+        {% endif %}{% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
   {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> {% if delete_url %}<a href="#" data-toggle="modal" data-target="#DeleteModal" data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>{% endif %}{% endif %}
   <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary">
   </form>
@@ -52,6 +77,8 @@
 &nbsp;<br>
 {% addtoblock "js" %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
  {{ form.media.js }}
 <script>
 (function($) {
@@ -73,5 +100,67 @@
     })
 })($)
 </script>
+{% if form.link_template %}
+<script type="text/javascript">
+const username_links = {{% for key, link in form.link_template.items %}
+    "{{ key }}": "{{ link }}",
+    {% endfor %}};
+
+function socialLinkSetup(start_row) {
+    const network_id = '#id_links-' + start_row + '-social_network'
+    const link_id = '#id_links-' + start_row + '-link'
+    const username_id = '#id_links-' + start_row + '-username'
+    const no_net_div = '#' + start_row + '-no_network_choice'
+
+    // always clear link text, cause it's changing
+    $('#' + start_row + '-link_text').remove();
+    if ($(network_id).val() in username_links) {
+        $(link_id).parent().hide();
+        $(link_id).val('').attr('value','');
+        $(username_id).parent().show()
+        $(username_id).parent().prepend(
+            '<span id="' + start_row + '-link_text">' + 
+            username_links[$(network_id).val()] + '</span>')
+        $(no_net_div).hide()
+    } else {
+        $(username_id).parent().hide();
+        $(username_id).val('').attr('value','');
+        if ($(network_id).val().length > 0) {
+            $(link_id).parent().show()
+            $(no_net_div).hide()
+        }
+        else {
+            $(link_id).parent().hide();
+            $(link_id).val('').attr('value','');
+            $(no_net_div).show()
+        }
+    }
+}
+$(document).ready(function(){
+  var list = $('#mySortable'),
+      updatePosition = function() {
+        list.children().each(function(i, e){
+          $(this).children('input[class="drag_change"]').val(++i);
+        });
+      };
+
+  list.sortable({
+    placeholder: "ui-state-highlight",
+    update: updatePosition
+  });
+});
+$(document).ready(function () {
+    $('#perf_form select[name$="social_network"]').change(function () {
+        start_row = Number($(this).attr("name").replace(/\D+/g, ""));
+        socialLinkSetup(start_row)
+    });
+});
+$(window).on('load', function () {
+    for (var i = 0; i < 5; i++) {
+        socialLinkSetup(i)
+    };
+});
+</script>
+{% endif %}
 {% endaddtoblock %}
 {% endblock content %}

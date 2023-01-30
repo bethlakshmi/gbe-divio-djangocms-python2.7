@@ -522,3 +522,20 @@ content: none;
 li.progressbar_active {
   font-weight: bold;
 }
+div.dragable_list{
+  list-style-type: none;
+  padding-left: 0;
+}
+div.dragable_list > div,
+.ui-state-highlight {
+  font-size: 16px;
+  line-height: 18px;
+  border: 1px solid;
+  padding: 0.5em 1em;
+  margin-bottom: 0.25em;
+  box-sizing: border-box;
+}
+.ui-state-highlight{
+  display: block;
+  background-color: #999;
+}
