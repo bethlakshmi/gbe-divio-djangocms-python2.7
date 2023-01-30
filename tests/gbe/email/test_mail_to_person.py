@@ -97,6 +97,12 @@ class TestMailToPerson(TestCase):
             'value="%s" id="id_sender" />' % (
                 self.privileged_profile.user_object.email),
             html=True)
+        self.assertContains(
+            response,
+            ('<input type="text" name="sender_name" value="%s" ' +
+             'maxlength="150" id="id_sender_name">') % (
+                self.privileged_profile.display_name),
+            html=True)
 
     def test_pick_no_admin_fixed_email(self):
         reduced_profile = self.reduced_login()
@@ -107,12 +113,19 @@ class TestMailToPerson(TestCase):
             'value="%s" id="id_sender" />' % (
                 reduced_profile.user_object.email),
             html=True)
+        self.assertContains(
+            response,
+            ('<input type="hidden" name="sender_name" value="%s" ' +
+             'id="id_sender_name">') % (
+                reduced_profile.display_name),
+            html=True)
 
     def test_send_email_success_status(self):
         login_as(self.privileged_profile, self)
         data = {
             'to': self.to_profile.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'send': True
@@ -128,6 +141,7 @@ class TestMailToPerson(TestCase):
         data = {
             'to': self.to_profile.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'send': True
@@ -138,6 +152,7 @@ class TestMailToPerson(TestCase):
             data['subject'],
             data['html_message'],
             data['sender'],
+            data['sender_name']
             )
 
     def test_send_email_reduced_w_fixed_from(self):
@@ -145,6 +160,7 @@ class TestMailToPerson(TestCase):
         data = {
             'to': self.to_profile.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'send': True
@@ -155,6 +171,7 @@ class TestMailToPerson(TestCase):
             data['subject'],
             data['html_message'],
             reduced_profile.user_object.email,
+            reduced_profile.display_name,
             )
 
     def test_send_email_failure(self):
