@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gbe', '0025_remove_performer_homepage'),
+        ('gbe', '0028_remove_techinfo_pronouns'),
     ]
 
     operations = [
