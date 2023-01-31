@@ -254,6 +254,7 @@ class ActTechWizardView(View):
         else:
             prop_initial = []
         return BasicActTechForm(instance=self.act.tech, initial={
+            'pronouns': self.act.performer.pronouns,
             'prop_setup': prop_initial,
             'confirm_no_music': int(self.act.tech.confirm_no_music)})
 
@@ -307,6 +308,10 @@ class ActTechWizardView(View):
                                           instance=self.act.tech)
             if basic_form.is_valid():
                 basic_form.save()
+                self.act.performer.pronouns = basic_form.cleaned_data[
+                    'pronouns']
+                self.act.performer.save()
+
                 # fix or remove
                 # call_command('sync_audio_downloads', unsync_all=True)
                 success = UserMessage.objects.get_or_create(

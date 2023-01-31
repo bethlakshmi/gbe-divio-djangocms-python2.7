@@ -126,7 +126,7 @@ class ActTechList(View):
                 act.tech.duration,
                 act.tech.starting_position,
                 prop_setup_list,
-                act.tech.pronouns,
+                act.performer.pronouns,
                 read_exact,
                 act.tech.introduction_text,
                 "Primary: %s\nSecondary: %s" % (act.tech.primary_color,

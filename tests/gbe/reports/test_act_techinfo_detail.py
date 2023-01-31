@@ -29,13 +29,14 @@ class TestReviewActTechInfo(TestCase):
             'set before my number', u'I will leave props or set pieces ' + \
             'on-stage that will need to be cleared']"
         self.context.act.tech.crew_instruct = "crew instruct"
-        self.context.act.tech.pronouns = "these are my pronouns"
+        self.context.act.performer.pronouns = "these are my pronouns"
         self.context.act.tech.primary_color = "reds"
         self.context.act.tech.secondary_color = "black"
         self.context.act.tech.track = SimpleUploadedFile(
             "file.mp3",
             b"file_content")
         self.context.act.tech.save()
+        self.context.act.performer.save()
 
     def setUp(self):
         self.client = Client()
@@ -93,10 +94,9 @@ class TestReviewActTechInfo(TestCase):
             'I will leave props or set pieces on-stage that will need to ' +
             'be cleared')
         self.assertContains(response, self.context.act.tech.crew_instruct)
-        self.assertContains(response, self.context.act.tech.pronouns)
+        self.assertContains(response, self.context.act.performer.pronouns)
         self.assertContains(response, self.context.act.tech.primary_color)
         self.assertContains(response, self.context.act.tech.secondary_color)
-        self.assertContains(response, self.context.act.tech.pronouns)
         self.assertContains(response, self.context.act.tech.track.url)
         self.assertContains(response, '<b>Follow Spot:</b> OFF<br>')
         self.assertContains(response, date_format(
@@ -151,7 +151,6 @@ class TestReviewActTechInfo(TestCase):
             starting_position="Onstage",
             primary_color="text",
             feel_of_act="text",
-            pronouns="text",
             introduction_text="text")
         self.context.act.accepted = 3
         self.context.act.save()

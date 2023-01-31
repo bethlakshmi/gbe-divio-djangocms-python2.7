@@ -40,6 +40,7 @@ class TroupeCreate(CreatePopupMixin,
     def get_initial(self):
         initial = super().get_initial()
         initial['contact'] = self.request.user.profile
+        initial['pronouns'] = "they/them"
         return initial
 
     def get_form(self, form_class=None):

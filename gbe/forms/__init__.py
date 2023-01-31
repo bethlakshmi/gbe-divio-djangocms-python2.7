@@ -1,3 +1,5 @@
+from .choice_with_other_field import ChoiceWithOtherField
+
 # usermanagement forms
 from .contact_form import ContactForm
 from .participant_form import ParticipantForm
