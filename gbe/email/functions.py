@@ -373,7 +373,7 @@ def get_user_email_templates(user):
             'default_base': "bid_submitted",
             'default_subject': "%s Submission Occurred" % priv, }]
         for state in acceptance_states:
-            if priv == "act" and state[1] == "Accepted":
+            if priv == "act" and state[1] in ("Wait List", "Accepted"):
                 for show in get_occurrences(
                         event_styles=['Show'],
                         label_sets=[Conference.all_slugs(current=True)]

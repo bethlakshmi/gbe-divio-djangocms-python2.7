@@ -176,9 +176,9 @@ class ActChangeStateView(BidChangeStateView):
         email_show = None
         email_casting = None
         if (str(self.object.accepted) != request.POST['accepted']) or (
-                request.POST['accepted'] == '3'):
-            # only send the show & role when act is accepted
-            if request.POST['accepted'] == '3':
+                request.POST['accepted'] in ('2', '3')):
+            # only send the show & role when act is accepted or waitlisted
+            if request.POST['accepted'] in ('2', '3'):
                 email_show = self.new_show
                 email_casting = self.casting
             for bidder in self.object.profiles:
