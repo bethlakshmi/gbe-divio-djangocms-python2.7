@@ -385,7 +385,7 @@ def get_user_email_templates(user):
                     subject = 'Your act has been cast in %s'
                     if state[1] == "Wait List":
                         subject = ('Your act has been added to the wait ' +
-                            'list for %s')
+                                   'list for %s')
                     template_set += [{
                         'name': "%s %s - %s" % (priv,
                                                 state[1].lower(),
