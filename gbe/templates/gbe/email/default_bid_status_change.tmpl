@@ -2,7 +2,7 @@ Dear {{ name }},
 
 The status of your {{ bid_type }} - {{ bid }} - has been changed to {{ status }}. {% if casting %}Your role is {{ casting }}{% endif %}.  You can always check the status of your submissions or your schedule by visiting your personal pane on {{site}}.
 
-{% if show %}
+{% if show and status=='Accepted' %}
 Congratulations!  Your act, {{ bid }} was cast in {{ show }}.  We've posted you as one of
 our performers on our show page:
 
@@ -14,4 +14,6 @@ act the best it can be!  The form is here:
   {{ act_tech_link }}
   
 Congratulations again!  We look forward to seeing you at the Expo!
+{% elif show and status=='Wait List' %}
+We loved your act, but unfortunately do not have enough space in our show for it at this time.  We've added your act to our wait list and will contact you ASAP if a space becomes available in {{ show }}.
 {% endif %}
