@@ -36,6 +36,7 @@ class TroupeCreate(CreatePopupMixin,
     intro_text = troupe_header_text
     mode = "troupe"
     valid_message = default_edit_troupe_msg
+    stay_here = True
 
     def get_initial(self):
         initial = super().get_initial()
@@ -79,6 +80,12 @@ class TroupeUpdate(UpdatePopupMixin,
     mode = "update"
     intro_text = troupe_header_text
     valid_message = default_edit_troupe_msg
+    stay_here = True
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['pronouns'] = "they/them"
+        return initial
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)

@@ -21,6 +21,7 @@ class PersonaCreate(CreatePopupMixin,
                     SubwayMapMixin,
                     ProfileRequiredMixin,
                     CreateView):
+    stay_here = True
     model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
@@ -41,6 +42,7 @@ class PersonaUpdate(UpdatePopupMixin,
                     GbeFormMixin,
                     ProfileRequiredMixin,
                     UpdateView):
+    stay_here = True
     model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
