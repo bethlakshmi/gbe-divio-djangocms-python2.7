@@ -351,6 +351,7 @@ class TestActChangestate(TestCase):
         # change show, change role
         EmailTemplateSenderFactory(
             from_email="actemail@notify.com",
+            from_name="Act Review Committee",
             template__name='act wait list - %s' % (
                 self.sched_event.title.lower()),
             template__subject="test template"
@@ -372,7 +373,9 @@ class TestActChangestate(TestCase):
             response,
             "Conflicting booking: %s" % str(conflict))
         assert_email_template_used(
-            "test template", "actemail@notify.com")
+            "test template",
+            email="actemail@notify.com",
+            name="Act Review Committee")
 
     def test_act_accept_makes_template_per_show(self):
         # waitlisted -> accepted

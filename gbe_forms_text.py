@@ -935,3 +935,5 @@ style_value_help = {
     'add_image': '''Uploading an image takes precedence over any selected
     image.''',
 }
+sender_name_help = ('The name of the sender.  Recipients will get email ' +
+                    'from "Sender Name <From>')

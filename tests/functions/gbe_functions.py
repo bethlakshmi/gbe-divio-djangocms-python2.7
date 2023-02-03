@@ -128,12 +128,13 @@ def assert_email_template_create(
 def assert_email_template_used(
         expected_subject,
         email=settings.DEFAULT_FROM_EMAIL,
+        name="Team BurlExpo",
         outbox_size=1,
         message_index=0):
     assert outbox_size == len(mail.outbox)
     msg = mail.outbox[message_index]
     assert msg.subject == expected_subject
-    header = {'Reply-to': email}
+    header = {'Reply-to': "%s <%s>" % (name, email)}
     assert msg.extra_headers == header
     return msg
 
@@ -156,8 +157,9 @@ def assert_right_mail_right_addresses(
         num_email,
         expected_subject,
         to_email_array,
-        from_email=settings.DEFAULT_FROM_EMAIL):
-    header = {'Reply-to': from_email}
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        from_name="Team BurlExpo"):
+    header = {'Reply-to': "%s <%s>" % (from_name, from_email)}
     assert num_email == len(mail.outbox)
     msg = mail.outbox[queue_order]
     assert msg.subject == expected_subject
@@ -166,14 +168,18 @@ def assert_right_mail_right_addresses(
     return msg
 
 
-def assert_queued_email(to_list, subject, message, sender, extras=[]):
+def assert_queued_email(to_list,
+                        subject,
+                        message,
+                        sender,
+                        sender_name,
+                        extras=[]):
     queued_email = Email.objects.filter(
         status=2,
         subject=subject,
         html_message__startswith=message,
-        headers={'Reply-to': sender},
-        from_email=DEFAULT_FROM_EMAIL
-        )
+        headers={'Reply-to': "%s <%s>" % (sender_name, sender)},
+        from_email="%s <%s>" % (sender_name, DEFAULT_FROM_EMAIL))
     for recipient in to_list:
         assert queued_email.filter(to=recipient).exists()
         match = queued_email.filter(to=recipient).first()

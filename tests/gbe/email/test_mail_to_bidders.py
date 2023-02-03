@@ -489,6 +489,7 @@ class TestMailToBidders(TestMailFilters):
         data = {
             'to': self.context.teacher.contact.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
@@ -507,6 +508,7 @@ class TestMailToBidders(TestMailFilters):
         data = {
             'to': self.context.teacher.contact.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'email-select-state': [0, 1, 2, 3, 4, 5],
@@ -520,6 +522,7 @@ class TestMailToBidders(TestMailFilters):
             data['subject'],
             data['html_message'],
             data['sender'],
+            data['sender_name'],
             extras=[self.get_param, reverse(
                 'email_update',
                 urlconf='gbe.urls',
@@ -532,6 +535,7 @@ class TestMailToBidders(TestMailFilters):
         data = {
             'to': second_bid.performer.contact.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk,
@@ -546,6 +550,7 @@ class TestMailToBidders(TestMailFilters):
             data['subject'],
             data['html_message'],
             reduced_profile.user_object.email,
+            reduced_profile.display_name,
             extras=[self.get_param, reverse(
                 'email_update',
                 urlconf='gbe.urls',
@@ -558,6 +563,7 @@ class TestMailToBidders(TestMailFilters):
         data = {
             'to': second_bid.performer.contact.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk,
@@ -580,6 +586,7 @@ class TestMailToBidders(TestMailFilters):
             'to': [second_bid.performer.contact.user_object.email,
                    random.user_object.email],
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk,
@@ -599,6 +606,7 @@ class TestMailToBidders(TestMailFilters):
         login_as(self.privileged_profile, self)
         data = {
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-bid_type': self.priv_list,
@@ -614,6 +622,7 @@ class TestMailToBidders(TestMailFilters):
         data = {
             'to': self.context.teacher.contact.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-bid_type': self.priv_list,
@@ -633,6 +642,7 @@ class TestMailToBidders(TestMailFilters):
         login_as(self.privileged_profile, self)
         data = {
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-bid_type': self.priv_list,
@@ -651,6 +661,7 @@ class TestMailToBidders(TestMailFilters):
         login_as(self.privileged_profile, self)
         data = {
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-bid_type': "Class",
@@ -669,6 +680,7 @@ class TestMailToBidders(TestMailFilters):
         login_as(self.privileged_profile, self)
         data = {
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-bid_type': self.priv_list,
@@ -701,6 +713,7 @@ class TestMailToBidders(TestMailFilters):
             'to': User.objects.exclude(
                 username="limbo").values_list('email', flat=True),
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'everyone': "Everyone",
@@ -713,6 +726,7 @@ class TestMailToBidders(TestMailFilters):
                 data['subject'],
                 data['html_message'],
                 data['sender'],
+                data['sender_name'],
                 extras=[self.get_param, reverse(
                     'email_update',
                     urlconf='gbe.urls',
@@ -722,6 +736,7 @@ class TestMailToBidders(TestMailFilters):
         reduced_profile = self.reduced_login()
         data = {
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'everyone': "Everyone",
@@ -743,6 +758,7 @@ class TestMailToBidders(TestMailFilters):
             'to': [self.privileged_profile.user_object.email,
                    second_super.email],
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'everyone': "Everyone",
