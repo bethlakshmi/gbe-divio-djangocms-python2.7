@@ -102,7 +102,7 @@ class TestEditEmail(TestCase):
             status=2,
             to=self.profile.user_object.email,
             subject="Unsubscribe from GBE Mail",
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_email="Team BurlExpo <%s>" % settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 1)
 

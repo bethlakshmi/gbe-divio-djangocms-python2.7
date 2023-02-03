@@ -37,21 +37,26 @@ def mail_send_gbe(to_list,
                   from_address,
                   template,
                   context,
-                  priority='now'):
+                  priority='now',
+                  from_name=None):
     if settings.DEBUG:
         print("Original To List:")
         print(to_list)
         to_list = []
         for admin in settings.ADMINS:
             to_list += [admin[1]]
-
+    from_complete = settings.DEFAULT_FROM_EMAIL
+    reply_to = from_address
+    if from_name is not None:
+        from_complete = "%s <%s>" % (from_name, settings.DEFAULT_FROM_EMAIL)
+        reply_to = "%s <%s>" % (from_name, from_address)
     try:
         mail.send(to_list,
-                  settings.DEFAULT_FROM_EMAIL,
+                  from_complete,
                   template=template,
                   context=context,
                   priority=priority,
-                  headers={'Reply-to': from_address},
+                  headers={'Reply-to': reply_to},
                   )
     except:
         return "EMAIL_SEND_ERROR"
@@ -103,7 +108,8 @@ def get_or_create_template(name, base, subject):
     except:
         sender = EmailTemplateSender.objects.create(
             template=template,
-            from_email=settings.DEFAULT_FROM_EMAIL
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_name=settings.DEFAULT_FROM_NAME,
         )
         sender.save()
 
@@ -158,7 +164,8 @@ def send_bid_state_change_mail(
         email,
         template.sender.from_email,
         template=name,
-        context=context)
+        context=context,
+        from_name=template.sender.from_name)
 
 
 def send_schedule_update_mail(participant_type, profile):
@@ -188,7 +195,8 @@ def send_schedule_update_mail(participant_type, profile):
                 'unsubscribe_link': create_unsubscribe_link(
                     profile.contact_email,
                     "send_schedule_change_notifications")
-                },)
+                },
+            from_name=template.sender.from_name)
 
 
 def send_daily_schedule_mail(schedules, day, slug, email_type):
@@ -212,7 +220,8 @@ def send_daily_schedule_mail(schedules, day, slug, email_type):
                     user.profile.contact_email,
                     "send_%s" % email_type)
                 },
-            priority="medium")
+            priority="medium",
+            from_name=template.sender.from_name)
 
 
 def send_act_tech_reminder(act, email_type):
@@ -236,7 +245,8 @@ def send_act_tech_reminder(act, email_type):
             'unsubscribe_link': create_unsubscribe_link(
                 act.performer.contact.contact_email,
                 "send_%s" % email_type)},
-            priority="medium")
+            priority="medium",
+            from_name=template.sender.from_name)
 
 
 def send_unsubscribe_link(user):
@@ -254,7 +264,8 @@ def send_unsubscribe_link(user):
             'badge_name': user.profile.get_badge_name(),
             'unsubscribe_link': create_unsubscribe_link(
                 user.profile.contact_email)},
-        priority="medium")
+        priority="medium",
+        from_name=template.sender.from_name)
 
 
 def notify_reviewers_on_bid_change(bidder,
@@ -285,7 +296,7 @@ def notify_reviewers_on_bid_change(bidder,
                 'conference': conference,
                 'group_name': group_name,
                 'review_url': Site.objects.get_current().domain+review_url},
-            )
+            from_name=template.sender.from_name)
 
 
 def notify_admin_on_error(activity, error, target_link):
@@ -303,7 +314,8 @@ def notify_admin_on_error(activity, error, target_link):
             context={
                 'activity': activity,
                 'error': error,
-                'target_link': target_link})
+                'target_link': target_link},
+            from_name=template.sender.from_name)
 
 
 def send_volunteer_update_to_staff(
@@ -359,7 +371,7 @@ def send_volunteer_update_to_staff(
                 'error': update_response.errors,
                 'warnings': warnings,
                 'state_change': state_change},
-            )
+            from_name=template.sender.from_name)
 
 
 def get_user_email_templates(user):

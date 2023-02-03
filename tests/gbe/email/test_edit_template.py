@@ -38,6 +38,7 @@ class TestEditEmailTemplate(TestCase):
 
     def get_template_post(self):
         data = {"sender": "new@sender.com",
+                "sender_name": "Sender Name",
                 "subject": 'New Subject',
                 "html_content": '<p><b>New</b> Content</p>',
                 "name": self.sender.template.name,
