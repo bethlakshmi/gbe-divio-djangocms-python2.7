@@ -142,6 +142,10 @@ def send_bid_state_change_mail(
         action = 'Your %s has been cast in %s' % (
             bid_type,
             str(show))
+        if acceptance_states[status][1].lower() == 'wait list':
+            action = 'Your %s has been added to the wait list for %s' % (
+                bid_type,
+                str(show))
         context['show'] = show
         context['show_link'] = site.domain + reverse(
             'detail_view',
@@ -385,11 +389,15 @@ def get_user_email_templates(user):
             'default_base': "bid_submitted",
             'default_subject': "%s Submission Occurred" % priv, }]
         for state in acceptance_states:
-            if priv == "act" and state[1] == "Accepted":
+            if priv == "act" and state[1] in ("Wait List", "Accepted"):
                 for show in get_occurrences(
                         event_styles=['Show'],
                         label_sets=[Conference.all_slugs(current=True)]
                         ).occurrences:
+                    subject = 'Your act has been cast in %s'
+                    if state[1] == "Wait List":
+                        subject = ('Your act has been added to the wait ' +
+                                   'list for %s')
                     template_set += [{
                         'name': "%s %s - %s" % (priv,
                                                 state[1].lower(),
@@ -399,8 +407,7 @@ def get_user_email_templates(user):
                                        state[1].lower())] % show.title,
                         'category': priv,
                         'default_base': "default_bid_status_change",
-                        'default_subject': 'Your act has been cast in %s' % (
-                            show.title), }]
+                        'default_subject': subject % (show.title), }]
             else:
                 template_set += [{
                     'name': "%s %s" % (priv, state[1].lower()),

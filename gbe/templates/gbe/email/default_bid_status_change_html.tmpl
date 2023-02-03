@@ -5,7 +5,7 @@ The status of your {{ bid_type }} has been changed to {{ status }}.  {% if casti
 your personal pane on <a href='{{site}}'>{{site_name}}</a>
 <br><br>
 
-{% if show %}
+{% if show and status == 'Accepted' %}
 Congratulations!  Your act, {{ bid }} was cast in {{ show }}.  We've posted you as one of
 our performers on our <a href="{{ show_link }}">show's promotion</a>!
 <br><br>
@@ -18,4 +18,6 @@ act the best it can be!  The form is here:
 <br><br>
   
 Congratulations again!  We look forward to seeing you at the Expo!
+{% elif show and status == 'Wait List' %}
+We loved your act, but unfortunately do not have enough space in our show for it at this time.  We've added your act to our wait list and will contact you ASAP if a space becomes available in {{ show }}.
 {% endif %}

@@ -63,7 +63,7 @@ class TestTemplateList(TestCase):
                      "act no decision",
                      "act reject",
                      "act submission notification",
-                     "act wait list",
+                     "act wait list - %s" % context.sched_event.title.lower(),
                      "act withdrawn", ]
         for template in templates:
             self.assertContains(response, template)

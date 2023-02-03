@@ -290,8 +290,9 @@ class TestActChangestate(TestCase):
         response = self.client.post(url, data=self.data)
         self.assertEqual(response.status_code, 302)
         assert_email_template_create(
-            'act wait list',
-            "Your act proposal has changed status to Wait List"
+            'act wait list - %s' % self.sched_event.title.lower(),
+            "Your act has been added to the wait list for %s" % (
+                self.sched_event.title),
         )
         casting = Ordering.objects.get(class_id=act.pk)
         assert(casting.role == "Waitlisted")
@@ -329,8 +330,9 @@ class TestActChangestate(TestCase):
                          ResourceAllocation.objects.filter(
                             event=self.sched_event).count() - prev_count2)
         assert_email_template_create(
-            'act wait list',
-            "Your act proposal has changed status to Wait List"
+            'act wait list - %s' % self.sched_event.title.lower(),
+            "Your act has been added to the wait list for %s" % (
+                self.sched_event.title),
         )
         casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == "Waitlisted")
@@ -350,7 +352,8 @@ class TestActChangestate(TestCase):
         EmailTemplateSenderFactory(
             from_email="actemail@notify.com",
             from_name="Act Review Committee",
-            template__name='act wait list',
+            template__name='act wait list - %s' % (
+                self.sched_event.title.lower()),
             template__subject="test template"
         )
         grant_privilege(self.privileged_user, 'Act Reviewers')
