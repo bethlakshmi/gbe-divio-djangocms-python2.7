@@ -26,6 +26,7 @@ from gbe_forms_text import (
 from django.forms import (
     ModelMultipleChoiceField,
     MultipleChoiceField,
+    MultipleHiddenInput,
 )
 from django.forms.widgets import CheckboxSelectMultiple
 from django.db.models import Q
@@ -290,8 +291,7 @@ class MailToRolesView(MailToFilterView):
                                      prefix="event-select")
         event_info.fields['events'] = MultipleChoiceField(
             choices=self.event_choices,
-            widget=CheckboxSelectMultiple(
-                attrs={'class': 'form-check-input'}),
+            widget=MultipleHiddenInput(),
             required=False)
         return to_list, [recipient_info, event_info]
 
@@ -318,8 +318,7 @@ class MailToRolesView(MailToFilterView):
                                      prefix="event-select")
         event_info.fields['events'] = MultipleChoiceField(
             choices=self.event_choices,
-            widget=CheckboxSelectMultiple(
-                attrs={'class': 'form-check-input'}),
+            widget=MultipleHiddenInput(),
             required=False)
         context = self.get_select_forms()
         context["email_form"] = email_form

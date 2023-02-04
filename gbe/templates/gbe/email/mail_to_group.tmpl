@@ -68,6 +68,12 @@
      {% else %}
       {{ email_form.sender }}
      {% endif %}
+     {% if email_form.sender_name in email_form.visible_fields %}
+       {% include "form_field.tmpl" with field=email_form.sender_name %}
+       <!-- end sender_name -->
+     {% else %}
+      {{ email_form.sender_name }}
+     {% endif %}
      {% include "form_field.tmpl" with field=email_form.subject %}
      <!-- end subject -->
      {% include "form_field.tmpl" with field=email_form.html_message %}

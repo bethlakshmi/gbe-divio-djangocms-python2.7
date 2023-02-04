@@ -38,6 +38,7 @@ class TestEditEmailTemplate(TestCase):
 
     def get_template_post(self):
         data = {"sender": "new@sender.com",
+                "sender_name": "Sender Name",
                 "subject": 'New Subject',
                 "html_content": '<p><b>New</b> Content</p>',
                 "name": self.sender.template.name,
@@ -92,6 +93,25 @@ class TestEditEmailTemplate(TestCase):
         self.assertContains(response, settings.DEFAULT_FROM_EMAIL)
         self.assertContains(response, 'Your act has been cast in %s' % (
             context.sched_event.title))
+        self.assertContains(
+            response,
+            'Be sure to fill out your Act Tech Info Page ASAP')
+
+    def test_act_waitlist_not_exists_w_get(self):
+        context = ShowContext()
+        grant_privilege(self.privileged_profile.user_object,
+                        'Act Coordinator')
+        login_as(self.privileged_profile, self)
+        response = self.client.get(reverse(
+            self.view_name,
+            urlconf="gbe.email.urls",
+            args=["act wait list - %s" % context.sched_event.title.lower()]))
+
+        self.assertContains(response, settings.DEFAULT_FROM_EMAIL)
+        self.assertContains(
+            response,
+            'Your act has been added to the wait list for %s' % (
+                context.sched_event.title))
         self.assertContains(
             response,
             'Be sure to fill out your Act Tech Info Page ASAP')

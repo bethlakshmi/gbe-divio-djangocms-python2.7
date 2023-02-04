@@ -146,6 +146,7 @@ class TestMakeBid(TestCase):
         subject_format = "bidder: %s, bid: %s"
         EmailTemplateSenderFactory(
             from_email="class@notify.com",
+            from_name="Class Committee",
             template__name='class submission notification',
             template__subject="bidder: %s, bid: %s" % (
                 "{{ bidder }}",
@@ -164,7 +165,8 @@ class TestMakeBid(TestCase):
                 str(self.performer.performer_profile),
                 data['theclass-b_title']),
             [privileged_profile.contact_email],
-            from_email="class@notify.com")
+            from_email="class@notify.com",
+            from_name="Class Committee")
 
     def test_class_submit_has_message(self):
         '''class_bid, not submitting and no other problems,

@@ -30,7 +30,7 @@ class TestSendDailySchedule(TestCase):
         queued_email = Email.objects.filter(
             status=2,
             subject=self.subject,
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_email="Team BurlExpo <%s>" % settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 1)
         self.assertTrue(context.bid.b_title in queued_email[0].html_message)

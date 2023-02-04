@@ -360,6 +360,8 @@ email_template_desc = {
     marks the %s as a duplicate''',
     'act accepted': '''This email is sent to the performer when they have \
     been cast into the show %s.''',
+    'act wait list': '''This email is sent to the performer when they have \
+    been wait listed into the show %s.''',
 }
 
 unique_email_templates = {

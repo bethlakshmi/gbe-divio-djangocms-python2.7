@@ -617,6 +617,7 @@ class TestMailToRoles(TestMailFilters):
         data = {
             'to': volunteer.user_object.email,
             'sender': self.privileged_profile.user_object.email,
+            'sender_name': "Sender Name",
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
@@ -640,6 +641,7 @@ class TestMailToRoles(TestMailFilters):
         data = {
             'to': volunteer.user_object.email,
             'sender': staffcontext.staff_lead.user_object.email,
+            'sender_name': staffcontext.staff_lead.display_name,
             'subject': "Subject",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
@@ -655,6 +657,7 @@ class TestMailToRoles(TestMailFilters):
             data['subject'],
             data['html_message'],
             data['sender'],
+            data['sender_name'],
             extras=[self.get_param, reverse(
                 'email_update',
                 urlconf='gbe.urls',
@@ -670,6 +673,7 @@ class TestMailToRoles(TestMailFilters):
         data = {
             'to': volunteer.user_object.email,
             'sender': "sender@admintest.com",
+            'sender_name': "Sender Name",
             'html_message': "<p>Test Message</p>",
             'email-select-conference': [self.context.conference.pk],
             'email-select-roles': ["Interested", ],

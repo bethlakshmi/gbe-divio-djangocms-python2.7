@@ -7,6 +7,7 @@ from django.forms import (
 )
 from post_office.models import EmailTemplate
 from django.utils.html import strip_tags
+from gbe_forms_text import sender_name_help
 
 
 class EmailTemplateForm(ModelForm):
@@ -19,6 +20,9 @@ class EmailTemplateForm(ModelForm):
     sender = CharField(max_length=100,
                        required=True,
                        label="From")
+    sender_name = CharField(max_length=150,
+                            required=True,
+                            help_text=sender_name_help)
     subject = CharField(widget=TextInput(attrs={'size': '79'}))
 
     def save(self, commit=True):
@@ -31,5 +35,5 @@ class EmailTemplateForm(ModelForm):
 
     class Meta:
         model = EmailTemplate
-        fields = ['sender', 'name', 'subject', 'html_content']
+        fields = ['sender', 'sender_name', 'name', 'subject', 'html_content']
         widgets = {'name': HiddenInput()}

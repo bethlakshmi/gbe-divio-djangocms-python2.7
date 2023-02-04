@@ -66,7 +66,8 @@ class EditTemplateView(View):
                     'subject': match_template_info['default_subject'],
                     'html_content': htmlcontent,
                     'description': match_template_info['description'],
-                    'sender': settings.DEFAULT_FROM_EMAIL}
+                    'sender': settings.DEFAULT_FROM_EMAIL,
+                    'sender_name': settings.DEFAULT_FROM_NAME}
 
     def make_context(self):
         context = {
@@ -95,12 +96,15 @@ class EditTemplateView(View):
             if EmailTemplateSender.objects.filter(
                     template=self.template).exists():
                 sender = self.template.sender.from_email
+                sender_name = self.template.sender.from_name
             else:
                 sender = settings.DEFAULT_FROM_EMAIL
+                sender_name = settings.DEFAULT_FROM_NAME
 
             self.form = EmailTemplateForm(
                 instance=self.template,
-                initial={'sender': sender})
+                initial={'sender': sender,
+                         'sender_name': sender_name})
         else:
             self.form = EmailTemplateForm(
                 initial=self.initial)
@@ -157,10 +161,13 @@ class EditTemplateView(View):
                     template=self.template).exists():
                 self.template.sender.from_email = self.form.cleaned_data[
                     'sender']
+                self.template.sender.from_name = self.form.cleaned_data[
+                    'sender_name']
             else:
                 self.template.sender = EmailTemplateSender(
                     template=self.template,
-                    from_email=self.form.cleaned_data['sender'])
+                    from_email=self.form.cleaned_data['sender'],
+                    from_name=self.form.cleaned_data['sender_name'])
             self.template.sender.save()
 
         user_message = UserMessage.objects.get_or_create(
