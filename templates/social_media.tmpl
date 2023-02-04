@@ -1,0 +1,3 @@
+{% for link in item.links.all %}
+<b><a href="{{link.get_display_text}}"><i class="icon-link"></i>&nbsp;&nbsp; {{link.social_network}}</a></b>
+{% endfor %}

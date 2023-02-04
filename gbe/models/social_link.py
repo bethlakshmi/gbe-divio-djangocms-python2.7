@@ -44,6 +44,18 @@ class SocialLink(Model):
     order = PositiveIntegerField(validators=[MinValueValidator(1),
                                              MaxValueValidator(5)])
 
+    def get_url(self):
+        if self.social_network in self.link_template.keys():
+            return link_template[self.social_network] + self.username
+        else:
+            return self.link
+
+    def get_display_text(self):
+        if self.social_network in self.link_template.keys():
+            return self.username
+        else:
+            return self.social_network
+
     class Meta:
         ordering = ['performer', 'order']
         app_label = "gbe"
