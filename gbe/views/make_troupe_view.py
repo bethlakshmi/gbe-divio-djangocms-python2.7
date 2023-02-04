@@ -36,7 +36,6 @@ class TroupeCreate(CreatePopupMixin,
     intro_text = troupe_header_text
     mode = "troupe"
     valid_message = default_edit_troupe_msg
-    stay_here = True
 
     def get_initial(self):
         initial = super().get_initial()
