@@ -251,6 +251,7 @@ class TestEventDetailView(TestCase):
     def test_eval_class(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))
         context.setup_eval()
+        link = context.set_social_media("CashApp")
         package, this_class = context.setup_tickets()
         url = reverse(
             self.view_name,
@@ -266,6 +267,7 @@ class TestEventDetailView(TestCase):
             url))
         self.assertContains(response, package.ticketing_event.title)
         self.assertContains(response, this_class.ticketing_event.title)
+        self.assertContains(response, setup_social_media(link))
 
     def test_class_already_evaled(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))

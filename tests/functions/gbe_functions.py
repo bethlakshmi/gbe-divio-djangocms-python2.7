@@ -207,6 +207,7 @@ def setup_social_media(link):
             icons,
             link.social_network)
 
+
 def make_act_app_purchase(conference, user_object):
     purchaser = PurchaserFactory(
         matched_to_user=user_object)

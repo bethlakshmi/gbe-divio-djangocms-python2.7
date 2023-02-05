@@ -68,7 +68,6 @@ class SocialLink(Model):
             return self.social_icons[self.social_network]
         return '<i class="fas fa-link"></i>'
 
-
     class Meta:
         ordering = ['performer', 'order']
         app_label = "gbe"
