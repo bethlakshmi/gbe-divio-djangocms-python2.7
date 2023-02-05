@@ -4,6 +4,7 @@ from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory,
     RoomFactory,
+    SocialLinkFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
@@ -14,6 +15,7 @@ from tests.factories.scheduler_factories import (
     WorkerFactory,
 )
 from scheduler.models import Ordering
+from gbe.models import SocialLink
 
 
 class ActTechInfoContext():
@@ -108,3 +110,16 @@ class ActTechInfoContext():
             event=self.sched_event,
             resource=WorkerFactory(role=role, _item=profile))
         return profile
+
+    def set_social_media(self, social_network="Website"):
+        username = None
+        link = None
+        if social_network in SocialLink.link_template:
+            username = "performer_%d" % self.performer.pk
+        else:
+            link = "www.madethisup%d.com" % self.performer.pk
+
+        return SocialLinkFactory(performer=self.performer,
+                                 social_network=social_network,
+                                 username=username,
+                                 link=link)

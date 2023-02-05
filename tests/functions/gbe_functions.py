@@ -187,6 +187,26 @@ def assert_queued_email(to_list,
             assert extra in match.html_message
 
 
+def setup_social_media(link):
+    url = link.link
+    icons = '<i class="fas fa-link"></i>'
+    if link.username:
+        url = link.link_template[link.social_network] + link.username
+    if link.social_network in link.social_icons:
+        icons = link.social_icons[link.social_network]
+
+    if link.username:
+        return '<a href="%s" class="gbe-link">%s&nbsp;&nbsp; %s - %s</a>' % (
+            url,
+            icons,
+            link.social_network,
+            link.username)
+    else:
+        return '<a href="%s" class="gbe-link">%s&nbsp;&nbsp; %s</a>' % (
+            url,
+            icons,
+            link.social_network)
+
 def make_act_app_purchase(conference, user_object):
     purchaser = PurchaserFactory(
         matched_to_user=user_object)
