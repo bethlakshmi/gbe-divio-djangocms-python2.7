@@ -72,4 +72,3 @@ class SocialLink(Model):
     class Meta:
         ordering = ['performer', 'order']
         app_label = "gbe"
-        unique_together = [['performer', 'order'], ]
