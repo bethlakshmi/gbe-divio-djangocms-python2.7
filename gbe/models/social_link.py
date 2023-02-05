@@ -25,6 +25,15 @@ class SocialLink(Model):
         ('Website', 'Website'),
         ('YouTube', 'YouTube'),
     ]
+    social_icons = {
+        'Cash App': '<i class="fas fa-dollar-sign"></i>',
+        'Facebook': '<i class="fab fa-facebook"></i>',
+        'Instagram': '<i class="fab fa-instagram"></i>',
+        'Paypal': '<i class="fab fa-paypal"></i>',
+        'TikTok': '<i class="fab fa-tiktok"></i>',
+        'Venmo': '<iconify-icon icon="simple-icons:velog"></iconify-icon>',
+        'YouTube': '<i class="fab fa-youtube"></i>',
+    }
     link_template = {
         'Cash App': 'https://cash.app/$',
         'Instagram': 'https://www.instagram.com/',
@@ -45,16 +54,20 @@ class SocialLink(Model):
                                              MaxValueValidator(5)])
 
     def get_url(self):
-        if self.social_network in self.link_template.keys():
-            return link_template[self.social_network] + self.username
-        else:
-            return self.link
+        if self.social_network in self.link_template:
+            return self.link_template[self.social_network] + self.username
+        return self.link
 
     def get_display_text(self):
-        if self.social_network in self.link_template.keys():
+        if self.social_network in self.link_template:
             return self.username
-        else:
-            return self.social_network
+        return False
+
+    def get_icon(self):
+        if self.social_network in self.social_icons:
+            return self.social_icons[self.social_network]
+        return '<i class="fas fa-link"></i>'
+
 
     class Meta:
         ordering = ['performer', 'order']

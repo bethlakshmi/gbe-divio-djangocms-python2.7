@@ -5,7 +5,9 @@
 {% block title %}
   Great Burlesque Exposition: {{title}}
 {% endblock %}
-
+{% block head %}
+      <script src="https://code.iconify.design/iconify-icon/1.0.3/iconify-icon.min.js"></script>
+{% endblock head %}
 {% block content %}
    
    <H1 class="gbe-title">{{title}}</H1>
@@ -35,6 +37,7 @@
 	{% endfor %}
 	<br>
         {{teacher.bio.bio |safe}}
+        {% include "social_media.tmpl" with item=teacher.bio %}
         <br><br>
       </div>
       <div class="col-md-5 col-12">

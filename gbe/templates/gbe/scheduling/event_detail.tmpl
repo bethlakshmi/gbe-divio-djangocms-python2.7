@@ -5,6 +5,7 @@
   {{conference.conference_slug}}: {{eventitem.occurrence.title}}
 {% endblock %}
 {% block head %}
+      <script src="https://code.iconify.design/iconify-icon/1.0.3/iconify-icon.min.js"></script>
       {% include "gray_grids_css.tmpl" %}
 {% endblock head %}
 {% block content %}
@@ -70,8 +71,9 @@
 	{%if worker.role == "Staff Lead"%}
 	  <h2 class="bio_name gbe-subtitle">{{worker.role}} - {{worker.person.display_name}}</h2>
         {%else%}
-          <h2 class="gbe-subtitle">About the {{worker.role}} - {{worker.person.name}}</h2>
-          {{worker.person.bio |safe}}
+    <h2 class="gbe-subtitle">About the {{worker.role}} - {{worker.person.name}}</h2>
+        {{worker.person.bio |safe}}
+        {% include "social_media.tmpl" with item=worker.person %}
 	{%endif%}
         <br><br>
         </div>
