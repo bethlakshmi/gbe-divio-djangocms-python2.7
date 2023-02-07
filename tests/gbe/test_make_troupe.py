@@ -212,11 +212,13 @@ class TestTroupeEdit(TestCase):
         name = '"extra quotes"'
         response, data = self.submit_troupe(name=name)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '(Click to edit)')
+        self.assertContains(response, 'Tell Us About Your Troupe')
         self.assertNotContains(response, name)
         self.assertContains(response, name.strip('\"\''))
         self.assertFalse(SocialLink.objects.filter(
             pk=data['links-0-id']).exists())
+        assert_alert_exists(
+            response, 'success', 'Success', default_edit_troupe_msg)
 
     def test_edit_troupe_bad_data(self):
         '''edit_troupe view, edit flow success
@@ -244,11 +246,6 @@ class TestTroupeEdit(TestCase):
         self.assertContains(response, 'Tell Us About Your Troupe')
         expected_string = "Enter a whole number."
         self.assertContains(response, expected_string)
-
-    def test_update_profile_make_message(self):
-        response, data = self.submit_troupe()
-        assert_alert_exists(
-            response, 'success', 'Success', default_edit_troupe_msg)
 
     def test_update_profile_has_message(self):
         msg = UserMessageFactory(
