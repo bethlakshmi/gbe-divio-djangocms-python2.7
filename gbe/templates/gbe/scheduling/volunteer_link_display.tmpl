@@ -1,9 +1,35 @@
      {% if sched_event.volunteer_link and sched_event.volunteer_link != "disabled" %}
-      <a href="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}"
-         class="detail_link cal-favorite" data-toggle="tooltip"
-         title="{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}">
+      <a href="#" data-toggle="modal" data-target="#Modal{{eventitem.occurrence.pk}}" data-backdrop="true"
+         class="detail_link cal-favorite" title="{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}">
        {% include "gbe/scheduling/volunteer_icon.tmpl" with occurrence=sched_event %}</a>
       </a>
+      <div class="modal" id="Modal{{eventitem.occurrence.pk}}" role="dialog">
+         <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content gbe-modal-content">
+               <form action="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">
+               <div class="modal-header gbe-modal-header">
+                  <h4 class="modal-title">Volunteer for {{eventitem.occurrence.title}}</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+               </div>
+               <div class="modal-body">
+                  {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon-large" occurrence=sched_event %}
+                  <b>Time:</b> {{ eventitem.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
+        {{ eventitem.occurrence.end_time|date:_("TIME_FORMAT")}}<br>
+                  <b>Location:</b> {{ eventitem.occurrence.location }}<br>
+                  {% if sched_event.approval_needed %}<div class="well well-sm">
+                    {{ pending_note}}
+                  </div>{% endif %}
+                  {% if sched_event.complete_profile_form %}
+                  <div class="pt-4">{% include "form_table.tmpl" with form=sched_event.complete_profile_form %}</div>
+                  {% endif %}
+                </div>
+                <div class="modal-footer gbe-modal-footer">
+                    <input type="submit" value='{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}' name="submit_done" class="btn gbe-btn-primary">
+                    <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
+                </div>
+                {% csrf_token %}
+                </form>
+              </div></div></div>
      {% elif sched_event.volunteer_link %}
       <a href="#" class="detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"
          title="{% if sched_event.vol_disable_msg %}{{sched_event.vol_disable_msg}}{% else %}You are a {{ sched_event.highlight }} - contact the coordinator to change your schedule{% endif %}">
