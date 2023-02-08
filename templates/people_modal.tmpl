@@ -24,14 +24,10 @@
                       <div class="col-12">
 		              {%endif%}
                       {{item.bio | safe}}{{item.description | safe}}
-                  {% if item.homepage %}
- 		      <br><br>
-		      <b><a href="{{item.homepage}}" class="btn gbe-btn-secondary btn-sm"><i class="icon-link"></i>&nbsp;&nbsp; Website</a></b>
-	          {% endif %}
+                  {% include "social_media.tmpl" %}
                   {% if item.website %}
  		      <br><br>
-		      <b><a href="{{item.website}}" class="btn gbe-btn-secondary btn-sm"><i class="icon-link"></i>&nbsp;&nbsp; Website</a></b>
-	          {% endif %}
+		      <b><a href="{{item.website}}" class="btn gbe-btn-secondary btn-sm"><i class="icon-link"></i>&nbsp;&nbsp; Website</a></b>{% endif %}
                       </div>
                   </div>
                 </div>

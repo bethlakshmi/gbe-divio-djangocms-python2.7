@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory,
     RoomFactory,
+    SocialLinkFactory,
 )
 from tests.factories.scheduler_factories import (
     EventEvalGradeFactory,
@@ -17,7 +18,10 @@ from tests.factories.scheduler_factories import (
     WorkerFactory,
 )
 
-from gbe.models import Class
+from gbe.models import (
+    Class,
+    SocialLink,
+)
 from datetime import timedelta
 from tests.functions.scheduler_functions import noon
 from tests.factories.ticketing_factories import TicketItemFactory
@@ -114,3 +118,16 @@ class ClassContext:
             has_coupon=False)
         this_class.ticketing_event.linked_events.add(self.sched_event)
         return package, this_class
+
+    def set_social_media(self, social_network="Website"):
+        username = None
+        link = None
+        if social_network in SocialLink.link_template:
+            username = "teacher_%d" % self.teacher.pk
+        else:
+            link = "www.madethisup%d.com" % self.teacher.pk
+
+        return SocialLinkFactory(performer=self.teacher,
+                                 social_network=social_network,
+                                 username=username,
+                                 link=link)

@@ -1,8 +1,11 @@
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
-from tests.factories.gbe_factories import ClassFactory
-from tests.functions.gbe_functions import login_as
+from tests.contexts import ClassContext
+from tests.functions.gbe_functions import (
+    login_as,
+    setup_social_media
+)
 
 
 class TestViewClass(TestCase):
@@ -16,11 +19,13 @@ class TestViewClass(TestCase):
     def test_view_class(self):
         '''view_class view, success
         '''
-        klass = ClassFactory()
+        context = ClassContext()
+        link = context.set_social_media("Instagram")
         url = reverse(self.view_name,
-                      args=[klass.pk],
+                      args=[context.bid.pk],
                       urlconf='gbe.urls')
 
-        login_as(klass.teacher.performer_profile, self)
+        login_as(context.teacher.performer_profile, self)
         response = self.client.get(url)
         assert response.status_code == 200
+        self.assertContains(response, setup_social_media(link))

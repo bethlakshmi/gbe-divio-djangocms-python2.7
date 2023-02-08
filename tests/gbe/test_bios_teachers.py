@@ -4,14 +4,17 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ClassFactory,
     ProfileFactory,
-    PersonaFactory
+    PersonaFactory,
 )
 from tests.contexts import ClassContext
 from gbe.models import (
     Conference
 )
 from django.urls import reverse
-from tests.functions.gbe_functions import login_as
+from tests.functions.gbe_functions import (
+    login_as,
+    setup_social_media
+)
 
 
 class TestBiosTeachers(TestCase):
@@ -23,7 +26,6 @@ class TestBiosTeachers(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.performer = PersonaFactory()
         cls.conference = ConferenceFactory(status='upcoming',
                                            accepting_bids=True)
 
@@ -42,6 +44,7 @@ class TestBiosTeachers(TestCase):
 
     def test_bios_teachers_specific_conference(self):
         first_context = ClassContext()
+        link = first_context.set_social_media("Facebook")
         other_context = ClassContext()
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(ProfileFactory(), self)
@@ -51,15 +54,9 @@ class TestBiosTeachers(TestCase):
         assert response.status_code == 200
         self.assertContains(response, first_context.bid.teacher.name)
         self.assertContains(response, first_context.bid.b_title)
-
-        # the following assertions should work, but currently
-        # do not. This is possibly an issue with multiple
-        # inheritance and factory boy, but that is not clear
-        # to me.
-        # Leaving them commented out to encourage us to
-        # fix
-        # assert other_context.bid.teacher.name not in response.content
-        # assert other_context.bid.title not in response.content
+        self.assertContains(response, setup_social_media(link))
+        self.assertNotContains(response, other_context.bid.teacher.name)
+        self.assertNotContains(response, other_context.bid.b_title)
 
     def test_bios_teachers_unbooked_accepted(self):
         accepted_class = ClassFactory(b_conference=self.conference,
