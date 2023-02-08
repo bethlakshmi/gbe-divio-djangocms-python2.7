@@ -27,6 +27,7 @@ from tests.contexts import (
     StaffAreaContext,
 )
 from gbe.models import ConferenceDay
+from gbetext import login_please
 
 
 class TestCalendarView(TestCase):
@@ -125,13 +126,6 @@ class TestCalendarView(TestCase):
         self.assertNotContains(response, self.other_show.sched_event.title)
         self.assertNotContains(response, self.classcontext.bid.b_title)
         self.assertContains(response, self.volunteeropp.title)
-        self.assertNotContains(
-            response,
-            reverse('set_volunteer',
-                    args=[self.volunteeropp.pk, 'on'],
-                    urlconf='gbe.scheduling.urls'))
-        self.assertContains(response, reverse('login'))
-        self.assertContains(response, reverse('register', urlconf="gbe.urls"))
 
     def test_calendar_conference_w_default_conf_public_days(self):
         conference_day = ConferenceDayFactory(

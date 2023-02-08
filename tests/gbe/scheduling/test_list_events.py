@@ -23,6 +23,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from gbetext import pending_note
 
 
 class TestViewList(TestCase):
@@ -267,6 +268,7 @@ class TestViewList(TestCase):
         self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
         self.assertContains(response, 'awaiting_approval.gif')
+        self.assertContains(response, pending_note)
 
     def test_view_volunteers_rejected(self):
         context = StaffAreaContext(conference=self.conf)

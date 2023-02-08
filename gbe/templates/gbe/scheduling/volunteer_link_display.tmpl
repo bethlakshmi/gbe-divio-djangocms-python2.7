@@ -28,7 +28,7 @@
                     <input type="submit" value='{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}' name="submit_done" class="btn gbe-btn-primary">
                     <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
                 </div>
-                </form>{% else %}<br>{{ login_please }}<br><br><a href="{% url 'gbe:register' %}?next={{ request.get_full_path }}" class="btn gbe-btn-primary m-2">Set Up Account</a><a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn gbe-btn-primary m-2">Login</a></div>{% endif %}
+                </form>{% else %}<br>{{ login_please | safe }}<br><br><a href="{% url 'gbe:register' %}?next={{ request.get_full_path }}" class="btn gbe-btn-primary m-2">Set Up Account</a><a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn gbe-btn-primary m-2">Login</a></div>{% endif %}
               </div></div></div>
      {% elif sched_event.volunteer_link %}
       <a href="#" class="detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"

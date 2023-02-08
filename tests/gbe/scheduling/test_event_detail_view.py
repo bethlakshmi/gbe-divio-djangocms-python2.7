@@ -34,6 +34,10 @@ from datetime import (
     datetime,
     timedelta,
 )
+from gbetext import (
+    login_please,
+    pending_note,
+)
 
 
 class TestEventDetailView(TestCase):
@@ -309,6 +313,7 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
         self.assertContains(response, 'awaiting_approval.gif')
+        self.assertContains(response, pending_note)
 
     def test_view_volunteers(self):
         staff_context = StaffAreaContext()
@@ -319,6 +324,7 @@ class TestEventDetailView(TestCase):
                       urlconf="gbe.scheduling.urls",
                       args=[opportunity.pk])
         response = self.client.get(url)
+        print(response.content)
         self.assertContains(response, opportunity.title)
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon-large"')
@@ -329,3 +335,4 @@ class TestEventDetailView(TestCase):
                     urlconf='gbe.scheduling.urls'))
         self.assertContains(response, reverse('login'))
         self.assertContains(response, reverse('register', urlconf="gbe.urls"))
+        self.assertContains(response, login_please)
