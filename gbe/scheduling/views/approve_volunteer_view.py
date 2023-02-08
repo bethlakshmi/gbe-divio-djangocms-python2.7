@@ -57,7 +57,7 @@ class ApproveVolunteerView(View):
     def get_list(self, request):
         pending = get_people(
             roles=["Pending Volunteer", "Waitlisted", "Rejected"],
-            labels=[self.conference.conference_slug])
+            label_sets=[[self.conference.conference_slug], ["Volunteer"]])
         show_general_status(request, pending, self.__class__.__name__)
         rows = []
         action = ""
