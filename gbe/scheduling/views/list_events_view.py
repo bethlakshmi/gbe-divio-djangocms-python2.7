@@ -7,7 +7,9 @@ from django.urls import reverse
 from gbe.models import (
     Class,
     Performer,
+    UserMessage,
 )
+from gbe.forms import InvolvedProfileForm
 from gbe.functions import (
     get_current_conference,
     get_conference_by_slug,
@@ -29,6 +31,7 @@ from gbetext import (
     calendar_for_event,
     class_styles,
     role_options,
+    pending_note,
 )
 
 
@@ -53,11 +56,18 @@ class ListEventsView(View):
         if not self.conference:
             raise Http404
 
+        pending_instructions = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="PENDING_INSTRUCTIONS",
+            defaults={
+                'summary': "Pending Instructions (in modal, approval needed)",
+                'description': pending_note})
         context = {
             'conf_slug': self.conference.conference_slug,
             'conference_slugs': conference_slugs(),
             'title': list_titles.get(self.event_type.lower(), ""),
             'view_header_text': list_text.get(self.event_type.lower(), ""),
+            'pending_note': pending_instructions[0].description,
         }
 
         return context
@@ -119,6 +129,12 @@ class ListEventsView(View):
                 eval_occurrences = eval_response.occurrences
             else:
                 eval_occurrences = None
+            if not request.user.profile.participation_ready:
+                context['complete_profile_form'] = InvolvedProfileForm(
+                    instance=request.user.profile,
+                    initial={'first_name': request.user.first_name,
+                             'last_name': request.user.last_name})
+
         scheduled_events = []
         presenters = []
         response = get_occurrences(
