@@ -6,7 +6,6 @@
       <div class="modal" id="Modal{{occurrence.pk}}" role="dialog">
          <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content gbe-modal-content">
-               <form action="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">
                <div class="modal-header gbe-modal-header">
                   <h4 class="modal-title">Volunteer for {{occurrence.title}}</h4>
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -19,6 +18,8 @@
                   {% if sched_event.approval_needed %}<div class="well well-sm">
                     {{ pending_note}}
                   </div>{% endif %}
+               {% if user.is_authenticated %}
+               <form action="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">{% csrf_token %}
                   {% if complete_profile_form %}
                   <div class="pt-4">{% include "form_table.tmpl" with form=complete_profile_form %}</div>
                   {% endif %}
@@ -27,8 +28,7 @@
                     <input type="submit" value='{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}' name="submit_done" class="btn gbe-btn-primary">
                     <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
                 </div>
-                {% csrf_token %}
-                </form>
+                </form>{% else %}<br>{{ login_please }}<br><br><a href="{% url 'gbe:register' %}?next={{ request.get_full_path }}" class="btn gbe-btn-primary m-2">Set Up Account</a><a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn gbe-btn-primary m-2">Login</a></div>{% endif %}
               </div></div></div>
      {% elif sched_event.volunteer_link %}
       <a href="#" class="detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"

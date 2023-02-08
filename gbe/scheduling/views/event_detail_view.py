@@ -20,6 +20,7 @@ from scheduler.data_transfer import Person
 from django.urls import reverse
 from gbetext import (
     calendar_for_event,
+    login_please,
     pending_note,
     role_options,
 )
@@ -61,6 +62,11 @@ class EventDetailView(View):
                     eval_occurrences = eval_response.occurrences
                 else:
                     eval_occurrences = None
+            if not request.user.profile.participation_ready:
+                complete_profile_form = InvolvedProfileForm(
+                    instance=request.user.profile,
+                    initial={'first_name': request.user.first_name,
+                             'last_name': request.user.last_name})
         conference = Conference.objects.filter(
             conference_slug__in=labels)[0]
         (favorite_link,
@@ -74,12 +80,7 @@ class EventDetailView(View):
             conference.status == "completed",
             personal_schedule_items)
         complete_profile_form = None
-        if volunteer_link is not None and volunteer_link != "disabled" and (
-                not request.user.profile.participation_ready):
-            complete_profile_form = InvolvedProfileForm(
-                instance=request.user.profile,
-                initial={'first_name': request.user.first_name,
-                         'last_name': request.user.last_name})
+
         schedule_items += [{
             'favorite_link': favorite_link,
             'volunteer_link': volunteer_link,
@@ -101,7 +102,12 @@ class EventDetailView(View):
             defaults={
                 'summary': "Pending Instructions (in modal, approval needed)",
                 'description': pending_note})
-
+        login_please_msg = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="LOGIN_REQUIRED",
+            defaults={
+                'summary': "Login or setup account message",
+                'description': login_please})
         return render(request, template, {
             'eventitem': eventitem_view,
             'conference': conference,
@@ -111,6 +117,7 @@ class EventDetailView(View):
             'bid': bid,
             'schedule_items': schedule_items,
             'pending_note': pending_instructions[0].description,
+            'login_please': login_please_msg[0].description,
             'complete_profile_form': complete_profile_form})
 
     def dispatch(self, *args, **kwargs):

@@ -7,6 +7,7 @@ from django.http import Http404
 from django.urls import reverse
 from gbetext import calendar_type as calendar_type_options
 from gbetext import (
+    login_please,
     pending_note,
     role_options,
 )
@@ -96,12 +97,19 @@ class ShowCalendarView(View):
             defaults={
                 'summary': "Pending Instructions (in modal, approval needed)",
                 'description': pending_note})
+        login_please_msg = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="LOGIN_REQUIRED",
+            defaults={
+                'summary': "Login or setup account message",
+                'description': login_please})
         context = {
             'calendar_type': self.calendar_type,
             'conference': self.conference,
             'conference_slugs': conference_slugs(),
             'this_day': self.this_day,
             'pending_note': pending_instructions[0].description,
+            'login_please': login_please_msg[0].description,
         }
         if self.calendar_type == "General" and validate_perms(
                 request,

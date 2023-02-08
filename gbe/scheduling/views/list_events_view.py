@@ -30,6 +30,7 @@ from gbe_forms_text import (
 from gbetext import (
     calendar_for_event,
     class_styles,
+    login_please,
     role_options,
     pending_note,
 )
@@ -62,12 +63,19 @@ class ListEventsView(View):
             defaults={
                 'summary': "Pending Instructions (in modal, approval needed)",
                 'description': pending_note})
+        login_please_msg = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="LOGIN_REQUIRED",
+            defaults={
+                'summary': "Login or setup account message",
+                'description': login_please})
         context = {
             'conf_slug': self.conference.conference_slug,
             'conference_slugs': conference_slugs(),
             'title': list_titles.get(self.event_type.lower(), ""),
             'view_header_text': list_text.get(self.event_type.lower(), ""),
             'pending_note': pending_instructions[0].description,
+            'login_please': login_please_msg[0].description,
         }
 
         return context
