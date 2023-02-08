@@ -125,6 +125,13 @@ class TestCalendarView(TestCase):
         self.assertNotContains(response, self.other_show.sched_event.title)
         self.assertNotContains(response, self.classcontext.bid.b_title)
         self.assertContains(response, self.volunteeropp.title)
+        self.assertNotContains(
+            response,
+            reverse('set_volunteer',
+                    args=[self.volunteeropp.pk, 'on'],
+                    urlconf='gbe.scheduling.urls'))
+        self.assertContains(response, reverse('login'))
+        self.assertContains(response, reverse('register', urlconf="gbe.urls"))
 
     def test_calendar_conference_w_default_conf_public_days(self):
         conference_day = ConferenceDayFactory(
@@ -469,6 +476,9 @@ class TestCalendarView(TestCase):
         opportunity = booking.event
         opportunity.starttime = datetime.now() + timedelta(days=1)
         opportunity.save()
+        vol_link = reverse('set_volunteer',
+                           args=[opportunity.pk, 'off'],
+                           urlconf='gbe.scheduling.urls')
         ConferenceDayFactory(conference=self.staffcontext.conference,
                              day=opportunity.starttime)
         login_as(volunteer, self)
@@ -480,6 +490,7 @@ class TestCalendarView(TestCase):
         self.assertContains(response, opportunity.title)
         self.assertContains(response,
                             'class="volunteer-icon" alt="You\'ve signed up"/>')
+        self.assertContains(response, vol_link)
 
     def test_volunteer_event_full(self):
         volunteer, booking = self.staffcontext.book_volunteer()

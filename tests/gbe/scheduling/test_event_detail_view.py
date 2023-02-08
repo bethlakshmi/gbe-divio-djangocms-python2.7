@@ -319,10 +319,13 @@ class TestEventDetailView(TestCase):
                       urlconf="gbe.scheduling.urls",
                       args=[opportunity.pk])
         response = self.client.get(url)
-        vol_link = reverse('set_volunteer',
-                           args=[opportunity.pk, 'on'],
-                           urlconf='gbe.scheduling.urls')
         self.assertContains(response, opportunity.title)
-        self.assertContains(response, vol_link)
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon-large"')
+        self.assertNotContains(
+            response,
+            reverse('set_volunteer',
+                    args=[opportunity.pk, 'on'],
+                    urlconf='gbe.scheduling.urls'))
+        self.assertContains(response, reverse('login'))
+        self.assertContains(response, reverse('register', urlconf="gbe.urls"))

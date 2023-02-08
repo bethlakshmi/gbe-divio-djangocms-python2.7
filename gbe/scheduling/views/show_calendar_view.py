@@ -156,6 +156,7 @@ class ShowCalendarView(View):
                 'object': occurrence,
                 'hour': hour,
                 'approval_needed': occurrence.approval_needed,
+                'title': title,
                 'detail_link': reverse('detail_view',
                                        urlconf='gbe.scheduling.urls',
                                        args=[occurrence.pk]),

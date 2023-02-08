@@ -207,6 +207,8 @@ class TestViewList(TestCase):
         self.assertNotContains(response, this_class.b_title)
         self.assertNotContains(response, 'fa-star')
         self.assertNotContains(response, 'fa-star-o')
+        self.assertNotContains(response,
+                               reverse('register', urlconf="gbe.urls"))
 
     def test_view_volunteer_filled(self):
         staff_context = StaffAreaContext(conference=self.conf)
