@@ -6,7 +6,10 @@ from django.shortcuts import (
 from django.http import Http404
 from django.urls import reverse
 from gbetext import calendar_type as calendar_type_options
-from gbetext import role_options
+from gbetext import (
+    pending_note,
+    role_options,
+)
 from django.utils.formats import date_format
 from settings import (
     GBE_TIME_FORMAT,
@@ -17,9 +20,11 @@ from datetime import (
     timedelta,
 )
 import pytz
+from gbe.forms import InvolvedProfileForm
 from gbe.models import (
     ConferenceDay,
     Performer,
+    UserMessage,
 )
 from gbe.functions import (
     get_current_conference,
@@ -85,12 +90,18 @@ class ShowCalendarView(View):
             self.this_day = get_conference_days(
                 self.conference,
                 open_to_public=True).order_by("day").first()
-
+        pending_instructions = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="PENDING_INSTRUCTIONS",
+            defaults={
+                'summary': "Pending Instructions (in modal, approval needed)",
+                'description': pending_note})
         context = {
             'calendar_type': self.calendar_type,
             'conference': self.conference,
             'conference_slugs': conference_slugs(),
             'this_day': self.this_day,
+            'pending_note': pending_instructions[0].description,
         }
         if self.calendar_type == "General" and validate_perms(
                 request,
@@ -134,10 +145,7 @@ class ShowCalendarView(View):
                     title = "%s: %s" % (occurrence.parent.slug,
                                         occurrence.title)
             occurrence_detail = {
-                'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
-                'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
-                'title': title,
-                'location': occurrence.location,
+                'object': occurrence,
                 'hour': hour,
                 'approval_needed': occurrence.approval_needed,
                 'detail_link': reverse('detail_view',
@@ -205,6 +213,12 @@ class ShowCalendarView(View):
                     eval_occurrences = eval_response.occurrences
                 else:
                     eval_occurrences = None
+                if not request.user.profile.participation_ready:
+                    context['complete_profile_form'] = InvolvedProfileForm(
+                        instance=request.user.profile,
+                        initial={'first_name': request.user.first_name,
+                                 'last_name': request.user.last_name})
+
             max_block_size, context[
                 'occurrences'] = self.build_occurrence_display(
                 response.occurrences,

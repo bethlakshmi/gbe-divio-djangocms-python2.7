@@ -87,7 +87,6 @@ class EventDetailView(View):
             'evaluate': evaluate,
             'approval_needed': eventitem_view['occurrence'].approval_needed,
             'vol_disable_msg': vol_disable_msg,
-            'complete_profile_form': complete_profile_form,
             }]
         template = 'gbe/scheduling/event_detail.tmpl'
         bid = None
@@ -111,7 +110,8 @@ class EventDetailView(View):
             'user_id': request.user.id,
             'bid': bid,
             'schedule_items': schedule_items,
-            'pending_note': pending_instructions[0].description})
+            'pending_note': pending_instructions[0].description,
+            'complete_profile_form': complete_profile_form})
 
     def dispatch(self, *args, **kwargs):
         return super(EventDetailView, self).dispatch(*args, **kwargs)
