@@ -28,6 +28,7 @@ from tests.functions.gbe_functions import (
     login_as,
     set_image,
     setup_admin_w_privs,
+    setup_social_media,
 )
 from django.contrib.auth.models import User
 from datetime import (
@@ -88,14 +89,17 @@ class TestEventDetailView(TestCase):
         another_context = ActTechInfoContext(
             sched_event=self.context.sched_event,
             conference=self.context.conference)
+        link1 = another_context.set_social_media(social_network="Venmo")
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, self.regular_casting.display_header)
         self.assertContains(response, another_context.performer.name)
+        self.assertContains(response, setup_social_media(link1))
 
     def test_feature_performers(self):
         ActCastingOptionFactory(display_order=1)
         context = ActTechInfoContext(act_role="Hosted by...")
+        link0 = context.set_social_media()
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[context.sched_event.pk])
@@ -103,6 +107,7 @@ class TestEventDetailView(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertContains(response, context.performer.name)
         self.assertContains(response, "Hostest with the mostest")
+        self.assertContains(response, setup_social_media(link0))
 
     def test_bad_casting(self):
         ActCastingOptionFactory(display_order=1)
@@ -250,6 +255,7 @@ class TestEventDetailView(TestCase):
     def test_eval_class(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))
         context.setup_eval()
+        link = context.set_social_media("CashApp")
         package, this_class = context.setup_tickets()
         url = reverse(
             self.view_name,
@@ -265,6 +271,7 @@ class TestEventDetailView(TestCase):
             url))
         self.assertContains(response, package.ticketing_event.title)
         self.assertContains(response, this_class.ticketing_event.title)
+        self.assertContains(response, setup_social_media(link))
 
     def test_class_already_evaled(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))

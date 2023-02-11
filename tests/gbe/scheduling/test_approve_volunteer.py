@@ -3,11 +3,17 @@ from django.test import Client
 from django.urls import reverse
 from django.utils.formats import date_format
 from tests.factories.gbe_factories import (
+    ActFactory,
     EmailTemplateFactory,
     PersonaFactory,
     ProfileFactory,
 )
-from tests.factories.scheduler_factories import LabelFactory
+from tests.factories.scheduler_factories import (
+    LabelFactory,
+    OrderingFactory,
+    ResourceAllocationFactory,
+    WorkerFactory,
+)
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_email_recipient,
@@ -88,10 +94,25 @@ class TestApproveVolunteer(TestCase):
 
     def test_approve_volunteer_no_volunteers(self):
         '''default conference selected, make sure it returns the right page'''
+        '''Acts that are waitlisted do not show up'''
+        waitlisted_act = ActFactory(b_conference=self.context.conference,
+                                    accepted=2,
+                                    submitted=True)
+        booking = ResourceAllocationFactory(
+            event=self.context.sched_event,
+            resource=WorkerFactory(_item=waitlisted_act.performer,
+                                   role="Waitlisted"))
+        order = OrderingFactory(
+            allocation=booking,
+            class_id=waitlisted_act.pk,
+            class_name="Act",
+            role="Waitlisted")
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Approve Pending Volunteers')
+        self.assertNotContains(response, self.context.sched_event.title)
+        self.assertNotContains(response, waitlisted_act.performer.name)
 
     def test_approve_volunteer_w_conf(self):
         ''' check conference selector, no data is in table.'''

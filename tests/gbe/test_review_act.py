@@ -10,12 +10,14 @@ from tests.factories.gbe_factories import (
     EvaluationCategoryFactory,
     FlexibleEvaluationFactory,
     ProfileFactory,
+    SocialLinkFactory,
 )
 from tests.functions.gbe_functions import (
     assert_option_state,
     clear_conferences,
     grant_privilege,
     login_as,
+    setup_social_media,
 )
 from gbe.models import (
     ActBidEvaluation,
@@ -78,6 +80,7 @@ class TestReviewAct(TestCase):
         self.act.performer.year_started = 0
         self.act.performer.experience = 14
         self.act.performer.save()
+        link = SocialLinkFactory(performer=self.act.performer)
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -87,6 +90,7 @@ class TestReviewAct(TestCase):
         self.assertContains(
             response,
             self.act.performer.performer_profile.user_object.email)
+        self.assertContains(response, setup_social_media(link), html=True)
 
     def test_hidden_fields_are_populated(self):
         login_as(self.privileged_user, self)

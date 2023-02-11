@@ -1,4 +1,7 @@
 {% load thumbnail %}
+{% block head %}
+      <script src="https://code.iconify.design/iconify-icon/1.0.3/iconify-icon.min.js"></script>
+{% endblock head %}
 {% if performer %}
  <div class="row top-buffer">
   <div class="col-12"><h3 class="readonlyform gbe-subtitle">The Presenter</h3></div>
@@ -11,9 +14,8 @@
   {% else %}<div class="col-12">{% endif %}
   <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Stage Name:</div>
   <div class="col-md-9 col-sm-9 col-12 read-only-info">{{performer.name}}</div></div>
-  <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Web Site:</div>
-  <div class="col-md-9 col-sm-9 col-12 read-only-info">{% if performer.homepage %}
-   <a href="{{performer.homepage}}">Web Site</a>{%else%}No Website{% endif %}</div></div>
+  <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Social Media:</div>
+  <div class="col-md-9 col-sm-9 col-12 read-only-info">{% include "social_media.tmpl" with item=performer %}</div></div>
   <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Experience:</div>
   <div class="col-md-9 col-sm-9 col-12 read-only-info">{% if performer.year_started %}Started in {{performer.year_started}}{% else %}{{performer.experience}} years (start year not available){% endif %}</div></div>
   <div class="row"><div class="col-md-3 col-sm-3 col-12 read-only-label">Awards:</div>
