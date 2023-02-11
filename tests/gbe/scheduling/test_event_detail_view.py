@@ -331,7 +331,6 @@ class TestEventDetailView(TestCase):
                       urlconf="gbe.scheduling.urls",
                       args=[opportunity.pk])
         response = self.client.get(url)
-        print(response.content)
         self.assertContains(response, opportunity.title)
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon-large"')
