@@ -21,31 +21,32 @@ class TestReviewActTechInfo(TestCase):
     '''Tests for index view'''
     view_name = 'act_tech_list'
 
-    def set_the_basics(self):
-        self.context.act.tech.introduction_text = "intro text"
-        self.context.act.tech.feel_of_act = "feel my act"
-        self.context.act.tech.read_exact = True
-        self.context.act.tech.prop_setup = "[u'I have props I will need ' + \
+    def setUp(self):
+        self.client = Client()
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = ActTechInfoContext(schedule_rehearsal=True)
+        cls.profile = ProfileFactory()
+        grant_privilege(cls.profile, 'Staff Lead')
+        cls.url = reverse(cls.view_name,
+                          urlconf='gbe.reporting.urls',
+                          args=[cls.context.sched_event.pk])
+        cls.context.act.tech.introduction_text = "intro text"
+        cls.context.act.tech.feel_of_act = "feel my act"
+        cls.context.act.tech.read_exact = True
+        cls.context.act.tech.prop_setup = "[u'I have props I will need ' + \
             'set before my number', u'I will leave props or set pieces ' + \
             'on-stage that will need to be cleared']"
-        self.context.act.tech.crew_instruct = "crew instruct"
-        self.context.act.performer.pronouns = "they/them"
-        self.context.act.tech.primary_color = "reds"
-        self.context.act.tech.secondary_color = "black"
-        self.context.act.tech.track = SimpleUploadedFile(
+        cls.context.act.tech.crew_instruct = "crew instruct"
+        cls.context.act.performer.pronouns = "they/them"
+        cls.context.act.tech.primary_color = "reds"
+        cls.context.act.tech.secondary_color = "black"
+        cls.context.act.tech.track = SimpleUploadedFile(
             "file.mp3",
             b"file_content")
-        self.context.act.tech.save()
-        self.context.act.performer.save()
-
-    def setUp(self):
-        self.context = ActTechInfoContext(schedule_rehearsal=True)
-        self.client = Client()
-        self.profile = ProfileFactory()
-        grant_privilege(self.profile, 'Staff Lead')
-        self.url = reverse(self.view_name,
-                           urlconf='gbe.reporting.urls',
-                           args=[self.context.sched_event.pk])
+        cls.context.act.tech.save()
+        cls.context.act.performer.save()
 
     def test_review_act_tech_fail(self):
         '''review_act_techinfo view should load for Tech Crew
@@ -66,7 +67,6 @@ class TestReviewActTechInfo(TestCase):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
 
     def test_review_act_tech_the_basics(self):
-        self.set_the_basics()
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -88,7 +88,6 @@ class TestReviewActTechInfo(TestCase):
         self.assertContains(response, 'OFF')
 
     def test_review_act_tech_advanced(self):
-        self.set_the_basics()
         self.context.act.tech.prop_setup = ""
         self.context.act.tech.mic_choice = "I own a mic"
         self.context.act.tech.background_color = "blue"
