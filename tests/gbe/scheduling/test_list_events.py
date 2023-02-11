@@ -216,7 +216,6 @@ class TestViewList(TestCase):
         volunteer, booking = staff_context.book_volunteer()
         opportunity = booking.event
         opportunity.starttime = datetime.now() + timedelta(days=1)
-        opportunity.max_volunteers = 1
         opportunity.save()
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",

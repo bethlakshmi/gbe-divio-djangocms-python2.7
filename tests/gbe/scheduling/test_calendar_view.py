@@ -490,7 +490,6 @@ class TestCalendarView(TestCase):
         volunteer, booking = self.staffcontext.book_volunteer()
         opportunity = booking.event
         opportunity.starttime = datetime.now() + timedelta(days=1)
-        opportunity.max_volunteers = 1
         opportunity.save()
         ConferenceDayFactory(conference=self.staffcontext.conference,
                              day=opportunity.starttime)
@@ -503,6 +502,22 @@ class TestCalendarView(TestCase):
         self.assertContains(
           response,
           'This event has all the volunteers it needs.')
+
+    def test_volunteer_event_no_login(self):
+        volunteer, booking = self.staffcontext.book_volunteer()
+        opportunity = booking.event
+        opportunity.starttime = datetime.now() + timedelta(days=1)
+        opportunity.max_volunteer = 10
+        opportunity.save()
+        ConferenceDayFactory(conference=self.staffcontext.conference,
+                             day=opportunity.starttime)
+        url = reverse('calendar',
+                      urlconf="gbe.scheduling.urls",
+                      args=['Volunteer'])
+        response = self.client.get(url, data={
+            'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
+        self.assertContains(response, opportunity.title)
+        self.assertContains(response, login_please)
 
     def test_disabled_eval(self):
         eval_profile = self.classcontext.set_eval_answerer()
