@@ -51,13 +51,13 @@
   {% endifchanged %}
     <div class="col-lg-{{grid_size}} col-md-{% if grid_size > 4 %}{{grid_size}}{% else %}4{% endif %} col-sm-{% if grid_size > 6 %}{{grid_size}}{% else %}6{% endif %} col-12{% if occurrence.highlight %} {{occurrence.highlight|slugify}}{% endif %}">
      {% include "gbe/scheduling/favorite_star.tmpl" with sched_event=occurrence %}
-      {% include "gbe/scheduling/volunteer_link_display.tmpl" with sched_event=occurrence icon_class="volunteer-icon" %}
+      {% include "gbe/scheduling/volunteer_link_display.tmpl" with sched_event=occurrence occurrence=occurrence.object icon_class="volunteer-icon" %}
      {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=occurrence.evaluate %}
-     {{ occurrence.start }}-{{ occurrence.end }}<br>
+     {{ occurrence.object.start_time|date:"g:i A" }}-{{ occurrence.object.end_time|date:"g:i A" }}<br>
      <b><a href="{{occurrence.detail_link}}" class="detail_link">{{ occurrence.title}}</a></b><br>
      {% for role, teacher in occurrence.teachers %}{{ role }}:  {{ teacher.name }}
      {% if not forloop.last %}, {% endif %}{% endfor %}<br>
-     <i>{{ occurrence.location }}</i>
+     <i>{{ occurrence.object.location }}</i>
      {% if occurrence.show_dashboard %}
        <a href="{{occurrence.show_dashboard}}" class="btn gbe-btn-secondary btn-sm mb-2 float-right">Dashboard</a>{% endif %}
     </div>
