@@ -5,7 +5,9 @@ from django.shortcuts import (
 from gbe.models import (
     Class,
     Conference,
+    UserMessage,
 )
+from gbe.forms import InvolvedProfileForm
 from gbe.scheduling.views.functions import (
     build_icon_links,
     get_event_display_info,
@@ -18,6 +20,8 @@ from scheduler.data_transfer import Person
 from django.urls import reverse
 from gbetext import (
     calendar_for_event,
+    login_please,
+    pending_note,
     role_options,
 )
 
@@ -58,6 +62,11 @@ class EventDetailView(View):
                     eval_occurrences = eval_response.occurrences
                 else:
                     eval_occurrences = None
+            if not request.user.profile.participation_ready:
+                complete_profile_form = InvolvedProfileForm(
+                    instance=request.user.profile,
+                    initial={'first_name': request.user.first_name,
+                             'last_name': request.user.last_name})
         conference = Conference.objects.filter(
             conference_slug__in=labels)[0]
         (favorite_link,
@@ -70,6 +79,7 @@ class EventDetailView(View):
             cal_type,
             conference.status == "completed",
             personal_schedule_items)
+        complete_profile_form = None
 
         schedule_items += [{
             'favorite_link': favorite_link,
@@ -86,6 +96,18 @@ class EventDetailView(View):
             bid = Class.objects.get(
                 pk=eventitem_view['occurrence'].connected_id)
 
+        pending_instructions = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="PENDING_INSTRUCTIONS",
+            defaults={
+                'summary': "Pending Instructions (in modal, approval needed)",
+                'description': pending_note})
+        login_please_msg = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="LOGIN_REQUIRED",
+            defaults={
+                'summary': "Login or setup account message",
+                'description': login_please})
         return render(request, template, {
             'eventitem': eventitem_view,
             'conference': conference,
@@ -93,7 +115,10 @@ class EventDetailView(View):
             'tickets': get_tickets(eventitem_view['occurrence']),
             'user_id': request.user.id,
             'bid': bid,
-            'schedule_items': schedule_items})
+            'schedule_items': schedule_items,
+            'pending_note': pending_instructions[0].description,
+            'login_please': login_please_msg[0].description,
+            'complete_profile_form': complete_profile_form})
 
     def dispatch(self, *args, **kwargs):
         return super(EventDetailView, self).dispatch(*args, **kwargs)
