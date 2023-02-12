@@ -142,28 +142,28 @@ class ManageEventsView(View):
     def get_filtered_occurrences(self, request, select_form):
         occurrences = []
         label_set = [[self.conference.conference_slug]]
+        day = None
 
-        if len(select_form.cleaned_data['calendar_type']) > 0:
-            cal_types = []
-            for cal_type in select_form.cleaned_data['calendar_type']:
-                cal_types += [calendar_type[int(cal_type)]]
-            label_set += [cal_types]
-        if len(select_form.cleaned_data['staff_area']) > 0:
-            staff_areas = []
-            for staff_area in select_form.cleaned_data['staff_area']:
-                staff_areas += [staff_area.slug]
-            label_set += [staff_areas]
-        if len(select_form.cleaned_data['day']) > 0:
-            for day_id in select_form.cleaned_data['day']:
-                day = ConferenceDay.objects.get(pk=day_id)
-                response = get_occurrences(label_sets=label_set,
-                                           day=day.day)
-                occurrences += response.occurrences
-        else:
-            response = get_occurrences(
-                label_sets=label_set)
-            occurrences += response.occurrences
+        if select_form.is_valid():
+            if len(select_form.cleaned_data['calendar_type']) > 0:
+                cal_types = []
+                for cal_type in select_form.cleaned_data['calendar_type']:
+                    cal_types += [calendar_type[int(cal_type)]]
+                label_set += [cal_types]
+            if len(select_form.cleaned_data['staff_area']) > 0:
+                staff_areas = []
+                for staff_area in select_form.cleaned_data['staff_area']:
+                    staff_areas += [staff_area.slug]
+                label_set += [staff_areas]
+            if len(select_form.cleaned_data['day']) > 0:
+                for day_id in select_form.cleaned_data['day']:
+                    day = ConferenceDay.objects.get(pk=day_id)
+                    response = get_occurrences(label_sets=label_set,
+                                               day=day.day)
+        if day is None:
+            response = get_occurrences(label_sets=label_set)
 
+        occurrences += response.occurrences
         return self.build_occurrence_display(occurrences)
 
     @never_cache
@@ -171,26 +171,21 @@ class ManageEventsView(View):
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
 
-        if context['selection_form'].is_valid() and (
-                len(context['selection_form'].cleaned_data['day']) > 0 or len(
-                    context['selection_form'].cleaned_data[
-                        'calendar_type']) > 0 or len(
-                    context['selection_form'].cleaned_data['staff_area']) > 0):
-            context['occurrences'] = self.get_filtered_occurrences(
-                request,
-                context['selection_form'])
-            context['columns'] = [
-                'Title',
-                'Parent',
-                'Area',
-                'Location',
-                'Date/Time',
-                'Duration',
-                'Type',
-                'Current #',
-                'Max #',
-                'Action']
-            context['order'] = 4
+        context['occurrences'] = self.get_filtered_occurrences(
+            request,
+            context['selection_form'])
+        context['columns'] = [
+            'Title',
+            'Parent',
+            'Area',
+            'Location',
+            'Date/Time',
+            'Duration',
+            'Type',
+            'Current #',
+            'Max #',
+            'Action']
+        context['order'] = 4
         return render(request, self.template, context)
 
     @method_decorator(login_required)
