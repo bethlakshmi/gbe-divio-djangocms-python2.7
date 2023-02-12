@@ -10,7 +10,7 @@
 <div class="container review"><div class="row">
   <div class="col-md-8">
     <h2 class="gbe-title">{{view_title}}{% if conference.status != "completed" %}
-      <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-secondary">Create</a>{% endif %}</h2>
+      <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-secondary">+ Create New Event</a>{% endif %}</h2>
    </div><div class="col-md-4 text-right">
   <div class="dropdown show">
     <a class="btn gbe-btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{conference.conference_slug}}</a>
@@ -26,7 +26,7 @@
    <div class="dropdown">
     <button class="btn gbe-btn-light dropdown-toggle m-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
      {{ selection_form.staff_area.label }}</button>
-   <div class="dropdown-menu" aria-labelledby="staffMenuLink"><div class="form-group">
+   <div class="dropdown-menu pb-0" aria-labelledby="staffMenuLink"><div class="form-group">
      {% for checkbox in selection_form.staff_area %}
       <div class="form-check-inline">
       <label class="checkbox-label gbe-filter" id="{{ checkbox.id_for_label }}">
@@ -42,15 +42,14 @@
       </a>
       </label></div>
      {% endfor %}
+     <input type="submit" class="btn btn-secondary w-100 mt-2" name="filter" value="Apply">
+   </div>
       {% if selection_form.staff_area.errors %}
         <font class="gbe-form-error">{{ selection_form.staff_area.errors }}</font>
       {% endif %}
-   </div></div></div>
-   <div class="form-group" id="filter-button">
-      <input type="submit" class="btn gbe-btn-primary" name="filter" value="Filter">
-   </div></div></div>
+    </div></div></div></div>
    
-   Yellow = volunteers must be approved.
+   Yellow = volunteers for this event must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>
 {% endblock %}
 {% block tbody %}
