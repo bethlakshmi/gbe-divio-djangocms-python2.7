@@ -20,45 +20,36 @@
  {% endfor %}
     </div></div></div></div>
  <div class="gbe-tab-area my-2">
+  <div class="btn-group">
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.day %}
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
-   <div class="form-row">
-   <div class="form-group col-md-2 col-12">
-    <label class="form-check-label horizontal-label" id="{{ selection_form.staff_area.name }}"><b>
-     {% if selection_form.staff_area.errors %}
-      <font class="gbe-form-error">!&nbsp;&nbsp;
-     {% endif %}
-     {{ selection_form.staff_area.label }}:&nbsp;&nbsp;
-     {% if selection_form.staff_area.errors %}
-      </font>
-     {% endif %}</b></label>
-   </div>
-   <div class="form-group col-md-10 col-12">
+   <div class="dropdown">
+    <button class="btn gbe-btn-light dropdown-toggle m-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+     {{ selection_form.staff_area.label }}</button>
+   <div class="dropdown-menu" aria-labelledby="staffMenuLink"><div class="form-group">
      {% for checkbox in selection_form.staff_area %}
-      <div class="form-group col-md-4 col-sm-4 col-12 checkbox-box{%if alt_id|slugify == checkbox.data.value|slugify %} checkbox-box-success{%endif%}">
       <div class="form-check-inline">
-      <label class="form-check-label staff-checkbox-label" id="{{ checkbox.id_for_label }}">
+      <label class="checkbox-label gbe-filter" id="{{ checkbox.id_for_label }}">
       {{ checkbox.tag }}
-      {{ checkbox.choice_label }}&nbsp;
+      {{ checkbox.choice_label }}
       {% if conference.status != "completed" %}
-      &nbsp;<a href="{% url "scheduling:edit_staff" checkbox.data.value %}" data-toggle="tooltip" title="Edit" class="detail_link">
+      <a href="{% url "scheduling:edit_staff" checkbox.data.value %}" data-toggle="tooltip" title="Edit" class="detail_link ml-1">
        <i class="fa fa-pencil-square" aria-hidden="true"></i>
       </a>
      {% endif %}
-      &nbsp;<a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link">
+      &nbsp;<a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link ml-1">
        <i class="fa fa-files-o" aria-hidden="true"></i>
       </a>
       </label></div>
-     </div>
      {% endfor %}
       {% if selection_form.staff_area.errors %}
         <font class="gbe-form-error">{{ selection_form.staff_area.errors }}</font>
       {% endif %}
-   </div></div>
-   <div class="form-row">
-   <div class="form-group col-12 mb-2" id="filter-button"><br>
+   </div></div></div>
+   <div class="form-group" id="filter-button">
       <input type="submit" class="btn gbe-btn-primary" name="filter" value="Filter">
-   </div></div>
+   </div></div></div>
+   
    Yellow = volunteers must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>
 {% endblock %}
