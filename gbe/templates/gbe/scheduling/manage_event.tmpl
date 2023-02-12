@@ -7,13 +7,19 @@
  {% for form in other_forms %}
   {{ form }}
  {% endfor %}
-<div class="container review">
- <ul class="nav nav-tabs" id="inner">
+<div class="container review"><div class="row">
+  <div class="col-md-8">
+    <h2 class="gbe-title">{{view_title}}{% if conference.status != "completed" %}
+      <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-secondary">Create</a>{% endif %}</h2>
+   </div><div class="col-md-4 text-right">
+  <div class="dropdown show">
+    <a class="btn gbe-btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{conference.conference_slug}}</a>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
  {% for slug in conference_slugs %}
-  <li role="presentation"><a href="{% url 'scheduling:manage_event_list' slug %}?{{ request.GET.urlencode }}" class="{% if conference.conference_slug == slug %}gbe-tab-active{% else %}gbe-tab{% endif %}">{{slug}}</a></li>
+        <a class="dropdown-item" href="{% url 'scheduling:manage_event_list' slug %}?{{ request.GET.urlencode }}">{{slug}}</a>
  {% endfor %}
- </ul>
- <div class="gbe-tab-area">
+    </div></div></div></div>
+ <div class="gbe-tab-area my-2">
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.day %}
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
    <div class="form-row">
@@ -52,9 +58,7 @@
    <div class="form-row">
    <div class="form-group col-12 mb-2" id="filter-button"><br>
       <input type="submit" class="btn gbe-btn-primary" name="filter" value="Filter">
-   {% if conference.status != "completed" %}
-      &nbsp;<a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn gbe-btn-primary">Create</a>
-   {% endif %}</div></div>
+   </div></div>
    Yellow = volunteers must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>
 {% endblock %}

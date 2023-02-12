@@ -41,7 +41,6 @@ class ManageEventsView(View):
 
     def groundwork(self, request, args, kwargs):
         validate_perms(request, ('Scheduling Mavens', 'Admins'))
-        context = {}
         self.conference = None
         conference_set = conference_list().order_by('-conference_slug')
 
@@ -66,6 +65,7 @@ class ManageEventsView(View):
                 conf.conference_slug for conf in conference_set],
             'selection_form': select_form,
             'other_forms': [],
+            'view_title': "Events",
         }
         if 'new' in list(request.GET.keys()):
             context['success_occurrences'] = eval(request.GET['new'])
