@@ -13,7 +13,7 @@
       <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-secondary">+ Create New Event</a>{% endif %}</h2>
    </div><div class="col-md-4 text-right">
   <div class="dropdown show">
-    <a class="btn gbe-btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{conference.conference_slug}}</a>
+    <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{conference.conference_slug}}</a>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
  {% for slug in conference_slugs %}
         <a class="dropdown-item" href="{% url 'scheduling:manage_event_list' slug %}?{{ request.GET.urlencode }}">{{slug}}</a>
@@ -24,7 +24,7 @@
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.day %}
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.event_style %}
    <div class="dropdown col col-md-auto">
-    <button class="btn gbe-btn-light dropdown-toggle m-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-light dropdown-toggle m-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
      {{ selection_form.staff_area.label }}</button>
     <div class="dropdown-menu pb-0" aria-labelledby="staffMenuLink">
      {% for checkbox in selection_form.staff_area %}
