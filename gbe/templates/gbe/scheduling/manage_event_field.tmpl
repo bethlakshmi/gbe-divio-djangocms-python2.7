@@ -1,6 +1,6 @@
    <div class="dropdown col col-md-auto">
     <button class="btn gbe-btn-light dropdown-toggle m-2" type="button" id="{{ field.label }}MenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ field.label }}</button>
-   <div class="dropdown-menu pb-0" aria-labelledby="{{ field.label }}MenuButton"><div class="form-group mb-0">
+   <div class="dropdown-menu pb-0" aria-labelledby="{{ field.label }}MenuButton">
      {% for checkbox in field %}
       <div class="dropdown-item">
       <label class="checkbox-label gbe-filter mb-0" id="{{ checkbox.id_for_label }}">
@@ -8,5 +8,5 @@
       </label>
       </div>{% endfor %}
       <input type="submit" class="btn btn-secondary w-100 mt-2" name="filter" value="Apply">
-   </div></div>
+   </div>
    {% if field.errors %}<font class="gbe-form-error">{{ field.errors }}</font>{% endif %}</div>
