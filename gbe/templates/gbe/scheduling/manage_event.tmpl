@@ -3,7 +3,7 @@
   Manage Expo Schedule
 {% endblock %}
 {% block before_table %}
-<form class="form-inline" action="" method="get" enctype="multipart/form-data">
+<form action="" method="get" enctype="multipart/form-data">
  {% for form in other_forms %}
   {{ form }}
  {% endfor %}
@@ -20,16 +20,16 @@
  {% endfor %}
     </div></div></div></div>
  <div class="gbe-tab-area my-2">
-  <div class="btn-group">
+  <div class="btn-group row">
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.day %}
-   {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
-   <div class="dropdown">
+   {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.event_style %}
+   <div class="dropdown col col-md-auto">
     <button class="btn gbe-btn-light dropdown-toggle m-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
      {{ selection_form.staff_area.label }}</button>
-   <div class="dropdown-menu pb-0" aria-labelledby="staffMenuLink"><div class="form-group">
+    <div class="dropdown-menu pb-0" aria-labelledby="staffMenuLink"><div class="form-group mb-0">
      {% for checkbox in selection_form.staff_area %}
-      <div class="form-check-inline">
-      <label class="checkbox-label gbe-filter" id="{{ checkbox.id_for_label }}">
+      <div class="dropdown-item">
+      <label class="checkbox-label gbe-filter mb-0" id="{{ checkbox.id_for_label }}">
       {{ checkbox.tag }}
       {{ checkbox.choice_label }}
       {% if conference.status != "completed" %}
@@ -43,11 +43,13 @@
       </label></div>
      {% endfor %}
      <input type="submit" class="btn btn-secondary w-100 mt-2" name="filter" value="Apply">
-   </div>
+    </div>
       {% if selection_form.staff_area.errors %}
         <font class="gbe-form-error">{{ selection_form.staff_area.errors }}</font>
       {% endif %}
-    </div></div></div></div>
+  </div></div>
+    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
+  </div></div>
    
    Yellow = volunteers for this event must be approved.
    <div class="row"><div class="col-12">&nbsp;</div></div>

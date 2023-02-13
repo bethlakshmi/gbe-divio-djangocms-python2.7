@@ -33,6 +33,7 @@ from gbetext import (
     calendar_for_event,
     calendar_type,
 )
+import string
 
 
 class ManageEventsView(View):
@@ -142,6 +143,7 @@ class ManageEventsView(View):
     def get_filtered_occurrences(self, request, select_form):
         occurrences = []
         label_set = [[self.conference.conference_slug]]
+        event_styles = []
         day = None
 
         if select_form.is_valid():
@@ -150,6 +152,9 @@ class ManageEventsView(View):
                 for cal_type in select_form.cleaned_data['calendar_type']:
                     cal_types += [calendar_type[int(cal_type)]]
                 label_set += [cal_types]
+            if len(select_form.cleaned_data['event_style']) > 0:
+                for event_style in select_form.cleaned_data['event_style']:
+                    event_styles += [string.capwords(event_style)]
             if len(select_form.cleaned_data['staff_area']) > 0:
                 staff_areas = []
                 for staff_area in select_form.cleaned_data['staff_area']:
@@ -159,9 +164,11 @@ class ManageEventsView(View):
                 for day_id in select_form.cleaned_data['day']:
                     day = ConferenceDay.objects.get(pk=day_id)
                     response = get_occurrences(label_sets=label_set,
+                                               event_styles=event_styles,
                                                day=day.day)
         if day is None:
-            response = get_occurrences(label_sets=label_set)
+            response = get_occurrences(label_sets=label_set,
+                                       event_styles=event_styles)
 
         occurrences += response.occurrences
         return self.build_occurrence_display(occurrences)
