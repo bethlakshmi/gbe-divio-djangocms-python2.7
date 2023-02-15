@@ -6,7 +6,7 @@ from django.forms import (
 )
 from django.forms.widgets import CheckboxSelectMultiple
 from gbetext import calendar_type as calendar_type_options
-from gbe_forms_text import event_type_options
+from gbe_forms_text import flat_event_type_only
 from gbe.models import StaffArea
 from django.db.models.functions import Lower
 
@@ -22,7 +22,7 @@ class SelectEventForm(Form):
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
     event_style = MultipleChoiceField(
-        choices=list(event_type_options),
+        choices=flat_event_type_only,
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
     staff_area = ModelMultipleChoiceField(
@@ -42,7 +42,7 @@ class HiddenSelectEventForm(Form):
         widget=MultipleHiddenInput(),
         required=False)
     event_style = MultipleChoiceField(
-        choices=list(event_type_options),
+        choices=flat_event_type_only,
         widget=MultipleHiddenInput(),
         required=False)
     staff_area = ModelMultipleChoiceField(

@@ -25,7 +25,7 @@
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.event_style %}
    <div class="dropdown col col-md-auto">
     <button class="btn btn-light dropdown-toggle m-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-     {{ selection_form.staff_area.label }}</button>
+     {{ selection_form.staff_area.label | safe }}</button>
     <div class="dropdown-menu pb-0" aria-labelledby="staffMenuLink">
      {% for checkbox in selection_form.staff_area %}
       <div class="dropdown-item">

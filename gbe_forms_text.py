@@ -61,6 +61,15 @@ event_type_options = [(
         ('staff', 'Staff Area'),
         ('volunteer', 'Volunteering'), ), ), ]
 
+flat_event_type_only = [
+    ('drop-in', 'Drop-In Class'),
+    ('conference', 'Conference Class'),
+    ('master', 'Master Class'),
+    ('show', 'Show'),
+    ('special', 'Special Event'),
+    ('rehearsal', 'Rehearsal Slot'),
+    ('volunteer', 'Volunteering')]
+
 event_settings = {
     'drop-in': {
         'event_type': 'Drop-In Class',

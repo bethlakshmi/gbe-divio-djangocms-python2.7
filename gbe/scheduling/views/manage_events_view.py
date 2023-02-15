@@ -152,25 +152,38 @@ class ManageEventsView(View):
                 for cal_type in select_form.cleaned_data['calendar_type']:
                     cal_types += [calendar_type[int(cal_type)]]
                 label_set += [cal_types]
+                select_form.fields['calendar_type'].label = (
+                    '<b>%s</b>' % ', '.join(cal_types))
             if len(select_form.cleaned_data['event_style']) > 0:
                 for event_style in select_form.cleaned_data['event_style']:
                     event_styles += [string.capwords(event_style)]
+                select_form.fields['event_style'].label = (
+                    '<b>%s</b>' % ', '.join(event_styles))
             if len(select_form.cleaned_data['staff_area']) > 0:
                 staff_areas = []
+                staff_area_labels = []
+
                 for staff_area in select_form.cleaned_data['staff_area']:
                     staff_areas += [staff_area.slug]
+                    staff_area_labels += [staff_area.title]
                 label_set += [staff_areas]
+                select_form.fields['staff_area'].label = (
+                    '<b>%s</b>' % ', '.join(staff_area_labels))
             if len(select_form.cleaned_data['day']) > 0:
+                days = []
                 for day_id in select_form.cleaned_data['day']:
                     day = ConferenceDay.objects.get(pk=day_id)
                     response = get_occurrences(label_sets=label_set,
                                                event_styles=event_styles,
                                                day=day.day)
+                    days += [str(day)]
+                    occurrences += response.occurrences
+                select_form.fields['day'].label = '<b>%s</b>' % ', '.join(days)
+
         if day is None:
             response = get_occurrences(label_sets=label_set,
                                        event_styles=event_styles)
-
-        occurrences += response.occurrences
+            occurrences += response.occurrences
         return self.build_occurrence_display(occurrences)
 
     @never_cache
