@@ -4,9 +4,6 @@
 {% endblock %}
 {% block before_table %}
 <form action="" method="get" enctype="multipart/form-data">
- {% for form in other_forms %}
-  {{ form }}
- {% endfor %}
 <div class="container review"><div class="row">
   <div class="col-md-8">
     <h2 class="gbe-title">{{view_title}}{% if conference.status != "completed" %}

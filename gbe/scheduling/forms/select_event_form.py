@@ -29,23 +29,3 @@ class SelectEventForm(Form):
         queryset=StaffArea.objects.all().order_by("conference", "slug"),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False)
-
-
-class HiddenSelectEventForm(Form):
-    required_css_class = 'required'
-    error_css_class = 'error'
-    day = MultipleChoiceField(
-        widget=MultipleHiddenInput(),
-        required=False)
-    calendar_type = MultipleChoiceField(
-        choices=list(calendar_type_options.items()),
-        widget=MultipleHiddenInput(),
-        required=False)
-    event_style = MultipleChoiceField(
-        choices=flat_event_type_only,
-        widget=MultipleHiddenInput(),
-        required=False)
-    staff_area = ModelMultipleChoiceField(
-        queryset=StaffArea.objects.all().order_by("conference", "slug"),
-        widget=MultipleHiddenInput(),
-        required=False)

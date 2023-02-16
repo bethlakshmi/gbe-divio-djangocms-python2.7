@@ -25,10 +25,7 @@ from gbe.functions import (
     validate_perms,
 )
 from scheduler.idd import get_occurrences
-from gbe.scheduling.forms import (
-    HiddenSelectEventForm,
-    SelectEventForm,
-)
+from gbe.scheduling.forms import SelectEventForm
 from gbetext import (
     calendar_for_event,
     calendar_type,
@@ -65,24 +62,12 @@ class ManageEventsView(View):
             'conference_slugs': [
                 conf.conference_slug for conf in conference_set],
             'selection_form': select_form,
-            'other_forms': [],
             'view_title': "Events",
         }
         if 'new' in list(request.GET.keys()):
             context['success_occurrences'] = eval(request.GET['new'])
         if 'alt_id' in list(request.GET.keys()):
             context['alt_id'] = int(request.GET['alt_id'])
-        for conf in conference_set:
-            if self.conference != conf:
-                hidden_form = HiddenSelectEventForm(
-                    request.GET,
-                    prefix=conf.conference_slug)
-                conf_day_list = []
-                for day in conf.conferenceday_set.all():
-                    conf_day_list += [(day.pk,
-                                       day.day.strftime(GBE_DATE_FORMAT))]
-                hidden_form.fields['day'].choices = conf_day_list
-                context['other_forms'] += [hidden_form]
         return context
 
     def build_occurrence_display(self, occurrences):
