@@ -49,6 +49,8 @@
   <div class="col col-md-auto">
      <a href="{% url 'scheduling:manage_event_list' conference.conference_slug %}" class="btn gbe-btn-primary mt-1">Clear All Filters</a>
   </div>
+  <div class="col col-md-auto mt-1 py-2" id="filter-box">
+  </div>
   </div></div>
    
    Yellow = volunteers for this event must be approved.
@@ -89,6 +91,9 @@
  </div>
 </div>
 </form>
+{% endblock %}
+{% block on_ready_js %}
+    $('#gbe-table_filter').appendTo( $('#filter-box') );
 {% endblock %}
 
 
