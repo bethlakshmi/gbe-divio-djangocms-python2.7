@@ -8,16 +8,16 @@
   <div class="col-md-8">
     <h2 class="gbe-title">{{view_title}}{% if conference.status != "completed" %}
       <a href="{% url 'scheduling:create_event_wizard' conference.conference_slug %}" role="button" class="btn btn-secondary">+ Create New Event</a>{% endif %}</h2>
-   </div><div class="col-md-4 text-right">
-  <div class="dropdown show">
+   </div></div>
+<div class="row">
+  <div class="gbe-tab-area my-2 col-auto mr-2"><div class="dropdown pt-2">
     <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{conference.conference_slug}}</a>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
- {% for slug in conference_slugs %}
+  {% for slug in conference_slugs %}
         <a class="dropdown-item" href="{% url 'scheduling:manage_event_list' slug %}?{{ request.GET.urlencode }}">{{slug}}</a>
- {% endfor %}
-    </div></div></div></div>
- <div class="gbe-tab-area my-2">
-  <div class="btn-group row">
+  {% endfor %}
+  </div></div></div>
+  <div class="gbe-tab-area my-2 col"><div class="btn-group row">
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.day %}
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.event_style %}
    <div class="dropdown col col-md-auto">
@@ -51,8 +51,8 @@
   </div>
   <div class="col col-md-auto mt-1 py-2" id="filter-box">
   </div>
-  </div></div>
-   <div class="row"><div class="col-12">Yellow = volunteers for this event must be approved.</div></div>
+  </div></div></div>
+  <div class="row"><div class="col-12">Yellow = volunteers for this event must be approved.</div></div>
 {% endblock %}
 {% block tbody %}
     {% for occurrence in occurrences %}
