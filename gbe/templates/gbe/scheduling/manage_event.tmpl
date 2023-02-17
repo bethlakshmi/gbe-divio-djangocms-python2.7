@@ -3,7 +3,7 @@
   Manage Expo Schedule
 {% endblock %}
 {% block before_table %}
-<form action="" method="get" enctype="multipart/form-data">
+<form action="?" method="get" enctype="multipart/form-data">
 <div class="container review"><div class="row">
   <div class="col-md-8">
     <h2 class="gbe-title">{{view_title}}{% if conference.status != "completed" %}
@@ -26,7 +26,7 @@
     <div class="dropdown-menu pb-0" aria-labelledby="staffMenuLink">
      {% for checkbox in selection_form.staff_area %}
       <div class="dropdown-item">
-      <label class="checkbox-label gbe-filter mb-0" id="{{ checkbox.id_for_label }}">
+      <label class="checkbox-label gbe-filter mb-0">
       {{ checkbox.tag }}
       {{ checkbox.choice_label }}
       {% if conference.status != "completed" %}
@@ -52,9 +52,7 @@
   <div class="col col-md-auto mt-1 py-2" id="filter-box">
   </div>
   </div></div>
-   
-   Yellow = volunteers for this event must be approved.
-   <div class="row"><div class="col-12">&nbsp;</div></div>
+   <div class="row"><div class="col-12">Yellow = volunteers for this event must be approved.</div></div>
 {% endblock %}
 {% block tbody %}
     {% for occurrence in occurrences %}
@@ -88,7 +86,6 @@
     {% endfor %}
 {% endblock %}
 {% block after_table %}
- </div>
 </div>
 </form>
 {% endblock %}

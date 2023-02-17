@@ -1,9 +1,9 @@
    <div class="dropdown col col-md-auto">
-    <button class="btn btn-light dropdown-toggle m-2" type="button" id="{{ field.label }}MenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ field.label | safe }}</button>
-   <div class="dropdown-menu pb-0" aria-labelledby="{{ field.label }}MenuButton">
+    <button class="btn btn-light dropdown-toggle m-2" type="button" id="{{ field.label|slugify }}MenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ field.label | safe }}</button>
+   <div class="dropdown-menu pb-0" aria-labelledby="{{ field.label|slugify }}MenuButton">
      {% for checkbox in field %}
       <div class="dropdown-item">
-      <label class="checkbox-label gbe-filter mb-0" id="{{ checkbox.id_for_label }}">
+      <label class="checkbox-label gbe-filter mb-0">
       {{ checkbox.tag }}{{ checkbox.label_tag }}{{ checkbox.choice_label }}
       </label>
       </div>{% endfor %}

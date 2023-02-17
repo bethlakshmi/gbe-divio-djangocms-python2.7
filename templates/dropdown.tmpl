@@ -7,7 +7,7 @@
   {%else%}
     <li><a class="dropdown-item gbe_dropdown"  id="gbe_dropdown" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
         {{ child.get_menu_title }}
-    </a>
+    </a></li>
   {%endif%}
 
     {% if child.children %}
@@ -15,5 +15,4 @@
         {% show_menu from_level to_level extra_inactive extra_active "dropdown.tmpl" "" "" child %}
         </ul>
     {% endif %}
-    </li>
 {% endfor %}
