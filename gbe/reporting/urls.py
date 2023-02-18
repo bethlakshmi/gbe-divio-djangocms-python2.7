@@ -7,6 +7,7 @@ from gbe.reporting.views import (
     eval_view,
     interest_view,
     all_volunteer_view,
+    PerformerSlidesList,
     PerformerShowComp,
     review_staff_area_view,
     staff_area_view,
@@ -70,4 +71,7 @@ urlpatterns = [
     url(r'^reports/act_tech_list/(?P<occurrence_id>\d+)/?$',
         ActTechList.as_view(),
         name='act_tech_list'),
+    url(r'^reports/performer_urls/(?P<occurrence_id>\d+)/?$',
+        PerformerSlidesList.as_view(),
+        name='performer_urls'),
 ]
