@@ -81,29 +81,6 @@ class TestManageEventList(TestCase):
             checked)
         self.assertContains(response, assert_string, html=True)
 
-    def assert_hidden_input_selected(
-            self,
-            response,
-            conf_slug,
-            input_field,
-            input_index,
-            value,
-            exists=True):
-        template_input = '<input type="hidden" name="%s-%s" value="%d"' + \
-            ' id="id_%s-%s_%d" />'
-
-        assert_string = template_input % (
-            conf_slug,
-            input_field,
-            value,
-            conf_slug,
-            input_field,
-            input_index)
-        if exists:
-            self.assertContains(response, assert_string, html=True)
-        else:
-            self.assertNotContains(response, assert_string, html=True)
-
     def test_no_login_gives_error(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
