@@ -141,7 +141,7 @@ class ManageEventsView(View):
                     '<b>%s</b>' % ', '.join(cal_types))
             if len(select_form.cleaned_data['event_style']) > 0:
                 for event_style in select_form.cleaned_data['event_style']:
-                    event_styles += [string.capwords(event_style)]
+                    event_styles += [event_style]
                 select_form.fields['event_style'].label = (
                     '<b>%s</b>' % ', '.join(event_styles))
             if len(select_form.cleaned_data['staff_area']) > 0:

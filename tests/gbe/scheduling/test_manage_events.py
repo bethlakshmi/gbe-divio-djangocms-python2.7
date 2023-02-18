@@ -29,27 +29,33 @@ from settings import (
 from datetime import (
     timedelta,
 )
+from gbe_forms_text import event_styles_complete
 
 
 class TestManageEventList(TestCase):
     view_name = 'manage_event_list'
-    conf_tab = (
-        '<li role="presentation"><a href="%s?" class="gbe-tab%s">%s</a></li>')
+    conf_tab = '<a class="dropdown-item" href="%s?">%s</a>'
+    active_conf = (
+        '<a class="btn btn-light dropdown-toggle" href="#" role="button" ' +
+        'id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" ' +
+        'aria-expanded="false">%s</a>')
 
     def setUp(self):
         self.client = Client()
-        self.user = ProfileFactory.create().user_object
-        self.privileged_profile = ProfileFactory()
-        self.privileged_user = self.privileged_profile.user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.scheduling.urls")
-        self.volunteer_context = VolunteerContext()
-        self.day = self.volunteer_context.conf_day
-        self.class_context = ClassContext(conference=self.day.conference)
-        self.show_context = ShowContext(conference=self.day.conference)
-        self.staff_context = StaffAreaContext(conference=self.day.conference)
-        booking, self.vol_opp = self.staff_context.book_volunteer()
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = ProfileFactory.create().user_object
+        cls.privileged_profile = ProfileFactory()
+        cls.privileged_user = cls.privileged_profile.user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
+        cls.url = reverse(cls.view_name, urlconf="gbe.scheduling.urls")
+        cls.volunteer_context = VolunteerContext()
+        cls.day = cls.volunteer_context.conf_day
+        cls.class_context = ClassContext(conference=cls.day.conference)
+        cls.show_context = ShowContext(conference=cls.day.conference)
+        cls.staff_context = StaffAreaContext(conference=cls.day.conference)
+        booking, cls.vol_opp = cls.staff_context.book_volunteer()
 
     def assert_visible_input_selected(
             self,
@@ -63,7 +69,7 @@ class TestManageEventList(TestCase):
             checked = 'checked '
         else:
             checked = ''
-        template_input = '<input type="checkbox" name="%s-%s" value="%d" ' + \
+        template_input = '<input type="checkbox" name="%s-%s" value="%s" ' + \
                          'class="form-check-input" id="id_%s-%s_%d" %s/>'
         assert_string = template_input % (
             conf_slug,
@@ -116,12 +122,7 @@ class TestManageEventList(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            self.conf_tab % (
-                reverse(self.view_name,
-                        urlconf="gbe.scheduling.urls",
-                        args=[self.day.conference.conference_slug]),
-                '-active',
-                self.day.conference.conference_slug),
+            self.active_conf % self.day.conference.conference_slug,
             html=True)
         self.assertContains(
             response,
@@ -129,7 +130,6 @@ class TestManageEventList(TestCase):
                 reverse(self.view_name,
                         urlconf="gbe.scheduling.urls",
                         args=[old_conf_day.conference.conference_slug]),
-                '',
                 old_conf_day.conference.conference_slug),
             html=True)
         self.assertContains(
@@ -176,10 +176,7 @@ class TestManageEventList(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            self.conf_tab % (
-                url,
-                '-active',
-                old_conf_day.conference.conference_slug),
+            self.active_conf % old_conf_day.conference.conference_slug,
             html=True)
         self.assertContains(
             response,
@@ -187,7 +184,6 @@ class TestManageEventList(TestCase):
                 reverse(self.view_name,
                         urlconf="gbe.scheduling.urls",
                         args=[self.day.conference.conference_slug]),
-                '',
                 self.day.conference.conference_slug),
             html=True)
         self.assertContains(
@@ -396,52 +392,25 @@ class TestManageEventList(TestCase):
                 checked=(area == self.staff_context.area))
             index += 1
 
-    def test_switch_conf_keep_filter(self):
-        old_conf_day = ConferenceDayFactory(
-            conference__status="completed",
-            day=self.day.day + timedelta(3))
-        url = reverse(self.view_name,
-                      urlconf="gbe.scheduling.urls",
-                      args=[old_conf_day.conference.conference_slug])
+    def test_good_user_filter_event_style(self):
         login_as(self.privileged_profile, self)
         data = {
-            "%s-day" % self.day.conference.conference_slug: self.day.pk,
-            "%s-calendar_type" % self.day.conference.conference_slug: 1,
-            "%s-day" % old_conf_day.conference.conference_slug: (
-                old_conf_day.pk),
-            "%s-calendar_type" % old_conf_day.conference.conference_slug: 0,
-            "%s-staff_area" % self.day.conference.conference_slug: (
-                self.staff_context.area.pk),
+            "%s-event_style" % self.day.conference.conference_slug: (
+                'Volunteer'),
             "filter": "Filter",
         }
-        response = self.client.get(url, data=data)
+        response = self.client.get(self.url, data=data)
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.vol_opp.event.title)
         self.assertNotContains(response, self.show_context.sched_event.title)
-        self.assertNotContains(response, self.class_context.bid.b_title)
-        for day in self.day.conference.conferenceday_set.all().order_by('day'):
-            self.assert_hidden_input_selected(
+        self.assertNotContains(response, self.class_context.sched_event.title)
+        index = 0
+        for event_style, description in event_styles_complete:
+            self.assert_visible_input_selected(
                 response,
                 self.day.conference.conference_slug,
-                "day",
-                0,
-                day.pk,
-                exists=(day == self.day))
-        self.assert_hidden_input_selected(
-            response,
-            self.day.conference.conference_slug,
-            "calendar_type",
-            0,
-            1)
-        self.assert_hidden_input_selected(
-            response,
-            self.day.conference.conference_slug,
-            "calendar_type",
-            0,
-            0,
-            False)
-        self.assert_hidden_input_selected(
-            response,
-            self.day.conference.conference_slug,
-            "staff_area",
-            0,
-            self.staff_context.area.pk)
+                "event_style",
+                index,
+                event_style,
+                checked=(event_style == "Volunteer"))
+            index += 1
