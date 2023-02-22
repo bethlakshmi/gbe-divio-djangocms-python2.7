@@ -11,7 +11,7 @@
    </div></div>
 <div class="row">
   <div class="gbe-tab-area my-2 col-auto mr-2"><div class="dropdown pt-2">
-    <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{conference.conference_slug}}</a>
+    <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{conference.conference_slug}}</a>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
   {% for slug in conference_slugs %}
         <a class="dropdown-item" href="{% url 'scheduling:manage_event_list' slug %}?{{ request.GET.urlencode }}">{{slug}}</a>
@@ -20,8 +20,8 @@
   <div class="gbe-tab-area my-2 col"><div class="btn-group row">
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.day %}
    {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.event_style %}
-   <div class="dropdown col col-md-auto">
-    <button class="btn btn-light dropdown-toggle m-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+   <div class="dropdown col col-md-auto px-2">
+    <button class="btn btn-light btn-sm dropdown-toggle mt-2" type="button" id="staffMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
      {{ selection_form.staff_area.label | safe }}</button>
     <div class="dropdown-menu pb-0" aria-labelledby="staffMenuLink">
      {% for checkbox in selection_form.staff_area %}
@@ -46,10 +46,10 @@
       {% endif %}
   </div>
     {% include "gbe/scheduling/manage_event_field.tmpl" with field=selection_form.calendar_type %}
-  <div class="col col-md-auto">
-     <a href="{% url 'scheduling:manage_event_list' conference.conference_slug %}" class="btn gbe-btn-primary mt-1">Clear All Filters</a>
+  <div class="col col-md-auto px-2">
+     <a href="{% url 'scheduling:manage_event_list' conference.conference_slug %}" class="btn btn-sm gbe-btn-primary mt-1">Clear All Filters</a>
   </div>
-  <div class="col col-md-auto mt-1 py-2" id="filter-box">
+  <div class="col col-md-auto mt-1 pt-1" id="filter-box">
   </div>
   </div></div></div>
   <div class="row"><div class="col-12">Yellow = volunteers for this event must be approved.</div></div>
