@@ -76,7 +76,7 @@
 	  <label class="sched_detail">Time/Place:</label></div>
  	  <div class="col-xs-12 col-sm-10">
       {% include "gbe/scheduling/favorite_star.tmpl" with sched_event=event%}
-      {% include "gbe/scheduling/volunteer_link_display.tmpl" with icon_class="volunteer-icon" sched_event=event %}
+      {% include "gbe/scheduling/volunteer_link_display.tmpl" with icon_class="volunteer-icon" sched_event=event occurrence=event.occurrence %}
       {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=event.evaluate %}
       {{ event.occurrence.start_time|date:_("DATETIME_FORMAT") }} -
 	    {{ event.occurrence.end_time|date:_("TIME_FORMAT") }} - {{ event.occurrence.location }}

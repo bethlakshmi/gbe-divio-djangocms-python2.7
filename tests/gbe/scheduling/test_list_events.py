@@ -23,6 +23,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from gbetext import pending_note
 
 
 class TestViewList(TestCase):
@@ -207,13 +208,14 @@ class TestViewList(TestCase):
         self.assertNotContains(response, this_class.b_title)
         self.assertNotContains(response, 'fa-star')
         self.assertNotContains(response, 'fa-star-o')
+        self.assertNotContains(response,
+                               reverse('register', urlconf="gbe.urls"))
 
     def test_view_volunteer_filled(self):
         staff_context = StaffAreaContext(conference=self.conf)
         volunteer, booking = staff_context.book_volunteer()
         opportunity = booking.event
         opportunity.starttime = datetime.now() + timedelta(days=1)
-        opportunity.max_volunteers = 1
         opportunity.save()
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
@@ -265,6 +267,7 @@ class TestViewList(TestCase):
         self.assertContains(response, opportunity.title)
         self.assertContains(response, vol_link)
         self.assertContains(response, 'awaiting_approval.gif')
+        self.assertContains(response, pending_note)
 
     def test_view_volunteers_rejected(self):
         context = StaffAreaContext(conference=self.conf)

@@ -29,7 +29,7 @@
 	<div class="row px-4">
 	  <div class="col-1 col-sm-2 col-md-3 col-lg-1 pt-3 pr-3">
       {% include "gbe/scheduling/favorite_star.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable"%}
-      {% include "gbe/scheduling/volunteer_link_display.tmpl" with size="fa-2x" icon_class="volunteer-icon-large" disable_style="detail_link-detail_disable" %}
+      {% include "gbe/scheduling/volunteer_link_display.tmpl" with size="fa-2x" icon_class="volunteer-icon-large" disable_style="detail_link-detail_disable" occurrence=eventitem.occurrence %}
       {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
 	  <div class="col-11 col-sm-10 col-md-9 col-lg-4">

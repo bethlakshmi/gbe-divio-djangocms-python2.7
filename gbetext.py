@@ -685,6 +685,8 @@ with a highlighted box require approval, when you volunteer, your offer will \
 be reviewed and a response will be sent shortly.'''
 pending_note = '''This is a shift that requires approval.  When you volunteer,\
  your offer will be reviewed and a response will be sent shortly.'''
+login_please = '''To volunteer, you must have an account with the expo.  \
+Set up an account or login and we'll bring you back here to volunteer.'''
 interested_explain_msg = '''Anyone with an account with The Great Burlesque \
 Exposition can show their interest in an event and add it to their schedule \
 by clicking on the star on our calendar or in an event description.  Starred \
