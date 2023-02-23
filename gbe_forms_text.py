@@ -723,9 +723,9 @@ link_event_labels = {
 link_event_help_text = {
     'display_icon': '''What is shown on the 'I Want to Buy Tickets'
         page.  Description is not shown there, it's pulled from BPT but not
-        shown.  Display Icon must come from http://simplelineicons.com/ or 
+        shown.  Display Icon must come from http://simplelineicons.com/ or
         https://icons.getbootstrap.com/ (version 1.10.2)
-        -- NOTE:  use only the icon class, for example 
+        -- NOTE:  use only the icon class, for example
         <i class="JUST USE THIS STUFF"></i>'''
 }
 ticketing_event_labels = {
