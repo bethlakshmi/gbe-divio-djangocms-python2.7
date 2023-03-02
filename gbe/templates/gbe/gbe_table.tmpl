@@ -32,8 +32,11 @@
     {% endfor %} 
   </form></div></div>
   {% endif %}
-  <div>
-    <b>Toggle column(s):</b>
+  <div class="text-right">
+  <a class="btn btn-light" data-toggle="collapse" data-text-alt="Hide Toggle Columns" href="#toggleToggle" role="button" aria-expanded="false" aria-controls="toggleToggle">
+    Show Toggle Columns
+  </a></div>
+  <div class="collapse text-right mt-3" id="toggleToggle">
     {% for column in columns %}
     <button type="button" class="btn btn-sm gbe-btn-secondary toggle-vis" data-toggle="button" aria-pressed="false" autocomplete="off" data-column="{{ forloop.counter0 }}">{{column}}</button>
     {% endfor %}
@@ -113,7 +116,16 @@
         // Toggle the visibility
         column.visible( ! column.visible() );
     } );
+{% block on_ready_js %}
+{% endblock %}
   } );
   </script>
+  <script>jQuery(function($){
+  $('.btn[data-toggle="collapse"]').on('click', function(){
+    $(this)
+    .data('text-original', $(this).text())
+    .text($(this).data('text-alt') )
+    .data('text-alt', $(this).data('text-original'));
+  });});</script>
 {% endaddtoblock %}
 {% endblock %}

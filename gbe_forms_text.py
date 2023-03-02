@@ -61,6 +61,20 @@ event_type_options = [(
         ('staff', 'Staff Area'),
         ('volunteer', 'Volunteering'), ), ), ]
 
+# our event style setting had no canonical list.  This is not that list.
+# Fix it, reuse it - Betty 2/18/23
+event_styles_complete = [
+    ('Drop-In', 'Drop-In Class'),
+    ('Lecture', "Lecture"),
+    ('Master', 'Master Class'),
+    ('Movement', "Movement"),
+    ('Panel', "Panel"),
+    ('Rehearsal Slot', 'Rehearsal Slot'),
+    ('Show', 'Show'),
+    ('Special', 'Special Event'),
+    ('Volunteer', 'Volunteering'),
+    ('Workshop', "Workshop")]
+
 event_settings = {
     'drop-in': {
         'event_type': 'Drop-In Class',

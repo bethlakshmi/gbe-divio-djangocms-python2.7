@@ -25,14 +25,12 @@ from gbe.functions import (
     validate_perms,
 )
 from scheduler.idd import get_occurrences
-from gbe.scheduling.forms import (
-    HiddenSelectEventForm,
-    SelectEventForm,
-)
+from gbe.scheduling.forms import SelectEventForm
 from gbetext import (
     calendar_for_event,
     calendar_type,
 )
+import string
 
 
 class ManageEventsView(View):
@@ -41,7 +39,6 @@ class ManageEventsView(View):
 
     def groundwork(self, request, args, kwargs):
         validate_perms(request, ('Scheduling Mavens', 'Admins'))
-        context = {}
         self.conference = None
         conference_set = conference_list().order_by('-conference_slug')
 
@@ -65,23 +62,12 @@ class ManageEventsView(View):
             'conference_slugs': [
                 conf.conference_slug for conf in conference_set],
             'selection_form': select_form,
-            'other_forms': [],
+            'view_title': "Events",
         }
         if 'new' in list(request.GET.keys()):
             context['success_occurrences'] = eval(request.GET['new'])
         if 'alt_id' in list(request.GET.keys()):
             context['alt_id'] = int(request.GET['alt_id'])
-        for conf in conference_set:
-            if self.conference != conf:
-                hidden_form = HiddenSelectEventForm(
-                    request.GET,
-                    prefix=conf.conference_slug)
-                conf_day_list = []
-                for day in conf.conferenceday_set.all():
-                    conf_day_list += [(day.pk,
-                                       day.day.strftime(GBE_DATE_FORMAT))]
-                hidden_form.fields['day'].choices = conf_day_list
-                context['other_forms'] += [hidden_form]
         return context
 
     def build_occurrence_display(self, occurrences):
@@ -142,28 +128,47 @@ class ManageEventsView(View):
     def get_filtered_occurrences(self, request, select_form):
         occurrences = []
         label_set = [[self.conference.conference_slug]]
+        event_styles = []
+        day = None
 
-        if len(select_form.cleaned_data['calendar_type']) > 0:
-            cal_types = []
-            for cal_type in select_form.cleaned_data['calendar_type']:
-                cal_types += [calendar_type[int(cal_type)]]
-            label_set += [cal_types]
-        if len(select_form.cleaned_data['staff_area']) > 0:
-            staff_areas = []
-            for staff_area in select_form.cleaned_data['staff_area']:
-                staff_areas += [staff_area.slug]
-            label_set += [staff_areas]
-        if len(select_form.cleaned_data['day']) > 0:
-            for day_id in select_form.cleaned_data['day']:
-                day = ConferenceDay.objects.get(pk=day_id)
-                response = get_occurrences(label_sets=label_set,
-                                           day=day.day)
-                occurrences += response.occurrences
-        else:
-            response = get_occurrences(
-                label_sets=label_set)
+        if select_form.is_valid():
+            if len(select_form.cleaned_data['calendar_type']) > 0:
+                cal_types = []
+                for cal_type in select_form.cleaned_data['calendar_type']:
+                    cal_types += [calendar_type[int(cal_type)]]
+                label_set += [cal_types]
+                select_form.fields['calendar_type'].label = (
+                    '<b>%s</b>' % ', '.join(cal_types))
+            if len(select_form.cleaned_data['event_style']) > 0:
+                for event_style in select_form.cleaned_data['event_style']:
+                    event_styles += [event_style]
+                select_form.fields['event_style'].label = (
+                    '<b>%s</b>' % ', '.join(event_styles))
+            if len(select_form.cleaned_data['staff_area']) > 0:
+                staff_areas = []
+                staff_area_labels = []
+
+                for staff_area in select_form.cleaned_data['staff_area']:
+                    staff_areas += [staff_area.slug]
+                    staff_area_labels += [staff_area.title]
+                label_set += [staff_areas]
+                select_form.fields['staff_area'].label = (
+                    '<b>%s</b>' % ', '.join(staff_area_labels))
+            if len(select_form.cleaned_data['day']) > 0:
+                days = []
+                for day_id in select_form.cleaned_data['day']:
+                    day = ConferenceDay.objects.get(pk=day_id)
+                    response = get_occurrences(label_sets=label_set,
+                                               event_styles=event_styles,
+                                               day=day.day)
+                    days += [str(day)]
+                    occurrences += response.occurrences
+                select_form.fields['day'].label = '<b>%s</b>' % ', '.join(days)
+
+        if day is None:
+            response = get_occurrences(label_sets=label_set,
+                                       event_styles=event_styles)
             occurrences += response.occurrences
-
         return self.build_occurrence_display(occurrences)
 
     @never_cache
@@ -171,26 +176,21 @@ class ManageEventsView(View):
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
 
-        if context['selection_form'].is_valid() and (
-                len(context['selection_form'].cleaned_data['day']) > 0 or len(
-                    context['selection_form'].cleaned_data[
-                        'calendar_type']) > 0 or len(
-                    context['selection_form'].cleaned_data['staff_area']) > 0):
-            context['occurrences'] = self.get_filtered_occurrences(
-                request,
-                context['selection_form'])
-            context['columns'] = [
-                'Title',
-                'Parent',
-                'Area',
-                'Location',
-                'Date/Time',
-                'Duration',
-                'Type',
-                'Current #',
-                'Max #',
-                'Action']
-            context['order'] = 4
+        context['occurrences'] = self.get_filtered_occurrences(
+            request,
+            context['selection_form'])
+        context['columns'] = [
+            'Title',
+            'Parent',
+            'Area',
+            'Location',
+            'Date/Time',
+            'Duration',
+            'Type',
+            'Current #',
+            'Max #',
+            'Action']
+        context['order'] = 4
         return render(request, self.template, context)
 
     @method_decorator(login_required)
