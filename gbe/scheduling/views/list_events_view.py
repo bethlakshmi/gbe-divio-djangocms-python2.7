@@ -7,6 +7,7 @@ from django.urls import reverse
 from gbe.models import (
     Class,
     Performer,
+    StaffArea,
     UserMessage,
 )
 from gbe.forms import InvolvedProfileForm
@@ -43,6 +44,8 @@ class ListEventsView(View):
 
     def groundwork(self, request, args, kwargs):
         context = {}
+        staff_areas = None
+        link_to_vol_cal = False
 
         if "event_type" in kwargs:
             self.event_type = kwargs['event_type']
@@ -54,6 +57,12 @@ class ListEventsView(View):
                 self.request.GET.get('conference', None))
         else:
             self.conference = get_current_conference()
+
+        if self.event_type == "Volunteer":
+            staff_areas = StaffArea.objects.filter(conference=self.conference)
+            if self.conference.status != "completed":
+                link_to_vol_cal = True
+
         if not self.conference:
             raise Http404
 
@@ -72,6 +81,8 @@ class ListEventsView(View):
         context = {
             'conf_slug': self.conference.conference_slug,
             'conference_slugs': conference_slugs(),
+            'staff_areas': staff_areas,
+            'show_vol_cal_link': link_to_vol_cal,
             'title': list_titles.get(self.event_type.lower(), ""),
             'view_header_text': list_text.get(self.event_type.lower(), ""),
             'pending_note': pending_instructions[0].description,
