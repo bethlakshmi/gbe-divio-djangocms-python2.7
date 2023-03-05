@@ -86,6 +86,10 @@ class RoomAdmin(admin.ModelAdmin):
 
 
 class MessageAdmin(admin.ModelAdmin):
+    search_fields = ('view',
+                     'code',
+                     'summary',
+                     'description')
     list_display = ('view',
                     'code',
                     'summary',
