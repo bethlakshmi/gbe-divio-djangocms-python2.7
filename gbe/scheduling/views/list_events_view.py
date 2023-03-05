@@ -78,13 +78,19 @@ class ListEventsView(View):
             defaults={
                 'summary': "Login or setup account message",
                 'description': login_please})
+        header_text = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="%s_INSTRUCTIONS" % self.event_type.upper(),
+                defaults={
+                    'summary': "Text on top of event list pages",
+                    'description': list_text.get(self.event_type.lower(), "")})
         context = {
             'conf_slug': self.conference.conference_slug,
             'conference_slugs': conference_slugs(),
             'staff_areas': staff_areas,
             'show_vol_cal_link': link_to_vol_cal,
             'title': list_titles.get(self.event_type.lower(), ""),
-            'view_header_text': list_text.get(self.event_type.lower(), ""),
+            'view_header_text': header_text[0].description,
             'pending_note': pending_instructions[0].description,
             'login_please': login_please_msg[0].description,
         }
