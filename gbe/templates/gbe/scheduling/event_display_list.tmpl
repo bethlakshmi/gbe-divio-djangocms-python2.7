@@ -13,6 +13,20 @@
      {{view_header_text | safe}}
    </div>
    {% include "conference_list.tmpl" %}<br><br>
+   <div>
+   {% if filter_form %}
+   <form class="form-inline" action="" method="get" enctype="multipart/form-data">
+    {% csrf_token %}
+    <ul class="list-group list-group-flush"><li class="list-group-item gbe-bg-light">
+    <div class="row email-select">
+    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=filter_form.staff_area %}
+    <div class="form-group col-md-1 col-12">
+      <button class="btn gbe-btn-primary" type="submit" name="filter" value="Filter">Filter</button>
+    </div></div>
+    </li></ul>
+   </form>
+   {% endif %}
+   </div>
 </div></div>
 <div class="row"><div class="col-12">
    {% for bid in unscheduled %}

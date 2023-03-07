@@ -10,6 +10,7 @@ from gbe.models import (
     StaffArea,
     UserMessage,
 )
+from gbe.scheduling.forms import DisplayEventForm
 from gbe.forms import InvolvedProfileForm
 from gbe.functions import (
     get_current_conference,
@@ -59,10 +60,9 @@ class ListEventsView(View):
             self.conference = get_current_conference()
 
         if self.event_type == "Volunteer":
-            staff_areas = StaffArea.objects.filter(conference=self.conference)
-            if self.conference.status != "completed":
-                link_to_vol_cal = True
-
+            form = DisplayEventForm(request.GET)
+            form.fields['staff_area'].queryset = StaffArea.objects.filter(
+                conference=self.conference).order_by("slug")
         if not self.conference:
             raise Http404
 
@@ -87,8 +87,7 @@ class ListEventsView(View):
         context = {
             'conf_slug': self.conference.conference_slug,
             'conference_slugs': conference_slugs(),
-            'staff_areas': staff_areas,
-            'show_vol_cal_link': link_to_vol_cal,
+            'filter_form': form,
             'title': list_titles.get(self.event_type.lower(), ""),
             'view_header_text': header_text[0].description,
             'pending_note': pending_instructions[0].description,
