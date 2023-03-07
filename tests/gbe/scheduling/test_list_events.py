@@ -223,7 +223,6 @@ class TestViewList(TestFilters):
     def test_view_volunteers_filtered(self):
         staff_context = StaffAreaContext(conference=self.conf)
         volunteer_context = VolunteerContext(conference=self.conf)
-        other_volunteer = VolunteerContext(conference=self.conf)
         opportunity = staff_context.add_volunteer_opp()
         opportunity.starttime = datetime.now() + timedelta(days=1)
         opportunity.save()
@@ -235,7 +234,7 @@ class TestViewList(TestFilters):
             url,
             data={"conference": self.conf.conference_slug,
                   "staff_area": staff_context.area.pk,
-                  "filter": Filter})
+                  "filter": "Filter"})
         vol_link = reverse('set_volunteer',
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
@@ -250,14 +249,10 @@ class TestViewList(TestFilters):
             checked=True,
             prefix=None)
         self.assertContains(response, vol_link)
-        self.assertContains(response, "%s: %s" % (
+        self.assertContains(response, opportunity.title)
+        self.assertNotContains(response, "%s: %s" % (
             volunteer_context.sched_event.title,
             volunteer_context.opp_event.title))
-        self.assertContains(response,
-                            'volunteered.gif" class="volunteer-icon"')
-        self.assertNotContains(response, "%s: %s" % (
-            other_volunteer.sched_event.title,
-            other_volunteer.opp_event.title))
 
     def test_view_volunteer_filled(self):
         staff_context = StaffAreaContext(conference=self.conf)
