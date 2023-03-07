@@ -45,8 +45,8 @@ class ListEventsView(View):
 
     def groundwork(self, request, args, kwargs):
         context = {}
-        staff_areas = None
         link_to_vol_cal = False
+        form = None
 
         if "event_type" in kwargs:
             self.event_type = kwargs['event_type']
@@ -160,7 +160,8 @@ class ListEventsView(View):
                              'last_name': request.user.last_name})
 
         label_set = [[self.conference.conference_slug]]
-        if context['filter_form'].is_valid() and (
+        if context['filter_form'] is not None and (
+                context['filter_form'].is_valid()) and (
                 len(context['filter_form'].cleaned_data['staff_area']) > 0):
             staff_areas = []
             for staff_area in context['filter_form'].cleaned_data['staff_area']:
