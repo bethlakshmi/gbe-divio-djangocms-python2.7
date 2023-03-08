@@ -737,8 +737,10 @@ link_event_labels = {
 link_event_help_text = {
     'display_icon': '''What is shown on the 'I Want to Buy Tickets'
         page.  Description is not shown there, it's pulled from BPT but not
-        shown.  Display Icon must come from http://simplelineicons.com/
-        -- NOTE:  Avoid the "."'''
+        shown.  Display Icon must come from http://simplelineicons.com/ or
+        https://icons.getbootstrap.com/ (version 1.10.2)
+        -- NOTE:  use only the icon class, for example
+        <i class="JUST USE THIS STUFF"></i>'''
 }
 ticketing_event_labels = {
     'act_submission_event': 'Act Submission Fee?:',
@@ -761,7 +763,8 @@ ticketing_event_help_text = {
     'include_conference': 'All Classes, Panels and Workshops are included.',
     'include_most': ('Everything except Master Classes and Volunteer '
                      'Opportunities'),
-    'ticket_style': 'Special instructions for Reg Desk'
+    'ticket_style': 'Special instructions for Reg Desk',
+    'display_icon': link_event_help_text['display_icon'],
 }
 
 donation_labels = {'donation': 'Fee (pay what you will)'}

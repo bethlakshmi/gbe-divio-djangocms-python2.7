@@ -1,5 +1,6 @@
 from django.contrib import admin
 from ticketing.models import *
+from gbe_forms_text import link_event_help_text
 
 
 class BrownPaperSettingsAdmin(admin.ModelAdmin):
@@ -112,12 +113,7 @@ class TicketingEventsAdmin(admin.ModelAdmin):
         }),
         ("Display Text", {
             'fields': ('display_icon', 'title', 'description'),
-            'description': '''What is shown on the 'I Want to Buy Tickets'
-                page.  Description is not shown there, it's pulled from
-                ticket source but not shown.  Display Icon must come from
-                https://simplelineicons.github.io/ or
-                https://icons.getbootstrap.com/ -- NOTE:  Use only the
-                classes, the i tag is already in the code.''',
+            'description': link_event_help_text['display_icon'],
         }),
     )
 
