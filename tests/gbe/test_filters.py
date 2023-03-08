@@ -17,7 +17,7 @@ class TestFilters(TestCase):
 
         if prefix is not None:
             checkbox = (
-                '<input type="checkbox" name="%s-%s" value="%s" ' + \
+                '<input type="checkbox" name="%s-%s" value="%s" ' +
                 'class="form-check-input" id="id_%s-%s_%s" %s/>%s') % (
                 prefix,
                 field_name,
@@ -29,7 +29,7 @@ class TestFilters(TestCase):
                 label)
         else:
             checkbox = (
-                '<input type="checkbox" name="%s" value="%s" ' + \
+                '<input type="checkbox" name="%s" value="%s" ' +
                 'class="form-check-input" id="id_%s_%s" %s/>%s') % (
                 field_name,
                 value,

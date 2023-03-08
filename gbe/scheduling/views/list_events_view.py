@@ -164,9 +164,10 @@ class ListEventsView(View):
                 context['filter_form'].is_valid()) and (
                 len(context['filter_form'].cleaned_data['staff_area']) > 0):
             staff_areas = []
-            for staff_area in context['filter_form'].cleaned_data['staff_area']:
+            for staff_area in context['filter_form'].cleaned_data[
+                    'staff_area']:
                 staff_areas += [staff_area.slug]
-            label_set +=[staff_areas]
+            label_set += [staff_areas]
         response = get_occurrences(
             event_styles=self.get_styles(),
             label_sets=label_set)
