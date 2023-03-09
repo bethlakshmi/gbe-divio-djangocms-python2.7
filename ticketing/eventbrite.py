@@ -239,7 +239,7 @@ def process_eb_purchases():
         continuation_token = ""
         while has_more_items:
             import_list = eventbrite.get(
-                ('/events/%s/attendees/?status=attending%s') % (
+                ('/events/%s/attendees/?%s') % (
                     event.event_id,
                     continuation_token))
             if 'attendees' not in import_list.keys():
@@ -254,9 +254,18 @@ def process_eb_purchases():
             else:
                 has_more_items = import_list['pagination']['has_more_items']
                 for attendee in import_list['attendees']:
-                    save_msg, is_success = eb_save_orders_to_database(
-                        event.event_id,
-                        attendee)
+                    if attendee['status'].lower() == "attending":
+                        save_msg, is_success = eb_save_orders_to_database(
+                            event.event_id,
+                            attendee)
+                    elif attendee['status'].lower() == "not attending":
+                        save_msg, is_success = eb_remove_orders_in_database(
+                            event.event_id,
+                            attendee)
+                    else:
+                        print(attendee)
+                        is_success = True
+
                     if not is_success:
                         msgs += [(save_msg, False)]
 
@@ -269,6 +278,7 @@ def process_eb_purchases():
                 if has_more_items:
                     continuation_token = "&continuation=%s" % (
                         import_list['pagination']['continuation'])
+
     success_msg = UserMessage.objects.get_or_create(
             view="ViewTransactions",
             code="IMPORT_EB_MESSAGE",
@@ -285,6 +295,23 @@ def process_eb_purchases():
     msgs += [(msg, True)]
     return msgs
 
+
+def eb_remove_orders_in_database(event_id, attendee):
+    '''
+    Function takes an object from the eventbrite order list call and
+    REMOVES the transaction object, because it's a refund/cancellation.
+
+    event_id - the ID of the event associated to this order
+    order - the order object from the EB call
+    Returns:  the Transaction object.  May throw an exception.
+    '''
+    attendee_count = 0
+    if Transaction.objects.filter(reference=attendee['id']).exists():
+        trans = Transaction.objects.filter(reference=attendee['id'])
+        trans.delete()
+        attendee_count = attendee_count + 1
+
+    return attendee_count, True
 
 def eb_save_orders_to_database(event_id, attendee):
     '''
