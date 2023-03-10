@@ -254,17 +254,22 @@ def process_eb_purchases():
             else:
                 has_more_items = import_list['pagination']['has_more_items']
                 for attendee in import_list['attendees']:
-                    if attendee['status'].lower() == "attending":
-                        save_msg, is_success = eb_save_orders_to_database(
-                            event.event_id,
-                            attendee)
-                    elif attendee['status'].lower() == "not attending":
+                    is_success = False
+
+                    if attendee['status'].lower() == "not attending":
                         save_msg, is_success = eb_remove_orders_in_database(
                             event.event_id,
                             attendee)
+                    elif attendee['status'].lower() in ("attending",
+                                                      "checked in",
+                                                      "guests attended",
+                                                      "guests attending"):
+                        save_msg, is_success = eb_save_orders_to_database(
+                            event.event_id,
+                            attendee)
                     else:
-                        print(attendee)
-                        is_success = True
+                        save_msg = "Unknown Status - %s, did not save it" % (
+                            attendee['status'])
 
                     if not is_success:
                         msgs += [(save_msg, False)]
@@ -336,27 +341,8 @@ def eb_save_orders_to_database(event_id, attendee):
             ticket_id=attendee['ticket_class_id'])
         trans.amount = get_cost(attendee['costs']['base_price'])
 
-        # Build a purchaser object.
-        if Purchaser.objects.filter(
-                email=attendee['profile']['email']).exists():
-            purchaser = Purchaser.objects.filter(
-                email=attendee['profile']['email']).order_by('-pk').first()
-        else:
-            purchaser = Purchaser(
-                email=attendee['profile']['email'],
-                first_name=attendee['profile']['first_name'],
-                last_name=attendee['profile']['last_name'])
-
-            # assign to a user or limbo
-            matched_user = attempt_match_purchaser_to_user(purchaser)
-            if matched_user is None:
-                purchaser.matched_to_user = User.objects.get(username='limbo')
-            else:
-                purchaser.matched_to_user = matched_user
-            purchaser.save()
-
         # Build out the remainder of the transaction.
-        trans.purchaser = purchaser
+        trans.purchaser = eb_setup_purchaser(attendee)
         trans.order_date = pytz.utc.localize(
             datetime.strptime(
                 attendee['created'],
@@ -368,4 +354,32 @@ def eb_save_orders_to_database(event_id, attendee):
 
         trans.save()
         attendee_count = attendee_count + 1
+    else:
+        trans = Transaction.objects.get(reference=attendee['id'])
+        # check if ticket given to someone else
+        if trans.purchaser.email != attendee['profile']['email']:
+            trans.purchaser = eb_setup_purchaser(attendee)
+            trans.save()
+            attendee_count = attendee_count + 1
     return attendee_count, True
+
+def eb_setup_purchaser(attendee):
+    purchaser = None
+    if Purchaser.objects.filter(
+            email=attendee['profile']['email']).exists():
+        purchaser = Purchaser.objects.filter(
+            email=attendee['profile']['email']).order_by('-pk').first()
+    else:
+        purchaser = Purchaser(
+            email=attendee['profile']['email'],
+            first_name=attendee['profile']['first_name'],
+            last_name=attendee['profile']['last_name'])
+
+        # assign to a user or limbo
+        matched_user = attempt_match_purchaser_to_user(purchaser)
+        if matched_user is None:
+            purchaser.matched_to_user = User.objects.get(username='limbo')
+        else:
+            purchaser.matched_to_user = matched_user
+        purchaser.save()
+    return purchaser
