@@ -270,7 +270,6 @@ class TestViewList(TestFilters):
             volunteer_context.sched_event.title,
             volunteer_context.opp_event.title))
 
-        print(response.content)
         self.assertContains(
             response, 
             "Select a valid choice. %d is not one of the available choices." %
