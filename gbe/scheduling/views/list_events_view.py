@@ -45,7 +45,6 @@ class ListEventsView(View):
 
     def groundwork(self, request, args, kwargs):
         context = {}
-        link_to_vol_cal = False
         form = None
 
         if "event_type" in kwargs:
