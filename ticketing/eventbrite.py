@@ -261,9 +261,9 @@ def process_eb_purchases():
                             event.event_id,
                             attendee)
                     elif attendee['status'].lower() in ("attending",
-                                                      "checked in",
-                                                      "guests attended",
-                                                      "guests attending"):
+                                                        "checked in",
+                                                        "guests attended",
+                                                        "guests attending"):
                         save_msg, is_success = eb_save_orders_to_database(
                             event.event_id,
                             attendee)
@@ -318,6 +318,7 @@ def eb_remove_orders_in_database(event_id, attendee):
 
     return attendee_count, True
 
+
 def eb_save_orders_to_database(event_id, attendee):
     '''
     Function takes an object from the eventbrite order list call and
@@ -362,6 +363,7 @@ def eb_save_orders_to_database(event_id, attendee):
             trans.save()
             attendee_count = attendee_count + 1
     return attendee_count, True
+
 
 def eb_setup_purchaser(attendee):
     purchaser = None

@@ -145,8 +145,8 @@ class TestTransactions(TestCase):
         attendees = order_dict["attendees"][0]
         transaction = TransactionFactory(
             ticket_item=ticket,
-            reference = attendees['id'],
-            payment_source = 'Eventbrite')
+            reference=attendees['id'],
+            payment_source='Eventbrite')
         orig_purchaser = transaction.purchaser
         m_eventbrite.return_value = order_dict
 
@@ -178,8 +178,8 @@ class TestTransactions(TestCase):
         attendees = order_dict["attendees"][0]
         transaction = TransactionFactory(
             ticket_item=ticket,
-            reference = attendees['id'],
-            payment_source = 'Eventbrite')
+            reference=attendees['id'],
+            payment_source='Eventbrite')
         refund = order_dict
         refund["attendees"][0]["status"] = "Not Attending"
         m_eventbrite.return_value = refund
