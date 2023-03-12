@@ -158,7 +158,7 @@ def load_events(eventbrite, organization_id, organizer_id):
                         title=event['name']['text'],
                         description=event['description']['html'],
                         conference=conference,
-                       source=2)
+                        source=2)
                     new_event.save()
                     event_count = event_count + 1
         if has_more_items:
