@@ -36,9 +36,9 @@ class TestManageEventList(TestCase):
     view_name = 'manage_event_list'
     conf_tab = '<a class="dropdown-item" href="%s?">%s</a>'
     active_conf = (
-        '<a class="btn btn-light dropdown-toggle" href="#" role="button" ' +
-        'id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" ' +
-        'aria-expanded="false">%s</a>')
+        '<a class="btn btn-light btn-sm dropdown-toggle" href="#" ' +
+        'role="button" id="dropdownMenuLink" data-toggle="dropdown" ' +
+        'aria-haspopup="true" aria-expanded="false">%s</a>')
 
     def setUp(self):
         self.client = Client()

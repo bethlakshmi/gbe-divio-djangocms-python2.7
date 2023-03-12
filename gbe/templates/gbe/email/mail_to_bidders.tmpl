@@ -10,23 +10,23 @@
     <ul class="list-group list-group-flush"><li class="list-group-item gbe-bg-light">
       <h3 class="card-subtitle mb-2 gbe-text-muted">Include</h3><br>
     <div class="row email-select">
-    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.conference %}
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.conference %}
     </div>
     <div class="row email-select">
-    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.bid_type %}
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.bid_type %}
     </div>
     <div class="row email-select">
-    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.state %}
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.state %}
     </div></li><li class="list-group-item gbe-bg-light">
       <h3 class="card-subtitle mb-2 gbe-text-muted">Exclude</h3><br>
     <div class="row email-select">
-    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.x_conference %}
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_conference %}
     </div>
     <div class="row email-select">
-    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.x_bid_type %}
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_bid_type %}
     </div>
     <div class="row email-select">
-    {% include "gbe/email/filter_checkbox_horizontal.tmpl" with field=selection_form.x_state %}</div></li></ul>
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_state %}</div></li></ul>
     <div class="row email-select justify-content-end mt-3">
       <button class="btn gbe-btn-primary" type="submit" name="filter" value="Filter">Filter</button>
     </div>

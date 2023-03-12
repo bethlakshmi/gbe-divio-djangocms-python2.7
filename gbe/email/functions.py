@@ -127,6 +127,7 @@ def send_bid_state_change_mail(
     site = Site.objects.get_current()
     context = {
         'name': badge_name,
+        'badge_name': badge_name,
         'bid_type': bid_type,
         'bid': bid,
         'status': acceptance_states[status][1],
