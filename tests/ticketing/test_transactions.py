@@ -198,6 +198,36 @@ class TestTransactions(TestCase):
         order_dict["attendees"][0]["status"] = "Attending"
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_error(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory(active_sync=False)
+        EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        limbo = get_limbo()
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+        attendees = order_dict["attendees"][0]
+        transaction = TransactionFactory(
+            ticket_item=ticket,
+            reference=attendees['id'],
+            payment_source='Eventbrite')
+        refund = order_dict
+        refund["attendees"][0]["status"] = "Weird Status"
+        m_eventbrite.return_value = refund
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+
+        self.assertFalse(Transaction.objects.filter(
+            reference=order_dict["attendees"][0]['id']).exists())
+        self.assertContains(
+            response,
+            "Unknown Status - %s, did not save it" % (
+                refund["attendees"][0]["status"]))
+        order_dict["attendees"][0]["status"] = "Attending"
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_pagination(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
