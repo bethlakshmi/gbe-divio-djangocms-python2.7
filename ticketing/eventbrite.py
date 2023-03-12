@@ -134,7 +134,7 @@ def load_tickets(eventbrite):
     return ti_count, msg
 
 
-def load_events(eventbrite, organization_id):
+def load_events(eventbrite, organization_id, organizer_id):
     from gbe.functions import get_current_conference
     has_more_items = True
     continuation_token = ""
@@ -149,16 +149,18 @@ def load_events(eventbrite, organization_id):
         has_more_items = import_item_list['pagination']['has_more_items']
         conference = get_current_conference()
         for event in import_item_list['events']:
-            if not TicketingEvents.objects.filter(
-                    event_id=event['id']).exists():
-                new_event = TicketingEvents(
-                    event_id=event['id'],
-                    title=event['name']['text'],
-                    description=event['description']['html'],
-                    conference=conference,
-                    source=2)
-                new_event.save()
-                event_count = event_count + 1
+            if organizer_id is None or len(organizer_id) == 0 or (
+                    event["organizer_id"] == organizer_id):
+                if not TicketingEvents.objects.filter(
+                        event_id=event['id']).exists():
+                    new_event = TicketingEvents(
+                        event_id=event['id'],
+                        title=event['name']['text'],
+                        description=event['description']['html'],
+                        conference=conference,
+                       source=2)
+                    new_event.save()
+                    event_count = event_count + 1
         if has_more_items:
             continuation_token = "&continuation=%s" % (
                 import_item_list['pagination']['continuation'])
@@ -178,7 +180,9 @@ def import_eb_ticket_items():
     proceed, return_tuple, eventbrite, settings = setup_eb_api()
     if not proceed:
         return return_tuple
-    event_count, msg = load_events(eventbrite, settings.organization_id)
+    event_count, msg = load_events(eventbrite,
+                                   settings.organization_id,
+                                   settings.organizer_id)
     if len(msg) > 0:
         status = SyncStatus(is_success=False,
                             error_msg=msg,

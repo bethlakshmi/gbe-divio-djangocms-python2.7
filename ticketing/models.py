@@ -31,6 +31,7 @@ class EventbriteSettings(models.Model):
     '''
     oauth = models.CharField(max_length=128)
     organization_id = models.CharField(max_length=128, blank=True, null=True)
+    organizer_id = models.CharField(max_length=128, blank=True, null=True)
     system = models.IntegerField(choices=system_options, unique=True)
     active_sync = models.BooleanField()
 
