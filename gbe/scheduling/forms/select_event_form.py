@@ -2,6 +2,7 @@ from django.forms import (
     Form,
     ModelMultipleChoiceField,
     MultipleChoiceField,
+    MultipleHiddenInput,
 )
 from django.forms.widgets import CheckboxSelectMultiple
 from gbetext import calendar_type as calendar_type_options

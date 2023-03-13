@@ -7,10 +7,8 @@ from django.urls import reverse
 from gbe.models import (
     Class,
     Performer,
-    StaffArea,
     UserMessage,
 )
-from gbe.scheduling.forms import DisplayEventForm
 from gbe.forms import InvolvedProfileForm
 from gbe.functions import (
     get_current_conference,
@@ -45,7 +43,6 @@ class ListEventsView(View):
 
     def groundwork(self, request, args, kwargs):
         context = {}
-        form = None
 
         if "event_type" in kwargs:
             self.event_type = kwargs['event_type']
@@ -57,11 +54,6 @@ class ListEventsView(View):
                 self.request.GET.get('conference', None))
         else:
             self.conference = get_current_conference()
-
-        if self.event_type == "Volunteer":
-            form = DisplayEventForm(request.GET)
-            form.fields['staff_area'].queryset = StaffArea.objects.filter(
-                conference=self.conference).order_by("slug")
         if not self.conference:
             raise Http404
 
@@ -86,7 +78,6 @@ class ListEventsView(View):
         context = {
             'conf_slug': self.conference.conference_slug,
             'conference_slugs': conference_slugs(),
-            'filter_form': form,
             'title': list_titles.get(self.event_type.lower(), ""),
             'view_header_text': header_text[0].description,
             'pending_note': pending_instructions[0].description,
@@ -158,21 +149,11 @@ class ListEventsView(View):
                     initial={'first_name': request.user.first_name,
                              'last_name': request.user.last_name})
 
-        label_set = [[self.conference.conference_slug]]
-        if context['filter_form'] is not None and (
-                context['filter_form'].is_valid()) and (
-                len(context['filter_form'].cleaned_data['staff_area']) > 0):
-            staff_areas = []
-            for staff_area in context['filter_form'].cleaned_data[
-                    'staff_area']:
-                staff_areas += [staff_area.slug]
-            label_set += [staff_areas]
-        response = get_occurrences(
-            event_styles=self.get_styles(),
-            label_sets=label_set)
-
         scheduled_events = []
         presenters = []
+        response = get_occurrences(
+            event_styles=self.get_styles(),
+            labels=[self.conference.conference_slug])
         for occurrence in response.occurrences:
             (favorite_link,
              volunteer_link,

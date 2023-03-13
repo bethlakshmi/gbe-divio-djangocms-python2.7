@@ -13,20 +13,6 @@
      {{view_header_text | safe}}
    </div>
    {% include "conference_list.tmpl" %}<br><br>
-   {% if filter_form %}
-   <div>
-   <form class="form-inline" action="" method="get" enctype="multipart/form-data">
-    {% if conf_slug %}<input type="hidden" name="conference" value="{{conf_slug}}">{% endif %}
-    <ul class="list-group list-group-flush"><li class="list-group-item gbe-bg-light">
-    <div class="row email-select">
-    {% include "filter_checkbox_horizontal.tmpl" with field=filter_form.staff_area %}
-    <div class="form-group col-md-1 col-12">
-      <button class="btn gbe-btn-primary" type="submit" name="filter" value="Filter">Filter</button>
-    </div></div>
-    </li></ul>
-   </form>
-   </div>
-   {% endif %}
 </div></div>
 <div class="row"><div class="col-12">
    {% for bid in unscheduled %}
@@ -68,9 +54,9 @@
     <h2 class="card-title">
       <a href='{{event.detail}}' class="gbe-panel-link">{% if event.occurrence.parent %}{{ event.occurrence.parent.title | safe}}: {% endif %}{{ event.occurrence.title }}</a>
       <div class="pull-right">
-        <a href='{{event.detail}}' class="detail_link" title="More information">
+	<a href='{{event.detail}}' class="detail_link" title="More information">
           <i class="fa fa-info-circle fa-lg" aria-hidden="true"></i>
-         </a></div>
+      </a></div>
     </h2>
   </div>
   <div class="card-body">

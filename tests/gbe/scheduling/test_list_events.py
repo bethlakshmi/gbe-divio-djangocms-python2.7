@@ -24,10 +24,9 @@ from datetime import (
     timedelta,
 )
 from gbetext import pending_note
-from tests.gbe.test_filters import TestFilters
 
 
-class TestViewList(TestFilters):
+class TestViewList(TestCase):
 
     def setUp(self):
         clear_conferences()
@@ -200,14 +199,6 @@ class TestViewList(TestFilters):
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
         self.assertContains(response, opportunity.title)
-        self.assert_checkbox(
-            response,
-            "staff_area",
-            0,
-            staff_context.area.pk,
-            staff_context.area.title,
-            checked=False,
-            prefix=None)
         self.assertContains(response, vol_link)
         self.assertContains(response, "%s: %s" % (
             volunteer_context.sched_event.title,
@@ -219,62 +210,6 @@ class TestViewList(TestFilters):
         self.assertNotContains(response, 'fa-star-o')
         self.assertNotContains(response,
                                reverse('register', urlconf="gbe.urls"))
-
-    def test_view_volunteers_filtered(self):
-        staff_context = StaffAreaContext(conference=self.conf)
-        volunteer_context = VolunteerContext(conference=self.conf)
-        opportunity = staff_context.add_volunteer_opp()
-        opportunity.starttime = datetime.now() + timedelta(days=1)
-        opportunity.save()
-        login_as(ProfileFactory(), self)
-        url = reverse("event_list",
-                      urlconf="gbe.scheduling.urls",
-                      args=["Volunteer"])
-        response = self.client.get(
-            url,
-            data={"conference": self.conf.conference_slug,
-                  "staff_area": staff_context.area.pk,
-                  "filter": "Filter"})
-        vol_link = reverse('set_volunteer',
-                           args=[opportunity.pk, 'on'],
-                           urlconf='gbe.scheduling.urls')
-        self.assertContains(response, opportunity.title)
-        self.assert_checkbox(
-            response,
-            "staff_area",
-            0,
-            staff_context.area.pk,
-            staff_context.area.title,
-            checked=True,
-            prefix=None)
-        self.assertContains(response, vol_link)
-        self.assertContains(response, opportunity.title)
-        self.assertNotContains(response, "%s: %s" % (
-            volunteer_context.sched_event.title,
-            volunteer_context.opp_event.title))
-
-    def test_view_volunteers_filter_error(self):
-        staff_context = StaffAreaContext()
-        volunteer_context = VolunteerContext(conference=self.conf)
-
-        login_as(ProfileFactory(), self)
-        url = reverse("event_list",
-                      urlconf="gbe.scheduling.urls",
-                      args=["Volunteer"])
-        response = self.client.get(
-            url,
-            data={"conference": self.conf.conference_slug,
-                  "staff_area": staff_context.area.pk,
-                  "filter": "Filter"})
-        self.assertContains(response, "%s: %s" % (
-            volunteer_context.sched_event.title,
-            volunteer_context.opp_event.title))
-
-        self.assertContains(
-            response, 
-            "Select a valid choice. %d is not one of the available choices." %
-            staff_context.area.pk)
-
 
     def test_view_volunteer_filled(self):
         staff_context = StaffAreaContext(conference=self.conf)
