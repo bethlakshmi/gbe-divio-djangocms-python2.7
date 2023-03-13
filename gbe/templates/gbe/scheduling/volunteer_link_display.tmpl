@@ -2,6 +2,7 @@
       <a href="#" data-toggle="modal" data-target="#Modal{{occurrence.pk}}" data-backdrop="true"
          class="detail_link cal-favorite" title="{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}">
        {% include "gbe/scheduling/volunteer_icon.tmpl" with occurrence=sched_event %}</a>
+      </a>
       <div class="modal" id="Modal{{occurrence.pk}}" role="dialog">
          <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content gbe-modal-content">
@@ -22,6 +23,7 @@
                   {% if complete_profile_form %}
                   <div class="pt-4">{% include "form_table.tmpl" with form=complete_profile_form %}</div>
                   {% endif %}
+                </div>
                 <div class="modal-footer gbe-modal-footer">
                     <input type="submit" value='{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}' name="submit_done" class="btn gbe-btn-primary">
                     <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
