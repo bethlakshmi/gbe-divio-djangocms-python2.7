@@ -29,10 +29,10 @@ from django.contrib.auth.models import User
 from gbe.models import Conference
 from gbetext import role_options
 from gbe_forms_text import role_option_privs
-from tests.gbe.test_filters import TestFilters
+from tests.gbe.email.test_mail_filters import TestMailFilters
 
 
-class TestMailToRoles(TestFilters):
+class TestMailToRoles(TestMailFilters):
     view_name = 'mail_to_roles'
     role_list = ['Interested',
                  'Moderator',

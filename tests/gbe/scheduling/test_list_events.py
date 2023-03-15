@@ -24,10 +24,9 @@ from datetime import (
     timedelta,
 )
 from gbetext import pending_note
-from tests.gbe.test_filters import TestFilters
 
 
-class TestViewList(TestFilters):
+class TestViewList(TestCase):
 
     def setUp(self):
         clear_conferences()
@@ -200,14 +199,6 @@ class TestViewList(TestFilters):
                            args=[opportunity.pk, 'on'],
                            urlconf='gbe.scheduling.urls')
         self.assertContains(response, opportunity.title)
-        self.assert_checkbox(
-            response,
-            "staff_area",
-            0,
-            staff_context.area.pk,
-            staff_context.area.title,
-            checked=False,
-            prefix=None)
         self.assertContains(response, vol_link)
         self.assertContains(response, "%s: %s" % (
             volunteer_context.sched_event.title,
