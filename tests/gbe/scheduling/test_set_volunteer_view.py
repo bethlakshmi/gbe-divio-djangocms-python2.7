@@ -237,6 +237,10 @@ class TestSetVolunteer(TestCase):
             'success',
             'Success',
             set_pending_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to awaiting approval",
+            outbox_size=2)
+        assert(self.volunteeropp.title in msg.body)
 
     def test_remove_pending_volunteer(self):
         self.volunteeropp.approval_needed = True
@@ -261,6 +265,10 @@ class TestSetVolunteer(TestCase):
             'success',
             'Success',
             unset_pending_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to Withdrawn",
+            outbox_size=2)
+        assert(self.volunteeropp.title in msg.body)
 
     def test_volunteer_conflict(self):
         self.privileged_profile = ProfileFactory()
