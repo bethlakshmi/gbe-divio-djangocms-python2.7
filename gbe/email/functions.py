@@ -173,6 +173,36 @@ def send_bid_state_change_mail(
         from_name=template.sender.from_name)
 
 
+def send_awaiting_approval_mail(
+        bid_type,
+        email,
+        badge_name,
+        occurrence):
+    site = Site.objects.get_current()
+    context = {
+        'name': badge_name,
+        'badge_name': badge_name,
+        'bid_type': "offer to volunteer",
+        'occurrence': occurrence,
+        'status': "awaiting approval",
+        'site': site.domain,
+        'site_name': site.name}
+    name = '%s %s' % (bid_type, "awaiting approval")
+    action = 'Your %s proposal has changed status to %s' % (
+        bid_type,
+        "awaiting approval")
+    template = get_or_create_template(
+        name,
+        "default_bid_status_change",
+        action)
+    return mail_send_gbe(
+        email,
+        template.sender.from_email,
+        template=name,
+        context=context,
+        from_name=template.sender.from_name)
+
+
 def send_schedule_update_mail(participant_type, profile):
     if profile.email_allowed('schedule_change_notifications'):
         name = '%s schedule update' % (participant_type.lower())
@@ -409,6 +439,8 @@ def get_user_email_templates(user):
                         'category': priv,
                         'default_base': "default_bid_status_change",
                         'default_subject': subject % (show.title), }]
+            elif priv != "volunteer" and state[1] == 'Awaiting Approval':
+                pass
             else:
                 template_set += [{
                     'name': "%s %s" % (priv, state[1].lower()),
