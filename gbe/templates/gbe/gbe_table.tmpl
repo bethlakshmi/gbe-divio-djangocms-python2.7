@@ -24,7 +24,7 @@
     {% csrf_token %}
     {% for field in filter_form.visible_fields %}
     <div class="row email-select">
-      {% include "gbe/email/filter_checkbox_horizontal.tmpl" %}
+      {% include "filter_checkbox_horizontal.tmpl" %}
     </div>
     <div>
     <input type="submit" class="btn gbe-btn-secondary float-right" name="filter" value="Filter Interest">

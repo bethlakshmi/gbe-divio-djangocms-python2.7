@@ -2,7 +2,6 @@
       <a href="#" data-toggle="modal" data-target="#Modal{{occurrence.pk}}" data-backdrop="true"
          class="detail_link cal-favorite" title="{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}">
        {% include "gbe/scheduling/volunteer_icon.tmpl" with occurrence=sched_event %}</a>
-      </a>
       <div class="modal" id="Modal{{occurrence.pk}}" role="dialog">
          <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content gbe-modal-content">
@@ -10,6 +9,8 @@
                   <h4 class="modal-title">Volunteer for {{occurrence.title}}</h4>
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                </div>
+               {% if user.is_authenticated %}
+               <form action="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">{% endif %}
                <div class="modal-body">
                   {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon-large" occurrence=sched_event %}
                   <b>Time:</b> {{ occurrence.start_time|date:"M j, Y, g:i A"}} - 
@@ -19,11 +20,12 @@
                     {{ pending_note}}
                   </div>{% endif %}
                {% if user.is_authenticated %}
-               <form action="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                  {% csrf_token %}
                   {% if complete_profile_form %}
                   <div class="pt-4">{% include "form_table.tmpl" with form=complete_profile_form %}</div>
                   {% endif %}
                 </div>
+
                 <div class="modal-footer gbe-modal-footer">
                     <input type="submit" value='{%if sched_event.highlight == "volunteer" %}Remove from schedule{% elif sched_event.highlight == "pending volunteer" %}Retract pending offer{% else %}Volunteer for this opportunity!{% endif %}' name="submit_done" class="btn gbe-btn-primary">
                     <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>

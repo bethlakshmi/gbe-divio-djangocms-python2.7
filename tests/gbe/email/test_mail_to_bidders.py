@@ -30,10 +30,10 @@ from gbetext import (
 from django.contrib.auth.models import User
 from gbe.models import Conference
 from post_office.models import Email
-from tests.gbe.email.test_mail_filters import TestMailFilters
+from tests.gbe.test_filters import TestFilters
 
 
-class TestMailToBidders(TestMailFilters):
+class TestMailToBidders(TestFilters):
     view_name = 'mail_to_bidders'
     priv_list = ['Act', 'Class', 'Costume', 'Vendor', 'Volunteer']
     get_param = "?email_disable=send_bid_notifications"
