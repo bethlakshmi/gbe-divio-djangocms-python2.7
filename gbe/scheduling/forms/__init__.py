@@ -24,6 +24,7 @@ from .generic_booking_form import GenericBookingForm
 from .person_allocation_form import PersonAllocationForm
 from .rehearsal_slot_form import RehearsalSlotForm
 
+from .display_event_form import DisplayEventForm
 from .select_event_form import SelectEventForm
 from .event_evaluation_form import EventEvaluationForm
 from .act_schedule_form import ActScheduleBasics
