@@ -123,7 +123,7 @@ class TestListTickets(TestCase):
             eventbrite_error % (403, "Made up error"))
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
-    def test_get_eb_inventory(self, m_eventbrite):
+    def test_get_eb_inventory_no_organizer(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
         BrownPaperSettings.objects.all().delete()
@@ -145,6 +145,32 @@ class TestListTickets(TestCase):
         self.assertEqual(ticket.cost, Decimal('0.00'))
         ticket = get_object_or_404(TicketItem, ticket_id='098098098')
         self.assertEqual(ticket.cost, Decimal('100.00'))
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_get_eb_inventory_filter_organizer(self, m_eventbrite):
+        # privileged user gets the inventory of tickets from (fake) EB
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        event = TicketingEventsFactory()
+        BrownPaperSettingsFactory()
+        EventbriteSettingsFactory(organizer_id="33556727241")
+
+        m_eventbrite.side_effect = [event_dict,
+                                    ticket_dict2]
+
+        response = self.import_tickets()
+        assert_alert_exists(response, 'success', 'Success', (
+            "Successfully imported %d events, %d tickets") % (1, 2))
+        assert_alert_exists(response, 'success', 'Success', (
+            "BPT: imported %d tickets") % (0))
+        ticket = get_object_or_404(TicketItem, ticket_id='890890890')
+        self.assertEqual(ticket.cost, Decimal('0.00'))
+        ticket = get_object_or_404(TicketItem, ticket_id='3255985')
+        self.assertEqual(ticket.cost, Decimal('100.00'))
+        self.assertTrue(TicketingEvents.objects.filter(
+            event_id='2222333332323232').exists())
+        self.assertFalse(TicketingEvents.objects.filter(
+            event_id='44454545454545454').exists())
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_get_eb_inventory_ticket_pagination(self, m_eventbrite):
