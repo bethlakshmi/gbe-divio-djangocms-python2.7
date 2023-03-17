@@ -3,6 +3,7 @@ from django.shortcuts import (
     get_object_or_404,
     render,
 )
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
@@ -16,7 +17,10 @@ from gbe.models import (
     StaffArea,
     UserMessage,
 )
-from gbe.functions import validate_perms
+from gbe.functions import (
+    validate_profile,
+    validate_perms_by_profile,
+)
 from scheduler.idd import (
     get_people,
     set_person,
@@ -39,25 +43,31 @@ from scheduler.data_transfer import Person
 class ApproveVolunteerView(View):
     template = 'gbe/scheduling/approve_volunteer.tmpl'
     conference = None
-    reviewer_permissions = ('Volunteer Coordinator',
-                            'Stage Manager',
-                            'Staff Lead',
-                            'Technical Director',
-                            'Scheduling Mavens',
-                            'Producer')
+    full_permissions = ('Volunteer Coordinator',
+                        'Stage Manager',
+                        'Technical Director',
+                        'Scheduling Mavens',
+                        'Producer')
     review_list_view_name = 'approve_volunteer'
     changed_id = -1
     page_title = 'Approve Volunteers'
     view_title = 'Approve Pending Volunteers'
+    labels = []
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ApproveVolunteerView, self).dispatch(*args, **kwargs)
 
     def get_list(self, request):
+        label_sets = [[self.conference.conference_slug], ["Volunteer"]]
+
+        # filter if user is a staff lead
+        if len(self.labels) > 0:
+            label_sets += [self.labels]
+
         pending = get_people(
             roles=["Pending Volunteer", "Waitlisted", "Rejected"],
-            label_sets=[[self.conference.conference_slug], ["Volunteer"]])
+            label_sets=label_sets)
         show_general_status(request, pending, self.__class__.__name__)
         rows = []
         action = ""
@@ -121,11 +131,21 @@ class ApproveVolunteerView(View):
             'view_title': self.view_title}
 
     def groundwork(self, request):
-        self.reviewer = validate_perms(request, self.reviewer_permissions)
         if request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
         else:
             self.conference = Conference.current_conf()
+
+        self.reviewer = validate_profile(request, require=True)
+        full_access = validate_perms_by_profile(self.reviewer,
+                                                self.full_permissions)
+        if not full_access:
+            for area in self.reviewer.staffarea_set.filter(
+                    conference=self.conference):
+                self.labels += [area.slug]
+            if len(self.labels) == 0:
+                raise PermissionDenied
+
         self.conference_slugs = Conference.all_slugs()
         self.page_title = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
