@@ -134,7 +134,7 @@ def load_tickets(eventbrite):
     return ti_count, msg
 
 
-def load_events(eventbrite, organization_id):
+def load_events(eventbrite, organization_id, organizer_id):
     from gbe.functions import get_current_conference
     has_more_items = True
     continuation_token = ""
@@ -149,16 +149,18 @@ def load_events(eventbrite, organization_id):
         has_more_items = import_item_list['pagination']['has_more_items']
         conference = get_current_conference()
         for event in import_item_list['events']:
-            if not TicketingEvents.objects.filter(
-                    event_id=event['id']).exists():
-                new_event = TicketingEvents(
-                    event_id=event['id'],
-                    title=event['name']['text'],
-                    description=event['description']['html'],
-                    conference=conference,
-                    source=2)
-                new_event.save()
-                event_count = event_count + 1
+            if organizer_id is None or len(organizer_id) == 0 or (
+                    event["organizer_id"] == organizer_id):
+                if not TicketingEvents.objects.filter(
+                        event_id=event['id']).exists():
+                    new_event = TicketingEvents(
+                        event_id=event['id'],
+                        title=event['name']['text'],
+                        description=event['description']['html'],
+                        conference=conference,
+                        source=2)
+                    new_event.save()
+                    event_count = event_count + 1
         if has_more_items:
             continuation_token = "&continuation=%s" % (
                 import_item_list['pagination']['continuation'])
@@ -178,7 +180,9 @@ def import_eb_ticket_items():
     proceed, return_tuple, eventbrite, settings = setup_eb_api()
     if not proceed:
         return return_tuple
-    event_count, msg = load_events(eventbrite, settings.organization_id)
+    event_count, msg = load_events(eventbrite,
+                                   settings.organization_id,
+                                   settings.organizer_id)
     if len(msg) > 0:
         status = SyncStatus(is_success=False,
                             error_msg=msg,
@@ -239,7 +243,7 @@ def process_eb_purchases():
         continuation_token = ""
         while has_more_items:
             import_list = eventbrite.get(
-                ('/events/%s/attendees/?status=attending%s') % (
+                ('/events/%s/attendees/?%s') % (
                     event.event_id,
                     continuation_token))
             if 'attendees' not in import_list.keys():
@@ -254,9 +258,23 @@ def process_eb_purchases():
             else:
                 has_more_items = import_list['pagination']['has_more_items']
                 for attendee in import_list['attendees']:
-                    save_msg, is_success = eb_save_orders_to_database(
-                        event.event_id,
-                        attendee)
+                    is_success = False
+
+                    if attendee['status'].lower() == "not attending":
+                        save_msg, is_success = eb_remove_orders_in_database(
+                            event.event_id,
+                            attendee)
+                    elif attendee['status'].lower() in ("attending",
+                                                        "checked in",
+                                                        "guests attended",
+                                                        "guests attending"):
+                        save_msg, is_success = eb_save_orders_to_database(
+                            event.event_id,
+                            attendee)
+                    else:
+                        save_msg = "Unknown Status - %s, did not save it" % (
+                            attendee['status'])
+
                     if not is_success:
                         msgs += [(save_msg, False)]
 
@@ -269,6 +287,7 @@ def process_eb_purchases():
                 if has_more_items:
                     continuation_token = "&continuation=%s" % (
                         import_list['pagination']['continuation'])
+
     success_msg = UserMessage.objects.get_or_create(
             view="ViewTransactions",
             code="IMPORT_EB_MESSAGE",
@@ -284,6 +303,24 @@ def process_eb_purchases():
     status.save()
     msgs += [(msg, True)]
     return msgs
+
+
+def eb_remove_orders_in_database(event_id, attendee):
+    '''
+    Function takes an object from the eventbrite order list call and
+    REMOVES the transaction object, because it's a refund/cancellation.
+
+    event_id - the ID of the event associated to this order
+    order - the order object from the EB call
+    Returns:  the Transaction object.  May throw an exception.
+    '''
+    attendee_count = 0
+    if Transaction.objects.filter(reference=attendee['id']).exists():
+        trans = Transaction.objects.filter(reference=attendee['id'])
+        trans.delete()
+        attendee_count = attendee_count + 1
+
+    return attendee_count, True
 
 
 def eb_save_orders_to_database(event_id, attendee):
@@ -309,27 +346,8 @@ def eb_save_orders_to_database(event_id, attendee):
             ticket_id=attendee['ticket_class_id'])
         trans.amount = get_cost(attendee['costs']['base_price'])
 
-        # Build a purchaser object.
-        if Purchaser.objects.filter(
-                email=attendee['profile']['email']).exists():
-            purchaser = Purchaser.objects.filter(
-                email=attendee['profile']['email']).order_by('-pk').first()
-        else:
-            purchaser = Purchaser(
-                email=attendee['profile']['email'],
-                first_name=attendee['profile']['first_name'],
-                last_name=attendee['profile']['last_name'])
-
-            # assign to a user or limbo
-            matched_user = attempt_match_purchaser_to_user(purchaser)
-            if matched_user is None:
-                purchaser.matched_to_user = User.objects.get(username='limbo')
-            else:
-                purchaser.matched_to_user = matched_user
-            purchaser.save()
-
         # Build out the remainder of the transaction.
-        trans.purchaser = purchaser
+        trans.purchaser = eb_setup_purchaser(attendee)
         trans.order_date = pytz.utc.localize(
             datetime.strptime(
                 attendee['created'],
@@ -341,4 +359,33 @@ def eb_save_orders_to_database(event_id, attendee):
 
         trans.save()
         attendee_count = attendee_count + 1
+    else:
+        trans = Transaction.objects.get(reference=attendee['id'])
+        # check if ticket given to someone else
+        if trans.purchaser.email != attendee['profile']['email']:
+            trans.purchaser = eb_setup_purchaser(attendee)
+            trans.save()
+            attendee_count = attendee_count + 1
     return attendee_count, True
+
+
+def eb_setup_purchaser(attendee):
+    purchaser = None
+    if Purchaser.objects.filter(
+            email=attendee['profile']['email']).exists():
+        purchaser = Purchaser.objects.filter(
+            email=attendee['profile']['email']).order_by('-pk').first()
+    else:
+        purchaser = Purchaser(
+            email=attendee['profile']['email'],
+            first_name=attendee['profile']['first_name'],
+            last_name=attendee['profile']['last_name'])
+
+        # assign to a user or limbo
+        matched_user = attempt_match_purchaser_to_user(purchaser)
+        if matched_user is None:
+            purchaser.matched_to_user = User.objects.get(username='limbo')
+        else:
+            purchaser.matched_to_user = matched_user
+        purchaser.save()
+    return purchaser

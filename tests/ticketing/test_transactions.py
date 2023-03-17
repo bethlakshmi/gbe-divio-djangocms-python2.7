@@ -19,6 +19,7 @@ from tests.factories.ticketing_factories import (
     PurchaserFactory,
     TicketItemFactory,
     TicketingEventsFactory,
+    TransactionFactory,
 )
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -130,6 +131,96 @@ class TestTransactions(TestCase):
         response = self.client.post(self.url, data={'Sync': 'Sync'})
         test_purchaser = Purchaser.objects.get(pk=purchaser.pk)
         self.assertEqual(test_purchaser.matched_to_user, user.user_ptr)
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_change_prior_purchaser(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory(active_sync=False)
+        EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        limbo = get_limbo()
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+        attendees = order_dict["attendees"][0]
+        transaction = TransactionFactory(
+            ticket_item=ticket,
+            reference=attendees['id'],
+            payment_source='Eventbrite')
+        orig_purchaser = transaction.purchaser
+        m_eventbrite.return_value = order_dict
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        test_purchaser = Purchaser.objects.get(
+            email=attendees['profile']['email'])
+        test_trans = Transaction.objects.get(
+            reference=attendees['id'])
+        self.assertEqual(test_trans.purchaser, test_purchaser)
+        self.assertNotEqual(test_trans.purchaser, orig_purchaser)
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s  Transactions imported: %d -- Eventbrite" % (
+                                import_transaction_message,
+                                1))
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_refund(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory(active_sync=False)
+        EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        limbo = get_limbo()
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+        attendees = order_dict["attendees"][0]
+        transaction = TransactionFactory(
+            ticket_item=ticket,
+            reference=attendees['id'],
+            payment_source='Eventbrite')
+        refund = order_dict
+        refund["attendees"][0]["status"] = "Not Attending"
+        m_eventbrite.return_value = refund
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+
+        self.assertFalse(Transaction.objects.filter(
+            reference=order_dict["attendees"][0]['id']).exists())
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "%s  Transactions imported: %d -- Eventbrite" % (
+                                import_transaction_message,
+                                1))
+        order_dict["attendees"][0]["status"] = "Attending"
+
+    @patch('eventbrite.Eventbrite.get', autospec=True)
+    def test_transactions_sync_eb_error_status(self, m_eventbrite):
+        TicketingEvents.objects.all().delete()
+        BrownPaperSettings.objects.all().delete()
+        EventbriteSettings.objects.all().delete()
+        BrownPaperSettingsFactory(active_sync=False)
+        EventbriteSettingsFactory()
+        event = TicketingEventsFactory(event_id="1", source=2)
+        limbo = get_limbo()
+        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
+        attendees = order_dict["attendees"][0]
+
+        weird = order_dict
+        weird["attendees"][0]["status"] = "Weird Status"
+        m_eventbrite.return_value = weird
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+
+        self.assertContains(
+            response,
+            "Unknown Status - %s, did not save it" % (
+                weird["attendees"][0]["status"]))
+        order_dict["attendees"][0]["status"] = "Attending"
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_pagination(self, m_eventbrite):

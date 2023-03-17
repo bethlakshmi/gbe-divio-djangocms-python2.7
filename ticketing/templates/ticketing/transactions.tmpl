@@ -5,6 +5,7 @@
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
 {% endblock %}
 {% block content %}
 <div class="container card"><div class="row card-body gbe-bg-light">
@@ -37,10 +38,24 @@ Note:  You may need to update the ticket item list before processing transaction
 </div>
 <a href="{% url 'ticketing:comp_ticket' %}" class="btn gbe-btn-primary float-right">Create Comp</a>
 {% ifequal view_format "ticket" %}
+<div id="accordion" class="gbe_accordion my-3">
 {% for item in transactions %}
 {% ifchanged item.ticket_item.ticketing_event %}
-{% if not forloop.first %}</tbody></table>{% endif %}
-<br><br><h3 class="gbe-title">{{item.ticket_item.ticketing_event.title }} ({{item.ticket_item.ticketing_event.event_id }})</h3>
+{% if not forloop.first %}</tbody></table></div></div></div>{% endif %}
+  <div class="card gbe-panel-list">
+    <div class="card-header gbe-bg-dark" id="headingOne">
+      <h2 class="mb-0">
+        <button class="d-flex align-items-center justify-content-between btn gbe-panel-link collapsed" data-toggle="collapse" data-target="#collapse{{item.ticket_item.ticketing_event.event_id}}" aria-expanded="false" aria-controls="collapse{{item.ticket_item.ticketing_event.event_id}}">
+        {{item.ticket_item.ticketing_event.title }} ({{item.ticket_item.ticketing_event.event_id }})
+          <span class="fa-stack fa-sm">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-plus fa-stack-1x gbe-text-muted"></i>
+          </span>
+        </button>
+      </h2>
+    </div>
+    <div id="collapse{{item.ticket_item.ticketing_event.event_id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body gbe-bg-light">
 {% include 'ticketing/event_details.tmpl' with event=item.ticket_item.ticketing_event %}
 <table id="" class="datatable" cellspacing="0" width="100%">
   <thead>
@@ -113,9 +128,9 @@ Note:  You may need to update the ticket item list before processing transaction
   	{% if purchaser.transaction_set.all|length > 0 %}
       {% include "ticketing/transaction_row.tmpl" %}{% endif %}{% endfor %}</table>
   </td>
-</tr>{% endif %}{% endfor %}</tbody></table>
+</tr>{% endif %}{% endfor %}</tbody></table></div></div></div></div>
 {% endifequal %}
-</div></div>
+</div></div></div></div></div></div>
 {% addtoblock "js" %}
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
@@ -127,5 +142,13 @@ Note:  You may need to update the ticket item list before processing transaction
         "paging": false});
 } );
   </script>
+<script>
+$("#accordion").on("hide.bs.collapse show.bs.collapse", e => {
+  $(e.target)
+    .prev()
+    .find("i:last-child")
+    .toggleClass("fa-minus fa-plus");
+});
+</script>
 {% endaddtoblock %}
 {% endblock %}
