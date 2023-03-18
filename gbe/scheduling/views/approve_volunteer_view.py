@@ -5,7 +5,10 @@ from django.shortcuts import (
 )
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import (
+    Http404,
+    HttpResponseRedirect,
+)
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -22,6 +25,7 @@ from gbe.functions import (
     validate_perms_by_profile,
 )
 from scheduler.idd import (
+    get_occurrence,
     get_people,
     set_person,
 )
@@ -190,6 +194,13 @@ class ApproveVolunteerView(View):
                 user_message[0].description + "status code: ")
 
     def set_status(self, request, kwargs):
+        if len(self.labels) > 0:
+            response = get_occurrence(booking_id=kwargs['booking_id'])
+            show_general_status(request, response, self.__class__.__name__)
+            if response.occurrence is None:
+                raise Http404
+            if not (set(response.occurrence.labels) & set(self.labels)):
+                raise PermissionDenied 
         check = False
         state = volunteer_action_map[kwargs['action']]['state']
         if kwargs['action'] == "approve":

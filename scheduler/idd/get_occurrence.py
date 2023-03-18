@@ -7,11 +7,16 @@ from scheduler.data_transfer import (
 )
 
 
-def get_occurrence(occurrence_id):
+def get_occurrence(occurrence_id=None, booking_id=None):
     response = None
     try:
-        response = OccurrenceResponse(
-            occurrence=Event.objects.get(pk=occurrence_id))
+        if occurrence_id is not None:
+            response = OccurrenceResponse(
+                occurrence=Event.objects.get(pk=occurrence_id))
+        else:
+            response = OccurrenceResponse(
+                occurrence=Event.objects.get(
+                    resources_allocated__pk=booking_id))            
     except Event.DoesNotExist:
         response = OccurrenceResponse(
             errors=[Error(
