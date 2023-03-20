@@ -27,6 +27,7 @@ from gbe.functions import (
 from scheduler.idd import (
     get_occurrence,
     get_people,
+    get_schedule,
     set_person,
 )
 from gbe.scheduling.views.functions import show_general_status
@@ -48,15 +49,16 @@ class ApproveVolunteerView(View):
     template = 'gbe/scheduling/approve_volunteer.tmpl'
     conference = None
     full_permissions = ('Volunteer Coordinator',
-                        'Stage Manager',
-                        'Technical Director',
-                        'Scheduling Mavens',
-                        'Producer')
+                        'Scheduling Mavens')
+    event_roles = ['Stage Manager',
+                   'Technical Director',
+                   'Producer']
     review_list_view_name = 'approve_volunteer'
     changed_id = -1
     page_title = 'Approve Volunteers'
     view_title = 'Approve Pending Volunteers'
     labels = []
+    parent_shows = []
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -72,6 +74,7 @@ class ApproveVolunteerView(View):
         pending = get_people(
             roles=["Pending Volunteer", "Waitlisted", "Rejected"],
             label_sets=label_sets)
+
         show_general_status(request, pending, self.__class__.__name__)
         rows = []
         action = ""
@@ -140,6 +143,7 @@ class ApproveVolunteerView(View):
         else:
             self.conference = Conference.current_conf()
 
+        # refactor later into a permission function that gives scopes
         self.reviewer = validate_profile(request, require=True)
         full_access = validate_perms_by_profile(self.reviewer,
                                                 self.full_permissions)
@@ -147,7 +151,15 @@ class ApproveVolunteerView(View):
             for area in self.reviewer.staffarea_set.filter(
                     conference=self.conference):
                 self.labels += [area.slug]
-            if len(self.labels) == 0:
+
+            response = get_schedule(
+                self.reviewer.user_object,
+                labels=[self.conference.conference_slug],
+                roles=self.event_roles)
+            for item in response.schedule_items:
+                self.parent_shows += [item.event.pk]
+
+            if len(self.labels) == 0 and len(self.parent_shows) == 0:
                 raise PermissionDenied
 
         self.conference_slugs = Conference.all_slugs()
@@ -194,12 +206,20 @@ class ApproveVolunteerView(View):
                 user_message[0].description + "status code: ")
 
     def set_status(self, request, kwargs):
-        if len(self.labels) > 0:
+        if len(self.labels) > 0 or len(self.parent_shows) > 0:
+            within_scope = False
             response = get_occurrence(booking_id=kwargs['booking_id'])
             show_general_status(request, response, self.__class__.__name__)
             if response.occurrence is None:
                 raise Http404
-            if not (set(response.occurrence.labels) & set(self.labels)):
+
+            if set(response.occurrence.labels) & set(self.labels):
+                within_scope = True
+
+            if response.occurrence.parent_id in self.parent_shows:
+                within_scope = True
+
+            if not within_scope:
                 raise PermissionDenied 
         check = False
         state = volunteer_action_map[kwargs['action']]['state']
@@ -240,6 +260,11 @@ class ApproveVolunteerView(View):
         if 'next' in request.GET.keys():
             return HttpResponseRedirect(request.GET.get('next'))
         else:
+            # list not supported for show related roles, they go through 
+            # dashboard
+            if len(self.parent_shows) > 0:
+                raise PermissionDenied
+
             return render(request,
                           self.template,
                           self.make_context(self.get_list(request)))
