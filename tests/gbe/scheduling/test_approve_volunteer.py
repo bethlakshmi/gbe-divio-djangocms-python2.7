@@ -137,7 +137,9 @@ class TestApproveVolunteer(TestCase):
         staff_context = StaffAreaContext()
 
         login_as(staff_context.staff_lead, self)
-        response = self.client.get(self.url)
+        response = self.client.get(
+            self.url,
+            {'conf_slug': staff_context.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Approve Pending Volunteers')

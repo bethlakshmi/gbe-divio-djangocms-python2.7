@@ -138,6 +138,8 @@ class ApproveVolunteerView(View):
             'view_title': self.view_title}
 
     def groundwork(self, request):
+        self.labels = []
+        self.parent_shows = []
         if request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
         else:
@@ -147,7 +149,7 @@ class ApproveVolunteerView(View):
         self.reviewer = validate_profile(request, require=True)
         full_access = validate_perms_by_profile(self.reviewer,
                                                 self.full_permissions)
-        if not full_access:
+        if type(full_access) == bool and not full_access:
             for area in self.reviewer.staffarea_set.filter(
                     conference=self.conference):
                 self.labels += [area.slug]
