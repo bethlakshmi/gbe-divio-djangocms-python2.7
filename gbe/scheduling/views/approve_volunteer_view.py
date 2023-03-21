@@ -145,11 +145,14 @@ class ApproveVolunteerView(View):
         else:
             self.conference = Conference.current_conf()
 
+        self.conference_slugs = Conference.all_slugs()
+
         # refactor later into a permission function that gives scopes
         self.reviewer = validate_profile(request, require=True)
         full_access = validate_perms_by_profile(self.reviewer,
                                                 self.full_permissions)
         if type(full_access) == bool and not full_access:
+            self.conference_slugs = None
             for area in self.reviewer.staffarea_set.filter(
                     conference=self.conference):
                 self.labels += [area.slug]
@@ -164,7 +167,6 @@ class ApproveVolunteerView(View):
             if len(self.labels) == 0 and len(self.parent_shows) == 0:
                 raise PermissionDenied
 
-        self.conference_slugs = Conference.all_slugs()
         self.page_title = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="PAGE_TITLE",

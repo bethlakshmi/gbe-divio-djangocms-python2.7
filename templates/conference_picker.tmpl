@@ -1,3 +1,4 @@
+{% if conference_slugs %}
     <form action="{{ return_link }}" method="get" enctype="multipart/form-data">
     <select name="conf_slug" id="conf_slug">
       {% for slug in conference_slugs %}
@@ -8,3 +9,4 @@
     </select>
     <input type="submit" name="submit" class="gbe-btn-secondary btn-sm btn" value="Select conference">
     </form>
+{% endif %}

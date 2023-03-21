@@ -134,15 +134,28 @@ class TestApproveVolunteer(TestCase):
                 self.context.conference.conference_slug))
 
     def test_approve_volunteer_as_staff_lead(self):
-        staff_context = StaffAreaContext()
+        self.context.worker.role = "Pending Volunteer"
+        label = LabelFactory(allocation=self.context.allocation)
+        self.context.worker.save()
+        staff_context = StaffAreaContext(conference=self.context.conference)
 
         login_as(staff_context.staff_lead, self)
-        response = self.client.get(
-            self.url,
-            {'conf_slug': staff_context.conference.conference_slug})
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Approve Pending Volunteers')
+        self.assertNotContains(
+            response,
+            'Select conference',
+            msg_prefix="Staff Lead should not get conference picker")
+
+        # check that filter works
+        self.assertNotContains(
+            response,
+            str(self.context.allocation.resource.worker._item.profile))
+        self.assertNotContains(
+            response,
+            str(self.context.allocation.event))
 
     def test_get_pending(self):
         self.context.worker.role = "Pending Volunteer"
