@@ -64,12 +64,13 @@ class VolunteerContext():
         self.allocation = ResourceAllocationFactory(resource=self.worker,
                                                     event=self.opp_event)
 
-    def set_staff_lead(self, staff_lead=None):
+    def set_staff_lead(self, staff_lead=None, role=None):
         staff_lead = staff_lead or ProfileFactory()
+        role = role or "Staff Lead"
         ResourceAllocationFactory(event=self.sched_event,
                                   resource=WorkerFactory(
                                     _item=staff_lead,
-                                    role="Staff Lead"))
+                                    role=role))
         return staff_lead
 
     def add_opportunity(self, start_time=None):

@@ -445,6 +445,61 @@ class TestApproveVolunteer(TestCase):
         response = self.client.get(approve_url)
         self.assertEqual(403, response.status_code)
 
+    def test_stage_manager_approve(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        stage_mgr = self.context.set_staff_lead(role="Stage Manager")
+        login_as(stage_mgr, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
+        response = self.client.get("%s?next=%s" % (
+            approve_url,
+            reverse('home', urlconf='gbe.urls')), follow=True)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
+        alert_msg = set_volunteer_role_msg % "Volunteer"
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+                alert_msg,
+                str(self.context.profile),
+                str(self.context.opp_event),
+                self.context.opp_event.starttime.strftime(
+                    GBE_DATETIME_FORMAT))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            full_msg)
+
+    def test_stage_manager_fail_out_of_scope(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        stage_mgr = self.context.set_staff_lead(role="Stage Manager")
+        staff_context = StaffAreaContext(conference=self.context.conference)
+        volunteer, booking = staff_context.book_volunteer(
+            role="Pending Volunteer")
+        login_as(stage_mgr, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  volunteer.pk,
+                  booking.pk])
+        response = self.client.get("%s?next=%s" % (
+            approve_url,
+            reverse('home', urlconf='gbe.urls')))
+        self.assertEqual(403, response.status_code)
+
+    def test_stage_manager_list_fail(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        stage_mgr = self.context.set_staff_lead(role="Stage Manager")
+        login_as(stage_mgr, self)
+        response = self.client.get(self.url)
+        self.assertEqual(403, response.status_code)
+
     def test_email_fail(self):
         template = EmailTemplateFactory(
             name='volunteer changed schedule',
