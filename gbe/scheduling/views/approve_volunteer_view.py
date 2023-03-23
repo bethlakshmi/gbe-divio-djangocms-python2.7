@@ -224,7 +224,7 @@ class ApproveVolunteerView(View):
                 within_scope = True
 
             if not within_scope:
-                raise PermissionDenied 
+                raise PermissionDenied
         check = False
         state = volunteer_action_map[kwargs['action']]['state']
         if kwargs['action'] == "approve":
@@ -264,7 +264,7 @@ class ApproveVolunteerView(View):
         if 'next' in request.GET.keys():
             return HttpResponseRedirect(request.GET.get('next'))
         else:
-            # list not supported for show related roles, they go through 
+            # list not supported for show related roles, they go through
             # dashboard
             if len(self.parent_shows) > 0:
                 raise PermissionDenied

@@ -445,6 +445,20 @@ class TestApproveVolunteer(TestCase):
         response = self.client.get(approve_url)
         self.assertEqual(403, response.status_code)
 
+    def test_set_bad_id(self):
+        staff_context = StaffAreaContext(conference=self.context.conference)
+        volunteer, booking = staff_context.book_volunteer(
+            role="Pending Volunteer")
+        login_as(staff_context.staff_lead, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  volunteer.pk,
+                  booking.pk+100])
+        response = self.client.get(approve_url)
+        self.assertEqual(404, response.status_code)
+
     def test_stage_manager_approve(self):
         self.context.worker.role = "Pending Volunteer"
         self.context.worker.save()
