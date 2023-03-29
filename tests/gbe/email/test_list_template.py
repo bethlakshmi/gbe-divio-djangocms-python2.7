@@ -39,6 +39,7 @@ class TestTemplateList(TestCase):
         response = self.client.get(self.url)
 
         templates = ["volunteer accepted",
+                     "volunteer awaiting approval",
                      "volunteer duplicate",
                      "volunteer no decision",
                      "volunteer reject",

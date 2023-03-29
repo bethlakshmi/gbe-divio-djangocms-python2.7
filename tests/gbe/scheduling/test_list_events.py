@@ -271,10 +271,9 @@ class TestViewList(TestFilters):
             volunteer_context.opp_event.title))
 
         self.assertContains(
-            response, 
+            response,
             "Select a valid choice. %d is not one of the available choices." %
             staff_context.area.pk)
-
 
     def test_view_volunteer_filled(self):
         staff_context = StaffAreaContext(conference=self.conf)

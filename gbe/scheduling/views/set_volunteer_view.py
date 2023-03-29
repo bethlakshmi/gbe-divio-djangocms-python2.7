@@ -26,6 +26,8 @@ from gbetext import (
     volunteer_allocate_email_fail_msg,
 )
 from gbe.email.functions import (
+    send_awaiting_approval_mail,
+    send_bid_state_change_mail,
     send_schedule_update_mail,
     send_volunteer_update_to_staff,
 )
@@ -135,7 +137,24 @@ class SetVolunteerView(View):
                             'description': default_message})
                     messages.success(request, user_message[0].description)
         if schedule_response and schedule_response.booking_id:
-            email_status = send_schedule_update_mail("Volunteer", self.owner)
+            if kwargs['state'] == 'on' and (
+                    occ_response.occurrence.approval_needed):
+                email_status = send_awaiting_approval_mail(
+                    "volunteer",
+                    self.owner.contact_email,
+                    self.owner.get_badge_name(),
+                    occ_response.occurrence)
+            elif kwargs['state'] == 'off' and (
+                    occ_response.occurrence.approval_needed):
+                email_status = send_bid_state_change_mail(
+                    "volunteer",
+                    self.owner.contact_email,
+                    self.owner.get_badge_name(),
+                    occ_response.occurrence.title,
+                    4)
+            else:
+                email_status = send_schedule_update_mail("Volunteer",
+                                                         self.owner)
             staff_status = send_volunteer_update_to_staff(
                 self.owner,
                 self.owner,

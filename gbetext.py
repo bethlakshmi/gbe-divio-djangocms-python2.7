@@ -186,7 +186,8 @@ acceptance_states = ((0, 'No Decision'),
                      (2, 'Wait List'),
                      (3, 'Accepted'),
                      (4, 'Withdrawn'),
-                     (5, 'Duplicate'))
+                     (5, 'Duplicate'),
+                     (6, 'Awaiting Approval'))
 
 class_acceptance_states = ((1, 'Reject'),
                            (2, 'Wait List'),
@@ -358,6 +359,8 @@ email_template_desc = {
     withdrawn.''',
     'Duplicate': '''This email is sent to the bidder when the coordinator \
     marks the %s as a duplicate''',
+    'Awaiting Approval': '''This email is sent when a %s has offered \
+    to help at an opportunity that requires approval.''',
     'act accepted': '''This email is sent to the performer when they have \
     been cast into the show %s.''',
     'act wait list': '''This email is sent to the performer when they have \

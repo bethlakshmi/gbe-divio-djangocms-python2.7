@@ -86,13 +86,13 @@ class TestApproveVolunteer(TestCase):
                           booking.resource.worker._item.profile.pk,
                           booking.pk]))
 
-    def test_approve_volunteers_bad_user(self):
+    def test_list_volunteers_bad_user(self):
         ''' user does not have Volunteer Coordinator, permission is denied'''
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(403, response.status_code)
 
-    def test_approve_volunteer_no_volunteers(self):
+    def test_list_volunteer_no_volunteers(self):
         '''default conference selected, make sure it returns the right page'''
         '''Acts that are waitlisted do not show up'''
         waitlisted_act = ActFactory(b_conference=self.context.conference,
@@ -114,7 +114,7 @@ class TestApproveVolunteer(TestCase):
         self.assertNotContains(response, self.context.sched_event.title)
         self.assertNotContains(response, waitlisted_act.performer.name)
 
-    def test_approve_volunteer_w_conf(self):
+    def test_list_volunteer_w_conf(self):
         ''' check conference selector, no data is in table.'''
         second_context = VolunteerContext()
         login_as(self.privileged_user, self)
@@ -133,14 +133,35 @@ class TestApproveVolunteer(TestCase):
             '<option value = "%s">' % (
                 self.context.conference.conference_slug))
 
-    def test_approve_volunteer_as_staff_lead(self):
-        staff_context = StaffAreaContext()
+    def test_list_volunteer_as_staff_lead(self):
+        self.context.worker.role = "Pending Volunteer"
+        label = LabelFactory(allocation=self.context.allocation)
+        self.context.worker.save()
+        staff_context = StaffAreaContext(conference=self.context.conference)
+        volunteer, booking = staff_context.book_volunteer(
+            role="Pending Volunteer")
 
         login_as(staff_context.staff_lead, self)
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Approve Pending Volunteers')
+        self.assertNotContains(
+            response,
+            'Select conference',
+            msg_prefix="Staff Lead should not get conference picker")
+
+        # lead can get their own volunteers
+        self.assert_volunteer_state(response, booking)
+        self.assertContains(response, str(staff_context.area))
+
+        # ... but not anyone else's
+        self.assertNotContains(
+            response,
+            str(self.context.allocation.resource.worker._item.profile))
+        self.assertNotContains(
+            response,
+            str(self.context.allocation.event))
 
     def test_get_pending(self):
         self.context.worker.role = "Pending Volunteer"
@@ -153,17 +174,6 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response,
                             '<tr class="gbe-table-row gbe-table-info">')
         self.assertContains(response, label.text)
-
-    def test_get_staff_area(self):
-        staff_context = StaffAreaContext(conference=self.context.conference)
-        volunteer, booking = staff_context.book_volunteer(
-            role="Pending Volunteer")
-        login_as(self.privileged_user, self)
-        response = self.client.get(
-            self.url,
-            {'conf_slug': self.context.conference.conference_slug})
-        self.assert_volunteer_state(response, booking)
-        self.assertContains(response, str(staff_context.area))
 
     def test_get_inactive_user(self):
         self.context.worker.role = "Pending Volunteer"
@@ -329,13 +339,6 @@ class TestApproveVolunteer(TestCase):
         self.assertNotContains(response, approve_url)
         self.assertNotContains(response,
                                '<tr gbe-table-row gbe-table-success">')
-        alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
-                alert_msg,
-                str(self.context.profile),
-                str(self.context.opp_event),
-                self.context.opp_event.starttime.strftime(
-                    GBE_DATETIME_FORMAT))
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
             class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
@@ -370,13 +373,6 @@ class TestApproveVolunteer(TestCase):
                   self.context.allocation.pk])
         response = self.client.get(approve_url)
         self.assertNotContains(response, approve_url)
-        alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
-                alert_msg,
-                str(self.context.profile),
-                str(self.context.opp_event),
-                self.context.opp_event.starttime.strftime(
-                    GBE_DATETIME_FORMAT))
         conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
             class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
@@ -400,6 +396,81 @@ class TestApproveVolunteer(TestCase):
                   self.context.allocation.pk])
         response = self.client.get(approve_url)
         self.assertNotContains(response, approve_url)
+        conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
+            class_context.bid.b_title,
+            class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
+        self.assertContains(response, conflict_msg)
+
+    def test_staff_lead_approval(self):
+        staff_context = StaffAreaContext(conference=self.context.conference)
+        volunteer, booking = staff_context.book_volunteer(
+            role="Pending Volunteer")
+        login_as(staff_context.staff_lead, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  volunteer.pk,
+                  booking.pk])
+        response = self.client.get(approve_url)
+        alert_msg = set_volunteer_role_msg % "Volunteer"
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+                alert_msg,
+                str(volunteer),
+                str(booking.event),
+                booking.event.starttime.strftime(
+                    GBE_DATETIME_FORMAT))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            full_msg)
+
+    def test_staff_lead_fail_out_of_scope(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        staff_context = StaffAreaContext(conference=self.context.conference)
+        volunteer, booking = staff_context.book_volunteer(
+            role="Pending Volunteer")
+        login_as(staff_context.staff_lead, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
+        response = self.client.get(approve_url)
+        self.assertEqual(403, response.status_code)
+
+    def test_set_bad_id(self):
+        staff_context = StaffAreaContext(conference=self.context.conference)
+        volunteer, booking = staff_context.book_volunteer(
+            role="Pending Volunteer")
+        login_as(staff_context.staff_lead, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  volunteer.pk,
+                  booking.pk+100])
+        response = self.client.get(approve_url)
+        self.assertEqual(404, response.status_code)
+
+    def test_stage_manager_approve(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        stage_mgr = self.context.set_staff_lead(role="Stage Manager")
+        login_as(stage_mgr, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
+        response = self.client.get("%s?next=%s" % (
+            approve_url,
+            reverse('home', urlconf='gbe.urls')), follow=True)
+        self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         alert_msg = set_volunteer_role_msg % "Volunteer"
         full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
                 alert_msg,
@@ -407,10 +478,38 @@ class TestApproveVolunteer(TestCase):
                 str(self.context.opp_event),
                 self.context.opp_event.starttime.strftime(
                     GBE_DATETIME_FORMAT))
-        conflict_msg = 'Conflicting booking: %s, Start Time: %s' % (
-            class_context.bid.b_title,
-            class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
-        self.assertContains(response, conflict_msg)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            full_msg)
+
+    def test_stage_manager_fail_out_of_scope(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        stage_mgr = self.context.set_staff_lead(role="Stage Manager")
+        staff_context = StaffAreaContext(conference=self.context.conference)
+        volunteer, booking = staff_context.book_volunteer(
+            role="Pending Volunteer")
+        login_as(stage_mgr, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  volunteer.pk,
+                  booking.pk])
+        response = self.client.get("%s?next=%s" % (
+            approve_url,
+            reverse('home', urlconf='gbe.urls')))
+        self.assertEqual(403, response.status_code)
+
+    def test_stage_manager_list_fail(self):
+        self.context.worker.role = "Pending Volunteer"
+        self.context.worker.save()
+        stage_mgr = self.context.set_staff_lead(role="Stage Manager")
+        login_as(stage_mgr, self)
+        response = self.client.get(self.url)
+        self.assertEqual(403, response.status_code)
 
     def test_email_fail(self):
         template = EmailTemplateFactory(
