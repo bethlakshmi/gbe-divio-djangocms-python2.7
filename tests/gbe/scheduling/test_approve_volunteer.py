@@ -152,6 +152,9 @@ class TestApproveVolunteer(TestCase):
             msg_prefix="Staff Lead should not get conference picker")
 
         # lead can get their own volunteers
+        response = self.client.get(
+            self.url,
+            {'conf_slug': self.context.conference.conference_slug})
         self.assert_volunteer_state(response, booking)
         self.assertContains(response, str(staff_context.area))
 
