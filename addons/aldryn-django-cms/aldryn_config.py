@@ -205,6 +205,10 @@ class Form(forms.BaseForm):
         # django-robots
         settings['INSTALLED_APPS'].append('robots')
 
+        settings['MIGRATION_COMMANDS'].append(
+            'python manage.py cms fix-tree'
+        )
+
         # default plugins
         settings['INSTALLED_APPS'].extend([
             # required by aldryn-forms
