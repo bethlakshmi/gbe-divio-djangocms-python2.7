@@ -13,6 +13,10 @@ from tests.factories.gbe_factories import (
     PersonaFactory,
     ProfileFactory,
 )
+from tests.factories.scheduler_factories import (
+    ResourceAllocationFactory,
+    WorkerFactory,
+)
 from tests.contexts import (
     ClassContext,
     ShowContext,
@@ -61,6 +65,11 @@ class TestViewList(TestFilters):
         specialcontext = VolunteerContext(conference=self.conf,
                                           event_style="Special")
         classcontext = ClassContext(conference=self.conf)
+        second_teacher = PersonaFactory(name="aaaa")
+        ResourceAllocationFactory(
+            event=classcontext.sched_event,
+            resource=WorkerFactory(_item=second_teacher.workeritem_ptr,
+                                   role='Teacher'))
         accepted_class = ClassFactory(accepted=3,
                                       b_conference=self.conf)
         previous_class = ClassFactory(accepted=3,
@@ -78,6 +87,29 @@ class TestViewList(TestFilters):
         self.assertNotContains(response, rejected_class.b_title)
         self.assertNotContains(response, previous_class.b_title)
         self.assertNotContains(response, rehearsal.title)
+        print(response.content)
+        self.assertContains(
+            response,
+            "%s, %s" % (second_teacher.name, classcontext.teacher.name),
+            html=True)
+
+    def test_teacher_right_for_class(self):
+        '''
+        each class has it's own teacher, not a list of all teachers
+        '''
+        classcontext = ClassContext(conference=self.conf)
+        another_class = ClassContext(conference=self.conf)
+        url = reverse("event_list",
+                      urlconf="gbe.scheduling.urls",
+                      args=["Class"])
+        login_as(ProfileFactory(), self)
+        response = self.client.get(url)
+        self.assertContains(response, classcontext.sched_event.title)
+        self.assertContains(response, another_class.sched_event.title)
+        self.assertContains(response, classcontext.teacher.name, 1)
+        self.assertContains(response, another_class.teacher.name, 1)
+        self.assertNotContains(response, classcontext.teacher.name + ",")
+        self.assertNotContains(response, another_class.teacher.name + ",")
 
     def test_no_avail_conf(self):
         clear_conferences()

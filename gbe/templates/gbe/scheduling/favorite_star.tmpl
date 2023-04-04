@@ -2,7 +2,7 @@
       <a href="{{sched_event.favorite_link}}?next={{ request.get_full_path }}"
          class="detail_link cal-favorite" data-toggle="tooltip"
          title="{%if sched_event.highlight == "interested" %}Remove from Schedule{% else %}Add to Schedule{% endif %}">
-       <i class="fa {%if sched_event.highlight == "interested" %}fa-star{% else %}fa-star-o{% endif %} {{size}}" aria-hidden="true"></i></a>
+       <i class="fa {%if sched_event.highlight == "interested" %}fa-star{% else %}fa-star-o{% endif %} {{size}}" aria-hidden="true"></i>
       </a>
      {% elif sched_event.favorite_link %}
       <a href="#" class="cal-favorite {% if disable_style %}{{ disable_style }}{% else %}detail_link-disabled{% endif %}" data-toggle="tooltip"
