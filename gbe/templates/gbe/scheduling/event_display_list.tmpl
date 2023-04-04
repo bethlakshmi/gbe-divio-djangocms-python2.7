@@ -81,7 +81,7 @@
 	  <label class="sched_detail">Presented by:</label></div>
  	  <div class="col-xs-12 col-sm-10">
  	  {% for person in event.presenters %}
-	    {{ person.name }},
+	    {{ person.name }}{% if not forloop.last %},{% endif %}
 	  {% endfor %}
 	</div></div>
 	{% endif %}

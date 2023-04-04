@@ -172,8 +172,8 @@ class ListEventsView(View):
             label_sets=label_set)
 
         scheduled_events = []
-        presenters = []
         for occurrence in response.occurrences:
+            presenters = []
             (favorite_link,
              volunteer_link,
              evaluate,
