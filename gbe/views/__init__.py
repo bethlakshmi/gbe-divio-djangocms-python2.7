@@ -74,3 +74,7 @@ from .review_troupes_view import ReviewTroupesView
 # public views
 from .bios_teachers_view import BiosTeachersView
 from .fashion_faire_view import FashionFaireView
+from .article_views import (
+	ArticleListView,
+	ArticleDetailView,
+)

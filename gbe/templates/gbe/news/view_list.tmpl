@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}
+  Great Burlesque Exposition: News
+{% endblock %}
+{% block content %}
+  <h1>News</h1>
+  {% if object_list %}
+  <ul>
+    {% for article in object_list %}{% if article.available_to_public %}
+      <li>
+        <b><a href="{% url 'gbe:news_item' article.id %}" class="gbe-link">{{ article.title }}</a> - {{ article.published_date }}</b> - {{article.summary}}
+      </li>
+    {% endif %}{% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no current news items.</p>
+  {% endif %}
+{% endblock %}

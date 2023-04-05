@@ -43,6 +43,7 @@ INSTALLED_APPS.extend([
     'dal',
     'dal_select2',
     'django_addanother',
+    'published',
     # 'debug_toolbar',
 ])
 

@@ -3,6 +3,8 @@ from gbe.views import (
     ActChangeStateView,
     ActTechWizardView,
     AdminProfileView,
+    ArticleDetailView,
+    ArticleListView,
     BiosTeachersView,
     BusinessCreate,
     BusinessUpdate,
@@ -65,6 +67,12 @@ urlpatterns = [
     #  landing page
     url(r'^gbe/?',
         LandingPageView.as_view(), name='home'),
+
+    #  articles
+    url(r'^news_item/(?P<pk>\d+)',
+        ArticleDetailView.as_view(), name='news_item'),
+    url(r'^news/?',
+        ArticleListView.as_view(), name='news_list'),
 
     # autocompletes
     url(r'^profile-autocomplete/$',

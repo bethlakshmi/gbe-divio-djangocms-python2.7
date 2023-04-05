@@ -20,9 +20,9 @@ aldryn-client==2.3.5
     # via aldryn-django
 https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-common/1.0.4/1021e5a2-d7d6-4dde-8976-c2db74c52c68/aldryn-common-1.0.4.tar.gz#egg=aldryn-common==1.0.4
     # via -r /workspace/requirements.in
-https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.11.0.1/a6ca94bc-f20d-4a9f-b1c7-e330e34d70b4/aldryn-django-cms-3.11.0.1.tar.gz#egg=aldryn-django-cms==3.11.0.1
+https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.11.1.0/7a6cb951-9840-4fd2-b734-36a2d49d41d8/aldryn-django-cms-3.11.1.0.tar.gz#egg=aldryn-django-cms==3.11.1.0
     # via -r /workspace/requirements.in
-https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django/3.2.16.0/08980d9b-eb8c-421e-bcb5-aa9d44b69901/aldryn-django-3.2.16.0.tar.gz#egg=aldryn-django==3.2.16.0
+https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django/3.2.18.0/f4beb3e0-9f27-4441-802d-906f6ed9ac1d/aldryn-django-3.2.18.0.tar.gz#egg=aldryn-django==3.2.18.0
     # via -r /workspace/requirements.in
 aldryn-sites==0.6.0
     # via aldryn-django
@@ -86,7 +86,7 @@ django-classy-tags==4.0.0
     # via
     #   django-cms
     #   django-sekizai
-django-cms==3.11.0
+django-cms==3.11.1
     # via
     #   aldryn-django-cms
     #   djangocms-attributes-field
@@ -104,7 +104,7 @@ django-compressor==4.3.1
     # via aldryn-django-cms
 django-debug-toolbar==4.0.0
     # via -r /workspace/requirements.in
-https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.2.3/2d33931e-e292-42d8-bda8-ddcdcd4d23ce/django-filer-2.2.3.tar.gz#egg=django-filer==2.2.3
+https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.2.4/fec06386-b801-4861-b100-b48310c26ff7/django-filer-2.2.4.tar.gz#egg=django-filer==2.2.4
     # via
     #   -r /workspace/requirements.in
     #   djangocms-bootstrap4
@@ -135,6 +135,8 @@ django-paypal==2.0
 django-polymorphic==3.1.0
     # via django-filer
 django-post-office==3.6.3
+    # via -r /workspace/requirements.in
+django-published==0.7.0
     # via -r /workspace/requirements.in
 django-ranged-response==0.2.0
     # via django-simple-captcha
@@ -169,7 +171,7 @@ django-treebeard==4.4
     #   djangocms-attributes-field
     #   djangocms-history
     #   djangocms-link
-django==3.2.16
+django==3.2.18
     # via
     #   aldryn-addons
     #   aldryn-boilerplates
@@ -189,6 +191,7 @@ django==3.2.16
     #   django-paypal
     #   django-polymorphic
     #   django-post-office
+    #   django-published
     #   django-ranged-response
     #   django-sekizai
     #   django-select2
