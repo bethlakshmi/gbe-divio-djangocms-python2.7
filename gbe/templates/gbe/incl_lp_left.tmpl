@@ -3,5 +3,5 @@
 {% if admin_message %}
     <font class="gbe-form-error">{{admin_message}}</font><br><br>
 {% endif %}
-    {{logged_in_message}}
+{% include "gbe/news/summaries.tmpl" with object_list=news %}
 </p>

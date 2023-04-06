@@ -3,16 +3,5 @@
   Great Burlesque Exposition: News
 {% endblock %}
 {% block content %}
-  <h1>News</h1>
-  {% if object_list %}
-  <ul>
-    {% for article in object_list %}{% if article.available_to_public %}
-      <li>
-        <b><a href="{{ article.get_absolute_url }}" class="gbe-link">{{ article.title }}</a> - {{ article.published_date }}</b> - {{article.summary}}
-      </li>
-    {% endif %}{% endfor %}
-  </ul>
-  {% else %}
-    <p>There are no current news items.</p>
-  {% endif %}
+{% include "gbe/news/summaries.tmpl" %}
 {% endblock %}
