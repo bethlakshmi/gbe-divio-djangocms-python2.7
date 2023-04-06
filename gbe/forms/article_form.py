@@ -1,10 +1,7 @@
 from django.forms import (
-    CharField,
-    HiddenInput,
-    ImageField,
-    IntegerField,
     ModelForm,
     Textarea,
+    TextInput,
 )
 from gbe.models import Article
 from gbe_forms_text import article_help_texts
@@ -27,8 +24,9 @@ class ArticleForm(ModelForm):
                   ]
         help_texts = article_help_texts
         widgets = {
-        'content': Textarea(attrs={'id': 'user-tiny-mce'}),
-        'live_as_of': DatePicker(
-            attrs={'append': 'fa fa-calendar',
-                   'icon_toggle': True},
-            options={'format': "M/D/YYYY"})}
+            'summary': TextInput(attrs={'size': '80'}),
+            'content': Textarea(attrs={'id': 'user-tiny-mce'}),
+            'live_as_of': DatePicker(
+                attrs={'append': 'fa fa-calendar',
+                       'icon_toggle': True},
+                options={'format': "M/D/YYYY"})}

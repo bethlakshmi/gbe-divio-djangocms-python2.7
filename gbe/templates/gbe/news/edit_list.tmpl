@@ -1,0 +1,33 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% block title %}
+  {{ page_title }}
+{% endblock %}
+{% block before_table %}
+<div class="row">
+  <div class="col-8 col-md-9">
+   <h2 class="gbe-title">{{view_title}}</h2>
+   {{intro_text|safe}}<br><br>
+  </div>
+  <div class="col-4 col-md-3 p-0 px-sm-2 px-lg-3 text-right">
+    <a href="{% url 'gbe:news-add' %}" role="button" class="btn gbe-btn-secondary my-2">Create Article</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block tbody %}
+  {% for article in object_list %}
+    <tr class="gbe-table-row {% if changed_id == article.pk %}gbe-table-success{% elif not article.available_to_public %}gbe-table-info{% endif %}">
+      <td>{{ article.available_to_public }}</td>
+      <td>{{ article.published_date }}</td>
+      <td>{{ article.creator }}</td>
+      <td>{{ article.title }}</td>
+      <td>{{ article.summary }}</td>
+      <td><a href="{{ article.get_absolute_url }}" role="button" class="btn gbe-btn-table btn-sm">
+        View</a>&nbsp;
+        <a href="#" data-toggle="modal" data-target="#DeleteModal{{article.pk}}" data-backdrop="true" class="btn gbe-btn-table btn-sm">Delete</a>&nbsp;
+        {% include "gbe/delete_modal.tmpl" with delete_url=article.get_delete_url object=article modal_id=article.pk %}
+        <a href="{% url 'gbe:news-update' article.pk %}" role="button" class="btn gbe-btn-table btn-sm">Edit</a></td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+

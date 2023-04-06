@@ -46,3 +46,6 @@ class Article(PublishedModel):
 
     def get_absolute_url(self):
         return reverse("gbe:news_item", kwargs={"slug": self.slug})
+
+    def get_delete_url(self):
+        return reverse("gbe:news-delete", args=[self.pk])

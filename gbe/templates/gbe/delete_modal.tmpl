@@ -1,0 +1,21 @@
+{% if delete_url %}
+<!-- Delete Modal Start -->
+    <div class="modal" id="DeleteModal{{modal_id}}" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content gbe-modal-content">
+        <form action="{{delete_url}}" method="post">
+            <div class="modal-header gbe-modal-header">
+                <h4 class="modal-title">Confirm Delete</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                {% csrf_token %}
+                <p>Are you sure you want to delete <b>{{object}}</b>?  This cannot be undone.</p>    
+            </div>
+            <div class="modal-footer gbe-modal-footer">
+              <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
+              <input type="submit" value="Confirm" class="btn gbe-btn-primary">
+            </div></form>
+    </div></div></div>
+<!-- Delete Modal End -->
+{% endif %}
