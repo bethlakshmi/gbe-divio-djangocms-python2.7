@@ -1,4 +1,10 @@
 from django.urls import reverse
+from gbe.email.views import (
+    MailToBiddersView,
+    MailToPersonView,
+    MailToRolesView,
+)
+
 
 special_menu_tree = [
     {'title': 'Contact',
@@ -22,26 +28,20 @@ special_menu_tree = [
                     urlconf='gbe.email.urls'),
      'parent_id': 2,
      'id': 46,
-     'groups': ['Act Coordinator',
-                'Class Coordinator',
-                'Costume Coordinator',
-                'Vendor Coordinator',
-                'Volunteer Coordinator',
-                ]},
+     'groups': MailToBiddersView.reviewer_permissions},
     {'title': 'Roles By Email',
      'url': reverse('mail_to_roles',
                     urlconf='gbe.email.urls'),
      'parent_id': 2,
      'id': 52,
-     'groups': ['Act Coordinator',
-                'Class Coordinator',
-                'Producer',
-                'Registrar',
-                'Schedule Mavens',
-                'Staff Lead',
-                'Technical Director',
-                'Volunteer Coordinator',
-                ]},
+     'groups': MailToRolesView.reviewer_permissions},
+    {'title': 'News Articles',
+     'url': reverse('news_manage', urlconf="gbe.urls"),
+     'parent_id': 2,
+     'id': 48,
+     'groups':  MailToPersonView.email_permissions + (
+          MailToRolesView.reviewer_permissions) + (
+          MailToBiddersView.reviewer_permissions)},
     {'title': 'Manage',
      'url': '',
      'parent_id': 1,
