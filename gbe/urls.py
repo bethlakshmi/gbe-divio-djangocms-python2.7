@@ -73,9 +73,13 @@ urlpatterns = [
         LandingPageView.as_view(), name='home'),
 
     #  articles
-    url(r'^news/view/(?P<slug>[-\w\d]+)', ArticleDetail.as_view(), name='news_item'),
+    url(r'^news/view/(?P<slug>[-\w\d]+)',
+        ArticleDetail.as_view(),
+        name='news_item'),
     url(r'^news/add/$', ArticleCreate.as_view(), name='news-add'),
-    url(r'^news/delete/(?P<pk>.*)/$', ArticleDelete.as_view(), name='news-delete'),
+    url(r'^news/delete/(?P<pk>.*)/$',
+        ArticleDelete.as_view(),
+        name='news-delete'),
     url(r'^news/update/(?P<pk>.*)/$',
         ArticleUpdate.as_view(),
         name='news-update'),

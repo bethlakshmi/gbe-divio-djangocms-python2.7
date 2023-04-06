@@ -12,7 +12,9 @@ from .clone_bid_view import CloneBidView
 
 # personas & business
 from .limited_performer_autocomplete import LimitedPerformerAutocomplete
-from .coordinator_performer_autocomplete import CoordinatorPerformerAutocomplete
+from .coordinator_performer_autocomplete import (
+    CoordinatorPerformerAutocomplete,
+)
 from .limited_persona_autocomplete import LimitedPersonaAutocomplete
 from .limited_business_autocomplete import LimitedBusinessAutocomplete
 from .persona_autocomplete import PersonaAutocomplete

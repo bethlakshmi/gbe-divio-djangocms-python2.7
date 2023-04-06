@@ -112,7 +112,7 @@ class ArticleUpdate(FormToTableMixin, RoleRequiredMixin, UpdateView):
         return context
 
 
-class ArticleManageList(RoleRequiredMixin, ListView):  
+class ArticleManageList(RoleRequiredMixin, ListView):
     model = Article
     template_name = 'gbe/news/edit_list.tmpl'
     context_object_name = 'articles'
