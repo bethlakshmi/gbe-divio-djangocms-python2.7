@@ -80,6 +80,7 @@ from .article_views import (
     ArticleCreate,
     ArticleDelete,
     ArticleDetail,
+    ArticleDetailRestricted,
     ArticleList,
     ArticleManageList,
     ArticleUpdate,

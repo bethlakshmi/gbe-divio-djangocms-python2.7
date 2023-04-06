@@ -32,6 +32,11 @@ from gbe.email.views import (
 )
 
 
+article_view_permissions = MailToPersonView.email_permissions + (
+    MailToRolesView.reviewer_permissions) + (
+    MailToBiddersView.reviewer_permissions)
+
+
 class ArticleList(PublishedListMixin, ListView):
     model = Article
     template_name = 'gbe/news/view_list.tmpl'
@@ -45,6 +50,13 @@ class ArticleDetail(PublishedDetailMixin, DetailView):
     slug_url_kwarg = 'slug'
 
 
+class ArticleDetailRestricted(RoleRequiredMixin, DetailView):
+    model = Article
+    template_name = 'gbe/news/view_article.tmpl'
+    context_object_name = 'article'
+    view_permissions = article_view_permissions
+
+
 class ArticleCreate(FormToTableMixin, RoleRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
@@ -55,9 +67,7 @@ class ArticleCreate(FormToTableMixin, RoleRequiredMixin, CreateView):
     view_title = 'Create News Article'
     mode = "performer"
     valid_message = create_article_msg
-    view_permissions = MailToPersonView.email_permissions + (
-        MailToRolesView.reviewer_permissions) + (
-        MailToBiddersView.reviewer_permissions)
+    view_permissions = article_view_permissions
 
     def form_valid(self, form):
         response = super(ArticleCreate, self).form_valid(form)
@@ -70,9 +80,7 @@ class ArticleDelete(RoleRequiredMixin, DeleteView):
     model = Article
     success_url = reverse_lazy('news_manage', urlconf="gbe.urls")
     template_name = 'gbe/modal_performer_form.tmpl'
-    view_permissions = MailToPersonView.email_permissions + (
-        MailToRolesView.reviewer_permissions) + (
-        MailToBiddersView.reviewer_permissions)
+    view_permissions = article_view_permissions
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -100,9 +108,7 @@ class ArticleUpdate(FormToTableMixin, RoleRequiredMixin, UpdateView):
     view_title = 'Update News Article'
     mode = "update"
     valid_message = update_article_msg
-    view_permissions = MailToPersonView.email_permissions + (
-        MailToRolesView.reviewer_permissions) + (
-        MailToBiddersView.reviewer_permissions)
+    view_permissions = article_view_permissions
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -116,9 +122,7 @@ class ArticleManageList(RoleRequiredMixin, ListView):
     model = Article
     template_name = 'gbe/news/edit_list.tmpl'
     context_object_name = 'articles'
-    view_permissions = MailToPersonView.email_permissions + (
-        MailToRolesView.reviewer_permissions) + (
-        MailToBiddersView.reviewer_permissions)
+    view_permissions = article_view_permissions
     page_title = 'Manage News Articles'
     view_title = 'Manage News Articles'
     intro_text = manage_articles_msg

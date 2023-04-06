@@ -17,12 +17,12 @@
 {% block tbody %}
   {% for article in object_list %}
     <tr class="gbe-table-row {% if changed_id == article.pk %}gbe-table-success{% elif not article.available_to_public %}gbe-table-info{% endif %}">
-      <td>{{ article.available_to_public }}</td>
+      <td>{% if article.available_to_public %}Now{% elif article.publish_status == 0 %}Never{% else %}Timed{% endif %}</td>
       <td>{{ article.published_date }}</td>
       <td>{{ article.creator }}</td>
       <td>{{ article.title }}</td>
       <td>{{ article.summary }}</td>
-      <td><a href="{{ article.get_absolute_url }}" role="button" class="btn gbe-btn-table btn-sm">
+      <td><a href="{% url 'gbe:news_special' article.pk %}" role="button" class="btn gbe-btn-table btn-sm">
         View</a>&nbsp;
         <a href="#" data-toggle="modal" data-target="#DeleteModal{{article.pk}}" data-backdrop="true" class="btn gbe-btn-table btn-sm">Delete</a>&nbsp;
         {% include "gbe/delete_modal.tmpl" with delete_url=article.get_delete_url object=article modal_id=article.pk %}
