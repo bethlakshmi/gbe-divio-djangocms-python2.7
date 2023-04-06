@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ object.title }}
+{% endblock %}
+{% block content %}
+{% if not article.available_to_public %}
+<div class="alert gbe-alert-warning">
+  <strong>Not Published:</strong> This news article has not yet been published.
+</div>
+{% endif %}
+<div class="container">
+  <div class="row">
+    <div class="col-8 mb-4  mt-3 left top">
+        <h2 class="gbe-title">{{ object.title }}</h2>
+        <h5 class="gbe-subtitle">{{ object.creator }} | {{ object.published_date }}</h5>
+        <p class=" text-muted">{{ object.summary }}</p>
+        <p class="card-text ">{{ object.description | safe }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

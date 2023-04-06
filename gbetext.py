@@ -504,6 +504,8 @@ default_edit_troupe_msg = "Your troupe has been updated."
 delete_in_use = '''This performer is in use in a current, or prior bid.  It \
 can be updated but not deleted.'''
 create_comp_msg = '''Comp has been created, user can now apply.'''
+create_article_msg = '''News article has been created.'''
+update_article_msg = '''News article has been updated.'''
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''
 default_advanced_acttech_instruct = '''The following information is optional.\

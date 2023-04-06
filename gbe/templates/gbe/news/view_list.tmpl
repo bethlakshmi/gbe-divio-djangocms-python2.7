@@ -8,7 +8,7 @@
   <ul>
     {% for article in object_list %}{% if article.available_to_public %}
       <li>
-        <b><a href="{% url 'gbe:news_item' article.id %}" class="gbe-link">{{ article.title }}</a> - {{ article.published_date }}</b> - {{article.summary}}
+        <b><a href="{{ article.get_absolute_url }}" class="gbe-link">{{ article.title }}</a> - {{ article.published_date }}</b> - {{article.summary}}
       </li>
     {% endif %}{% endfor %}
   </ul>

@@ -60,3 +60,6 @@ from .vendor_bid_form import VendorBidForm
 from .advanced_act_tech_form import AdvancedActTechForm
 from .basic_act_tech_form import BasicActTechForm
 from .basic_rehearsal_form import BasicRehearsalForm
+
+# news
+from .article_form import ArticleForm
