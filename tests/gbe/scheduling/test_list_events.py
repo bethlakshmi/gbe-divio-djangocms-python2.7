@@ -87,7 +87,6 @@ class TestViewList(TestFilters):
         self.assertNotContains(response, rejected_class.b_title)
         self.assertNotContains(response, previous_class.b_title)
         self.assertNotContains(response, rehearsal.title)
-        print(response.content)
         self.assertContains(
             response,
             "%s, %s" % (second_teacher.name, classcontext.teacher.name),
