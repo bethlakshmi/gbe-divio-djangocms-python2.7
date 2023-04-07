@@ -4,7 +4,7 @@
   <div class='ml-2 pb-2'>
     <font style="font-size: larger; font-weight: bold"><a href="{{ article.get_absolute_url }}" class="gbe-link">{{ article.title }}</a></font><br>
     <i>{{ article.published_date }}</i><br>
-    {{article.summary}}<br>
+    {% if article.summary %}{{article.summary}}<br>{% endif %}
   </div>
     {% endif %}{% endfor %}
   {% else %}
