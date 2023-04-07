@@ -297,7 +297,7 @@ class TestSetVolunteer(TestCase):
             class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
         assert(class_context.bid.b_title in staff_msg.body)
-        # even though there is a volunteer coordinator - mail only goes to 
+        # even though there is a volunteer coordinator - mail only goes to
         # staff lead
         assert_email_recipient(
             [self.context.staff_lead.profile.user_object.email],
