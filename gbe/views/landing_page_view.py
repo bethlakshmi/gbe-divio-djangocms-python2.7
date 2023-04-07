@@ -165,7 +165,7 @@ class LandingPageView(ProfileRequiredMixin, View):
         else:
             acts = acts.exclude(b_conference__status="completed")
 
-        news_articles = Article.objects.order_by('-created_at')
+        news_articles = Article.objects.order_by('-created_at')[:4]
         context = {
             'profile': viewer_profile,
             'historical': self.historical,

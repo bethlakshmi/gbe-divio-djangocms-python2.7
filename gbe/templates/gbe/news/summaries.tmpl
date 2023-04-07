@@ -1,12 +1,12 @@
   <h3 class="gbe-title">News</h3>
   {% if object_list %}
-  <ul>
     {% for article in object_list %}{% if article.available_to_public %}
-      <li>
-        <b><a href="{{ article.get_absolute_url }}" class="gbe-link">{{ article.title }}</a> - {{ article.published_date }}</b> - {{article.summary}}
-      </li>
+  <div class='ml-2 pb-2'>
+    <font style="font-size: larger; font-weight: bold"><a href="{{ article.get_absolute_url }}" class="gbe-link">{{ article.title }}</a></font><br>
+    <i>{{ article.published_date }}</i><br>
+    {{article.summary}}<br>
+  </div>
     {% endif %}{% endfor %}
-  </ul>
   {% else %}
     <p>There are no current news items.</p>
   {% endif %}
