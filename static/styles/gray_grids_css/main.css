@@ -56,6 +56,7 @@ fieldset[disabled] .btn {
   position: relative;
   margin-bottom: 10px;
   padding-top: 15px;
+  padding-bottom: 30px;
 }
 .gallery-item .overlay {
   position: absolute;
