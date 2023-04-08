@@ -25,7 +25,7 @@ class ArticleForm(ModelForm):
         help_texts = article_help_texts
         widgets = {
             'summary': TextInput(attrs={'size': '80'}),
-            'content': Textarea(attrs={'id': 'user-tiny-mce'}),
+            'content': Textarea(attrs={'id': 'admin-tiny-mce'}),
             'live_as_of': DatePicker(
                 attrs={'append': 'fa fa-calendar',
                        'icon_toggle': True},
