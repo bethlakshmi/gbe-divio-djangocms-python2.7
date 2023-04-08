@@ -52,5 +52,6 @@ class Article(PublishedModel):
     def get_delete_url(self):
         return reverse("gbe:news-delete", args=[self.pk])
 
+
 class ArticleConfig(CMSPlugin):
     num_articles = IntegerField(default=4)

@@ -45,6 +45,7 @@ class FollowOnFacebookPlugin(CMSPluginBase):
     name = _("Follow us on Facebook")  # name of the plugin in the interface
     render_template = 'gbe/facebook_follow.tmpl'
 
+
 class NewsPlugin(CMSPluginBase):
     model = ArticleConfig
     module = _("GBE Plugins")

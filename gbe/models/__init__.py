@@ -41,6 +41,6 @@ from .user_style_preview import UserStylePreview
 
 # news
 from .article import (
-	Article,
-	ArticleConfig,
+    Article,
+    ArticleConfig,
 )

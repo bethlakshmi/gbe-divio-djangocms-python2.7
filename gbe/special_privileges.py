@@ -35,6 +35,7 @@ special_menu_tree = [
                 'Registrar',
                 'Staff Lead',
                 'Scheduling Mavens',
+                'Stage Manager',
                 'Theme Editor',
                 'Ticketing - Admin',
                 'Ticketing - Transactions',
