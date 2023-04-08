@@ -507,7 +507,9 @@ create_comp_msg = '''Comp has been created, user can now apply.'''
 create_article_msg = '''News article has been created.'''
 update_article_msg = '''News article has been updated.'''
 manage_articles_msg = '''"View" shows you what normal users will see.  "Edit"
- gives a view you can change.'''
+ gives a view you can change.  Articles shown to the public will be sorted
+ by publication date (shown here), if the article is available immediately,
+ creation date takes the place of publication date (also shown here).'''
 troupe_header_text = '''More than 1 person, who will be performing on stage \
 together.'''
 default_advanced_acttech_instruct = '''The following information is optional.\

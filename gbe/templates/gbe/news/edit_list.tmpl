@@ -20,6 +20,7 @@
       <td>{% if article.available_to_public %}Now{% elif article.publish_status == 0 %}Never{% else %}Timed{% endif %}</td>
       <td>{{ article.published_date }}</td>
       <td>{{ article.creator }}</td>
+      <td>{{ article.slug }}</td>
       <td>{{ article.title }}</td>
       <td>{{ article.summary }}</td>
       <td><a href="{% url 'gbe:news_special' article.pk %}" role="button" class="btn gbe-btn-table btn-sm">

@@ -152,6 +152,7 @@ class ArticleManageList(RoleRequiredMixin, ListView):
         context['columns'] = ['Published?',
                               'Publication Date',
                               'Author',
+                              'Slug',
                               'Title',
                               'Summary',
                               'Actions']

@@ -165,7 +165,8 @@ class LandingPageView(ProfileRequiredMixin, View):
         else:
             acts = acts.exclude(b_conference__status="completed")
 
-        news_articles = Article.objects.order_by('-created_at')[:4]
+        news_articles = Article.objects.order_by('-live_as_of',
+                                                 '-created_at')
         context = {
             'profile': viewer_profile,
             'historical': self.historical,
@@ -185,7 +186,7 @@ class LandingPageView(ProfileRequiredMixin, View):
             'acceptance_states': acceptance_states,
             'admin_message': self.admin_message,
             'bookings': bookings,
-            'news': queryset_filter(news_articles, user=request.user),
+            'news': queryset_filter(news_articles)[:4],
             'act_paid': verify_performer_app_paid(
                 viewer_profile.user_object.username,
                 current_conf),

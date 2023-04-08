@@ -13,7 +13,6 @@ from gbe.models import (
     Performer,
     UserMessage,
 )
-from settings import GBE_DATETIME_FORMAT
 from gbetext import interested_report_explain_msg
 
 
