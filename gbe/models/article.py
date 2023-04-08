@@ -3,6 +3,7 @@ from django.db.models import (
     CharField,
     DateTimeField,
     ForeignKey,
+    IntegerField,
     SlugField,
     TextField,
 )
@@ -13,6 +14,7 @@ from gbetext import acceptance_states
 from model_utils.managers import InheritanceManager
 from gbe.models import Profile
 from settings import GBE_DATETIME_FORMAT
+from cms.models.pluginmodel import CMSPlugin
 
 
 class Article(PublishedModel):
@@ -49,3 +51,6 @@ class Article(PublishedModel):
 
     def get_delete_url(self):
         return reverse("gbe:news-delete", args=[self.pk])
+
+class ArticleConfig(CMSPlugin):
+    num_articles = IntegerField(default=4)

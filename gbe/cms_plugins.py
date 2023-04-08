@@ -4,6 +4,11 @@ from django.utils.translation import ugettext as _
 from gbe.forms import ContactForm
 from cms.models.pluginmodel import CMSPlugin
 from django.urls import reverse
+from gbe.models import (
+    Article,
+    ArticleConfig,
+)
+from published.utils import queryset_filter
 
 
 class ContactFormPlugin(CMSPluginBase):
@@ -44,6 +49,19 @@ class FollowOnFacebookPlugin(CMSPluginBase):
     name = _("Follow us on Facebook")  # name of the plugin in the interface
     render_template = 'gbe/facebook_follow.tmpl'
 
+class NewsPlugin(CMSPluginBase):
+    model = ArticleConfig
+    module = _("GBE Plugins")
+    name = _("News Article Summary")  # name of the plugin in the interface
+    render_template = 'gbe/news/summaries.tmpl'
+
+    def render(self, context, instance, placeholder):
+        news_articles = Article.objects.order_by('-live_as_of',
+                                                 '-created_at')
+        context.update({'object_list': queryset_filter(
+            news_articles)[:instance.num_articles]})
+        return context
+
 '''
 class AdRotatorPlugin(CMSPluginBase):
     model = CMSPlugin
@@ -57,4 +75,5 @@ plugin_pool.register_plugin(SubscribeEmailPlugin)
 plugin_pool.register_plugin(GoFundMePlugin)
 plugin_pool.register_plugin(ShareOnFacebookPlugin)
 plugin_pool.register_plugin(FollowOnFacebookPlugin)
+plugin_pool.register_plugin(NewsPlugin)
 # plugin_pool.register_plugin(AdRotatorPlugin)

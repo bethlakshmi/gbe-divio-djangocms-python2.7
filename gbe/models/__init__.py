@@ -40,4 +40,7 @@ from .style_value import StyleValue
 from .user_style_preview import UserStylePreview
 
 # news
-from .article import Article
+from .article import (
+	Article,
+	ArticleConfig,
+)
