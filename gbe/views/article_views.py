@@ -14,6 +14,7 @@ from gbe.models import (
     Article,
     UserMessage,
 )
+from published.utils import queryset_filter
 from gbe.forms import ArticleForm
 from published.mixins import PublishedListMixin, PublishedDetailMixin
 from gbe_utils.mixins import (
@@ -35,6 +36,16 @@ from gbe.email.views import (
 article_view_permissions = MailToPersonView.email_permissions + (
     MailToRolesView.reviewer_permissions) + (
     MailToBiddersView.reviewer_permissions)
+
+
+def fetch_article_context(num_articles=4):
+    more = False
+    news_articles = Article.objects.order_by('-live_as_of', '-created_at')
+    if queryset_filter(news_articles).count() > num_articles:
+        more = True
+    return {
+        'object_list': queryset_filter(news_articles)[:num_articles],
+        'more': more}
 
 
 class ArticleList(PublishedListMixin, ListView):

@@ -3,12 +3,8 @@ from cms.plugin_pool import plugin_pool
 from django.utils.translation import ugettext as _
 from gbe.forms import ContactForm
 from cms.models.pluginmodel import CMSPlugin
-from django.urls import reverse
-from gbe.models import (
-    Article,
-    ArticleConfig,
-)
-from published.utils import queryset_filter
+from gbe.models import ArticleConfig
+from gbe.views.article_views import fetch_article_context
 
 
 class ContactFormPlugin(CMSPluginBase):
@@ -56,10 +52,7 @@ class NewsPlugin(CMSPluginBase):
     render_template = 'gbe/news/summaries.tmpl'
 
     def render(self, context, instance, placeholder):
-        news_articles = Article.objects.order_by('-live_as_of',
-                                                 '-created_at')
-        context.update({'object_list': queryset_filter(
-            news_articles)[:instance.num_articles]})
+        context.update(fetch_article_context(instance.num_articles))
         return context
 
 '''

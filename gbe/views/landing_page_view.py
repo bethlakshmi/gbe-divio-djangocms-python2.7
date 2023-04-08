@@ -9,7 +9,6 @@ from django.views.generic import View
 from django.db.models import Q
 from gbe.models import (
     Act,
-    Article,
     Class,
     Conference,
     Costume,
@@ -43,6 +42,7 @@ from scheduler.idd import (
 from scheduler.data_transfer import Person
 from gbe_utils.mixins import ProfileRequiredMixin
 from published.utils import queryset_filter
+from gbe.views.article_views import fetch_article_context
 
 
 class LandingPageView(ProfileRequiredMixin, View):
@@ -165,8 +165,6 @@ class LandingPageView(ProfileRequiredMixin, View):
         else:
             acts = acts.exclude(b_conference__status="completed")
 
-        news_articles = Article.objects.order_by('-live_as_of',
-                                                 '-created_at')
         context = {
             'profile': viewer_profile,
             'historical': self.historical,
@@ -186,7 +184,6 @@ class LandingPageView(ProfileRequiredMixin, View):
             'acceptance_states': acceptance_states,
             'admin_message': self.admin_message,
             'bookings': bookings,
-            'news': queryset_filter(news_articles)[:4],
             'act_paid': verify_performer_app_paid(
                 viewer_profile.user_object.username,
                 current_conf),
@@ -194,6 +191,7 @@ class LandingPageView(ProfileRequiredMixin, View):
                 viewer_profile.user_object.username,
                 current_conf),
             }
+        context.update(fetch_article_context())
         if not self.historical:
             user_message = UserMessage.objects.get_or_create(
                 view="LandingPageView",
