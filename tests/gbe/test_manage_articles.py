@@ -226,7 +226,6 @@ class TestArticleLists(TestCase):
                             self.article_pub_last_week.published_date())
 
 class ArticleDetail(TestCase):
-    view_name = 'news-delete'
 
     def setUp(self):
         self.client = Client()
@@ -237,19 +236,34 @@ class ArticleDetail(TestCase):
         grant_privilege(cls.privileged_user, 'Act Coordinator')
         cls.article = ArticleFactory()
         cls.article_never = ArticleFactory(publish_status=0)
-        cls.url = reverse(cls.view_name,
-                          urlconf="gbe.urls",
-                          args=[cls.article.pk])
 
-    def test_delete_performer_has_message(self):
+    def test_by_slug(self):
+        response = self.client.get(reverse('news_item',
+                                           urlconf="gbe.urls",
+                                           args=[self.article.slug]))
+        self.assertContains(response, self.article)
+        self.assertContains(response, self.article.content)
+
+    def test_unpublished_by_slug(self):
+        response = self.client.get(reverse('news_item',
+                                           urlconf="gbe.urls",
+                                           args=[self.article_never.slug]))
+        self.assertEqual(404, response.status_code)
+
+    def test_restricted(self):
         login_as(self.privileged_user, self)
-        response = self.client.post(self.url,
-                                    data={'submit': 'Confirm'},
-                                    follow=True)
-        self.assertRedirects(response,
-                             reverse('news_manage', urlconf="gbe.urls"))
-        assert_alert_exists(
-            response,
-            'success',
-            'Success',
-            "Successfully deleted article '%s'" % str(self.article))
+        response = self.client.get(reverse('news_special',
+                                           urlconf="gbe.urls",
+                                           args=[self.article.pk]))
+        self.assertContains(response, self.article)
+        self.assertContains(response, self.article.content)
+
+    def test_unpublished_restricted(self):
+        login_as(self.privileged_user, self)
+        response = self.client.get(reverse('news_special',
+                                           urlconf="gbe.urls",
+                                           args=[self.article_never.pk]))
+        self.assertContains(response, self.article_never)
+        self.assertContains(response, self.article_never.content)
+        self.assertContains(response,
+                            "This news article has not yet been published.")
