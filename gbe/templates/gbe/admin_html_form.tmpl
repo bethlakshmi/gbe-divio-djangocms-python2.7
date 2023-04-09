@@ -22,4 +22,8 @@
 {% include "gbe/delete_modal.tmpl" %}
 </div>
 &nbsp;<br>
+
+{% addtoblock "js" %}
+ {{ form.media.js }}
+{% endaddtoblock %}
 {% endblock content %}

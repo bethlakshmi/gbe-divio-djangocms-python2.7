@@ -41,7 +41,7 @@ class Article(PublishedModel):
         return self.title
 
     def published_date(self):
-        published_date = self.created_at
+        published_date = self.updated_at
         if self.publish_status == AVAILABLE_AFTER:
             published_date = self.live_as_of
         return published_date.strftime(GBE_DATETIME_FORMAT)

@@ -40,7 +40,7 @@ article_view_permissions = MailToPersonView.email_permissions + (
 
 def fetch_article_context(num_articles=4):
     more = False
-    news_articles = Article.objects.order_by('-live_as_of', '-created_at')
+    news_articles = Article.objects.order_by('-live_as_of', '-updated_at')
     if queryset_filter(news_articles).count() > num_articles:
         more = True
     return {
@@ -90,10 +90,6 @@ class ArticleDelete(RoleRequiredMixin, DeleteView):
     success_url = reverse_lazy('news_manage', urlconf="gbe.urls")
     template_name = 'gbe/admin_html_form.tmpl'
     view_permissions = article_view_permissions
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -147,8 +143,6 @@ class ArticleManageList(RoleRequiredMixin, ListView):
             defaults={
                 'summary': "%s First Header" % self.__class__.__name__,
                 'description': self.view_title})[0].description
-        if not hasattr(self, 'intro_text'):
-            self.intro_text = ""
         context['intro_text'] = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
             code="INSTRUCTIONS",
