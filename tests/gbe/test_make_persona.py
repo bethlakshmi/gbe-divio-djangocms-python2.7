@@ -130,7 +130,6 @@ class TestPersonaCreate(TestCase):
                 'year_started': 2003,
                 'awards': 'Generic string here'}
         data.update(formset_data)
-        persona_count = self.profile.personae.count()
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This field is required.", 1)

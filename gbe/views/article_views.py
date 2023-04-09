@@ -72,11 +72,9 @@ class ArticleCreate(FormToTableMixin, RoleRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
     template_name = 'gbe/admin_html_form.tmpl'
-    no_tabs = True
     success_url = reverse_lazy('news_manage', urlconf="gbe.urls")
     page_title = 'Create News Article'
     view_title = 'Create News Article'
-    mode = "performer"
     valid_message = create_article_msg
     view_permissions = article_view_permissions
 
@@ -95,7 +93,6 @@ class ArticleDelete(RoleRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['no_tabs'] = True
         return context
 
     def delete(self, request, *args, **kwargs):
@@ -112,12 +109,10 @@ class ArticleDelete(RoleRequiredMixin, DeleteView):
 class ArticleUpdate(FormToTableMixin, RoleRequiredMixin, UpdateView):
     model = Article
     form_class = ArticleForm
-    no_tabs = True
     template_name = 'gbe/admin_html_form.tmpl'
     success_url = reverse_lazy('news_manage', urlconf="gbe.urls")
     page_title = 'Update News Article'
     view_title = 'Update News Article'
-    mode = "update"
     valid_message = update_article_msg
     view_permissions = article_view_permissions
 
