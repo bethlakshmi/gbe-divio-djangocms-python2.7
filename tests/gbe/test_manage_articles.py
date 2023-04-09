@@ -224,6 +224,16 @@ class TestArticleLists(TestCase):
         self.assertContains(response, self.article_avail.published_date())
         self.assertContains(response,
                             self.article_pub_last_week.published_date())
+        self.assertNotContains(response, "more news...")
+
+    def test_view_more_at_home(self):
+        regular_user = ProfileFactory().user_object
+        login_as(regular_user, self)
+        url = reverse('home', urlconf="gbe.urls")
+        ArticleFactory.create_batch(10)
+        response = self.client.get(url)
+        self.assertContains(response, "more news...")
+
 
 class ArticleDetail(TestCase):
 
