@@ -3,17 +3,13 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ArticleFactory,
-    UserFactory,
     UserMessageFactory,
-    PersonaFactory,
     ProfileFactory,
-    SocialLinkFactory,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     grant_privilege,
     login_as,
-    set_image,
 )
 from gbetext import (
     update_article_msg,
@@ -22,7 +18,6 @@ from gbe.models import (
     Article,
     UserMessage,
 )
-from tests.gbe.test_gbe import TestGBE
 
 
 formset_data = {
@@ -35,7 +30,6 @@ formset_data = {
 
 
 class TestArticleCreate(TestCase):
-    '''Tests for index view'''
     view_name = 'news-add'
 
     def setUp(self):
@@ -64,8 +58,7 @@ class TestArticleCreate(TestCase):
             html=True)
 
     def test_submit(self):
-        ''' using an image and making a custom success message
-        '''
+        ''' making a custom success message '''
         msg = UserMessageFactory(
             view='ArticleCreate',
             code='SUCCESS')
@@ -99,10 +92,9 @@ class TestArticleCreate(TestCase):
         self.assertEqual(article_count, Article.objects.all().count())
 
 
-class TestArticleUpdate(TestGBE):
+class TestArticleUpdate(TestCase):
     view_name = 'news-update'
 
-    '''Tests for edit_persona view'''
     def setUp(self):
         UserMessage.objects.all().delete()
         self.client = Client()
@@ -150,3 +142,32 @@ class TestArticleUpdate(TestGBE):
             article_reloaded.pk))
         assert_alert_exists(
             response, 'success', 'Success', update_article_msg)
+
+
+class ArticleDelete(TestCase):
+    view_name = 'news-delete'
+
+    def setUp(self):
+        self.client = Client()
+        self.article = ArticleFactory()
+        self.url = reverse(self.view_name,
+                           urlconf="gbe.urls",
+                           args=[self.article.pk])
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Act Coordinator')
+
+    def test_delete_performer_has_message(self):
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url,
+                                    data={'submit': 'Confirm'},
+                                    follow=True)
+        self.assertRedirects(response,
+                             reverse('news_manage', urlconf="gbe.urls"))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            "Successfully deleted article '%s'" % str(self.article))
