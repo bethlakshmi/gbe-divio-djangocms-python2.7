@@ -364,9 +364,7 @@ def send_volunteer_update_to_staff(
         name,
         "volunteer_schedule_change",
         "Volunteer Schedule Change")
-    to_list = [user.email for user in
-               User.objects.filter(groups__name='Volunteer Coordinator',
-                                   is_active=True)]
+    to_list = []
     leads = get_all_container_bookings(
         occurrence_ids=[occurrence.pk],
         roles=['Staff Lead', ])
@@ -379,6 +377,13 @@ def send_volunteer_update_to_staff(
             staff_lead__isnull=False):
         if area.staff_lead.user_object.email not in to_list:
             to_list += [area.staff_lead.user_object.email]
+
+    # only mail to coordinators if there are no staff leads
+    if len(to_list) == 0:
+        to_list = [user.email for user in User.objects.filter(
+            groups__name='Volunteer Coordinator',
+            is_active=True)]
+
     state_change = ""
     if state == "on":
         if occurrence.approval_needed:

@@ -297,9 +297,10 @@ class TestSetVolunteer(TestCase):
             class_context.bid.b_title,
             class_context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT))
         assert(class_context.bid.b_title in staff_msg.body)
+        # even though there is a volunteer coordinator - mail only goes to
+        # staff lead
         assert_email_recipient(
-            [self.privileged_user.email,
-             self.context.staff_lead.profile.user_object.email],
+            [self.context.staff_lead.profile.user_object.email],
             outbox_size=2,
             message_index=1)
         self.assertContains(response, conflict_msg)
@@ -334,6 +335,23 @@ class TestSetVolunteer(TestCase):
             message_index=1)
         self.assertContains(response, conflict_msg)
         assert(conflict_msg in staff_msg.body)
+
+    def test_mail_vol_coordinator_when_no_lead(self):
+        self.privileged_profile = ProfileFactory()
+        self.privileged_user = self.privileged_profile.user_object
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        vol_context = VolunteerContext(
+            conference=self.context.conference)
+        url = reverse(
+            self.view_name,
+            args=[vol_context.opp_event.pk, "on"],
+            urlconf="gbe.scheduling.urls")
+        login_as(self.profile, self)
+        response = self.client.post(url, follow=True)
+        assert_email_recipient(
+            [self.privileged_user.email],
+            outbox_size=2,
+            message_index=1)
 
     def test_email_fail(self):
         self.context.area.staff_lead = self.profile
