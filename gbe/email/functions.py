@@ -148,11 +148,11 @@ def send_bid_state_change_mail(
                 bid_type,
                 str(show))
         context['show'] = show
-        context['show_link'] = site.domain + reverse(
+        context['show_link'] = "http://" + site.domain + reverse(
             'detail_view',
             args=[show.pk],
             urlconf='gbe.scheduling.urls')
-        context['act_tech_link'] = site.domain + reverse(
+        context['act_tech_link'] = "http://" + site.domain + reverse(
             'act_tech_wizard',
             args=[bid.pk],
             urlconf='gbe.urls')
@@ -273,10 +273,10 @@ def send_act_tech_reminder(act, email_type):
         context={
             'act': act,
             'name': act.performer.name,
-            'act_tech_link': Site.objects.get_current().domain + reverse(
-                'act_tech_wizard',
-                args=[act.pk],
-                urlconf='gbe.urls'),
+            'act_tech_link': "http://" + Site.objects.get_current(
+                ).domain + reverse('act_tech_wizard',
+                                   args=[act.pk],
+                                   urlconf='gbe.urls'),
             'unsubscribe_link': create_unsubscribe_link(
                 act.performer.contact.contact_email,
                 "send_%s" % email_type)},
@@ -330,7 +330,8 @@ def notify_reviewers_on_bid_change(bidder,
                 'action': action,
                 'conference': conference,
                 'group_name': group_name,
-                'review_url': Site.objects.get_current().domain+review_url},
+                'review_url': "http://" + Site.objects.get_current(
+                    ).domain+review_url},
             from_name=template.sender.from_name)
 
 
