@@ -7,19 +7,11 @@ from django.shortcuts import (
     get_object_or_404,
     render,
 )
-from django.contrib import messages
-from gbe.models import UserMessage
 from django.urls import reverse
-from gbe.models import (
-    Conference,
-    StaffArea,
-)
+from gbe.models import StaffArea
 from gbe.scheduling.forms import StaffAreaForm
 from gbe.functions import validate_perms
-from gbetext import (
-    calendar_type,
-    slug_safety_msgs,
-)
+from gbe.scheduling.views.functions import setup_staff_area_saved_messages
 
 
 class EditStaffAreaView(ManageVolWizardView):
@@ -89,40 +81,11 @@ class EditStaffAreaView(ManageVolWizardView):
 
         if context['event_form'].is_valid():
             new_event = context['event_form'].save()
-
-            if context['event_form'].fields['slug'] in calendar_type.values():
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="STAFF_AREA_SLUG_IS_RESERVED_WORD",
-                    defaults={
-                        'summary': "Staff Area has a slug that overlaps " +
-                        "with calendar type labels",
-                        'description': slug_safety_msgs['cal_type']})
-                messages.warning(request, user_message[0].description)
-            if Conference.objects.filter(
-                    conference_slug=context['event_form'].fields['slug']
-                    ).exists():
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="STAFF_AREA_SLUG_ALSO_CONF_SLUG",
-                    defaults={
-                        'summary': "Staff Area has a slug that overlaps " +
-                        "with a conference slug",
-                        'description': slug_safety_msgs['conference_overlap']})
-                messages.warning(request, '%s<br>Slug: %s' % (
-                    user_message[0].description,
-                    context['event_form'].fields['slug']))
-            user_message = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="STAFF_AREA_UPDATE_SUCCESS",
-                defaults={
-                    'summary': "Staff Area has been updated",
-                    'description': "Staff Area has been updated."})
-            messages.success(
+            setup_staff_area_saved_messages(
                 request,
-                '%s<br>Title: %s' % (
-                    user_message[0].description,
-                    new_event.title))
+                new_event.title,
+                context['event_form'].cleaned_data['slug'],
+                self.__class__.__name__)
             if request.POST.get('edit_event', 0) != "Save and Continue":
                 return HttpResponseRedirect(reverse(
                     'manage_event_list',

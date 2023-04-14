@@ -4,13 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.contrib import messages
-from gbe.models import UserMessage
 from gbe.scheduling.forms import (
     StaffAreaForm,
 )
 from gbe.scheduling.views import EventWizardView
 from gbe.functions import validate_perms
+from gbe.scheduling.views.functions import setup_staff_area_saved_messages
 
 
 class StaffAreaWizardView(EventWizardView):
@@ -45,17 +44,11 @@ class StaffAreaWizardView(EventWizardView):
             initial={'conference':  self.conference})
         if context['second_form'].is_valid():
             new_event = context['second_form'].save()
-            user_message = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="STAFF_AREA_CREATE_SUCCESS",
-                defaults={
-                    'summary': "Staff area has been created",
-                    'description': "Staff area has been created."})
-            messages.success(
+            setup_staff_area_saved_messages(
                 request,
-                '%s<br>Title: %s' % (
-                    user_message[0].description,
-                    new_event.title))
+                new_event.title,
+                context['second_form'].cleaned_data['slug'],
+                self.__class__.__name__)
             if request.POST.get(
                     'set_event'
                     ) == 'More...' and (
