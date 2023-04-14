@@ -41,7 +41,6 @@ from scheduler.idd import (
 )
 from scheduler.data_transfer import Person
 from gbe_utils.mixins import ProfileRequiredMixin
-from published.utils import queryset_filter
 from gbe.views.article_views import fetch_article_context
 
 
