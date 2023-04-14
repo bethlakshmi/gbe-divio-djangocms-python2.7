@@ -97,7 +97,7 @@ class EditStaffAreaView(ManageVolWizardView):
                     defaults={
                         'summary': "Staff Area has a slug that overlaps " +
                         "with calendar type labels",
-                    'description': slug_safety_msgs['cal_type']})
+                        'description': slug_safety_msgs['cal_type']})
                 messages.warning(request, user_message[0].description)
             if Conference.objects.filter(
                     conference_slug=context['event_form'].fields['slug']
@@ -108,7 +108,7 @@ class EditStaffAreaView(ManageVolWizardView):
                     defaults={
                         'summary': "Staff Area has a slug that overlaps " +
                         "with a conference slug",
-                    'description': slug_safety_msgs['conference_overlap']})
+                        'description': slug_safety_msgs['conference_overlap']})
                 messages.warning(request, '%s<br>Slug: %s' % (
                     user_message[0].description,
                     context['event_form'].fields['slug']))
