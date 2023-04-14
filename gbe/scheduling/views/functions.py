@@ -409,6 +409,7 @@ def build_icon_links(occurrence,
             highlight,
             vol_disable_msg)
 
+
 def setup_staff_area_saved_messages(request, title, slug, class_name):
     if slug in calendar_type.values():
         user_message = UserMessage.objects.get_or_create(

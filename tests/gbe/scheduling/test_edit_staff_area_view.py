@@ -21,6 +21,7 @@ from tests.contexts import (
     VolunteerContext,
 )
 from datetime import timedelta
+from gbetext import slug_safety_msgs
 
 
 class TestEditStaffAreaView(TestCase):
@@ -144,11 +145,12 @@ class TestEditStaffAreaView(TestCase):
             'Success',
             'Staff Area has been updated.<br>Title: Test Edit Staff')
 
-    def test_edit_area_and_continue(self):
+    def test_edit_area_and_continue_w_warning(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         login_as(self.privileged_user, self)
         data = self.edit_area()
         data['edit_event'] = "Save and Continue"
+        data['slug'] = self.context.conference.conference_slug
         response = self.client.post(
             self.url,
             data=data,
@@ -172,6 +174,12 @@ class TestEditStaffAreaView(TestCase):
         self.assertContains(
             response,
             'name="default_volunteers" value="3"')
+        assert_alert_exists(
+            response,
+            'warning',
+            'Warning',
+            '%s<br>Slug: %s' % (slug_safety_msgs['conference_overlap'],
+                                self.context.conference.conference_slug))
 
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)

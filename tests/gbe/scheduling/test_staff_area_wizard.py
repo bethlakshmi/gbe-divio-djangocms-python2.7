@@ -20,6 +20,7 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from tests.gbe.scheduling.test_scheduling import TestScheduling
+from gbetext import slug_safety_msgs
 
 
 class TestStaffAreaWizard(TestScheduling):
@@ -93,7 +94,7 @@ class TestStaffAreaWizard(TestScheduling):
             response,
             'success',
             'Success',
-            'Staff area has been created.<br>Title: %s' % data['title']
+            'Staff Area has been updated.<br>Title: %s' % data['title']
             )
 
     def test_auth_user_bad_user_assign(self):
@@ -134,7 +135,7 @@ class TestStaffAreaWizard(TestScheduling):
             response,
             "Staff area with this Title and Conference already exists.")
 
-    def test_create_area_w_all_vals_and_continue(self):
+    def test_create_area_w_all_vals_and_continue_w_warning(self):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         login_as(self.privileged_user, self)
         data = self.edit_area()
@@ -142,6 +143,7 @@ class TestStaffAreaWizard(TestScheduling):
         data['staff_lead'] = self.privileged_user.profile.pk
         data['default_location'] = self.room.pk
         data['set_event'] = "More..."
+        data['slug'] = "Conference"
         response = self.client.post(
             self.url,
             data=data,
@@ -158,8 +160,14 @@ class TestStaffAreaWizard(TestScheduling):
             response,
             'success',
             'Success',
-            'Staff area has been created.<br>Title: %s' % (
+            'Staff Area has been updated.<br>Title: %s' % (
                 data['title'])
+            )
+        assert_alert_exists(
+            response,
+            'warning',
+            'Warning',
+            '%s<br>Slug: Conference' % slug_safety_msgs['cal_type']
             )
         assert_option_state(response, self.room.pk, str(self.room), True)
         assert_option_state(response, self.privileged_user.profile.pk,
