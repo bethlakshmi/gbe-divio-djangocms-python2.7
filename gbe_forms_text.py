@@ -471,7 +471,10 @@ persona_help_texts = {
                   'us know how you did. This information will appear on '
                   'your performer page.'),
 }
-
+article_help_texts = {
+    'live_as_of': '''Date to start displaying the article.  This only used if
+    publish is set to 'Available after "Publish Date"'.'''
+}
 acceptance_labels = {
     'accepted': ('Change Bid State')
 }

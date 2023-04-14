@@ -1,0 +1,15 @@
+  <h3 class="gbe-title">News</h3>
+  {% if object_list %}
+    {% for article in object_list %}{% if article.available_to_public %}
+  <div class="ml-2 mb-2 p-2 {% cycle 'gbe-medium-light' 'gbe-bg-dark'%}">
+    <font style="font-size: larger; font-weight: bold"><a href="{{ article.get_absolute_url }}" class="gbe-link">{{ article.title }}</a></font><br>
+    <i>{{ article.published_date }}</i><br>
+    {% if article.summary %}{{article.summary}}<br>{% endif %}
+  </div>
+    {% endif %}{% endfor %}
+  {% else %}
+    <div class='ml-2 pb-2'>There are no current news items.</div>
+  {% endif %}
+  {% if more %}
+  <div class='ml-2 pb-2'><a href="{% url 'gbe:news_list' %}" class="gbe-link">more news...</a></div>
+  {% endif %}

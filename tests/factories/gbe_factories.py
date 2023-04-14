@@ -71,6 +71,16 @@ class ProfileFactory(DjangoModelFactory):
     display_name = Sequence(lambda n: "%s_%s" % (str(n), str(n)))
 
 
+class ArticleFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.Article
+    creator = SubFactory(ProfileFactory)
+    title = Sequence(lambda n: "Title Number %s" % str(n))
+    content = '<i>content</i> with HTML'
+    publish_status = 1
+    slug = Sequence(lambda n: "slug_%s" % str(n))
+
+
 class PersonaFactory(DjangoModelFactory):
     class Meta:
         model = conf.Persona

@@ -41,6 +41,7 @@ from scheduler.idd import (
 )
 from scheduler.data_transfer import Person
 from gbe_utils.mixins import ProfileRequiredMixin
+from gbe.views.article_views import fetch_article_context
 
 
 class LandingPageView(ProfileRequiredMixin, View):
@@ -162,6 +163,7 @@ class LandingPageView(ProfileRequiredMixin, View):
             acts = acts.filter(b_conference__status="completed")
         else:
             acts = acts.exclude(b_conference__status="completed")
+
         context = {
             'profile': viewer_profile,
             'historical': self.historical,
@@ -187,13 +189,8 @@ class LandingPageView(ProfileRequiredMixin, View):
             'vendor_paid': verify_vendor_app_paid(
                 viewer_profile.user_object.username,
                 current_conf),
-            'logged_in_message': UserMessage.objects.get_or_create(
-                view="LandingPageView",
-                code="GENERAL_MESSAGE",
-                defaults={
-                    'summary': "Left hand sidebar message",
-                    'description': ''})[0].description
             }
+        context.update(fetch_article_context())
         if not self.historical:
             user_message = UserMessage.objects.get_or_create(
                 view="LandingPageView",
