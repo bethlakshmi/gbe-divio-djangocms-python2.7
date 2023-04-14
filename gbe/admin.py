@@ -3,6 +3,11 @@ from gbe.models import *
 from import_export.admin import ImportExportActionModelAdmin
 from django.urls import reverse
 from django.utils.html import format_html
+from published.admin import (
+    PublishedAdmin,
+    add_to_list_display,
+    add_to_readonly_fields,
+)
 
 
 class ConferenceAdmin(admin.ModelAdmin):
@@ -318,8 +323,14 @@ class EmailFrequencyAdmin(admin.ModelAdmin):
         'weekday')
 
 
+class ArticleAdmin(PublishedAdmin):
+    readonly_fields = [] + add_to_readonly_fields()
+    list_display = ['pk', 'title', ] + add_to_list_display()
+
+
 admin.site.register(ActCastingOption, CastingAdmin)
 admin.site.register(Act, ActAdmin)
+admin.site.register(Article, ArticleAdmin)
 admin.site.register(Biddable, BidAdmin)
 admin.site.register(Class, ClassAdmin)
 admin.site.register(Conference, ConferenceAdmin)

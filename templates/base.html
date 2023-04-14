@@ -52,7 +52,7 @@
 	{% if message.tags == "error" %}<div class="alert gbe-alert-danger">{% else %}<div class="alert gbe-alert-{{message.tags}}">{% endif %}
           <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
           <strong>{{message.tags|capfirst}}:</strong> {{message|safe}}
-	</div>
+  </div>
 	{% endfor %}
         {% endif %}
 

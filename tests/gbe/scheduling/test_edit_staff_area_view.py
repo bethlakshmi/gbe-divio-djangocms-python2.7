@@ -16,7 +16,6 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from settings import GBE_DATE_FORMAT
 from tests.contexts import (
     StaffAreaContext,
     VolunteerContext,

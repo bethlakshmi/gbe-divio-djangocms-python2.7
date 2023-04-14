@@ -3,7 +3,8 @@ from cms.plugin_pool import plugin_pool
 from django.utils.translation import ugettext as _
 from gbe.forms import ContactForm
 from cms.models.pluginmodel import CMSPlugin
-from django.urls import reverse
+from gbe.models import ArticleConfig
+from gbe.views.article_views import fetch_article_context
 
 
 class ContactFormPlugin(CMSPluginBase):
@@ -44,6 +45,17 @@ class FollowOnFacebookPlugin(CMSPluginBase):
     name = _("Follow us on Facebook")  # name of the plugin in the interface
     render_template = 'gbe/facebook_follow.tmpl'
 
+
+class NewsPlugin(CMSPluginBase):
+    model = ArticleConfig
+    module = _("GBE Plugins")
+    name = _("News Article Summary")  # name of the plugin in the interface
+    render_template = 'gbe/news/summaries.tmpl'
+
+    def render(self, context, instance, placeholder):
+        context.update(fetch_article_context(instance.num_articles))
+        return context
+
 '''
 class AdRotatorPlugin(CMSPluginBase):
     model = CMSPlugin
@@ -57,4 +69,5 @@ plugin_pool.register_plugin(SubscribeEmailPlugin)
 plugin_pool.register_plugin(GoFundMePlugin)
 plugin_pool.register_plugin(ShareOnFacebookPlugin)
 plugin_pool.register_plugin(FollowOnFacebookPlugin)
+plugin_pool.register_plugin(NewsPlugin)
 # plugin_pool.register_plugin(AdRotatorPlugin)

@@ -51,28 +51,7 @@
   {% if view.is_popup %}<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" onclick="window.open('','_self').close();">{% else %}<a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> {% if delete_url %}<a href="#" data-toggle="modal" data-target="#DeleteModal" data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>{% endif %}{% endif %}
   <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary">
   </form>
-{% if delete_url %}
-<!-- Delete Modal Start -->
-              <div class="modal" id="DeleteModal" role="dialog">
-              <div class="modal-dialog modal-dialog-centered modal-sm">
-              <div class="modal-content gbe-modal-content">
-                <form action="{{delete_url}}" method="post">
-                <div class="modal-header gbe-modal-header">
-                    <h4 class="modal-title">Confirm Delete</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    {% csrf_token %}
-                    <p>Are you sure you want to delete {{object}}?  This cannot be undone.</p>
-                    
-                </div>
-                <div class="modal-footer gbe-modal-footer">
-                  <button type="button" class="btn gbe-btn-light" data-dismiss="modal">Close</button>
-                  <input type="submit" value="Confirm" class="btn gbe-btn-primary">
-                </div></form>
-              </div></div></div>
-<!-- Delete Modal End -->
-{% endif %}
+{% include "gbe/delete_modal.tmpl" %}
 </div>
 &nbsp;<br>
 {% addtoblock "js" %}

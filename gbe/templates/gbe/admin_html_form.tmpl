@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static sekizai_tags %}
+{% block title %}
+   {{page_title}}
+{% endblock %}
+{% block head %}
+    {{ form.media.css }}
+    <script type="text/javascript" src="/static/tinymce/tinymce.min.js"></script>
+    <script>{% include "tiny-mce-admin-settings.tmpl" %}</script>
+{% endblock %}
+{% block content %}
+<div class="gbe-tab-area">
+  <h3 class="gbe-title">{{view_title}}</h3>
+  {% if intro_text != "&nbsp;" %}<p>{{intro_text | safe}}</p>{% endif %}
+  <form action="" method="post" enctype="multipart/form-data" name="perf_form" id="perf_form">
+   <p><font class="gbe-form-error">*</font> indicates a required field</p>
+    {% include "form_table.tmpl" %}
+  <a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a>
+  {% if delete_url %}<a href="#" data-toggle="modal" data-target="#DeleteModal" data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>{% endif %}
+  <input type="submit" name="submit" value="Save" class="btn gbe-btn-primary">
+  </form>
+{% include "gbe/delete_modal.tmpl" %}
+</div>
+&nbsp;<br>
+
+{% addtoblock "js" %}
+ {{ form.media.js }}
+{% endaddtoblock %}
+{% endblock content %}

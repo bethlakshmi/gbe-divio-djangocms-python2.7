@@ -100,7 +100,7 @@ def assert_alert_exists(response, tag, label, text):
         '          <a href="#" class="close" data-dismiss="alert" ' + \
         'aria-label="close">&times;</a>\n' + \
         '          <strong>%s:</strong> %s\n' \
-        '	</div>'
+        '  </div>'
     assert bytes(alert_html % (tag, label, text), 'utf-8') in response.content
 
 

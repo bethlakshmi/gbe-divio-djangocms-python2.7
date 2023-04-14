@@ -51,33 +51,6 @@ formset_data = {
     'links-MAX_NUM_FORMS': 5,
 }
 
-formset_data = {
-    'links-0-social_network': '',
-    'links-0-order': 1,
-    'links-0-link': '',
-    'links-0-username': '',
-    'links-1-social_network': '',
-    'links-1-order': 2,
-    'links-1-link': '',
-    'links-1-username': '',
-    'links-2-social_network': '',
-    'links-2-order': 3,
-    'links-2-link': '',
-    'links-2-username': '',
-    'links-3-social_network': '',
-    'links-3-order': 4,
-    'links-3-link': '',
-    'links-3-username': '',
-    'links-4-social_network': '',
-    'links-4-order': 5,
-    'links-4-link': '',
-    'links-4-username': '',
-    'links-TOTAL_FORMS': 5,
-    'links-INITIAL_FORMS': 0,
-    'links-MIN_NUM_FORMS': 0,
-    'links-MAX_NUM_FORMS': 5,
-}
-
 
 class TestPersonaCreate(TestCase):
     '''Tests for index view'''
@@ -157,7 +130,6 @@ class TestPersonaCreate(TestCase):
                 'year_started': 2003,
                 'awards': 'Generic string here'}
         data.update(formset_data)
-        persona_count = self.profile.personae.count()
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This field is required.", 1)

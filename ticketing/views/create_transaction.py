@@ -2,7 +2,7 @@ from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from datetime import datetime
 from gbe_utils.mixins import (
-    GbeFormMixin,
+    FormToTableMixin,
     RoleRequiredMixin,
 )
 from ticketing.models import (
@@ -15,7 +15,7 @@ from gbetext import (
 )
 
 
-class CreateTransaction(GbeFormMixin, RoleRequiredMixin, CreateView):
+class CreateTransaction(FormToTableMixin, RoleRequiredMixin, CreateView):
     model = Transaction
     form_class = CompFeeForm
     template_name = 'gbe/modal_performer_form.tmpl'
@@ -26,11 +26,6 @@ class CreateTransaction(GbeFormMixin, RoleRequiredMixin, CreateView):
     mode = "performer"
     valid_message = create_comp_msg
     view_permissions = ('Ticketing - Transactions', )
-
-    def get_success_url(self):
-        return "%s?changed_id=%d" % (
-            self.request.GET.get('next', self.success_url),
-            self.object.pk)
 
     def form_valid(self, form):
         form.instance.amount = 0

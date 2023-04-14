@@ -12,7 +12,9 @@ from .clone_bid_view import CloneBidView
 
 # personas & business
 from .limited_performer_autocomplete import LimitedPerformerAutocomplete
-from .coordinator_performer_autocomplete import CoordinatorPerformerAutocomplete
+from .coordinator_performer_autocomplete import (
+    CoordinatorPerformerAutocomplete,
+)
 from .limited_persona_autocomplete import LimitedPersonaAutocomplete
 from .limited_business_autocomplete import LimitedBusinessAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
@@ -74,3 +76,12 @@ from .review_troupes_view import ReviewTroupesView
 # public views
 from .bios_teachers_view import BiosTeachersView
 from .fashion_faire_view import FashionFaireView
+from .article_views import (
+    ArticleCreate,
+    ArticleDelete,
+    ArticleDetail,
+    ArticleDetailRestricted,
+    ArticleList,
+    ArticleManageList,
+    ArticleUpdate,
+)
