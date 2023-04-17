@@ -16,6 +16,7 @@
   <td>{{ user.last_login|date:"M j, Y, g:i A" }}</td>
   <td>{% for group in user.groups.all %}{{group}}<br>{% endfor %}</td>
   <td>{% for role in user.profile.get_priv_roles %}{{role}}<br>{% endfor %}</td>
+  <td><a href="{% url 'admin:auth_user_change' user.pk %}" role="button" class="btn gbe-btn-table btn-sm">Edit</a></td>
 </tr>
 {% endfor %}
 {% endblock %}

@@ -21,5 +21,6 @@ class UserPrivView(GbeContextMixin, ListView):
         context['columns'] = ['User',
                               'Last Login',
                               'Permanent Groups',
-                              'Conference Groups']
+                              'Conference Groups',
+                              'Action']
         return context
