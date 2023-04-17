@@ -7,14 +7,11 @@ from django.shortcuts import (
     get_object_or_404,
     render,
 )
-from django.contrib import messages
-from gbe.models import UserMessage
 from django.urls import reverse
-from gbe.models import (
-    StaffArea,
-)
+from gbe.models import StaffArea
 from gbe.scheduling.forms import StaffAreaForm
 from gbe.functions import validate_perms
+from gbe.scheduling.views.functions import setup_staff_area_saved_messages
 
 
 class EditStaffAreaView(ManageVolWizardView):
@@ -84,17 +81,11 @@ class EditStaffAreaView(ManageVolWizardView):
 
         if context['event_form'].is_valid():
             new_event = context['event_form'].save()
-            user_message = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="STAFF_AREA_UPDATE_SUCCESS",
-                defaults={
-                    'summary': "Staff Area has been updated",
-                    'description': "Staff Area has been updated."})
-            messages.success(
+            setup_staff_area_saved_messages(
                 request,
-                '%s<br>Title: %s' % (
-                    user_message[0].description,
-                    new_event.title))
+                new_event.title,
+                context['event_form'].cleaned_data['slug'],
+                self.__class__.__name__)
             if request.POST.get('edit_event', 0) != "Save and Continue":
                 return HttpResponseRedirect(reverse(
                     'manage_event_list',
