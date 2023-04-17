@@ -24,6 +24,8 @@ def get_roles(user,
     for item in resources:
         if item.resource.as_subtype.role not in roles:
             roles += [item.resource.as_subtype.role]
+        if item.resource.as_subtype.role == "performer":
+            print(item.event)
 
     response = RolesResponse(roles=sorted(roles))
     return response

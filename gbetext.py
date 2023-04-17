@@ -290,6 +290,11 @@ role_options = (
     ('Rejected', "Rejected"),
     ('Waitlisted', "Waitlisted"),
     ('Pending Volunteer', "Pending Volunteer"),)
+privileged_event_roles = ['Technical Director',
+                          'Tech Crew',
+                          'Producer',
+                          'Stage Manager',
+                          'Staff Lead']
 role_commit_map = {
     'New': (5, "fas fa-plus-square gbe-text-secondary"),
     'Error': (0, "fas fa-exclamation-triangle gbe-text-warning"),
