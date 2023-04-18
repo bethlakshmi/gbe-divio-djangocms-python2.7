@@ -26,8 +26,8 @@ def DeleteProfileView(request, profile_id):
     admin_profile = validate_perms(request, ('Registrar',))
     if profile_id:
         user_profile = get_object_or_404(Profile, resourceitem_id=profile_id)
-    return_page = HttpResponseRedirect(reverse('manage_users',
-                                               urlconf='gbe.urls'))
+    return_page = HttpResponseRedirect(
+        request.GET.get('next', reverse('manage_users', urlconf='gbe.urls')))
 
     bookings = ResourceAllocation.objects.filter(
         resource__worker___item=user_profile).count()
