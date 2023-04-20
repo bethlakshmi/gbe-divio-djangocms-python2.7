@@ -22,7 +22,6 @@ class TestMailToPerson(TestCase):
     priv_list = ['Registrar',
                  'Volunteer Coordinator',
                  'Act Coordinator',
-                 'Conference Coordinator',
                  'Vendor Coordinator',
                  'Ticketing - Admin']
 

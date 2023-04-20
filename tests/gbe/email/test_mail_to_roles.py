@@ -49,7 +49,7 @@ class TestMailToRoles(TestFilters):
     @classmethod
     def setUpTestData(cls):
         Conference.objects.all().delete()
-        cls.privileged_user = setup_admin_w_privs(["Schedule Mavens"])
+        cls.privileged_user = setup_admin_w_privs(["Scheduling Mavens"])
         cls.privileged_profile = cls.privileged_user.profile
         cls.url = reverse(cls.view_name, urlconf="gbe.email.urls")
         cls.context = ClassContext()

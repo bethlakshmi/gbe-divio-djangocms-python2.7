@@ -58,7 +58,7 @@ class ShowCalendarView(View):
         2: 6,
         1: 12,
     }
-    show_editors = ('Schedule Mavens', 'Act Coordinator')
+    show_editors = ('Scheduling Mavens', 'Act Coordinator')
 
     def process_inputs(self, request, args, kwargs):
         context = {}

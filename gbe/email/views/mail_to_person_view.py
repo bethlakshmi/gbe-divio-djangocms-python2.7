@@ -16,7 +16,6 @@ class MailToPersonView(MailView):
     email_permissions = ['Registrar',
                          'Volunteer Coordinator',
                          'Act Coordinator',
-                         'Conference Coordinator',
                          'Vendor Coordinator',
                          'Ticketing - Admin',
                          'Scheduling Mavens',
