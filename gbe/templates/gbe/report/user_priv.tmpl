@@ -22,3 +22,23 @@
 </tr>
 {% endfor %}
 {% endblock %}
+
+{% block after_table %}
+<h2 class="review-title gbe-title">Groups with Special Menu Abilities</h2>
+This is what Special menu items a member of this group gets.  Privileges are 
+aggregated, a person gets ALL the options for all their groups.
+
+{% for group, menus in group_power.items %}
+  <h3>{{group}}</h3>
+  <ul>
+  {% for id, menu in menus.items %}
+    <li>{{menu.title}}</li>
+    <ul>
+    {% for child in menu.children %}
+      <li>{{ child }}</li>
+    {% endfor %}
+    </ul>
+  {% endfor %}
+  </ul>
+{% endfor %}
+{% endblock %}
