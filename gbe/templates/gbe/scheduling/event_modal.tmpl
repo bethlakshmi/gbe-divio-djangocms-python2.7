@@ -11,6 +11,7 @@
                   {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon-large" %}
                   <b>Time:</b> {{ occurrence.start }}-{{ occurrence.end }}<br>
                   <b>Location:</b> {{ occurrence.location }}<br>
+                  <b>Currently Staffed:</b> {{ occurrence.object.role_count }} out of {{ occurrence.object.max_volunteer }} volunteers<br>
                   {% if occurrence.description %}
                   <b>Description:</b><br>
                   {{occurrence.description | safe}}<br>
