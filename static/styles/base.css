@@ -307,12 +307,15 @@ tr.striped_table_row td select{padding: 4px 0 4px 0;}
 /* small device */
 @media (max-width: 767px) {
   .device-big {display: none;}
-  .device-small {display: block;}
+  .device-small {display: block; border-bottom: 1px solid; margin-bottom: 15px;}
 }
-.device-small li a.active {border-bottom: 4px solid;position: relative;} 
-.device-small li.active a {background-color: inherit;}
-.device-small li.active a:hover {background-color: inherit;}
-.device-small li.active a li:hover {background-color: inherit;}
+.device-small li a.active {
+  border-width: 1px 1px 0px 1px;
+  border-style: solid;
+  position: relative;
+  padding-bottom: 10px;} 
+
+.device-small li a {padding-bottom: 8px;} 
 
 /* big device */
 @media only screen and (min-width : 768px) {
