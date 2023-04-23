@@ -15,6 +15,7 @@ class TestSpecialMenu(TestCase):
     special_roles = [
         'Act Reviewers',
         'Act Coordinator',
+        'Admins',
         'Class Reviewers',
         'Class Coordinator',
         'Costume Reviewers',
