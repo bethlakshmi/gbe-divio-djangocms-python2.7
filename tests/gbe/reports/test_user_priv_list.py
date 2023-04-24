@@ -1,7 +1,10 @@
 from pytz import utc
 from django.urls import reverse
 from django.test import TestCase, Client
-from tests.contexts import StaffAreaContext
+from tests.contexts import (
+    StaffAreaContext,
+    VolunteerContext,
+)
 from tests.factories.gbe_factories import (
     ActFactory,
     PersonaFactory,
@@ -77,3 +80,40 @@ class TestReviewActTechInfo(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, context.staff_lead)
         self.assertContains(response, "<td>Staff Lead<br></td>")
+
+    def test_review_booked_lead(self):
+        context = VolunteerContext()
+        booked_lead = context.set_staff_lead(role="Producer")
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, booked_lead)
+        self.assertContains(response, "<td>Producer<br></td>")
+
+    def test_missing_group_in_parent(self):
+        from gbe.special_privileges import special_menu_tree
+        special_menu_tree += [{
+            'title': 'Missing Group',
+            'url': reverse('list_template', urlconf='gbe.email.urls'),
+            'parent_id': 10,
+            'id': 3,
+            'groups': ['Extra']}]
+        grant_privilege(self.everything_user.user_object, 'Extra')
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        print(response)
+        self.assertContains(
+            response,
+            "menu: Missing Group, group: Extra - parent not found")
+
+    def test_missing_group(self):
+        from gbe.special_privileges import special_menu_tree
+        special_menu_tree += [{
+            'title': 'Missing Child',
+            'url': reverse('list_template', urlconf='gbe.email.urls'),
+            'parent_id': 10,
+            'id': 3,
+            'groups': ['More Extra']}]
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response,
+                            "group: More Extra - not a configured group")
