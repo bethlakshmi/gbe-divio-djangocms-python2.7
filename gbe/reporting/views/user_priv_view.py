@@ -57,7 +57,7 @@ class UserPrivView(GbeContextMixin, ListView):
                             "group: %s - not a configured group" % (group))
                     elif node['parent_id'] in group_power[group].keys():
                         if node['title'] not in group_power[group][node[
-                            'parent_id']]['children']:
+                                'parent_id']]['children']:
                             group_power[group][node['parent_id']][
                                 'children'] += [node['title']]
                     else:
