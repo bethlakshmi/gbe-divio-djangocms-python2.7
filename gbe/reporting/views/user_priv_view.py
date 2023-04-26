@@ -1,5 +1,8 @@
 from django.views.generic.list import ListView
-from gbe_utils.mixins import GbeContextMixin
+from gbe_utils.mixins import (
+    GbeContextMixin,
+    RoleRequiredMixin,
+)
 from django.contrib.auth.models import (
     Group,
     User,
@@ -16,13 +19,14 @@ from django.contrib import messages
 from scheduler.idd import get_people
 
 
-class UserPrivView(GbeContextMixin, ListView):
+class UserPrivView(GbeContextMixin, RoleRequiredMixin, ListView):
     model = User
     template_name = 'gbe/report/user_priv.tmpl'
     queryset = User.objects.exclude(groups=None)
     page_title = 'User Privilege Report'
     view_title = 'Users with Special Privileges'
     intro_text = 'This is all users that have privileges in the site.'
+    view_permissions = ['Admins']
 
     def get_context_data(self, **kwargs):
         from gbe.special_privileges import special_menu_tree
