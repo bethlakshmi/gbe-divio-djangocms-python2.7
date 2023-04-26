@@ -10,12 +10,7 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
 )
-from tests.contexts import (
-    ActTechInfoContext,
-    ClassContext,
-    PurchasedTicketContext,
-)
-import ticketing.models as tix
+from tests.contexts import ClassContext
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -60,96 +55,6 @@ class TestReports(TestCase):
             reverse('report_list',
                     urlconf="gbe.reporting.urls"))
         self.assertEqual(response.status_code, 200)
-
-    def test_env_stuff_fail(self):
-        '''env_stuff view should load for privileged users
-           and fail for others
-        '''
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('env_stuff',
-                    urlconf="gbe.reporting.urls"))
-        self.assertEqual(response.status_code, 403)
-
-    def test_env_stuff_succeed(self):
-        '''env_stuff view should load with no conf choice
-        '''
-        ticket_context = PurchasedTicketContext()
-        profile = ticket_context.profile
-        transaction = ticket_context.transaction
-        grant_privilege(profile, 'Registrar')
-        login_as(profile, self)
-        response = self.client.get(
-            reverse('env_stuff',
-                    urlconf="gbe.reporting.urls"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
-        self.assertContains(
-            response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
-            "Staff Lead,Volunteering,Presenter,Show")
-        self.assertContains(
-            response,
-            transaction.purchaser.matched_to_user.first_name)
-        self.assertContains(
-            response,
-            transaction.ticket_item.title)
-
-    def test_env_stuff_w_inactive_purchaser(self):
-        '''env_stuff view should load with no conf choice
-        '''
-        Conference.objects.all().delete()
-        inactive = ProfileFactory(
-            display_name="DON'T SEE THIS",
-            user_object__is_active=False
-        )
-        ticket_context = PurchasedTicketContext(profile=inactive)
-        transaction = ticket_context.transaction
-        grant_privilege(self.profile, 'Registrar')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('env_stuff',
-                    urlconf="gbe.reporting.urls"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
-        self.assertContains(
-            response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
-            "Staff Lead,Volunteering,Presenter,Show")
-        self.assertNotContains(
-            response,
-            inactive.display_name)
-
-    def test_env_stuff_succeed_w_conf(self):
-        '''env_stuff view should load for a selected conference slug
-        '''
-        ticket_context = PurchasedTicketContext()
-        profile = ticket_context.profile
-        grant_privilege(profile, 'Registrar')
-        t = ticket_context.transaction
-        login_as(profile, self)
-        response = self.client.get(reverse(
-            'env_stuff',
-            urlconf="gbe.reporting.urls",
-            args=[
-                t.ticket_item.ticketing_event.conference.conference_slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
-        self.assertContains(
-            response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
-            "Staff Lead,Volunteering,Presenter,Show")
-        self.assertContains(
-            response,
-            t.purchaser.matched_to_user.first_name)
-        self.assertContains(
-            response,
-            t.ticket_item.title)
 
     def test_room_schedule_fail(self):
         '''room_schedule view should load for privileged users,

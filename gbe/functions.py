@@ -65,17 +65,13 @@ def validate_perms(request, perms, require=True):
 
 
 def validate_perms_by_profile(profile, perms='any'):
-    event_roles = ['Technical Director',
-                   'Producer',
-                   'Stage Manager',
-                   'Staff Lead']
     privilege_groups = profile.privilege_groups
     if len(privilege_groups) > 0 and (perms == 'any' or any(
             [perm in privilege_groups for perm in perms])):
         return profile
 
-    dynamic_roles = profile.get_roles()
-    if perms == 'any' and any([perm in dynamic_roles for perm in event_roles]):
+    dynamic_roles = profile.get_priv_roles()
+    if perms == 'any' and len(dynamic_roles) > 0:
         return profile
     elif any([perm in dynamic_roles for perm in perms]):
         return profile

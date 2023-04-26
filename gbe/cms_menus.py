@@ -59,10 +59,8 @@ class SpecialMenu(Menu):
         profile = validate_perms(request, 'any', require=False)
         if profile:
             privileges = set(request.user.profile.privilege_groups)
-            roles = profile.get_roles()
-            for role in ['Technical Director', 'Producer', 'Staff Lead']:
-                if role in roles:
-                    privileges.add(role)
+            for role in profile.get_priv_roles():
+                privileges.add(role)
             nodes.append(NavigationNode(_("Special"), "", 1))
             for node in special_menu_tree:
                 if not privileges.isdisjoint(node['groups']):

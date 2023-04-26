@@ -41,7 +41,6 @@ def ViewTroupeView(request, troupe_id=None):
             request, ('Registrar',
                       'Volunteer Coordinator',
                       'Act Coordinator',
-                      'Conference Coordinator',
                       'Vendor Coordinator',
                       'Ticketing - Admin'), require=False)):
         raise Http404

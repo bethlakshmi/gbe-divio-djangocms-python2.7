@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 from django.conf.urls.static import static
 from gbe.reporting.views import (
@@ -11,6 +12,7 @@ from gbe.reporting.views import (
     PerformerShowComp,
     review_staff_area_view,
     staff_area_view,
+    UserPrivView,
     WelcomeLetterView,
 )
 from gbe.reporting.report_views import (
@@ -74,4 +76,7 @@ urlpatterns = [
     url(r'^reports/performer_urls/(?P<occurrence_id>\d+)/?$',
         PerformerSlidesList.as_view(),
         name='performer_urls'),
+    url(r'^reports/privileges/?$',
+        staff_member_required(UserPrivView.as_view()),
+        name='user_privs'),
 ]

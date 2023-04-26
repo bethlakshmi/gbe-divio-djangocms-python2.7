@@ -37,7 +37,7 @@ class MailToRolesView(MailToFilterView):
                             'Class Coordinator',
                             'Producer',
                             'Registrar',
-                            'Schedule Mavens',
+                            'Scheduling Mavens',
                             'Staff Lead',
                             'Stage Manager',
                             'Technical Director',
@@ -51,7 +51,7 @@ class MailToRolesView(MailToFilterView):
         permitted_styles = []
         choices = []
         if is_superuser or len(
-                [i for i in ["Schedule Mavens",
+                [i for i in ["Scheduling Mavens",
                              "Registrar",
                              "Volunteer Coordinator",
                              "Staff Lead"] if i in priv_list]) > 0:
@@ -73,7 +73,7 @@ class MailToRolesView(MailToFilterView):
     def setup_staff_queryset(self, is_superuser, priv_list, conferences):
         staff_queryset = None
         if is_superuser or len(
-                [i for i in ["Schedule Mavens",
+                [i for i in ["Scheduling Mavens",
                              "Staff Lead",
                              "Registrar",
                              "Volunteer Coordinator"] if i in priv_list]) > 0:
@@ -88,7 +88,7 @@ class MailToRolesView(MailToFilterView):
                                     conferences):
         event_collect = []
         if is_superuser or len(
-                [i for i in ["Schedule Mavens",
+                [i for i in ["Scheduling Mavens",
                              "Registrar",
                              "Volunteer Coordinator"] if i in priv_list]) > 0:
             return event_collect_choices
@@ -211,7 +211,7 @@ class MailToRolesView(MailToFilterView):
         if self.specify_event_form:
             limits = self.create_occurrence_limits()
         if self.user.user_object.is_superuser or len(
-                [i for i in ["Schedule Mavens",
+                [i for i in ["Scheduling Mavens",
                              "Registrar",
                              "Volunteer Coordinator"] if i in self.priv_list]
                 ) > 0:

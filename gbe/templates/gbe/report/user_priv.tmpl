@@ -1,0 +1,57 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+
+{% block before_table %}
+  <h2 class="review-title gbe-title">{{ view_title }}</h2>
+  <br/>
+  <i>{{ intro_text }}</i>
+  <br/><br/>
+{% endblock %}
+
+{% block tbody %}
+{% for user in object_list %}
+<tr class="gbe-table-row">
+  <td><b>Username:</b>  {{ user }}<br>
+      <b>Display Name:</b>  {{ user.profile.get_badge_name }}
+    {% if user.is_staff %}<br>Admin{% endif %}</td>
+  <td>{{ user.last_login|date:"M j, Y, g:i A" }}</td>
+  <td>{% for group in user.groups.all %}{{group}}<br>{% endfor %}</td>
+  <td>{% for role in user.profile.get_priv_roles %}{{role}}<br>{% endfor %}</td>
+  <td><a href="{% url 'admin:auth_user_change' user.pk %}" role="button" class="btn gbe-btn-table btn-sm my-1">Edit Groups</a><br>
+    <a href="{% url 'gbe:admin_profile' user.profile.resourceitem_id %}?next={{ request.get_full_path }}" role="button" class="btn gbe-btn-table btn-sm my-1">Edit Profile</a><br>
+    <a href="{% url 'gbe:delete_profile' user.profile.resourceitem_id %}?next={{ request.get_full_path }}" role="button" class="btn gbe-btn-table btn-sm my-1">Delete Profile</a></td>
+</tr>
+{% endfor %}
+{% for user in conf_priv_users %}
+<tr class="gbe-table-row">
+  <td><b>Username:</b>  {{ user }}<br>
+      <b>Display Name:</b>  {{ user.profile.get_badge_name }}
+    {% if user.is_staff %}<br>Admin{% endif %}</td>
+  <td>{{ user.last_login|date:"M j, Y, g:i A" }}</td>
+  <td>{% for group in user.groups.all %}{{group}}<br>{% endfor %}</td>
+  <td>{% for role in user.profile.get_priv_roles %}{{role}}<br>{% endfor %}</td>
+  <td><a href="{% url 'admin:auth_user_change' user.pk %}" role="button" class="btn gbe-btn-table btn-sm my-1">Edit Groups</a><br>
+    <a href="{% url 'gbe:admin_profile' user.profile.resourceitem_id %}?next={{ request.get_full_path }}" role="button" class="btn gbe-btn-table btn-sm my-1">Edit Profile</a><br>
+    <a href="{% url 'gbe:delete_profile' user.profile.resourceitem_id %}?next={{ request.get_full_path }}" role="button" class="btn gbe-btn-table btn-sm my-1">Delete Profile</a></td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block after_table %}
+<h2 class="review-title gbe-title">Groups with Special Menu Abilities</h2>
+This is what Special menu items a member of this group gets.  Privileges are 
+aggregated, a person gets ALL the options for all their groups.
+
+{% for group, menus in group_power.items %}
+  <h3>{{group}}</h3>
+  <ul>
+  {% for id, menu in menus.items %}
+    <li>{{menu.title}}</li>
+    <ul>
+    {% for child in menu.children %}
+      <li>{{ child }}</li>
+    {% endfor %}
+    </ul>
+  {% endfor %}
+  </ul>
+{% endfor %}
+{% endblock %}

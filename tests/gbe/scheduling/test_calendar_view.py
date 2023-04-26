@@ -85,7 +85,7 @@ class TestCalendarView(TestCase):
 
     def test_calendar_priv_dash_link(self):
         profile = ProfileFactory()
-        grant_privilege(profile, 'Schedule Mavens')
+        grant_privilege(profile, 'Scheduling Mavens')
         login_as(profile, self)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",

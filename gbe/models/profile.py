@@ -23,6 +23,7 @@ from gbetext import (
     best_time_to_call_options,
     not_scheduled_roles,
     phone_number_format_error,
+    privileged_event_roles,
     profile_alerts,
     role_options,
     states_options,
@@ -209,6 +210,13 @@ class Profile(WorkerItem):
                     conference=conference).exists():
                 roles += ["Staff Lead"]
         return roles
+
+    def get_priv_roles(self, conference=None):
+        '''
+        Gets only roles that have special privileges
+        '''
+        roles = self.get_roles(conference)
+        return [perm for perm in privileged_event_roles if perm in roles]
 
     def get_badge_name(self):
         badge_name = self.display_name
