@@ -60,8 +60,8 @@ def all_volunteer_view(request):
                    'columns': ['Event',
                                'Parent',
                                'Area',
-                               'Date/Time',
                                'Location',
+                               'Date/Time',
                                'Max',
                                'Current',
                                'Volunteers']
