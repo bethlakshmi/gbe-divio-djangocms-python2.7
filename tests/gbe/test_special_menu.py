@@ -151,9 +151,9 @@ class TestSpecialMenu(TestCase):
 
     def test_admin(self):
         from gbe.special_privileges import special_menu_tree
-        privileged_user = setup_admin_w_privs([])
+        privileged_user = setup_admin_w_privs(["Registrar"])
         login_as(privileged_user, self)
         response = self.client.get(self.url)
         for item in special_menu_tree:
             if 'admin_access' in item.keys() and item['admin_access']:
-                self.assertContains(response, menu_item['title'])
+                self.assertContains(response, item['title'])
