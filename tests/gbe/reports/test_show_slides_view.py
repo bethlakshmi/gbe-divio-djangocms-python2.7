@@ -19,13 +19,12 @@ class TestShowSlidesView(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        self.profile = ProfileFactory()
-        grant_privilege(self.profile, 'Slide Helper')
+        cls.profile = ProfileFactory()
+        grant_privilege(cls.profile, 'Slide Helper')
         cls.context = ActTechInfoContext(schedule_rehearsal=True)
         cls.url1 = cls.context.set_social_media("Instagram")
         cls.url2 = cls.context.set_social_media()
-        self.url = reverse('show_slide_list',
-                    urlconf="gbe.reporting.urls")
+        cls.url = reverse('show_slide_list', urlconf="gbe.reporting.urls")
 
     def test_no_priv(self):
         regular_profile = ProfileFactory()
