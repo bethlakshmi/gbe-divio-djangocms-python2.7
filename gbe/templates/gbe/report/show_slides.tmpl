@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card round gbe-panel-list mx-2 my-4">
+  <div class="card-header gbe-bg-dark">
+    <h2 class="card-title">{{view_title}}</h2></div>
+  <table class="table gbe-panel-table">
+    <tr>
+      <th>Show</th>
+      <th>Slide Data</th>
+    </tr>
+    {% for show in shows %}
+      <tr>
+        <td>{{show.title}}</td>
+        <td>
+          <a href="{%url 'reporting:performer_urls' show.pk %}" class="gbe-table-link">
+	    Get Slide Data</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
+

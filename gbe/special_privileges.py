@@ -4,6 +4,7 @@ from gbe.email.views import (
     MailToPersonView,
     MailToRolesView,
 )
+from gbe.reporting.views import PerformerSlidesList
 
 
 special_menu_tree = [
@@ -116,7 +117,7 @@ special_menu_tree = [
                 'Ticketing - Admin',
                 'Registrar',
                 'Technical Director',
-                ]},
+                ] + PerformerSlidesList.view_perm},
     {'title': 'Most Reports',
      'url': reverse('report_list', urlconf='gbe.reporting.urls'),
      'parent_id': 20,
@@ -175,6 +176,11 @@ special_menu_tree = [
      'parent_id': 20,
      'id': 55,
      'groups': ['Ticketing - Admin', ]},
+    {'title': 'Show Slides Data',
+     'url': reverse('show_slide_list', urlconf="gbe.reporting.urls"),
+     'parent_id': 20,
+     'id': 59,
+     'groups': PerformerSlidesList.view_perm},
     {'title': 'Volunteer Staffing Reports',
      'url': reverse('staff_area', urlconf='gbe.reporting.urls'),
      'parent_id': 20,

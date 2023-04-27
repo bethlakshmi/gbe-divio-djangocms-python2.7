@@ -17,7 +17,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.formats import date_format
 
 
-class TestReviewActTechInfo(TestCase):
+class TestPerformerSlidesList(TestCase):
     '''Tests for index view'''
     view_name = 'performer_urls'
 

@@ -18,12 +18,13 @@ from gbe.models import Act
 
 class PerformerSlidesList(View):
 
-    view_perm = ('Act Coordinator',
+    view_perm = ['Act Coordinator',
                  'Scheduling Mavens',
+                 'Slide Helper',
                  'Staff Lead',
                  'Stage Manager',
                  'Technical Director',
-                 'Producer')
+                 'Producer']
 
     def groundwork(self, request, args, kwargs):
         groundwork_data = shared_groundwork(
