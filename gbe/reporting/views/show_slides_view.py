@@ -15,7 +15,7 @@ class ShowSlidesView(GbeContextMixin, RoleRequiredMixin, ListView):
     page_title = 'Show Slide Data'
     view_title = 'Show Slide Data'
     intro_text = '''Each link is a CSV with the data we need for the given
-    show's slide deck.  The slides should display behind the performer to 
+    show's slide deck.  The slides should display behind the performer to
     show their info and contact/tipping data'''
     view_permissions = PerformerSlidesList.view_perm
 
