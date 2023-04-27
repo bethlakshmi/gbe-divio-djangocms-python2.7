@@ -75,6 +75,7 @@ class UserPrivView(GbeContextMixin, ListView):
                 else:
                     group_power['Superusers (Admin setting)'][
                         node['parent_id']]['children'] += [node['title']]
+
         context['group_power'] = group_power
 
         context['conf_priv_users'] = []

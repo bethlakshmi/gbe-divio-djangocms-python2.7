@@ -797,3 +797,12 @@ missing_day_form_note = '''Could not load the form for the identified day.
   This may be because the day is for a past conference.'''
 no_scope_error = '''You do not have the allowed role to view this event.  If \
 this is in error, please contact our web support.'''
+slug_safety_msgs = {
+    'cal_type':  '''The slug submitted overlaps with the reserved slugs used
+    to denote what calendar display to use for events (Conference, General,
+    Volunteer) - any event assigned to this area will also appear on that
+    calendar.''',
+    'conference_overlap': '''The slug set overlaps with a slug used for a
+    conference year.  Any events assigned to this event may appear in diplays
+    associated with that conference in a number of unpredictable places.'''
+}

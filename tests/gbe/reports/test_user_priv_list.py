@@ -21,7 +21,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.formats import date_format
 
 
-class TestReviewActTechInfo(TestCase):
+class TestUserPrivList(TestCase):
     '''Tests for index view'''
     view_name = 'user_privs'
 

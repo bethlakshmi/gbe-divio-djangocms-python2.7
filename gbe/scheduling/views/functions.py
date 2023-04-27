@@ -38,6 +38,10 @@ from settings import (
 )
 from django.http import Http404
 from gbe_forms_text import event_settings
+from gbetext import (
+    calendar_type,
+    slug_safety_msgs,
+)
 
 
 def get_start_time(data):
@@ -404,3 +408,33 @@ def build_icon_links(occurrence,
             evaluate,
             highlight,
             vol_disable_msg)
+
+
+def setup_staff_area_saved_messages(request, title, slug, class_name):
+    if slug in calendar_type.values():
+        user_message = UserMessage.objects.get_or_create(
+            view=class_name,
+            code="STAFF_AREA_SLUG_IS_RESERVED_WORD",
+            defaults={'summary': "Staff Area has a slug that overlaps " +
+                      "with calendar type labels",
+                      'description': slug_safety_msgs['cal_type']})
+        messages.warning(
+            request,
+            '%s<br>Slug: %s' % (user_message[0].description, slug))
+    if Conference.objects.filter(conference_slug=slug).exists():
+        user_message = UserMessage.objects.get_or_create(
+            view=class_name,
+            code="STAFF_AREA_SLUG_ALSO_CONF_SLUG",
+            defaults={'summary': "Staff Area has a slug that overlaps " +
+                      "with a conference slug",
+                      'description': slug_safety_msgs['conference_overlap']})
+        messages.warning(
+            request,
+            '%s<br>Slug: %s' % (user_message[0].description, slug))
+    user_message = UserMessage.objects.get_or_create(
+        view=class_name,
+        code="STAFF_AREA_UPDATE_SUCCESS",
+        defaults={'summary': "Staff Area has been updated",
+                  'description': "Staff Area has been updated."})
+    messages.success(request,
+                     '%s<br>Title: %s' % (user_message[0].description, title))
