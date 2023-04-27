@@ -37,6 +37,8 @@ Act state is {{ state }}</span>
 <div class="col-11 sched_times gbe-bg-dark">
     <b>Duration</b>(hh:mm:ss): {{act.tech.duration}}<br>
     <b>Description:</b> {{act.b_description | linebreaks}}<br>
+    <b>Video:</b> {% if act.act.video_link and act.act.video_choice != "1" %}
+      <a href="{{ act.act.video_link }}" target="_blank">Watch Act Video</a>{% else %}<i>no act video, or the video submitted is not for this act</i>{% endif %}<br>
     <b>Feel of Act:</b> {{act.tech.feel_of_act | linebreaks}}<br>
 </div>
 </div>
