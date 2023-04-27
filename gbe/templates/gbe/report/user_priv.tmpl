@@ -12,7 +12,7 @@
 <tr class="gbe-table-row">
   <td><b>Username:</b>  {{ user }}<br>
       <b>Display Name:</b>  {{ user.profile.get_badge_name }}
-    {% if user.is_staff %}<br>Admin{% endif %}</td>
+    {% if user.is_staff %}<br><i>Admin</i>{% endif %}</td>
   <td>{{ user.last_login|date:"M j, Y, g:i A" }}</td>
   <td>{% for group in user.groups.all %}{{group}}<br>{% endfor %}</td>
   <td>{% for role in user.profile.get_priv_roles %}{{role}}<br>{% endfor %}</td>
@@ -25,7 +25,7 @@
 <tr class="gbe-table-row">
   <td><b>Username:</b>  {{ user }}<br>
       <b>Display Name:</b>  {{ user.profile.get_badge_name }}
-    {% if user.is_staff %}<br>Admin{% endif %}</td>
+    {% if user.is_staff %}<br><i>Admin</i>{% endif %}</td>
   <td>{{ user.last_login|date:"M j, Y, g:i A" }}</td>
   <td>{% for group in user.groups.all %}{{group}}<br>{% endfor %}</td>
   <td>{% for role in user.profile.get_priv_roles %}{{role}}<br>{% endfor %}</td>

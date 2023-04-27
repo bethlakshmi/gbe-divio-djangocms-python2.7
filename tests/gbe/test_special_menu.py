@@ -4,8 +4,9 @@ from django.urls import reverse
 from tests.factories.gbe_factories import ProfileFactory
 from tests.contexts import StaffAreaContext
 from tests.functions.gbe_functions import (
-        grant_privilege,
-        login_as
+    grant_privilege,
+    login_as,
+    setup_admin_w_privs,
 )
 from gbe.models import Conference
 
@@ -147,3 +148,12 @@ class TestSpecialMenu(TestCase):
                     menu_item['url'],
                     msg_prefix='Normal users should not see %s' % (
                         menu_item['url']))
+
+    def test_admin(self):
+        from gbe.special_privileges import special_menu_tree
+        privileged_user = setup_admin_w_privs([])
+        login_as(privileged_user, self)
+        response = self.client.get(self.url)
+        for item in special_menu_tree:
+            if 'admin_access' in item.keys() and item['admin_access']:
+                self.assertContains(response, menu_item['title'])
