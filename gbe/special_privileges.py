@@ -4,7 +4,6 @@ from gbe.email.views import (
     MailToPersonView,
     MailToRolesView,
 )
-from gbe.reporting.views import UserPrivView
 
 
 special_menu_tree = [
@@ -117,7 +116,7 @@ special_menu_tree = [
                 'Ticketing - Admin',
                 'Registrar',
                 'Technical Director',
-                ] + UserPrivView.view_permissions},
+                ]},
     {'title': 'Most Reports',
      'url': reverse('report_list', urlconf='gbe.reporting.urls'),
      'parent_id': 20,
@@ -176,11 +175,6 @@ special_menu_tree = [
      'parent_id': 20,
      'id': 55,
      'groups': ['Ticketing - Admin', ]},
-    {'title': 'User Privileges',
-     'url': reverse('user_privs', urlconf="gbe.reporting.urls"),
-     'parent_id': 20,
-     'id': 58,
-     'groups': UserPrivView.view_permissions},
     {'title': 'Volunteer Staffing Reports',
      'url': reverse('staff_area', urlconf='gbe.reporting.urls'),
      'parent_id': 20,
