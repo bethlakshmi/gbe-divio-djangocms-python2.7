@@ -102,6 +102,8 @@ class TestReviewActTechInfo(TestCase):
         self.assertContains(response, date_format(
             self.context.rehearsal.start_time,
             "DATETIME_FORMAT"))
+        self.assertContains(response,
+                            "<b>Role:</b> %s" % self.context.order.role)
 
     def test_review_act_techinfo_advanced(self):
         '''review_act_techinfo view should load for Tech Crew

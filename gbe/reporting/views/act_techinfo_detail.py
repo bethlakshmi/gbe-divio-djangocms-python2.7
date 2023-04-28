@@ -22,6 +22,7 @@ def act_techinfo_detail(request, act_id):
     shows = []
     rehearsals = []
     order = -1
+    role = "NO ROLE"
 
     act = get_object_or_404(Act, pk=act_id)
     # if this isn't a privileged user, it had better be a member of the
@@ -45,6 +46,7 @@ def act_techinfo_detail(request, act_id):
                     item.event.event_style == 'Show'):
                 shows += [item.event]
                 order = item.commitment.order
+                role = item.commitment.role
             elif item.event not in rehearsals and (
                     item.event.event_style == 'Rehearsal Slot'):
                 rehearsals += [item.event]
@@ -55,4 +57,5 @@ def act_techinfo_detail(request, act_id):
                    'state': acceptance_states[act.accepted][1],
                    'shows': shows,
                    'order': order,
+                   'role': role,
                    'rehearsals': rehearsals})
