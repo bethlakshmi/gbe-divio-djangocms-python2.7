@@ -33,7 +33,7 @@ class UserPrivView(GbeContextMixin, ListView):
                               'Conference Groups',
                               'Action']
         group_power = OrderedDict()
-        group_list = []
+        group_list = ['Superusers (Admin setting)']
         for group in Group.objects.values_list('name',
                                                flat=True).order_by('name'):
             group_list += [group]
@@ -66,6 +66,16 @@ class UserPrivView(GbeContextMixin, ListView):
                             "menu: %s, group: %s - parent not found" % (
                                 node['title'],
                                 group))
+            if 'admin_access' in node.keys() and node['admin_access']:
+                if node['parent_id'] == 1:
+                    group_power['Superusers (Admin setting)'][node['id']] = {
+                        'children': [],
+                        'title': node['title'],
+                    }
+                else:
+                    group_power['Superusers (Admin setting)'][
+                        node['parent_id']]['children'] += [node['title']]
+
         context['group_power'] = group_power
 
         context['conf_priv_users'] = []

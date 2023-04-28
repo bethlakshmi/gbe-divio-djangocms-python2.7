@@ -21,7 +21,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.formats import date_format
 
 
-class TestReviewActTechInfo(TestCase):
+class TestUserPrivList(TestCase):
     '''Tests for index view'''
     view_name = 'user_privs'
 
@@ -48,7 +48,7 @@ class TestReviewActTechInfo(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.privileged_user = setup_admin_w_privs([])
+        cls.privileged_user = setup_admin_w_privs(['Registrar'])
         cls.profile = ProfileFactory()
         cls.everything_user = ProfileFactory()
         for privilege in cls.special_roles:
@@ -68,11 +68,12 @@ class TestReviewActTechInfo(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        print(response.content)
         for privilege in self.special_roles:
             self.assertContains(response, "<h3>%s</h3>" % privilege)
+        self.assertContains(response, "<h3>Superusers (Admin setting)</h3>")
         self.assertContains(response, self.everything_user)
         self.assertContains(response, self.profile)
+        self.assertContains(response, "<i>Admin</i>")
 
     def test_review_staff_lead(self):
         context = StaffAreaContext()
@@ -100,7 +101,6 @@ class TestReviewActTechInfo(TestCase):
         grant_privilege(self.everything_user.user_object, 'Extra')
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
-        print(response)
         self.assertContains(
             response,
             "menu: Missing Group, group: Extra - parent not found")
