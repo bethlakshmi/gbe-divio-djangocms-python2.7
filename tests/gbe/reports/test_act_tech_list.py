@@ -122,3 +122,4 @@ class TestReviewActTechInfo(TestCase):
         login_as(self.profile, self)
         response = self.client.get(self.url)
         self.assertContains(response, "3")
+        self.assertContains(response, self.context.order.role)

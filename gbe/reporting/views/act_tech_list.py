@@ -45,6 +45,7 @@ class ActTechList(View):
 
         header = ['Order',
                   'Performer',
+                  'Role',
                   'Title',
                   'Duration (HH:MM:SS)',
                   'Starting Position',
@@ -77,6 +78,7 @@ class ActTechList(View):
             background = "No selection made"
             cue = "NONE"
             order = -1
+            role = ""
             act = get_object_or_404(
                 Act,
                 pk=performer.commitment.class_id)
@@ -89,6 +91,7 @@ class ActTechList(View):
             for item in sched_response.schedule_items:
                 if item.event.event_style == "Show":
                     order = item.commitment.order
+                    role = item.commitment.role
             if act.tech.prop_setup:
                 for item in act.tech.prop_setup_list:
                     if len(prop_setup_list) == 0:
@@ -122,6 +125,7 @@ class ActTechList(View):
             tech_info.append([
                 order,
                 str(act.performer),
+                role,
                 act.b_title,
                 act.tech.duration,
                 act.tech.starting_position,
