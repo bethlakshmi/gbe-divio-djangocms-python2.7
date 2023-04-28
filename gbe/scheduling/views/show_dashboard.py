@@ -154,6 +154,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                    'Tech Done',
                    'Act',
                    'Performer',
+                   'Role',
                    'Rehearsal',
                    'Music',
                    'Action']
@@ -166,6 +167,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
         for performer in response.people:
             rehearsals = []
             order = -1
+            show_role = "NO ROLE"
             act = get_object_or_404(
                 Act,
                 pk=performer.commitment.class_id)
@@ -181,6 +183,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                     rehearsals += [item]
                 elif item.event.event_style == "Show":
                     order = item.commitment.order
+                    show_role = item.commitment.role
             if request.POST:
                 form = ActScheduleBasics(
                     request.POST,
@@ -203,6 +206,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                 'act': act,
                 'rehearsals': rehearsals,
                 'order': order,
+                'show_role': show_role,
                 'rebook_form': rebook_form,
                 'form': form}]
 
