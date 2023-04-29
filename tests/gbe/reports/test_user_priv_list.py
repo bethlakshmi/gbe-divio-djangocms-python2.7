@@ -38,6 +38,7 @@ class TestUserPrivList(TestCase):
         'Vendor Reviewers',
         'Vendor Coordinator',
         'Scheduling Mavens',
+        'Slide Helper',
         'Stage Manager',
         'Tech Crew',
         'Theme Editor',

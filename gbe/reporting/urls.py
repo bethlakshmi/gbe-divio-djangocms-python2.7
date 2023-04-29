@@ -12,6 +12,7 @@ from gbe.reporting.views import (
     PerformerShowComp,
     review_staff_area_view,
     staff_area_view,
+    ShowSlidesView,
     UserPrivView,
     WelcomeLetterView,
 )
@@ -54,6 +55,9 @@ urlpatterns = [
     url(r'^reports/performer_comp/?$',
         PerformerShowComp.as_view(),
         name='perf_comp'),
+    url(r'^reports/show_slide_list/?$',
+        ShowSlidesView.as_view(),
+        name='show_slide_list'),
     url(r'^reports/schedule/room/?$',
         room_schedule, name='room_schedule'),
     url(r'^reports/schedule/room/(\d+)/?$',
