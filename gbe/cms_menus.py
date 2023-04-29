@@ -69,6 +69,13 @@ class SpecialMenu(Menu):
                         url=node['url'],
                         id=node['id'],
                         parent_id=node['parent_id']))
+                if 'admin_access' in node.keys() and (
+                        node['admin_access']) and request.user.is_superuser:
+                    nodes.append(NavigationNode(
+                        title=node['title'],
+                        url=node['url'],
+                        id=node['id'],
+                        parent_id=node['parent_id']))
         return nodes
 
 
