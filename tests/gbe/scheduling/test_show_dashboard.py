@@ -114,6 +114,7 @@ class TestShowDashboard(TestCase):
              self.context.order.order,
              self.context.booking.pk),
             html=True)
+        self.assertContains(response, self.context.order.role)
 
     def test_no_techinfo_edit_no_order_change(self):
         '''Act Coordinator can't edit act tech, or the order
