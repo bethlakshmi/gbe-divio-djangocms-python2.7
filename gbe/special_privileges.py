@@ -183,7 +183,7 @@ special_menu_tree = [
      'id': 59,
      'groups': PerformerSlidesList.view_perm},
     {'title': 'User Privileges',
-     'url': reverse('checklistitem_list', urlconf="ticketing.urls"),
+     'url': reverse('user_privs', urlconf="gbe.reporting.urls"),
      'parent_id': 20,
      'id': 58,
      'groups': [],
