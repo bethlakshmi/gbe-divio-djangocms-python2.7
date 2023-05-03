@@ -80,7 +80,7 @@ class PerformerSlidesList(View):
                 url_set[1],
                 url_set[2],
                 ])
-
+        slide_info.sort()
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = (
             'attachment; filename=%s_perf_urls.csv') % (
