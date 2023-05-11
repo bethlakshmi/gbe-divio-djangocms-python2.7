@@ -90,6 +90,12 @@ class EventEvalGradeAdmin(admin.ModelAdmin):
     list_display_links = ('event',)
 
 
+class LabelAdmin(ImportExportActionModelAdmin):
+    list_display = ('id',
+                    'text',
+                    'allocation')
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventLabel, EventLabelAdmin)
 admin.site.register(Location)
@@ -100,3 +106,4 @@ admin.site.register(Resource)
 admin.site.register(ResourceAllocation, ResourceAllocationAdmin)
 admin.site.register(Worker, WorkerAdmin)
 admin.site.register(WorkerItem)
+admin.site.register(Label, LabelAdmin)

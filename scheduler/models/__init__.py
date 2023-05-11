@@ -2,6 +2,7 @@ from .resource import Resource
 from .resource_item import ResourceItem
 from .location_item import LocationItem
 from .location import Location
+from .people import People
 from .worker_item import WorkerItem
 from .worker import Worker
 from .schedulable import Schedulable
