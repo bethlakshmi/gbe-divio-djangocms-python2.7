@@ -11,7 +11,7 @@ from django.core.validators import (
     MinValueValidator,
     MaxValueValidator
 )
-from gbe.models import Performer
+from gbe.models import Performer, Bio
 
 
 class SocialLink(Model):
@@ -45,6 +45,10 @@ class SocialLink(Model):
     performer = ForeignKey(Performer,
                            on_delete=CASCADE,
                            related_name='links')
+    bio = ForeignKey(Bio,
+                     on_delete=CASCADE,
+                     related_name='links',
+                     null=True)
     link = URLField(null=True, blank=True)
     username = CharField(null=True, blank=True, max_length=100)
     social_network = CharField(max_length=40,

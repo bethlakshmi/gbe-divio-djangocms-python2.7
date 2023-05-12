@@ -15,6 +15,7 @@ from django.core.validators import (
 )
 from gbe.models import (
     Biddable,
+    Bio,
     Persona,
     Profile,
 )
@@ -39,6 +40,10 @@ class Costume(Biddable):
                            on_delete=CASCADE,
                            blank=True,
                            null=True)
+    bio = ForeignKey(Bio,
+                     on_delete=CASCADE,
+                     blank=True,
+                     null=True)
     creator = CharField(max_length=128)
     act_title = CharField(max_length=128, blank=True, null=True)
     debut_date = CharField(max_length=128, blank=True, null=True)
