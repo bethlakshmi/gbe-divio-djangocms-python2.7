@@ -1,4 +1,3 @@
-from model_utils.managers import InheritanceManager
 from django.db.models import (
     CASCADE,
     CharField,
@@ -18,7 +17,6 @@ class Bio(Model):
     so that the person booked as part of this bio is in the scheduler, while
     this is used purely for the information *about* that entity.
     '''
-    objects = InheritanceManager()
     contact = ForeignKey(Profile,
                          on_delete=CASCADE)
     name = CharField(max_length=100)

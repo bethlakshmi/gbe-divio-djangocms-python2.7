@@ -42,6 +42,7 @@ class BidAdmin(ImportExportActionModelAdmin):
 class ClassAdmin(BidAdmin):
     list_display = ('b_title',
                     'teacher',
+                    'teacher_bio',
                     'submitted',
                     'accepted',
                     'created_at',
@@ -51,6 +52,7 @@ class ClassAdmin(BidAdmin):
 
 class ActAdmin(BidAdmin):
     list_display = ('performer',
+                    'bio',
                     'b_title',
                     'submitted',
                     'accepted',
@@ -184,6 +186,7 @@ class SocialLinkAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
         'performer',
+        'bio',
         'order',
         'social_network',
         'link',
@@ -342,6 +345,7 @@ admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
 admin.site.register(FlexibleEvaluation, FlexAdmin)
 admin.site.register(Performer, PerformerAdmin)
 admin.site.register(Persona, PerformerAdmin)
+admin.site.register(Bio, PerformerAdmin)
 admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
