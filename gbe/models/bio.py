@@ -20,8 +20,7 @@ class Bio(Model):
     '''
     objects = InheritanceManager()
     contact = ForeignKey(Profile,
-                         on_delete=CASCADE,
-                         related_name='contact')
+                         on_delete=CASCADE)
     name = CharField(max_length=100)
     label = CharField(max_length=100, blank=True)
     bio = TextField()
