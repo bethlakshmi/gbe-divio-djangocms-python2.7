@@ -5,8 +5,7 @@ from django.db.models import (
     Model,
     OneToOneField,
 )
-from scheduler.models import ResourceAllocation
-from scheduler.models import People
+from scheduler.models import ResourceAllocation, PeopleAllocation
 
 
 class Ordering(Model):
@@ -20,7 +19,9 @@ class Ordering(Model):
     '''
     order = IntegerField(default=0)
     allocation = OneToOneField(ResourceAllocation, on_delete=CASCADE)
-    people = OneToOneField(People, on_delete=CASCADE, null=True)
+    people_allocated = OneToOneField(PeopleAllocation,
+                                     on_delete=CASCADE,
+                                     null=True)
     role = CharField(max_length=50, blank=True)
     class_name = CharField(max_length=50, blank=True)
     class_id = IntegerField(blank=True, null=True)

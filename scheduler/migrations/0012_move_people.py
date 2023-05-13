@@ -3,20 +3,24 @@
 from django.db import migrations
 
 
-def create_people(alloc, worker, entity, users, label_text, People):
-    people = People(role=worker.role,
-                    label=label_text,
-                    class_name=entity.__class__.__name__,
-                    class_id=entity.pk)
-    people.save()
-    for user in users:
-        people.users.add(user)
-    alloc.event.people.add(people)
+def create_people(entity, users, People):
+    people = None
+    if People.objects.filter(class_name=entity.__class__.__name__,
+                             class_id=entity.pk).exists():
+        people = People.objects.get(class_name=entity.__class__.__name__,
+                                    class_id=entity.pk)
+    else:
+        people = People(class_name=entity.__class__.__name__,
+                        class_id=entity.pk)
+        people.save()
+        for user in users:
+            people.users.add(user)
     return people
 
 
 def migrate_people(apps, schema_editor):
     ResourceAllocation = apps.get_model("scheduler", "ResourceAllocation")
+    PeopleAllocation = apps.get_model("scheduler", "PeopleAllocation")
     Location = apps.get_model("scheduler", "Location")
     Label = apps.get_model("scheduler", "Label")
     Ordering = apps.get_model("scheduler", "Ordering")
@@ -49,21 +53,13 @@ def migrate_people(apps, schema_editor):
             if Profile.objects.filter(pk=worker._item.pk).exists():
                 counts[' - Profiles'] = counts[' - Profiles'] + 1
                 entity = Profile.objects.get(pk=worker._item.pk)
-                people = create_people(alloc,
-                                       worker,
-                                       entity,
-                                       [entity.user_object],
-                                       label_text,
-                                       People)
+                people = create_people(entity, [entity.user_object], People)
             elif Persona.objects.filter(pk=worker._item.pk).exists():
                 counts[' - Personas'] = counts[' - Personas'] + 1
                 entity = Persona.objects.get(pk=worker._item.pk)
                 bio = Bio.objects.get(name=entity.name, label=entity.label)
-                people = create_people(alloc,
-                                       worker,
-                                       bio,
+                people = create_people(bio,
                                        [entity.performer_profile.user_object],
-                                       label_text,
                                        People)
             elif Troupe.objects.filter(pk=worker._item.pk).exists():
                 counts[' - Troupes'] = counts[' - Troupes'] + 1
@@ -72,17 +68,18 @@ def migrate_people(apps, schema_editor):
                 users = []
                 for a in entity.membership.all():
                     users += [a.performer_profile.user_object]
-                people = create_people(alloc,
-                                       worker,
-                                       bio,
-                                       users,
-                                       label_text,
-                                       People)
+                people = create_people(bio, users, People)
             else:
                 counts[' - Unknown Workers'] = counts[' - Unknown Workers'] + 1
-            if Ordering.objects.filter(allocation=alloc).exists:
+
+            p_alloc = PeopleAllocation(event=alloc.event,
+                                       people=people,
+                                       label=label_text,
+                                       role=worker.role)
+            p_alloc.save()
+            if Ordering.objects.filter(allocation=alloc).exists():
                 ordering = Ordering.objects.get(allocation=alloc)
-                ordering.people = people
+                ordering.people_allocated = p_alloc
                 ordering.save()
         else:
             counts['Unknown'] = counts['Unknown'] + 1

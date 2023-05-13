@@ -16,7 +16,6 @@ from scheduler.models import (
     Resource,
     ResourceItem,
     Schedulable,
-    People,
     WorkerItem,
     Worker,
 )
@@ -33,7 +32,6 @@ class Event(Schedulable):
     '''
     An Event is a schedulable item with a conference model item as its payload.
     '''
-    people = ManyToManyField(People)
     starttime = DateTimeField(blank=True)
     max_volunteer = PositiveIntegerField(default=0)
     approval_needed = BooleanField(default=False)
@@ -55,7 +53,6 @@ class Event(Schedulable):
     event_style = CharField(max_length=128, blank=False)
     connected_id = PositiveIntegerField(blank=True, null=True)
     connected_class = CharField(max_length=128, blank=True)
-
 
     def has_commitment_space(self, commitment_class_name):
         from scheduler.models import Ordering
