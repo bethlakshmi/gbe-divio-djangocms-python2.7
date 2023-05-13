@@ -23,9 +23,6 @@ class Migration(migrations.Migration):
                 ('class_id', models.IntegerField(blank=True, null=True)),
                 ('users', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-                'unique_together': {('class_name', 'class_id')},
-            },
         ),
         migrations.AddField(
             model_name='ordering',

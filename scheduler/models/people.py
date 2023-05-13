@@ -22,4 +22,3 @@ class People(Model):
 
     class Meta:
         app_label = "scheduler"
-        unique_together = (('class_name', 'class_id'),)
