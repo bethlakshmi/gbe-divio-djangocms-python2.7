@@ -5,17 +5,19 @@ from django.db import migrations
 
 def create_people(entity, users, People):
     people = None
+    created = False
     if People.objects.filter(class_name=entity.__class__.__name__,
                              class_id=entity.pk).exists():
         people = People.objects.get(class_name=entity.__class__.__name__,
                                     class_id=entity.pk)
     else:
+        created = True
         people = People(class_name=entity.__class__.__name__,
                         class_id=entity.pk)
         people.save()
         for user in users:
             people.users.add(user)
-    return people
+    return people, created
 
 
 def migrate_people(apps, schema_editor):
@@ -35,8 +37,11 @@ def migrate_people(apps, schema_editor):
         'Locations': 0,
         'Workers': 0,
         ' - Profiles': 0,
+        ' - Copy Profiles': 0,
         ' - Personas': 0,
+        ' - Copy Personas': 0,
         ' - Troupes': 0,
+        ' - Copy Troupes': 0,
         ' - Unknown Workers': 0,
         'Unknown': 0,
     }
@@ -51,24 +56,36 @@ def migrate_people(apps, schema_editor):
             if Label.objects.filter(allocation=alloc).exists():
                 label_text = Label.objects.get(allocation=alloc).text
             if Profile.objects.filter(pk=worker._item.pk).exists():
-                counts[' - Profiles'] = counts[' - Profiles'] + 1
                 entity = Profile.objects.get(pk=worker._item.pk)
-                people = create_people(entity, [entity.user_object], People)
+                people, created = create_people(entity,
+                                                [entity.user_object],
+                                                People)
+                if created:
+                    counts[' - Profiles'] = counts[' - Profiles'] + 1
+                else:
+                    counts[' - Copy Profiles'] = counts[' - Copy Profiles'] + 1
             elif Persona.objects.filter(pk=worker._item.pk).exists():
-                counts[' - Personas'] = counts[' - Personas'] + 1
                 entity = Persona.objects.get(pk=worker._item.pk)
                 bio = Bio.objects.get(name=entity.name, label=entity.label)
-                people = create_people(bio,
-                                       [entity.performer_profile.user_object],
-                                       People)
+                people, created  = create_people(
+                    bio,
+                    [entity.performer_profile.user_object],
+                    People)
+                if created:
+                    counts[' - Personas'] = counts[' - Personas'] + 1
+                else:
+                    counts[' - Copy Personas'] = counts[' - Copy Personas'] + 1
             elif Troupe.objects.filter(pk=worker._item.pk).exists():
-                counts[' - Troupes'] = counts[' - Troupes'] + 1
                 entity = Troupe.objects.get(pk=worker._item.pk)
                 bio = Bio.objects.get(name=entity.name, label=entity.label)
                 users = []
                 for a in entity.membership.all():
                     users += [a.performer_profile.user_object]
-                people = create_people(bio, users, People)
+                people, created = create_people(bio, users, People)
+                if created:
+                    counts[' - Troupes'] = counts[' - Troupes'] + 1
+                else:
+                    counts[' - Copy Troupes'] = counts[' - Copy Troupes'] + 1
             else:
                 counts[' - Unknown Workers'] = counts[' - Unknown Workers'] + 1
 

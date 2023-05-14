@@ -18,6 +18,8 @@ def move_performer(performer, bio):
 def migrate_personas(apps, schema_editor):
     Bio = apps.get_model("gbe", "Bio")
     Persona = apps.get_model("gbe", "Persona")
+    print('')
+    print("migrating %d personas" % Persona.objects.all().count())
     for performer in Persona.objects.all():
         # move persona to bio
         bio = Bio(contact=performer.contact,
@@ -29,7 +31,8 @@ def migrate_personas(apps, schema_editor):
                   awards=performer.awards,
                   img=performer.img,
                   festivals=performer.festivals,
-                  pronouns=performer.pronouns)
+                  pronouns=performer.pronouns,
+                  multiple_performers=False)
         bio.save()
         # Move class proposals
         for class_bid in performer.is_teaching.all():
@@ -46,6 +49,8 @@ def migrate_personas(apps, schema_editor):
 def migrate_troupes(apps, schema_editor):
     Bio = apps.get_model("gbe", "Bio")
     Troupe = apps.get_model("gbe", "Troupe")
+    People = apps.get_model("scheduler", "People")
+    print("migrating %d troupes" % Troupe.objects.all().count())
     for performer in Troupe.objects.all():
         # move persona to bio
         bio = Bio(contact=performer.contact,
@@ -57,9 +62,15 @@ def migrate_troupes(apps, schema_editor):
                   awards=performer.awards,
                   img=performer.img,
                   festivals=performer.festivals,
-                  pronouns=performer.pronouns)
+                  pronouns=performer.pronouns,
+                  multiple_performers=True)
         bio.save()
         move_performer(performer, bio)
+        people = People(class_name=bio.__class__.__name__,
+                        class_id=bio.pk)
+        people.save()
+        for member in performer.membership.all():
+            people.users.add(member.performer_profile.user_object)
 
 
 class Migration(migrations.Migration):

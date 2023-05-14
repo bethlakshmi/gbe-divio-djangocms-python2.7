@@ -1,4 +1,5 @@
 from django.db.models import (
+    BooleanField,
     CASCADE,
     CharField,
     ForeignKey,
@@ -31,6 +32,7 @@ class Bio(Model):
         related_name="image_bio")
     festivals = TextField(blank=True)     # placeholder only
     pronouns = CharField(max_length=128, blank=True)
+    multiple_performers = BooleanField(default=False)
 
     def get_profiles(self):
         '''
