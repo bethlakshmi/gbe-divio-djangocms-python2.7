@@ -54,10 +54,34 @@ class WorkerAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order', 'performer', 'role', 'class_id')
+    list_display = ('order',
+                    'performer',
+                    'people_id',
+                    'role',
+                    'class_id',
+                    'people')
 
     def performer(self, obj):
         return str(obj.allocation.resource)
+
+    def people(self, obj):
+        people = ""
+        for person in obj.people_allocated.people.users.all():
+            people = person.profile.display_name + ', ' + people
+        return people
+
+    def people_id(self, obj):
+        return obj.people_allocated.people.pk
+
+
+class PeopleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'class_name', 'class_id', 'user_list')
+
+    def user_list(self, obj):
+        people = ""
+        for person in obj.users.all():
+            people = person.profile.display_name + ', ' + people
+        return people
 
 
 class EventLabelAdmin(admin.ModelAdmin):
@@ -106,4 +130,5 @@ admin.site.register(Resource)
 admin.site.register(ResourceAllocation, ResourceAllocationAdmin)
 admin.site.register(Worker, WorkerAdmin)
 admin.site.register(WorkerItem)
+admin.site.register(People, PeopleAdmin)
 admin.site.register(Label, LabelAdmin)
