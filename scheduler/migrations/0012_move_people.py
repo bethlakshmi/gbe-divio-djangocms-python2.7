@@ -88,10 +88,47 @@ def migrate_people(apps, schema_editor):
     for key, value in counts.items():
         print("%s: %d" % (key, value))
 
+
 def migrate_people_reverse(apps, schema_editor):
     People = apps.get_model("scheduler", "People")
     print("deleting %s People objects" % People.objects.all().count())
     People.objects.all().delete()
+    return
+
+
+def profile_to_user(Profile, answer):
+    if Profile.objects.filter(pk=answer.profile.pk).exists():
+        answer.user = Profile.objects.get(pk=answer.profile.pk).user_object
+        answer.save()
+    else:
+        print("can't find profile: %d" % answer.profile.pk)
+
+def migrate_eval_answers(apps, schema_editor):
+    EventEvalBoolean = apps.get_model("scheduler", "EventEvalBoolean")
+    EventEvalComment = apps.get_model("scheduler", "EventEvalComment")
+    EventEvalGrade = apps.get_model("scheduler", "EventEvalGrade")
+    Profile = apps.get_model("gbe", "Profile")
+    for answer in EventEvalBoolean.objects.all():
+        profile_to_user(Profile, answer)
+    for answer in EventEvalComment.objects.all():
+        profile_to_user(Profile, answer)
+    for answer in EventEvalGrade.objects.all():
+        profile_to_user(Profile, answer)
+
+
+def return_to_profile(apps, schema_editor):
+    EventEvalBoolean = apps.get_model("scheduler", "EventEvalBoolean")
+    EventEvalComment = apps.get_model("scheduler", "EventEvalComment")
+    EventEvalGrade = apps.get_model("scheduler", "EventEvalGrade")
+    for answer in EventEvalBoolean.objects.all():
+        answer.profile = answer.user.profile
+        answer.save()
+    for answer in EventEvalComment.objects.all():
+        answer.profile = answer.user.profile
+        answer.save()
+    for answer in EventEvalGrade.objects.all():
+        answer.profile = answer.user.profile
+        answer.save()
     return
 
 
@@ -104,5 +141,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(migrate_people,
-                             reverse_code=migrate_people_reverse)
+                             reverse_code=migrate_people_reverse),
+        migrations.RunPython(migrate_eval_answers,
+                             reverse_code=return_to_profile),
     ]
