@@ -13,7 +13,6 @@ from gbe.models import (
     Bio,
     Conference,
     Persona,
-    Profile,
 )
 from gbetext import (
     acceptance_states,

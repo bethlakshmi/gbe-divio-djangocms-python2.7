@@ -8,7 +8,7 @@ from django.db.models import (
     TextField,
     URLField,
 )
-from gbe.models import Profile
+from gbe.models import Account
 from filer.fields.image import FilerImageField
 
 
@@ -18,7 +18,7 @@ class Bio(Model):
     so that the person booked as part of this bio is in the scheduler, while
     this is used purely for the information *about* that entity.
     '''
-    contact = ForeignKey(Profile,
+    contact = ForeignKey(Account,
                          on_delete=CASCADE)
     name = CharField(max_length=100)
     label = CharField(max_length=100, blank=True)

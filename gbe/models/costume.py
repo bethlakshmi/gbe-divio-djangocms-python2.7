@@ -14,6 +14,7 @@ from django.core.validators import (
     MaxValueValidator
 )
 from gbe.models import (
+    Account,
     Biddable,
     Bio,
     Persona,
@@ -36,6 +37,10 @@ class Costume(Biddable):
     profile = ForeignKey(Profile,
                          on_delete=CASCADE,
                          related_name="costumes")
+    account = ForeignKey(Account,
+                         on_delete=CASCADE,
+                         related_name="costumes",
+                         null=True)
     performer = ForeignKey(Persona,
                            on_delete=CASCADE,
                            blank=True,

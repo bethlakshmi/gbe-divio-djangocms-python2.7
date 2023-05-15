@@ -10,6 +10,7 @@ from django.core.validators import (
     MinValueValidator,
 )
 from gbe.models import (
+    Account,
     Biddable,
     EvaluationCategory,
     Profile,
@@ -18,6 +19,7 @@ from gbe.models import (
 
 class FlexibleEvaluation(Model):
     evaluator = ForeignKey(Profile, on_delete=CASCADE)
+    evaluator_acct = ForeignKey(Account, on_delete=CASCADE, null=True)
     bid = ForeignKey(Biddable, on_delete=CASCADE)
     ranking = IntegerField(validators=[MinValueValidator(-1),
                                        MaxValueValidator(5)],
