@@ -4,6 +4,7 @@ from .room import Room
 from .conference_day import ConferenceDay
 
 from .profile import Profile
+from .account import Account
 from .performer import Performer
 from .persona import Persona
 from .troupe import Troupe

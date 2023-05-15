@@ -73,6 +73,27 @@ def migrate_troupes(apps, schema_editor):
             people.users.add(member.performer_profile.user_object)
 
 
+def migrate_profiles(apps, schema_editor):
+    Profile = apps.get_model("gbe", "Profile")
+    Account = apps.get_model("gbe", "Account")
+    print("migrating %d profiles" % Profile.objects.all().count())
+    for profile in Profile.objects.all():
+        # move persona to bio
+        account = Account(user_object=profile.user_object,
+                          display_name=profile.display_name,
+                          purchase_email=profile.purchase_email,
+                          address1=profile.address1,
+                          address2=profile.address2,
+                          city=profile.city,
+                          state=profile.state,
+                          zip_code=profile.zip_code,
+                          country=profile.country,
+                          phone=profile.phone,
+                          best_time=profile.best_time,
+                          how_heard=profile.how_heard)
+        account.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -81,6 +102,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(migrate_profiles),
         migrations.RunPython(migrate_personas),
         migrations.RunPython(migrate_troupes)
     ]
