@@ -22,7 +22,7 @@ def migrate_personas(apps, schema_editor):
     print("migrating %d personas" % Persona.objects.all().count())
     for performer in Persona.objects.all():
         # move persona to bio
-        bio = Bio(contact=performer.contact,
+        bio = Bio(contact=performer.contact.user_object.account,
                   name=performer.name,
                   label=performer.label,
                   bio=performer.bio,
@@ -53,7 +53,7 @@ def migrate_troupes(apps, schema_editor):
     print("migrating %d troupes" % Troupe.objects.all().count())
     for performer in Troupe.objects.all():
         # move persona to bio
-        bio = Bio(contact=performer.contact,
+        bio = Bio(contact=performer.contact.user_object.account,
                   name=performer.name,
                   label=performer.label,
                   bio=performer.bio,
@@ -75,6 +75,7 @@ def migrate_troupes(apps, schema_editor):
 
 def migrate_profiles(apps, schema_editor):
     Profile = apps.get_model("gbe", "Profile")
+    ProfilePreferences = apps.get_model("gbe", "ProfilePreferences")
     Account = apps.get_model("gbe", "Account")
     print("migrating %d profiles" % Profile.objects.all().count())
     for profile in Profile.objects.all():
@@ -92,6 +93,32 @@ def migrate_profiles(apps, schema_editor):
                           best_time=profile.best_time,
                           how_heard=profile.how_heard)
         account.save()
+        for evaluation in profile.actbidevaluation_set.all():
+            evaluation.evaluator_acct = account
+            evaluation.save()
+        for evaluation in profile.bidevaluation_set.all():
+            evaluation.evaluator_acct = account
+            evaluation.save()
+        for evaluation in profile.flexibleevaluation_set.all():
+            evaluation.evaluator_acct = account
+            evaluation.save()
+        for article in profile.article_set.all():
+            article.creator_acct = account
+            article.save()
+        for biz in profile.business_set.all():
+            biz.owner_accts.add(account)
+        for costume in profile.costumes.all():
+            costume.account = account
+            costume.save()
+        for area in profile.staffarea_set.all():
+            area.staff_lead_account = account
+            area.save()
+        for vol in profile.volunteer_set.all():
+            vol.account = account
+            vol.save()
+    for pref in ProfilePreferences.objects.all():
+        pref.account = pref.profile.user_object.account
+        pref.save()
 
 
 class Migration(migrations.Migration):
