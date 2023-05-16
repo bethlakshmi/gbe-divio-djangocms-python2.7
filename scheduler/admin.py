@@ -88,7 +88,8 @@ class OrderAdmin(admin.ModelAdmin):
                     'people')
 
     def performer(self, obj):
-        return str(obj.allocation.resource)
+        return "class: %s, id: %d" % (obj.people_allocated.people.class_name,
+                                      obj.people_allocated.people.class_id)
 
     def people(self, obj):
         people = ""
@@ -132,7 +133,7 @@ class EventEvalQuestionAdmin(admin.ModelAdmin):
 @admin.register(EventEvalGrade, EventEvalComment, EventEvalBoolean)
 class EventEvalGradeAdmin(admin.ModelAdmin):
     list_display = ('event',
-                    'profile',
+                    'user',
                     'question',
                     'answer',)
     list_editable = ('question',
