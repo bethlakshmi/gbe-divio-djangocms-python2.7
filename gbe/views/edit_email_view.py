@@ -15,7 +15,7 @@ from gbe.models import (
     ProfilePreferences,
     UserMessage,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbetext import (
     bad_token_msg,
     default_update_profile_msg,

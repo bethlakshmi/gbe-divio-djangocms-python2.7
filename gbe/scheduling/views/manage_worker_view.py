@@ -18,7 +18,7 @@ from scheduler.idd import (
 from gbe.models import (
     UserMessage,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe.email.functions import (
     send_bid_state_change_mail,
     send_schedule_update_mail,

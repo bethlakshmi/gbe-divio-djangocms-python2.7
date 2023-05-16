@@ -3,7 +3,7 @@ from .conference import Conference
 from .room import Room
 from .conference_day import ConferenceDay
 
-from .account import Account
+from .profile import Profile
 from .bio import Bio
 from .social_link import SocialLink
 from .tech_info import TechInfo

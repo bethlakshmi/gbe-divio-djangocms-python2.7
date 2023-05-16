@@ -22,9 +22,9 @@ class StaffAreaAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'conference',
                     'title',
-                    'staff_lead_account')
+                    'staff_lead')
     list_editable = ('title',
-                     'staff_lead_account',)
+                     'staff_lead',)
     list_display_links = ('id',)
     list_filter = ['conference__conference_slug', 'slug']
 
@@ -71,13 +71,13 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 class ProfilePreferencesAdmin(admin.ModelAdmin):
-    list_display = ('account',
+    list_display = ('profile',
                     'in_hotel',
                     'inform_about',
                     'show_hotel_infobox')
     list_filter = ['in_hotel', 'inform_about']
-    search_fields = ['account__display_name',
-                     'account__user_object__email']
+    search_fields = ['profile__display_name',
+                     'profile__user_object__email']
 
 
 class RoomAdmin(admin.ModelAdmin):
@@ -307,7 +307,7 @@ class FlexAdmin(admin.ModelAdmin):
         'pk',
         'bid',
         'category',
-        'evaluator_acct',
+        'evaluator',
         'ranking')
 
 
@@ -337,7 +337,7 @@ admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
 admin.site.register(FlexibleEvaluation, FlexAdmin)
 admin.site.register(Bio, PerformerAdmin)
 admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
-admin.site.register(Account, ProfileAdmin)
+admin.site.register(Profile, ProfileAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)

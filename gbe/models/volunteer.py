@@ -3,7 +3,7 @@ from django.db.models import (
     ForeignKey,
 )
 from gbe.models import (
-    Account,
+    Profile,
     Biddable,
 )
 
@@ -12,7 +12,7 @@ class Volunteer(Biddable):
     '''
     Represents a conference attendee's participation as a volunteer.
     '''
-    account = ForeignKey(Account,
+    profile = ForeignKey(Profile,
                          on_delete=CASCADE,
                          null=True)
     class Meta:

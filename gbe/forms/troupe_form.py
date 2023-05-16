@@ -5,7 +5,7 @@ from django.forms import (
     MultipleChoiceField,
 )
 from gbe.models import (
-    Account,
+    Profile,
     Bio,
 )
 from gbe_forms_text import (
@@ -22,7 +22,7 @@ class TroupeForm(PersonaForm):
     required_css_class = 'required'
     error_css_class = 'error'
     contact = ModelChoiceField(
-        queryset=Account.objects.all(),
+        queryset=Profile.objects.all(),
         empty_label=None,
         label=troupe_labels['contact'])
     year_started = IntegerField(

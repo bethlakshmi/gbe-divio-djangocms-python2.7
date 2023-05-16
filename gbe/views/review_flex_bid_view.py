@@ -11,7 +11,7 @@ from gbe.models import (
     FlexibleEvaluation,
     UserMessage,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe.forms import (
     ActBidEvaluationForm,
     FlexibleEvaluationForm,

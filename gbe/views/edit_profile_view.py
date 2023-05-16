@@ -15,7 +15,7 @@ from gbe.models import (
     ProfilePreferences,
     UserMessage
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe.functions import validate_profile
 from gbetext import (
     default_update_profile_msg,

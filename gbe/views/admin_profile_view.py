@@ -4,7 +4,7 @@ from gbe.functions import validate_perms
 from gbe.models import (
     UserMessage,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbetext import admin_note
 from gbe.views import EditProfileView
 

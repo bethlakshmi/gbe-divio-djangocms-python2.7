@@ -14,7 +14,7 @@ from django.core.validators import (
     MaxValueValidator
 )
 from gbe.models import (
-    Account,
+    Profile,
     Biddable,
     Bio,
 )
@@ -32,7 +32,7 @@ class Costume(Biddable):
       - act_title is optional, and therefore does not fit the rules of
         Biddable's title
     '''
-    account = ForeignKey(Account,
+    profile = ForeignKey(Profile,
                          on_delete=CASCADE,
                          related_name="costumes",
                          null=True)

@@ -19,7 +19,7 @@ from gbe.models import (
     StaffArea,
     UserMessage,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe.functions import (
     validate_profile,
     validate_perms_by_profile,

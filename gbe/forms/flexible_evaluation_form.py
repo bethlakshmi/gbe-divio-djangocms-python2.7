@@ -35,8 +35,8 @@ class FlexibleEvaluationForm(ModelForm):
         model = FlexibleEvaluation
         fields = ['ranking',
                   'category',
-                  'evaluator_acct',
+                  'evaluator',
                   'bid']
         widgets = {'category': HiddenInput(),
-                   'evaluator_acct': HiddenInput(),
+                   'evaluator': HiddenInput(),
                    'bid': HiddenInput(), }

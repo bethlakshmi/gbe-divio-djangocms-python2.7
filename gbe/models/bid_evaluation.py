@@ -6,7 +6,7 @@ from django.db.models import (
     TextField,
 )
 from gbe.models import (
-    Account,
+    Profile,
     Biddable,
 )
 
@@ -17,7 +17,7 @@ class BidEvaluation(Model):
     '''
     A response to a bid, cast by a privileged GBE staff member
     '''
-    evaluator_acct = ForeignKey(Account, on_delete=CASCADE, null=True)
+    evaluator = ForeignKey(Profile, on_delete=CASCADE, null=True)
     vote = IntegerField(choices=vote_options)
     notes = TextField(blank=True)
     bid = ForeignKey(Biddable, on_delete=CASCADE)

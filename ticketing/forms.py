@@ -14,7 +14,7 @@ from django import forms
 from gbe.models import (
     Conference,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe_forms_text import (
     ticketing_event_help_text,
     ticketing_event_labels,

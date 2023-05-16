@@ -10,7 +10,7 @@ from gbetext import register_msg
 from gbe.models import (
     ProfilePreferences,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe_utils.mixins import SubwayMapMixin
 
 

@@ -10,14 +10,14 @@ from django.core.validators import (
     MinValueValidator,
 )
 from gbe.models import (
-    Account,
+    Profile,
     Biddable,
     EvaluationCategory,
 )
 
 
 class FlexibleEvaluation(Model):
-    evaluator_acct = ForeignKey(Account, on_delete=CASCADE, null=True)
+    evaluator = ForeignKey(Profile, on_delete=CASCADE, null=True)
     bid = ForeignKey(Biddable, on_delete=CASCADE)
     ranking = IntegerField(validators=[MinValueValidator(-1),
                                        MaxValueValidator(5)],
@@ -26,4 +26,4 @@ class FlexibleEvaluation(Model):
 
     class Meta:
         app_label = "gbe"
-        unique_together = (("bid", "evaluator_acct", "category"),)
+        unique_together = (("bid", "evaluator", "category"),)

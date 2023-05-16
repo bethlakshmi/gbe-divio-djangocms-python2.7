@@ -15,7 +15,7 @@ from gbe.models import (
     Vendor,
     UserMessage,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe.ticketing_idd_interface import (
     get_purchased_tickets,
     verify_performer_app_paid,

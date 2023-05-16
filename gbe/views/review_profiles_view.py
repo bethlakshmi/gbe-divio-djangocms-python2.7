@@ -7,7 +7,7 @@ from gbe.models import (
     Bio,
     UserMessage,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe.functions import validate_perms
 from settings import GBE_TABLE_FORMAT
 from gbetext import profile_intro_msg

@@ -9,7 +9,7 @@ from gbe.models import (
     UserMessage,
     Vendor,
 )
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from scheduler.models import ResourceAllocation
 from gbe.functions import validate_perms
 from gbetext import (

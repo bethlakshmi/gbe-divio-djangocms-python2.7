@@ -12,7 +12,7 @@ from published.models import PublishedModel
 from published.constants import *
 from gbetext import acceptance_states
 from model_utils.managers import InheritanceManager
-from gbe.models import Account
+from gbe.models import Profile
 from settings import GBE_DATETIME_FORMAT
 from cms.models.pluginmodel import CMSPlugin
 
@@ -25,10 +25,10 @@ class Article(PublishedModel):
     title = CharField(max_length=128)
     summary = CharField(max_length=300, blank=True)
     content = TextField()
-    creator_acct = ForeignKey(Account,
-                              on_delete=SET_NULL,
-                              null=True,
-                              blank=True)
+    creator = ForeignKey(Profile,
+                         on_delete=SET_NULL,
+                         null=True,
+                         blank=True)
     slug = SlugField(null=False, unique=True)
 
     created_at = DateTimeField(auto_now_add=True)

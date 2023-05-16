@@ -18,7 +18,7 @@ from ticketing.models import (
 )
 import html
 from django.utils import timezone
-from gbe.models import Account as Profile
+from gbe.models import Profile
 import sys
 from datetime import datetime
 import pytz

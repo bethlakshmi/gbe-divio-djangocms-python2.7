@@ -2,7 +2,7 @@ from django.forms import (
     CharField,
 )
 from gbe.forms import ParticipantForm
-from gbe.models import Account
+from gbe.models import Profile
 from gbe_forms_text import (
     participant_labels,
 )
@@ -17,7 +17,7 @@ class ProfileAdminForm(ParticipantForm):
         label=participant_labels['purchase_email'])
 
     class Meta:
-        model = Account
+        model = Profile
         # purchase_email should be display only
         fields = ('first_name',
                   'last_name',
