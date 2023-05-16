@@ -12,10 +12,10 @@ from gbe.forms import (
     ProfilePreferencesForm,
 )
 from gbe.models import (
+    Profile,
     ProfilePreferences,
     UserMessage
 )
-from gbe.models import Account as Profile
 from gbe.functions import validate_profile
 from gbetext import (
     default_update_profile_msg,

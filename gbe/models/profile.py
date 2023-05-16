@@ -7,7 +7,6 @@ from django.conf import settings
 from django.db.models import (
     CASCADE,
     CharField,
-    Model,
     OneToOneField,
     TextField,
 )
@@ -34,7 +33,7 @@ from gbetext import (
 phone_regex = '(\d{3}[-\.]?\d{3}[-\.]?\d{4})'
 
 
-class Account(Model):
+class Profile(WorkerItem):
     '''
     The core data about any registered user of the GBE site, barring
     the information gathered up in the User object. (which we'll

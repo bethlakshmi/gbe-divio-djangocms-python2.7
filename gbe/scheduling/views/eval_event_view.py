@@ -4,7 +4,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
-from gbe.models import UserMessage
+from gbe.models import (
+    Performer,
+    UserMessage,
+)
 from gbe.functions import check_user_and_redirect
 from scheduler.idd import (
     get_bookings,

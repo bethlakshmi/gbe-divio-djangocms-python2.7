@@ -1,6 +1,6 @@
 from dal import autocomplete
 from django.db.models import Q
-from gbe.models import Bio
+from gbe.models import Performer
 from gbe.functions import validate_profile
 
 
@@ -8,9 +8,9 @@ class LimitedPerformerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         profile = validate_profile(self.request, require=True)
         if not profile:
-            return Bio.objects.none()
+            return Performer.objects.none()
 
-        qs = Bio.objects.filter(contact=profile)
+        qs = Performer.objects.filter(contact=profile)
 
         if self.q:
             qs = qs.filter(

@@ -1,12 +1,11 @@
 from django.forms import (
-    HiddenInput,
     IntegerField,
     ModelChoiceField,
-    MultipleChoiceField,
+    ModelMultipleChoiceField,
 )
 from gbe.models import (
-    Account,
-    Bio,
+    Profile,
+    Troupe,
 )
 from gbe_forms_text import (
     persona_help_texts,
@@ -15,23 +14,19 @@ from gbe_forms_text import (
 from gbe.forms import PersonaForm
 from dal import autocomplete
 from django.urls import reverse_lazy
-from gbe.forms.common_queries import visible_profiles
 
 
 class TroupeForm(PersonaForm):
     required_css_class = 'required'
     error_css_class = 'error'
     contact = ModelChoiceField(
-        queryset=Account.objects.all(),
+        queryset=Profile.objects.all(),
         empty_label=None,
         label=troupe_labels['contact'])
     year_started = IntegerField(
         required=True,
         label=troupe_labels['year_started'],
         help_text=persona_help_texts['year_started'])
-
-    membership = MultipleChoiceField(widget=autocomplete.ModelSelect2Multiple(
-        url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls')))
 
     def clean(self):
         cleaned_data = super(TroupeForm, self).clean()
@@ -40,18 +35,20 @@ class TroupeForm(PersonaForm):
         return cleaned_data
 
     class Meta:
-        model = Bio
+        model = Troupe
         fields = ['contact',
                   'name',
                   'label',
                   'pronouns',
+                  'membership',
                   'bio',
                   'year_started',
                   'awards',
                   'upload_img',
                   'festivals',
-                  'multiple_performers',
                   ]
         help_texts = persona_help_texts
         labels = troupe_labels
-        widgets = {'multiple_performers': HiddenInput()}
+        widgets = {
+            'membership': autocomplete.ModelSelect2Multiple(
+                url=reverse_lazy('persona-autocomplete', urlconf='gbe.urls'))}

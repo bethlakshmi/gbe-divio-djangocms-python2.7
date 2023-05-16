@@ -28,6 +28,8 @@ from django.contrib import messages
 from gbe.models import (
     ActCastingOption,
     Conference,
+    Performer,
+    Profile,
     UserMessage,
 )
 from settings import (

@@ -23,8 +23,8 @@ from datetime import (
 import pytz
 from gbe.forms import InvolvedProfileForm
 from gbe.models import (
-    Bio,
     ConferenceDay,
+    Performer,
     UserMessage,
 )
 from gbe.functions import (
@@ -169,7 +169,7 @@ class ShowCalendarView(View):
                     args=[occurrence.pk])
             for person in get_bookings([occurrence.pk],
                                        roles=["Teacher", "Moderator"]).people:
-                presenter = Bio.objects.get(pk=person.public_id)
+                presenter = Performer.objects.get(pk=person.public_id)
                 occurrence_detail['teachers'] += [(person.role, presenter)]
             (occurrence_detail['favorite_link'],
              occurrence_detail['volunteer_link'],

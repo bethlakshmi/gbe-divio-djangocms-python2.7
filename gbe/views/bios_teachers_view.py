@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
-from scheduler.idd import get_people
+
+from scheduler.functions import (
+    get_scheduled_events_by_role,
+)
 from gbe.models import (
-    Bio,
     Class,
+    Performer,
 )
 from gbe.functions import (
     get_current_conference,
@@ -25,40 +28,33 @@ def BiosTeachersView(request):
     else:
         conference = get_conference_by_slug(conf_slug)
     conferences = conference_list()
-    performers = Bio.objects.filter(multiple_performers=False)
+    performers = Performer.objects.all()
     bid_classes = Class.objects.filter(
         b_conference=conference,
         accepted=3)
-    bios = {}
-    response = get_people(labels=[conference.conference_slug],
-                          roles=["Teacher", "Moderator", "Panelist"])
+    bios = []
+    workers, commits = get_scheduled_events_by_role(
+        conference,
+        ["Teacher", "Moderator", "Panelist"])
 
-    for performer in response.people:
-        if performer.public_id not in bios.keys():
-            bios[performer.public_id] = {
-                'bio': Bio.objects.get(pk=performer.public_id),
-                'classes': []}
-        bios[performer.public_id]['classes'] += [{
-            'role': performer.role,
-            'event': performer.occurrence,
-            'detail_id': performer.occurrence.pk}]
-
-    for a_class in bid_classes:
-        if teacher_bio.pk not in bios.keys():
-            bios[teacher_bio.pk] = {
-                'bio': Bio.objects.get(pk=performer.public_id),
-                'classes': [{'role': "Teacher",
-                             'event': a_class}]}
-        else:
-            matched = False
-            for event in bios[teacher_bio.pk]['classes']:
-                if event['event'].connected_id == a_class.pk and (
-                        event['event'].connected_class == "Class"):
-                    matched = True
-            if not matched:
-                bios[teacher_bio.pk]['classes'] += [{
+    for performer in performers:
+        classes = []
+        for worker in workers.filter(_item=performer):
+            for commit in commits.filter(resource=worker):
+                classes += [{
+                    'role': worker.role,
+                    'event': commit.event,
+                    'detail_id': commit.event.pk}]
+        for a_class in bid_classes.filter(teacher=performer):
+            if len(commits.filter(
+                    event__connected_id=a_class.pk,
+                    event__connected_class=a_class.__class__.__name__)) == 0:
+                classes += [{
                     'role': "Teacher",
                     'event': a_class}]
+
+        if len(classes) > 0:
+            bios += [{'bio': performer, 'classes': classes}]
 
     template = 'gbe/bio_list.tmpl'
     context = {'bios': bios,

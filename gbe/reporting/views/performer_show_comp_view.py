@@ -2,7 +2,9 @@ from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from gbe.models import Account as Profile
+from gbe.models import (
+    Profile,
+)
 from django.shortcuts import (
     get_object_or_404,
     render,

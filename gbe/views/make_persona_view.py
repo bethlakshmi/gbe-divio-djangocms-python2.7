@@ -8,7 +8,7 @@ from gbe_utils.mixins import (
     SubwayMapMixin,
 )
 from django_addanother.views import CreatePopupMixin, UpdatePopupMixin
-from gbe.models import Bio
+from gbe.models import Persona
 from gbe.forms import PersonaForm
 from django.urls import reverse, reverse_lazy
 from gbetext import (
@@ -21,12 +21,12 @@ class PersonaCreate(CreatePopupMixin,
                     SubwayMapMixin,
                     ProfileRequiredMixin,
                     CreateView):
-    model = Bio
+    model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
-    page_title = 'Bio'
-    view_title = 'Tell Us About Your Bio'
+    page_title = 'Stage Persona'
+    view_title = 'Tell Us About Your Stage Persona'
     mode = "performer"
     valid_message = default_create_persona_msg
 
@@ -42,12 +42,12 @@ class PersonaUpdate(UpdatePopupMixin,
                     ProfileRequiredMixin,
                     UpdateView):
     stay_here = True
-    model = Bio
+    model = Persona
     form_class = PersonaForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
-    page_title = 'Bio'
-    view_title = 'Tell Us About Your Bio'
+    page_title = 'Stage Persona'
+    view_title = 'Tell Us About Your Stage Persona'
     mode = "update"
     valid_message = default_edit_persona_msg
 

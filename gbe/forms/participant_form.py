@@ -5,7 +5,7 @@ from django.forms import (
     ModelForm,
     MultipleChoiceField,
 )
-from gbe.models import Account
+from gbe.models import Profile
 from gbe_forms_text import (
     how_heard_options,
     participant_form_help_texts,
@@ -101,7 +101,7 @@ class ParticipantForm(ModelForm):
             self.fields['phone'].required = True
 
     class Meta:
-        model = Account
+        model = Profile
         # purchase_email should be display only
         fields = ['first_name',
                   'last_name',

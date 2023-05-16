@@ -7,7 +7,7 @@ from django.forms import (
     Textarea,
 )
 from gbe.models import (
-    Bio,
+    Persona,
     SocialLink,
 )
 from gbe_forms_text import (
@@ -65,7 +65,7 @@ class PersonaForm(ModelForm):
             )
             for i in range(1, 6):
                 if not SocialLink.objects.filter(
-                        bio=kwargs.get('instance'), order=i).exists():
+                        performer=kwargs.get('instance'), order=i).exists():
                     formset_initial += [{'order': i}]
         else:
             for i in range(1, 6):
@@ -117,15 +117,18 @@ class PersonaForm(ModelForm):
         return performer
 
     class Meta:
-        model = Bio
+        model = Persona
         fields = ['name',
                   'label',
                   'pronouns',
                   'bio',
                   'year_started',
                   'awards',
+                  'performer_profile',
                   'contact',
                   ]
         help_texts = persona_help_texts
         labels = persona_labels
-        widgets = {'contact': HiddenInput()}
+        widgets = {'performer_profile': HiddenInput(),
+                   'contact': HiddenInput(),
+                   }

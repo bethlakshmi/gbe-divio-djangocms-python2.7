@@ -22,9 +22,9 @@ class StaffAreaAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'conference',
                     'title',
-                    'staff_lead_account')
+                    'staff_lead')
     list_editable = ('title',
-                     'staff_lead_account',)
+                     'staff_lead',)
     list_display_links = ('id',)
     list_filter = ['conference__conference_slug', 'slug']
 
@@ -41,6 +41,7 @@ class BidAdmin(ImportExportActionModelAdmin):
 
 class ClassAdmin(BidAdmin):
     list_display = ('b_title',
+                    'teacher',
                     'teacher_bio',
                     'submitted',
                     'accepted',
@@ -50,7 +51,8 @@ class ClassAdmin(BidAdmin):
 
 
 class ActAdmin(BidAdmin):
-    list_display = ('bio',
+    list_display = ('performer',
+                    'bio',
                     'b_title',
                     'submitted',
                     'accepted',
@@ -64,6 +66,11 @@ class PerformerAdmin(admin.ModelAdmin):
     search_fields = ['name', 'contact__display_name']
 
 
+class TroupeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'contact')
+    filter_horizontal = ("membership",)
+
+
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('display_name', 'user_object', 'phone', 'purchase_email')
     search_fields = ['display_name',
@@ -71,13 +78,13 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 class ProfilePreferencesAdmin(admin.ModelAdmin):
-    list_display = ('account',
+    list_display = ('profile',
                     'in_hotel',
                     'inform_about',
                     'show_hotel_infobox')
     list_filter = ['in_hotel', 'inform_about']
-    search_fields = ['account__display_name',
-                     'account__user_object__email']
+    search_fields = ['profile__display_name',
+                     'profile__user_object__email']
 
 
 class RoomAdmin(admin.ModelAdmin):
@@ -178,6 +185,7 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
 class SocialLinkAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
+        'performer',
         'bio',
         'order',
         'social_network',
@@ -307,7 +315,7 @@ class FlexAdmin(admin.ModelAdmin):
         'pk',
         'bid',
         'category',
-        'evaluator_acct',
+        'evaluator',
         'ranking')
 
 
@@ -335,13 +343,16 @@ admin.site.register(EmailFrequency, EmailFrequencyAdmin)
 admin.site.register(EvaluationCategory, EvalCategoryAdmin)
 admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
 admin.site.register(FlexibleEvaluation, FlexAdmin)
+admin.site.register(Performer, PerformerAdmin)
+admin.site.register(Persona, PerformerAdmin)
 admin.site.register(Bio, PerformerAdmin)
 admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
-admin.site.register(Account, ProfileAdmin)
+admin.site.register(Profile, ProfileAdmin)
 admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)
 admin.site.register(Business, BusinessAdmin)
+admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(SocialLink, SocialLinkAdmin)
 admin.site.register(UserMessage, MessageAdmin)
 admin.site.register(Vendor, VendorAdmin)

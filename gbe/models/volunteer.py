@@ -5,6 +5,7 @@ from django.db.models import (
 from gbe.models import (
     Account,
     Biddable,
+    Profile,
 )
 
 
@@ -12,7 +13,10 @@ class Volunteer(Biddable):
     '''
     Represents a conference attendee's participation as a volunteer.
     '''
-    account = ForeignKey(Account,
+    profile = ForeignKey(Profile,
+                         on_delete=CASCADE,
+                         related_name="volunteering")
+    account = ForeignKey(Profile,
                          on_delete=CASCADE,
                          null=True)
     class Meta:

@@ -2,7 +2,7 @@ from django.forms import (
     CharField,
     ModelForm,
 )
-from gbe.models import Account
+from gbe.models import Profile
 from gbe_forms_text import (
     participant_form_help_texts,
     participant_labels,
@@ -32,7 +32,7 @@ class InvolvedProfileForm(ModelForm):
             form.user_object.save()
 
     class Meta:
-        model = Account
+        model = Profile
         # purchase_email should be display only
         fields = ['first_name',
                   'last_name',

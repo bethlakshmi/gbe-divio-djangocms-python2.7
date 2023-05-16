@@ -13,10 +13,12 @@ from gbe.models import (
     Account,
     Biddable,
     EvaluationCategory,
+    Profile,
 )
 
 
 class FlexibleEvaluation(Model):
+    evaluator = ForeignKey(Profile, on_delete=CASCADE)
     evaluator_acct = ForeignKey(Account, on_delete=CASCADE, null=True)
     bid = ForeignKey(Biddable, on_delete=CASCADE)
     ranking = IntegerField(validators=[MinValueValidator(-1),
@@ -26,4 +28,4 @@ class FlexibleEvaluation(Model):
 
     class Meta:
         app_label = "gbe"
-        unique_together = (("bid", "evaluator_acct", "category"),)
+        unique_together = (("bid", "evaluator", "category"),)

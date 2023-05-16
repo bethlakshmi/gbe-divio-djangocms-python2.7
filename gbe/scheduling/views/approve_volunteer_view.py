@@ -16,10 +16,10 @@ from django.urls import reverse
 from settings import GBE_DATETIME_FORMAT
 from gbe.models import (
     Conference,
+    Profile,
     StaffArea,
     UserMessage,
 )
-from gbe.models import Account as Profile
 from gbe.functions import (
     validate_profile,
     validate_perms_by_profile,

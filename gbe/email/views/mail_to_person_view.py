@@ -7,7 +7,7 @@ from django.shortcuts import (
 )
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from gbe.models import Account as Profile
+from gbe.models import Profile
 from gbe.email.views import MailView
 from gbe.functions import validate_perms
 

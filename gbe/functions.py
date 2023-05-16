@@ -2,7 +2,7 @@ from gbe.models import (
     Class,
     Conference,
     ConferenceDay,
-    Account,
+    Profile,
     StaffArea,
     UserMessage,
     Volunteer,
@@ -39,7 +39,7 @@ def validate_profile(request, require=False):
     if request.user.is_authenticated:
         try:
             return request.user.profile
-        except Account.DoesNotExist:
+        except Profile.DoesNotExist:
             if require:
                 raise Http404
     else:

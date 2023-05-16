@@ -3,6 +3,7 @@ from scheduler.models import (
     EventEvalGrade,
     EventEvalBoolean,
     EventEvalQuestion,
+    WorkerItem,
 )
 from scheduler.data_transfer import (
     EvalInfoResponse,
@@ -36,10 +37,11 @@ def set_eval_info(answers, occurrence_id, person):
                 details="The event hasn't occurred yet, and can't be rated.",
                 occurrence=response.occurrence)],
             occurrences=[response.occurrence])
+    answer_giver = WorkerItem.objects.get(pk=person.public_id)
     for submitted_answer in answers:
         new_answer, created = answer_type_to_class[
             submitted_answer.question.answer_type].objects.get_or_create(
-            user=person.user,
+            profile=answer_giver,
             event=response.occurrence,
             question=submitted_answer.question,
             defaults={'answer': submitted_answer.value})
