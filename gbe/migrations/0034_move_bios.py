@@ -77,6 +77,7 @@ def migrate_profiles(apps, schema_editor):
     Profile = apps.get_model("gbe", "Profile")
     ProfilePreferences = apps.get_model("gbe", "ProfilePreferences")
     Account = apps.get_model("gbe", "Account")
+    Volunteer = apps.get_model("gbe", "Volunteer")
     print("migrating %d profiles" % Profile.objects.all().count())
     for profile in Profile.objects.all():
         # move persona to bio
@@ -113,8 +114,8 @@ def migrate_profiles(apps, schema_editor):
         for area in profile.staffarea_set.all():
             area.staff_lead_account = account
             area.save()
-        for vol in profile.volunteer_set.all():
-            vol.account = account
+    for vol in Volunteer.objects.all():
+            vol.account = vol.profile.user_object.account
             vol.save()
     for pref in ProfilePreferences.objects.all():
         pref.account = pref.profile.user_object.account
