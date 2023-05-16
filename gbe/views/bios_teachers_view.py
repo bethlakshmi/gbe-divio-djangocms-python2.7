@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
-
+from collections import OrderedDict
 from scheduler.idd import get_people
 from gbe.models import (
     Bio,
@@ -61,7 +61,8 @@ def BiosTeachersView(request):
             'event': a_class}]
 
     template = 'gbe/bio_list.tmpl'
-    context = {'bios': bios,
+    context = {'bios': OrderedDict(sorted(bios.items(),
+                                          key=lambda t: t[1]['bio'].name)),
                'bio_url': reverse('bios_teacher',
                                   urlconf='gbe.urls'),
                'title': 'Conference Bios',

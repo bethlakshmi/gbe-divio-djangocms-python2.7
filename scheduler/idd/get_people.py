@@ -31,12 +31,9 @@ def get_people(parent_event_ids=[],
         bookings = bookings.filter(
             event__id__in=event_ids)
     if len(roles) > 0:
-        bookings = bookings.filter(resource__worker__role__in=roles)
+        bookings = bookings.filter(role__in=roles)
     for booking in bookings:
-        if booking.resource.as_subtype.__class__.__name__ == "Worker":
-            person = Person(booking=booking)
-            if hasattr(booking, 'label'):
-                person.label = booking.label.text
-            people += [person]
+        person = Person(booking=booking)
+        people += [person]
 
     return PeopleResponse(people=people)

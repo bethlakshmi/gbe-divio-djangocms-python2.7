@@ -30,7 +30,8 @@ class Person(object):
         if booking:
             self.booking_id = booking.pk
             self.occurrence = booking.event
-            self.role = worker.role
+            self.role = booking.role
+            self.label = booking.label
             people = booking.people
             if hasattr(booking, 'ordering'):
                 self.commitment = booking.ordering
@@ -44,11 +45,11 @@ class Person(object):
             self.public_id = people.class_id
         elif worker:
             self.role = worker.role
-            self.user = worker._item.as_subtype.user_object
+            self.users = [worker._item.as_subtype.user_object]
             self.public_class = worker._item.as_subtype.__class__.__name__
             self.public_id = worker._item.pk
         else:
-            self.user = user
+            self.users = [user]
             self.public_id = public_id
             self.role = role
             self.public_class = public_class
@@ -56,9 +57,9 @@ class Person(object):
         if booking_id:
             self.booking_id = booking_id
         self.label = label
-        if users is not None:
+        if self.users is not None:
             self.users = users
-        elif self.user is not None:
+        elif user is not None:
             self.users = [self.user]
 
 
