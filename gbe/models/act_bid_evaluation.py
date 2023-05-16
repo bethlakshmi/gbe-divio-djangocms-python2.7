@@ -7,11 +7,12 @@ from django.db.models import (
 from gbe.models import (
     Profile,
     Act,
+    Profile,
 )
 
 
 class ActBidEvaluation(Model):
-    evaluator = ForeignKey(Profile, on_delete=CASCADE, null=True)
+    evaluator = ForeignKey(Profile, on_delete=CASCADE)
     notes = TextField(blank=True)
     bid = ForeignKey(Act, on_delete=CASCADE)
 

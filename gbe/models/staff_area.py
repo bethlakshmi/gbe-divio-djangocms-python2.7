@@ -10,6 +10,7 @@ from django.db.models import (
 from gbe.models import (
     Profile,
     Conference,
+    Profile,
     Room,
 )
 

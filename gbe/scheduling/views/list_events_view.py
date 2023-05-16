@@ -5,8 +5,8 @@ from django.shortcuts import (
 from django.http import Http404
 from django.urls import reverse
 from gbe.models import (
-    Bio,
     Class,
+    Performer,
     StaffArea,
     UserMessage,
 )
@@ -190,7 +190,7 @@ class ListEventsView(View):
                 "Panelist"])
             for person in people_response.people:
                 if person.public_class != "Profile":
-                    presenter = Bio.objects.get(pk=person.public_id)
+                    presenter = Performer.objects.get(pk=person.public_id)
                     if presenter not in presenters:
                         presenters += [presenter]
             bid = None

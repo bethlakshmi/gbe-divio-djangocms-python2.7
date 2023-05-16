@@ -16,9 +16,9 @@ from scheduler.idd import (
     test_booking,
 )
 from gbe.models import (
+    Profile,
     UserMessage,
 )
-from gbe.models import Profile
 from gbe.email.functions import (
     send_bid_state_change_mail,
     send_schedule_update_mail,

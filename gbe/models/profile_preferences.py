@@ -17,8 +17,7 @@ class ProfilePreferences(Model):
     '''
     profile = OneToOneField(Profile,
                             on_delete=CASCADE,
-                            related_name='preferences',
-                            null=True)
+                            related_name='preferences')
     in_hotel = CharField(max_length=10,
                          blank=True,
                          choices=yes_no_maybe_options)

@@ -8,9 +8,9 @@ from django.shortcuts import redirect
 from gbe.forms import UserCreateForm
 from gbetext import register_msg
 from gbe.models import (
+    Profile,
     ProfilePreferences,
 )
-from gbe.models import Profile
 from gbe_utils.mixins import SubwayMapMixin
 
 

@@ -5,6 +5,7 @@ from django.forms import (
     ModelForm,
     MultipleChoiceField,
 )
+from gbe.models import Profile
 from gbe_forms_text import (
     how_heard_options,
     participant_form_help_texts,
@@ -22,7 +23,6 @@ from gbetext import (
     found_on_list_msg,
     required_data_removed_msg,
 )
-from gbe.models import Profile
 
 
 class ParticipantForm(ModelForm):

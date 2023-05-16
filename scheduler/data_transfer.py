@@ -20,7 +20,7 @@ class Person(object):
                  public_class="Performer",
                  role=None,
                  label=None,
-                 people=None,
+                 worker=None,
                  booking=None,
                  commitment=None,
                  users=None):
@@ -30,19 +30,14 @@ class Person(object):
         if booking:
             self.booking_id = booking.pk
             self.occurrence = booking.event
-            self.role = booking.role
-            people = booking.people
+            worker = booking.resource.worker
             if hasattr(booking, 'ordering'):
                 self.commitment = booking.ordering
         else:
             self.occurrence = None
             self.commitment = commitment
 
-        if people:
-            self.users = people.users
-            self.public_class = people.class_name
-            self.public_id = people.class_id
-        elif worker:
+        if worker:
             self.role = worker.role
             self.user = worker._item.as_subtype.user_object
             self.public_class = worker._item.as_subtype.__class__.__name__

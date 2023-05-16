@@ -18,6 +18,7 @@ class Ordering(Model):
     indices are allowed.
     '''
     order = IntegerField(default=0)
+    allocation = OneToOneField(ResourceAllocation, on_delete=CASCADE)
     people_allocated = OneToOneField(PeopleAllocation,
                                      on_delete=CASCADE,
                                      null=True)

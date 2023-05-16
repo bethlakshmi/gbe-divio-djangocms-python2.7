@@ -12,6 +12,7 @@ from gbe.models import (
     Biddable,
     Bio,
     Conference,
+    Persona,
 )
 from gbetext import (
     acceptance_states,
@@ -29,6 +30,9 @@ class Class(Biddable):
     teach/instruct/guide/mediate and a number of participants
     spectate/participate.
     '''
+    teacher = ForeignKey(Persona,
+                         on_delete=CASCADE,
+                         related_name='is_teaching')
     teacher_bio = ForeignKey(Bio,
                              on_delete=CASCADE,
                              related_name='is_teaching',

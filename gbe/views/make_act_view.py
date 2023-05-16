@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from gbe.models import (
     Act,
-    Bio,
+    Performer,
     TechInfo,
 )
 from gbe.forms import (
@@ -23,14 +23,14 @@ class MakeActView(MakeBidView):
     view_title = 'Propose an Act'
     draft_fields = ['b_title',
                     'b_description',
-                    'bio',
+                    'performer',
                     'first_name',
                     'last_name',
                     'phone']
     submit_fields = ['b_title',
                      'b_description',
                      'shows_preferences',
-                     'bio', ]
+                     'performer', ]
     bid_type = "Act"
     has_draft = True
     submit_msg = default_act_submit_msg
@@ -65,14 +65,14 @@ class MakeActView(MakeBidView):
                 "%screate" % redirect_prefix,
                 urlconf='gbe.urls')
 
-        self.bios = self.owner.bio_set.all()
-        if len(self.bios) == 0:
+        self.personae = self.owner.personae.all()
+        if len(self.personae) == 0:
             return '%s?next=%s' % (
                 reverse('persona-add', urlconf='gbe.urls', args=[1]),
                 reverse('act_create', urlconf='gbe.urls'))
 
         if self.bid_object and (
-                self.bid_object.bio.contact != self.owner):
+                self.bid_object.performer.contact != self.owner):
             raise Http404
 
     def get_initial(self):
@@ -84,7 +84,7 @@ class MakeActView(MakeBidView):
                 'act_duration': self.bid_object.tech.duration})
         else:
             initial.update({
-                'bio': self.bios[0],
+                'performer': self.personae[0],
                 'b_conference': self.conference,
                 'b_title': "%s Act - %s" % (
                     self.owner,

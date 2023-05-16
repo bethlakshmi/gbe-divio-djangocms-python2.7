@@ -2,7 +2,14 @@
 from django.conf.urls import url, include
 from aldryn_django.utils import i18n_patterns
 import aldryn_addons.urls
-
+from gbe.views import (
+    CoordinatorPerformerAutocomplete,
+    LimitedBusinessAutocomplete,
+    LimitedPerformerAutocomplete,
+    LimitedPersonaAutocomplete,
+    PersonaAutocomplete,
+    ProfileAutocomplete,
+)
 # import debug_toolbar
 from django.urls import include, path
 

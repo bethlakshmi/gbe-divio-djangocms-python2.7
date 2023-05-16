@@ -13,10 +13,11 @@ from django.db.models import (
 from scheduler.models import (
     Location,
     LocationItem,
-    People,
     Resource,
     ResourceItem,
     Schedulable,
+    WorkerItem,
+    Worker,
 )
 from scheduler.data_transfer import (
     Person,
@@ -85,46 +86,45 @@ class Event(Schedulable):
     @property
     def people(self):
         people = []
-        for booking in self.people_allocations.all():
-            person = Person(booking=booking)
-            if hasattr(booking, 'label'):
-                person.label = booking.label
-            people += [person]
+        for booking in self.resources_allocated.all():
+            if booking.resource.as_subtype.__class__.__name__ == "Worker":
+                person = Person(booking=booking)
+                if hasattr(booking, 'label'):
+                    person.label = booking.label.text
+                people += [person]
         return people
 
     # New - from refactoring
     def allocate_person(self, person):
         '''
-        allocated people for the new model - right now, focused on create
+        allocated worker for the new model - right now, focused on create
         uses the Person from the data_transfer objects.
         '''
         from scheduler.idd import get_schedule
         from scheduler.models import (
             Ordering,
-            PeopleAllocation,
+            ResourceAllocation,
         )
 
         warnings = []
         time_format = GBE_DATETIME_FORMAT
 
-        people = None
+        worker = None
         if person.public_id:
-            if People.objects.filter(
-                    class_name=person.public_class,
-                    class_id=person.public_id).exists():
-                people = People.objects.get(class_name=person.public_class,
-                                            class_id=person.public_id)
-                people.users.all().delete()
-            else:
-                people = People(class_name=person.public_class,
-                                class_id=person.public_id)
-                people.save()
-
+            item = WorkerItem.objects.get(pk=person.public_id)
+            worker = Worker(_item=item, role=person.role)
         else:
-            raise Exception("Person public id required")
+            worker = Worker(_item=person.user.profile, role=person.role)
+            # TODO is there a leak here?  what happens to old workers
+            # that aren't linked??
+        worker.save()
 
-        for user in person.users:
-            people.users.add(user)
+        if person.users:
+            users = person.users
+        else:
+            users = [worker.workeritem.user_object]
+
+        for user in users:
             for conflict in get_schedule(
                         user=user,
                         start_time=self.start_time,
@@ -135,19 +135,17 @@ class Event(Schedulable):
                                          user=user,
                                          occurrence=conflict.event)]
         if person.booking_id:
-            allocation = PeopleAllocation.objects.get(
+            allocation = ResourceAllocation.objects.get(
                 id=person.booking_id)
-            allocation.people = people
+            allocation.resource = worker
             allocation.event = self
-            allocation.role = person.role
         else:
-            allocation = PeopleAllocation(event=self,
-                                          people=people,
-                                          role = person.role)
+            allocation = ResourceAllocation(event=self,
+                                            resource=worker)
         allocation.save()
         if person.commitment:
             ordering, created = Ordering.objects.get_or_create(
-                people_allocated=allocation)
+                allocation=allocation)
             if person.commitment.role is not None:
                 ordering.role = person.commitment.role
             if person.commitment.order:
@@ -161,14 +159,20 @@ class Event(Schedulable):
                 details="Over booked by %s volunteers" % (
                     self.extra_volunteers()))]
         if person.label:
-            allocation.label = person.label
-            allocation.save()
+            # refactor
+            from scheduler.models import Label
+            l, created = Label.objects.get_or_create(allocation=allocation)
+            l.text = person.label
+            l.save()
         return BookingResponse(warnings=warnings,
                                booking_id=allocation.pk,
                                occurrence=self)
 
     def role_count(self, role="Volunteer"):
-        return self.people_allocations.filter(role=role).count()
+        allocations = self.resources_allocated.all()
+        participants = allocations.filter(
+            resource__worker__role=role).count()
+        return participants
 
     @property
     def duration(self):
@@ -197,7 +201,9 @@ class Event(Schedulable):
         amount of space remaining (if there are 4 spaces, and 3 volunteers,
         the value will be -1)
         '''
-        return self.role_count - self.max_volunteer
+        count = Worker.objects.filter(allocations__event=self,
+                                      role='Volunteer').count()
+        return count - self.max_volunteer
 
     # New with Scheduler API
     @property

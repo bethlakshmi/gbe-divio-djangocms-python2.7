@@ -2,9 +2,9 @@ from django.shortcuts import get_object_or_404
 from gbe.forms import ProfileAdminForm
 from gbe.functions import validate_perms
 from gbe.models import (
+    Profile,
     UserMessage,
 )
-from gbe.models import Profile
 from gbetext import admin_note
 from gbe.views import EditProfileView
 

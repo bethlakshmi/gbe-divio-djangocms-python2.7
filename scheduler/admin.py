@@ -17,6 +17,7 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
                     'resource_type')
     list_filter = ['event__event_style',
                    'event__eventlabel__text',
+                   'resource__worker__role',
                    'resource__location']
 
     def resource_type(self, obj):
@@ -131,7 +132,7 @@ class EventEvalQuestionAdmin(admin.ModelAdmin):
 @admin.register(EventEvalGrade, EventEvalComment, EventEvalBoolean)
 class EventEvalGradeAdmin(admin.ModelAdmin):
     list_display = ('event',
-                    'user',
+                    'profile',
                     'question',
                     'answer',)
     list_editable = ('question',
@@ -154,4 +155,7 @@ admin.site.register(ResourceItem)
 admin.site.register(Resource)
 admin.site.register(ResourceAllocation, ResourceAllocationAdmin)
 admin.site.register(PeopleAllocation, PeopleAllocationAdmin)
+admin.site.register(Worker, WorkerAdmin)
+admin.site.register(WorkerItem)
 admin.site.register(People, PeopleAdmin)
+admin.site.register(Label, LabelAdmin)

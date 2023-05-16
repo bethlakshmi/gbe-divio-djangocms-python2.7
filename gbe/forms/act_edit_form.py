@@ -57,7 +57,7 @@ class ActEditDraftForm(ModelForm, BasicBidForm):
     class Meta:
         model = Act
         fields = [
-            'bio',
+            'performer',
             'first_name',
             'last_name',
             'phone',
@@ -75,7 +75,7 @@ class ActEditDraftForm(ModelForm, BasicBidForm):
         help_texts = act_help_texts
         widgets = {
             'b_conference': HiddenInput(),
-            'bio': AddAnotherEditSelectedWidgetWrapper(
+            'performer': AddAnotherEditSelectedWidgetWrapper(
                 autocomplete.ModelSelect2(
                     url=reverse_lazy(
                         'limited-performer-autocomplete',

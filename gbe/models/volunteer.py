@@ -5,6 +5,7 @@ from django.db.models import (
 from gbe.models import (
     Profile,
     Biddable,
+    Profile,
 )
 
 
@@ -14,6 +15,6 @@ class Volunteer(Biddable):
     '''
     profile = ForeignKey(Profile,
                          on_delete=CASCADE,
-                         null=True)
+                         related_name="volunteering")
     class Meta:
         app_label = "gbe"

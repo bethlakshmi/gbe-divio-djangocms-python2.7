@@ -4,7 +4,7 @@ from gbe.models import (
 )
 
 
-visible_personas = Bio.objects.filter(
+visible_personas = Persona.objects.filter(
     contact__user_object__is_active=True)
 
 

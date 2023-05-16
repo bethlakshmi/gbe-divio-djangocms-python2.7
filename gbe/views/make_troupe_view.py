@@ -11,10 +11,10 @@ from gbe_utils.mixins import (
     ProfileRequiredMixin,
 )
 from gbe.models import (
-    Bio,
+    Profile,
+    Troupe,
     UserMessage,
 )
-from gbe.models import Profile
 from gbe.forms import TroupeForm
 from gbetext import (
     default_edit_troupe_msg,
@@ -27,7 +27,7 @@ class TroupeCreate(CreatePopupMixin,
                    GbeFormMixin,
                    ProfileRequiredMixin,
                    CreateView):
-    model = Bio
+    model = Troupe
     form_class = TroupeForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
@@ -41,7 +41,6 @@ class TroupeCreate(CreatePopupMixin,
         initial = super().get_initial()
         initial['contact'] = self.request.user.profile
         initial['pronouns'] = "they/them"
-        initial['multiple_performers'] = True
         return initial
 
     def get_form(self, form_class=None):
@@ -71,7 +70,7 @@ class TroupeUpdate(UpdatePopupMixin,
                    GbeFormMixin,
                    ProfileRequiredMixin,
                    UpdateView):
-    model = Bio
+    model = Troupe
     form_class = TroupeForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
@@ -85,7 +84,6 @@ class TroupeUpdate(UpdatePopupMixin,
     def get_initial(self):
         initial = super().get_initial()
         initial['pronouns'] = "they/them"
-        initial['multiple_performers'] = True
         return initial
 
     def get_form(self, form_class=None):

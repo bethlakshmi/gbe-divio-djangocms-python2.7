@@ -13,11 +13,12 @@ from gbe.models import (
     Profile,
     Biddable,
     EvaluationCategory,
+    Profile,
 )
 
 
 class FlexibleEvaluation(Model):
-    evaluator = ForeignKey(Profile, on_delete=CASCADE, null=True)
+    evaluator = ForeignKey(Profile, on_delete=CASCADE)
     bid = ForeignKey(Biddable, on_delete=CASCADE)
     ranking = IntegerField(validators=[MinValueValidator(-1),
                                        MaxValueValidator(5)],

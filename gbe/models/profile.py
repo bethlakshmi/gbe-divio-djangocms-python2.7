@@ -15,6 +15,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.db.models import Q
 from gbe.models import Conference
+from scheduler.models import WorkerItem
 from scheduler.idd import (
     get_roles,
     get_schedule,
