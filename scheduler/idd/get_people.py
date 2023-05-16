@@ -1,4 +1,4 @@
-from scheduler.models import ResourceAllocation
+from scheduler.models import PeopleAllocation
 from scheduler.data_transfer import (
     Error,
     PeopleResponse,
@@ -18,7 +18,7 @@ def get_people(parent_event_ids=[],
                 code="INVALID_REQUEST",
                 details="labels and label_sets are not compatible"), ])
     people = []
-    bookings = ResourceAllocation.objects.all()
+    bookings = PeopleAllocation.objects.all()
     if len(labels) > 0:
         bookings = bookings.filter(event__eventlabel__text__in=labels)
     for label_set in label_sets:

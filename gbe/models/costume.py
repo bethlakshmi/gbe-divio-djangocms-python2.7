@@ -17,7 +17,6 @@ from gbe.models import (
     Profile,
     Biddable,
     Bio,
-    Persona,
     Profile,
 )
 from gbetext import (
@@ -37,10 +36,6 @@ class Costume(Biddable):
     profile = ForeignKey(Profile,
                          on_delete=CASCADE,
                          related_name="costumes")
-    performer = ForeignKey(Persona,
-                           on_delete=CASCADE,
-                           blank=True,
-                           null=True)
     bio = ForeignKey(Bio,
                      on_delete=CASCADE,
                      blank=True,

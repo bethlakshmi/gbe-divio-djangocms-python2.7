@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
-    Troupe,
+    Bio,
     UserMessage,
 )
 from gbe.functions import validate_perms
@@ -23,7 +23,8 @@ class ReviewTroupesView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         admin_profile = validate_perms(request, self.reviewer_permissions)
-        troupes = Troupe.objects.filter(contact__user_object__is_active=True)
+        troupes = Bio.objects.filter(contact__user_object__is_active=True,
+                                     multiple_performers=True)
         rows = []
         intro = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,

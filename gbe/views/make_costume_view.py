@@ -10,7 +10,7 @@ from gbe.forms import (
 )
 from gbe.models import (
     Costume,
-    Persona,
+    Bio,
     UserMessage
 )
 from gbe_forms_text import (
@@ -52,7 +52,7 @@ class MakeCostumeView(MakeBidView):
             self).groundwork(request, args, kwargs)
         if redirect:
             return redirect
-        self.performers = self.owner.personae.all()
+        self.performers = self.owner.bio_set.all()
         if len(self.performers) == 0:
             return '%s?next=%s' % (
                 reverse('persona-add', urlconf='gbe.urls', args=[0]),
@@ -110,8 +110,7 @@ class MakeCostumeView(MakeBidView):
         )
 
     def set_up_form(self):
-        self.form.fields['performer'].queryset = Persona.objects.filter(
-            performer_profile_id=self.owner.resourceitem_id)
+        self.form.fields['performer'].queryset = self.owner.bio_set.all()
 
     def make_context(self, request):
         context = super(MakeCostumeView, self).make_context(request)

@@ -1,7 +1,7 @@
 from django.views.generic.base import RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_addanother.views import UpdatePopupMixin
-from gbe.models import Performer
+from gbe.models import Bio
 from django.urls import reverse
 from django.http import Http404
 
@@ -15,7 +15,7 @@ class PerformerUpdate(UpdatePopupMixin, PermissionRequiredMixin, RedirectView):
                            urlconf="gbe.urls",
                            args=[kwargs['pk'], 1])
         try:
-            performer = Performer.objects.get_subclass(
+            performer = Bio.objects.get_subclass(
                 pk=kwargs['pk'],
                 contact__user_object=self.request.user)
         except:

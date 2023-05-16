@@ -4,7 +4,6 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from gbe.models import (
     Act,
-    Performer,
     TechInfo,
 )
 from gbe.forms import (
@@ -23,14 +22,14 @@ class MakeActView(MakeBidView):
     view_title = 'Propose an Act'
     draft_fields = ['b_title',
                     'b_description',
-                    'performer',
+                    'bio',
                     'first_name',
                     'last_name',
                     'phone']
     submit_fields = ['b_title',
                      'b_description',
                      'shows_preferences',
-                     'performer', ]
+                     'bio', ]
     bid_type = "Act"
     has_draft = True
     submit_msg = default_act_submit_msg
@@ -65,8 +64,8 @@ class MakeActView(MakeBidView):
                 "%screate" % redirect_prefix,
                 urlconf='gbe.urls')
 
-        self.personae = self.owner.personae.all()
-        if len(self.personae) == 0:
+        self.bios = self.owner.bio_set.all()
+        if len(self.bios) == 0:
             return '%s?next=%s' % (
                 reverse('persona-add', urlconf='gbe.urls', args=[1]),
                 reverse('act_create', urlconf='gbe.urls'))
@@ -84,7 +83,7 @@ class MakeActView(MakeBidView):
                 'act_duration': self.bid_object.tech.duration})
         else:
             initial.update({
-                'performer': self.personae[0],
+                'performer': self.bios[0],
                 'b_conference': self.conference,
                 'b_title': "%s Act - %s" % (
                     self.owner,

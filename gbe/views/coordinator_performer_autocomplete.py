@@ -1,6 +1,6 @@
 from dal import autocomplete
 from django.db.models import Q
-from gbe.models import Performer
+from gbe.models import Bio
 from gbe.functions import validate_profile
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -10,7 +10,7 @@ class CoordinatorPerformerAutocomplete(PermissionRequiredMixin,
     permission_required = 'gbe.view_performer'
 
     def get_queryset(self):
-        qs = Performer.objects.all()
+        qs = Bio.objects.all()
 
         if self.q:
             qs = qs.filter(

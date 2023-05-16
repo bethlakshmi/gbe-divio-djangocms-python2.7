@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
+    Bio,
     Profile,
-    Troupe,
     UserMessage,
 )
 from gbe.functions import validate_perms
@@ -45,7 +45,7 @@ def ReviewProfilesView(request):
             last_login = aprofile.user_object.last_login.strftime(
                 GBE_TABLE_FORMAT)
         display_name = aprofile.display_name
-        for troupe in Troupe.objects.filter(contact=aprofile):
+        for troupe in Bio.objects.filter(contact=aprofile):
             display_name += "<br>(%s)" % troupe.name
         bid_row['profile'] = (
             display_name,

@@ -5,7 +5,7 @@ from gbe.forms import (
 )
 from gbe.models import (
     Costume,
-    Performer,
+    Bio,
 )
 from gbe.views import ReviewBidView
 from gbe.views.functions import get_participant_form
@@ -27,16 +27,16 @@ class ReviewCostumeView(ReviewBidView):
     def groundwork(self, request, args, kwargs):
         super(ReviewCostumeView, self).groundwork(request, args, kwargs)
         self.details = CostumeDetailsSubmitForm(instance=self.object)
-        if self.object.performer:
+        if self.object.bio:
             self.performer = self.bidder_form_type(
-                instance=self.object.performer,
+                instance=self.object.bio,
                 prefix=self.performer_prefix)
         else:
             self.performer = ""
         self.create_object_form()
         if self.object.performer:
-            self.object_form['performer'].queryset = Performer.objects.filter(
-                pk=self.object.performer.pk)
+            self.object_form['performer'].queryset = Bio.objects.filter(
+                pk=self.object.bio.pk)
 
         self.profile = get_participant_form(
             self.object.profile,
@@ -45,5 +45,5 @@ class ReviewCostumeView(ReviewBidView):
         self.readonlyform_pieces = [
             self.object_form,
             self.details,
-            self.performer,
+            self.bio,
             self.profile]

@@ -3,7 +3,7 @@ from django.views.generic.edit import DeleteView
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from gbe.models import (
-    Performer,
+    Bio,
     UserMessage,
 )
 from gbe_utils.mixins import ProfileRequiredMixin
@@ -11,7 +11,7 @@ from gbetext import delete_in_use
 
 
 class DeletePerformerView(ProfileRequiredMixin, DeleteView):
-    model = Performer
+    model = Bio
     success_url = reverse_lazy('home', urlconf="gbe.urls")
     template_name = 'gbe/modal_performer_form.tmpl'
 

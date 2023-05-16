@@ -7,7 +7,7 @@ from django.forms import (
     Textarea,
 )
 from gbe.models import (
-    Persona,
+    Bio,
     SocialLink,
 )
 from gbe_forms_text import (
@@ -117,18 +117,16 @@ class PersonaForm(ModelForm):
         return performer
 
     class Meta:
-        model = Persona
+        model = Bio
         fields = ['name',
                   'label',
                   'pronouns',
                   'bio',
                   'year_started',
                   'awards',
-                  'performer_profile',
                   'contact',
                   ]
         help_texts = persona_help_texts
         labels = persona_labels
-        widgets = {'performer_profile': HiddenInput(),
-                   'contact': HiddenInput(),
+        widgets = {'contact': HiddenInput(),
                    }

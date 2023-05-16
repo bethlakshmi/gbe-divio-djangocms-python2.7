@@ -35,7 +35,7 @@ class CostumeBidDraftForm(ModelForm, BasicBidForm):
     class Meta:
         model = Costume
         fields = ['b_title',
-                  'performer',
+                  'bio',
                   'first_name',
                   'last_name',
                   'phone',
@@ -46,7 +46,7 @@ class CostumeBidDraftForm(ModelForm, BasicBidForm):
         help_texts = costume_proposal_help_texts
         labels = costume_proposal_labels
         widgets = {
-            'performer': AddAnotherEditSelectedWidgetWrapper(
+            'bio': AddAnotherEditSelectedWidgetWrapper(
                 autocomplete.ModelSelect2(url=reverse_lazy(
                     'limited-persona-autocomplete',
                     urlconf='gbe.urls')),

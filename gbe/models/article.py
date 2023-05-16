@@ -29,10 +29,6 @@ class Article(PublishedModel):
                          on_delete=SET_NULL,
                          null=True,
                          blank=True)
-    creator_acct = ForeignKey(Account,
-                              on_delete=SET_NULL,
-                              null=True,
-                              blank=True)
     slug = SlugField(null=False, unique=True)
 
     created_at = DateTimeField(auto_now_add=True)

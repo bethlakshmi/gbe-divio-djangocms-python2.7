@@ -15,7 +15,7 @@ from gbe.functions import (
     validate_perms,
     validate_profile,
 )
-from gbe.models import Troupe
+from gbe.models import Bio
 from gbe.views.functions import (
     get_participant_form,
 )
@@ -35,7 +35,7 @@ def ViewTroupeView(request, troupe_id=None):
                                     reverse('troupe-add',
                                             urlconf='gbe.urls'))
 
-    troupe = get_object_or_404(Troupe, resourceitem_id=troupe_id)
+    troupe = get_object_or_404(Bio, resourceitem_id=troupe_id)
     if not (troupe.contact.profile == profile or troupe.membership.filter(
             performer_profile=profile).exists() or validate_perms(
             request, ('Registrar',

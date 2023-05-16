@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe.models import (
     Class,
-    Persona,
+    Bio,
 )
 from gbe_forms_text import avoided_constraints_popup_text
 from gbe.forms import (
@@ -44,7 +44,7 @@ class MakeClassView(MakeBidView):
         redirect = super(MakeClassView, self).groundwork(request, args, kwargs)
         if redirect:
             return redirect
-        self.teachers = self.owner.personae.all()
+        self.teachers = self.owner.bio_set.filter(multiple_performers=False)
         if len(self.teachers) == 0:
             return '%s?next=%s' % (
                 reverse('persona-add', urlconf='gbe.urls', args=[0]),
@@ -62,9 +62,7 @@ class MakeClassView(MakeBidView):
         return initial
 
     def set_up_form(self):
-        q = Persona.objects.filter(
-            performer_profile_id=self.owner.resourceitem_id)
-        self.form.fields['teacher'].queryset = q
+        self.form.fields['teacher'].queryset = self.owner.bio_set.all()
 
     def make_context(self, request):
         context = super(MakeClassView, self).make_context(request)
