@@ -16,7 +16,6 @@ from gbe.models import (
     Biddable,
     Bio,
     Conference,
-    Performer,
     TechInfo,
 )
 from gbetext import (
@@ -32,11 +31,6 @@ class Act (Biddable):
     A performance, either scheduled or proposed.
     Until approved, an Act is simply a proposal.
     '''
-    performer = ForeignKey(Performer,
-                           on_delete=CASCADE,
-                           related_name='acts',
-                           blank=True,
-                           null=True)
     bio = ForeignKey(Bio,
                      on_delete=CASCADE,
                      related_name='acts',

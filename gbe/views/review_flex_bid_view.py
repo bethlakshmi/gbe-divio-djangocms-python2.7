@@ -9,9 +9,9 @@ from gbe.models import (
     ActBidEvaluation,
     EvaluationCategory,
     FlexibleEvaluation,
-    Profile,
     UserMessage,
 )
+from gbe.models import Account as Profile
 from gbe.forms import (
     ActBidEvaluationForm,
     FlexibleEvaluationForm,

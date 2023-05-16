@@ -11,7 +11,7 @@ from django.core.validators import (
     MinValueValidator,
     MaxValueValidator
 )
-from gbe.models import Performer, Bio
+from gbe.models import Bio
 
 
 class SocialLink(Model):
@@ -42,9 +42,6 @@ class SocialLink(Model):
         'Venmo': 'https://venmo.com/',
         'YouTube': 'https://www.youtube.com/c/',
     }
-    performer = ForeignKey(Performer,
-                           on_delete=CASCADE,
-                           related_name='links')
     bio = ForeignKey(Bio,
                      on_delete=CASCADE,
                      related_name='links',
@@ -73,5 +70,5 @@ class SocialLink(Model):
         return '<i class="fas fa-link"></i>'
 
     class Meta:
-        ordering = ['performer', 'order']
+        ordering = ['bio', 'order']
         app_label = "gbe"

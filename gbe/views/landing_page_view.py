@@ -12,10 +12,10 @@ from gbe.models import (
     Class,
     Conference,
     Costume,
-    Profile,
     Vendor,
     UserMessage,
 )
+from gbe.models import Account as Profile
 from gbe.ticketing_idd_interface import (
     get_purchased_tickets,
     verify_performer_app_paid,

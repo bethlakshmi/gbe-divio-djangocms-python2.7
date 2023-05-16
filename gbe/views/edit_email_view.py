@@ -12,10 +12,10 @@ from gbe.forms import (
     SendEmailLinkForm,
 )
 from gbe.models import (
-    Profile,
     ProfilePreferences,
     UserMessage,
 )
+from gbe.models import Account as Profile
 from gbetext import (
     bad_token_msg,
     default_update_profile_msg,

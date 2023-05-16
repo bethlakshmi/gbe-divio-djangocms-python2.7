@@ -1,6 +1,6 @@
 from dal import autocomplete
 from django.db.models import Q
-from gbe.models import Profile
+from gbe.models import Account as Profile
 from gbe.functions import validate_perms
 
 

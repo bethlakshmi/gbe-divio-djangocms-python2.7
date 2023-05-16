@@ -10,7 +10,6 @@ from django.db.models import (
 from gbe.models import (
     Account,
     Conference,
-    Profile,
     Room,
 )
 
@@ -34,10 +33,6 @@ class StaffArea(Model):
     default_volunteers = IntegerField(default="1",
                                       blank=True,
                                       null=True)
-    staff_lead = ForeignKey(Profile,
-                            on_delete=CASCADE,
-                            blank=True,
-                            null=True)
     staff_lead_account = ForeignKey(Account,
                                     on_delete=CASCADE,
                                     blank=True,

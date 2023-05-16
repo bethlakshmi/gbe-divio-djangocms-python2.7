@@ -17,8 +17,6 @@ from gbe.models import (
     Account,
     Biddable,
     Bio,
-    Persona,
-    Profile,
 )
 from gbetext import (
     acceptance_states,
@@ -34,17 +32,10 @@ class Costume(Biddable):
       - act_title is optional, and therefore does not fit the rules of
         Biddable's title
     '''
-    profile = ForeignKey(Profile,
-                         on_delete=CASCADE,
-                         related_name="costumes")
     account = ForeignKey(Account,
                          on_delete=CASCADE,
                          related_name="costumes",
                          null=True)
-    performer = ForeignKey(Persona,
-                           on_delete=CASCADE,
-                           blank=True,
-                           null=True)
     bio = ForeignKey(Bio,
                      on_delete=CASCADE,
                      blank=True,

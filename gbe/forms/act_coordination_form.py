@@ -34,7 +34,7 @@ class ActCoordinationForm(ModelForm):
     class Meta:
         model = Act
         fields = [
-            'performer',
+            'bio',
             'b_title',
             'track_title',
             'track_artist',
@@ -45,7 +45,7 @@ class ActCoordinationForm(ModelForm):
         help_texts = act_help_texts
         widgets = {
             'b_conference': HiddenInput(),
-            'performer': autocomplete.ModelSelect2(
+            'bio': autocomplete.ModelSelect2(
                 url=reverse_lazy('coordinator-performer-autocomplete',
                                  urlconf="gbe.urls")),
             }

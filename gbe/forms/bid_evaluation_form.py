@@ -12,5 +12,5 @@ class BidEvaluationForm(ModelForm):
     class Meta:
         model = BidEvaluation
         fields = '__all__'
-        widgets = {'evaluator': HiddenInput(),
+        widgets = {'evaluator_acct': HiddenInput(),
                    'bid': HiddenInput()}

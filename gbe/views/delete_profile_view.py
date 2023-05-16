@@ -6,10 +6,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
-    Profile,
     UserMessage,
     Vendor,
 )
+from gbe.models import Account as Profile
 from scheduler.models import ResourceAllocation
 from gbe.functions import validate_perms
 from gbetext import (

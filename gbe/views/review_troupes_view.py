@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
-    Troupe,
+    Bio,
     UserMessage,
 )
 from gbe.functions import validate_perms
@@ -23,7 +23,8 @@ class ReviewTroupesView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         admin_profile = validate_perms(request, self.reviewer_permissions)
-        troupes = Troupe.objects.filter(contact__user_object__is_active=True)
+        troupes = Bio.objects.filter(contact__user_object__is_active=True,
+                                     multiple_performers=False)
         rows = []
         intro = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
@@ -34,6 +35,7 @@ class ReviewTroupesView(View):
         for troupe in troupes:
             bid_row = {}
             members = ""
+            # TODO - build an API for getting this - cause this won't work
             for member in troupe.membership.filter(
                     contact__user_object__is_active=True):
                 members += "%s,<br>" % member.name
@@ -47,12 +49,12 @@ class ReviewTroupesView(View):
                         args=[troupe.contact.resourceitem_id]),
                     troupe.contact.user_object.email),
                 members)
-            bid_row['id'] = troupe.resourceitem_id
+            bid_row['id'] = troupe.pk
             bid_row['actions'] = [
                 {'url': reverse(
                     'troupe_view',
                     urlconf='gbe.urls',
-                    args=[troupe.resourceitem_id]),
+                    args=[troupe.pk]),
                  'text': "View Troupe"},
                 {'url': reverse(
                     'admin_landing_page',

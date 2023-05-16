@@ -15,7 +15,7 @@ from gbe.functions import (
     validate_perms,
     validate_profile,
 )
-from gbe.models import Troupe
+from gbe.models import Bio
 from gbe.views.functions import (
     get_participant_form,
 )
@@ -35,14 +35,16 @@ def ViewTroupeView(request, troupe_id=None):
                                     reverse('troupe-add',
                                             urlconf='gbe.urls'))
 
-    troupe = get_object_or_404(Troupe, resourceitem_id=troupe_id)
-    if not (troupe.contact.profile == profile or troupe.membership.filter(
-            performer_profile=profile).exists() or validate_perms(
-            request, ('Registrar',
-                      'Volunteer Coordinator',
-                      'Act Coordinator',
-                      'Vendor Coordinator',
-                      'Ticketing - Admin'), require=False)):
+    troupe = get_object_or_404(Bio, resourceitem_id=troupe_id)
+    # todo - goes through user model, not through scheduler IDD.  Reconsider
+    if not troupe.contact.profile == profile or user.people_set.filter(
+            class_name=bio.__class__.__name__, class_id=bio.pk).exists() or (
+            validate_perms(request,
+                           ('Registrar',
+                            'Volunteer Coordinator',
+                            'Act Coordinator',
+                            'Vendor Coordinator',
+                            'Ticketing - Admin'), require=False)):
         raise Http404
     performer_form = TroupeForm(instance=troupe,
                                 prefix="The Troupe")
