@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gbe', '0035_remove_worker_models'),
+        ('gbe', '0036_remove_worker_models'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('scheduler', '0012_move_people'),
     ]

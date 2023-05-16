@@ -7,7 +7,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('gbe', '0035_remove_worker_models'),
-        ('scheduler', '0013_remove_worker_models'),
     ]
 
     operations = [
