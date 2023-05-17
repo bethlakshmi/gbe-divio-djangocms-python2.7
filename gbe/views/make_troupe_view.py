@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.views.generic.edit import (
     CreateView,
     UpdateView,
@@ -21,7 +22,10 @@ from gbetext import (
     no_persona_msg,
     troupe_header_text,
 )
-from scheduler.idd import get_bookable_people
+from scheduler.idd import (
+    get_bookable_people,
+    update_bookable_people,
+)
 from gbe.scheduling.views.functions import show_general_status
 
 
@@ -110,3 +114,11 @@ class TroupeUpdate(UpdatePopupMixin,
                                         urlconf="gbe.urls",
                                         args=[self.get_object().pk])
         return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        users = User.objects.filter(
+            profile__in=form.cleaned_data['membership'])
+        idd_resp = update_bookable_people(self.object, users)
+        show_general_status(self.request, idd_resp, self.__class__.__name__)
+        return response
