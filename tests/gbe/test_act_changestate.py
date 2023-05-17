@@ -7,16 +7,14 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
     ActFactory,
+    BioFactory,
     EmailTemplateSenderFactory,
-    PersonaFactory,
     ProfileFactory,
-    TroupeFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
-    ResourceAllocationFactory,
+    PeopleAllocationFactory,
     SchedEventFactory,
-    WorkerFactory,
 )
 from tests.contexts import ActTechInfoContext
 from tests.functions.gbe_functions import (
@@ -301,9 +299,9 @@ class TestActChangestate(TestCase):
         # No decision -> accept
         # new show, new role
         act = ActFactory(b_conference=self.context.conference,
-                         performer=TroupeFactory())
-        act.performer.membership.add(PersonaFactory())
-        act.performer.membership.add(PersonaFactory())
+                         performer=BioFactory(multiple_performers=True))
+        act.performer.membership.add(BioFactory())
+        act.performer.membership.add(BioFactory())
 
         url = reverse(self.view_name,
                       args=[act.pk],
@@ -361,10 +359,9 @@ class TestActChangestate(TestCase):
             starttime=self.context.sched_event.starttime)
         EventLabelFactory(event=conflict,
                           text=self.context.conference.conference_slug)
-        ResourceAllocationFactory(
+        PeopleAllocationFactory(
             event=conflict,
-            resource=WorkerFactory(
-                _item=self.context.performer.performer_profile))
+            people=self.context.people)
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data,

@@ -1,8 +1,8 @@
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     ConferenceDayFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     RoomFactory,
 )
@@ -10,13 +10,17 @@ from tests.factories.scheduler_factories import (
     EventLabelFactory,
     LocationFactory,
     OrderingFactory,
+    PeopleAllocationFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
-    WorkerFactory,
 )
 from tests.factories.ticketing_factories import TicketItemFactory
 import pytz
-from tests.functions.scheduler_functions import noon
+from tests.functions.scheduler_functions import (
+    get_or_create_bio,
+    get_or_create_profile,
+    noon,
+)
 from datetime import (
     datetime,
     timedelta,
@@ -32,7 +36,8 @@ class ShowContext:
                  room=None,
                  starttime=None,
                  act_role='Regular Act'):
-        self.performer = performer or PersonaFactory()
+        self.performer = performer or BioFactory()
+        self.people = get_or_create_bio(self.performer)
         self.conference = conference or ConferenceFactory()
         if not self.conference.conferenceday_set.exists():
             day = ConferenceDayFactory(conference=self.conference)
@@ -86,10 +91,12 @@ class ShowContext:
         act = act or ActFactory(b_conference=self.conference,
                                 accepted=3,
                                 submitted=True)
+        performer = get_or_create_bio(act.bio)
         role = "Performer"
-        booking = ResourceAllocationFactory(
+        booking = PeopleAllocationFactory(
             event=self.sched_event,
-            resource=WorkerFactory(_item=act.performer, role=role))
+            people=performer,
+            role=role)
         order = OrderingFactory(
             allocation=booking,
             class_id=act.pk,
@@ -99,10 +106,10 @@ class ShowContext:
 
     def set_interest(self, interested_profile=None):
         interested_profile = interested_profile or ProfileFactory()
-        ResourceAllocationFactory(event=self.sched_event,
-                                  resource=WorkerFactory(
-                                    _item=interested_profile,
-                                    role="Interested"))
+        people = get_or_create_profile(profile)
+        PeopleAllocationFactory(event=self.sched_event,
+                                people=people,
+                                role="Interested")
         return interested_profile
 
     def make_rehearsal(self, room=True):

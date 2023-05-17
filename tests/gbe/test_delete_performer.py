@@ -3,17 +3,15 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     ClassFactory,
-    PersonaFactory,
     ProfileFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
 )
 from gbetext import delete_in_use
-from gbe.models import Persona
 
 
 class TestDeletePerformer(TestCase):
@@ -22,7 +20,7 @@ class TestDeletePerformer(TestCase):
     '''Tests for edit_persona view'''
     def setUp(self):
         self.client = Client()
-        self.persona = PersonaFactory()
+        self.persona = BioFactory()
         self.url = reverse(self.view_name,
                            urlconf="gbe.urls",
                            args=[self.persona.pk])
@@ -59,7 +57,7 @@ class TestDeletePerformer(TestCase):
             delete_in_use)
 
     def test_delete_troupe(self):
-        self.troupe = TroupeFactory()
+        self.troupe = BioFactory(multiple_performers=True)
         self.url = reverse(self.view_name,
                            urlconf="gbe.urls",
                            args=[self.troupe.pk])
@@ -75,7 +73,7 @@ class TestDeletePerformer(TestCase):
             "Successfully deleted persona %s" % str(self.troupe))
 
     def test_delete_troupe_with_bid(self):
-        self.troupe = TroupeFactory()
+        self.troupe = BioFactory(multiple_performers=True)
         self.url = reverse(self.view_name,
                            urlconf="gbe.urls",
                            args=[self.troupe.pk])

@@ -8,9 +8,9 @@ from tests.factories.gbe_factories import (
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
     LocationFactory,
+    PeopleAllocationFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
-    WorkerFactory,
 )
 from gbe.models import ConferenceDay
 from datetime import (
@@ -18,6 +18,7 @@ from datetime import (
     datetime,
     time,
 )
+from tests.functions.scheduler_functions import get_or_create_profile
 
 
 class VolunteerContext():
@@ -36,6 +37,7 @@ class VolunteerContext():
         else:
             self.conf_day = ConferenceDayFactory(conference=self.conference)
         self.profile = profile or ProfileFactory()
+        self.people = get_or_create_profile(self.profile)
         if not hasattr(self.profile, 'preferences'):
             ProfilePreferencesFactory(profile=self.profile)
 
@@ -58,19 +60,19 @@ class VolunteerContext():
                               text=self.conference.conference_slug)
         else:
             self.sched_event = sched_event
-        self.worker = WorkerFactory(_item=self.profile.workeritem,
-                                    role=self.role)
+
         self.opp_event = self.add_opportunity(opportunity)
-        self.allocation = ResourceAllocationFactory(resource=self.worker,
-                                                    event=self.opp_event)
+        self.allocation = PeopleAllocationFactory(people=self.people,
+                                                  role=self.role,
+                                                  event=self.opp_event)
 
     def set_staff_lead(self, staff_lead=None, role=None):
         staff_lead = staff_lead or ProfileFactory()
+        staff_lead_people = get_or_create_profile(self.profile)
         role = role or "Staff Lead"
-        ResourceAllocationFactory(event=self.sched_event,
-                                  resource=WorkerFactory(
-                                    _item=staff_lead,
-                                    role=role))
+        PeopleAllocationFactory(event=self.sched_event,
+                                people=staff_lead_people,
+                                role=role)
         return staff_lead
 
     def add_opportunity(self, start_time=None):

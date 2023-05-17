@@ -1,9 +1,9 @@
 from random import randint
 from tests.factories.gbe_factories import (
+    BioFactory,
     ClassFactory,
     ConferenceDayFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     RoomFactory,
     SocialLinkFactory,
@@ -13,17 +13,20 @@ from tests.factories.scheduler_factories import (
     EventEvalQuestionFactory,
     EventLabelFactory,
     LocationFactory,
+    PeopleAllocationFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
-    WorkerFactory,
 )
-
+from tests.functions.scheduler_functions import (
+    get_or_create_bio,
+    get_or_create_profile,
+    noon,
+)
 from gbe.models import (
     Class,
     SocialLink,
 )
 from datetime import timedelta
-from tests.functions.scheduler_functions import noon
 from tests.factories.ticketing_factories import TicketItemFactory
 
 
@@ -34,7 +37,9 @@ class ClassContext:
                  conference=None,
                  room=None,
                  starttime=None):
-        self.teacher = teacher or PersonaFactory()
+        self.teacher = teacher or BioFactory()
+        self.people = get_or_create_bio(self.teacher)
+
         self.conference = conference or ConferenceFactory()
         if not self.conference.conferenceday_set.exists():
             day = ConferenceDayFactory(conference=self.conference)
@@ -79,10 +84,10 @@ class ClassContext:
         ResourceAllocationFactory(
             event=sched_event,
             resource=LocationFactory(_item=room.locationitem_ptr))
-        ResourceAllocationFactory(
+        PeopleAllocationFactory(
             event=sched_event,
-            resource=WorkerFactory(_item=teacher.workeritem_ptr,
-                                   role='Teacher'))
+            role='Teacher',
+            people=self.people)
         EventLabelFactory(event=sched_event,
                           text=self.conference.conference_slug)
         EventLabelFactory(event=sched_event,
@@ -91,10 +96,10 @@ class ClassContext:
 
     def set_interest(self, interested_profile=None):
         interested_profile = interested_profile or ProfileFactory()
-        ResourceAllocationFactory(event=self.sched_event,
-                                  resource=WorkerFactory(
-                                    _item=interested_profile,
-                                    role="Interested"))
+        self.people = get_or_create_profile(interested_profile)
+        PeopleAllocationFactory(event=self.sched_event,
+                                role="Interested",
+                                people=interested_people)
         return interested_profile
 
     def setup_eval(self):
@@ -102,7 +107,7 @@ class ClassContext:
 
     def set_eval_answerer(self, eval_profile=None):
         eval_profile = eval_profile or ProfileFactory()
-        answer = EventEvalGradeFactory(profile=eval_profile,
+        answer = EventEvalGradeFactory(user=eval_profile.user_object,
                                        event=self.sched_event)
         return eval_profile
 
@@ -127,7 +132,7 @@ class ClassContext:
         else:
             link = "www.madethisup%d.com" % self.teacher.pk
 
-        return SocialLinkFactory(performer=self.teacher,
+        return SocialLinkFactory(bio=self.teacher,
                                  social_network=social_network,
                                  username=username,
                                  link=link)

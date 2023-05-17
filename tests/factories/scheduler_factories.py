@@ -10,9 +10,7 @@ from datetime import (
     datetime,
     timedelta,
 )
-from tests.factories.gbe_factories import (
-    ProfileFactory,
-)
+from tests.factories.gbe_factories import UserFactory
 
 
 class SchedulableFactory(DjangoModelFactory):
@@ -42,17 +40,9 @@ class LocationFactory(DjangoModelFactory):
         model = sched.Location
 
 
-class WorkerItemFactory(DjangoModelFactory):
+class PeopleFactory(DjangoModelFactory):
     class Meta:
-        model = sched.WorkerItem
-
-
-class WorkerFactory(DjangoModelFactory):
-    _item = SubFactory(WorkerItemFactory)
-    role = "Volunteer"
-
-    class Meta:
-        model = sched.Worker
+        model = sched.People
 
 
 class SchedEventFactory(DjangoModelFactory):
@@ -73,26 +63,27 @@ class SchedEventFactory(DjangoModelFactory):
 
 class ResourceAllocationFactory(DjangoModelFactory):
     event = SubFactory(SchedEventFactory)
-    resource = SubFactory(WorkerFactory)
+    resource = SubFactory(LocationFactory)
 
     class Meta:
         model = sched.ResourceAllocation
 
 
+class PeopleAllocationFactory(DjangoModelFactory):
+    event = SubFactory(SchedEventFactory)
+    people = SubFactory(PeopleFactory)
+    role = "Volunteer"
+
+    class Meta:
+        model = sched.PeopleAllocation
+
+
 class OrderingFactory(DjangoModelFactory):
     order = Sequence(lambda x: x)
-    allocation = SubFactory(ResourceAllocationFactory)
+    allocation = SubFactory(PeopleAllocationFactory)
 
     class Meta:
         model = sched.Ordering
-
-
-class LabelFactory(DjangoModelFactory):
-    text = Sequence(lambda x: "Label #%d" % x)
-    allocation = SubFactory(ResourceAllocationFactory)
-
-    class Meta:
-        model = sched.Label
 
 
 class EventLabelFactory(DjangoModelFactory):
@@ -114,7 +105,7 @@ class EventEvalQuestionFactory(DjangoModelFactory):
 
 class EventEvalGradeFactory(DjangoModelFactory):
     question = SubFactory(EventEvalQuestionFactory)
-    profile = SubFactory(ProfileFactory)
+    user = SubFactory(UserFactory)
     event = SubFactory(SchedEventFactory)
     answer = 2
 
@@ -124,7 +115,7 @@ class EventEvalGradeFactory(DjangoModelFactory):
 
 class EventEvalBooleanFactory(DjangoModelFactory):
     question = SubFactory(EventEvalQuestionFactory, answer_type="boolean")
-    profile = SubFactory(ProfileFactory)
+    user = SubFactory(UserFactory)
     event = SubFactory(SchedEventFactory)
     answer = True
 
@@ -134,7 +125,7 @@ class EventEvalBooleanFactory(DjangoModelFactory):
 
 class EventEvalCommentFactory(DjangoModelFactory):
     question = SubFactory(EventEvalQuestionFactory, answer_type="text")
-    profile = SubFactory(ProfileFactory)
+    user = SubFactory(UserFactory)
     event = SubFactory(SchedEventFactory)
     answer = Sequence(lambda x: "Answer #%d" % x)
 
