@@ -70,6 +70,10 @@ class Act (Biddable):
         return self.bio.get_profiles()
 
     @property
+    def performer(self):
+        return self.bio
+
+    @property
     def bid_review_header(self):
         return (['Performer',
                  'Act Title',

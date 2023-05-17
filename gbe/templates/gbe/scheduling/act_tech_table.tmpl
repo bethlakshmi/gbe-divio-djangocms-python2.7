@@ -51,7 +51,7 @@
         {% endif %}<br>
         <a href='mailto:{{act.act.bio.contact.user_object.email}}' class="gbe-table-link">{{act.act.bio.contact.user_object.email}}</a></td>
       <td>{{ act.show_role }}</td>
-      <td>{% if act.act.tech.confirm_no_rehearsal %}Acknowledged No Rehearsal{% else %}{% for rehearsal in act.rehearsals %}{{rehearsal.starttime}}<br>{% empty %}Has not signed up{%endfor%}{% endif %}</td>
+      <td>{% for rehearsal in act.rehearsals %}{{rehearsal.starttime}}<br>{% empty %}{% if act.act.tech.confirm_no_rehearsal %}Acknowledged No Rehearsal{% else %}Has not signed up{% endif %}{%endfor%}</td>
       <td>{% if act.act.tech.track %}
             <a href="{{act.act.tech.track.url}}" class="gbe-table-link" >{{act.act.tech.track.name | display_track_title:20 }}</a>
           {% elif act.act.tech.confirm_no_music %}
