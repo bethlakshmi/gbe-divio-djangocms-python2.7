@@ -15,7 +15,6 @@ from tests.functions.gbe_functions import (
 )
 from gbetext import (
     default_edit_troupe_msg,
-    no_persona_msg,
     troupe_header_text,
 )
 from gbe_utils.text import no_profile_msg
@@ -62,19 +61,6 @@ class TestTroupeCreate(TestGBE):
     def setUp(self):
         self.client = Client()
         self.troupe_string = 'Tell Us About Your Troupe'
-
-    def test_create_troupe_no_persona(self):
-        '''edit_troupe view, create flow
-        '''
-        user = ProfileFactory()
-        login_as(user.user_object, self)
-        url = reverse(self.view_name, urlconf='gbe.urls')
-        response = self.client.get(url, follow=True)
-        expected_loc = '%s?next=%s' % (
-            reverse('persona-add', urlconf="gbe.urls", args=[1]),
-            url)
-        self.assertRedirects(response, expected_loc)
-        self.assertContains(response, no_persona_msg)
 
     def test_create_troupe_performer_exists(self):
         contact = PersonaFactory()

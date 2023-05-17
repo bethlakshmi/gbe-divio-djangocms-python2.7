@@ -543,9 +543,6 @@ no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."
 act_status_no_change_msg = "Act status has not been changed."
-no_persona_msg = '''A troupe must have at least one member, please enter your
- stage name and performer bio.  Troupe activities will be shown on your
- schedule and the schedule of any other member.'''
 no_login_msg = '''Please set up and account and give us some ways to \
 contact you, or login, if you already have an account.'''
 register_msg = '''In order to do most other things at The Expo, we need you \
