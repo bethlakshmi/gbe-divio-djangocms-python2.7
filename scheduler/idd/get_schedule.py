@@ -40,17 +40,24 @@ def get_schedule(user=None,
     for item in basic_filter:
         if (start_time and item.event.end_time >= start_time) or (
                 start_time is None):
-            order = None
-            if hasattr(item, 'ordering'):
-                order = item.ordering
-            for user in item.people.users.all():
-                sched_items += [ScheduleItem(
-                    user=user,
-                    event=item.event,
-                    role=item.role,
-                    label=item.label,
-                    booking_id=item.pk,
-                    commitment=order)]
+            resource = item.resource.as_subtype
+            booking_label = None
+            if hasattr(item, 'label'):
+                booking_label = item.label
+            if resource.__class__.__name__ == "Worker":
+                order = None
+                if hasattr(item, 'ordering'):
+                    order = item.ordering
+                # TODO - refactor to a schedule side construct, not a GBE side
+                # this covers all troupe members getting included
+                for profile in resource.workeritem.get_profiles():
+                    sched_items += [ScheduleItem(
+                        user=profile.user_object,
+                        event=item.event,
+                        role=resource.role,
+                        label=booking_label,
+                        booking_id=item.pk,
+                        commitment=order)]
     response = ScheduleResponse(
         schedule_items=sorted(
             set(sched_items),

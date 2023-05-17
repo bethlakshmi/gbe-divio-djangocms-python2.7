@@ -66,6 +66,9 @@ class Profile(Model):
                           blank=True)
     how_heard = TextField(blank=True)
 
+    def get_profiles(self):
+        return [self]
+
     @property
     def how_heard_list(self):
         if self.how_heard:
