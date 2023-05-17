@@ -28,7 +28,7 @@
   {% endif %}
   <div class="performer_text">
     {% if performer.contact == profile %}
-      <a class="gbe-link" href='{% if is_troupe == 1 %}{% url "gbe:troupe-update" performer.pk %}{% else %}{% url "gbe:persona-update" performer.pk 1 %}{% endif %}'>
+      <a class="gbe-link" href='{% if performer.multiple_performers %}{% url "gbe:troupe-update" performer.pk %}{% else %}{% url "gbe:persona-update" performer.pk 1 %}{% endif %}'>
         {{ performer }}
       </a><br>
     (Click to edit)
