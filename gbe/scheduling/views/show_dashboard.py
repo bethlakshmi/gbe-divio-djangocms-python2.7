@@ -178,9 +178,9 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                 sched_response,
                                 self.__class__.__name__)
             for item in sched_response.schedule_items:
-                if item not in rehearsals and (
+                if item.event not in rehearsals and (
                         item.event.event_style == "Rehearsal Slot"):
-                    rehearsals += [item]
+                    rehearsals += [item.event]
                 elif item.event.event_style == "Show":
                     order = item.commitment.order
                     show_role = item.commitment.role
