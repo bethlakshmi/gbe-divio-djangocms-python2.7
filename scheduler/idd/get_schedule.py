@@ -43,7 +43,11 @@ def get_schedule(user=None,
             order = None
             if hasattr(item, 'ordering'):
                 order = item.ordering
-            for user in item.people.users.all():
+
+            people_list = item.people.users.all()
+            if user:
+                people_list = item.people.users.filter(pk=user.pk)
+            for user in people_list:
                 sched_items += [ScheduleItem(
                     user=user,
                     event=item.event,
