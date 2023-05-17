@@ -80,6 +80,8 @@ class ApproveVolunteerView(View):
         action = ""
 
         for pending_person in pending.people:
+            if len(pending_person.users) > 1:
+                raise Exception("TODO:  what if it's not an individual?")
             action_links = {
                 'email': reverse('mail_to_individual',
                                  urlconf='gbe.email.urls',
@@ -97,7 +99,7 @@ class ApproveVolunteerView(View):
                               pending_person.public_id,
                               pending_person.booking_id])
             row = {
-                'volunteer': pending_person.user.profile,
+                'volunteer': pending_person.users[0].profile,
                 'occurrence': pending_person.occurrence,
                 'staff_areas': StaffArea.objects.filter(
                     conference=self.conference,
@@ -184,17 +186,17 @@ class ApproveVolunteerView(View):
         if state == 3:
             email_status = send_schedule_update_mail(
                 "Volunteer",
-                person.user.profile)
+                person.user[0].profile)
         else:
             email_status = send_bid_state_change_mail(
                 "volunteer",
-                person.user.profile.contact_email,
-                person.user.profile.get_badge_name(),
+                person.user[0].profile.contact_email,
+                person.user[0].profile.get_badge_name(),
                 response.occurrence,
                 state)
         staff_status = send_volunteer_update_to_staff(
             self.reviewer,
-            person.user.profile,
+            person.user[0].profile,
             response.occurrence,
             person.role,
             response)
@@ -231,7 +233,7 @@ class ApproveVolunteerView(View):
             check = True
         profile = get_object_or_404(Profile, pk=kwargs['public_id'])
         person = Person(
-            user=profile.user_object,
+            users=[profile.user_object],
             public_id=profile.pk,
             role=volunteer_action_map[kwargs['action']]['role'],
             booking_id=kwargs['booking_id'],
