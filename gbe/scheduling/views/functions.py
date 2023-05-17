@@ -27,6 +27,7 @@ from scheduler.idd import (
 from django.contrib import messages
 from gbe.models import (
     ActCastingOption,
+    Bio,
     Conference,
     Profile,
     UserMessage,
