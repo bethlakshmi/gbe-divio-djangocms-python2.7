@@ -6,7 +6,6 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from django.views.generic import View
-from django.db.models import Q
 from gbe.models import (
     Act,
     Class,
@@ -91,14 +90,13 @@ class LandingPageView(ProfileRequiredMixin, View):
                                args=[str(bid.id)]),
                 'action': "Review",
                 'bid_type': bid.__class__.__name__}]
-        personae, troupes = viewer_profile.get_performers(organize=True)
+        bios = viewer_profile.get_performers()
         bookings = []
         booking_ids = []
         manage_shows = []
         shows = []
         classes = []
-        acts = Act.objects.filter(
-            Q(performer__in=personae) | Q(performer__in=troupes))
+        acts = Act.objects.filter(bio__in=bios)
 
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
@@ -168,8 +166,8 @@ class LandingPageView(ProfileRequiredMixin, View):
             'profile': viewer_profile,
             'historical': self.historical,
             'alerts': viewer_profile.alerts(shows, classes),
-            'personae': personae,
-            'troupes': troupes,
+            'personae': bios.filter(multiple_performers=False),
+            'troupes': bios.filter(multiple_performers=True),
             'manage_shows': manage_shows,
             'businesses': viewer_profile.business_set.all(),
             'acts': acts,

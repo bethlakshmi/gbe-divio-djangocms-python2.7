@@ -28,12 +28,12 @@
   {% endif %}
   <div class="performer_text">
     {% if performer.contact == profile %}
-      <a class="gbe-link" href='{% if is_troupe == 1 %}{% url "gbe:troupe-update" performer.resourceitem_id %}{% else %}{% url "gbe:persona-update" performer.resourceitem_id 1 %}{% endif %}'>
+      <a class="gbe-link" href='{% if is_troupe == 1 %}{% url "gbe:troupe-update" performer.pk %}{% else %}{% url "gbe:persona-update" performer.pk 1 %}{% endif %}'>
         {{ performer }}
       </a><br>
     (Click to edit)
     {% else %}
-      <a class="gbe-link" href='{% url "gbe:troupe_view" performer.resourceitem_id %}'>
+      <a class="gbe-link" href='{% url "gbe:troupe_view" performer.pk %}'>
         {{ performer }}
       </a><br>
     {% endif %}

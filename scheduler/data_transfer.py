@@ -62,7 +62,7 @@ class Person(object):
         if self.users is None:
             self.users = users
         elif user is not None:
-            self.users = [self.user]
+            self.users = [user]
 
 
 class ScheduleItem(object):

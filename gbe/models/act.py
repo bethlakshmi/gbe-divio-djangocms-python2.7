@@ -47,7 +47,7 @@ class Act (Biddable):
 
     def clone(self):
         act = Act(
-            performer=self.performer,
+            bio=self.bio,
             tech=self.tech.clone(),
             video_link=self.video_link,
             video_choice=self.video_link,
@@ -67,7 +67,7 @@ class Act (Biddable):
         '''
         Gets all of the performers involved in the act.
         '''
-        return self.performer.get_profiles()
+        return self.bio.get_profiles()
 
     @property
     def bid_review_header(self):
@@ -94,7 +94,7 @@ class Act (Biddable):
                     castings += ' - %s' % item.commitment.role
                 cast_shows += [item.event.pk]
 
-        return [self.performer.name,
+        return [self.bio.name,
                 self.b_title,
                 self.updated_at.strftime(GBE_TABLE_FORMAT),
                 acceptance_states[self.accepted][1],
@@ -114,12 +114,12 @@ class Act (Biddable):
         # conference, title and performer contact should all be unique before
         # the act is saved.
         super(Act, self).validate_unique(*args, **kwargs)
-        if self.performer is None or not self.performer.contact:
+        if self.bio is None or not self.bio.contact:
             raise ValidationError({'performer': "Performer is not valid"})
         if Act.objects.filter(
                 b_conference=self.b_conference,
                 b_title=self.b_title,
-                performer__contact=self.performer.contact
+                bio__contact=self.bio.contact
                 ).exclude(pk=self.pk).exists():
             raise ValidationError({
                 NON_FIELD_ERRORS: [act_not_unique, ]
@@ -127,7 +127,7 @@ class Act (Biddable):
 
     @property
     def profile(self):
-        return self.performer.contact
+        return self.bio.contact
 
     class Meta:
         app_label = "gbe"
