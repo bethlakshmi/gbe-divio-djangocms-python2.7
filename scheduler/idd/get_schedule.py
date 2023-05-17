@@ -3,7 +3,7 @@ from scheduler.data_transfer import (
     ScheduleResponse,
     ScheduleItem,
 )
-from scheduler.models import ResourceAllocation
+from scheduler.models import PeopleAllocation
 from gbetext import not_scheduled_roles
 
 
@@ -15,7 +15,7 @@ def get_schedule(user=None,
                  end_time=None,
                  roles=[],
                  commitment=None):
-    basic_filter = ResourceAllocation.objects.all()
+    basic_filter = PeopleAllocation.objects.all()
     sched_items = []
 
     if len(labels) > 0:
@@ -30,51 +30,25 @@ def get_schedule(user=None,
             ordering__class_id=commitment.pk)
 
     if len(roles) > 0:
-        worker_filter = basic_filter.filter(
-            resource__worker__role__in=roles,
-        )
+        basic_filter = basic_filter.filter(role__in=roles)
     else:
-        worker_filter = basic_filter.exclude(
-            resource__worker__role__in=not_scheduled_roles)
-    if user:
-        bookable_items = user.profile.get_bookable_items()
-        if len(bookable_items['performers']) > 0:
-            for item in worker_filter.filter(
-                    resource__worker___item__in=bookable_items['performers']):
-                booking_label = None
-                order = None
-                if hasattr(item, 'ordering'):
-                    order = item.ordering
-                if hasattr(item, 'label'):
-                    booking_label = item.label
-                if (start_time and item.event.end_time > start_time) or (
-                        start_time is None):
-                    sched_items += [ScheduleItem(
-                        user=user,
-                        event=item.event,
-                        role=item.resource.as_subtype.role,
-                        label=booking_label,
-                        commitment=order,
-                        booking_id=item.pk)]
-        worker_filter = worker_filter.filter(
-            resource__worker___item=user.profile)
+        basic_filter = basic_filter.exclude(role__in=not_scheduled_roles)
 
-    for item in worker_filter:
+    if user:
+        basic_filter = basic_filter.filter(people__users__in=[user])
+
+    for item in basic_filter:
         if (start_time and item.event.end_time >= start_time) or (
                 start_time is None):
-            resource = item.resource.as_subtype
-            booking_label = None
-            if hasattr(item, 'label'):
-                booking_label = item.label
-            if resource.__class__.__name__ == "Worker":
-                order = None
-                if hasattr(item, 'ordering'):
-                    order = item.ordering
+            order = None
+            if hasattr(item, 'ordering'):
+                order = item.ordering
+            for user in item.people.users.all():
                 sched_items += [ScheduleItem(
-                    user=resource.workeritem.user_object,
+                    user=user,
                     event=item.event,
-                    role=resource.role,
-                    label=booking_label,
+                    role=item.role,
+                    label=item.label,
                     booking_id=item.pk,
                     commitment=order)]
     response = ScheduleResponse(

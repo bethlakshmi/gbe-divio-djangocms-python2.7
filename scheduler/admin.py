@@ -103,6 +103,10 @@ class OrderAdmin(admin.ModelAdmin):
 
 class PeopleAdmin(admin.ModelAdmin):
     list_display = ('id', 'class_name', 'class_id', 'user_list')
+    list_filter = ['class_name']
+    search_fields = ['users__username',
+                     'users__profile__display_name',
+                     'class_id']
 
     def user_list(self, obj):
         people = ""

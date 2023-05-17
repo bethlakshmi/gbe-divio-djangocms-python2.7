@@ -27,6 +27,8 @@ class Person(object):
         self.booking_id = None
         self.commitment = None
         self.users = None
+        people = None
+
         if booking:
             self.booking_id = booking.pk
             self.occurrence = booking.event
@@ -40,7 +42,7 @@ class Person(object):
             self.commitment = commitment
 
         if people:
-            self.users = people.users
+            self.users = people.users.all()
             self.public_class = people.class_name
             self.public_id = people.class_id
         elif worker:
@@ -57,7 +59,7 @@ class Person(object):
         if booking_id:
             self.booking_id = booking_id
         self.label = label
-        if self.users is not None:
+        if self.users is None:
             self.users = users
         elif user is not None:
             self.users = [self.user]

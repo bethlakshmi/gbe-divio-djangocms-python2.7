@@ -157,16 +157,17 @@ class Profile(Model):
             return self.costumes.exclude(b_conference__status="completed")
 
     def get_performers(self, organize=False):
-        from gbe.models import Troupe  # late import, circularity
-        solos = self.personae.all()
-        troupes = Troupe.objects.filter(
-            Q(contact=self) | Q(membership__performer_profile=self)).distinct()
+        # TODO - should this have an IDD?
+        from gbe.models import Bio  # late import, circularity
+        bookable_bios = self.user_object.people_set.filter(
+            class_name="Bio").values_list('class_id', flat=True)
+        bios = Bio.objects.filter(Q(contact=self) | Q(pk__in=bookable_bios))
+
         if organize:
-            return solos, troupes
+            return bios.filter(multiple_performers=False), bios.filter(
+                multiple_performers=True)
         else:
-            performers = list(solos)
-            performers += troupes
-            return performers
+            return bios
 
     def get_acts(self):
         acts = []
@@ -236,7 +237,7 @@ class Profile(Model):
 
     def proposed_classes(self, historical=False):
         from gbe.models import Class
-        classes = Class.objects.filter(teacher__contact=self)
+        classes = Class.objects.filter(teacher_bio__contact=self)
         if historical:
             classes = classes.filter(b_conference__status="completed")
         else:
@@ -265,7 +266,7 @@ class Profile(Model):
         active_vendor = self.vendors().exclude(accepted__in=(1, 4, 5)).exists()
         active_teacher = self.proposed_classes().exclude(
             accepted__in=(1, 4, 5)).exists()
-        active_performer = Act.objects.filter(performer__contact=self).exclude(
+        active_performer = Act.objects.filter(bio__contact=self).exclude(
             b_conference__status="completed", accepted__in=(1, 4, 5)).exists()
         active_costuming = self.costumes.exclude(
             accepted__in=(1, 4, 5)).exists()
