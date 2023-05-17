@@ -73,7 +73,6 @@ def get_schedule(user=None,
                 # TODO - refactor to a schedule side construct, not a GBE side
                 # this covers all troupe members getting included
                 for profile in resource.workeritem.get_profiles():
-                    print("profile: %s, event: %s" % (str(profile), item.event.title))
                     sched_items += [ScheduleItem(
                         user=profile.user_object,
                         event=item.event,
