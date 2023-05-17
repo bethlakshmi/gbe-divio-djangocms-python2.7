@@ -8,6 +8,7 @@ from .update_occurrence import update_occurrence
 from .get_bookings import get_bookings
 from .get_all_container_bookings import get_all_container_bookings
 from .get_people import get_people
+from .get_bookable_people import get_bookable_people
 from .get_roles import get_roles
 from .get_schedule import get_schedule
 from .get_eval_summary import get_eval_summary

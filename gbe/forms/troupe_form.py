@@ -2,7 +2,6 @@ from django.forms import (
     HiddenInput,
     IntegerField,
     ModelChoiceField,
-    MultipleChoiceField,
     ModelMultipleChoiceField,
 )
 from gbe.models import (
@@ -29,10 +28,13 @@ class TroupeForm(PersonaForm):
         required=True,
         label=troupe_labels['year_started'],
         help_text=persona_help_texts['year_started'])
-    membership = MultipleChoiceField(
+    membership = ModelMultipleChoiceField(
+        queryset=Profile.objects.filter(user_object__is_active=True),
         widget=autocomplete.ModelSelect2Multiple(
-            url=reverse_lazy('profile-autocomplete',
-            urlconf='gbe.urls')))
+            url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls'),
+            attrs={
+                'data-minimum-input-length': 3,
+                },))
 
     def clean(self):
         cleaned_data = super(TroupeForm, self).clean()

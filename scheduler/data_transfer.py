@@ -21,13 +21,13 @@ class Person(object):
                  role=None,
                  label=None,
                  worker=None,
+                 people=None,
                  booking=None,
                  commitment=None,
                  users=None):
         self.booking_id = None
         self.commitment = None
         self.users = None
-        people = None
 
         if booking:
             self.booking_id = booking.pk
@@ -45,6 +45,7 @@ class Person(object):
             self.users = people.users.all()
             self.public_class = people.class_name
             self.public_id = people.class_id
+
         elif worker:
             self.role = worker.role
             self.users = [worker._item.as_subtype.user_object]

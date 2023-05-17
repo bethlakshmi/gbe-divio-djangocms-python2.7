@@ -21,6 +21,8 @@ from gbetext import (
     no_persona_msg,
     troupe_header_text,
 )
+from scheduler.idd import get_bookable_people
+from gbe.scheduling.views.functions import show_general_status
 
 
 class TroupeCreate(CreatePopupMixin,
@@ -85,12 +87,17 @@ class TroupeUpdate(UpdatePopupMixin,
     def get_initial(self):
         initial = super().get_initial()
         initial['pronouns'] = "they/them"
+        response = get_bookable_people(self.object.pk,
+                                       self.object.__class__.__name__)
+        show_general_status(self.request, response, self.__class__.__name__)
+        initial['membership'] = Profile.objects.filter(
+            user_object__in=response.people[0].users)
         return initial
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         form.fields['contact'].queryset = Profile.objects.filter(
-            resourceitem_id=self.request.user.profile.resourceitem_id)
+            pk=self.request.user.profile.pk)
         return form
 
     def get_queryset(self):

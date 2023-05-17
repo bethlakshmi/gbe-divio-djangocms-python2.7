@@ -65,7 +65,7 @@ class PersonaForm(ModelForm):
             )
             for i in range(1, 6):
                 if not SocialLink.objects.filter(
-                        performer=kwargs.get('instance'), order=i).exists():
+                        bio=kwargs.get('instance'), order=i).exists():
                     formset_initial += [{'order': i}]
         else:
             for i in range(1, 6):
