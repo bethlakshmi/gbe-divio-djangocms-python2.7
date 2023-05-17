@@ -4,7 +4,14 @@ from gbe.models import Conference
 from post_office.models import Email
 from django.core.management import call_command
 from django.conf import settings
-from tests.contexts import ClassContext
+from tests.factories.gbe_factories import (
+    TroupeFactory,
+    PersonaFactory,
+)
+from tests.contexts import (
+    ClassContext,
+    ShowContext,
+)
 from datetime import (
     date,
     datetime,
@@ -36,3 +43,24 @@ class TestSendDailySchedule(TestCase):
         self.assertTrue(context.bid.b_title in queued_email[0].html_message)
         self.assertTrue(
             context.teacher.user_object.email in queued_email[0].to)
+
+    def test_troupe_mail(self):
+        start_time = datetime.combine(
+            datetime.now().date() + timedelta(days=1),
+            time(0, 0, 0, 0))
+        troupe = TroupeFactory()
+        member = PersonaFactory()
+        troupe.membership.add(member)
+        context = ShowContext(starttime=start_time,
+                              performer=troupe)
+        call_command("send_daily_schedule")
+        queued_email = Email.objects.filter(
+            status=2,
+            subject=self.subject,
+            from_email="Team BurlExpo <%s>" % settings.DEFAULT_FROM_EMAIL,
+            )
+        self.assertEqual(queued_email.count(), 1)
+        self.assertTrue(
+            context.sched_event.title in queued_email[0].html_message)
+        self.assertTrue(
+            member.user_object.email in queued_email[0].to)

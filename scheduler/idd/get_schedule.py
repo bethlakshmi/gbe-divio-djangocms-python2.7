@@ -70,13 +70,16 @@ def get_schedule(user=None,
                 order = None
                 if hasattr(item, 'ordering'):
                     order = item.ordering
-                sched_items += [ScheduleItem(
-                    user=resource.workeritem.user_object,
-                    event=item.event,
-                    role=resource.role,
-                    label=booking_label,
-                    booking_id=item.pk,
-                    commitment=order)]
+                # TODO - refactor to a schedule side construct, not a GBE side
+                # this covers all troupe members getting included
+                for profile in resource.workeritem.get_profiles():
+                    sched_items += [ScheduleItem(
+                        user=profile.user_object,
+                        event=item.event,
+                        role=resource.role,
+                        label=booking_label,
+                        booking_id=item.pk,
+                        commitment=order)]
     response = ScheduleResponse(
         schedule_items=sorted(
             set(sched_items),
