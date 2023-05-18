@@ -91,7 +91,7 @@ class ActTechInfoContext():
             booking = PeopleAllocationFactory(
                 event=rehearsal_event,
                 people=self.people,
-                role="performer")
+                role="Performer")
             OrderingFactory(
                 people_allocated=booking,
                 class_id=act.pk,
