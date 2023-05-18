@@ -51,7 +51,7 @@ class ClassContext:
         self.starttime = starttime or noon(self.days[0])
         self.bid = bid or ClassFactory(b_conference=self.conference,
                                        accepted=3,
-                                       teacher=self.teacher,
+                                       teacher_bio=self.teacher,
                                        submitted=True)
         self.room = room or RoomFactory()
         self.room.conferences.add(self.conference)

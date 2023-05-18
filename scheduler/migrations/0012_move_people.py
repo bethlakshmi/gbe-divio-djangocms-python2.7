@@ -28,10 +28,13 @@ def migrate_people(apps, schema_editor):
     Ordering = apps.get_model("scheduler", "Ordering")
     Worker = apps.get_model("scheduler", "Worker")
     People = apps.get_model("scheduler", "People")
-    Profile = apps.get_model("gbe", "Profile")
-    Persona = apps.get_model("gbe", "Persona")
-    Troupe = apps.get_model("gbe", "Troupe")
-    Bio = apps.get_model("gbe", "Bio")
+    try:
+        Profile = apps.get_model("gbe", "Profile")
+        Persona = apps.get_model("gbe", "Persona")
+        Troupe = apps.get_model("gbe", "Troupe")
+        Bio = apps.get_model("gbe", "Bio")
+    except LookupError:
+        return
 
     counts = {
         'Locations': 0,

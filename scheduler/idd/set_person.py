@@ -1,5 +1,5 @@
 from scheduler.idd import get_occurrence
-from scheduler.models import ResourceAllocation
+from scheduler.models import PeopleAllocation
 from scheduler.data_transfer import (
     Error,
     BookingResponse
@@ -16,9 +16,9 @@ def set_person(occurrence_id=None, person=None):
         occurrence = occ_response.occurrence
     elif person and person.booking_id:
         try:
-            alloc = ResourceAllocation.objects.get(pk=person.booking_id)
+            alloc = PeopleAllocation.objects.get(pk=person.booking_id)
             occurrence = alloc.event
-        except ResourceAllocation.DoesNotExist:
+        except PeopleAllocation.DoesNotExist:
             return BookingResponse(errors=[Error(
                 code="BOOKING_NOT_FOUND",
                 details="Booking id %s not found" % person.booking_id), ])
@@ -26,7 +26,7 @@ def set_person(occurrence_id=None, person=None):
         return BookingResponse(errors=[Error(
             code="OCCURRENCE_NOT_FOUND",
             details="Neither booking id nor occurrence id provided")])
-    if person.booking_id and not ResourceAllocation.objects.filter(
+    if person.booking_id and not PeopleAllocation.objects.filter(
             pk=person.booking_id).exists():
         return BookingResponse(errors=[Error(
                 code="BOOKING_NOT_FOUND",

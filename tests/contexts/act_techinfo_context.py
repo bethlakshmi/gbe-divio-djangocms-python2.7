@@ -35,7 +35,7 @@ class ActTechInfoContext():
         self.conference = conference or ConferenceFactory()
         self.performer = performer or BioFactory()
         self.people = get_or_create_bio(self.performer)
-        self.act = act or ActFactory(performer=self.performer,
+        self.act = act or ActFactory(bio=self.performer,
                                      b_conference=self.conference,
                                      accepted=3,
                                      submitted=True)
@@ -70,7 +70,7 @@ class ActTechInfoContext():
             people=self.people,
             role=role)
         self.order = OrderingFactory(
-            allocation=self.booking,
+            people_allocated=self.booking,
             class_id=self.act.pk,
             class_name="Act",
             role=act_role)
@@ -93,7 +93,7 @@ class ActTechInfoContext():
                 people=self.people,
                 role="performer")
             OrderingFactory(
-                allocation=booking,
+                people_allocated=booking,
                 class_id=act.pk,
                 class_name="Act")
 

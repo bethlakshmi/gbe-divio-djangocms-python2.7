@@ -12,12 +12,8 @@ from django.db.models import (
 )
 from scheduler.models import (
     Location,
-    LocationItem,
-    Resource,
-    ResourceItem,
+    People,
     Schedulable,
-    WorkerItem,
-    Worker,
 )
 from scheduler.data_transfer import (
     Person,
@@ -103,28 +99,25 @@ class Event(Schedulable):
         from scheduler.idd import get_schedule
         from scheduler.models import (
             Ordering,
-            ResourceAllocation,
+            PeopleAllocation,
         )
 
         warnings = []
         time_format = GBE_DATETIME_FORMAT
 
         worker = None
-        if person.public_id:
-            item = WorkerItem.objects.get(pk=person.public_id)
-            worker = Worker(_item=item, role=person.role)
-        else:
-            worker = Worker(_item=person.user.profile, role=person.role)
-            # TODO is there a leak here?  what happens to old workers
-            # that aren't linked??
-        worker.save()
+        if not (person.public_id and person.public_class):
+            raise Exception("This shouldn't happen")
 
-        if person.users:
-            users = person.users
-        else:
-            users = [worker.workeritem.user_object]
+        people, created = People.objects.get_or_create(
+            class_id=person.public_id,
+            class_name=person.public_class)
+        people.save()
+        if created:
+            for user in person.users:
+                people.users.add(user)
 
-        for user in users:
+        for user in people.users.all():
             for conflict in get_schedule(
                         user=user,
                         start_time=self.start_time,
@@ -135,17 +128,21 @@ class Event(Schedulable):
                                          user=user,
                                          occurrence=conflict.event)]
         if person.booking_id:
-            allocation = ResourceAllocation.objects.get(
+            allocation = PeopleAllocation.objects.get(
                 id=person.booking_id)
-            allocation.resource = worker
+            allocation.person = people
             allocation.event = self
+            role=person.role
         else:
-            allocation = ResourceAllocation(event=self,
-                                            resource=worker)
+            allocation = PeopleAllocation(event=self,
+                                          people=people,
+                                          role=person.role)
+        if person.label is not None:
+            label=person.label
         allocation.save()
         if person.commitment:
             ordering, created = Ordering.objects.get_or_create(
-                allocation=allocation)
+                people_allocated=allocation)
             if person.commitment.role is not None:
                 ordering.role = person.commitment.role
             if person.commitment.order:
@@ -158,12 +155,7 @@ class Event(Schedulable):
                 code="OCCURRENCE_OVERBOOKED",
                 details="Over booked by %s volunteers" % (
                     self.extra_volunteers()))]
-        if person.label:
-            # refactor
-            from scheduler.models import Label
-            l, created = Label.objects.get_or_create(allocation=allocation)
-            l.text = person.label
-            l.save()
+
         return BookingResponse(warnings=warnings,
                                booking_id=allocation.pk,
                                occurrence=self)
@@ -190,6 +182,7 @@ class Event(Schedulable):
             return None  # or what??
 
     def extra_volunteers(self):
+        from scheduler.models import PeopleAllocation
         '''
         The difference between the max suggested # of volunteers
         and the actual number
@@ -201,8 +194,8 @@ class Event(Schedulable):
         amount of space remaining (if there are 4 spaces, and 3 volunteers,
         the value will be -1)
         '''
-        count = Worker.objects.filter(allocations__event=self,
-                                      role='Volunteer').count()
+        count = PeopleAllocation.objects.filter(event=self, 
+                                                role='Volunteer').count()
         return count - self.max_volunteer
 
     # New with Scheduler API

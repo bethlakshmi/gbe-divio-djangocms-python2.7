@@ -299,7 +299,7 @@ class TestActChangestate(TestCase):
         # No decision -> accept
         # new show, new role
         act = ActFactory(b_conference=self.context.conference,
-                         performer=BioFactory(multiple_performers=True))
+                         bio=BioFactory(multiple_performers=True))
         act.performer.membership.add(BioFactory())
         act.performer.membership.add(BioFactory())
 

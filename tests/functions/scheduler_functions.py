@@ -52,27 +52,29 @@ def noon(day):
 def get_or_create_bio(public_class):
     people = None
     if not People.objects.filter(
-            class_name=self.public_class.__class__.__name__,
-            class_id=self.public_class.pk).exists():
-        self.people = People(class_name=self.public_class.__class__.__name__,
-                             class_id=self.public_class.pk)
-        self.people.add(self.public_class.contact)
+            class_name=public_class.__class__.__name__,
+            class_id=public_class.pk).exists():
+        people = People(class_name=public_class.__class__.__name__,
+                        class_id=public_class.pk)
+        people.save()
+        people.users.add(public_class.contact.user_object)
     else:
-        self.people = People.objects.get(
-            class_name=self.public_class.__class__.__name__,
-            class_id=self.public_class.pk)
+        people = People.objects.get(
+            class_name=public_class.__class__.__name__,
+            class_id=public_class.pk)
     return people
 
 def get_or_create_profile(public_class):
     people = None
     if not People.objects.filter(
-            class_name=self.public_class.__class__.__name__,
-            class_id=self.public_class.pk).exists():
-        self.people = People(class_name=self.public_class.__class__.__name__,
-                             class_id=self.public_class.pk)
-        self.people.add(self.public_class.user_object)
+            class_name=public_class.__class__.__name__,
+            class_id=public_class.pk).exists():
+        people = People(class_name=public_class.__class__.__name__,
+                        class_id=public_class.pk)
+        people.save()
+        people.users.add(public_class.user_object)
     else:
-        self.people = People.objects.get(
-            class_name=self.public_class.__class__.__name__,
-            class_id=self.public_class.pk)
+        people = People.objects.get(
+            class_name=public_class.__class__.__name__,
+            class_id=public_class.pk)
     return people

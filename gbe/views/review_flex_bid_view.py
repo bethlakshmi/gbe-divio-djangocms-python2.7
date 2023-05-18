@@ -174,7 +174,7 @@ class FlexibleReviewBidView(ReviewBidView):
         self.readonlyform_pieces = [self.object_form]
         self.bid_notes = ActBidEvaluation.objects.filter(
             bid_id=self.object.pk,
-            evaluator_id=self.reviewer.resourceitem_id).first()
+            evaluator_id=self.reviewer.pk).first()
         if self.bid_notes is None:
             self.bid_notes = ActBidEvaluation(
                 evaluator=self.reviewer, bid=self.object)

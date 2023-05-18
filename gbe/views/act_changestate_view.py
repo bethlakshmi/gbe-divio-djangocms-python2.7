@@ -62,6 +62,7 @@ class ActChangeStateView(BidChangeStateView):
                                       item.booking_id)
             show_general_status(request, response, self.__class__.__name__)
         if show:
+            print("removing show - " + show.event.title)
             response = remove_booking(show.event.pk,
                                       show.booking_id)
             show_general_status(request, response, self.__class__.__name__)
@@ -107,15 +108,14 @@ class ActChangeStateView(BidChangeStateView):
                     return super(ActChangeStateView, self).bid_state_change(
                         request)
 
-            person = Person(public_id=self.object.performer.pk,
+            person = Person(public_id=self.object.bio.pk,
+                            public_class=self.object.bio.__class__.__name__,
                             role=role,
                             commitment=Commitment(role=self.casting,
                                                   decorator_class=self.object))
             profiles = self.object.get_performer_profiles()
-            if len(profiles) > 1:
-                person.users = [profile.user_object for profile in profiles]
-            else:
-                person.user = profiles[0].user_object
+            person.users = [profile.user_object for profile in profiles]
+
             if same_show and not same_role:
                 person.booking_id = show.booking_id
                 set_response = set_person(person=person)

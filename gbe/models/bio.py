@@ -10,6 +10,7 @@ from django.db.models import (
 )
 from gbe.models import Profile
 from filer.fields.image import FilerImageField
+from scheduler.idd import get_bookable_people
 
 
 class Bio(Model):
@@ -38,12 +39,12 @@ class Bio(Model):
         '''
         Gets all of the people performing in the act
         '''
-        return Performer.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id).get_profiles()
+        response = get_bookable_people(self.pk, self.__class__.__name__)
+        return Profile.objects.filter(user_object__in=response.people[0].users)
 
     def has_bids(self):
-        return Performer.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id).has_bids()
+        return (self.is_teaching.count() > 0 or self.acts.count() > 0 or
+                self.costume_set.count() > 0)
 
     @property
     def is_active(self):

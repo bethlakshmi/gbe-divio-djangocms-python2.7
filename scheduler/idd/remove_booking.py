@@ -1,5 +1,5 @@
 from scheduler.idd import test_booking
-from scheduler.models import ResourceAllocation
+from scheduler.models import PeopleAllocation
 from scheduler.data_transfer import (
     Error,
     BookingResponse,
@@ -17,12 +17,7 @@ def remove_booking(occurrence_id,
                 booking_id, occurrence_id))]
         return response
     deleteable_resources = []
-    bookings = ResourceAllocation.objects.filter(pk=booking_id)
-    for booking in bookings:
-        if booking.resource.allocations.count() == 1:
-            deleteable_resources += [booking.resource]
+    bookings = PeopleAllocation.objects.filter(pk=booking_id)
     bookings.delete()
-    for resource in deleteable_resources:
-        resource.delete()
     response.booking_id = booking_id
     return response

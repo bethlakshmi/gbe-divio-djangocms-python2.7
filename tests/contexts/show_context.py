@@ -46,7 +46,7 @@ class ShowContext:
                 day.save()
         self.days = self.conference.conferenceday_set.all()
         act = act or ActFactory(b_conference=self.conference,
-                                performer=self.performer,
+                                bio=self.performer,
                                 accepted=3,
                                 submitted=True)
         self.acts = [act]

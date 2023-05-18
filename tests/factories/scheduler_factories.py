@@ -80,7 +80,7 @@ class PeopleAllocationFactory(DjangoModelFactory):
 
 class OrderingFactory(DjangoModelFactory):
     order = Sequence(lambda x: x)
-    allocation = SubFactory(PeopleAllocationFactory)
+    people_allocated = SubFactory(PeopleAllocationFactory)
 
     class Meta:
         model = sched.Ordering
