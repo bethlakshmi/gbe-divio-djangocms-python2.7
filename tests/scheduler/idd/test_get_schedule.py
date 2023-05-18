@@ -4,26 +4,27 @@ from tests.contexts import (
     ShowContext,
     ClassContext,
 )
-from tests.factories.scheduler_factories import LabelFactory
-from scheduler.models import ResourceAllocation
+from scheduler.models import PeopleAllocation
 
 
 class TestGetSchedule(TestCase):
 
     def test_get_teacher_w_label(self):
         context = ClassContext()
-        booking = ResourceAllocation.objects.get(
+        booking = PeopleAllocation.objects.get(
             event=context.sched_event,
-            resource__worker__role='Teacher')
-        label = LabelFactory(allocation=booking)
+            role='Teacher')
+        booking.label='test_get_teacher_w_label'
+        booking.save()
         response = get_schedule(
-            user=context.teacher.performer_profile.user_object)
-        self.assertEqual(response.schedule_items[0].label.text, label.text)
+            user=context.teacher.get_profiles()[0].user_object)
+        self.assertEqual(response.schedule_items[0].label, booking.label)
 
     def test_get_act_w_label(self):
         context = ShowContext()
         act, booking = context.book_act()
-        label = LabelFactory(allocation=booking)
+        booking.label = "test_get_act_w_label"
+        booking.save()
         response = get_schedule(
-            user=act.performer.performer_profile.user_object)
-        self.assertEqual(response.schedule_items[0].label.text, label.text)
+            user=act.performer.get_profiles()[0].user_object)
+        self.assertEqual(response.schedule_items[0].label, booking.label)

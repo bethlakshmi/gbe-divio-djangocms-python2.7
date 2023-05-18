@@ -4,7 +4,6 @@ from tests.contexts import (
     ShowContext,
     VolunteerContext,
 )
-from tests.factories.scheduler_factories import LabelFactory
 
 
 class TestGetPeople(TestCase):
@@ -14,23 +13,25 @@ class TestGetPeople(TestCase):
 
     def test_get_volunteer_w_label(self):
         context = VolunteerContext()
-        label = LabelFactory(allocation=context.allocation)
+        context.allocation.label = "test_get_volunteer_w_label"
+        context.allocation.save()
         response = get_people(labels=[context.conference.conference_slug],
                               roles=["Volunteer"])
-        self.assertEqual(response.people[0].label, label.text)
+        self.assertEqual(response.people[0].label, context.allocation.label)
 
     def test_get_act_w_label(self):
         context = ShowContext()
         act, booking = context.book_act()
-        label = LabelFactory(allocation=booking)
+        booking.label="test_get_act_w_label"
+        booking.save()
         response = get_people(labels=[context.conference.conference_slug],
                               roles=["Performer"])
         target_person = None
 
         for person in response.people:
-            if act.performer.user_object.pk == person.user.pk:
+            if act.bio.user_object.pk == person.users[0].pk:
                 target_person = person
             else:
-                self.assertNotEqual(person.label, label.text)
+                self.assertNotEqual(person.label, booking.label)
         self.assertIsNotNone(target_person)
-        self.assertEqual(target_person.label, label.text)
+        self.assertEqual(target_person.label, booking.label)

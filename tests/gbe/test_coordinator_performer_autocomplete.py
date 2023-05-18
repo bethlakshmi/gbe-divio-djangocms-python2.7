@@ -23,7 +23,7 @@ class TestLimitedPerformerAutoComplete(TestCase):
         cls.privileged_user = ProfileFactory.create().user_object
         grant_privilege(cls.privileged_user,
                         'Act Coordinator',
-                        'view_performer')
+                        'view_bio')
         cls.persona = BioFactory()
         cls.troupe = BioFactory(multiple_performers=True)
 

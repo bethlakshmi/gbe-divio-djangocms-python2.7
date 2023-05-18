@@ -8,7 +8,7 @@ from tests.factories.ticketing_factories import (
     NoEventRoleExclusionFactory
 )
 from tests.factories.gbe_factories import (
-    PersonaFactory
+    BioFactory
 )
 from gbe.models import Conference
 from tests.functions.scheduler_functions import book_worker_item_for_role
@@ -24,7 +24,7 @@ class TestIsExcluded(TestCase):
         clear_conferences()
         cls.ticketingexclusion = TicketingExclusionFactory.create()
         cls.roleexclusion = RoleExclusionFactory.create()
-        cls.teacher = PersonaFactory.create()
+        cls.teacher = BioFactory.create()
         booking = book_worker_item_for_role(
             cls.teacher,
             cls.roleexclusion.role,
@@ -34,7 +34,7 @@ class TestIsExcluded(TestCase):
         cls.conference = Conference.objects.filter(
             conference_slug__in=booking.event.labels)[0]
         cls.schedule = get_schedule(
-                cls.teacher.performer_profile.user_object,
+                cls.teacher.get_profiles()[0].user_object,
                 labels=[cls.conference.conference_slug]).schedule_items
 
     def setUp(self):

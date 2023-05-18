@@ -98,7 +98,7 @@ class ShowContext:
             people=performer,
             role=role)
         order = OrderingFactory(
-            allocation=booking,
+            people_allocated=booking,
             class_id=act.pk,
             class_name="Act",
             role=act_role)

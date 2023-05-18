@@ -44,7 +44,7 @@ class TestDeletePerformer(TestCase):
             "Successfully deleted persona %s" % str(self.persona))
 
     def test_delete_performer_with_bid(self):
-        ClassFactory(teacher=self.persona)
+        ClassFactory(teacher_bio=self.persona)
         login_as(self.persona.contact, self)
         response = self.client.post(self.url,
                                     data={'submit': 'Confirm'},
@@ -77,7 +77,7 @@ class TestDeletePerformer(TestCase):
         self.url = reverse(self.view_name,
                            urlconf="gbe.urls",
                            args=[self.troupe.pk])
-        ActFactory(performer=self.troupe)
+        ActFactory(bio=self.troupe)
         login_as(self.troupe.contact, self)
         response = self.client.post(self.url,
                                     data={'submit': 'Confirm'},

@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 
 class CoordinatorPerformerAutocomplete(PermissionRequiredMixin,
                                        autocomplete.Select2QuerySetView):
-    permission_required = 'gbe.view_performer'
+    permission_required = 'gbe.view_bio'
 
     def get_queryset(self):
         qs = Bio.objects.all()
