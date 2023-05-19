@@ -209,7 +209,6 @@ class ApproveVolunteerView(View):
                     'description': volunteer_allocate_email_fail_msg}
                     )[0].description
             if email_status:
-                raise Exception(email_status)
                 messages.error(
                     request,
                     user_message + "status code: " + email_status)
