@@ -61,6 +61,7 @@ def migrate_people(apps, schema_editor):
                                                 [entity.user_object],
                                                 People)
                 people.class_id = entity.user_object.account.pk
+                people.save()
                 if created:
                     counts[' - Profiles'] = counts[' - Profiles'] + 1
                 else:
