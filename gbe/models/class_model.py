@@ -58,7 +58,7 @@ class Class(Biddable):
 
     def clone(self):
         new_class = Class()
-        new_class.teacher = self.teacher
+        new_class.teacher_bio = self.teacher_bio
         new_class.minimum_enrollment = self.minimum_enrollment
         new_class.organization = self.organization
         new_class.type = self.type
@@ -77,6 +77,10 @@ class Class(Biddable):
 
         new_class.save()
         return new_class
+
+    @property
+    def teacher(self):
+        return self.teacher_bio
 
     @property
     def get_space_needs(self):

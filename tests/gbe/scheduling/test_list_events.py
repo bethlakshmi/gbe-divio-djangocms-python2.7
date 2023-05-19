@@ -7,16 +7,14 @@ from tests.functions.gbe_functions import (
     clear_conferences,
     login_as,
 )
+from tests.functions.scheduler_functions import get_or_create_bio
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
     ClassFactory,
-    PersonaFactory,
     ProfileFactory,
 )
-from tests.factories.scheduler_factories import (
-    ResourceAllocationFactory,
-    WorkerFactory,
-)
+from tests.factories.scheduler_factories import PeopleAllocationFactory
 from tests.contexts import (
     ClassContext,
     ShowContext,
@@ -65,11 +63,11 @@ class TestViewList(TestFilters):
         specialcontext = VolunteerContext(conference=self.conf,
                                           event_style="Special")
         classcontext = ClassContext(conference=self.conf)
-        second_teacher = PersonaFactory(name="aaaa")
-        ResourceAllocationFactory(
+        second_teacher = BioFactory(name="aaaa")
+        PeopleAllocationFactory(
             event=classcontext.sched_event,
-            resource=WorkerFactory(_item=second_teacher.workeritem_ptr,
-                                   role='Teacher'))
+            role='Teacher',
+            people=get_or_create_bio(second_teacher))
         accepted_class = ClassFactory(accepted=3,
                                       b_conference=self.conf)
         previous_class = ClassFactory(accepted=3,
@@ -176,7 +174,7 @@ class TestViewList(TestFilters):
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=['Class'])
-        login_as(context.teacher.performer_profile, self)
+        login_as(context.teacher.contact, self)
         response = self.client.get(url)
         self.assertContains(
           response,
@@ -186,14 +184,14 @@ class TestViewList(TestFilters):
     def test_booked_teacher_over_bid_teacher(self):
         context = ClassContext(conference=self.conf,
                                starttime=datetime.now()-timedelta(days=1))
-        context.bid.teacher = PersonaFactory()
+        context.bid.teacher_bio = BioFactory()
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=['Class'])
-        login_as(context.teacher.performer_profile, self)
+        login_as(context.teacher.contact, self)
         response = self.client.get(url)
-        self.assertContains(response, str(context.teacher.performer))
-        self.assertNotContains(response, str(context.bid.teacher.performer))
+        self.assertContains(response, str(context.teacher.name))
+        self.assertNotContains(response, str(context.bid.teacher.name))
 
     def test_view_panels(self):
         this_class = ClassFactory.create(accepted=3,
