@@ -17,7 +17,6 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
                     'resource_type')
     list_filter = ['event__event_style',
                    'event__eventlabel__text',
-                   'resource__worker__role',
                    'resource__location']
 
     def resource_type(self, obj):
@@ -72,11 +71,6 @@ class EventAdmin(ImportExportModelAdmin):
                    'max_commitments',
                    'approval_needed', ]
     search_fields = ['title', 'event_style']
-
-
-class WorkerAdmin(admin.ModelAdmin):
-    list_display = ('_item', 'role')
-    list_filter = ['role', '_item']
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -160,7 +154,4 @@ admin.site.register(ResourceItem)
 admin.site.register(Resource)
 admin.site.register(ResourceAllocation, ResourceAllocationAdmin)
 admin.site.register(PeopleAllocation, PeopleAllocationAdmin)
-admin.site.register(Worker, WorkerAdmin)
-admin.site.register(WorkerItem)
 admin.site.register(People, PeopleAdmin)
-admin.site.register(Label, LabelAdmin)

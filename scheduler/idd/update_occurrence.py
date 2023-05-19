@@ -1,7 +1,7 @@
 from scheduler.models import (
     Event,
     EventLabel,
-    Worker,
+    People,
 )
 from scheduler.data_transfer import OccurrenceResponse
 from scheduler.idd import get_occurrence
@@ -67,8 +67,8 @@ def update_occurrence(occurrence_id,
 
     warnings = []
     if people is not None:
-        Worker.objects.filter(allocations__event=occurrence,
-                              role__in=roles).delete()
+        People.objects.filter(people_allocations__event=occurrence,
+                              people_allocations__role__in=roles).delete()
         for person in people:
             warnings += occurrence.allocate_person(
                 person).warnings

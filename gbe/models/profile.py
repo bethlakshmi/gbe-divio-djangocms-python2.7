@@ -15,7 +15,6 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.db.models import Q
 from gbe.models import Conference
-from scheduler.models import WorkerItem
 from scheduler.idd import (
     get_roles,
     get_schedule,
@@ -189,9 +188,13 @@ class Profile(Model):
 
     def volunteer_schedule(self, conference=None):
         conference = conference or Conference.current_conf()
-        return self.workeritem.get_bookings(role="Volunteer",
-                                            conference=conference).order_by(
-                                                'starttime')
+        occurrences = []
+        response = get_schedule(self.user_object,
+                                labels=[conference.conference_slug],
+                                roles=["Volunteer"])
+        for item in response.schedule_items:
+            occurrences += [item.event]
+        return occurrences
 
     def get_roles(self, conference=None):
         '''

@@ -6,7 +6,6 @@ from django.db.models import (
 from scheduler.models import (
     EventEvalQuestion,
     Event,
-    WorkerItem,
 )
 from django.contrib.auth.models import User
 

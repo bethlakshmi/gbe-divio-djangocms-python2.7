@@ -44,7 +44,7 @@ class EvalEventView(View):
         if response['error_url']:
             return HttpResponseRedirect(response['error_url'])
         self.person = Person(
-            user=response['owner'].user_object,
+            users=[response['owner'].user_object],
             public_id=response['owner'].pk,
             public_class="Profile")
 

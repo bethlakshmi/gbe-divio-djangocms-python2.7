@@ -79,7 +79,7 @@ class LandingPageView(ProfileRequiredMixin, View):
         bids_to_review = []
 
         person = Person(
-            user=viewer_profile.user_object,
+            users=[viewer_profile.user_object],
             public_id=viewer_profile.pk,
             public_class="Profile")
         for bid in viewer_profile.bids_to_review():
