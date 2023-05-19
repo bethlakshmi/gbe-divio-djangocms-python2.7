@@ -182,23 +182,23 @@ class ApproveVolunteerView(View):
                     'summary': "Approve Volunteer First Header",
                     'description': self.view_title})[0].description
 
-    def send_notifications(self, request, response, state, person):
+    def send_notifications(self, request, response, state, profile, role):
         if state == 3:
             email_status = send_schedule_update_mail(
                 "Volunteer",
-                person.users[0].profile)
+                profile)
         else:
             email_status = send_bid_state_change_mail(
                 "volunteer",
-                person.users[0].profile.contact_email,
-                person.users[0].profile.get_badge_name(),
+                profile.contact_email,
+                profile.get_badge_name(),
                 response.occurrence,
                 state)
         staff_status = send_volunteer_update_to_staff(
             self.reviewer,
-            person.users[0].profile,
+            profile,
             response.occurrence,
-            person.role,
+            role,
             response)
         if email_status or staff_status:
             user_message = UserMessage.objects.get_or_create(
@@ -206,10 +206,17 @@ class ApproveVolunteerView(View):
                 code="EMAIL_FAILURE",
                 defaults={
                     'summary': "Email Failed",
-                    'description': volunteer_allocate_email_fail_msg})
-            messages.error(
-                request,
-                user_message[0].description + "status code: ")
+                    'description': volunteer_allocate_email_fail_msg}
+                    )[0].description
+            if email_status:
+                raise Exception(email_status)
+                messages.error(
+                    request,
+                    user_message + "status code: " + email_status)
+            if staff_status:
+                messages.error(
+                    request,
+                    user_message + "status code: " + staff_status)
 
     def set_status(self, request, kwargs):
         if len(self.labels) > 0 or len(self.parent_shows) > 0:
@@ -255,7 +262,11 @@ class ApproveVolunteerView(View):
                 response.occurrence.starttime.strftime(
                     GBE_DATETIME_FORMAT))
             messages.success(request, full_msg)
-            self.send_notifications(request, response, state, person)
+            self.send_notifications(request,
+                                    response,
+                                    state,
+                                    profile,
+                                    person.role)
 
     @never_cache
     def get(self, request, *args, **kwargs):

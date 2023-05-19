@@ -43,11 +43,6 @@ class ConferenceDayFactory(DjangoModelFactory):
         model = conf.ConferenceDay
 
 
-class WorkerItemFactory(DjangoModelFactory):
-    class Meta:
-        model = sched.WorkerItem
-
-
 class UserFactory(DjangoModelFactory):
     ''' the created_by_id of a Page User is a hack to get to python 3.8,
     Django CMS > 3.7.  If this is ever really fixed, it can be removed:

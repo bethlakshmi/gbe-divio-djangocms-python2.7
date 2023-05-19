@@ -161,10 +161,7 @@ class Event(Schedulable):
                                occurrence=self)
 
     def role_count(self, role="Volunteer"):
-        allocations = self.resources_allocated.all()
-        participants = allocations.filter(
-            resource__worker__role=role).count()
-        return participants
+        return self.peopleallocation_set.filter(role=role).count()
 
     @property
     def duration(self):
@@ -182,7 +179,6 @@ class Event(Schedulable):
             return None  # or what??
 
     def extra_volunteers(self):
-        from scheduler.models import PeopleAllocation
         '''
         The difference between the max suggested # of volunteers
         and the actual number
@@ -194,9 +190,7 @@ class Event(Schedulable):
         amount of space remaining (if there are 4 spaces, and 3 volunteers,
         the value will be -1)
         '''
-        count = PeopleAllocation.objects.filter(event=self, 
-                                                role='Volunteer').count()
-        return count - self.max_volunteer
+        return self.role_count() - self.max_volunteer
 
     # New with Scheduler API
     @property
