@@ -3,17 +3,18 @@
 from django.db import migrations
 
 
-def create_people(entity, users, People):
+def create_people(entity, users, People, class_id=None):
     people = None
     created = False
+    this_class_id = class_id or entity.pk
     if People.objects.filter(class_name=entity.__class__.__name__,
-                             class_id=entity.pk).exists():
+                             class_id=this_class_id).exists():
         people = People.objects.get(class_name=entity.__class__.__name__,
-                                    class_id=entity.pk)
+                                    class_id=this_class_id)
     else:
         created = True
         people = People(class_name=entity.__class__.__name__,
-                        class_id=entity.pk)
+                        class_id=this_class_id)
         people.save()
         for user in users:
             people.users.add(user)
@@ -62,7 +63,8 @@ def migrate_people(apps, schema_editor):
                 entity = Profile.objects.get(pk=worker._item.pk)
                 people, created = create_people(entity,
                                                 [entity.user_object],
-                                                People)
+                                                People,
+                                                entity.user_object.account.pk)
                 if created:
                     counts[' - Profiles'] = counts[' - Profiles'] + 1
                 else:
