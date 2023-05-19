@@ -3,10 +3,10 @@ from django.test.client import RequestFactory
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ClassFactory,
     ConferenceFactory,
     ConferenceDayFactory,
-    PersonaFactory,
     ProfileFactory,
     RoomFactory,
 )
@@ -29,13 +29,13 @@ class TestClassWizard(TestScheduling):
         self.room = RoomFactory()
         # because there was a bug around duplicate room names
         RoomFactory(name=self.room.name)
-        self.teacher = PersonaFactory()
+        self.teacher = BioFactory()
         self.current_conference = ConferenceFactory(accepting_bids=True)
         self.day = ConferenceDayFactory(conference=self.current_conference)
         self.room.conferences.add(self.current_conference)
         self.test_class = ClassFactory(b_conference=self.current_conference,
                                        accepted=3,
-                                       teacher=self.teacher,
+                                       teacher_bio=self.teacher,
                                        submitted=True)
         self.url = reverse(
             self.view_name,
@@ -210,7 +210,7 @@ class TestClassWizard(TestScheduling):
         panel = ClassFactory(b_conference=self.current_conference,
                              type="Panel",
                              accepted=3,
-                             teacher=self.teacher,
+                             teacher_bio=self.teacher,
                              submitted=True)
         login_as(self.privileged_user, self)
         data = self.get_data()

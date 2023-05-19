@@ -4,15 +4,13 @@ from django.urls import reverse
 from django.utils.formats import date_format
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     EmailTemplateFactory,
-    PersonaFactory,
     ProfileFactory,
 )
 from tests.factories.scheduler_factories import (
-    LabelFactory,
     OrderingFactory,
-    ResourceAllocationFactory,
-    WorkerFactory,
+    PeopleAllocationFactory,
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -21,6 +19,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from tests.functions.scheduler_functions import get_or_create_bio
 from tests.contexts import (
     ClassContext,
     StaffAreaContext,
@@ -30,7 +29,7 @@ from gbe.models import (
     Conference,
     Profile,
 )
-from scheduler.models import ResourceAllocation
+from scheduler.models import PeopleAllocation
 from settings import (
     GBE_DATETIME_FORMAT,
     GBE_TABLE_FORMAT,
@@ -63,7 +62,7 @@ class TestApproveVolunteer(TestCase):
 
     def assert_volunteer_state(self, response, booking, disabled_action=""):
         self.assertContains(response,
-                            str(booking.resource.worker._item.profile))
+                            str(booking.people.users.first().profile))
         self.assertContains(response, str(booking.event))
         self.assertContains(
             response,
@@ -82,9 +81,7 @@ class TestApproveVolunteer(TestCase):
                 self.assertContains(response, reverse(
                     self.approve_name,
                     urlconf='gbe.scheduling.urls',
-                    args=[action,
-                          booking.resource.worker._item.profile.pk,
-                          booking.pk]))
+                    args=[action, booking.people.class_id, booking.pk]))
 
     def test_list_volunteers_bad_user(self):
         ''' user does not have Volunteer Coordinator, permission is denied'''
@@ -98,12 +95,12 @@ class TestApproveVolunteer(TestCase):
         waitlisted_act = ActFactory(b_conference=self.context.conference,
                                     accepted=2,
                                     submitted=True)
-        booking = ResourceAllocationFactory(
+        booking = PeopleAllocationFactory(
             event=self.context.sched_event,
-            resource=WorkerFactory(_item=waitlisted_act.performer,
-                                   role="Waitlisted"))
+            role="Waitlisted",
+            people=get_or_create_bio(waitlisted_act.performer))
         order = OrderingFactory(
-            allocation=booking,
+            people_allocated=booking,
             class_id=waitlisted_act.pk,
             class_name="Act",
             role="Waitlisted")
@@ -134,9 +131,9 @@ class TestApproveVolunteer(TestCase):
                 self.context.conference.conference_slug))
 
     def test_list_volunteer_as_staff_lead(self):
-        self.context.worker.role = "Pending Volunteer"
-        label = LabelFactory(allocation=self.context.allocation)
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.label = "test_list_volunteer_as_staff_lead"
+        self.context.allocation.save()
         staff_context = StaffAreaContext(conference=self.context.conference)
         volunteer, booking = staff_context.book_volunteer(
             role="Pending Volunteer")
@@ -158,15 +155,15 @@ class TestApproveVolunteer(TestCase):
         # ... but not anyone else's
         self.assertNotContains(
             response,
-            str(self.context.allocation.resource.worker._item.profile))
+            str(self.context.allocation.booking.people.users.first().profile))
         self.assertNotContains(
             response,
             str(self.context.allocation.event))
 
     def test_get_pending(self):
-        self.context.worker.role = "Pending Volunteer"
-        label = LabelFactory(allocation=self.context.allocation)
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.label = "test_get_pending"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assert_volunteer_state(response, self.context.allocation)
@@ -176,8 +173,8 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response, label.text)
 
     def test_get_inactive_user(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         self.context.profile.user_object.is_active = False
         self.context.profile.user_object.save()
         login_as(self.privileged_user, self)
@@ -187,8 +184,8 @@ class TestApproveVolunteer(TestCase):
                             '<tr class="gbe-table-row gbe-table-danger">')
 
     def test_event_full(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         self.context.opp_event.max_volunteer = 0
         self.context.opp_event.save()
         login_as(self.privileged_user, self)
@@ -199,8 +196,8 @@ class TestApproveVolunteer(TestCase):
                             '<tr class="gbe-table-row gbe-table-warning">')
 
     def test_set_waitlist(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         response = self.client.get(reverse(
             self.approve_name,
@@ -231,8 +228,8 @@ class TestApproveVolunteer(TestCase):
             outbox_size=2)
 
     def test_redirects(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         response = self.client.get("%s?next=%s" % (
             reverse(self.approve_name,
@@ -244,8 +241,8 @@ class TestApproveVolunteer(TestCase):
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
 
     def test_set_reject(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         response = self.client.get(reverse(
             self.approve_name,
@@ -276,8 +273,8 @@ class TestApproveVolunteer(TestCase):
             outbox_size=2)
 
     def test_approve(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         approve_url = reverse(
             self.approve_name,
@@ -320,14 +317,14 @@ class TestApproveVolunteer(TestCase):
             message_index=1)
 
     def test_approval_w_conflict(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         class_context = ClassContext(
             conference=self.context.conference,
-            teacher=PersonaFactory(performer_profile=self.context.profile),
+            teacher=BioFactory(contact=self.context.profile),
             starttime=self.context.opp_event.starttime)
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         approve_url = reverse(
             self.approve_name,
@@ -356,14 +353,14 @@ class TestApproveVolunteer(TestCase):
             message_index=1)
 
     def test_approval_w_conflict_start_after(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         class_context = ClassContext(
             conference=self.context.conference,
-            teacher=PersonaFactory(performer_profile=self.context.profile),
+            teacher=BioFactory(contact=self.context.profile),
             starttime=self.context.opp_event.starttime + timedelta(minutes=30))
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         approve_url = reverse(
             self.approve_name,
@@ -379,14 +376,14 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response, conflict_msg)
 
     def test_approval_w_conflict_start_before(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         class_context = ClassContext(
             conference=self.context.conference,
-            teacher=PersonaFactory(performer_profile=self.context.profile),
+            teacher=BioFactory(contact=self.context.profile),
             starttime=self.context.opp_event.starttime - timedelta(minutes=30))
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         approve_url = reverse(
             self.approve_name,
@@ -427,8 +424,8 @@ class TestApproveVolunteer(TestCase):
             full_msg)
 
     def test_staff_lead_fail_out_of_scope(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         staff_context = StaffAreaContext(conference=self.context.conference)
         volunteer, booking = staff_context.book_volunteer(
             role="Pending Volunteer")
@@ -457,8 +454,8 @@ class TestApproveVolunteer(TestCase):
         self.assertEqual(404, response.status_code)
 
     def test_stage_manager_approve(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         stage_mgr = self.context.set_staff_lead(role="Stage Manager")
         login_as(stage_mgr, self)
         approve_url = reverse(
@@ -485,8 +482,8 @@ class TestApproveVolunteer(TestCase):
             full_msg)
 
     def test_stage_manager_fail_out_of_scope(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         stage_mgr = self.context.set_staff_lead(role="Stage Manager")
         staff_context = StaffAreaContext(conference=self.context.conference)
         volunteer, booking = staff_context.book_volunteer(
@@ -504,8 +501,8 @@ class TestApproveVolunteer(TestCase):
         self.assertEqual(403, response.status_code)
 
     def test_stage_manager_list_fail(self):
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         stage_mgr = self.context.set_staff_lead(role="Stage Manager")
         login_as(stage_mgr, self)
         response = self.client.get(self.url)
@@ -516,8 +513,8 @@ class TestApproveVolunteer(TestCase):
             name='volunteer changed schedule',
             content="{% include 'gbe/email/bad.tmpl' %}"
             )
-        self.context.worker.role = "Pending Volunteer"
-        self.context.worker.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
         login_as(self.privileged_user, self)
         approve_url = reverse(
             self.approve_name,
@@ -529,7 +526,7 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response, volunteer_allocate_email_fail_msg)
 
     def test_set_bad_booking(self):
-        bad_id = ResourceAllocation.objects.aggregate(Max('pk'))['pk__max']+1
+        bad_id = PeopleAllocation.objects.aggregate(Max('pk'))['pk__max']+1
         login_as(self.privileged_user, self)
         response = self.client.get(reverse(
             self.approve_name,

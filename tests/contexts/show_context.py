@@ -106,7 +106,7 @@ class ShowContext:
 
     def set_interest(self, interested_profile=None):
         interested_profile = interested_profile or ProfileFactory()
-        people = get_or_create_profile(profile)
+        people = get_or_create_profile(interested_profile)
         PeopleAllocationFactory(event=self.sched_event,
                                 people=people,
                                 role="Interested")

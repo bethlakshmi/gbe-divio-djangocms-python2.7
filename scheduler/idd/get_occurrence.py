@@ -16,7 +16,7 @@ def get_occurrence(occurrence_id=None, booking_id=None):
         else:
             response = OccurrenceResponse(
                 occurrence=Event.objects.get(
-                    resources_allocated__pk=booking_id))
+                    peopleallocation__pk=booking_id))
     except Event.DoesNotExist:
         response = OccurrenceResponse(
             errors=[Error(

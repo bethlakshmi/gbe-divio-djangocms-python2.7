@@ -186,17 +186,17 @@ class ApproveVolunteerView(View):
         if state == 3:
             email_status = send_schedule_update_mail(
                 "Volunteer",
-                person.user[0].profile)
+                person.users[0].profile)
         else:
             email_status = send_bid_state_change_mail(
                 "volunteer",
-                person.user[0].profile.contact_email,
-                person.user[0].profile.get_badge_name(),
+                person.users[0].profile.contact_email,
+                person.users[0].profile.get_badge_name(),
                 response.occurrence,
                 state)
         staff_status = send_volunteer_update_to_staff(
             self.reviewer,
-            person.user[0].profile,
+            person.users[0].profile,
             response.occurrence,
             person.role,
             response)
@@ -235,9 +235,9 @@ class ApproveVolunteerView(View):
         person = Person(
             users=[profile.user_object],
             public_id=profile.pk,
+            public_class=profile.__class__.__name__,
             role=volunteer_action_map[kwargs['action']]['role'],
-            booking_id=kwargs['booking_id'],
-            worker=None)
+            booking_id=kwargs['booking_id'])
         response = set_person(person=person)
         show_general_status(request, response, self.__class__.__name__)
         if not response.errors:

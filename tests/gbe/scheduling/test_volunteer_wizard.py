@@ -4,7 +4,6 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     RoomFactory,
 )

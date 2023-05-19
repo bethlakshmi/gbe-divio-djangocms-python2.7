@@ -3,8 +3,8 @@ from django.test.client import RequestFactory
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceDayFactory,
-    PersonaFactory,
     ProfileFactory,
 )
 from tests.functions.gbe_functions import (
@@ -365,7 +365,7 @@ class TestEditVolunteer(TestGBE):
         volunteer_sched_event = staff_context.add_volunteer_opp()
         volunteer_sched_event.approval_needed = True
         volunteer_sched_event.save()
-        teacher = PersonaFactory()
+        teacher = BioFactory()
         teacher, alloc = staff_context.book_volunteer(
             volunteer_sched_event=volunteer_sched_event,
             volunteer=teacher,
@@ -391,7 +391,7 @@ class TestEditVolunteer(TestGBE):
     def test_inactive_user_not_listed(self):
         staff_context = StaffAreaContext()
         volunteer_sched_event = staff_context.add_volunteer_opp()
-        inactive_persona = PersonaFactory(
+        inactive_persona = BioFactory(
             contact__user_object__is_active=False)
         login_as(self.privileged_user, self)
         url = reverse(self.view_name,

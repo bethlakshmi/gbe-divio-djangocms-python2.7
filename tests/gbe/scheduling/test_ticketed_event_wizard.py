@@ -3,9 +3,9 @@ from django.test.client import RequestFactory
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
     ConferenceDayFactory,
-    PersonaFactory,
     ProfileFactory,
     RoomFactory,
 )
@@ -41,7 +41,7 @@ class TestTicketedEventWizard(TestScheduling):
 
     def setUp(self):
         self.room = RoomFactory()
-        self.teacher = PersonaFactory()
+        self.teacher = BioFactory()
         self.current_conference = ConferenceFactory(accepting_bids=True)
         self.room.conferences.add(self.current_conference)
         self.day = ConferenceDayFactory(conference=self.current_conference)
@@ -286,7 +286,7 @@ class TestTicketedEventWizard(TestScheduling):
         data['alloc_0-role'] = "Producer"
         data['alloc_1-role'] = "Technical Director"
         data['alloc_0-worker'] = self.privileged_user.pk
-        data['alloc_1-worker'] = self.teacher.performer_profile.pk
+        data['alloc_1-worker'] = self.teacher.contact.pk
         data['set_event'] = "More..."
         response = self.client.post(
             self.url,
@@ -322,7 +322,7 @@ class TestTicketedEventWizard(TestScheduling):
         data = self.edit_class()
         data['type'] = "Special"
         data['alloc_0-role'] = "Staff Lead"
-        data['alloc_0-worker'] = self.teacher.performer_profile.pk
+        data['alloc_0-worker'] = self.teacher.contact.pk
         data['set_event'] = "More..."
         data.pop('alloc_1-role', None)
         response = self.client.post(

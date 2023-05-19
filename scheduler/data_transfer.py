@@ -15,12 +15,10 @@ class Commitment(object):
 class Person(object):
     def __init__(self,
                  booking_id=None,
-                 user=None,
                  public_id=None,
                  public_class="Performer",
                  role=None,
                  label=None,
-                 worker=None,
                  people=None,
                  booking=None,
                  commitment=None,
@@ -28,6 +26,7 @@ class Person(object):
         self.booking_id = None
         self.commitment = None
         self.users = None
+        self.label = None
 
         if booking:
             self.booking_id = booking.pk
@@ -45,18 +44,13 @@ class Person(object):
             self.users = people.users.all()
             self.public_class = people.class_name
             self.public_id = people.class_id
-
-        elif worker:
-            self.role = worker.role
-            self.users = [worker._item.as_subtype.user_object]
-            self.public_class = worker._item.as_subtype.__class__.__name__
-            self.public_id = worker._item.pk
         else:
-            self.users = [user]
+            self.users = users
             self.public_id = public_id
-            self.role = role
             self.public_class = public_class
 
+        if role:
+            self.role = role
         if booking_id:
             self.booking_id = booking_id
         if label:
@@ -64,8 +58,6 @@ class Person(object):
 
         if self.users is None:
             self.users = users
-        elif user is not None:
-            self.users = [user]
 
 
 class ScheduleItem(object):
