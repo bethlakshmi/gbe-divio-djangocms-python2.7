@@ -41,6 +41,7 @@ from gbetext import (
 from django.contrib.sites.models import Site
 from django.db.models import Max
 from datetime import timedelta
+from scheduler.idd import get_schedule
 
 
 class TestApproveVolunteer(TestCase):
@@ -155,7 +156,7 @@ class TestApproveVolunteer(TestCase):
         # ... but not anyone else's
         self.assertNotContains(
             response,
-            str(self.context.allocation.booking.people.users.first().profile))
+            str(self.context.allocation.people.users.first().profile))
         self.assertNotContains(
             response,
             str(self.context.allocation.event))
@@ -170,7 +171,7 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response, str(self.context.sched_event))
         self.assertContains(response,
                             '<tr class="gbe-table-row gbe-table-info">')
-        self.assertContains(response, label.text)
+        self.assertContains(response, self.context.allocation.label)
 
     def test_get_inactive_user(self):
         self.context.allocation.role = "Pending Volunteer"
@@ -464,6 +465,7 @@ class TestApproveVolunteer(TestCase):
             args=["approve",
                   self.context.profile.pk,
                   self.context.allocation.pk])
+        response = get_schedule(user=stage_mgr.user_object)
         response = self.client.get("%s?next=%s" % (
             approve_url,
             reverse('home', urlconf='gbe.urls')), follow=True)

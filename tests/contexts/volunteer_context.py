@@ -68,7 +68,7 @@ class VolunteerContext():
 
     def set_staff_lead(self, staff_lead=None, role=None):
         staff_lead = staff_lead or ProfileFactory()
-        staff_lead_people = get_or_create_profile(self.profile)
+        staff_lead_people = get_or_create_profile(staff_lead)
         role = role or "Staff Lead"
         PeopleAllocationFactory(event=self.sched_event,
                                 people=staff_lead_people,

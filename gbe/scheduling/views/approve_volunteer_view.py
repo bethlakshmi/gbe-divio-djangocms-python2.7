@@ -160,7 +160,7 @@ class ApproveVolunteerView(View):
                 self.labels += [area.slug]
 
             response = get_schedule(
-                self.reviewer.user_object,
+                user=self.reviewer.user_object,
                 labels=[self.conference.conference_slug],
                 roles=self.event_roles)
             for item in response.schedule_items:
