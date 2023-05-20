@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
 from gbe.models import (
+    Bio,
     UserMessage,
 )
 from gbe.functions import check_user_and_redirect
@@ -92,7 +93,7 @@ class EvalEventView(View):
             redirect_now = True
         else:
             if verify_bought_conference(
-                    self.person.user, eval_info.occurrences[0].labels
+                    self.person.users[0], eval_info.occurrences[0].labels
                     ) is False:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
@@ -106,7 +107,7 @@ class EvalEventView(View):
             response = get_bookings(
                 occurrence_ids=[eval_info.occurrences[0].pk],
                 roles=['Teacher', 'Moderator', 'Panelist'])
-            user_performers = self.person.user.profile.get_performers()
+            user_performers = self.person.users[0].profile.get_performers()
             pk_list = []
             for user_perf in user_performers:
                 pk_list += [user_perf.pk]

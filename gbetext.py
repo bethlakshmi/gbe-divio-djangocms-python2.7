@@ -295,6 +295,7 @@ privileged_event_roles = ['Technical Director',
                           'Producer',
                           'Stage Manager',
                           'Staff Lead']
+class_roles = ['Teacher', 'Moderator', 'Panelist']
 role_commit_map = {
     'New': (5, "fas fa-plus-square gbe-text-secondary"),
     'Error': (0, "fas fa-exclamation-triangle gbe-text-warning"),
