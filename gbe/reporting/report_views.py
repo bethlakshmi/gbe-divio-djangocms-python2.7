@@ -5,20 +5,32 @@ from django.urls import reverse
 from django.db.models import Q
 from django.core.management import call_command
 from django.views.decorators.cache import never_cache
-
+from gbe.models import (
+    Act,
+    Bio,
+    Class,
+    Conference,
+    Profile,
+    Room,
+)
 import gbe.models as conf
 import scheduler.models as sched
 import ticketing.models as tix
 import os as os
 import csv
 from reportlab.pdfgen import canvas
-from gbetext import class_styles
+from gbetext import (
+    class_styles,
+    class_roles,
+    privileged_event_roles,
+)
 from gbe.functions import (
     conference_slugs,
     get_current_conference,
     get_conference_by_slug,
     validate_perms,
 )
+from scheduler.idd import get_people
 
 
 def list_reports(request):
@@ -50,8 +62,8 @@ def env_stuff(request, conference_choice=None):
     else:
         conference = get_current_conference()
 
-    people = conf.Profile.objects.filter(user_object__is_active=True)
-    acts = conf.Act.objects.filter(
+    people = Profile.objects.filter(user_object__is_active=True)
+    acts = Act.objects.filter(
         accepted=3,
         b_conference=conference)
     tickets = tix.Transaction.objects.filter(
@@ -139,17 +151,16 @@ def room_schedule(request, room_id=None):
                                     'any',
                                     require=True)
 
-    conference_slugs = conf.Conference.all_slugs()
+    conference_slugs = Conference.all_slugs()
     if request.GET and request.GET.get('conf_slug'):
-        conference = conf.Conference.by_slug(request.GET['conf_slug'])
+        conference = Conference.by_slug(request.GET['conf_slug'])
     else:
-        conference = conf.Conference.current_conf()
+        conference = Conference.current_conf()
 
     if room_id:
-        rooms = [get_object_or_404(conf.Room,
-                                   resourceitem_id=room_id)]
+        rooms = [get_object_or_404(Room, resourceitem_id=room_id)]
     else:
-        rooms = conf.Room.objects.filter(conferences=conference)
+        rooms = Room.objects.filter(conferences=conference)
 
     conf_days = conference.conferenceday_set.all()
     tmp_days = []
@@ -166,6 +177,7 @@ def room_schedule(request, room_id=None):
         day_events = []
         current_day = None
         for booking in room.get_bookings:
+            print(booking)
             if not current_day:
                 current_day = booking.start_time.date()
             if current_day != booking.start_time.date():
@@ -173,14 +185,24 @@ def room_schedule(request, room_id=None):
                 if current_day in conf_days:
                     room_set += [{'room': room,
                                   'date': current_day,
-                                  'bookings': day_events}]
+                                  'events': day_events}]
                 current_day = booking.start_time.date()
                 day_events = []
-            day_events += [booking]
+            response = get_people(event_ids=[booking.pk],
+                                  roles=class_roles+privileged_event_roles)
+            people_set = []
+            for people in response.people:
+                print
+                people_set += [{
+                    "role": people.role,
+                    "person": eval(people.public_class).objects.get(
+                        pk=people.public_id)}]
+            day_events += [{'booking': booking,
+                            'people': people_set}]
         if current_day in conf_days:
             room_set += [{'room': room,
                           'date': current_day,
-                          'bookings': day_events}]
+                          'events': day_events}]
     return render(request, 'gbe/report/room_schedule.tmpl',
                   {'room_date': room_set,
                    'conference_slugs': conference_slugs,
@@ -190,11 +212,11 @@ def room_schedule(request, room_id=None):
 @never_cache
 def room_setup(request):
 
-    conference_slugs = conf.Conference.all_slugs()
+    conference_slugs = Conference.all_slugs()
     if request.GET and request.GET.get('conf_slug'):
-        conference = conf.Conference.by_slug(request.GET['conf_slug'])
+        conference = Conference.by_slug(request.GET['conf_slug'])
     else:
-        conference = conf.Conference.current_conf()
+        conference = Conference.current_conf()
 
     conf_days = conference.conferenceday_set.all()
     tmp_days = []
@@ -203,7 +225,7 @@ def room_setup(request):
     conf_days = tmp_days
 
     viewer_profile = validate_perms(request, 'any', require=True)
-    rooms = conf.Room.objects.filter(conferences=conference)
+    rooms = Room.objects.filter(conferences=conference)
 
     # rearrange the data into the format of:
     #  - room & date of booking
@@ -225,7 +247,7 @@ def room_setup(request):
                 day_events = []
             if booking.event_style in class_styles:
                 day_events += [{'event': booking,
-                                'class': conf.Class.objects.get(
+                                'class': Class.objects.get(
                                     pk=booking.connected_id)}]
         if (current_day in conf_days and len(day_events) > 0):
             room_set += [{'room': room,
