@@ -8,7 +8,7 @@ from tests.factories.gbe_factories import (
 from scheduler.models import (
     Event,
     EventLabel,
-    ResourceAllocation,
+    PeopleAllocation,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -183,9 +183,10 @@ class TestEditShowWizard(TestCase):
         self.assertRedirects(
             response,
             "%s?volunteer_open=True" % self.url)
-        self.assertTrue(ResourceAllocation.objects.filter(
+        self.assertTrue(PeopleAllocation.objects.filter(
             event=self.context.sched_event,
-            resource__worker___item=self.context.performer).count() == 1)
+            people__class_name=self.context.performer.__class__.__name__,
+            people__class_id=self.context.performer.pk).count() == 1)
 
     def test_create_slot(self):
         login_as(self.privileged_profile, self)

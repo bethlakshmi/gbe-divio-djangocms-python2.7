@@ -70,8 +70,8 @@ class TestEditStaffAreaView(TestCase):
         self.assertContains(response, self.context.area.description)
         assert_option_state(
             response,
-            self.context.staff_lead.profile.pk,
-            str(self.context.staff_lead.profile),
+            self.context.staff_lead.pk,
+            str(self.context.staff_lead),
             True)
         self.assertContains(
             response,
