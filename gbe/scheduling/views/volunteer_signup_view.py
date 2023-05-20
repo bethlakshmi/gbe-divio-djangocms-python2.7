@@ -195,7 +195,7 @@ class VolunteerSignupView(View):
                 roles=all_roles)
             personal_schedule = sched_response.schedule_items
             person = Person(
-                user=request.user,
+                users=[request.user],
                 public_id=request.user.profile.pk,
                 public_class="Profile")
             eval_response = get_eval_info(person=person)

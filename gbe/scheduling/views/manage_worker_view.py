@@ -178,14 +178,18 @@ class ManageWorkerView(View):
                     booking_id=int(request.POST['alloc_id']))
                 if response.booking_id:
                     email_status = send_schedule_update_mail(
-                        "Volunteer", data['worker'].workeritem.as_subtype)
+                        "Volunteer", data['worker'])
             elif data.get('worker', None):
+                if data['worker'].__class__.__name__ == "Bio":
+                   user_object = data['worker'].contact.user_object
+                else:
+                    user_object = data['worker'].user_object
                 person = Person(
-                    user=data['worker'].workeritem.as_subtype.user_object,
-                    public_id=data['worker'].workeritem.as_subtype.pk,
+                    users=[user_object],
+                    public_id=data['worker'].pk,
+                    public_class=data['worker'].__class__.__name__,
                     role=data['role'],
-                    label=data['label'],
-                    worker=None)
+                    label=data['label'])
                 if int(data['alloc_id']) > -1:
                     person.booking_id = int(data['alloc_id'])
                 response = set_person(
@@ -199,8 +203,8 @@ class ManageWorkerView(View):
                         state = 1
                     email_status = send_bid_state_change_mail(
                         "volunteer",
-                        data['worker'].workeritem.as_subtype.user_object.email,
-                        data['worker'].workeritem.as_subtype.get_badge_name(),
+                        user_object.email,
+                        user_object.profile.get_badge_name(),
                         self.occurrence,
                         state)
                 elif data['role'] not in not_scheduled_roles:

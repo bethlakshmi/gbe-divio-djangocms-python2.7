@@ -110,10 +110,11 @@ class ClassWizardView(EventWizardView):
         people = []
         for assignment in people_formset:
             if assignment.is_valid() and assignment.cleaned_data['worker']:
+                worker = assignment.cleaned_data['worker']
                 people += [Person(
-                    user=assignment.cleaned_data[
-                        'worker'].workeritem.as_subtype.user_object,
-                    public_id=assignment.cleaned_data['worker'].workeritem.pk,
+                    users=[worker.contact.user_object],
+                    public_id=worker.pk,
+                    public_class=worker.__class__.__name__,
                     role=assignment.cleaned_data['role'])]
         response = create_occurrence(
             bid.b_title,
@@ -190,14 +191,14 @@ class ClassWizardView(EventWizardView):
                 working_class.duration = timedelta(
                     minutes=context['scheduling_form'].cleaned_data[
                         'duration']*60)
-                if not hasattr(working_class, 'teacher'):
+                if not hasattr(working_class, 'teacher_bio') or :
                     teacher = None
                     for form in context['worker_formset']:
                         if form.cleaned_data['worker']:
                             teacher = form.cleaned_data['worker']
                             break
                     if teacher:
-                        working_class.teacher = teacher
+                        working_class.teacher_bio = teacher
                     else:
                         user_message = UserMessage.objects.get_or_create(
                             view=self.__class__.__name__,

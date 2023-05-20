@@ -31,8 +31,7 @@ class Class(Biddable):
     '''
     teacher_bio = ForeignKey(Bio,
                              on_delete=CASCADE,
-                             related_name='is_teaching',
-                             null=True)
+                             related_name='is_teaching')
     minimum_enrollment = IntegerField(blank=True, default=1)
     maximum_enrollment = IntegerField(blank=True, default=20, null=True)
     organization = CharField(max_length=128, blank=True)

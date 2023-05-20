@@ -269,10 +269,15 @@ def update_event(event_form,
     people = []
     for assignment in people_formset:
         if assignment.is_valid() and assignment.cleaned_data['worker']:
+            worker = assignment.cleaned_data['worker']
+            if worker.__class__.__name__ == "Bio":
+                user_object = worker.contact.user_object
+            else:
+                user_object = worker.user_object
             people += [Person(
-                user=assignment.cleaned_data[
-                    'worker'].workeritem.as_subtype.user_object,
-                public_id=assignment.cleaned_data['worker'].workeritem.pk,
+                users=[user_object],
+                public_id=worker.pk,
+                public_class=worker.__class__.__name__,
                 role=assignment.cleaned_data['role'])]
     if len(people) == 0:
         people = None

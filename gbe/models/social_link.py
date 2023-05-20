@@ -44,8 +44,7 @@ class SocialLink(Model):
     }
     bio = ForeignKey(Bio,
                      on_delete=CASCADE,
-                     related_name='links',
-                     null=True)
+                     related_name='links')
     link = URLField(null=True, blank=True)
     username = CharField(null=True, blank=True, max_length=100)
     social_network = CharField(max_length=40,
