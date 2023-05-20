@@ -370,8 +370,9 @@ def send_volunteer_update_to_staff(
         occurrence_ids=[occurrence.pk],
         roles=['Staff Lead', ])
     for lead in leads.people:
-        if lead.user.email not in to_list:
-            to_list += [lead.user.email]
+        for user in lead.users:
+            if user.email not in to_list:
+                to_list += [user.email]
     for area in StaffArea.objects.filter(
             conference__conference_slug__in=occurrence.labels,
             slug__in=occurrence.labels,

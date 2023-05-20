@@ -114,7 +114,7 @@ class TestSetVolunteer(TestCase):
             message_index=1)
         assert(self.volunteeropp.title in staff_msg.body)
         assert_email_recipient(
-            [self.context.staff_lead.profile.user_object.email],
+            [self.context.staff_lead.user_object.email],
             outbox_size=2,
             message_index=1)
 
@@ -182,7 +182,7 @@ class TestSetVolunteer(TestCase):
             message_index=1)
         assert(self.volunteeropp.title in staff_msg.body)
         assert_email_recipient(
-            [self.context.staff_lead.profile.user_object.email],
+            [self.context.staff_lead.user_object.email],
             outbox_size=2,
             message_index=1)
 
@@ -299,7 +299,7 @@ class TestSetVolunteer(TestCase):
         # even though there is a volunteer coordinator - mail only goes to
         # staff lead
         assert_email_recipient(
-            [self.context.staff_lead.profile.user_object.email],
+            [self.context.staff_lead.user_object.email],
             outbox_size=2,
             message_index=1)
         self.assertContains(response, conflict_msg)
