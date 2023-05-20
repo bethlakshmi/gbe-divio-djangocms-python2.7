@@ -191,7 +191,7 @@ class ClassWizardView(EventWizardView):
                 working_class.duration = timedelta(
                     minutes=context['scheduling_form'].cleaned_data[
                         'duration']*60)
-                if not hasattr(working_class, 'teacher_bio') or :
+                if not hasattr(working_class, 'teacher_bio'):
                     teacher = None
                     for form in context['worker_formset']:
                         if form.cleaned_data['worker']:
