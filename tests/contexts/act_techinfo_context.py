@@ -100,17 +100,18 @@ class ActTechInfoContext():
         return rehearsal_event
 
     def order_act(self, act, order):
-        alloc = self.sched_event.resources_allocated.filter(
+        alloc = self.sched_event.peopleallocation_set.filter(
             ordering__class_id=act.pk,
             event=self.sched_event).first()
-        ordering, created = Ordering.objects.get_or_create(allocation=alloc)
+        ordering, created = Ordering.objects.get_or_create(
+            people_allocated=alloc)
         ordering.order = order
         ordering.save()
 
     def make_priv_role(self, role="Stage Manager"):
         profile = ProfileFactory()
         people = get_or_create_profile(profile)
-        ResourceAllocationFactory(
+        PeopleAllocationFactory(
             event=self.sched_event,
             role=role,
             people=people)

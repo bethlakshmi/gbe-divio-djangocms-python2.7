@@ -82,12 +82,8 @@ class Event(Schedulable):
     @property
     def people(self):
         people = []
-        for booking in self.resources_allocated.all():
-            if booking.resource.as_subtype.__class__.__name__ == "Worker":
-                person = Person(booking=booking)
-                if hasattr(booking, 'label'):
-                    person.label = booking.label.text
-                people += [person]
+        for booking in self.peopleallocation_set.all():
+            people += [Person(booking=booking)]
         return people
 
     # New - from refactoring
@@ -117,16 +113,17 @@ class Event(Schedulable):
             for user in person.users:
                 people.users.add(user)
 
-        for user in people.users.all():
-            for conflict in get_schedule(
+        if people.users is not None:
+            for user in people.users.all():
+                for conflict in get_schedule(
                         user=user,
                         start_time=self.start_time,
                         end_time=self.end_time).schedule_items:
-                if not person.booking_id or (
-                        person.booking_id != conflict.booking_id):
-                    warnings += [Warning(code="SCHEDULE_CONFLICT",
-                                         user=user,
-                                         occurrence=conflict.event)]
+                    if not person.booking_id or (
+                            person.booking_id != conflict.booking_id):
+                        warnings += [Warning(code="SCHEDULE_CONFLICT",
+                                             user=user,
+                                             occurrence=conflict.event)]
         if person.booking_id:
             allocation = PeopleAllocation.objects.get(
                 id=person.booking_id)

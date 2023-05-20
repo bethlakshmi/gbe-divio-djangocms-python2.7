@@ -286,12 +286,15 @@ class ShowDashboard(ProfileRequiredMixin, View):
             data['open_panel'] = 'act'
         else:
             for act in data['acts']:
-                person = Person(public_id=act['act'].performer.pk,
-                                booking_id=act['form'].prefix,
-                                role="Performer",
-                                commitment=Commitment(
-                                    decorator_class=act['act'],
-                                    order=act['form'].cleaned_data['order']))
+                # don't need to change users on People here
+                person = Person(
+                    public_id=act['act'].performer.pk,
+                    public_class=act['act'].performer.__class__.__name__,
+                    booking_id=act['form'].prefix,
+                    role="Performer",
+                    commitment=Commitment(
+                        decorator_class=act['act'],
+                        order=act['form'].cleaned_data['order']))
                 response = set_person(person=person,
                                       occurrence_id=self.occurrence.pk)
                 # we don't care about overbook warnings on this case

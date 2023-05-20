@@ -193,7 +193,9 @@ class TestShowDashboard(TestCase):
     def test_get_show_w_no_acts(self):
         no_act_context = ShowContext()
         no_act_context.performer.delete()
+        no_act_context.people.delete()
         no_act_context.acts[0].delete()
+
         no_act_url = reverse(self.view_name,
                              urlconf="gbe.scheduling.urls",
                              args=[no_act_context.sched_event.pk])
@@ -216,7 +218,7 @@ class TestShowDashboard(TestCase):
         self.assertContains(response, reverse(
             'mail_to_individual',
             urlconf='gbe.email.urls',
-            args=[vol_context.profile.resourceitem_id]))
+            args=[vol_context.profile.pk]))
         self.assertContains(response, reverse(
             'detail_view',
             urlconf='gbe.scheduling.urls',
