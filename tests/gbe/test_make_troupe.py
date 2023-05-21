@@ -63,7 +63,7 @@ class TestTroupeCreate(TestGBE):
 
     def test_create_troupe_performer_exists(self):
         contact = PersonaFactory()
-        login_as(contact.performer_profile, self)
+        login_as(contact.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -83,7 +83,7 @@ class TestTroupeCreate(TestGBE):
     def test_create_troupe_no_inactive_users(self):
         contact = PersonaFactory()
         inactive = PersonaFactory(contact__user_object__is_active=False)
-        login_as(contact.performer_profile, self)
+        login_as(contact.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -114,7 +114,7 @@ class TestTroupeEdit(TestCase):
                       args=[troupe.pk],
                       urlconf='gbe.urls')
         login_as(contact.profile, self)
-        data = {'contact': persona.performer_profile.pk,
+        data = {'contact': persona.contact.pk,
                 'name':  name or "New Troupe",
                 'bio': "bio",
                 'year_started': 2001,

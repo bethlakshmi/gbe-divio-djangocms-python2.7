@@ -89,7 +89,7 @@ class TestReviewAct(TestCase):
         self.assertContains(response, self.act.performer.experience)
         self.assertContains(
             response,
-            self.act.performer.performer_profile.user_object.email)
+            self.act.performer.contact.user_object.email)
         self.assertContains(response, setup_social_media(link), html=True)
 
     def test_hidden_fields_are_populated(self):

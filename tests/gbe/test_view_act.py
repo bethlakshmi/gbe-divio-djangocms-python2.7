@@ -27,7 +27,7 @@ class TestViewAct(TestCase):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf='gbe.urls')
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)
@@ -41,7 +41,7 @@ class TestViewAct(TestCase):
                       args=[act.pk],
                       urlconf="gbe.urls")
 
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         response = self.client.get(url)
         self.assertRedirects(
             response,
@@ -52,7 +52,7 @@ class TestViewAct(TestCase):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf='gbe.urls')
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)
@@ -65,8 +65,8 @@ class TestViewAct(TestCase):
                       args=[act.pk],
                       urlconf='gbe.urls')
         make_act_app_purchase(act.b_conference,
-                              act.performer.performer_profile.user_object)
-        login_as(act.performer.performer_profile, self)
+                              act.performer.contact.user_object)
+        login_as(act.performer.contact, self)
         response = self.client.get(url)
         test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)

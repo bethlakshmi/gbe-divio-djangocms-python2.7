@@ -40,7 +40,12 @@ class SchedulerChangeListTests(TestCase):
         context = ActTechInfoContext(act_role="Featured")
         response = self.client.get('/admin/scheduler/ordering/',
                                    follow=True)
-        self.assertContains(response, str(context.performer))
+        self.assertContains(
+            response,
+            "class: Bio, id: %d" %context.performer.pk)
+        self.assertContains(
+            response,
+            context.performer.contact.display_name)
         self.assertContains(response, "Featured")
 
     def test_get_allocation_no_resource(self):

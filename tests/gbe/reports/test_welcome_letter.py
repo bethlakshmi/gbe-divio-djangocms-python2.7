@@ -65,7 +65,7 @@ class TestWelcomeLetter(TestCase):
             msg_prefix="Role condition for teacher was not found")
         self.assertContains(
             response,
-            str(context.teacher.performer_profile),
+            str(context.teacher.contact),
             msg_prefix="Teacher is not in the list")
 
     def test_personal_schedule_teacher_booking(self):
@@ -82,7 +82,7 @@ class TestWelcomeLetter(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            str(context.teacher.performer_profile))
+            str(context.teacher.contact))
         self.assertContains(
             response,
             context.bid.b_title)
@@ -177,7 +177,7 @@ class TestWelcomeLetter(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(
             response,
-            str(teacher.performer_profile))
+            str(teacher.contact))
         self.assertNotContains(
             response,
             context.bid.b_title)

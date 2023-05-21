@@ -191,7 +191,7 @@ class TestReviewActTechInfo(TestCase):
         self.context.act.performer = troupe
         self.context.act.save()
         self.set_the_basics()
-        login_as(member.performer_profile, self)
+        login_as(member.contact, self)
         response = self.client.get(self.url)
         self.assertContains(response, self.context.act.b_title)
         self.assertContains(response, str(self.context.act.performer))

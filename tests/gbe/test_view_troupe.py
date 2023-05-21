@@ -86,7 +86,7 @@ class TestViewTroupe(TestCase):
         url = reverse('troupe_view',
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(member.performer_profile.user_object, self)
+        login_as(member.contact.user_object, self)
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

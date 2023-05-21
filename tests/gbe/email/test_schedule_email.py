@@ -78,12 +78,12 @@ class TestScheduleEmail(TestCase):
             )
         self.assertEqual(queued_email.count(), 2)
         first = queued_email.filter(
-            to=show_context.performer.performer_profile.user_object.email)[0]
+            to=show_context.performer.contact.user_object.email)[0]
         self.assertTrue(show_context.sched_event.title in first.html_message)
         self.assertTrue(self.unsub_link in queued_email[0].html_message)
         self.assertTrue(self.get_param in queued_email[0].html_message)
         second = queued_email.filter(
-            to=context.performer.performer_profile.user_object.email)[0]
+            to=context.performer.contact.user_object.email)[0]
         self.assertTrue(context.sched_event.title in second.html_message)
         self.assertTrue(
             context.rehearsal.title in second.html_message)
