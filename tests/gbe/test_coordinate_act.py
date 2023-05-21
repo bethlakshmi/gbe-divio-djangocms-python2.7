@@ -61,7 +61,7 @@ class TestCoordinateAct(TestCase):
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',
-                     'theact-bio': persona.resourceitem_id,
+                     'theact-bio': persona.pk,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk,
                      'submit': 1,

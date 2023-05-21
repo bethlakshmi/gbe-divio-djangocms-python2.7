@@ -39,7 +39,7 @@ class TestAllVolunteer(TestCase):
         self.assertContains(response, reverse(
             'mail_to_individual',
             urlconf='gbe.email.urls',
-            args=[self.context.profile.resourceitem_id]))
+            args=[self.context.profile.pk]))
         self.assertContains(response, reverse(
             'edit_event',
             urlconf='gbe.scheduling.urls',

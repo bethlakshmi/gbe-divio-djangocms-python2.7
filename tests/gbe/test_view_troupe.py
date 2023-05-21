@@ -37,7 +37,7 @@ class TestViewTroupe(TestCase):
         user = UserFactory()
         url = reverse(
             "troupe_view",
-            args=[troupe.resourceitem_id],
+            args=[troupe.pk],
             urlconf='gbe.urls')
         login_as(user, self)
         response = self.client.get(url)
@@ -48,7 +48,7 @@ class TestViewTroupe(TestCase):
         troupe.contact.state = ''
         troupe.contact.save()
         url = reverse('troupe_view',
-                      args=[troupe.resourceitem_id],
+                      args=[troupe.pk],
                       urlconf='gbe.urls')
 
         login_as(troupe.contact.profile.user_object, self)
@@ -65,7 +65,7 @@ class TestViewTroupe(TestCase):
         grant_privilege(priv_profile.user_object, 'Registrar')
 
         url = reverse('troupe_view',
-                      args=[troupe.resourceitem_id],
+                      args=[troupe.pk],
                       urlconf='gbe.urls')
         login_as(priv_profile.user_object, self)
 
@@ -84,7 +84,7 @@ class TestViewTroupe(TestCase):
         people = get_or_create_bio(troupe)
         people.users.add(member)
         url = reverse('troupe_view',
-                      args=[troupe.resourceitem_id],
+                      args=[troupe.pk],
                       urlconf='gbe.urls')
         login_as(member.performer_profile.user_object, self)
 
@@ -102,7 +102,7 @@ class TestViewTroupe(TestCase):
         contact = persona.contact
         troupe = BioFactory(contact=contact, multiple_performers=True)
         url = reverse('troupe_view',
-                      args=[troupe.resourceitem_id],
+                      args=[troupe.pk],
                       urlconf='gbe.urls')
         login_as(random.user_object, self)
 

@@ -45,25 +45,25 @@ class ReviewTroupesView(View):
                     reverse(
                         'mail_to_individual',
                         urlconf='gbe.email.urls',
-                        args=[troupe.contact.resourceitem_id]),
+                        args=[troupe.contact.pk]),
                     troupe.contact.user_object.email),
                 members)
-            bid_row['id'] = troupe.resourceitem_id
+            bid_row['id'] = troupe.pk
             bid_row['actions'] = [
                 {'url': reverse(
                     'troupe_view',
                     urlconf='gbe.urls',
-                    args=[troupe.resourceitem_id]),
+                    args=[troupe.pk]),
                  'text': "View Troupe"},
                 {'url': reverse(
                     'admin_landing_page',
                     urlconf='gbe.urls',
-                    args=[troupe.contact.resourceitem_id]),
+                    args=[troupe.contact.pk]),
                  'text': "View Contact Landing Page"},
                 {'url': reverse(
                     'mail_to_individual',
                     urlconf='gbe.email.urls',
-                    args=[troupe.contact.resourceitem_id]),
+                    args=[troupe.contact.pk]),
                  'text': "Email Contact"}
             ]
             rows.append(bid_row)

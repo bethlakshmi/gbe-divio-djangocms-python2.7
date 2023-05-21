@@ -89,7 +89,7 @@ class ReviewBidView(View):
     def set_bid_eval(self):
         self.bid_eval = self.bid_evaluation_type.objects.filter(
             bid_id=self.object.pk,
-            evaluator_id=self.reviewer.resourceitem_id).first()
+            evaluator_id=self.reviewer.pk).first()
         if self.bid_eval is None:
             self.bid_eval = self.bid_evaluation_type(
                 evaluator=self.reviewer, bid=self.object)
