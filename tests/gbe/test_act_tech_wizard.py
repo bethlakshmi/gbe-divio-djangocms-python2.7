@@ -4,7 +4,7 @@ from django.test import Client
 from django.db.models import Max
 from tests.factories.gbe_factories import (
     ActFactory,
-    PersonaFactory,
+    BioFactory,
     UserFactory,
 )
 from tests.contexts import ActTechInfoContext
@@ -27,7 +27,7 @@ from settings import GBE_DATETIME_FORMAT
 from datetime import timedelta
 from gbe.models import (
     Act,
-    Performer,
+    Bio,
 )
 from scheduler.models import (
     ResourceAllocation,
@@ -84,7 +84,7 @@ class TestActTechWizard(TestGBE):
                 selected_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT)))
 
     def test_edit_act_techinfo_unauthorized_user(self):
-        random_performer = PersonaFactory()
+        random_performer = BioFactory()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[self.context.act.pk])
@@ -431,7 +431,7 @@ class TestActTechWizard(TestGBE):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_act_tech_basic_submit)
-        reload_performer = Performer.objects.get(pk=context.performer.pk)
+        reload_performer = Bio.objects.get(pk=context.performer.pk)
         self.assertEqual('she/her', reload_performer.pronouns)
 
     def test_edit_act_wout_music_and_continue(self):

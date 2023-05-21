@@ -3,8 +3,8 @@ from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     UserMessageFactory,
 )
@@ -55,7 +55,7 @@ class TestMakeAct(TestCase):
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',
-                     'theact-performer': performer.resourceitem_id,
+                     'theact-bio': performer.pk,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk
                      }
@@ -84,20 +84,20 @@ class TestCreateAct(TestMakeAct):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.url = reverse(cls.view_name, urlconf='gbe.urls')
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
 
     def post_paid_act_submission(self, act_form=None):
         if not act_form:
             act_form = self.get_act_form(self.performer)
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         act_form.update({'submit': ''})
         make_act_app_purchase(self.current_conference,
-                              self.performer.performer_profile.user_object)
+                              self.performer.contact.user_object)
         response = self.client.post(self.url, data=act_form, follow=True)
         return response, act_form
 
     def post_unpaid_act_draft(self):
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         POST = self.get_act_form(self.performer)
         POST['draft'] = True
         response = self.client.post(self.url, data=POST, follow=True)
@@ -116,7 +116,7 @@ class TestCreateAct(TestMakeAct):
 
     def test_bid_act_get_with_persona(self):
         '''act_bid, when profile has a personae'''
-        profile = PersonaFactory().performer_profile
+        profile = BioFactory().contact
         url = reverse(self.view_name, urlconf='gbe.urls')
         login_as(profile, self)
         response = self.client.get(url)
@@ -125,7 +125,7 @@ class TestCreateAct(TestMakeAct):
         self.check_subway_state(response)
 
     def test_act_bid_post_form_not_valid(self):
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         data = self.get_act_form(self.performer, submit=True, valid=False)
         response = self.client.post(url,
@@ -136,7 +136,7 @@ class TestCreateAct(TestMakeAct):
 
     def test_act_bid_post_submit_no_payment(self):
         '''act_bid, if user has not paid, should take us to please_pay'''
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         tickets = setup_fees(self.current_conference, is_act=True)
         POST = self.get_act_form(self.performer)
         POST.update({'submit': '',
@@ -150,7 +150,7 @@ class TestCreateAct(TestMakeAct):
         '''act_bid, not submitting and no other problems,
         should redirect to home'''
         make_act_app_purchase(self.current_conference,
-                              self.performer.performer_profile.user_object)
+                              self.performer.contact.user_object)
         response, data = self.post_unpaid_act_draft()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, ' - Fee has been paid, submit NOW!')
@@ -164,7 +164,7 @@ class TestCreateAct(TestMakeAct):
         tickets[0].start_time = datetime.now() - timedelta(days=5)
         tickets[0].end_time = datetime.now() + timedelta(days=5)
         tickets[0].save()
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
@@ -183,7 +183,7 @@ class TestCreateAct(TestMakeAct):
         ticket_later[0].cost = tickets_shown[0].cost - 2
         ticket_later[0].save()
         ticket_sooner[0].save()
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
@@ -194,13 +194,13 @@ class TestCreateAct(TestMakeAct):
         '''act_bid, not post, but paid should take us to bid process'''
         UserMessage.objects.all().delete()
         make_act_app_purchase(self.current_conference,
-                              self.performer.performer_profile.user_object)
+                              self.performer.contact.user_object)
         msg = UserMessageFactory(
             view='MakeActView',
             code='BID_INSTRUCTIONS',
             summary="Act Bid Instructions",
             description="Test Bid Instructions Message")
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
@@ -239,7 +239,7 @@ class TestCreateAct(TestMakeAct):
             performer=self.performer,
             b_conference=self.current_conference)
         make_act_app_purchase(self.current_conference,
-                              self.performer.performer_profile.user_object)
+                              self.performer.contact.user_object)
         response, data = self.post_paid_act_submission()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "View</a> act")
@@ -247,10 +247,10 @@ class TestCreateAct(TestMakeAct):
 
     def test_act_draft_hacked_performer(self):
         make_act_app_purchase(self.current_conference,
-                              self.performer.performer_profile.user_object)
+                              self.performer.contact.user_object)
         response, data = self.post_unpaid_act_draft()
-        other_performer = PersonaFactory()
-        other_profile = other_performer.performer_profile
+        other_performer = BioFactory()
+        other_profile = other_performer.contact
         data['theact-performer'] = other_performer.pk
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, ' - Fee has been paid, submit NOW!')
@@ -273,10 +273,10 @@ class TestEditAct(TestMakeAct):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         make_act_app_purchase(
             act.b_conference,
-            act.performer.performer_profile.user_object)
+            act.performer.contact.user_object)
         response = self.client.post(
             url,
             data=act_form,
@@ -290,7 +290,7 @@ class TestEditAct(TestMakeAct):
                       urlconf="gbe.urls")
         make_act_app_purchase(
             original.b_conference,
-            original.performer.performer_profile.user_object)
+            original.performer.contact.user_object)
         return post_act_conflict(
             original.b_conference,
             original.performer,
@@ -323,7 +323,7 @@ class TestEditAct(TestMakeAct):
         self.assertEqual(response.status_code, 404)
 
     def test_edit_act_profile_is_not_contact(self):
-        user = PersonaFactory().performer_profile.user_object
+        user = BioFactory().contact.user_object
         act = ActFactory()
         url = reverse(self.view_name,
                       args=[act.pk],
@@ -339,7 +339,7 @@ class TestEditAct(TestMakeAct):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         response = self.client.post(
             url,
             self.get_act_form(act.performer, valid=False))
@@ -353,14 +353,14 @@ class TestEditAct(TestMakeAct):
                       args=[act.pk],
                       urlconf="gbe.urls")
         tickets = setup_fees(act.b_conference, is_act=True)
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         act_form = self.get_act_form(act.performer, submit=True)
         act_form['donation'] = 10
         response = self.client.post(url, data=act_form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Act Submission Fee")
         self.assertContains(response, payment_needed_msg)
-        profile = Profile.objects.get(pk=act.performer.performer_profile.pk)
+        profile = Profile.objects.get(pk=act.performer.contact.pk)
         self.assertEqual(profile.phone, '111-222-3333')
         self.assertEqual(profile.user_object.first_name, 'Jane')
         self.assertEqual(profile.user_object.last_name, 'Smith')
@@ -372,7 +372,7 @@ class TestEditAct(TestMakeAct):
                       args=[act.pk],
                       urlconf="gbe.urls")
         tickets = setup_fees(act.b_conference, is_act=True)
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         act_form = self.get_act_form(act.performer, submit=True)
         act_form['donation'] = 5
         response = self.client.post(url, data=act_form)
@@ -388,13 +388,13 @@ class TestEditAct(TestMakeAct):
         make_act_app_purchase(
             ConferenceFactory(
                 status="completed"),
-            act.performer.performer_profile.user_object)
+            act.performer.contact.user_object)
         tickets = setup_fees(act.b_conference, is_act=True)
 
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         act_form = self.get_act_form(act.performer, submit=True)
         act_form['donation'] = 10
         response = self.client.post(url, data=act_form)
@@ -415,10 +415,10 @@ class TestEditAct(TestMakeAct):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
-        act.performer.performer_profile.phone = "555-666-7777"
-        act.performer.performer_profile.user_object.first_name = "Bee"
-        act.performer.performer_profile.user_object.last_name = "Bumble"
-        act.performer.performer_profile.save()
+        act.performer.contact.phone = "555-666-7777"
+        act.performer.contact.user_object.first_name = "Bee"
+        act.performer.contact.user_object.last_name = "Bumble"
+        act.performer.contact.save()
         login_as(act.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -433,13 +433,13 @@ class TestEditAct(TestMakeAct):
                 "shows_preferences",
                 1),
             html=True)
-        self.assertContains(response, act.performer.performer_profile.phone)
+        self.assertContains(response, act.performer.contact.phone)
         self.assertContains(
             response,
-            act.performer.performer_profile.user_object.first_name)
+            act.performer.contact.user_object.first_name)
         self.assertContains(
             response,
-            act.performer.performer_profile.user_object.last_name)
+            act.performer.contact.user_object.last_name)
         self.check_subway_state(response)
 
     def test_edit_act_submit_make_message(self):

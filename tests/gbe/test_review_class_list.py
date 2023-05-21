@@ -5,9 +5,9 @@ from django.test import (
 )
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ClassFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     UserFactory,
     )
@@ -23,7 +23,7 @@ class TestReviewClassList(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Class Reviewers')
@@ -91,7 +91,7 @@ class TestReviewClassList(TestCase):
 
     def test_review_class_inactive_user(self):
         ClassFactory(
-            teacher__contact__user_object__is_active=False,
+            teacher_bio__contact__user_object__is_active=False,
             b_conference=self.conference,
             submitted=True)
         url = reverse(self.view_name, urlconf="gbe.urls")

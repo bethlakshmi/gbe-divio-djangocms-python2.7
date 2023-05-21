@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
     EmailTemplateSenderFactory,
-    PersonaFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
     UserFactory,
@@ -30,14 +30,14 @@ class TestMakeBid(TestCase):
     @classmethod
     def setUpTestData(cls):
         Conference.objects.all().delete()
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.conference = ConferenceFactory(accepting_bids=True)
 
     def setUp(self):
         self.client = Client()
 
     def get_form(self, submit=True, invalid=False):
-        data = {"theclass-teacher": self.performer.pk,
+        data = {"theclass-teacher_bio": self.performer.pk,
                 'theclass-phone': '111-222-3333',
                 'theclass-first_name': 'Jane',
                 'theclass-last_name': 'Smith',
@@ -55,7 +55,7 @@ class TestMakeBid(TestCase):
     def post_bid(self, submit=True):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         data = self.get_form(submit=submit)
         response = self.client.post(url, data=data, follow=True)
         return response, data
@@ -86,7 +86,7 @@ class TestMakeBid(TestCase):
         url = reverse('class_edit',
                       args=[0],
                       urlconf='gbe.urls')
-        login_as(PersonaFactory().performer_profile, self)
+        login_as(BioFactory().contact, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
@@ -124,14 +124,14 @@ class TestMakeBid(TestCase):
         self.conference = ConferenceFactory(accepting_bids=False)
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(404, response.status_code)
 
     def test_get_new_bid(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.conference.conference_name)
@@ -154,7 +154,7 @@ class TestMakeBid(TestCase):
         )
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         data = self.get_form()
         response = self.client.post(url, data=data, follow=True)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
@@ -162,7 +162,7 @@ class TestMakeBid(TestCase):
             0,
             1,
             "bidder: %s, bid: %s" % (
-                str(self.performer.performer_profile),
+                str(self.performer.contact),
                 data['theclass-b_title']),
             [privileged_profile.contact_email],
             from_email="class@notify.com",

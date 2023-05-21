@@ -5,23 +5,20 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import(
     ActFactory,
+    BioFactory,
     ClassFactory,
     ConferenceFactory,
     CostumeFactory,
     FlexibleEvaluationFactory,
-    PersonaFactory,
     ProfileFactory,
     TechInfoFactory,
-    TroupeFactory,
     UserFactory,
     VendorFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
-    LabelFactory,
     SchedEventFactory,
-    ResourceAllocationFactory,
-    WorkerFactory,
+    PeopleAllocationFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -31,6 +28,10 @@ from tests.functions.gbe_functions import (
     make_vendor_app_ticket,
     make_act_app_ticket,
     make_act_app_purchase,
+)
+from tests.functions.scheduler_functions import (
+    get_or_create_bio,
+    get_or_create_profile,
 )
 from tests.contexts import (
     ActTechInfoContext,
@@ -64,9 +65,8 @@ class TestIndex(TestCase):
 
         # User/Human setup
         cls.profile = ProfileFactory()
-        cls.performer = PersonaFactory(performer_profile=cls.profile,
-                                       contact=cls.profile,
-                                       label="Test Index Label")
+        cls.performer = BioFactory(contact=cls.profile,
+                                   label="Test Index Label")
         # Bid types previous and current
         cls.current_act = ActFactory(performer=cls.performer,
                                      submitted=True,
@@ -130,23 +130,23 @@ class TestIndex(TestCase):
         EventLabelFactory(event=cls.previous_class_sched,
                           text=cls.previous_conf.conference_slug)
 
-        worker = WorkerFactory(_item=cls.profile, role='Volunteer')
+        people = get_or_create_profile(cls.profile)
         for schedule_item in [cls.current_sched,
                               cls.previous_sched]:
-            volunteer_assignment = ResourceAllocationFactory(
+            volunteer_assignment = PeopleAllocationFactory(
                 event=schedule_item,
-                resource=worker
+                people=people,
+                label="Landing_Page_Test",
+                role='Volunteer',
             )
-            LabelFactory(text="label %d" % volunteer_assignment.pk,
-                         allocation=volunteer_assignment)
 
-        persona_worker = WorkerFactory(_item=cls.performer,
-                                       role='Teacher')
+        people = get_or_create_bio(cls.performer)
         for schedule_item in [cls.current_class_sched,
                               cls.previous_class_sched]:
-            volunteer_assignment = ResourceAllocationFactory(
+            volunteer_assignment = PeopleAllocationFactory(
                 event=schedule_item,
-                resource=worker
+                people=people,
+                role='Teacher',
             )
 
     def setUp(self):
@@ -322,32 +322,35 @@ class TestIndex(TestCase):
                 {'size': (20, 20), 'crop': True, 'upscale': True}).url)
 
     def test_cannot_edit_troupe_if_not_contact(self):
-        troupe = TroupeFactory()
-        member = PersonaFactory()
-        troupe.membership.add(member)
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
+        member = ProfileFactory()
+        people.users.add(member)
         url = reverse("home", urlconf="gbe.urls")
-        login_as(member.performer_profile, self)
+        login_as(member, self)
         response = self.client.get(url)
         self.assertContains(response, "(Click to edit)", 1)
 
     def test_review_act_w_troupe(self):
         # causes a check on act complete state that is different from soloist
-        troupe = TroupeFactory()
-        member = PersonaFactory()
-        troupe.membership.add(member)
-        act = ActFactory(performer=troupe,
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
+        member = ProfileFactory()
+        people.users.add(member)
+        act = ActFactory(bio=troupe,
                          submitted=True,
                          b_conference=self.current_conf)
-        login_as(member.performer_profile, self)
+        login_as(member, self)
         url = reverse("home", urlconf="gbe.urls")
         response = self.client.get(url)
         self.assertContains(response, act.b_title)
 
     def test_act_tech_troupe_member_view(self):
-        troupe = TroupeFactory()
-        member = PersonaFactory()
-        troupe.membership.add(member)
-        act = ActFactory(performer=troupe,
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
+        member = ProfileFactory()
+        people.users.add(member)
+        act = ActFactory(bio=troupe,
                          submitted=True,
                          b_conference=self.current_conf,
                          accepted=3)
@@ -423,7 +426,7 @@ class TestIndex(TestCase):
         '''
         context = ClassContext(
             conference=self.current_conf,
-            teacher=PersonaFactory(performer_profile=self.profile))
+            teacher_bio=BioFactory(contact=self.profile))
         interested = []
         for i in range(0, 3):
             interested += [context.set_interest()]
@@ -439,7 +442,7 @@ class TestIndex(TestCase):
     def test_historical_no_interest(self):
         context = ClassContext(
             conference=self.previous_conf,
-            teacher=PersonaFactory(performer_profile=self.profile))
+            teacher=BioFactory(contact=self.profile))
         interested = []
         for i in range(0, 3):
             interested += [context.set_interest()]

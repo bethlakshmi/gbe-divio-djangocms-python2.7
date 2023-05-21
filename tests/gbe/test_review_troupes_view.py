@@ -2,17 +2,15 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ProfileFactory,
-    PersonaFactory,
     ProfilePreferencesFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
     login_as,
 )
-from gbe.models import Troupe
 from tests.contexts import StaffAreaContext
 
 
@@ -24,9 +22,11 @@ class TestReviewTroupes(TestCase):
         self.client = Client()
         self.profile = ProfilePreferencesFactory(
             profile__purchase_email='test@test.com').profile
-        self.troupe = TroupeFactory(contact=self.profile)
-        self.member = PersonaFactory()
-        self.troupe.membership.add(self.member)
+        self.troupe = BioFactory(contact=self.profile,
+                                 multiple_performers=True)
+        self.member = ProfileFactory()
+        people = get_or_create_bio(self.troupe)
+        people.users.add(self.member)
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Registrar')
         self.url = reverse(self.view_name, urlconf='gbe.urls')
@@ -57,7 +57,7 @@ class TestReviewTroupes(TestCase):
              'gbe-btn-table btn-sm"><i class="far fa-eye"></i></a>') % (
              reverse('admin_landing_page',
                      urlconf='gbe.urls',
-                     args=[self.troupe.contact.resourceitem_id]),
+                     args=[self.troupe.contact.pk]),
              "View Contact Landing Page"),
             html=True)
         self.assertContains(
@@ -66,7 +66,7 @@ class TestReviewTroupes(TestCase):
              'gbe-btn-table btn-sm"><i class="far fa-envelope"></i></a>') % (
              reverse('mail_to_individual',
                      urlconf='gbe.email.urls',
-                     args=[self.troupe.contact.resourceitem_id]),
+                     args=[self.troupe.contact.pk]),
              "Email Contact"),
             html=True)
         self.assertContains(
@@ -75,6 +75,6 @@ class TestReviewTroupes(TestCase):
              'gbe-btn-table btn-sm"><i class="fas fa-eye"></i></a>') % (
              reverse('troupe_view',
                      urlconf='gbe.urls',
-                     args=[self.troupe.resourceitem_id]),
+                     args=[self.troupe.pk]),
              "View Troupe"),
             html=True)

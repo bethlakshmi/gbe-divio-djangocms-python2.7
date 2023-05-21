@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ClassFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     UserMessageFactory,
 )
@@ -31,7 +31,7 @@ class TestMakeClass(TestCase):
     def setUpTestData(cls):
         Conference.objects.all().delete()
         UserMessage.objects.all().delete()
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
 
     def setUp(self):
         self.client = Client()
@@ -78,7 +78,7 @@ class TestCreateClass(TestMakeClass):
     def post_bid(self, submit=True):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         data = self.get_form(submit=submit)
         response = self.client.post(url, data=data, follow=True)
         return response, data
@@ -108,7 +108,7 @@ class TestCreateClass(TestMakeClass):
                       urlconf='gbe.urls')
 
         data = self.get_form(submit=True, invalid=True)
-        user = self.performer.performer_profile.user_object
+        user = self.performer.contact.user_object
         login_as(user, self)
         response = self.client.post(url,
                                     data=data,
@@ -121,9 +121,9 @@ class TestCreateClass(TestMakeClass):
     def test_class_bid_post_invalid_form_no_submit(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        other_performer = PersonaFactory()
-        other_profile = other_performer.performer_profile
-        login_as(self.performer.performer_profile, self)
+        other_performer = BioFactory()
+        other_profile = other_performer.contact
+        login_as(self.performer.contact, self)
         data = self.get_form(submit=False, invalid=True)
         data['theclass-teacher'] = other_performer.pk
         response = self.client.post(url, data=data, follow=True)
@@ -138,7 +138,7 @@ class TestCreateClass(TestMakeClass):
     def test_class_bid_verify_avoided_constraints(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'I Would Prefer to Avoid')
@@ -158,7 +158,7 @@ class TestCreateClass(TestMakeClass):
         should redirect to home'''
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         data = self.get_form(submit=True)
         data['theclass-avoided_constraints'] = ['0']
         response = self.client.post(url, data=data, follow=True)
@@ -172,7 +172,7 @@ class TestCreateClass(TestMakeClass):
         '''class_bid, not submitting and no other problems,
         should redirect to home'''
         response, data = self.post_bid(submit=False)
-        profile = Profile.objects.get(pk=self.performer.performer_profile.pk)
+        profile = Profile.objects.get(pk=self.performer.contact.pk)
         self.assertEqual(profile.phone, '111-222-3333')
         self.assertEqual(profile.user_object.first_name, 'Jane')
         self.assertEqual(profile.user_object.last_name, 'Smith')
@@ -197,7 +197,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.performer_profile, self)
+        login_as(klass.teacher.contact, self)
         data = self.get_form()
         response = self.client.post(url, data=data, follow=True)
         return response, data
@@ -207,7 +207,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.performer_profile, self)
+        login_as(klass.teacher.contact, self)
         data = self.get_form(submit=False)
         data['theclass-b_title'] = '"extra quotes"'
         data["theclass-teacher"] = klass.teacher.pk
@@ -219,7 +219,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(PersonaFactory().performer_profile, self)
+        login_as(BioFactory().contact, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(404, response.status_code)
 
@@ -229,7 +229,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.performer_profile, self)
+        login_as(klass.teacher.contact, self)
         data = self.get_form(invalid=True)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
@@ -247,12 +247,12 @@ class TestEditClass(TestMakeClass):
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
         klass = ClassFactory()
-        klass.teacher.performer_profile.phone = "555-666-7777"
-        klass.teacher.performer_profile.save()
+        klass.teacher.contact.phone = "555-666-7777"
+        klass.teacher.contact.save()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.performer_profile, self)
+        login_as(klass.teacher.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Submit a Class')
@@ -265,7 +265,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.performer_profile, self)
+        login_as(klass.teacher.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'We will do our best to accommodate')
@@ -277,7 +277,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.performer_profile, self)
+        login_as(klass.teacher.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         constraint_selected = '<input type="checkbox" name="theclass-%s" ' + \
@@ -311,5 +311,5 @@ class TestEditClass(TestMakeClass):
         response, data = self.post_class_edit_submit()
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
-        profile = Profile.objects.get(pk=self.teacher.performer_profile.pk)
+        profile = Profile.objects.get(pk=self.teacher.contact.pk)
         self.assertEqual(profile.phone, '111-222-3333')

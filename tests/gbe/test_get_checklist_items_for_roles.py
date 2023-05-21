@@ -4,8 +4,8 @@ from tests.factories.ticketing_factories import (
     NoEventRoleExclusionFactory
 )
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory
 )
 from scheduler.idd import get_schedule
@@ -18,13 +18,13 @@ class TestGetCheckListForRoles(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.role_condition = RoleEligibilityConditionFactory()
-        cls.teacher = PersonaFactory()
+        cls.teacher = BioFactory()
         cls.conference = ConferenceFactory()
         booking = book_worker_item_for_role(cls.teacher,
                                             cls.role_condition.role,
                                             conference=cls.conference)
         cls.schedule = get_schedule(
-                cls.teacher.performer_profile.user_object,
+                cls.teacher.contact.user_object,
                 labels=[cls.conference.conference_slug]).schedule_items
 
     def test_no_role(self):
@@ -73,12 +73,12 @@ class TestGetCheckListForRoles(TestCase):
             role="Staff Lead")
 
         booking = book_worker_item_for_role(
-            self.teacher.performer_profile,
+            self.teacher.contact,
             another_role.role,
             conference=self.conference
             )
         self.schedule = get_schedule(
-                self.teacher.performer_profile.user_object,
+                self.teacher.contact.user_object,
                 labels=[self.conference.conference_slug]).schedule_items
 
         checklist_items = get_checklist_items_for_roles(
@@ -119,12 +119,12 @@ class TestGetCheckListForRoles(TestCase):
             role="Staff Lead")
 
         booking = book_worker_item_for_role(
-            self.teacher.performer_profile,
+            self.teacher.contact,
             exclusion.role,
             conference=self.conference
             )
         self.schedule = get_schedule(
-                self.teacher.performer_profile.user_object,
+                self.teacher.contact.user_object,
                 labels=[self.conference.conference_slug]).schedule_items
 
         checklist_items = get_checklist_items_for_roles(

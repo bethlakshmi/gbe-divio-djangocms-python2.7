@@ -2,8 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.test import Client
 from tests.factories.gbe_factories import (
-    TroupeFactory,
-    PersonaFactory,
+    BioFactory,
     ProfileFactory,
     UserFactory,
 )
@@ -11,6 +10,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from tests.functions.scheduler_functions import get_or_create_bio
 
 
 class TestViewTroupe(TestCase):
@@ -22,12 +22,10 @@ class TestViewTroupe(TestCase):
     def test_view_troupe(self):
         '''view_troupe view, success
         '''
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
-        url = reverse('troupe_view',
-                      args=[troupe.resourceitem_id],
-                      urlconf='gbe.urls')
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(contact=contact, multiple_performers=True)
+        url = reverse('troupe_view', args=[troupe.pk], urlconf='gbe.urls')
         login_as(contact.profile.user_object, self)
 
         response = self.client.get(url)
@@ -35,7 +33,7 @@ class TestViewTroupe(TestCase):
         self.assertContains(response, troupe.name)
 
     def test_no_profile(self):
-        troupe = TroupeFactory()
+        troupe = BioFactory(multiple_performers=True)
         user = UserFactory()
         url = reverse(
             "troupe_view",
@@ -46,7 +44,7 @@ class TestViewTroupe(TestCase):
         self.assertEqual(302, response.status_code)
 
     def test_review_class_no_state_in_profile(self):
-        troupe = TroupeFactory()
+        troupe = BioFactory(multiple_performers=True)
         troupe.contact.state = ''
         troupe.contact.save()
         url = reverse('troupe_view',
@@ -60,9 +58,9 @@ class TestViewTroupe(TestCase):
     def test_view_troupe_as_privileged_user(self):
         '''view_troupe view, success
         '''
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(contact=contact, multiple_performers=True)
         priv_profile = ProfileFactory()
         grant_privilege(priv_profile.user_object, 'Registrar')
 
@@ -79,12 +77,12 @@ class TestViewTroupe(TestCase):
     def test_view_troupe_as_member(self):
         '''view_troupe view, success
         '''
-        persona = PersonaFactory()
-        member = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
-        troupe.membership.add(member)
-        troupe.save()
+        persona = BioFactory()
+        member = ProfileFactory()
+        contact = persona.contact
+        troupe = BioFactory(contact=contact)
+        people = get_or_create_bio(troupe)
+        people.users.add(member)
         url = reverse('troupe_view',
                       args=[troupe.resourceitem_id],
                       urlconf='gbe.urls')
@@ -99,10 +97,10 @@ class TestViewTroupe(TestCase):
     def test_view_troupe_as_random_person(self):
         '''view_troupe view, success
         '''
-        persona = PersonaFactory()
+        persona = BioFactory()
         random = ProfileFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
+        contact = persona.contact
+        troupe = BioFactory(contact=contact, multiple_performers=True)
         url = reverse('troupe_view',
                       args=[troupe.resourceitem_id],
                       urlconf='gbe.urls')

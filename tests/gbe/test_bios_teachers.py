@@ -4,7 +4,6 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ClassFactory,
     ProfileFactory,
-    PersonaFactory,
 )
 from tests.contexts import ClassContext
 from gbe.models import (

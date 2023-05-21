@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ClassFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
 )
 from tests.factories.scheduler_factories import SchedEventFactory
@@ -23,7 +23,7 @@ class TestReviewClass(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Class Reviewers')
@@ -150,8 +150,8 @@ class TestReviewClass(TestCase):
 
     def test_review_class_no_how_heard(self):
         klass = ClassFactory()
-        klass.teacher.contact.how_heard = '[]'
-        klass.teacher.contact.save()
+        klass.teacher_bio.contact.how_heard = '[]'
+        klass.teacher_bio.contact.save()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -163,8 +163,8 @@ class TestReviewClass(TestCase):
 
     def test_review_class_how_heard_is_present(self):
         klass = ClassFactory()
-        klass.teacher.contact.how_heard = "[u'Facebook']"
-        klass.teacher.contact.save()
+        klass.teacher_bio.contact.how_heard = "[u'Facebook']"
+        klass.teacher_bio.contact.save()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')

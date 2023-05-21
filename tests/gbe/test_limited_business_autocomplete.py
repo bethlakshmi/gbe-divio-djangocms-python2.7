@@ -4,7 +4,6 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     BusinessFactory,
     ProfileFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import login_as
 from gbe.functions import validate_profile

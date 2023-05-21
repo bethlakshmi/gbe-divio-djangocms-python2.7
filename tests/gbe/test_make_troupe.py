@@ -2,10 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from django.test import Client
 from tests.factories.gbe_factories import (
-    PersonaFactory,
+    BioFactory,
     ProfileFactory,
     SocialLinkFactory,
-    TroupeFactory,
     UserFactory,
     UserMessageFactory
 )
@@ -107,10 +106,10 @@ class TestTroupeEdit(TestCase):
         self.client = Client()
 
     def submit_troupe(self, name=None):
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
-        link0 = SocialLinkFactory(performer=troupe)
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(multiple_performers=True,contact=contact)
+        link0 = SocialLinkFactory(bio=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
@@ -125,7 +124,7 @@ class TestTroupeEdit(TestCase):
                 'membership': [persona.pk], }
         data.update(formset_data)
         data['links-0-id'] = link0.pk
-        data['links-0-performer'] = troupe.pk
+        data['links-0-bio'] = troupe.pk
         data['links-INITIAL_FORMS'] = 1
         response = self.client.post(
             url,
@@ -138,10 +137,10 @@ class TestTroupeEdit(TestCase):
     def test_get_edit_troupe(self):
         '''edit_troupe view, edit flow success
         '''
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
-        link0 = SocialLinkFactory(performer=troupe)
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(contact=contact, multiple_performers=True)
+        link0 = SocialLinkFactory(bio=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
@@ -170,17 +169,17 @@ class TestTroupeEdit(TestCase):
     def test_edit_wrong_user(self):
         '''edit_troupe view, edit flow success
         '''
-        persona = PersonaFactory()
-        troupe = TroupeFactory()
+        persona = BioFactory()
+        troupe = BioFactory(multiple_performers=True)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(persona.performer_profile.profile, self)
+        login_as(persona.contact.profile, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_no_profile(self):
-        troupe = TroupeFactory()
+        troupe = BioFactory(multiple_performers=True)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
@@ -209,14 +208,14 @@ class TestTroupeEdit(TestCase):
     def test_edit_troupe_bad_data(self):
         '''edit_troupe view, edit flow success
         '''
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(contact=contact, multiple_performers=True)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
         login_as(contact.profile, self)
-        data = {'contact': persona.performer_profile.pk,
+        data = {'contact': persona.contact.pk,
                 'name':  "New Troupe",
                 'bio': "bio",
                 'year_started': 'bad',

@@ -3,8 +3,8 @@ from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
 )
 from tests.functions.gbe_functions import (
     login_as,
@@ -29,7 +29,7 @@ class TestSummerAct(TestCase):
         self.url = reverse(self.create_name, urlconf='gbe.urls')
         Conference.objects.all().delete()
         self.client = Client()
-        self.performer = PersonaFactory()
+        self.performer = BioFactory()
         self.current_conference = ConferenceFactory(
             accepting_bids=True,
             act_style='summer')
@@ -45,7 +45,7 @@ class TestSummerAct(TestCase):
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',
-                     'theact-performer': self.performer.resourceitem_id,
+                     'theact-bio': self.performer.pk,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk,
                      'theact-is_summer': True,
@@ -62,9 +62,9 @@ class TestSummerAct(TestCase):
         if not act_form:
             act_form = self.get_act_form(submit=True)
         url = reverse(self.create_name, urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         make_act_app_purchase(self.current_conference,
-                              self.performer.performer_profile.user_object)
+                              self.performer.contact.user_object)
         response = self.client.post(url, data=act_form, follow=True)
         return response, act_form
 
@@ -81,14 +81,14 @@ class TestSummerAct(TestCase):
 
     def test_bid_act_get_with_persona(self):
         url = reverse(self.create_name, urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(url)
         expected_string = 'Please also consider this act for GBE12'
         self.assertContains(response, expected_string)
         self.assertEqual(response.status_code, 200)
 
     def test_act_bid_post_form_not_valid(self):
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         url = reverse(self.create_name, urlconf='gbe.urls')
         data = self.get_act_form(submit=True, valid=False)
         response = self.client.post(url,
@@ -100,7 +100,7 @@ class TestSummerAct(TestCase):
 
     def test_act_bid_get_with_redirect(self):
         url = reverse("act_create", urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(url)
         self.assertRedirects(
             response,
@@ -110,7 +110,7 @@ class TestSummerAct(TestCase):
         url = reverse(self.create_name, urlconf='gbe.urls')
         self.current_conference.act_style = "normal"
         self.current_conference.save()
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(url)
         self.assertRedirects(
             response,

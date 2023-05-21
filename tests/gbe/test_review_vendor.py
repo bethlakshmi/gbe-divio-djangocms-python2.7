@@ -3,7 +3,6 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     VendorFactory,
 )
@@ -22,7 +21,6 @@ class TestReviewVendor(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.performer = PersonaFactory()
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Vendor Reviewers')

@@ -3,9 +3,9 @@ from django.test import Client
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
     CostumeFactory,
-    PersonaFactory,
     ProfileFactory,
     UserFactory,
 )
@@ -25,7 +25,7 @@ class TestMakeCostume(TestCase):
     @classmethod
     def setUpTestData(cls):
         Conference.objects.all().delete()
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.conference = ConferenceFactory(status='upcoming',
                                            accepting_bids=True)
 
@@ -73,7 +73,7 @@ class TestCreateCostume(TestMakeCostume):
     def post_costume_submission(self):
         url = reverse(self.view_name,
                       urlconf="gbe.urls")
-        login_as(PersonaFactory().contact, self)
+        login_as(BioFactory().contact, self)
         data = self.get_costume_form(submit=True)
         response = self.client.post(url, data=data, follow=True)
         return response, data
@@ -81,7 +81,7 @@ class TestCreateCostume(TestMakeCostume):
     def post_costume_draft(self):
         url = reverse(self.view_name,
                       urlconf="gbe.urls")
-        login_as(PersonaFactory().contact, self)
+        login_as(BioFactory().contact, self)
         data = self.get_costume_form()
         response = self.client.post(url, data=data, follow=True)
         return response, data
@@ -103,7 +103,7 @@ class TestCreateCostume(TestMakeCostume):
         '''costume_bid, if form not valid, should return to CostumeEditForm'''
         url = reverse(self.view_name,
                       urlconf="gbe.urls")
-        login_as(PersonaFactory().contact, self)
+        login_as(BioFactory().contact, self)
         data = self.get_costume_form(invalid=True)
         response = self.client.post(url)
         self.assertEqual(response.status_code, 200)
@@ -138,7 +138,7 @@ class TestCreateCostume(TestMakeCostume):
         '''act_bid, not post, should take us to bid process'''
         url = reverse(self.view_name,
                       urlconf="gbe.urls")
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Displaying a Costume')
@@ -158,7 +158,7 @@ class TestCreateCostume(TestMakeCostume):
     def test_costume_bid_post_invalid_form_no_submit(self):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         data = self.get_costume_form(submit=False, invalid=True)
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(200, response.status_code)
@@ -170,9 +170,9 @@ class TestEditCostume(TestMakeCostume):
     view_name = 'costume_edit'
 
     def post_edit_costume_submission(self):
-        persona = PersonaFactory()
-        costume = CostumeFactory(profile=persona.performer_profile,
-                                 performer=persona)
+        persona = BioFactory()
+        costume = CostumeFactory(profile=persona.contact,
+                                 bio=persona)
 
         url = reverse(self.view_name,
                       args=[costume.pk],
@@ -183,9 +183,9 @@ class TestEditCostume(TestMakeCostume):
         return response
 
     def post_edit_costume_draft(self):
-        persona = PersonaFactory()
-        costume = CostumeFactory(profile=persona.performer_profile,
-                                 performer=persona)
+        persona = BioFactory()
+        costume = CostumeFactory(profile=persona.contact,
+                                 bio=persona)
 
         url = reverse(self.view_name,
                       args=[costume.pk],
@@ -210,15 +210,14 @@ class TestEditCostume(TestMakeCostume):
         url = reverse(self.view_name,
                       args=[costume.pk],
                       urlconf='gbe.urls')
-        login_as(PersonaFactory().performer_profile, self)
+        login_as(BioFactory().contact, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_costume_edit_post_form_not_valid(self):
         '''costume_edit, if form not valid, should return to edit'''
         costume = CostumeFactory()
-        PersonaFactory(performer_profile=costume.profile,
-                       contact=costume.profile)
+        BioFactory(contact=costume.profile)
         url = reverse(self.view_name,
                       args=[costume.pk],
                       urlconf='gbe.urls')
@@ -248,9 +247,8 @@ class TestEditCostume(TestMakeCostume):
     def test_edit_bid_post_invalid(self):
         '''edit_costume, not submitting and no other problems,
         should redirect to home'''
-        persona = PersonaFactory()
-        costume = CostumeFactory(profile=persona.performer_profile,
-                                 performer=persona)
+        persona = BioFactory()
+        costume = CostumeFactory(profile=persona.contact, bio=persona)
 
         url = reverse(self.view_name,
                       args=[costume.pk],
@@ -266,9 +264,8 @@ class TestEditCostume(TestMakeCostume):
     def test_submit_bid_post_invalid(self):
         '''edit_costume, not submitting and no other problems,
         should redirect to home'''
-        persona = PersonaFactory()
-        costume = CostumeFactory(profile=persona.performer_profile,
-                                 performer=persona)
+        persona = BioFactory()
+        costume = CostumeFactory(profile=persona.contact, bio=persona)
 
         url = reverse(self.view_name,
                       args=[costume.pk],
@@ -283,9 +280,8 @@ class TestEditCostume(TestMakeCostume):
 
     def test_edit_bid_not_post(self):
         '''edit_costume, not post, should take us to edit process'''
-        persona = PersonaFactory()
-        costume = CostumeFactory(profile=persona.performer_profile,
-                                 performer=persona)
+        persona = BioFactory()
+        costume = CostumeFactory(profile=persona.contact, bio=persona)
         url = reverse(self.view_name,
                       args=[costume.pk],
                       urlconf='gbe.urls')

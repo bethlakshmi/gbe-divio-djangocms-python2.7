@@ -3,8 +3,8 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     BidEvaluationFactory,
+    BioFactory,
     CostumeFactory,
-    PersonaFactory,
     ProfileFactory,
     VendorFactory,
     VolunteerFactory,
@@ -75,13 +75,13 @@ class TestAdminProfile(TestCase):
         self.assert_deactivated(response, teacher_prof)
 
     def test_deactivate_if_persona(self):
-        persona_bearer = PersonaFactory()
+        persona_bearer = BioFactory()
         url = reverse(self.view_name,
                       args=[persona_bearer.performer_profile.pk],
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)
-        self.assert_deactivated(response, persona_bearer.performer_profile)
+        self.assert_deactivated(response, persona_bearer.contact)
 
     def test_deactivate_if_volunteer(self):
         volunteer = VolunteerFactory()

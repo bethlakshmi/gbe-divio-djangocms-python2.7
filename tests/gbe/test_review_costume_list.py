@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     CostumeFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     UserFactory,
     )
@@ -20,7 +20,7 @@ class TestReviewCostumeList(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Costume Reviewers')
@@ -49,7 +49,7 @@ class TestReviewCostumeList(TestCase):
     def test_review_costume_w_performer(self):
         url = reverse(self.view_name, urlconf="gbe.urls")
         login_as(self.privileged_user, self)
-        costume = CostumeFactory(performer=self.performer,
+        costume = CostumeFactory(bio=self.performer,
                                  b_conference=self.conference,
                                  submitted=True)
         response = self.client.get(

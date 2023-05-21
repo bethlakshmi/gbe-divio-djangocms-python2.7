@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ProfilePreferencesFactory,
     ProfileFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -62,7 +62,7 @@ class TestReviewProfiles(TestCase):
         self.assertContains(response, self.profile.phone)
 
     def test_with_troupe(self):
-        troupe = TroupeFactory(contact=self.profile)
+        troupe = BioFactory(contact=self.profile, multiple_performers=True)
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertContains(response, troupe.name)

@@ -2,10 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.test.client import RequestFactory
 from django.test import Client
-from tests.factories.gbe_factories import (
-    PersonaFactory,
-    TroupeFactory,
-)
+from tests.factories.gbe_factories import BioFactory
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
@@ -23,8 +20,8 @@ class TestUpdatePerformer(TestCase):
     def test_update_persona(self):
         '''edit_troupe view, create flow
         '''
-        contact = PersonaFactory()
-        login_as(contact.performer_profile, self)
+        contact = BioFactory()
+        login_as(contact.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[contact.pk])
         response = self.client.get(url + "?_popup=1", follow=True)
         self.assertRedirects(
@@ -35,7 +32,7 @@ class TestUpdatePerformer(TestCase):
                 args=[contact.pk, 1]))
 
     def test_update_troupe(self):
-        troupe = TroupeFactory()
+        troupe = BioFactory(multiple_performers=True)
         login_as(troupe.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[troupe.pk])
         response = self.client.get(url, follow=True)
@@ -44,7 +41,7 @@ class TestUpdatePerformer(TestCase):
             reverse('troupe-update', urlconf="gbe.urls", args=[troupe.pk]))
 
     def test_bad_performer(self):
-        troupe = TroupeFactory()
+        troupe = BioFactory(multiple_performers=True)
         login_as(troupe.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[troupe.pk + 1])
         response = self.client.get(url)
