@@ -71,17 +71,18 @@ class BadgePrintView(PermissionRequiredMixin, View):
             response = get_people(labels=[conference.conference_slug],
                                   roles=roles)
 
-            for person in response.people:
-                if person.user.username not in badged_usernames:
-                    badge_info.append(
-                        [person.user.first_name,
-                         person.user.last_name,
-                         person.user.username,
-                         person.user.profile.get_badge_name(),
-                         title_to_badge[person.role],
-                         "Role Condition: %s" % person.role,
+            for people in response.people:
+                for user in people.users:
+                    if user.username not in badged_usernames:
+                        badge_info.append(
+                        [user.first_name,
+                         user.last_name,
+                         user.username,
+                         user.profile.get_badge_name(),
+                         title_to_badge[people.role],
+                         "Role Condition: %s" % people.role,
                          "N/A"])
-                    badged_usernames += [person.user.username]
+                        badged_usernames += [user.username]
 
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=print_badges.csv'

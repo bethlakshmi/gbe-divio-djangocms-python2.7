@@ -31,7 +31,7 @@ class TestBadgePrintView(TestCase):
         self.url = reverse(self.view_name, urlconf='ticketing.urls')
         self.class_context = ClassContext()
         self.ticket_context = PurchasedTicketContext(
-            profile=self.class_context.teacher.performer_profile,
+            profile=self.class_context.teacher.contact,
             conference=self.class_context.conference)
 
     def test_w_ticket_condition(self):
@@ -96,7 +96,7 @@ class TestBadgePrintView(TestCase):
         response = self.client.get(self.url)
         self.assertContains(
             response,
-            self.class_context.teacher.performer_profile.user_object.username)
+            self.class_context.teacher.contact.user_object.username)
         self.assertContains(
             response,
             "Role Condition: Teacher")
