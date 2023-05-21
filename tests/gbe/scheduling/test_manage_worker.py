@@ -81,6 +81,9 @@ class TestManageWorker(TestCase):
                              notes,
                              role="Volunteer",
                              allocations=2):
+        print(response.content)
+        print(volunteer.pk)
+        print(volunteer)
         if volunteer == -1:
             assert_option_state(response,
                                 "",
