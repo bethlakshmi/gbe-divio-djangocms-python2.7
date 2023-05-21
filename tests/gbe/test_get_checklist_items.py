@@ -108,10 +108,10 @@ class TestGetCheckListItems(TestCase):
         self.ticket_condition.save()
 
         self.schedule = get_schedule(
-                teacher.performer_profile.user_object,
+                teacher.contact.user_object,
                 labels=[conference.conference_slug]).schedule_items
         ticket_items, role_items = get_checklist_items(
-            teacher.performer_profile,
+            teacher.contact,
             conference,
             self.schedule)
         self.assertEqual(len(ticket_items), 1)

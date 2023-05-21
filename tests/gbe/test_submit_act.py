@@ -21,7 +21,7 @@ class TestSubmitAct(TestCase):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf='gbe.urls')
-        login_as(act.performer.performer_profile, self)
+        login_as(act.performer.contact, self)
         response = self.client.get(url, follow=True)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         self.assertContains(response, "Welcome to GBE")

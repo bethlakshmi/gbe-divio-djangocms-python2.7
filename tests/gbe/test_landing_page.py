@@ -68,17 +68,17 @@ class TestIndex(TestCase):
         cls.performer = BioFactory(contact=cls.profile,
                                    label="Test Index Label")
         # Bid types previous and current
-        cls.current_act = ActFactory(performer=cls.performer,
+        cls.current_act = ActFactory(bio=cls.performer,
                                      submitted=True,
                                      b_conference=cls.current_conf)
-        cls.previous_act = ActFactory(performer=cls.performer,
+        cls.previous_act = ActFactory(bio=cls.performer,
                                       submitted=True,
                                       b_conference=cls.previous_conf)
-        cls.current_class = ClassFactory(teacher=cls.performer,
+        cls.current_class = ClassFactory(teacher_bio=cls.performer,
                                          submitted=True,
                                          accepted=3,
                                          b_conference=cls.current_conf)
-        cls.previous_class = ClassFactory(teacher=cls.performer,
+        cls.previous_class = ClassFactory(teacher_bio=cls.performer,
                                           submitted=True,
                                           accepted=3,
                                           b_conference=cls.previous_conf)
@@ -325,18 +325,18 @@ class TestIndex(TestCase):
         troupe = BioFactory(multiple_performers=True)
         people = get_or_create_bio(troupe)
         member = ProfileFactory()
-        people.users.add(member)
+        people.users.add(member.user_object)
         url = reverse("home", urlconf="gbe.urls")
         login_as(member, self)
         response = self.client.get(url)
-        self.assertContains(response, "(Click to edit)", 1)
+        self.assertContains(response, "(Click to edit)", 0)
 
     def test_review_act_w_troupe(self):
         # causes a check on act complete state that is different from soloist
         troupe = BioFactory(multiple_performers=True)
         people = get_or_create_bio(troupe)
         member = ProfileFactory()
-        people.users.add(member)
+        people.users.add(member.user_object)
         act = ActFactory(bio=troupe,
                          submitted=True,
                          b_conference=self.current_conf)
@@ -349,7 +349,7 @@ class TestIndex(TestCase):
         troupe = BioFactory(multiple_performers=True)
         people = get_or_create_bio(troupe)
         member = ProfileFactory()
-        people.users.add(member)
+        people.users.add(member.user_object)
         act = ActFactory(bio=troupe,
                          submitted=True,
                          b_conference=self.current_conf,
@@ -369,7 +369,7 @@ class TestIndex(TestCase):
             introduction_text="text")
         act.tech.save()
         event_id = make_act_app_ticket(self.current_conf)
-        login_as(member.performer_profile, self)
+        login_as(member, self)
         url = reverse("home", urlconf="gbe.urls")
         response = self.client.get(url)
         self.assertContains(
@@ -426,7 +426,7 @@ class TestIndex(TestCase):
         '''
         context = ClassContext(
             conference=self.current_conf,
-            teacher_bio=BioFactory(contact=self.profile))
+            teacher=BioFactory(contact=self.profile))
         interested = []
         for i in range(0, 3):
             interested += [context.set_interest()]
@@ -495,7 +495,7 @@ class TestIndex(TestCase):
         self.assertContains(response, "You have already rated this class")
 
     def test_unpaid_act_draft(self):
-        self.unpaid_act = ActFactory(performer=self.performer,
+        self.unpaid_act = ActFactory(bio=self.performer,
                                      submitted=False,
                                      b_conference=self.current_conf)
         expected_string = (
@@ -510,7 +510,7 @@ class TestIndex(TestCase):
                               self.profile.user_object)
         make_act_app_purchase(self.current_conf,
                               self.profile.user_object)
-        self.paid_act = ActFactory(performer=self.performer,
+        self.paid_act = ActFactory(bio=self.performer,
                                    submitted=False,
                                    b_conference=self.current_conf)
         event_id = make_act_app_ticket(self.current_conf)

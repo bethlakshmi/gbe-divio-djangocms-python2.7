@@ -66,7 +66,7 @@ class TestAdminProfile(TestCase):
 
     def test_deactivate_if_booked(self):
         context = ClassContext()
-        teacher_prof = context.teacher.performer_profile
+        teacher_prof = context.teacher.contact
         url = reverse(self.view_name,
                       args=[teacher_prof.pk],
                       urlconf='gbe.urls')
@@ -77,7 +77,7 @@ class TestAdminProfile(TestCase):
     def test_deactivate_if_persona(self):
         persona_bearer = BioFactory()
         url = reverse(self.view_name,
-                      args=[persona_bearer.performer_profile.pk],
+                      args=[persona_bearer.contact.pk],
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)

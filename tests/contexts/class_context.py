@@ -96,7 +96,7 @@ class ClassContext:
 
     def set_interest(self, interested_profile=None):
         interested_profile = interested_profile or ProfileFactory()
-        self.people = get_or_create_profile(interested_profile)
+        interested_people = get_or_create_profile(interested_profile)
         PeopleAllocationFactory(event=self.sched_event,
                                 role="Interested",
                                 people=interested_people)

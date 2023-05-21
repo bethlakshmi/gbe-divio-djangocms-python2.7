@@ -230,8 +230,8 @@ def make_act_app_ticket(conference):
 def post_act_conflict(conference, performer, data, url, testcase):
     original = ActFactory(
         b_conference=conference,
-        performer=performer)
-    login_as(performer.performer_profile, testcase)
+        bio=performer)
+    login_as(performer.contact, testcase)
     data['theact-b_title'] = original.b_title
     data['theact-b_conference'] = conference.pk
     response = testcase.client.post(

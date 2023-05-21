@@ -32,7 +32,6 @@ class PersonaCreate(CreatePopupMixin,
 
     def get_initial(self):
         initial = super().get_initial()
-        initial['performer_profile'] = self.request.user.profile
         initial['contact'] = self.request.user.profile
         return initial
 
