@@ -2,14 +2,11 @@ from django.urls import reverse
 from django.test import TestCase
 from django.test.client import RequestFactory
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
 )
-from tests.factories.scheduler_factories import (
-    ResourceAllocationFactory,
-    WorkerFactory,
-)
+from tests.factories.scheduler_factories import PeopleAllocationFactory
 from tests.factories.ticketing_factories import (
     RoleEligibilityConditionFactory,
     TransactionFactory,
@@ -23,6 +20,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as
 )
+from tests.functions.scheduler_functions import get_or_create_profile
 
 
 class TestWelcomeLetter(TestCase):
@@ -116,10 +114,9 @@ class TestWelcomeLetter(TestCase):
         role_condition = RoleEligibilityConditionFactory()
         context = ClassContext()
         profile = ProfileFactory()
-        booking = ResourceAllocationFactory(
-            resource=WorkerFactory(
-                _item=profile,
-                role="Interested"),
+        booking = PeopleAllocationFactory(
+            people=get_or_create_profile(profile),
+            role="Interested",
             event=context.sched_event)
 
         login_as(self.priv_profile, self)
@@ -169,7 +166,7 @@ class TestWelcomeLetter(TestCase):
            should have a booking
         '''
         role_condition = RoleEligibilityConditionFactory()
-        teacher = PersonaFactory(contact__user_object__is_active=False)
+        teacher = BioFactory(contact__user_object__is_active=False)
         context = ClassContext(teacher=teacher)
 
         login_as(self.priv_profile, self)

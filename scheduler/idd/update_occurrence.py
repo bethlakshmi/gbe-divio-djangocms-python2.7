@@ -67,8 +67,8 @@ def update_occurrence(occurrence_id,
 
     warnings = []
     if people is not None:
-        People.objects.filter(peopleallocations__event=occurrence,
-                              peopleallocations__role__in=roles).delete()
+        People.objects.filter(peopleallocation__event=occurrence,
+                              peopleallocation__role__in=roles).delete()
         for person in people:
             warnings += occurrence.allocate_person(
                 person).warnings
