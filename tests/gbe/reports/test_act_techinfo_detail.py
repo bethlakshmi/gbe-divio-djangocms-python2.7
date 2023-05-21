@@ -4,18 +4,17 @@ from django.test import TestCase, Client
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (
     ActFactory,
-    PersonaFactory,
+    BioFactory,
     ProfileFactory,
     TechInfoFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from tests.functions.scheduler_functions import get_or_create_bio
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.formats import date_format
-
 
 class TestReviewActTechInfo(TestCase):
     '''Tests for index view'''
@@ -185,9 +184,10 @@ class TestReviewActTechInfo(TestCase):
         '''review_act_techinfo view should load for Tech Crew
            and fail for others
         '''
-        troupe = TroupeFactory()
-        member = PersonaFactory()
-        troupe.membership.add(member)
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
+        member = ProfileFactory()
+        people.users.add(member)
         self.context.act.performer = troupe
         self.context.act.save()
         self.set_the_basics()

@@ -4,10 +4,8 @@ from django.test import TestCase, Client
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (
     ActFactory,
-    PersonaFactory,
     ProfileFactory,
     TechInfoFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
