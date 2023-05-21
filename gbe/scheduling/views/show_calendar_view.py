@@ -209,9 +209,9 @@ class ShowCalendarView(View):
                             self.conference.conference_slug])
                 personal_schedule = sched_response.schedule_items
                 person = Person(
-                    user=request.user,
+                    users=[request.user],
                     public_id=request.user.profile.pk,
-                    public_class="Profile")
+                    public_class=request.user.__class__.__name__)
                 eval_response = get_eval_info(person=person)
                 if len(eval_response.questions) > 0:
                     eval_occurrences = eval_response.occurrences

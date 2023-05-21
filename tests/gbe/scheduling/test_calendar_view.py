@@ -436,7 +436,7 @@ class TestCalendarView(TestCase):
             url))
 
     def test_logged_in_teacher(self):
-        login_as(self.classcontext.teacher.performer_profile, self)
+        login_as(self.classcontext.teacher.contact, self)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
                       args=['Conference'])
@@ -452,7 +452,7 @@ class TestCalendarView(TestCase):
                                'fa-tachometer')
 
     def test_logged_in_performer(self):
-        login_as(self.showcontext.performer.performer_profile, self)
+        login_as(self.showcontext.performer.contact, self)
         url = reverse('calendar',
                       urlconf="gbe.scheduling.urls",
                       args=['General'])
