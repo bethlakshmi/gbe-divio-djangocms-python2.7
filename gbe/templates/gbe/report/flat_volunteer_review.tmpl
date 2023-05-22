@@ -25,13 +25,13 @@
       <td>{{ opp.event.starttime|date:"M j, Y, g:i A"}}</td>
 	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.max_volunteer}}</td>
 	    <td {% if opp.event.approval_needed %}class="approval_needed"{% endif %}>{{opp.event.people|length}}</td>
-      <td>{% for contact in opp.event.people%}{% if contact.role in visible_roles %}
-        <div {% if not contact.user.profile.is_active %}class="gbe-form-error"{% endif %}>{% for role, commit in role_commit_map.items %}
-          {% if role == contact.role %}<i class="{{commit.1}}"></i>{% endif %}{% endfor %}
-        {{contact.user.profile}}
-        <a href="{% url 'email:mail_to_individual' contact.user.profile.pk %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Email"><i class="far fa-envelope"></i></a>{% if contact.role == 'Pending Volunteer' %}<a href="{% url 'scheduling:review_pending' %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Approve/Reject Volunteer"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></a>{% endif %}<br> P: {{contact.user.profile.phone}}</div>
-          {% endif %}
-          {% endfor %}
+      <td>{% for people in opp.event.people%}{% if people.role in visible_roles %}
+        {% for contact in people.users %}
+        <div {% if not contact.profile.is_active %}class="gbe-form-error"{% endif %}>{% for role, commit in role_commit_map.items %}
+          {% if role == people.role %}<i class="{{commit.1}}"></i>{% endif %}{% endfor %}
+        {{contact.profile}}
+        <a href="{% url 'email:mail_to_individual' contact.profile.pk %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Email"><i class="far fa-envelope"></i></a>{% if people.role == 'Pending Volunteer' %}<a href="{% url 'scheduling:review_pending' %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Approve/Reject Volunteer"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></a>{% endif %}<br> P: {{contact.profile.phone}}</div>
+          {% endfor %}{% endif %}{% endfor %}
   	  </td>
     </tr>
   {% endfor %}
