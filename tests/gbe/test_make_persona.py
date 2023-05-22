@@ -77,7 +77,9 @@ class TestPersonaCreate(TestCase):
         data.update(formset_data)
         if image:
             data['upload_img'] = image
-        persona_count = self.profile.personae.count()
+        persona_count = Bio.objects.filter(
+            contact=self.profile,
+            multiple_performers=False).count()
         response = self.client.post(
             url,
             data,
@@ -109,14 +111,19 @@ class TestPersonaCreate(TestCase):
             code='SUCCESS')
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
         response, persona_count = self.submit_persona(pic_filename)
+        last_bio = Bio.objects.filter(
+            contact=self.profile,
+            multiple_performers=False).order_by('pk').last()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "gbe_pagebanner.png")
-        self.assertEqual(1, self.profile.personae.count()-persona_count)
+        self.assertEqual(1, Bio.objects.filter(
+            contact=self.profile,
+            multiple_performers=False).count()-persona_count)
         assert_alert_exists(
             response, 'success', 'Success', msg.description)
         self.assertEqual(
             'custom/pronouns',
-            self.profile.personae.order_by('pk').last().pronouns)
+            last_bio.pronouns)
 
     def test_register_persona_invalid_post(self):
         # no pronoun values supplied in either field

@@ -93,6 +93,10 @@ class ActTechInfoContext():
                 event=rehearsal_event,
                 people=people,
                 role="Performer")
+            OrderingFactory(
+                people_allocated=booking,
+                class_id=act.pk,
+                class_name="Act")
         return rehearsal_event
 
     def order_act(self, act, order):

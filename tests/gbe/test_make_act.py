@@ -226,7 +226,7 @@ class TestCreateAct(TestMakeAct):
     def test_act_submit_paid_act_w_old_comp_act(self):
         prev_act = ActFactory(
             submitted=True,
-            performer=self.performer,
+            bio=self.performer,
             b_conference=ConferenceFactory(status='completed'))
         response, data = self.post_paid_act_submission()
         self.assertEqual(response.status_code, 200)
@@ -236,7 +236,7 @@ class TestCreateAct(TestMakeAct):
     def test_act_submit_second_paid_act(self):
         prev_act = ActFactory(
             submitted=True,
-            performer=self.performer,
+            bio=self.performer,
             b_conference=self.current_conference)
         make_act_app_purchase(self.current_conference,
                               self.performer.contact.user_object)

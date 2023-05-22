@@ -22,13 +22,13 @@ class MakeClassView(MakeBidView):
     page_title = "Submit a Class"
     view_title = "Submit a Class"
     draft_fields = ['b_title',
-                    'teacher',
+                    'teacher_bio',
                     'b_description',
                     'first_name',
                     'last_name',
                     'phone']
     submit_fields = ['b_title',
-                     'teacher',
+                     'teacher_bio',
                      'b_description',
                      'schedule_constraints']
     bid_type = "Class"
@@ -51,7 +51,7 @@ class MakeClassView(MakeBidView):
                 reverse('class_create', urlconf='gbe.urls'))
 
         if self.bid_object and (
-                self.bid_object.teacher.contact != self.owner):
+                self.bid_object.teacher_bio.contact != self.owner):
             raise Http404
 
     def get_initial(self):

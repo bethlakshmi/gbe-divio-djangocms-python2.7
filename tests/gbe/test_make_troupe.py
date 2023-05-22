@@ -62,7 +62,7 @@ class TestTroupeCreate(TestGBE):
         self.troupe_string = 'Tell Us About Your Troupe'
 
     def test_create_troupe_performer_exists(self):
-        contact = PersonaFactory()
+        contact = BioFactory()
         login_as(contact.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
@@ -81,8 +81,8 @@ class TestTroupeCreate(TestGBE):
             html=True)
 
     def test_create_troupe_no_inactive_users(self):
-        contact = PersonaFactory()
-        inactive = PersonaFactory(contact__user_object__is_active=False)
+        contact = BioFactory()
+        inactive = BioFactory(contact__user_object__is_active=False)
         login_as(contact.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)

@@ -7,9 +7,9 @@ from gbe.functions import validate_profile
 class PersonaAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         if not validate_profile(self.request, require=True):
-            return Persona.objects.none()
+            return Bio.objects.none()
 
-        qs = Persona.objects.filter(
+        qs = Bio.objects.filter(
             contact__user_object__is_active=True,
             multiple_performers=True)
 

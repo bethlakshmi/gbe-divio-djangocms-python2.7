@@ -27,7 +27,7 @@ class TestReviewTroupes(TestCase):
                                  multiple_performers=True)
         self.member = ProfileFactory()
         people = get_or_create_bio(self.troupe)
-        people.users.add(self.member)
+        people.users.add(self.member.user_object)
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Registrar')
         self.url = reverse(self.view_name, urlconf='gbe.urls')

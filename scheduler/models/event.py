@@ -53,7 +53,7 @@ class Event(Schedulable):
     def has_commitment_space(self, commitment_class_name):
         from scheduler.models import Ordering
         return (Ordering.objects.filter(
-            allocation__event=self,
+            people_allocated__event=self,
             class_name=commitment_class_name).count() < self.max_commitments)
 
     # New - fits scheduling API refactor

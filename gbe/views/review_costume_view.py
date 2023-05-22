@@ -34,7 +34,7 @@ class ReviewCostumeView(ReviewBidView):
         else:
             self.performer = ""
         self.create_object_form()
-        if self.object.performer:
+        if self.object.bio:
             self.object_form['performer'].queryset = Bio.objects.filter(
                 pk=self.object.bio.pk)
 

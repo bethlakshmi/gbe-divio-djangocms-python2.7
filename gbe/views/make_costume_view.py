@@ -59,7 +59,7 @@ class MakeCostumeView(MakeBidView):
                 reverse('costume_create', urlconf='gbe.urls'))
 
         if self.bid_object and ((self.bid_object.profile != self.owner) or (
-                self.bid_object.performer not in self.performers)):
+                self.bid_object.bio not in self.performers)):
             raise Http404
 
     def get_initial(self):
@@ -110,7 +110,7 @@ class MakeCostumeView(MakeBidView):
         )
 
     def set_up_form(self):
-        self.form.fields['performer'].queryset = self.owner.bio_set.all()
+        self.form.fields['bio'].queryset = self.owner.bio_set.all()
 
     def make_context(self, request):
         context = super(MakeCostumeView, self).make_context(request)
