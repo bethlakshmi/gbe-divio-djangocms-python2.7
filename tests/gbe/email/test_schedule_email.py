@@ -68,14 +68,15 @@ class TestScheduleEmail(TestCase):
         show_context = ShowContext(starttime=start_time)
         context = ActTechInfoContext(
             sched_event=show_context.sched_event,
-            schedule_rehearsal=True)
+            schedule_rehearsal=True,
+            conference=show_context.conference)
         num = schedule_email()
-        self.assertEqual(2, num)
         queued_email = Email.objects.filter(
             status=2,
             subject=self.subject,
             from_email="Team BurlExpo <%s>" % settings.DEFAULT_FROM_EMAIL,
             )
+        self.assertEqual(2, num)
         self.assertEqual(queued_email.count(), 2)
         first = queued_email.filter(
             to=show_context.performer.contact.user_object.email)[0]

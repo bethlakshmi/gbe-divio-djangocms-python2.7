@@ -15,10 +15,14 @@ from gbe.functions import (
     validate_perms,
     validate_profile,
 )
-from gbe.models import Bio
+from gbe.models import (
+    Bio,
+    Profile,
+)
 from gbe.views.functions import (
     get_participant_form,
 )
+from scheduler.idd import get_bookable_people
 
 
 @login_required
@@ -36,18 +40,20 @@ def ViewTroupeView(request, troupe_id=None):
                                             urlconf='gbe.urls'))
 
     troupe = get_object_or_404(Bio, pk=troupe_id)
-    if not (troupe.contact.profile == profile or troupe.membership.filter(
-            performer_profile=profile).exists() or validate_perms(
+    response = get_bookable_people(troupe.pk, troupe.__class__.__name__)
+    if not (troupe.contact == profile or (
+            profile.user_object in response.people[0].users) or validate_perms(
             request, ('Registrar',
                       'Volunteer Coordinator',
                       'Act Coordinator',
                       'Vendor Coordinator',
                       'Ticketing - Admin'), require=False)):
         raise Http404
+    user_ids = [user.pk for user in response.people[0].users]
     performer_form = TroupeForm(instance=troupe,
                                 prefix="The Troupe")
     performer_form.fields['membership'] = ModelMultipleChoiceField(
-        queryset=troupe.membership.all())
+        queryset=Profile.objects.filter(user_object__pk__in=user_ids))
     owner = get_participant_form(
             troupe.contact,
             prefix='Troupe Contact')

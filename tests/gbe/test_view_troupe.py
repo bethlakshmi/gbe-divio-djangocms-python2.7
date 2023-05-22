@@ -25,6 +25,7 @@ class TestViewTroupe(TestCase):
         persona = BioFactory()
         contact = persona.contact
         troupe = BioFactory(contact=contact, multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse('troupe_view', args=[troupe.pk], urlconf='gbe.urls')
         login_as(contact, self)
 
@@ -34,6 +35,7 @@ class TestViewTroupe(TestCase):
 
     def test_no_profile(self):
         troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
         user = UserFactory()
         url = reverse(
             "troupe_view",
@@ -47,6 +49,7 @@ class TestViewTroupe(TestCase):
         troupe = BioFactory(multiple_performers=True)
         troupe.contact.state = ''
         troupe.contact.save()
+        people = get_or_create_bio(troupe)
         url = reverse('troupe_view',
                       args=[troupe.pk],
                       urlconf='gbe.urls')
@@ -61,6 +64,7 @@ class TestViewTroupe(TestCase):
         persona = BioFactory()
         contact = persona.contact
         troupe = BioFactory(contact=contact, multiple_performers=True)
+        people = get_or_create_bio(troupe)
         priv_profile = ProfileFactory()
         grant_privilege(priv_profile.user_object, 'Registrar')
 
@@ -77,22 +81,20 @@ class TestViewTroupe(TestCase):
     def test_view_troupe_as_member(self):
         '''view_troupe view, success
         '''
-        persona = BioFactory()
         member = ProfileFactory()
-        contact = persona.contact
-        troupe = BioFactory(contact=contact)
+        troupe = BioFactory()
         people = get_or_create_bio(troupe)
-        people.users.add(member)
+        people.users.add(member.user_object)
         url = reverse('troupe_view',
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(member.contact.user_object, self)
+        login_as(member.user_object, self)
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, troupe.name)
         self.assertContains(response, troupe.contact.user_object.email)
-        self.assertContains(response, member.name)
+        self.assertContains(response, member.display_name)
 
     def test_view_troupe_as_random_person(self):
         '''view_troupe view, success
@@ -101,6 +103,7 @@ class TestViewTroupe(TestCase):
         random = ProfileFactory()
         contact = persona.contact
         troupe = BioFactory(contact=contact, multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse('troupe_view',
                       args=[troupe.pk],
                       urlconf='gbe.urls')

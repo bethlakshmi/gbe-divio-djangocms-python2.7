@@ -88,15 +88,11 @@ class ActTechInfoContext():
         EventLabelFactory(event=rehearsal_event,
                           text=self.conference.conference_slug)
         if act:
+            people = get_or_create_bio(act.bio)
             booking = PeopleAllocationFactory(
                 event=rehearsal_event,
-                people=self.people,
+                people=people,
                 role="Performer")
-            OrderingFactory(
-                people_allocated=booking,
-                class_id=act.pk,
-                class_name="Act")
-
         return rehearsal_event
 
     def order_act(self, act, order):

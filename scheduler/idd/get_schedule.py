@@ -40,6 +40,7 @@ def get_schedule(user=None,
     for item in basic_filter:
         if (start_time and item.event.end_time >= start_time) or (
                 start_time is None):
+
             order = None
             if hasattr(item, 'ordering'):
                 order = item.ordering
@@ -47,9 +48,9 @@ def get_schedule(user=None,
             people_list = item.people.users.all()
             if user:
                 people_list = item.people.users.filter(pk=user.pk)
-            for user in people_list:
+            for list_user in people_list:
                 sched_items += [ScheduleItem(
-                    user=user,
+                    user=list_user,
                     event=item.event,
                     role=item.role,
                     label=item.label,
