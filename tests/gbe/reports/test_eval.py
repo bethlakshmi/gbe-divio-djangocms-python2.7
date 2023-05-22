@@ -137,7 +137,6 @@ class TestEval(TestCase):
             'evaluation_detail',
             urlconf='gbe.reporting.urls',
             args=[self.context.sched_event.id]))
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, grade1.question.question, 5)
         self.assertContains(response, bool1.question.question, 2)
