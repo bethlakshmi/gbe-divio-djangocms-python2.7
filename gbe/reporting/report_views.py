@@ -112,10 +112,21 @@ def env_stuff(request, conference_choice=None):
                                                "Moderator",
                                                "Panelist"]):
             class_list += (commit.role + ': ' + str(commit.event) + ', ')
+            if commit.people.class_name != "Bio":
+                raise Exception("TODO - teacher should have bio")
+            bio = Bio.objects.get(pk=commit.people.class_id)
+            if str(bio) not in personae_list:
+                personae_list += str(bio) + ', '
 
         for commit in commits.filter(people__users__pk=person.user_object.pk,
-                                     role="Performer"):
+                                     role="Performer",
+                                     event__eventlabel__text="General"):
             show_list += str(commit.event)+', '
+            if commit.people.class_name != "Bio":
+                raise Exception("TODO - teacher should have bio")
+            bio = Bio.objects.get(pk=commit.people.class_id)
+            if str(bio) not in personae_list:
+                personae_list += str(bio) + ', '
 
         person_details.append(
             [person.get_badge_name().encode('utf-8').strip(),
