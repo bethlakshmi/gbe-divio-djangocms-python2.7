@@ -26,7 +26,7 @@ class TestViewTroupe(TestCase):
         contact = persona.contact
         troupe = BioFactory(contact=contact, multiple_performers=True)
         url = reverse('troupe_view', args=[troupe.pk], urlconf='gbe.urls')
-        login_as(contact.profile.user_object, self)
+        login_as(contact, self)
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -51,7 +51,7 @@ class TestViewTroupe(TestCase):
                       args=[troupe.pk],
                       urlconf='gbe.urls')
 
-        login_as(troupe.contact.profile.user_object, self)
+        login_as(troupe.contact, self)
         response = self.client.get(url)
         self.assertContains(response, 'No State Chosen')
 

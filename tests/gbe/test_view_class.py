@@ -25,7 +25,7 @@ class TestViewClass(TestCase):
                       args=[context.bid.pk],
                       urlconf='gbe.urls')
 
-        login_as(context.teacher.performer_profile, self)
+        login_as(context.teacher.contact, self)
         response = self.client.get(url)
         assert response.status_code == 200
         self.assertContains(response, setup_social_media(link))

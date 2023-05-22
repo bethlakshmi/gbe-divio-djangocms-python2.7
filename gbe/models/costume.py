@@ -69,8 +69,8 @@ class Costume(Biddable):
     @property
     def bid_review_summary(self):
         name = ""
-        if self.performer:
-            name += self.performer.name + " "
+        if self.bio:
+            name += self.bio.name + " "
 
         name += "(" + self.creator + ")"
         return [name,

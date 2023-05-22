@@ -11,6 +11,7 @@ from tests.functions.gbe_functions import (
     is_login_page,
     login_as,
 )
+from tests.functions.scheduler_functions import get_or_create_bio
 from tests.contexts import StaffAreaContext
 
 

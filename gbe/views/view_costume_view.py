@@ -27,6 +27,6 @@ class ViewCostumeView(ViewBidView):
                                          prefix=self.bid_prefix,
                                          initial=initial)
         detail_form = self.object_detail_form_type(instance=self.bid)
-        if self.bid.performer:
-            self.performer = self.bid.performer
+        if self.bid.bio:
+            self.performer = self.bid.bio
         return (bid_form, detail_form)
