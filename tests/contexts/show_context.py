@@ -81,10 +81,10 @@ class ShowContext:
 
     def set_producer(self, producer=None):
         producer = producer or ProfileFactory()
-        ResourceAllocationFactory(event=self.sched_event,
-                                  resource=WorkerFactory(
-                                    _item=producer,
-                                    role="Producer"))
+        prod_people = get_or_create_profile(producer)
+        PeopleAllocationFactory(event=self.sched_event,
+                                people=prod_people,
+                                role="Producer")
         return producer
 
     def book_act(self, act=None, act_role='Regular Act'):
