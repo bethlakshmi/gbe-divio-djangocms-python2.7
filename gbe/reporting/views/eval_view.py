@@ -37,7 +37,7 @@ def eval_view(request, occurrence_id=None):
                 detail_response.occurrences) > 0:
             occurrence = detail_response.occurrences[0]
             detail_response.answers.sort(
-                key=lambda answer: (answer.profile.profile.display_name,
+                key=lambda answer: (answer.user.profile.display_name,
                                     answer.question.order))
             details = {
                 'occurrence': occurrence,

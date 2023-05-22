@@ -29,7 +29,7 @@ class PerformerShowComp(View):
             self.conference = get_current_conference()
 
         self.profiles = Profile.objects.filter(
-            user_object__is_active=True, personae__isnull=False
+            user_object__is_active=True, bio__isnull=False
             ).select_related().distinct()
 
     @never_cache

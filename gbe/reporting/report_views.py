@@ -62,15 +62,13 @@ def env_stuff(request, conference_choice=None):
     else:
         conference = get_current_conference()
 
-    people = Profile.objects.filter(user_object__is_active=True)
+    profiles = Profile.objects.filter(user_object__is_active=True)
     acts = Act.objects.filter(
         accepted=3,
         b_conference=conference)
     tickets = tix.Transaction.objects.filter(
         ticket_item__ticketing_event__conference=conference)
-    roles = sched.Worker.objects.filter(
-        Q(allocations__event__eventlabel__text=conference.conference_slug))
-    commits = sched.ResourceAllocation.objects.filter(
+    commits = sched.PeopleAllocation.objects.filter(
         Q(event__eventlabel__text=conference.conference_slug))
 
     header = ['Badge Name',
@@ -85,7 +83,7 @@ def env_stuff(request, conference_choice=None):
               'Show']
 
     person_details = []
-    for person in people:
+    for person in profiles:
         ticket_list = ""
         staff_lead_list = ""
         volunteer_list = ""
@@ -100,30 +98,24 @@ def env_stuff(request, conference_choice=None):
                 ticket.ticket_item.ticketing_event.ticket_style)+", "
             ticket_names += ticket.ticket_item.title+", "
 
-        for lead in roles.filter(role="Staff Lead", _item=person):
-            for commit in commits.filter(resource=lead):
+        for commit in commits.filter(role="Staff Lead",
+                                     people__users__pk=person.user_object.pk):
                 staff_lead_list += str(commit.event)+', '
 
-        for volunteer in roles.filter(role="Volunteer", _item=person):
-            for commit in commits.filter(resource=volunteer):
-                volunteer_list += str(commit.event)+', '
+        for commit in commits.filter(
+                role="Volunteer",
+                people__users__pk=person.user_object.pk):
+            volunteer_list += str(commit.event)+', '
 
-        for performer in person.get_performers():
-            personae_list += str(performer) + ', '
-            for teacher in roles.filter((Q(role="Teacher") |
-                                         Q(role="Moderator") |
-                                         Q(role="Panelist")) &
-                                        Q(_item=performer)):
-                for commit in commits.filter(resource=teacher):
-                    class_list += (teacher.role +
-                                   ': ' +
-                                   str(commit.event) +
-                                   ', ')
-            act_ids = acts.filter(
-                performer=performer).values_list('pk', flat=True)
-            for commit in commits.filter(ordering__class_id__in=act_ids,
-                                         event__eventlabel__text="General"):
-                show_list += str(commit.event)+', '
+        for commit in commits.filter(people__users__pk=person.user_object.pk,
+                                     role__in=["Teacher",
+                                               "Moderator",
+                                               "Panelist"]):
+            class_list += (commit.role + ': ' + str(commit.event) + ', ')
+
+        for commit in commits.filter(people__users__pk=person.user_object.pk,
+                                     role="Performer"):
+            show_list += str(commit.event)+', '
 
         person_details.append(
             [person.get_badge_name().encode('utf-8').strip(),
