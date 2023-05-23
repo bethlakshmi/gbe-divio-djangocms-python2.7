@@ -16,5 +16,6 @@ class Volunteer(Biddable):
     profile = ForeignKey(Profile,
                          on_delete=CASCADE,
                          related_name="volunteering")
+
     class Meta:
         app_label = "gbe"
