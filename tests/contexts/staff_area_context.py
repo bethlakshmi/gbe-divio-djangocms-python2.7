@@ -17,6 +17,7 @@ from tests.functions.scheduler_functions import (
     noon,
 )
 
+
 class StaffAreaContext:
     '''
     Sets up a GenericEvent as a StaffArea in a pattern similar to what we

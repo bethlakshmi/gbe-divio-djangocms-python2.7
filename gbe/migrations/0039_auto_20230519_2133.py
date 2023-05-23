@@ -14,13 +14,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='class',
             name='teacher_bio',
-            field=models.ForeignKey(default=51, on_delete=django.db.models.deletion.CASCADE, related_name='is_teaching', to='gbe.bio'),
+            field=models.ForeignKey(
+                default=51,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='is_teaching',
+                to='gbe.bio'),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='sociallink',
             name='bio',
-            field=models.ForeignKey(default=51, on_delete=django.db.models.deletion.CASCADE, related_name='links', to='gbe.bio'),
+            field=models.ForeignKey(
+                default=51,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='links',
+                to='gbe.bio'),
             preserve_default=False,
         ),
     ]

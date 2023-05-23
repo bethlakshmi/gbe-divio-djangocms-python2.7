@@ -42,7 +42,7 @@ class SchedulerChangeListTests(TestCase):
                                    follow=True)
         self.assertContains(
             response,
-            "class: Bio, id: %d" %context.performer.pk)
+            "class: Bio, id: %d" % context.performer.pk)
         self.assertContains(
             response,
             context.performer.contact.display_name)

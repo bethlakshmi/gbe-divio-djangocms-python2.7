@@ -21,6 +21,7 @@ from gbe.models import (
     SocialLink,
     UserMessage,
 )
+from scheduler.models import People
 from tests.gbe.test_gbe import TestGBE
 from tests.functions.scheduler_functions import get_or_create_bio
 
@@ -98,6 +99,41 @@ class TestTroupeCreate(TestGBE):
                  '"id_links-%d-id">') % (i, i),
                 html=True)
 
+    def test_create_troupe_post(self):
+        msg = UserMessageFactory(
+            view='TroupeCreate',
+            code='SUCCESS')
+        persona = BioFactory()
+        contact = persona.contact
+        other_member = ProfileFactory()
+        url = reverse(self.view_name, urlconf='gbe.urls')
+        login_as(contact, self)
+        data = {'contact': persona.contact.pk,
+                'name':  "New Troupe",
+                'bio': "bio",
+                'year_started': 2001,
+                'awards': "many",
+                'pronouns_0': '',
+                'multiple_performers': True,
+                'pronouns_1': 'custom/pronouns',
+                'membership': [contact.pk, other_member.pk], }
+        data.update(formset_data)
+        response = self.client.post(
+            url,
+            data=data,
+            follow=True
+        )
+        print(response.content)
+        assert_alert_exists(
+            response, 'success', 'Success', msg.description)
+        self.assertEquals(
+            contact.bio_set.filter(multiple_performers=True).count(),
+            1)
+        troupe = contact.bio_set.filter(multiple_performers=True).first()
+        self.assertTrue(
+            People.objects.filter(class_name=troupe.__class__.__name__,
+                                  class_id=troupe.pk).exists())
+
 
 class TestTroupeEdit(TestCase):
     view_name = 'troupe-update'
@@ -109,7 +145,7 @@ class TestTroupeEdit(TestCase):
     def submit_troupe(self, name=None):
         persona = BioFactory()
         contact = persona.contact
-        troupe = BioFactory(multiple_performers=True,contact=contact)
+        troupe = BioFactory(multiple_performers=True, contact=contact)
         people = get_or_create_bio(troupe)
         link0 = SocialLinkFactory(bio=troupe)
         url = reverse(self.view_name,
@@ -122,6 +158,7 @@ class TestTroupeEdit(TestCase):
                 'year_started': 2001,
                 'awards': "many",
                 'pronouns_0': '',
+                'multiple_performers': True,
                 'pronouns_1': 'custom/pronouns',
                 'membership': [contact.pk], }
         data.update(formset_data)

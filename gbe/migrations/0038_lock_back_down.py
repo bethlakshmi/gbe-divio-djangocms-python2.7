@@ -14,31 +14,46 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='actbidevaluation',
             name='evaluator',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gbe.profile'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='gbe.profile'),
         ),
         migrations.AlterField(
             model_name='bidevaluation',
             name='evaluator',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gbe.profile'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='gbe.profile'),
         ),
         migrations.AlterField(
             model_name='costume',
             name='profile',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='costumes', to='gbe.profile'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='costumes',
+                to='gbe.profile'),
         ),
         migrations.AlterField(
             model_name='flexibleevaluation',
             name='evaluator',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gbe.profile'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='gbe.profile'),
         ),
         migrations.AlterField(
             model_name='profilepreferences',
             name='profile',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='preferences', to='gbe.profile'),
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='preferences',
+                to='gbe.profile'),
         ),
         migrations.AlterField(
             model_name='volunteer',
             name='profile',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='volunteering', to='gbe.profile'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='volunteering',
+                to='gbe.profile'),
         ),
     ]
