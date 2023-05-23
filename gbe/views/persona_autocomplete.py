@@ -11,7 +11,7 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
 
         qs = Bio.objects.filter(
             contact__user_object__is_active=True,
-            multiple_performers=True)
+            multiple_performers=False)
 
         if self.q:
             qs = qs.filter(

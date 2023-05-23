@@ -35,7 +35,7 @@ class ReviewCostumeView(ReviewBidView):
             self.performer = ""
         self.create_object_form()
         if self.object.bio:
-            self.object_form['performer'].queryset = Bio.objects.filter(
+            self.object_form['bio'].queryset = Bio.objects.filter(
                 pk=self.object.bio.pk)
 
         self.profile = get_participant_form(
@@ -45,5 +45,5 @@ class ReviewCostumeView(ReviewBidView):
         self.readonlyform_pieces = [
             self.object_form,
             self.details,
-            self.bio,
+            self.performer,
             self.profile]

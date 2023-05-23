@@ -41,7 +41,7 @@ class TestReviewCostume(TestCase):
         return data
 
     def test_review_costume_all_well(self):
-        costume = CostumeFactory(performer=self.performer)
+        costume = CostumeFactory(bio=self.performer)
         other_performer = BioFactory()
         url = reverse(self.view_name, args=[costume.pk], urlconf="gbe.urls")
         login_as(self.privileged_user, self)

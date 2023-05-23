@@ -11,6 +11,7 @@ from gbe.models import (
 )
 from gbe.functions import validate_perms
 from gbetext import troupe_intro_msg
+from scheduler.idd import get_bookable_people
 
 
 class ReviewTroupesView(View):
@@ -35,9 +36,11 @@ class ReviewTroupesView(View):
         for troupe in troupes:
             bid_row = {}
             members = ""
-            for member in troupe.membership.filter(
-                    contact__user_object__is_active=True):
-                members += "%s,<br>" % member.name
+            response = get_bookable_people(troupe.pk,
+                                           troupe.__class__.__name__)
+            for member in response.people[0].users:
+                if member.is_active:
+                    members += "%s,<br>" % member.profile.display_name
             bid_row['profile'] = (
                 troupe.name,
                 "%s<br>(<a href='%s'>%s</a>)" % (

@@ -22,6 +22,7 @@ from gbe.models import (
     UserMessage,
 )
 from tests.gbe.test_gbe import TestGBE
+from tests.functions.scheduler_functions import get_or_create_bio
 
 
 formset_data = {
@@ -109,11 +110,12 @@ class TestTroupeEdit(TestCase):
         persona = BioFactory()
         contact = persona.contact
         troupe = BioFactory(multiple_performers=True,contact=contact)
+        people = get_or_create_bio(troupe)
         link0 = SocialLinkFactory(bio=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(contact.profile, self)
+        login_as(contact, self)
         data = {'contact': persona.contact.pk,
                 'name':  name or "New Troupe",
                 'bio': "bio",
@@ -121,7 +123,7 @@ class TestTroupeEdit(TestCase):
                 'awards': "many",
                 'pronouns_0': '',
                 'pronouns_1': 'custom/pronouns',
-                'membership': [persona.pk], }
+                'membership': [contact.pk], }
         data.update(formset_data)
         data['links-0-id'] = link0.pk
         data['links-0-bio'] = troupe.pk
@@ -131,7 +133,7 @@ class TestTroupeEdit(TestCase):
             data=data,
             follow=True
         )
-        self.assertEqual(troupe.membership.first(), persona)
+        self.assertTrue(people.users.filter(pk=contact.pk).exists())
         return response, data
 
     def test_get_edit_troupe(self):
@@ -140,11 +142,12 @@ class TestTroupeEdit(TestCase):
         persona = BioFactory()
         contact = persona.contact
         troupe = BioFactory(contact=contact, multiple_performers=True)
+        people = get_or_create_bio(troupe)
         link0 = SocialLinkFactory(bio=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(contact.profile, self)
+        login_as(contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Tell Us About Your Troupe')
@@ -171,15 +174,17 @@ class TestTroupeEdit(TestCase):
         '''
         persona = BioFactory()
         troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(persona.contact.profile, self)
+        login_as(persona.contact, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_no_profile(self):
         troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
@@ -211,16 +216,17 @@ class TestTroupeEdit(TestCase):
         persona = BioFactory()
         contact = persona.contact
         troupe = BioFactory(contact=contact, multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(contact.profile, self)
+        login_as(contact, self)
         data = {'contact': persona.contact.pk,
                 'name':  "New Troupe",
                 'bio': "bio",
                 'year_started': 'bad',
                 'awards': "many",
-                'membership': [persona.pk]}
+                'membership': [contact.pk]}
         data.update(formset_data)
         response = self.client.post(
             url,

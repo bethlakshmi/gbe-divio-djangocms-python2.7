@@ -80,7 +80,7 @@ class TestReviewAct(TestCase):
         self.act.performer.year_started = 0
         self.act.performer.experience = 14
         self.act.performer.save()
-        link = SocialLinkFactory(performer=self.act.performer)
+        link = SocialLinkFactory(bio=self.act.performer)
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
