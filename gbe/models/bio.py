@@ -52,22 +52,9 @@ class Bio(Model):
     def has_bids(self):
         return (self.is_teaching.count() > 0 or self.acts.count() > 0 or
                 self.costume_set.count() > 0)
-
-    @property
-    def is_active(self):
-        return self.contact.user_object.is_active
-
     @property
     def user_object(self):
         return self.contact.user_object
-
-    @property
-    def contact_email(self):
-        return self.contact.user_object.email
-
-    @property
-    def describe(self):
-        return self.name
 
     def __str__(self):
         perf_string = self.name
