@@ -1,6 +1,5 @@
 from django.urls import reverse
 from django.test import TestCase
-from django.test.client import RequestFactory
 from tests.factories.gbe_factories import (
     BioFactory,
     ConferenceFactory,
@@ -24,12 +23,12 @@ from tests.functions.scheduler_functions import get_or_create_profile
 
 
 class TestWelcomeLetter(TestCase):
-    '''Tests for index view'''
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.priv_profile = ProfileFactory()
-        grant_privilege(self.priv_profile, 'Act Reviewers')
-        self.url = reverse('welcome_letter', urlconf='gbe.reporting.urls')
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.priv_profile = ProfileFactory()
+        grant_privilege(cls.priv_profile, 'Act Reviewers')
+        cls.url = reverse('welcome_letter', urlconf='gbe.reporting.urls')
 
     def test_personal_schedule_fail(self):
         '''personal_schedule view should load for privileged users
@@ -146,7 +145,7 @@ class TestWelcomeLetter(TestCase):
             conference=transaction.ticket_item.ticketing_event.conference)
         context.set_interest(interested_profile=purchaser)
 
-        request = self.factory.get(
+        request = self.client.get(
             'reports/schedule_all?conf_slug='+conference.conference_slug)
         login_as(self.priv_profile, self)
         response = self.client.get(
@@ -193,7 +192,7 @@ class TestWelcomeLetter(TestCase):
             tickets=[transaction.ticket_item]
         )
 
-        request = self.factory.get(
+        request = self.client.get(
             'reports/schedule_all?conf_slug='+conference.conference_slug)
         login_as(self.priv_profile, self)
         response = self.client.get(

@@ -1,6 +1,5 @@
 from django.urls import reverse
 from django.test import TestCase
-from django.test.client import RequestFactory
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
@@ -18,12 +17,11 @@ from tests.functions.gbe_functions import (
 
 
 class TestPerformerCompView(TestCase):
-    '''Tests for index view'''
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.priv_profile = ProfileFactory()
-        grant_privilege(self.priv_profile, 'Registrar')
-        self.url = reverse('perf_comp', urlconf='gbe.reporting.urls')
+    @classmethod
+    def setUpTestData(cls):
+        cls.priv_profile = ProfileFactory()
+        grant_privilege(cls.priv_profile, 'Registrar')
+        cls.url = reverse('perf_comp', urlconf='gbe.reporting.urls')
 
     def test_no_priv_fail(self):
         profile = ProfileFactory()
