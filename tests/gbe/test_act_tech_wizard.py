@@ -30,7 +30,7 @@ from gbe.models import (
     Bio,
 )
 from scheduler.models import (
-    ResourceAllocation,
+    PeopleAllocation,
 )
 
 
@@ -284,7 +284,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        alloc = ResourceAllocation.objects.get(
+        alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
             ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
@@ -306,7 +306,7 @@ class TestActTechWizard(TestGBE):
             'I will need set before my number" '
             'id="id_prop_setup_1" checked />',
             html=True)
-        alloc = ResourceAllocation.objects.filter(
+        alloc = PeopleAllocation.objects.filter(
             ordering__class_id=context.act.pk)
         self.assertEqual(alloc.count(), 2)
         assert_option_state(
@@ -336,7 +336,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = -1
-        alloc = ResourceAllocation.objects.get(
+        alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
             ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
@@ -369,7 +369,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        alloc = ResourceAllocation.objects.get(
+        alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
             ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
@@ -395,7 +395,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        alloc = ResourceAllocation.objects.aggregate(Max('pk'))['pk__max']+1
+        alloc = PeopleAllocation.objects.aggregate(Max('pk'))['pk__max']+1
         data['%d-booking_id' % context.sched_event.pk] = alloc
         response = self.client.post(url, data)
         self.assertContains(response, rehearsal_book_error)

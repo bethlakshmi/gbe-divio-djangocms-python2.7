@@ -133,7 +133,8 @@ class TestTroupeEdit(TestCase):
             data=data,
             follow=True
         )
-        self.assertTrue(people.users.filter(pk=contact.pk).exists())
+        self.assertTrue(people.users.filter(
+            pk=contact.user_object.pk).exists())
         return response, data
 
     def test_get_edit_troupe(self):

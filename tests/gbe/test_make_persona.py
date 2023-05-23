@@ -165,7 +165,7 @@ class TestPersonaCreate(TestCase):
         response = self.client.get(
             reverse('persona-add', urlconf='gbe.urls', args=[1]),
         )
-        self.assertContains(response, "Tell Us About Your Stage Persona")
+        self.assertContains(response, "Tell Us About Your Bio")
         self.assertContains(response, "Create Troupe")
         self.assertContains(response,
                             reverse("troupe-add", urlconf="gbe.urls"))
@@ -175,7 +175,7 @@ class TestPersonaCreate(TestCase):
         response = self.client.get(
             reverse('persona-add', urlconf='gbe.urls', args=[0]),
         )
-        self.assertContains(response, "Tell Us About Your Stage Persona")
+        self.assertContains(response, "Tell Us About Your Bio")
         self.assertNotContains(response, "Create Troupe")
         self.assertNotContains(response,
                                reverse("troupe-add", urlconf="gbe.urls"))
@@ -196,7 +196,7 @@ class TestPersonaEdit(TestGBE):
     def setUp(self):
         UserMessage.objects.all().delete()
         self.client = Client()
-        self.expected_string = 'Tell Us About Your Stage Persona'
+        self.expected_string = 'Tell Us About Your Bio'
         self.persona = BioFactory()
         self.link0 = SocialLinkFactory(bio=self.persona)
         self.link1 = SocialLinkFactory(
@@ -287,8 +287,8 @@ class TestPersonaEdit(TestGBE):
         for i in range(0, 5):
             self.assertContains(
                 response,
-                ('<input type="hidden" name="links-%d-performer" id="id_' +
-                 'links-%d-performer" value="%d">') % (i, i, self.persona.pk),
+                ('<input type="hidden" name="links-%d-bio" id="id_' +
+                 'links-%d-bio" value="%d">') % (i, i, self.persona.pk),
                 html=True)
         self.assert_radio_state(response,
                                 'pronouns_0',

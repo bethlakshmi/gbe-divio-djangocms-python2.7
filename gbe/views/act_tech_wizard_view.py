@@ -120,6 +120,7 @@ class ActTechWizardView(View):
             if int(rehearsal_form.cleaned_data['rehearsal']) >= 0:
                 person = Person(
                     public_id=self.act.performer.pk,
+                    public_class=self.act.performer.__class__.__name__,
                     role="Performer",
                     commitment=Commitment(decorator_class=self.act))
                 if rehearsal_form.cleaned_data['booking_id']:
