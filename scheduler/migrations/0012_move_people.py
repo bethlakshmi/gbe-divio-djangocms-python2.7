@@ -72,7 +72,7 @@ def migrate_people(apps, schema_editor):
             elif Persona.objects.filter(pk=worker._item.pk).exists():
                 entity = Persona.objects.get(pk=worker._item.pk)
                 bio = Bio.objects.get(name=entity.name, label=entity.label)
-                people, created  = create_people(
+                people, created = create_people(
                     bio,
                     [entity.performer_profile.user_object],
                     People)
@@ -124,6 +124,7 @@ def profile_to_user(Profile, answer):
         answer.save()
     else:
         print("can't find profile: %d" % answer.profile.pk)
+
 
 def migrate_eval_answers(apps, schema_editor):
     EventEvalBoolean = apps.get_model("scheduler", "EventEvalBoolean")

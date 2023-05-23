@@ -181,7 +181,7 @@ class ManageWorkerView(View):
                         "Volunteer", data['worker'])
             elif data.get('worker', None):
                 if data['worker'].__class__.__name__ == "Bio":
-                   user_object = data['worker'].contact.user_object
+                    user_object = data['worker'].contact.user_object
                 else:
                     user_object = data['worker'].user_object
                 person = Person(

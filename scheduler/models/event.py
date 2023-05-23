@@ -129,13 +129,13 @@ class Event(Schedulable):
                 id=person.booking_id)
             allocation.people = people
             allocation.event = self
-            allocation.role=person.role
+            allocation.role = person.role
         else:
             allocation = PeopleAllocation(event=self,
                                           people=people,
                                           role=person.role)
         if person.label is not None:
-            allocation.label=person.label
+            allocation.label = person.label
         allocation.save()
         if person.commitment:
             ordering, created = Ordering.objects.get_or_create(
