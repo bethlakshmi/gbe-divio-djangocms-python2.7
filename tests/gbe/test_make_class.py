@@ -37,7 +37,7 @@ class TestMakeClass(TestCase):
         self.client = Client()
 
     def get_form(self, submit=True, invalid=False):
-        data = {"theclass-teacher": self.performer.pk,
+        data = {"theclass-teacher_bio": self.performer.pk,
                 'theclass-phone': '111-222-3333',
                 'theclass-first_name': 'Jane',
                 'theclass-last_name': 'Smith',
@@ -97,7 +97,7 @@ class TestCreateClass(TestMakeClass):
             response,
             reverse("persona-add", urlconf='gbe.urls', args=[0]) +
             "?next=/class/create")
-        title = '<h3 class="gbe-title">Tell Us About Your Stage Persona</h3>'
+        title = '<h3 class="gbe-title">Tell Us About Your Bio</h3>'
         self.assertContains(response, title, html=True)
         self.assertNotContains(response, "Create Troupe")
         self.check_subway_state(response, active_state="Create Bio")
@@ -125,7 +125,7 @@ class TestCreateClass(TestMakeClass):
         other_profile = other_performer.contact
         login_as(self.performer.contact, self)
         data = self.get_form(submit=False, invalid=True)
-        data['theclass-teacher'] = other_performer.pk
+        data['theclass-teacher_bio'] = other_performer.pk
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Submit a Class')
@@ -193,7 +193,7 @@ class TestEditClass(TestMakeClass):
         cls.teacher = cls.performer
 
     def post_class_edit_submit(self):
-        klass = ClassFactory(teacher=self.teacher)
+        klass = ClassFactory(teacher_bio=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -203,14 +203,14 @@ class TestEditClass(TestMakeClass):
         return response, data
 
     def post_class_edit_draft(self):
-        klass = ClassFactory(teacher=self.teacher)
+        klass = ClassFactory(teacher_bio=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.contact, self)
+        login_as(klass.teacher_bio.contact, self)
         data = self.get_form(submit=False)
         data['theclass-b_title'] = '"extra quotes"'
-        data["theclass-teacher"] = klass.teacher.pk
+        data["theclass-teacher_bio"] = klass.teacher_bio.pk
         response = self.client.post(url, data=data, follow=True)
         return response, data
 
@@ -229,7 +229,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.contact, self)
+        login_as(klass.teacher_bio.contact, self)
         data = self.get_form(invalid=True)
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
@@ -247,12 +247,12 @@ class TestEditClass(TestMakeClass):
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
         klass = ClassFactory()
-        klass.teacher.contact.phone = "555-666-7777"
-        klass.teacher.contact.save()
+        klass.teacher_bio.contact.phone = "555-666-7777"
+        klass.teacher_bio.contact.save()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.contact, self)
+        login_as(klass.teacher_bio.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Submit a Class')
@@ -265,7 +265,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.contact, self)
+        login_as(klass.teacher_bio.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'We will do our best to accommodate')
@@ -277,7 +277,7 @@ class TestEditClass(TestMakeClass):
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
-        login_as(klass.teacher.contact, self)
+        login_as(klass.teacher_bio.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         constraint_selected = '<input type="checkbox" name="theclass-%s" ' + \

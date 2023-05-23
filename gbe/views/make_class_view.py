@@ -58,11 +58,11 @@ class MakeClassView(MakeBidView):
         initial = super(MakeClassView, self).get_initial()
         if not self.bid_object:
             initial.update({'owner': self.owner,
-                            'teacher': self.teachers[0]})
+                            'teacher_bio': self.teachers[0]})
         return initial
 
     def set_up_form(self):
-        self.form.fields['teacher'].queryset = self.owner.bio_set.all()
+        self.form.fields['teacher_bio'].queryset = self.owner.bio_set.all()
 
     def make_context(self, request):
         context = super(MakeClassView, self).make_context(request)
