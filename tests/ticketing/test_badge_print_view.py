@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.contexts import (
     ClassContext,
@@ -22,17 +21,17 @@ from tests.functions.gbe_functions import (
 class TestBadgePrintView(TestCase):
     view_name = 'badge_print'
 
-    def setUp(self):
-        self.client = Client()
-        self.privileged_user = ProfileFactory.create().user_object
-        grant_privilege(self.privileged_user,
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = ProfileFactory.create().user_object
+        grant_privilege(cls.privileged_user,
                         'Registrar',
                         'view_transaction')
-        self.url = reverse(self.view_name, urlconf='ticketing.urls')
-        self.class_context = ClassContext()
-        self.ticket_context = PurchasedTicketContext(
-            profile=self.class_context.teacher.contact,
-            conference=self.class_context.conference)
+        cls.url = reverse(cls.view_name, urlconf='ticketing.urls')
+        cls.class_context = ClassContext()
+        cls.ticket_context = PurchasedTicketContext(
+            profile=cls.class_context.teacher.contact,
+            conference=cls.class_context.conference)
 
     def test_w_ticket_condition(self):
         '''loads with the default conference selection.
@@ -60,8 +59,9 @@ class TestBadgePrintView(TestCase):
     def test_w_ticket_condition_only_purchaser(self):
         '''loads with the default conference selection.
         '''
+        short = self.class_context.conference
         transaction = TransactionFactory(
-            ticket_item__ticketing_event__conference=self.class_context.conference,
+            ticket_item__ticketing_event__conference=short,
         )
         ticket_condition = TicketingEligibilityConditionFactory(
             checklistitem__badge_title="Badge Name")

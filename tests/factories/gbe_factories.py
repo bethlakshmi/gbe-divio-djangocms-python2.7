@@ -84,7 +84,6 @@ class BioFactory(DjangoModelFactory):
     year_started = 2004
 
 
-
 class SocialLinkFactory(DjangoModelFactory):
     class Meta:
         model = conf.SocialLink

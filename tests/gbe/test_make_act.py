@@ -76,6 +76,7 @@ class TestMakeAct(TestCase):
                 '<li class="progressbar_upcoming">Payment</li>',
                 html=True)
 
+
 class TestCreateAct(TestMakeAct):
     '''Tests for create_act view'''
     view_name = 'act_create'

@@ -12,7 +12,7 @@ from tests.functions.gbe_functions import (
 from gbe.functions import validate_profile
 
 
-class TestLimitedPerformerAutoComplete(TestCase):
+class TestCoordinatorPerformerAutoComplete(TestCase):
 
     def setUp(self):
         self.client = Client()

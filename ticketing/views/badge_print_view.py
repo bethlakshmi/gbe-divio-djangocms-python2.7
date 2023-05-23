@@ -75,13 +75,13 @@ class BadgePrintView(PermissionRequiredMixin, View):
                 for user in people.users:
                     if user.username not in badged_usernames:
                         badge_info.append(
-                        [user.first_name,
-                         user.last_name,
-                         user.username,
-                         user.profile.get_badge_name(),
-                         title_to_badge[people.role],
-                         "Role Condition: %s" % people.role,
-                         "N/A"])
+                            [user.first_name,
+                             user.last_name,
+                             user.username,
+                             user.profile.get_badge_name(),
+                             title_to_badge[people.role],
+                             "Role Condition: %s" % people.role,
+                             "N/A"])
                         badged_usernames += [user.username]
 
         response = HttpResponse(content_type='text/csv')

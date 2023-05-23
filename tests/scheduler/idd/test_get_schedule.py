@@ -14,7 +14,7 @@ class TestGetSchedule(TestCase):
         booking = PeopleAllocation.objects.get(
             event=context.sched_event,
             role='Teacher')
-        booking.label='test_get_teacher_w_label'
+        booking.label = 'test_get_teacher_w_label'
         booking.save()
         response = get_schedule(
             user=context.teacher.get_profiles()[0].user_object)

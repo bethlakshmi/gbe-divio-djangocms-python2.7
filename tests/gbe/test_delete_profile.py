@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ActFactory,
@@ -31,12 +30,12 @@ class TestDeleteProfile(TestCase):
     '''Tests for admin_profile  view'''
     view_name = 'delete_profile'
 
-    def setUp(self):
-        self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Registrar')
-        self.deleted_profile = ProfileFactory()
-        self.deleted_people = get_or_create_profile(self.deleted_profile)
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Registrar')
+        cls.deleted_profile = ProfileFactory()
+        cls.deleted_people = get_or_create_profile(cls.deleted_profile)
 
     def assert_deactivated(self, response, profile):
         self.assertRedirects(response, reverse('manage_users',

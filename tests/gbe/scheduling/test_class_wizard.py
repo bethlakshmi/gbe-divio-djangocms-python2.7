@@ -1,6 +1,4 @@
 from django.test import TestCase
-from django.test.client import RequestFactory
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     BioFactory,
@@ -25,26 +23,25 @@ class TestClassWizard(TestScheduling):
     '''Tests for the 2nd and 3rd stage in the class wizard view'''
     view_name = 'create_class_wizard'
 
-    def setUp(self):
-        self.room = RoomFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.room = RoomFactory()
         # because there was a bug around duplicate room names
-        RoomFactory(name=self.room.name)
-        self.teacher = BioFactory()
-        self.current_conference = ConferenceFactory(accepting_bids=True)
-        self.day = ConferenceDayFactory(conference=self.current_conference)
-        self.room.conferences.add(self.current_conference)
-        self.test_class = ClassFactory(b_conference=self.current_conference,
-                                       accepted=3,
-                                       teacher_bio=self.teacher,
-                                       submitted=True)
-        self.url = reverse(
-            self.view_name,
-            args=[self.current_conference.conference_slug],
+        RoomFactory(name=cls.room.name)
+        cls.teacher = BioFactory()
+        cls.current_conference = ConferenceFactory(accepting_bids=True)
+        cls.day = ConferenceDayFactory(conference=cls.current_conference)
+        cls.room.conferences.add(cls.current_conference)
+        cls.test_class = ClassFactory(b_conference=cls.current_conference,
+                                      accepted=3,
+                                      teacher_bio=cls.teacher,
+                                      submitted=True)
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.current_conference.conference_slug],
             urlconf='gbe.scheduling.urls')
-        self.factory = RequestFactory()
-        self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
 
     def get_data(self):
         data = {

@@ -1,6 +1,4 @@
 from django.test import TestCase
-from django.test.client import RequestFactory
-from django.test import Client
 from django.urls import reverse
 from django.db.models import Max
 from tests.factories.gbe_factories import (
@@ -28,19 +26,19 @@ class TestEditStaffAreaView(TestCase):
     '''This view edits classes that were made through the wizard'''
     view_name = 'edit_staff'
 
-    def setUp(self):
-        self.room = RoomFactory()
-        self.context = StaffAreaContext()
-        self.context.area.default_volunteers = 7
-        self.context.area.save()
-        self.room.conferences.add(self.context.conference)
-        self.url = reverse(
-            self.view_name,
-            args=[self.context.area.pk],
+    @classmethod
+    def setUpTestData(cls):
+        cls.room = RoomFactory()
+        cls.context = StaffAreaContext()
+        cls.context.area.default_volunteers = 7
+        cls.context.area.save()
+        cls.room.conferences.add(cls.context.conference)
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.context.area.pk],
             urlconf='gbe.scheduling.urls')
-        self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
 
     def edit_area(self):
         data = {

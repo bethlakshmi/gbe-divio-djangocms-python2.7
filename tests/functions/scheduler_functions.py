@@ -49,6 +49,7 @@ def noon(day):
     return datetime.combine(day.day,
                             time(12, 0, 0))
 
+
 def get_or_create_bio(public_class):
     people = None
     if not People.objects.filter(
@@ -63,6 +64,7 @@ def get_or_create_bio(public_class):
             class_name=public_class.__class__.__name__,
             class_id=public_class.pk)
     return people
+
 
 def get_or_create_profile(public_class):
     people = None

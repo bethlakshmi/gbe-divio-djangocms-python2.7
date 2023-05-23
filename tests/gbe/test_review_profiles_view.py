@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     BioFactory,
@@ -19,14 +18,13 @@ class TestReviewProfiles(TestCase):
     '''Tests for admin_profile  view'''
     view_name = 'manage_users'
 
-    def setUp(self):
-        self.client = Client()
-        self.profile = ProfilePreferencesFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfilePreferencesFactory(
             profile__purchase_email='test@test.com').profile
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Registrar')
-        self.url = reverse('manage_users',
-                           urlconf='gbe.urls')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Registrar')
+        cls.url = reverse('manage_users', urlconf='gbe.urls')
 
     def test_non_privileged_user(self):
         login_as(ProfileFactory(), self)

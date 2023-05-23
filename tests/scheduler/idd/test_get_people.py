@@ -22,7 +22,7 @@ class TestGetPeople(TestCase):
     def test_get_act_w_label(self):
         context = ShowContext()
         act, booking = context.book_act()
-        booking.label="test_get_act_w_label"
+        booking.label = "test_get_act_w_label"
         booking.save()
         response = get_people(labels=[context.conference.conference_slug],
                               roles=["Performer"])

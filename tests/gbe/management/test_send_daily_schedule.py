@@ -46,7 +46,7 @@ class TestSendDailySchedule(TestCase):
             context.teacher.user_object.email in queued_email[0].to)
 
     def test_troupe_mail(self):
-        # in this case, contact is NOT a member of troupe, so doesn't get 
+        # in this case, contact is NOT a member of troupe, so doesn't get
         # any schedule mail
         start_time = datetime.combine(
             datetime.now().date() + timedelta(days=1),

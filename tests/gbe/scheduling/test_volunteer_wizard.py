@@ -1,6 +1,4 @@
 from django.test import TestCase
-from django.test.client import RequestFactory
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
@@ -25,24 +23,23 @@ class TestVolunteerWizard(TestScheduling):
     '''Tests for the 2nd and 3rd stage in the volunteer wizard view'''
     view_name = 'create_volunteer_wizard'
 
-    def setUp(self):
-        self.room = RoomFactory()
-        self.show_volunteer = VolunteerContext()
-        self.current_conference = self.show_volunteer.conference
-        self.room.conferences.add(self.current_conference)
-        self.special_volunteer = VolunteerContext(
+    @classmethod
+    def setUpTestData(cls):
+        cls.room = RoomFactory()
+        cls.show_volunteer = VolunteerContext()
+        cls.current_conference = cls.show_volunteer.conference
+        cls.room.conferences.add(cls.current_conference)
+        cls.special_volunteer = VolunteerContext(
             event_style="Special",
-            conference=self.current_conference)
-        self.staff_area = StaffAreaContext(
-            conference=self.current_conference)
-        self.url = reverse(
-            self.view_name,
-            args=[self.current_conference.conference_slug],
+            conference=cls.current_conference)
+        cls.staff_area = StaffAreaContext(
+            conference=cls.current_conference)
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.current_conference.conference_slug],
             urlconf='gbe.scheduling.urls')
-        self.factory = RequestFactory()
-        self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
 
     def create_opp(self):
         data = {

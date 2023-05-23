@@ -4,7 +4,7 @@ from datetime import (
     datetime,
     time,
 )
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
@@ -33,15 +33,15 @@ class TestShowDashboard(TestCase):
     '''Tests for index view'''
     view_name = 'show_dashboard'
 
-    def setUp(self):
-        self.client = Client()
-        self.context = ActTechInfoContext(schedule_rehearsal=True)
-        self.other_context = ActTechInfoContext(
-            conference=self.context.conference)
-        self.profile = self.context.make_priv_role()
-        self.url = reverse(self.view_name,
-                           urlconf='gbe.scheduling.urls',
-                           args=[self.context.sched_event.pk])
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = ActTechInfoContext(schedule_rehearsal=True)
+        cls.other_context = ActTechInfoContext(
+            conference=cls.context.conference)
+        cls.profile = cls.context.make_priv_role()
+        cls.url = reverse(cls.view_name,
+                          urlconf='gbe.scheduling.urls',
+                          args=[cls.context.sched_event.pk])
 
     def get_basic_post(self, order_value=1):
         data = {

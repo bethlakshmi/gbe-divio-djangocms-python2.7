@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ActFactory,
@@ -17,13 +16,12 @@ from gbetext import delete_in_use
 class TestDeletePerformer(TestCase):
     view_name = 'performer-delete'
 
-    '''Tests for edit_persona view'''
-    def setUp(self):
-        self.client = Client()
-        self.persona = BioFactory()
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.urls",
-                           args=[self.persona.pk])
+    @classmethod
+    def setUpTestData(cls):
+        cls.persona = BioFactory()
+        cls.url = reverse(cls.view_name,
+                          urlconf="gbe.urls",
+                          args=[cls.persona.pk])
 
     def test_wrong_profile(self):
         viewer = ProfileFactory()
@@ -88,4 +86,3 @@ class TestDeletePerformer(TestCase):
             'danger',
             'Error',
             delete_in_use)
-

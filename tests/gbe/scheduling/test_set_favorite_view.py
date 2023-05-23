@@ -1,7 +1,4 @@
-from django.test import (
-    TestCase,
-    Client
-)
+from django.test import TestCase
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
@@ -28,14 +25,14 @@ from gbetext import (
 class TestSetFavorite(TestCase):
     view_name = "set_favorite"
 
-    def setUp(self):
-        self.client = Client()
-        self.profile = ProfileFactory()
-        self.people = get_or_create_profile(self.profile)
-        self.context = ClassContext()
-        self.url = reverse(
-            self.view_name,
-            args=[self.context.sched_event.pk, "on"],
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfileFactory()
+        cls.people = get_or_create_profile(cls.profile)
+        cls.context = ClassContext()
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.context.sched_event.pk, "on"],
             urlconf="gbe.scheduling.urls")
 
     def test_no_login_gives_error(self):

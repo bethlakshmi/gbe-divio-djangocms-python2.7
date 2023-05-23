@@ -16,6 +16,7 @@ from tests.functions.scheduler_functions import get_or_create_bio
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.formats import date_format
 
+
 class TestReviewActTechInfo(TestCase):
     '''Tests for index view'''
     view_name = 'act_techinfo_detail'
