@@ -90,7 +90,7 @@ class TestGetRoles(TestCase):
             conference=self.conference)
         act = ActFactory(b_conference=self.conference,
                          accepted=3,
-                         performer=persona)
+                         bio=persona)
         showcontext = ShowContext(act=act, conference=self.conference)
 
         result = persona.contact.get_roles(self.conference)

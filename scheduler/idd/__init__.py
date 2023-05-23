@@ -13,6 +13,7 @@ from .get_schedule import get_schedule
 from .get_eval_summary import get_eval_summary
 from .get_eval_info import get_eval_info
 from .set_eval_info import set_eval_info
+from .delete_bookable_people import delete_bookable_people
 from .delete_occurrence import delete_occurrence
 from .delete_occurrences import delete_occurrences
 from .get_bookable_people import get_bookable_people

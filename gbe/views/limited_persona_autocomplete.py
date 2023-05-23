@@ -10,7 +10,7 @@ class LimitedPersonaAutocomplete(autocomplete.Select2QuerySetView):
         if not profile:
             return Bio.objects.none()
 
-        qs = Bio.objects.filter(contact=profile, multiple_performers=True)
+        qs = Bio.objects.filter(contact=profile, multiple_performers=False)
 
         if self.q:
             qs = qs.filter(
