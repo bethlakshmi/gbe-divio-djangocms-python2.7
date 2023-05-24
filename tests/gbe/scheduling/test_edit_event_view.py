@@ -3,6 +3,7 @@ from django.test.client import RequestFactory
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceDayFactory,
     RoomFactory,
     ProfileFactory,
@@ -254,10 +255,25 @@ class TestEditEventView(TestScheduling):
                 self.extra_day.day.strftime(GBE_DATE_FORMAT))
             )
 
-    def test_edit_event_and_continue(self):
+    def test_edit_class_w_teacher_and_continue(self):
+        class_context = ClassContext(conference=self.context.conference)
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         login_as(self.privileged_user, self)
+        new_teacher = BioFactory()
+        self.url = reverse(
+            self.view_name,
+            args=[class_context.conference.conference_slug,
+                  class_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
         data = self.edit_event()
+        data['alloc_0-role'] = 'Teacher'
+        data['alloc_1-role'] = 'Teacher'
+        data['alloc_2-role'] = 'Teacher'
+        data['alloc_3-role'] = 'Teacher'
+        data['alloc_0-worker'] = new_teacher.pk
+        data['alloc_1-worker'] = ''
+        data['alloc_2-worker'] = ''
+        data['alloc_3-worker'] = ''
         data['edit_event'] = "Save and Continue"
         response = self.client.post(
             self.url,
@@ -287,6 +303,11 @@ class TestEditEventView(TestScheduling):
         self.assertContains(
             response,
             'name="duration" value="2.5"')
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s</option>' % (
+                new_teacher.pk,
+                new_teacher.name))
 
     def test_auth_user_bad_user_assign(self):
         login_as(self.privileged_user, self)

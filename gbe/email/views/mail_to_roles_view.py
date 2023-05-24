@@ -282,13 +282,11 @@ class MailToRolesView(MailToFilterView):
                 if user.profile.email_allowed(self.email_type) and (
                         person_contact not in to_list):
                     to_list += [person_contact]
-            if len(person.users) > 1:
-                if person.public_class != "Bio":
-                    raise Exception("Better Error TODO")
-                troupe = Bio.objects.get(pk=person.public_id)
-                person_contact = (troupe.contact.user_object.email,
-                                  troupe.contact.display_name)
-                if troupe.contact.email_allowed(self.email_type) and (
+            if person.public_class == "Bio":
+                bio = Bio.objects.get(pk=person.public_id)
+                person_contact = (bio.contact.user_object.email,
+                                  bio.contact.display_name)
+                if bio.contact.email_allowed(self.email_type) and (
                         person_contact not in to_list):
                     to_list += [person_contact]
         return sorted(to_list, key=lambda s: s[1].lower())

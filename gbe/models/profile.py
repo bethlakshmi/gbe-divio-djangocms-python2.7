@@ -155,18 +155,13 @@ class Profile(Model):
         else:
             return self.costumes.exclude(b_conference__status="completed")
 
-    def get_performers(self, organize=False):
+    def get_performers(self):
         # TODO - should this have an IDD?
         from gbe.models import Bio  # late import, circularity
         bookable_bios = self.user_object.people_set.filter(
             class_name="Bio").values_list('class_id', flat=True)
         bios = Bio.objects.filter(Q(contact=self) | Q(pk__in=bookable_bios))
-
-        if organize:
-            return bios.filter(multiple_performers=False), bios.filter(
-                multiple_performers=True)
-        else:
-            return bios
+        return bios
 
     def get_acts(self):
         acts = []
@@ -174,14 +169,6 @@ class Profile(Model):
         for performer in performers:
             acts += performer.acts.exclude(b_conference__status="completed")
         return acts
-
-    # DEPRECATE, yes it's new.  Deprecate anyway, this hack gets through
-    # GBE2018 safely.  Used by get_schedule IDD call.  Treat as private
-    # and log any additional use here.
-    def get_bookable_items(self):
-        return {
-            "performers": self.get_performers(),
-        }
 
     def volunteer_schedule(self, conference=None):
         conference = conference or Conference.current_conf()
@@ -300,10 +287,6 @@ class Profile(Model):
                 return True
 
         return False
-
-    @property
-    def describe(self):
-        return self.display_name
 
     def __str__(self):
         return self.display_name

@@ -321,6 +321,7 @@ class TestMailToRoles(TestFilters):
         troupe = BioFactory(multiple_performers=True)
         showcontext = ShowContext(performer=troupe)
         member = ProfileFactory()
+        showcontext.people.users.clear()
         showcontext.people.users.add(member.user_object)
         anothershowcontext = ShowContext(
             conference=showcontext.conference,
@@ -342,6 +343,7 @@ class TestMailToRoles(TestFilters):
         self.assertNotContains(
             response,
             anothershowcontext.performer.contact.user_object.email)
+        # contact should be included, even when not a member
         self.assertContains(
             response,
             showcontext.performer.contact.user_object.email)
