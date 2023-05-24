@@ -62,7 +62,6 @@ def env_stuff(request, conference_choice=None):
               'First',
               'Last',
               'Tickets',
-              'Ticket format',
               'Personae',
               'Staff Lead',
               'Volunteering',
@@ -83,7 +82,6 @@ def env_stuff(request, conference_choice=None):
                     'last': user.last_name.encode(
                         'utf-8').strip(),
                     'ticket_names': "",
-                    'ticket_list': "",
                     'staff_lead_list': "",
                     'volunteer_list': "",
                     'class_list': "",
@@ -120,16 +118,12 @@ def env_stuff(request, conference_choice=None):
                 'last': ticket.purchaser.matched_to_user.last_name.encode(
                     'utf-8').strip(),
                 'ticket_names': "",
-                'ticket_list': "",
                 'staff_lead_list': "",
                 'volunteer_list': "",
                 'class_list': "",
                 'personae_list': "",
                 'show_list': "",
             }
-
-        people_rows[name]['ticket_list'] += str(
-            ticket.ticket_item.ticketing_event.ticket_style) + ", "
         people_rows[name]['ticket_names'] += ticket.ticket_item.title + ", "
 
 
@@ -143,7 +137,6 @@ def env_stuff(request, conference_choice=None):
             details['first'],
             details['last'],
             details['ticket_names'],
-            details['ticket_list'],
             details['personae_list'],
             details['staff_lead_list'],
             details['volunteer_list'],

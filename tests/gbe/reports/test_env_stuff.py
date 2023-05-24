@@ -51,7 +51,7 @@ class TestReports(TestCase):
                          "attachment; filename=env_stuff.csv")
         self.assertContains(
             response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
+            "Badge Name,First,Last,Tickets,Personae," +
             "Staff Lead,Volunteering,Presenter,Show")
         self.assertContains(
             response,
@@ -80,7 +80,7 @@ class TestReports(TestCase):
                          "attachment; filename=env_stuff.csv")
         self.assertContains(
             response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
+            "Badge Name,First,Last,Tickets,Personae," +
             "Staff Lead,Volunteering,Presenter,Show")
         self.assertNotContains(
             response,
@@ -101,7 +101,7 @@ class TestReports(TestCase):
                          "attachment; filename=env_stuff.csv")
         self.assertContains(
             response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
+            "Badge Name,First,Last,Tickets,Personae," +
             "Staff Lead,Volunteering,Presenter,Show")
         self.assertContains(
             response,
@@ -124,7 +124,7 @@ class TestReports(TestCase):
                          "attachment; filename=env_stuff.csv")
         self.assertContains(
             response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
+            "Badge Name,First,Last,Tickets,Personae," +
             "Staff Lead,Volunteering,Presenter,Show")
         self.assertContains(
             response,
@@ -147,7 +147,7 @@ class TestReports(TestCase):
                          "attachment; filename=env_stuff.csv")
         self.assertContains(
             response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
+            "Badge Name,First,Last,Tickets,Personae," +
             "Staff Lead,Volunteering,Presenter,Show")
         self.assertContains(
             response,
@@ -171,7 +171,7 @@ class TestReports(TestCase):
                          "attachment; filename=env_stuff.csv")
         self.assertContains(
             response,
-            "Badge Name,First,Last,Tickets,Ticket format,Personae," +
+            "Badge Name,First,Last,Tickets,Personae," +
             "Staff Lead,Volunteering,Presenter,Show")
         self.assertContains(
             response,
