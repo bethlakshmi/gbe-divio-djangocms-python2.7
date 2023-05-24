@@ -70,6 +70,8 @@ def env_stuff(request, conference_choice=None):
               'Show']
 
     people_rows = {}
+    # TODO - right now, there is no great IDD that does people class/id AND
+    # events.  If that is ever figured out, fix it here
     for commit in PeopleAllocation.objects.filter(
             event__eventlabel__text=conference.conference_slug):
         for user in commit.people.users.filter(is_active=True):
