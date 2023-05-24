@@ -6,19 +6,15 @@ from django.db.models import Q
 from django.core.management import call_command
 from django.views.decorators.cache import never_cache
 from gbe.models import (
-    Act,
     Bio,
     Class,
     Conference,
-    Profile,
     Room,
 )
-import gbe.models as conf
-import scheduler.models as sched
-import ticketing.models as tix
+from scheduler.models import PeopleAllocation
+from ticketing.models import Transaction
 import os as os
 import csv
-from reportlab.pdfgen import canvas
 from gbetext import (
     class_styles,
     class_roles,
@@ -62,15 +58,6 @@ def env_stuff(request, conference_choice=None):
     else:
         conference = get_current_conference()
 
-    profiles = Profile.objects.filter(user_object__is_active=True)
-    acts = Act.objects.filter(
-        accepted=3,
-        b_conference=conference)
-    tickets = tix.Transaction.objects.filter(
-        ticket_item__ticketing_event__conference=conference)
-    commits = sched.PeopleAllocation.objects.filter(
-        Q(event__eventlabel__text=conference.conference_slug))
-
     header = ['Badge Name',
               'First',
               'Last',
@@ -82,69 +69,84 @@ def env_stuff(request, conference_choice=None):
               'Presenter',
               'Show']
 
-    person_details = []
-    for person in profiles:
-        ticket_list = ""
-        staff_lead_list = ""
-        volunteer_list = ""
-        class_list = ""
-        personae_list = ""
-        show_list = ""
-        ticket_names = ""
+    people_rows = {}
+    for commit in PeopleAllocation.objects.filter(
+            event__eventlabel__text=conference.conference_slug):
+        for user in commit.people.users.filter(is_active=True):
+            name = user.profile.get_badge_name().encode('utf-8').strip()
+            if name not in people_rows.keys():
+                people_rows[name] = {
+                    'first': user.first_name.encode(
+                        'utf-8').strip(),
+                    'last': user.last_name.encode(
+                        'utf-8').strip(),
+                    'ticket_names': "",
+                    'ticket_list': "",
+                    'staff_lead_list': "",
+                    'volunteer_list': "",
+                    'class_list': "",
+                    'personae_list': "",
+                    'show_list': "",
+                }
+            if commit.role == "Staff Lead":
+                people_rows[name]['staff_lead_list'] += str(commit.event)+', '
+            elif commit.role == "Volunteer":
+                people_rows[name]['volunteer_list'] += str(commit.event)+', '
+            elif commit.role in ["Teacher", "Moderator", "Panelist"]:
+                people_rows[name]['class_list'] += (
+                    commit.role + ': ' + str(commit.event) + ', ')
+            elif commit.role == "Performer" and (
+                    "General" in commit.event.labels):
+                people_rows[name]['show_list'] += str(commit.event)+', '
+            
+            if commit.people.class_name == "Bio":
+                bio = Bio.objects.get(pk=commit.people.class_id)
+                if str(bio) not in people_rows[name]['personae_list']:
+                    people_rows[name]['personae_list'] += str(bio) + ', '
 
-        for ticket in tickets.filter(
-                purchaser__matched_to_user=person.user_object):
-            ticket_list += str(
-                ticket.ticket_item.ticketing_event.ticket_style)+", "
-            ticket_names += ticket.ticket_item.title+", "
 
-        for commit in commits.filter(role="Staff Lead",
-                                     people__users__pk=person.user_object.pk):
-                staff_lead_list += str(commit.event)+', '
+    for ticket in Transaction.objects.filter(
+            ticket_item__ticketing_event__conference=conference,
+            purchaser__matched_to_user__is_active=True).exclude(
+            purchaser__matched_to_user__username="limbo"):
+        name = ticket.purchaser.matched_to_user.profile.get_badge_name(
+            ).encode('utf-8').strip()
+        if name not in people_rows.keys():
+            people_rows[name] = {
+                'first': ticket.purchaser.matched_to_user.first_name.encode(
+                    'utf-8').strip(),
+                'last': ticket.purchaser.matched_to_user.last_name.encode(
+                    'utf-8').strip(),
+                'ticket_names': "",
+                'ticket_list': "",
+                'staff_lead_list': "",
+                'volunteer_list': "",
+                'class_list': "",
+                'personae_list': "",
+                'show_list': "",
+            }
 
-        for commit in commits.filter(
-                role="Volunteer",
-                people__users__pk=person.user_object.pk):
-            volunteer_list += str(commit.event)+', '
+        people_rows[name]['ticket_list'] += str(
+            ticket.ticket_item.ticketing_event.ticket_style) + ", "
+        people_rows[name]['ticket_names'] += ticket.ticket_item.title + ", "
 
-        for commit in commits.filter(people__users__pk=person.user_object.pk,
-                                     role__in=["Teacher",
-                                               "Moderator",
-                                               "Panelist"]):
-            class_list += (commit.role + ': ' + str(commit.event) + ', ')
-            if commit.people.class_name != "Bio":
-                raise Exception("TODO - teacher should have bio")
-            bio = Bio.objects.get(pk=commit.people.class_id)
-            if str(bio) not in personae_list:
-                personae_list += str(bio) + ', '
-
-        for commit in commits.filter(people__users__pk=person.user_object.pk,
-                                     role="Performer",
-                                     event__eventlabel__text="General"):
-            show_list += str(commit.event)+', '
-            if commit.people.class_name != "Bio":
-                raise Exception("TODO - teacher should have bio")
-            bio = Bio.objects.get(pk=commit.people.class_id)
-            if str(bio) not in personae_list:
-                personae_list += str(bio) + ', '
-
-        person_details.append(
-            [person.get_badge_name().encode('utf-8').strip(),
-             person.user_object.first_name.encode('utf-8').strip(),
-             person.user_object.last_name.encode('utf-8').strip(),
-             ticket_names, ticket_list,
-             personae_list,
-             staff_lead_list,
-             volunteer_list,
-             class_list,
-             show_list])
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=env_stuff.csv'
     writer = csv.writer(response)
     writer.writerow(header)
-    for row in person_details:
-        writer.writerow(row)
+    for name, details in people_rows.items():
+        writer.writerow([
+            name,
+            details['first'],
+            details['last'],
+            details['ticket_names'],
+            details['ticket_list'],
+            details['personae_list'],
+            details['staff_lead_list'],
+            details['volunteer_list'],
+            details['class_list'],
+            details['show_list']])
     return response
 
 
