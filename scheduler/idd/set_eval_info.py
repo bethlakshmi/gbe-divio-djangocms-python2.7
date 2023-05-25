@@ -39,9 +39,9 @@ def set_eval_info(answers, occurrence_id, person):
                 occurrence=response.occurrence)],
             occurrences=[response.occurrence])
     if len(person.users) > 1:
-        return EvalInfoResponse(errors=Error(
+        return EvalInfoResponse(errors=[Error(
             code="MORE_THAN_ONE_USER",
-            description="Setting eval info must be done 1 user at a time."))
+            details="Setting eval info must be done 1 user at a time.")])
     for submitted_answer in answers:
         new_answer, created = answer_type_to_class[
             submitted_answer.question.answer_type].objects.get_or_create(

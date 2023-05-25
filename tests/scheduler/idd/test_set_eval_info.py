@@ -5,6 +5,8 @@ from datetime import (
     datetime,
     timedelta,
 )
+from scheduler.data_transfer import Person
+from tests.factories.gbe_factories import UserFactory
 
 
 class TestSetEvalInfo(TestCase):
@@ -26,3 +28,11 @@ class TestSetEvalInfo(TestCase):
             occurrence_id=self.context.sched_event.pk,
             person=None)
         self.assertEqual(response.warnings[0].code, "EVENT_IN_FUTURE")
+
+    def test_multiple_user_check(self):
+        now_context = ClassContext()
+        response = set_eval_info(
+            answers=[],
+            occurrence_id=now_context.sched_event.pk,
+            person=Person(users=[UserFactory(), UserFactory()]))
+        self.assertEqual(response.errors[0].code, "MORE_THAN_ONE_USER")
