@@ -157,7 +157,6 @@ class Event(Schedulable):
                     self.extra_volunteers()))]
 
         return BookingResponse(warnings=warnings,
-                               errors=errors,
                                booking_id=allocation.pk,
                                occurrence=self)
 
