@@ -109,7 +109,8 @@ def env_stuff(request, conference_choice=None):
 
     for ticket in Transaction.objects.filter(
             ticket_item__ticketing_event__conference=conference,
-            purchaser__matched_to_user__is_active=True).exclude(
+            purchaser__matched_to_user__is_active=True,
+            ticket_item__ticketing_event__act_submission_event=False).exclude(
             purchaser__matched_to_user__username="limbo"):
         name = ticket.purchaser.matched_to_user.profile.get_badge_name(
             ).encode('utf-8').strip()
