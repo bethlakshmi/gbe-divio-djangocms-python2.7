@@ -46,7 +46,7 @@ class ClassAdmin(BidAdmin):
                     'accepted',
                     'created_at',
                     'updated_at')
-    search_fields = ['b_title', 'teacher__name']
+    search_fields = ['b_title', 'teacher_bio__name']
 
 
 class ActAdmin(BidAdmin):

@@ -36,8 +36,9 @@ def BiosTeachersView(request):
                           roles=["Teacher", "Moderator", "Panelist"])
 
     for performer in response.people:
+        connected_ids += [performer.occurrence.connected_id]
         if performer.public_class != "Bio":
-            raise Exception("TODO - better error")
+            continue
         if performer.public_id not in bios.keys():
             bios[performer.public_id] = {
                 'bio': performers.get(pk=performer.public_id),
@@ -47,7 +48,6 @@ def BiosTeachersView(request):
             'role': performer.role,
             'event': performer.occurrence,
             'detail_id': performer.occurrence.pk}]
-        connected_ids += [performer.occurrence.connected_id]
 
     for a_class in bid_classes.exclude(pk__in=connected_ids):
         if a_class.teacher_bio.pk not in bios.keys():
