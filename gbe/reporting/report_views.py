@@ -19,6 +19,7 @@ from gbetext import (
     class_styles,
     class_roles,
     privileged_event_roles,
+    not_scheduled_roles,
 )
 from gbe.functions import (
     conference_slugs,
@@ -72,7 +73,8 @@ def env_stuff(request, conference_choice=None):
     # TODO - right now, there is no great IDD that does people class/id AND
     # events.  If that is ever figured out, fix it here
     for commit in PeopleAllocation.objects.filter(
-            event__eventlabel__text=conference.conference_slug):
+            event__eventlabel__text=conference.conference_slug).exclude(
+            role__in=not_scheduled_roles+["Interested"]):
         for user in commit.people.users.filter(is_active=True):
             name = user.profile.get_badge_name().encode('utf-8').strip()
             if name not in people_rows.keys():
