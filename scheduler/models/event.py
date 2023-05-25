@@ -103,7 +103,10 @@ class Event(Schedulable):
 
         worker = None
         if not (person.public_id and person.public_class):
-            raise Exception("This shouldn't happen")
+            return BookingResponse(errors=[Error(
+                code="LINKED_CLASS_AND_ID_REQUIRED",
+                details="Allocating a person to an even requires the person" +
+                " to have a publicly linked class and id.")])
 
         people, created = People.objects.get_or_create(
             class_id=person.public_id,
@@ -154,6 +157,7 @@ class Event(Schedulable):
                     self.extra_volunteers()))]
 
         return BookingResponse(warnings=warnings,
+                               errors=errors,
                                booking_id=allocation.pk,
                                occurrence=self)
 
