@@ -35,6 +35,7 @@ from settings import (
     GBE_TABLE_FORMAT,
 )
 from gbetext import (
+    volunteer_data_error,
     set_volunteer_role_msg,
     volunteer_allocate_email_fail_msg,
 )
@@ -183,6 +184,32 @@ class TestApproveVolunteer(TestCase):
         self.assert_volunteer_state(response, self.context.allocation)
         self.assertContains(response,
                             '<tr class="gbe-table-row gbe-table-danger">')
+
+    def test_get_troupe_not_user(self):
+        second_context = VolunteerContext(conference=self.context.conference)
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
+        member = ProfileFactory()
+        people.users.add(member.user_object)
+        second_context.allocation.role = "Pending Volunteer"
+        second_context.allocation.people = people
+        second_context.allocation.save()
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
+
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-danger">')
+        self.assertContains(
+            response,
+            ("%s PEOPLE: booking id: %d, class_id: %d, " +
+             "class_name: %s user: %s") % (
+             volunteer_data_error,
+             second_context.allocation.pk,
+             troupe.pk,
+             troupe.__class__.__name__,
+             troupe.contact.display_name))
 
     def test_event_full(self):
         self.context.allocation.role = "Pending Volunteer"

@@ -735,6 +735,9 @@ your homepage - if our records are incorrect, please let us know.'''
 volunteer_allocate_email_fail_msg = '''The system was not able to send email \
 to the volunteer.  Check the email template, try again, or mail the volunteer \
 manually.  If the issue persists, please contact the web admin.'''
+volunteer_data_error = '''There is a volunteer that has multiple people in a \
+group, or a Bio and not a Profile.  This is likely a failure in the \
+software, contact support.'''
 bidder_email_fail_msg = '''The system was unable to send an email notifying \
 the bidder of the updates you have made.  Check the email template, try \
 again, or mail the bidder manually.  If the issue persists, please contact \

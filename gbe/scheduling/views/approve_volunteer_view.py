@@ -33,6 +33,7 @@ from scheduler.idd import (
 from gbe.scheduling.views.functions import show_general_status
 from gbetext import (
     volunteer_action_map,
+    volunteer_data_error,
     set_volunteer_role_summary,
     set_volunteer_role_msg,
     volunteer_allocate_email_fail_msg,
@@ -80,8 +81,6 @@ class ApproveVolunteerView(View):
         action = ""
 
         for pending_person in pending.people:
-            if len(pending_person.users) > 1:
-                raise Exception("TODO:  what if it's not an individual?")
             action_links = {
                 'email': reverse('mail_to_individual',
                                  urlconf='gbe.email.urls',
@@ -119,6 +118,26 @@ class ApproveVolunteerView(View):
                 row['status'] = "gbe-table-warning"
             elif pending_person.role == "Pending Volunteer":
                 row['status'] = "gbe-table-info"
+
+            if len(pending_person.users) > 1 or (
+                    pending_person.__class__.__name__ == 'Bio'):
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="DATA_PROBLEM",
+                    defaults={
+                        'summary': "Wrong type of volunteer",
+                        'description': volunteer_data_error}
+                    )[0].description
+                messages.error(
+                    request,
+                    ("%s PEOPLE: booking id: %d, class_id: %d, " +
+                     "class_name: %s user: %s") % (
+                        user_message,
+                        pending_person.booking_id,
+                        pending_person.public_id,
+                        pending_person.public_class,
+                        pending_person.users[0].profile.display_name))
+                row['status'] = "gbe-table-danger"
             rows.append(row)
         return rows
 
