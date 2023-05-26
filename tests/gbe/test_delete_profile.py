@@ -16,14 +16,18 @@ from tests.functions.gbe_functions import (
 from tests.functions.scheduler_functions import (
     get_or_create_bio,
     get_or_create_profile,
-    )
+)
 from gbe.models import (
     Bio,
     Profile,
 )
 from scheduler.models import People
-from tests.contexts.class_context import ClassContext
+from tests.contexts import (
+    ClassContext,
+    ShowContext,
+)
 from tests.factories.ticketing_factories import PurchaserFactory
+from tests.factories.scheduler_factories import PeopleFactory
 
 
 class TestDeleteProfile(TestCase):
@@ -94,6 +98,23 @@ class TestDeleteProfile(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)
         self.assert_deactivated(response, performer_prof)
+
+    def test_deactivate_if_booked_troupe_contact(self):
+        troupe = BioFactory(multiple_performers=True)
+        people = PeopleFactory(class_name=troupe.__class__.__name__,
+                               class_id=troupe.pk)
+        people.save()
+        user1 = ProfileFactory()
+        user2 = ProfileFactory()
+        people.users.add(user1.user_object)
+        people.users.add(user2.user_object)
+        context = ShowContext(performer=troupe)
+        url = reverse(self.view_name,
+                      args=[troupe.contact.pk],
+                      urlconf='gbe.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.get(url, follow=True)
+        self.assert_deactivated(response, troupe.contact)
 
     def test_delete_if_persona(self):
         persona_bearer = BioFactory()

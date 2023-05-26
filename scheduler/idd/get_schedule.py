@@ -14,9 +14,22 @@ def get_schedule(user=None,
                  start_time=None,
                  end_time=None,
                  roles=[],
-                 commitment=None):
+                 commitment=None,
+                 public_class=None,
+                 public_id=None):
     basic_filter = PeopleAllocation.objects.all()
     sched_items = []
+ 
+    if (public_class is None and public_id is not None) or (
+            public_id is None and public_class is not None):
+        return ScheduleResponse(errors=Error(
+            code="LINKED_CLASS_AND_ID_REQUIRED",
+            details="Getting a schedule by class & id requires both items."))
+
+    if public_class is not None and public_id is not None and user is not None:
+        return ScheduleResponse(errors=Error(
+            code="USER_AND_LINKED_CLASS_INCOMPATIBLE",
+            details="User and Linked Class searching is incompatible."))
 
     if len(labels) > 0:
         basic_filter = basic_filter.filter(
@@ -36,6 +49,9 @@ def get_schedule(user=None,
 
     if user:
         basic_filter = basic_filter.filter(people__users__in=[user])
+    elif public_class and public_id:
+        basic_filter = basic_filter.filter(people__class_name=public_class,
+                                           people__class_id=public_id)
 
     for item in basic_filter:
         if (start_time and item.event.end_time >= start_time) or (

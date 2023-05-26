@@ -29,6 +29,7 @@ from gbe.scheduling.views.functions import show_general_status
 @log_func
 @never_cache
 def DeleteProfileView(request, profile_id):
+    troupe_is_booked = False
     admin_profile = validate_perms(request, ('Registrar',))
     user_profile = get_object_or_404(Profile, pk=profile_id)
     return_page = HttpResponseRedirect(
@@ -39,13 +40,23 @@ def DeleteProfileView(request, profile_id):
                         response,
                         DeleteProfileView.__class__.__name__)
 
+    for troupe in user_profile.bio_set.filter(multiple_performers=True):
+        troupe_response = get_schedule(public_class=troupe.__class__.__name__,
+                                       public_id=troupe.pk)
+        if len(troupe_response.schedule_items) >= 1:
+            troupe_is_booked = True
+
+    show_general_status(request,
+                        response,
+                        DeleteProfileView.__class__.__name__)
+
     vendor_bids = Vendor.objects.filter(business__owners=user_profile)
     acts = Act.objects.filter(bio__contact=user_profile)
     classes = Class.objects.filter(teacher_bio__contact=user_profile)
-    if (len(response.schedule_items) >= 1) or (acts.count() >= 1) or (
+    if troupe_is_booked or (len(response.schedule_items) >= 1) or (
             classes.count() >= 1) or (vendor_bids.count() >= 1) or (
             user_profile.volunteering.count() >= 1) or (
-            user_profile.costumes.count() >= 1) or (
+            user_profile.costumes.count() >= 1) or (acts.count() >= 1) or (
             user_profile.bidevaluation_set.count() >= 1) or (
             user_profile.actbidevaluation_set.count() >= 1) or (
             user_profile.user_object.purchaser_set.count() >= 1):
