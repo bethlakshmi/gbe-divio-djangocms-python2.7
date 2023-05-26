@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
     ClassFactory,
     ProfileFactory,
 )
+from tests.contexts import ClassContext
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
@@ -43,6 +44,21 @@ class TestDeletePerformer(TestCase):
 
     def test_delete_performer_with_bid(self):
         ClassFactory(teacher_bio=self.persona)
+        login_as(self.persona.contact, self)
+        response = self.client.post(self.url,
+                                    data={'submit': 'Confirm'},
+                                    follow=True)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
+        assert_alert_exists(
+            response,
+            'danger',
+            'Error',
+            delete_in_use)
+
+    def test_delete_booked_performer(self):
+        context = ClassContext(teacher=self.persona)
+        context.bid.teacher_bio = BioFactory()
+        context.bid.save()
         login_as(self.persona.contact, self)
         response = self.client.post(self.url,
                                     data={'submit': 'Confirm'},
