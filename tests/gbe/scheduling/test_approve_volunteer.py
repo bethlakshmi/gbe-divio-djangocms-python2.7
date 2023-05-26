@@ -537,9 +537,26 @@ class TestApproveVolunteer(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(403, response.status_code)
 
-    def test_email_fail(self):
+    def test_staff_email_fail(self):
         template = EmailTemplateFactory(
             name='volunteer changed schedule',
+            content="{% include 'gbe/email/bad.tmpl' %}"
+            )
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
+        login_as(self.privileged_user, self)
+        approve_url = reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["approve",
+                  self.context.profile.pk,
+                  self.context.allocation.pk])
+        response = self.client.get(approve_url)
+        self.assertContains(response, volunteer_allocate_email_fail_msg)
+
+    def test_volunteer_email_fail(self):
+        template = EmailTemplateFactory(
+            name='volunteer schedule update',
             content="{% include 'gbe/email/bad.tmpl' %}"
             )
         self.context.allocation.role = "Pending Volunteer"
