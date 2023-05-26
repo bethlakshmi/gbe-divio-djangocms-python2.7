@@ -100,12 +100,11 @@ def env_stuff(request, conference_choice=None):
             elif commit.role == "Performer" and (
                     "General" in commit.event.labels):
                 people_rows[name]['show_list'] += str(commit.event)+', '
-            
+
             if commit.people.class_name == "Bio":
                 bio = Bio.objects.get(pk=commit.people.class_id)
                 if str(bio) not in people_rows[name]['personae_list']:
                     people_rows[name]['personae_list'] += str(bio) + ', '
-
 
     for ticket in Transaction.objects.filter(
             ticket_item__ticketing_event__conference=conference,
@@ -128,7 +127,6 @@ def env_stuff(request, conference_choice=None):
                 'show_list': "",
             }
         people_rows[name]['ticket_names'] += ticket.ticket_item.title + ", "
-
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=env_stuff.csv'

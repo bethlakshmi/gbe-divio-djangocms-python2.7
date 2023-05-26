@@ -29,7 +29,6 @@ class TestBiosTeachers(TestCase):
                                            accepting_bids=True)
         cls.url = reverse(cls.view_name, urlconf="gbe.urls")
 
-
     def test_bios_teachers_no_conf_slug(self):
         current_context = ClassContext(conference=self.conference)
         other_conference = ConferenceFactory(status="completed")
@@ -83,4 +82,3 @@ class TestBiosTeachers(TestCase):
         self.assertNotContains(response, first_context.bid.b_title)
         self.assertNotContains(response,
                                first_context.teacher.contact.display_name)
-
