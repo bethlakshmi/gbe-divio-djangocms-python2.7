@@ -80,7 +80,7 @@ class OrderAdmin(admin.ModelAdmin):
                     'role',
                     'class_id',
                     'people')
-
+    list_filter = ['people_allocated__event', ]
     def performer(self, obj):
         return "class: %s, id: %d" % (obj.people_allocated.people.class_name,
                                       obj.people_allocated.people.class_id)
