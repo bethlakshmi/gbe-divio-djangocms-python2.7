@@ -8,7 +8,6 @@ from django.db.models import (
     SlugField,
 )
 from gbe.models import (
-    Profile,
     Conference,
     Profile,
     Room,

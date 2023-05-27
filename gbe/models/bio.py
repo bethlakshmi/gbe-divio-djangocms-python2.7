@@ -6,7 +6,6 @@ from django.db.models import (
     Model,
     PositiveIntegerField,
     TextField,
-    URLField,
 )
 from gbe.models import Profile
 from filer.fields.image import FilerImageField

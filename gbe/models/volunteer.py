@@ -3,7 +3,6 @@ from django.db.models import (
     ForeignKey,
 )
 from gbe.models import (
-    Profile,
     Biddable,
     Profile,
 )

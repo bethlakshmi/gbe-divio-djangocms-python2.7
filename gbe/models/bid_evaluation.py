@@ -6,7 +6,6 @@ from django.db.models import (
     TextField,
 )
 from gbe.models import (
-    Profile,
     Biddable,
     Profile,
 )

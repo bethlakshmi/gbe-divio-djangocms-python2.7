@@ -10,7 +10,6 @@ from django.core.validators import (
     MinValueValidator,
 )
 from gbe.models import (
-    Profile,
     Biddable,
     EvaluationCategory,
     Profile,
