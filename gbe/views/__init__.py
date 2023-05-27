@@ -68,7 +68,6 @@ from .costume_changestate_view import CostumeChangeStateView
 from .vendor_changestate_view import VendorChangeStateView
 
 # special
-from .submit_act_view import SubmitActView
 from .act_tech_wizard_view import ActTechWizardView
 from .handle_user_contact_email_view import HandleUserContactEmailView
 from .review_troupes_view import ReviewTroupesView

@@ -155,21 +155,6 @@ class Profile(Model):
         else:
             return self.costumes.exclude(b_conference__status="completed")
 
-    def get_performers(self):
-        # TODO - should this have an IDD?
-        from gbe.models import Bio  # late import, circularity
-        bookable_bios = self.user_object.people_set.filter(
-            class_name="Bio").values_list('class_id', flat=True)
-        bios = Bio.objects.filter(Q(contact=self) | Q(pk__in=bookable_bios))
-        return bios
-
-    def get_acts(self):
-        acts = []
-        performers = self.get_performers()
-        for performer in performers:
-            acts += performer.acts.exclude(b_conference__status="completed")
-        return acts
-
     def volunteer_schedule(self, conference=None):
         conference = conference or Conference.current_conf()
         occurrences = []

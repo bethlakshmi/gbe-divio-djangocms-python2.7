@@ -107,10 +107,8 @@ class EvalEventView(View):
             response = get_bookings(
                 occurrence_ids=[eval_info.occurrences[0].pk],
                 roles=['Teacher', 'Moderator', 'Panelist'])
-            user_performers = self.person.users[0].profile.get_performers()
-            pk_list = []
-            for user_perf in user_performers:
-                pk_list += [user_perf.pk]
+            pk_list = self.person.users[0].profile.bio_set.all(
+                ).values_list('pk', flat=True)
 
             self.presenters = []
             for person in response.people:

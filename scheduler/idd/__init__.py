@@ -17,5 +17,6 @@ from .delete_bookable_people import delete_bookable_people
 from .delete_occurrence import delete_occurrence
 from .delete_occurrences import delete_occurrences
 from .get_bookable_people import get_bookable_people
+from .get_bookable_people_by_user import get_bookable_people_by_user
 from .create_bookable_people import create_bookable_people
 from .update_bookable_people import update_bookable_people
