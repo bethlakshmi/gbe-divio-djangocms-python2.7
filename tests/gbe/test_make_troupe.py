@@ -123,7 +123,6 @@ class TestTroupeCreate(TestGBE):
             data=data,
             follow=True
         )
-        print(response.content)
         assert_alert_exists(
             response, 'success', 'Success', msg.description)
         self.assertEquals(

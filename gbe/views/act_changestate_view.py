@@ -62,7 +62,6 @@ class ActChangeStateView(BidChangeStateView):
                                       item.booking_id)
             show_general_status(request, response, self.__class__.__name__)
         if show:
-            print("removing show - " + show.event.title)
             response = remove_booking(show.event.pk,
                                       show.booking_id)
             show_general_status(request, response, self.__class__.__name__)

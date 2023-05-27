@@ -178,7 +178,6 @@ def room_schedule(request, room_id=None):
         day_events = []
         current_day = None
         for booking in room.get_bookings:
-            print(booking)
             if not current_day:
                 current_day = booking.start_time.date()
             if current_day != booking.start_time.date():
@@ -193,7 +192,6 @@ def room_schedule(request, room_id=None):
                                   roles=class_roles+privileged_event_roles)
             people_set = []
             for people in response.people:
-                print
                 people_set += [{
                     "role": people.role,
                     "person": eval(people.public_class).objects.get(

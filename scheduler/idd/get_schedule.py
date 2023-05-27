@@ -22,14 +22,14 @@ def get_schedule(user=None,
  
     if (public_class is None and public_id is not None) or (
             public_id is None and public_class is not None):
-        return ScheduleResponse(errors=Error(
+        return ScheduleResponse(errors=[Error(
             code="LINKED_CLASS_AND_ID_REQUIRED",
-            details="Getting a schedule by class & id requires both items."))
+            details="Getting a schedule by class & id requires both items.")])
 
     if public_class is not None and public_id is not None and user is not None:
-        return ScheduleResponse(errors=Error(
+        return ScheduleResponse(errors=[Error(
             code="USER_AND_LINKED_CLASS_INCOMPATIBLE",
-            details="User and Linked Class searching is incompatible."))
+            details="User and Linked Class searching is incompatible.")])
 
     if len(labels) > 0:
         basic_filter = basic_filter.filter(
