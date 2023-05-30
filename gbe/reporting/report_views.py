@@ -9,6 +9,7 @@ from gbe.models import (
     Bio,
     Class,
     Conference,
+    Profile,
     Room,
 )
 from scheduler.models import PeopleAllocation
