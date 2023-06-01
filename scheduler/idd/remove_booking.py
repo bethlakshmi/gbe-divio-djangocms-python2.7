@@ -16,7 +16,6 @@ def remove_booking(occurrence_id,
             details="Could not find booking id %d for occurrence id %d." % (
                 booking_id, occurrence_id))]
         return response
-    deleteable_resources = []
     bookings = PeopleAllocation.objects.filter(pk=booking_id)
     bookings.delete()
     response.booking_id = booking_id
