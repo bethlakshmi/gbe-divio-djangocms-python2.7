@@ -57,7 +57,7 @@ class SchedulerChangeListTests(TestCase):
                             "Error in resource allocation, no resource")
         self.assertContains(response, "Resource (no child)")
 
-    def test_get_allocation_resource_type(self):
+    def test_get_allocation_w_profile(self):
         context = VolunteerContext()
         response = self.client.get(
             '/admin/scheduler/peopleallocation/?event__eventlabel__text=%s' % (
