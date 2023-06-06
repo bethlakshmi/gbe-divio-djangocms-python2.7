@@ -55,7 +55,8 @@ def migrate_people(apps, schema_editor):
             people = None
             label_text = ""
             if Label.objects.filter(allocation=alloc).exists():
-                label_text = Label.objects.get(allocation=alloc).text
+                label_text = Label.objects.get(
+                    allocation=alloc).text.capitalize()
             if Profile.objects.filter(pk=worker._item.pk).exists():
                 entity = Profile.objects.get(pk=worker._item.pk)
                 people, created = create_people(entity,
