@@ -94,7 +94,7 @@ def migrate_people(apps, schema_editor):
             p_alloc = PeopleAllocation(event=alloc.event,
                                        people=people,
                                        label=label_text,
-                                       role=worker.role.capitalize())
+                                       role=worker.role.title())
             p_alloc.save()
             if Ordering.objects.filter(allocation=alloc).exists():
                 ordering = Ordering.objects.get(allocation=alloc)
