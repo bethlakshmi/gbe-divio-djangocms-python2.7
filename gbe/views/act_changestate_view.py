@@ -48,12 +48,14 @@ class ActChangeStateView(BidChangeStateView):
     def parse_act_schedule(self, schedule_items):
         show = None
         rehearsals = []
+        rehearsal_pks = []
         for item in schedule_items:
             if item.event.event_style == "Show":
                 show = item
-            elif item.event not in rehearsals and (
+            elif item.booking_id not in rehearsal_pks and (
                     item.event.event_style == 'Rehearsal Slot'):
                 rehearsals += [item]
+                rehearsal_pks += [item.booking_id]
         return show, rehearsals
 
     def clear_bookings(self, request, rehearsals, show=None):
