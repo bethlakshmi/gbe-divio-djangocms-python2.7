@@ -176,7 +176,7 @@ class LandingPageView(ProfileRequiredMixin, View):
         context = {
             'profile': viewer_profile,
             'historical': self.historical,
-            'alerts': viewer_profile.alerts(shows, classes),
+            'alerts': viewer_profile.alerts(classes),
             'bios': Bio.objects.filter(pk__in=bio_ids).order_by('name'),
             'manage_shows': manage_shows,
             'businesses': viewer_profile.business_set.all(),

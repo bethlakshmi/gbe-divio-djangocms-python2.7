@@ -131,17 +131,17 @@ class Profile(Model):
                 email_privs += [bid_type.lower()]
         return email_privs
 
-    def alerts(self, shows, classes):
+    def alerts(self, classes):
+        from gbe.models import Act
         p_alerts = []
-
         if (len(self.display_name.strip()) == 0 or
                 len(self.purchase_email.strip()) == 0):
             p_alerts.append(profile_alerts['empty_profile'] %
                             reverse('profile_update',
                                     urlconf='gbe.urls'))
-        for show, act in shows:
-            if act.accepted == 3 and act.profile == self and not (
-                    act.is_complete):
+        for act in Act.objects.filter(bio__contact=self, accepted=3).exclude(
+                b_conference__status="completed"):
+            if not act.is_complete:
                 p_alerts.append(
                     profile_alerts['schedule_rehearsal'] %
                     (act.b_title, reverse('act_tech_wizard',
