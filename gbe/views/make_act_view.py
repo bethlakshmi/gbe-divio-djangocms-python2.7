@@ -115,7 +115,7 @@ class MakeActView(MakeBidView):
     def get_invalid_response(self, request):
         if [act_not_unique] in list(self.form.errors.values()):
             conflict_msg = UserMessage.objects.get_or_create(
-                view=view,
+                view=self.__class__.__name__,
                 code="ACT_TITLE_CONFLICT",
                 defaults={
                     'summary': "Act Title, User, Conference Conflict",
