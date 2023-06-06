@@ -12,7 +12,7 @@ from gbetext import (
     states_options,
 )
 from scheduler.idd import get_occurrences
-from gbe.views.act_display_functions import get_act_casting
+from gbe.models import ActCastingOption
 
 
 def get_participant_form(profile, prefix='Contact Info'):
@@ -40,6 +40,16 @@ def get_participant_form(profile, prefix='Contact Info'):
         required=False,
         label=participant_labels['how_heard'])
     return participantform
+
+
+def get_act_casting():
+    castings = ActCastingOption.objects.all()
+    cast_list = []
+    for casting in castings:
+        value = casting.casting
+        cast_list += [(value, casting.casting)]
+
+    return cast_list
 
 
 # used in review flex bid view and the show dashboard, takes a
