@@ -10,7 +10,6 @@ class ReviewVendorListView(ReviewBidListView):
     bid_review_list_view_name = 'vendor_review_list'
 
     def get_context_dict(self):
-        raise Exception("here")
         context = super(ReviewVendorListView, self).get_context_dict()
         context['order'] = 1
         return context
