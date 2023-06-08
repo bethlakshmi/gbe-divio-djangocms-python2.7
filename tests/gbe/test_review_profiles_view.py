@@ -65,6 +65,12 @@ class TestReviewProfiles(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, troupe.name)
 
+    def test_with_perfromer(self):
+        performer = BioFactory(contact=self.profile)
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, performer.name)
+
     def test_special_registrar(self):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
