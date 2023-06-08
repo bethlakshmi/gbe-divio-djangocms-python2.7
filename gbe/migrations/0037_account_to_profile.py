@@ -56,14 +56,10 @@ class Migration(migrations.Migration):
             old_name='account',
             new_name='profile',
         ),
-        migrations.RemoveField(
+        migrations.RenameField(
             model_name='business',
-            name='owner_accts',
-        ),
-        migrations.AddField(
-            model_name='business',
-            name='owners',
-            field=models.ManyToManyField(to='gbe.Profile'),
+            old_name='owner_accts',
+            new_name='owners',
         ),
         migrations.AlterUniqueTogether(
             name='flexibleevaluation',
