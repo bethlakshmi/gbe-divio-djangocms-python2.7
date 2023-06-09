@@ -1,6 +1,7 @@
 from django.db.models import (
     CASCADE,
     CharField,
+    SET_NULL,
     IntegerField,
     Model,
     OneToOneField,
@@ -18,7 +19,7 @@ class Ordering(Model):
     indices are allowed.
     '''
     order = IntegerField(default=0)
-    allocation = OneToOneField(ResourceAllocation, on_delete=CASCADE)
+    allocation = OneToOneField(ResourceAllocation, on_delete=SET_NULL, null=True)
     people_allocated = OneToOneField(PeopleAllocation,
                                      on_delete=CASCADE,
                                      null=True)
