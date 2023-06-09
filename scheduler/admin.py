@@ -79,8 +79,17 @@ class OrderAdmin(admin.ModelAdmin):
                     'people_id',
                     'role',
                     'class_id',
+                    'event',
                     'people')
     list_filter = ['people_allocated__event', ]
+    search_fields = ['people_allocated__people__users__profile__display_name',
+                     'people_allocated__people__users__username',
+                     'people_allocated__people__users__email',
+                     'people_allocated__event__title']
+
+    def event(self, obj):
+        return obj.people_allocated.event
+
     def performer(self, obj):
         return "class: %s, id: %d" % (obj.people_allocated.people.class_name,
                                       obj.people_allocated.people.class_id)
@@ -126,23 +135,6 @@ class EventEvalQuestionAdmin(admin.ModelAdmin):
                      'help_text',)
     list_display_links = None
     ordering = ['order', ]
-
-
-@admin.register(EventEvalGrade, EventEvalComment, EventEvalBoolean)
-class EventEvalGradeAdmin(admin.ModelAdmin):
-    list_display = ('event',
-                    'user',
-                    'question',
-                    'answer',)
-    list_editable = ('question',
-                     'answer',)
-    list_display_links = ('event',)
-
-
-class LabelAdmin(ImportExportActionModelAdmin):
-    list_display = ('id',
-                    'text',
-                    'allocation')
 
 
 admin.site.register(Event, EventAdmin)
