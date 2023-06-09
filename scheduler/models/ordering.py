@@ -5,7 +5,7 @@ from django.db.models import (
     Model,
     OneToOneField,
 )
-from scheduler.models import ResourceAllocation, PeopleAllocation
+from scheduler.models import PeopleAllocation
 
 
 class Ordering(Model):
