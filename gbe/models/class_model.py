@@ -10,9 +10,9 @@ from django.db.models import (
 )
 from gbe.models import (
     Biddable,
+    Bio,
     Conference,
     Persona,
-    Profile,
 )
 from gbetext import (
     acceptance_states,
@@ -33,6 +33,10 @@ class Class(Biddable):
     teacher = ForeignKey(Persona,
                          on_delete=CASCADE,
                          related_name='is_teaching')
+    teacher_bio = ForeignKey(Bio,
+                             on_delete=CASCADE,
+                             related_name='is_teaching',
+                             null=True)
     minimum_enrollment = IntegerField(blank=True, default=1)
     maximum_enrollment = IntegerField(blank=True, default=20, null=True)
     organization = CharField(max_length=128, blank=True)

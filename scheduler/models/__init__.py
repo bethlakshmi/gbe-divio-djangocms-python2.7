@@ -1,4 +1,5 @@
 from .resource import Resource
+from .people import People
 from .resource_item import ResourceItem
 from .location_item import LocationItem
 from .location import Location
@@ -7,6 +8,7 @@ from .worker import Worker
 from .schedulable import Schedulable
 from .event import Event
 from .resource_allocation import ResourceAllocation
+from .people_allocation import PeopleAllocation
 from .event_label import EventLabel
 from .label import Label
 from .ordering import Ordering

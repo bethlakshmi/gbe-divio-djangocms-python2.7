@@ -5,6 +5,7 @@ from django.db.models import (
     DateTimeField,
     DurationField,
     ForeignKey,
+    ManyToManyField,
     PositiveIntegerField,
     SlugField,
     TextField,
@@ -52,14 +53,6 @@ class Event(Schedulable):
     event_style = CharField(max_length=128, blank=False)
     connected_id = PositiveIntegerField(blank=True, null=True)
     connected_class = CharField(max_length=128, blank=True)
-
-    parent = ForeignKey(
-        "self",
-        on_delete=CASCADE,
-        null=True,
-        blank=True,
-        related_name="children")
-    slug = SlugField(null=True)
 
     def has_commitment_space(self, commitment_class_name):
         from scheduler.models import Ordering

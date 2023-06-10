@@ -8,11 +8,13 @@ from scheduler.models import (
     Event,
     WorkerItem,
 )
+from django.contrib.auth.models import User
 
 
 class EventEvalAnswer(Model):
     question = ForeignKey(EventEvalQuestion, on_delete=CASCADE)
     profile = ForeignKey(WorkerItem, on_delete=CASCADE)
+    user = ForeignKey(User, on_delete=CASCADE, null=True)
     event = ForeignKey(Event, on_delete=CASCADE)
 
     class Meta:

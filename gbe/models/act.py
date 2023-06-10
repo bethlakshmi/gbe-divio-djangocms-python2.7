@@ -14,6 +14,7 @@ from django.core.exceptions import (
 )
 from gbe.models import (
     Biddable,
+    Bio,
     Conference,
     Performer,
     TechInfo,
@@ -36,6 +37,11 @@ class Act (Biddable):
                            related_name='acts',
                            blank=True,
                            null=True)
+    bio = ForeignKey(Bio,
+                     on_delete=CASCADE,
+                     related_name='acts',
+                     blank=True,
+                     null=True)
     tech = OneToOneField(TechInfo, on_delete=CASCADE, blank=True)
     video_link = URLField(blank=True)
     video_choice = CharField(max_length=2,
