@@ -127,16 +127,6 @@ class PeopleAdmin(admin.ModelAdmin):
         return obj.people_allocated.people.pk
 
 
-class PeopleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'class_name', 'class_id', 'user_list')
-
-    def user_list(self, obj):
-        people = ""
-        for person in obj.users.all():
-            people = person.profile.display_name + ', ' + people
-        return people
-
-
 class EventLabelAdmin(admin.ModelAdmin):
     list_display = ('text', 'event')
     list_filter = ['text']
