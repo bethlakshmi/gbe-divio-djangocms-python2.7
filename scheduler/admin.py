@@ -117,15 +117,6 @@ class PeopleAdmin(admin.ModelAdmin):
             people = person.profile.display_name + ', ' + people
         return people
 
-    def people(self, obj):
-        people = ""
-        for person in obj.people_allocated.people.users.all():
-            people = person.profile.display_name + ', ' + people
-        return people
-
-    def people_id(self, obj):
-        return obj.people_allocated.people.pk
-
 
 class EventLabelAdmin(admin.ModelAdmin):
     list_display = ('text', 'event')
