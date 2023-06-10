@@ -14,7 +14,6 @@ from django.core.validators import (
     MaxValueValidator
 )
 from gbe.models import (
-    Profile,
     Biddable,
     Bio,
     Profile,

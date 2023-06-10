@@ -7,7 +7,7 @@ from django.db.models import (
     TextField,
     URLField,
 )
-from gbe.models import Profile
+from gbe.models import Profile, Account
 from filer.fields.image import FilerImageField
 
 
@@ -20,6 +20,7 @@ class Business(Model):
     name = CharField(max_length=128)
     description = TextField(blank=True)
     owners = ManyToManyField(Profile)
+    owner_accts = ManyToManyField(Account)
     website = URLField(blank=True)
     physical_address = TextField()
     publish_physical_address = BooleanField(default=False)

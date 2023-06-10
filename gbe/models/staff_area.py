@@ -8,6 +8,7 @@ from django.db.models import (
     SlugField,
 )
 from gbe.models import (
+    Account,
     Conference,
     Profile,
     Room,
@@ -37,7 +38,10 @@ class StaffArea(Model):
                             on_delete=CASCADE,
                             blank=True,
                             null=True)
-
+    staff_lead_account = ForeignKey(Account,
+                                    on_delete=CASCADE,
+                                    blank=True,
+                                    null=True)
     def __str__(self):
         return self.title
 

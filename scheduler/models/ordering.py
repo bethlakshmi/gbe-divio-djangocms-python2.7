@@ -1,6 +1,7 @@
 from django.db.models import (
     CASCADE,
     CharField,
+    SET_NULL,
     IntegerField,
     Model,
     OneToOneField,
