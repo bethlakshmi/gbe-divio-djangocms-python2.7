@@ -13,7 +13,6 @@ from tests.functions.gbe_functions import (
     assert_alert_exists,
     make_act_app_purchase,
     make_act_app_ticket,
-    post_act_conflict,
 )
 from gbetext import (
     default_act_submit_msg,
@@ -284,20 +283,23 @@ class TestEditAct(TestMakeAct):
             follow=True)
         return response
 
-    def post_title_collision(self):
-        original = ActFactory()
-        url = reverse(self.view_name,
-                      args=[original.pk],
-                      urlconf="gbe.urls")
+    def post_title_collision(self, submit_state=False):
+        original = ActFactory(submitted=submit_state)
+        duplicate_edit = ActFactory(b_conference=original.b_conference,
+                                    bio=original.bio)
         make_act_app_purchase(
-            original.b_conference,
-            original.performer.contact.user_object)
-        return post_act_conflict(
-            original.b_conference,
-            original.performer,
-            self.get_act_form(original.performer, submit=True),
-            url,
-            self)
+            duplicate_edit.b_conference,
+            duplicate_edit.performer.contact.user_object)
+        login_as(duplicate_edit.performer.contact, self)
+        data = self.get_act_form(original.performer, submit=True)
+        data['theact-b_title'] = original.b_title
+        data['theact-b_conference'] = original.b_conference.pk
+
+        url = reverse(self.view_name,
+                      args=[duplicate_edit.pk],
+                      urlconf="gbe.urls")
+        response = self.client.post(url, data=data, follow=True)
+        return response, original
 
     def post_edit_paid_act_draft(self):
         act = ActFactory()
@@ -474,11 +476,14 @@ class TestEditAct(TestMakeAct):
             view='MakeActView',
             code='ACT_TITLE_CONFLICT',
             description=message_string)
-        response, original = self.post_title_collision()
+        response, original = self.post_title_collision(submit_state=True)
+        print(original)
+        print(original.pk)
+        print(response.content)
         self.assertEqual(response.status_code, 200)
         error_msg = message_string % (
             reverse(
-                'act_edit',
+                'act_view',
                 urlconf='gbe.urls',
                 args=[original.pk]),
             original.b_title)

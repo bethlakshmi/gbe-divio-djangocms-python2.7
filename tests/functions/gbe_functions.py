@@ -227,20 +227,6 @@ def make_act_app_ticket(conference):
     return ticketing_event.event_id
 
 
-def post_act_conflict(conference, performer, data, url, testcase):
-    original = ActFactory(
-        b_conference=conference,
-        bio=performer)
-    login_as(performer.contact, testcase)
-    data['theact-b_title'] = original.b_title
-    data['theact-b_conference'] = conference.pk
-    response = testcase.client.post(
-        url,
-        data=data,
-        follow=True)
-    return response, original
-
-
 def make_vendor_app_purchase(conference, user_object):
     ticketing_event = TicketingEventsFactory(conference=conference,
                                              vendor_submission_event=True)
