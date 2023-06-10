@@ -6,7 +6,7 @@ from django.db.models import (
     TextField,
     BooleanField,
 )
-from gbe.models import Profile, Account
+from gbe.models import Profile
 from gbetext import yes_no_maybe_options
 
 
@@ -18,10 +18,6 @@ class ProfilePreferences(Model):
     profile = OneToOneField(Profile,
                             on_delete=CASCADE,
                             related_name='preferences')
-    account = OneToOneField(Account,
-                            on_delete=CASCADE,
-                            related_name='preferences',
-                            null=True)
     in_hotel = CharField(max_length=10,
                          blank=True,
                          choices=yes_no_maybe_options)

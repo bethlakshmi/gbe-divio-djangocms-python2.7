@@ -19,7 +19,7 @@ def get_schedule(user=None,
                  public_id=None):
     basic_filter = PeopleAllocation.objects.all()
     sched_items = []
- 
+
     if (public_class is None and public_id is not None) or (
             public_id is None and public_class is not None):
         return ScheduleResponse(errors=[Error(

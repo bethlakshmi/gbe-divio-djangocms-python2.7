@@ -127,6 +127,7 @@ def profile_to_user(Profile, answer):
     else:
         print("can't find profile: %d" % answer.profile.pk)
 
+
 def migrate_eval_answers(apps, schema_editor):
     EventEvalBoolean = apps.get_model("scheduler", "EventEvalBoolean")
     EventEvalComment = apps.get_model("scheduler", "EventEvalComment")

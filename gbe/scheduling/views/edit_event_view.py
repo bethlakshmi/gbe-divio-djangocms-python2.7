@@ -176,7 +176,7 @@ class EditEventView(ManageVolWizardView):
         }
         if context['event_form'].is_valid(
                 ) and context['scheduling_form'].is_valid(
-                ) and self.is_formset_valid(worker_formset):    
+                ) and self.is_formset_valid(worker_formset):
             people = []
             for assignment in worker_formset:
                 if assignment.is_valid() and assignment.cleaned_data['worker']:
@@ -192,17 +192,21 @@ class EditEventView(ManageVolWizardView):
                         role=assignment.cleaned_data['role'])]
             if len(people) == 0:
                 people = None
+
+            m = context['scheduling_form'].cleaned_data['duration']*60
+            max_v = context['scheduling_form'].cleaned_data['max_volunteer']
+            r = event_settings[self.occurrence.event_style.lower()]['roles']
+            l = [context['scheduling_form'].cleaned_data['location']]
             response = update_occurrence(
                 self.occurrence.pk,
                 context['event_form'].cleaned_data['title'],
                 context['event_form'].cleaned_data['description'],
                 get_start_time(context['scheduling_form'].cleaned_data),
-                length=timedelta(
-                    minutes=context['scheduling_form'].cleaned_data['duration']*60),
-                max_volunteer=context['scheduling_form'].cleaned_data['max_volunteer'],
+                length=timedelta(minutes=m),
+                max_volunteer=max_v,
                 people=people,
-                roles=event_settings[self.occurrence.event_style.lower()]['roles'],
-                locations=[context['scheduling_form'].cleaned_data['location']],
+                roles=r,
+                locations=l,
                 approval=context['scheduling_form'].cleaned_data['approval'],
                 slug=context['event_form'].cleaned_data['slug'])
 
