@@ -295,6 +295,7 @@ privileged_event_roles = ['Technical Director',
                           'Producer',
                           'Stage Manager',
                           'Staff Lead']
+class_roles = ['Teacher', 'Moderator', 'Panelist']
 role_commit_map = {
     'New': (5, "fas fa-plus-square gbe-text-secondary"),
     'Error': (0, "fas fa-exclamation-triangle gbe-text-warning"),
@@ -543,9 +544,6 @@ no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."
 act_status_no_change_msg = "Act status has not been changed."
-no_persona_msg = '''A troupe must have at least one member, please enter your
- stage name and performer bio.  Troupe activities will be shown on your
- schedule and the schedule of any other member.'''
 no_login_msg = '''Please set up and account and give us some ways to \
 contact you, or login, if you already have an account.'''
 register_msg = '''In order to do most other things at The Expo, we need you \
@@ -737,6 +735,9 @@ your homepage - if our records are incorrect, please let us know.'''
 volunteer_allocate_email_fail_msg = '''The system was not able to send email \
 to the volunteer.  Check the email template, try again, or mail the volunteer \
 manually.  If the issue persists, please contact the web admin.'''
+volunteer_data_error = '''There is a volunteer that has multiple people in a \
+group, or a Bio and not a Profile.  This is likely a failure in the \
+software, contact support.'''
 bidder_email_fail_msg = '''The system was unable to send an email notifying \
 the bidder of the updates you have made.  Check the email template, try \
 again, or mail the bidder manually.  If the issue persists, please contact \

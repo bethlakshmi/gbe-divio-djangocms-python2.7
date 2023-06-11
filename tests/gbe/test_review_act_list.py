@@ -4,9 +4,9 @@ from django.test import Client
 from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
     ActFactory,
+    BioFactory,
     ConferenceFactory,
     FlexibleEvaluationFactory,
-    PersonaFactory,
     ProfileFactory,
     UserFactory,
 )
@@ -33,7 +33,7 @@ class TestReviewActList(TestCase):
         cls.url = reverse(
             cls.view_name,
             urlconf='gbe.urls')
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Act Reviewers')
@@ -62,7 +62,7 @@ class TestReviewActList(TestCase):
         inactive = ActFactory(
             submitted=True,
             b_conference=self.conference,
-            performer__contact__user_object__is_active=False)
+            bio__contact__user_object__is_active=False)
         login_as(self.privileged_user, self)
         response = self.client.get(
             self.url,

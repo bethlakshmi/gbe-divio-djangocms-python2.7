@@ -5,8 +5,8 @@ from django.test import (
 from django.contrib.sites.models import Site
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     EmailTemplateFactory,
-    PersonaFactory,
     ProfileFactory,
     UserFactory,
 )
@@ -25,7 +25,6 @@ from tests.functions.gbe_functions import (
 from django.shortcuts import get_object_or_404
 from gbe.models import (
     Profile,
-    Volunteer,
 )
 from gbetext import (
     no_login_msg,
@@ -115,7 +114,7 @@ class TestSetVolunteer(TestCase):
             message_index=1)
         assert(self.volunteeropp.title in staff_msg.body)
         assert_email_recipient(
-            [self.context.staff_lead.profile.user_object.email],
+            [self.context.staff_lead.user_object.email],
             outbox_size=2,
             message_index=1)
 
@@ -183,7 +182,7 @@ class TestSetVolunteer(TestCase):
             message_index=1)
         assert(self.volunteeropp.title in staff_msg.body)
         assert_email_recipient(
-            [self.context.staff_lead.profile.user_object.email],
+            [self.context.staff_lead.user_object.email],
             outbox_size=2,
             message_index=1)
 
@@ -276,7 +275,7 @@ class TestSetVolunteer(TestCase):
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         class_context = ClassContext(
             conference=self.context.conference,
-            teacher=PersonaFactory(performer_profile=self.profile),
+            teacher=BioFactory(contact=self.profile),
             starttime=self.volunteeropp.starttime)
         login_as(self.profile, self)
         response = self.client.post(self.url, follow=True)
@@ -300,7 +299,7 @@ class TestSetVolunteer(TestCase):
         # even though there is a volunteer coordinator - mail only goes to
         # staff lead
         assert_email_recipient(
-            [self.context.staff_lead.profile.user_object.email],
+            [self.context.staff_lead.user_object.email],
             outbox_size=2,
             message_index=1)
         self.assertContains(response, conflict_msg)
@@ -312,7 +311,7 @@ class TestSetVolunteer(TestCase):
         lead = vol_context.set_staff_lead()
         class_context = ClassContext(
             conference=self.context.conference,
-            teacher=PersonaFactory(performer_profile=self.profile),
+            teacher=BioFactory(contact=self.profile),
             starttime=vol_context.opp_event.starttime)
         url = reverse(
             self.view_name,

@@ -38,12 +38,15 @@ class SetFavoriteView(View):
                                   roles=["Interested"])
         bookings = []
         for person in interested.people:
-            if person.user == self.owner.user_object:
+            if person.public_id == self.owner.pk and (
+                    person.public_class == self.owner.__class__.__name__):
                 bookings += [person.booking_id]
 
         if kwargs['state'] == 'on' and len(bookings) == 0:
             person = Person(
-                user=self.owner.user_object,
+                users=[self.owner.user_object],
+                public_id=self.owner.pk,
+                public_class=self.owner.__class__.__name__,
                 role="Interested")
             response = set_person(occurrence_id, person)
             show_general_status(request,

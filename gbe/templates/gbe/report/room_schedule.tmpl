@@ -20,15 +20,15 @@
       <th class="printable-header">Start</th>
       <th class="printable-header">End</th>
     </tr>
-    {% for booking in entry.bookings%}
+    {% for event in entry.events %}
     <tr class="printable-table">
-      <td class="printable-table">{{booking}}</td>
-      <td class="printable-table">{% for role in booking.eventitem.roles%}
-        {{role.role}}:  {{role.workeritem}}<br>
+      <td class="printable-table">{{event.booking}}</td>
+      <td class="printable-table">{% for person in event.people %}
+        {{person.role}}:  {{person.person}}<br>
       {%endfor%}
       </td>
-      <td class="printable-table">{{booking.start_time}}</td>
-      <td class="printable-table">{{booking.end_time}}</td>
+      <td class="printable-table">{{event.booking.start_time}}</td>
+      <td class="printable-table">{{event.booking.end_time}}</td>
     </tr>
     {% endfor %}
   </table>

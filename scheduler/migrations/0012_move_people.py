@@ -30,10 +30,13 @@ def migrate_people(apps, schema_editor):
     Ordering = apps.get_model("scheduler", "Ordering")
     Worker = apps.get_model("scheduler", "Worker")
     People = apps.get_model("scheduler", "People")
-    Profile = apps.get_model("gbe", "Profile")
-    Persona = apps.get_model("gbe", "Persona")
-    Troupe = apps.get_model("gbe", "Troupe")
-    Bio = apps.get_model("gbe", "Bio")
+    try:
+        Profile = apps.get_model("gbe", "Profile")
+        Persona = apps.get_model("gbe", "Persona")
+        Troupe = apps.get_model("gbe", "Troupe")
+        Bio = apps.get_model("gbe", "Bio")
+    except LookupError:
+        return
 
     counts = {
         'Locations': 0,
@@ -70,7 +73,7 @@ def migrate_people(apps, schema_editor):
             elif Persona.objects.filter(pk=worker._item.pk).exists():
                 entity = Persona.objects.get(pk=worker._item.pk)
                 bio = Bio.objects.get(name=entity.name, label=entity.label)
-                people, created  = create_people(
+                people, created = create_people(
                     bio,
                     [entity.performer_profile.user_object],
                     People)
@@ -123,6 +126,7 @@ def profile_to_user(Profile, answer):
         answer.save()
     else:
         print("can't find profile: %d" % answer.profile.pk)
+
 
 def migrate_eval_answers(apps, schema_editor):
     EventEvalBoolean = apps.get_model("scheduler", "EventEvalBoolean")

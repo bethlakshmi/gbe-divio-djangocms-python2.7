@@ -2,10 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
-    VendorFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
+    VendorFactory,
 )
 from tests.functions.gbe_functions import login_as
 
@@ -15,7 +14,6 @@ class TestFashionFaireView(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
 
     def test_fashion_faire_no_login(self):
         proposal = VendorFactory(submitted=True, accepted=3)

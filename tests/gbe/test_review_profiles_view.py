@@ -1,10 +1,9 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ProfilePreferencesFactory,
     ProfileFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -19,14 +18,13 @@ class TestReviewProfiles(TestCase):
     '''Tests for admin_profile  view'''
     view_name = 'manage_users'
 
-    def setUp(self):
-        self.client = Client()
-        self.profile = ProfilePreferencesFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfilePreferencesFactory(
             profile__purchase_email='test@test.com').profile
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Registrar')
-        self.url = reverse('manage_users',
-                           urlconf='gbe.urls')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Registrar')
+        cls.url = reverse('manage_users', urlconf='gbe.urls')
 
     def test_non_privileged_user(self):
         login_as(ProfileFactory(), self)
@@ -62,10 +60,16 @@ class TestReviewProfiles(TestCase):
         self.assertContains(response, self.profile.phone)
 
     def test_with_troupe(self):
-        troupe = TroupeFactory(contact=self.profile)
+        troupe = BioFactory(contact=self.profile, multiple_performers=True)
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertContains(response, troupe.name)
+
+    def test_with_perfromer(self):
+        performer = BioFactory(contact=self.profile)
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, performer.name)
 
     def test_special_registrar(self):
         login_as(self.privileged_user, self)

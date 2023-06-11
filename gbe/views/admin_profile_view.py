@@ -21,7 +21,7 @@ class AdminProfileView(EditProfileView):
             ('Registrar', 'Act Coordinator', ))
         profile_id = kwargs.get("profile_id")
 
-        self.profile = get_object_or_404(Profile, resourceitem_id=profile_id)
+        self.profile = get_object_or_404(Profile, pk=profile_id)
         admin_message = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
             code="EDIT_PROFILE_NOTE",

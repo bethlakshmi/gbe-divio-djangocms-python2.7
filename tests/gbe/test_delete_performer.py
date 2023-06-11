@@ -1,31 +1,28 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     ClassFactory,
-    PersonaFactory,
     ProfileFactory,
-    TroupeFactory,
 )
+from tests.contexts import ClassContext
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
 )
 from gbetext import delete_in_use
-from gbe.models import Persona
 
 
 class TestDeletePerformer(TestCase):
     view_name = 'performer-delete'
 
-    '''Tests for edit_persona view'''
-    def setUp(self):
-        self.client = Client()
-        self.persona = PersonaFactory()
-        self.url = reverse(self.view_name,
-                           urlconf="gbe.urls",
-                           args=[self.persona.pk])
+    @classmethod
+    def setUpTestData(cls):
+        cls.persona = BioFactory()
+        cls.url = reverse(cls.view_name,
+                          urlconf="gbe.urls",
+                          args=[cls.persona.pk])
 
     def test_wrong_profile(self):
         viewer = ProfileFactory()
@@ -46,7 +43,22 @@ class TestDeletePerformer(TestCase):
             "Successfully deleted persona %s" % str(self.persona))
 
     def test_delete_performer_with_bid(self):
-        ClassFactory(teacher=self.persona)
+        ClassFactory(teacher_bio=self.persona)
+        login_as(self.persona.contact, self)
+        response = self.client.post(self.url,
+                                    data={'submit': 'Confirm'},
+                                    follow=True)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
+        assert_alert_exists(
+            response,
+            'danger',
+            'Error',
+            delete_in_use)
+
+    def test_delete_booked_performer(self):
+        context = ClassContext(teacher=self.persona)
+        context.bid.teacher_bio = BioFactory()
+        context.bid.save()
         login_as(self.persona.contact, self)
         response = self.client.post(self.url,
                                     data={'submit': 'Confirm'},
@@ -59,7 +71,7 @@ class TestDeletePerformer(TestCase):
             delete_in_use)
 
     def test_delete_troupe(self):
-        self.troupe = TroupeFactory()
+        self.troupe = BioFactory(multiple_performers=True)
         self.url = reverse(self.view_name,
                            urlconf="gbe.urls",
                            args=[self.troupe.pk])
@@ -75,11 +87,11 @@ class TestDeletePerformer(TestCase):
             "Successfully deleted persona %s" % str(self.troupe))
 
     def test_delete_troupe_with_bid(self):
-        self.troupe = TroupeFactory()
+        self.troupe = BioFactory(multiple_performers=True)
         self.url = reverse(self.view_name,
                            urlconf="gbe.urls",
                            args=[self.troupe.pk])
-        ActFactory(performer=self.troupe)
+        ActFactory(bio=self.troupe)
         login_as(self.troupe.contact, self)
         response = self.client.post(self.url,
                                     data={'submit': 'Confirm'},
@@ -90,4 +102,3 @@ class TestDeletePerformer(TestCase):
             'danger',
             'Error',
             delete_in_use)
-

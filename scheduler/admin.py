@@ -17,7 +17,6 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
                     'resource_type')
     list_filter = ['event__event_style',
                    'event__eventlabel__text',
-                   'resource__worker__role',
                    'resource__location']
 
     def resource_type(self, obj):
@@ -74,21 +73,26 @@ class EventAdmin(ImportExportModelAdmin):
     search_fields = ['title', 'event_style']
 
 
-class WorkerAdmin(admin.ModelAdmin):
-    list_display = ('_item', 'role')
-    list_filter = ['role', '_item']
-
-
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('order',
                     'performer',
                     'people_id',
                     'role',
                     'class_id',
+                    'event',
                     'people')
+    list_filter = ['people_allocated__event', ]
+    search_fields = ['people_allocated__people__users__profile__display_name',
+                     'people_allocated__people__users__username',
+                     'people_allocated__people__users__email',
+                     'people_allocated__event__title']
+
+    def event(self, obj):
+        return obj.people_allocated.event
 
     def performer(self, obj):
-        return str(obj.allocation.resource)
+        return "class: %s, id: %d" % (obj.people_allocated.people.class_name,
+                                      obj.people_allocated.people.class_id)
 
     def people(self, obj):
         people = ""
@@ -102,6 +106,10 @@ class OrderAdmin(admin.ModelAdmin):
 
 class PeopleAdmin(admin.ModelAdmin):
     list_display = ('id', 'class_name', 'class_id', 'user_list')
+    list_filter = ['class_name']
+    search_fields = ['users__username',
+                     'users__profile__display_name',
+                     'class_id']
 
     def user_list(self, obj):
         people = ""
@@ -129,23 +137,6 @@ class EventEvalQuestionAdmin(admin.ModelAdmin):
     ordering = ['order', ]
 
 
-@admin.register(EventEvalGrade, EventEvalComment, EventEvalBoolean)
-class EventEvalGradeAdmin(admin.ModelAdmin):
-    list_display = ('event',
-                    'profile',
-                    'question',
-                    'answer',)
-    list_editable = ('question',
-                     'answer',)
-    list_display_links = ('event',)
-
-
-class LabelAdmin(ImportExportActionModelAdmin):
-    list_display = ('id',
-                    'text',
-                    'allocation')
-
-
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventLabel, EventLabelAdmin)
 admin.site.register(Location)
@@ -155,7 +146,4 @@ admin.site.register(ResourceItem)
 admin.site.register(Resource)
 admin.site.register(ResourceAllocation, ResourceAllocationAdmin)
 admin.site.register(PeopleAllocation, PeopleAllocationAdmin)
-admin.site.register(Worker, WorkerAdmin)
-admin.site.register(WorkerItem)
 admin.site.register(People, PeopleAdmin)
-admin.site.register(Label, LabelAdmin)

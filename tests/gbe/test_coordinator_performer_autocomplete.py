@@ -2,9 +2,8 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
-    PersonaFactory,
+    BioFactory,
     ProfileFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -13,7 +12,7 @@ from tests.functions.gbe_functions import (
 from gbe.functions import validate_profile
 
 
-class TestLimitedPerformerAutoComplete(TestCase):
+class TestCoordinatorPerformerAutoComplete(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -24,9 +23,9 @@ class TestLimitedPerformerAutoComplete(TestCase):
         cls.privileged_user = ProfileFactory.create().user_object
         grant_privilege(cls.privileged_user,
                         'Act Coordinator',
-                        'view_performer')
-        cls.persona = PersonaFactory()
-        cls.troupe = TroupeFactory()
+                        'view_bio')
+        cls.persona = BioFactory()
+        cls.troupe = BioFactory(multiple_performers=True)
 
     def test_list_performer(self):
         url = reverse('coordinator-performer-autocomplete', urlconf="gbe.urls")

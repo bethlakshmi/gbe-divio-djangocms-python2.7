@@ -88,7 +88,7 @@ class TestMailToBidders(TestFilters):
     def test_exclude_it_all(self):
         dual_context = ClassContext(conference=self.context.conference)
         act = ActFactory(b_conference=self.context.conference,
-                         performer=dual_context.teacher,
+                         bio=dual_context.teacher,
                          submitted=True,
                          accepted=3)
         second_conference = ClassContext()
@@ -774,7 +774,7 @@ class TestMailToBidders(TestFilters):
     def test_exclude_act_bidder(self):
         dual_context = ClassContext(conference=self.context.conference)
         act = ActFactory(b_conference=self.context.conference,
-                         performer=dual_context.teacher,
+                         bio=dual_context.teacher,
                          submitted=True,
                          accepted=3)
         second_conference = ClassContext()
@@ -804,7 +804,7 @@ class TestMailToBidders(TestFilters):
     def test_incomplete_exclude(self):
         dual_context = ClassContext(conference=self.context.conference)
         act = ActFactory(b_conference=self.context.conference,
-                         performer=dual_context.teacher,
+                         bio=dual_context.teacher,
                          submitted=True,
                          accepted=3)
         second_conference = ClassContext()

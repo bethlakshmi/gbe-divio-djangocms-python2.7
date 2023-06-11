@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db.models import (
     CASCADE,
     CharField,
+    Model,
     OneToOneField,
     TextField,
 )
@@ -14,7 +15,6 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.db.models import Q
 from gbe.models import Conference
-from scheduler.models import WorkerItem
 from scheduler.idd import (
     get_roles,
     get_schedule,
@@ -33,7 +33,7 @@ from gbetext import (
 phone_regex = '(\d{3}[-\.]?\d{3}[-\.]?\d{4})'
 
 
-class Profile(WorkerItem):
+class Profile(Model):
     '''
     The core data about any registered user of the GBE site, barring
     the information gathered up in the User object. (which we'll
@@ -64,9 +64,6 @@ class Profile(WorkerItem):
                           default='Any',
                           blank=True)
     how_heard = TextField(blank=True)
-
-    def get_profiles(self):
-        return [self]
 
     @property
     def how_heard_list(self):
@@ -134,17 +131,17 @@ class Profile(WorkerItem):
                 email_privs += [bid_type.lower()]
         return email_privs
 
-    def alerts(self, shows, classes):
+    def alerts(self, classes):
+        from gbe.models import Act
         p_alerts = []
-
         if (len(self.display_name.strip()) == 0 or
                 len(self.purchase_email.strip()) == 0):
             p_alerts.append(profile_alerts['empty_profile'] %
                             reverse('profile_update',
                                     urlconf='gbe.urls'))
-        for show, act in shows:
-            if act.accepted == 3 and act.profile == self and not (
-                    act.is_complete):
+        for act in Act.objects.filter(bio__contact=self, accepted=3).exclude(
+                b_conference__status="completed"):
+            if not act.is_complete:
                 p_alerts.append(
                     profile_alerts['schedule_rehearsal'] %
                     (act.b_title, reverse('act_tech_wizard',
@@ -158,38 +155,15 @@ class Profile(WorkerItem):
         else:
             return self.costumes.exclude(b_conference__status="completed")
 
-    def get_performers(self, organize=False):
-        from gbe.models import Troupe  # late import, circularity
-        solos = self.personae.all()
-        troupes = Troupe.objects.filter(
-            Q(contact=self) | Q(membership__performer_profile=self)).distinct()
-        if organize:
-            return solos, troupes
-        else:
-            performers = list(solos)
-            performers += troupes
-            return performers
-
-    def get_acts(self):
-        acts = []
-        performers = self.get_performers()
-        for performer in performers:
-            acts += performer.acts.exclude(b_conference__status="completed")
-        return acts
-
-    # DEPRECATE, yes it's new.  Deprecate anyway, this hack gets through
-    # GBE2018 safely.  Used by get_schedule IDD call.  Treat as private
-    # and log any additional use here.
-    def get_bookable_items(self):
-        return {
-            "performers": self.get_performers(),
-        }
-
     def volunteer_schedule(self, conference=None):
         conference = conference or Conference.current_conf()
-        return self.workeritem.get_bookings(role="Volunteer",
-                                            conference=conference).order_by(
-                                                'starttime')
+        occurrences = []
+        response = get_schedule(self.user_object,
+                                labels=[conference.conference_slug],
+                                roles=["Volunteer"])
+        for item in response.schedule_items:
+            occurrences += [item.event]
+        return occurrences
 
     def get_roles(self, conference=None):
         '''
@@ -238,7 +212,7 @@ class Profile(WorkerItem):
 
     def proposed_classes(self, historical=False):
         from gbe.models import Class
-        classes = Class.objects.filter(teacher__contact=self)
+        classes = Class.objects.filter(teacher_bio__contact=self)
         if historical:
             classes = classes.filter(b_conference__status="completed")
         else:
@@ -267,7 +241,7 @@ class Profile(WorkerItem):
         active_vendor = self.vendors().exclude(accepted__in=(1, 4, 5)).exists()
         active_teacher = self.proposed_classes().exclude(
             accepted__in=(1, 4, 5)).exists()
-        active_performer = Act.objects.filter(performer__contact=self).exclude(
+        active_performer = Act.objects.filter(bio__contact=self).exclude(
             b_conference__status="completed", accepted__in=(1, 4, 5)).exists()
         active_costuming = self.costumes.exclude(
             accepted__in=(1, 4, 5)).exists()
@@ -298,10 +272,6 @@ class Profile(WorkerItem):
                 return True
 
         return False
-
-    @property
-    def describe(self):
-        return self.display_name
 
     def __str__(self):
         return self.display_name

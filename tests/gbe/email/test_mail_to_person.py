@@ -33,7 +33,7 @@ class TestMailToPerson(TestCase):
         cls.to_profile = ProfileFactory()
         cls.url = reverse(cls.view_name,
                           urlconf="gbe.email.urls",
-                          args=[cls.to_profile.resourceitem_id])
+                          args=[cls.to_profile.pk])
 
     def setUp(self):
         self.client = Client()
@@ -71,7 +71,7 @@ class TestMailToPerson(TestCase):
         response = self.client.get(reverse(
             self.view_name,
             urlconf="gbe.email.urls",
-            args=[self.to_profile.resourceitem_id+100]), follow=True)
+            args=[self.to_profile.pk+100]), follow=True)
         self.assertEqual(404, response.status_code)
 
     def test_alt_permissions(self):

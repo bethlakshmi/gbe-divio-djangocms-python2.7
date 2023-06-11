@@ -53,12 +53,12 @@
     <tbody>
       <tr class="gbe-table-row">
     {% for eval in details.evaluations %}
-      {% ifchanged eval.profile %}
+      {% ifchanged eval.user %}
       {% if not forloop.first %}
       </tr>
       <tr class="gbe-table-row">
       {% endif %}
-        <td>{{ eval.profile }}</td>
+        <td>{{ eval.user.profile }}</td>
       {% endifchanged %}
         <td>{{ eval.answer }}</td>
     {% endfor %}

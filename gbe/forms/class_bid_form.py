@@ -43,7 +43,7 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
     class Meta:
         model = Class
         fields = ['b_title',
-                  'teacher',
+                  'teacher_bio',
                   'first_name',
                   'last_name',
                   'phone',
@@ -59,7 +59,7 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
         help_texts = classbid_help_texts
         labels = classbid_labels
         widgets = {
-            'teacher': AddAnotherEditSelectedWidgetWrapper(
+            'teacher_bio': AddAnotherEditSelectedWidgetWrapper(
                 autocomplete.ModelSelect2(url=reverse_lazy(
                     'limited-persona-autocomplete',
                     urlconf='gbe.urls')),

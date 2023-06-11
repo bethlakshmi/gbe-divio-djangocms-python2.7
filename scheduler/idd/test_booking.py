@@ -1,9 +1,9 @@
 from scheduler.models import (
-    ResourceAllocation,
+    PeopleAllocation,
 )
 
 
 def test_booking(booking_id, occurrence_id):
-    return ResourceAllocation.objects.filter(
+    return PeopleAllocation.objects.filter(
         pk=booking_id,
         event__pk=occurrence_id).exists()

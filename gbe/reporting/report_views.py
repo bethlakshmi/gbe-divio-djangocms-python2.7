@@ -5,20 +5,30 @@ from django.urls import reverse
 from django.db.models import Q
 from django.core.management import call_command
 from django.views.decorators.cache import never_cache
-
-import gbe.models as conf
-import scheduler.models as sched
-import ticketing.models as tix
+from gbe.models import (
+    Bio,
+    Class,
+    Conference,
+    Profile,
+    Room,
+)
+from scheduler.models import PeopleAllocation
+from ticketing.models import Transaction
 import os as os
 import csv
-from reportlab.pdfgen import canvas
-from gbetext import class_styles
+from gbetext import (
+    class_styles,
+    class_roles,
+    privileged_event_roles,
+    not_scheduled_roles,
+)
 from gbe.functions import (
     conference_slugs,
     get_current_conference,
     get_conference_by_slug,
     validate_perms,
 )
+from scheduler.idd import get_people
 
 
 def list_reports(request):
@@ -50,86 +60,90 @@ def env_stuff(request, conference_choice=None):
     else:
         conference = get_current_conference()
 
-    people = conf.Profile.objects.filter(user_object__is_active=True)
-    acts = conf.Act.objects.filter(
-        accepted=3,
-        b_conference=conference)
-    tickets = tix.Transaction.objects.filter(
-        ticket_item__ticketing_event__conference=conference)
-    roles = sched.Worker.objects.filter(
-        Q(allocations__event__eventlabel__text=conference.conference_slug))
-    commits = sched.ResourceAllocation.objects.filter(
-        Q(event__eventlabel__text=conference.conference_slug))
-
     header = ['Badge Name',
               'First',
               'Last',
               'Tickets',
-              'Ticket format',
               'Personae',
               'Staff Lead',
               'Volunteering',
               'Presenter',
               'Show']
 
-    person_details = []
-    for person in people:
-        ticket_list = ""
-        staff_lead_list = ""
-        volunteer_list = ""
-        class_list = ""
-        personae_list = ""
-        show_list = ""
-        ticket_names = ""
+    people_rows = {}
+    # TODO - right now, there is no great IDD that does people class/id AND
+    # events.  If that is ever figured out, fix it here
+    for commit in PeopleAllocation.objects.filter(
+            event__eventlabel__text=conference.conference_slug).exclude(
+            role__in=not_scheduled_roles+["Interested"]):
+        for user in commit.people.users.filter(is_active=True):
+            name = user.profile.get_badge_name().encode('utf-8').strip()
+            if name not in people_rows.keys():
+                people_rows[name] = {
+                    'first': user.first_name.encode(
+                        'utf-8').strip(),
+                    'last': user.last_name.encode(
+                        'utf-8').strip(),
+                    'ticket_names': "",
+                    'staff_lead_list': "",
+                    'volunteer_list': "",
+                    'class_list': "",
+                    'personae_list': "",
+                    'show_list': "",
+                }
+            if commit.role == "Staff Lead":
+                people_rows[name]['staff_lead_list'] += str(commit.event)+', '
+            elif commit.role == "Volunteer":
+                people_rows[name]['volunteer_list'] += str(commit.event)+', '
+            elif commit.role in ["Teacher", "Moderator", "Panelist"]:
+                people_rows[name]['class_list'] += (
+                    commit.role + ': ' + str(commit.event) + ', ')
+            elif commit.role == "Performer" and (
+                    "General" in commit.event.labels):
+                people_rows[name]['show_list'] += str(commit.event)+', '
 
-        for ticket in tickets.filter(
-                purchaser__matched_to_user=person.user_object):
-            ticket_list += str(
-                ticket.ticket_item.ticketing_event.ticket_style)+", "
-            ticket_names += ticket.ticket_item.title+", "
+            if commit.people.class_name == "Bio":
+                bio = Bio.objects.get(pk=commit.people.class_id)
+                if str(bio) not in people_rows[name]['personae_list']:
+                    people_rows[name]['personae_list'] += str(bio) + ', '
 
-        for lead in roles.filter(role="Staff Lead", _item=person):
-            for commit in commits.filter(resource=lead):
-                staff_lead_list += str(commit.event)+', '
-
-        for volunteer in roles.filter(role="Volunteer", _item=person):
-            for commit in commits.filter(resource=volunteer):
-                volunteer_list += str(commit.event)+', '
-
-        for performer in person.get_performers():
-            personae_list += str(performer) + ', '
-            for teacher in roles.filter((Q(role="Teacher") |
-                                         Q(role="Moderator") |
-                                         Q(role="Panelist")) &
-                                        Q(_item=performer)):
-                for commit in commits.filter(resource=teacher):
-                    class_list += (teacher.role +
-                                   ': ' +
-                                   str(commit.event) +
-                                   ', ')
-            act_ids = acts.filter(
-                performer=performer).values_list('pk', flat=True)
-            for commit in commits.filter(ordering__class_id__in=act_ids,
-                                         event__eventlabel__text="General"):
-                show_list += str(commit.event)+', '
-
-        person_details.append(
-            [person.get_badge_name().encode('utf-8').strip(),
-             person.user_object.first_name.encode('utf-8').strip(),
-             person.user_object.last_name.encode('utf-8').strip(),
-             ticket_names, ticket_list,
-             personae_list,
-             staff_lead_list,
-             volunteer_list,
-             class_list,
-             show_list])
+    for ticket in Transaction.objects.filter(
+            ticket_item__ticketing_event__conference=conference,
+            purchaser__matched_to_user__is_active=True,
+            ticket_item__ticketing_event__act_submission_event=False).exclude(
+            purchaser__matched_to_user__username="limbo"):
+        name = ticket.purchaser.matched_to_user.profile.get_badge_name(
+            ).encode('utf-8').strip()
+        if name not in people_rows.keys():
+            people_rows[name] = {
+                'first': ticket.purchaser.matched_to_user.first_name.encode(
+                    'utf-8').strip(),
+                'last': ticket.purchaser.matched_to_user.last_name.encode(
+                    'utf-8').strip(),
+                'ticket_names': "",
+                'staff_lead_list': "",
+                'volunteer_list': "",
+                'class_list': "",
+                'personae_list': "",
+                'show_list': "",
+            }
+        people_rows[name]['ticket_names'] += ticket.ticket_item.title + ", "
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=env_stuff.csv'
     writer = csv.writer(response)
     writer.writerow(header)
-    for row in person_details:
-        writer.writerow(row)
+    for name, details in people_rows.items():
+        writer.writerow([
+            name,
+            details['first'],
+            details['last'],
+            details['ticket_names'],
+            details['personae_list'],
+            details['staff_lead_list'],
+            details['volunteer_list'],
+            details['class_list'],
+            details['show_list']])
     return response
 
 
@@ -139,17 +153,16 @@ def room_schedule(request, room_id=None):
                                     'any',
                                     require=True)
 
-    conference_slugs = conf.Conference.all_slugs()
+    conference_slugs = Conference.all_slugs()
     if request.GET and request.GET.get('conf_slug'):
-        conference = conf.Conference.by_slug(request.GET['conf_slug'])
+        conference = Conference.by_slug(request.GET['conf_slug'])
     else:
-        conference = conf.Conference.current_conf()
+        conference = Conference.current_conf()
 
     if room_id:
-        rooms = [get_object_or_404(conf.Room,
-                                   resourceitem_id=room_id)]
+        rooms = [get_object_or_404(Room, resourceitem_id=room_id)]
     else:
-        rooms = conf.Room.objects.filter(conferences=conference)
+        rooms = Room.objects.filter(conferences=conference)
 
     conf_days = conference.conferenceday_set.all()
     tmp_days = []
@@ -173,14 +186,23 @@ def room_schedule(request, room_id=None):
                 if current_day in conf_days:
                     room_set += [{'room': room,
                                   'date': current_day,
-                                  'bookings': day_events}]
+                                  'events': day_events}]
                 current_day = booking.start_time.date()
                 day_events = []
-            day_events += [booking]
+            response = get_people(event_ids=[booking.pk],
+                                  roles=class_roles+privileged_event_roles)
+            people_set = []
+            for people in response.people:
+                people_set += [{
+                    "role": people.role,
+                    "person": eval(people.public_class).objects.get(
+                        pk=people.public_id)}]
+            day_events += [{'booking': booking,
+                            'people': people_set}]
         if current_day in conf_days:
             room_set += [{'room': room,
                           'date': current_day,
-                          'bookings': day_events}]
+                          'events': day_events}]
     return render(request, 'gbe/report/room_schedule.tmpl',
                   {'room_date': room_set,
                    'conference_slugs': conference_slugs,
@@ -190,11 +212,11 @@ def room_schedule(request, room_id=None):
 @never_cache
 def room_setup(request):
 
-    conference_slugs = conf.Conference.all_slugs()
+    conference_slugs = Conference.all_slugs()
     if request.GET and request.GET.get('conf_slug'):
-        conference = conf.Conference.by_slug(request.GET['conf_slug'])
+        conference = Conference.by_slug(request.GET['conf_slug'])
     else:
-        conference = conf.Conference.current_conf()
+        conference = Conference.current_conf()
 
     conf_days = conference.conferenceday_set.all()
     tmp_days = []
@@ -203,7 +225,7 @@ def room_setup(request):
     conf_days = tmp_days
 
     viewer_profile = validate_perms(request, 'any', require=True)
-    rooms = conf.Room.objects.filter(conferences=conference)
+    rooms = Room.objects.filter(conferences=conference)
 
     # rearrange the data into the format of:
     #  - room & date of booking
@@ -225,7 +247,7 @@ def room_setup(request):
                 day_events = []
             if booking.event_style in class_styles:
                 day_events += [{'event': booking,
-                                'class': conf.Class.objects.get(
+                                'class': Class.objects.get(
                                     pk=booking.connected_id)}]
         if (current_day in conf_days and len(day_events) > 0):
             room_set += [{'room': room,

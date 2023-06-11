@@ -1,9 +1,7 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
 )
 from tests.contexts import (
@@ -24,16 +22,16 @@ class TestRehearsalWizard(TestScheduling):
     '''Tests for the 2nd stage in the rehearsal wizard view'''
     view_name = 'rehearsal_wizard'
 
-    def setUp(self):
-        self.show_volunteer = VolunteerContext()
-        self.current_conference = self.show_volunteer.conference
-        self.url = reverse(
-            self.view_name,
-            args=[self.current_conference.conference_slug],
+    @classmethod
+    def setUpTestData(cls):
+        cls.show_volunteer = VolunteerContext()
+        cls.current_conference = cls.show_volunteer.conference
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.current_conference.conference_slug],
             urlconf='gbe.scheduling.urls')
-        self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
 
     def test_authorized_user_can_access(self):
         login_as(self.privileged_user, self)

@@ -12,7 +12,6 @@ from gbe.models import (
     Biddable,
     Bio,
     Conference,
-    Persona,
 )
 from gbetext import (
     acceptance_states,
@@ -30,13 +29,9 @@ class Class(Biddable):
     teach/instruct/guide/mediate and a number of participants
     spectate/participate.
     '''
-    teacher = ForeignKey(Persona,
-                         on_delete=CASCADE,
-                         related_name='is_teaching')
     teacher_bio = ForeignKey(Bio,
                              on_delete=CASCADE,
-                             related_name='is_teaching',
-                             null=True)
+                             related_name='is_teaching')
     minimum_enrollment = IntegerField(blank=True, default=1)
     maximum_enrollment = IntegerField(blank=True, default=20, null=True)
     organization = CharField(max_length=128, blank=True)
@@ -62,7 +57,7 @@ class Class(Biddable):
 
     def clone(self):
         new_class = Class()
-        new_class.teacher = self.teacher
+        new_class.teacher_bio = self.teacher_bio
         new_class.minimum_enrollment = self.minimum_enrollment
         new_class.organization = self.organization
         new_class.type = self.type
@@ -81,6 +76,10 @@ class Class(Biddable):
 
         new_class.save()
         return new_class
+
+    @property
+    def teacher(self):
+        return self.teacher_bio
 
     @property
     def get_space_needs(self):

@@ -354,7 +354,7 @@ class TestTransactions(TestCase):
         self.assertContains(response, reverse(
             'admin_profile',
             urlconf="gbe.urls",
-            args=[context.profile.resourceitem_id]))
+            args=[context.profile.pk]))
 
     def test_transactions_empty(self):
         TicketingEvents.objects.all().delete()

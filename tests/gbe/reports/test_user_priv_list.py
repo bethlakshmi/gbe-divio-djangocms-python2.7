@@ -7,10 +7,8 @@ from tests.contexts import (
 )
 from tests.factories.gbe_factories import (
     ActFactory,
-    PersonaFactory,
     ProfileFactory,
     TechInfoFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,

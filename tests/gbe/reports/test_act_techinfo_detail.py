@@ -4,15 +4,15 @@ from django.test import TestCase, Client
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (
     ActFactory,
-    PersonaFactory,
+    BioFactory,
     ProfileFactory,
     TechInfoFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from tests.functions.scheduler_functions import get_or_create_bio
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.formats import date_format
 
@@ -185,15 +185,16 @@ class TestReviewActTechInfo(TestCase):
         '''review_act_techinfo view should load for Tech Crew
            and fail for others
         '''
-        troupe = TroupeFactory()
-        member = PersonaFactory()
-        troupe.membership.add(member)
-        self.context.act.performer = troupe
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
+        member = ProfileFactory()
+        people.users.add(member.user_object)
+        self.context.act.bio = troupe
         self.context.act.save()
         self.set_the_basics()
-        login_as(member.performer_profile, self)
+        login_as(member, self)
         response = self.client.get(self.url)
         self.assertContains(response, self.context.act.b_title)
-        self.assertContains(response, str(self.context.act.performer))
+        self.assertContains(response, str(self.context.act.bio))
         self.assertContains(response, self.context.sched_event.title)
         self.assertContains(response, self.context.act.tech.introduction_text)

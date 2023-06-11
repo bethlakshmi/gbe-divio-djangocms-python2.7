@@ -91,7 +91,7 @@ def verify_performer_app_paid(user_name, conference):
     acts_submitted = Act.objects.filter(
         submitted=True,
         b_conference=conference,
-        performer__contact__user_object__username=user_name).count()
+        bio__contact__user_object__username=user_name).count()
 
     logger.info("Purchased Count:  %s  Submitted Count:  %s" %
                 (act_fees_purchased, acts_submitted))

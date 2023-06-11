@@ -8,23 +8,30 @@ from django.shortcuts import (
     render,
 )
 from django.urls import reverse
+from datetime import timedelta
 from gbe.models import (
     Class,
     Conference,
 )
 from gbe.views.class_display_functions import get_scheduling_info
-from gbe.scheduling.forms import PersonAllocationForm
+from gbe.scheduling.forms import (
+    EventBookingForm,
+    PersonAllocationForm,
+    ScheduleOccurrenceForm,
+)
 from gbe.functions import validate_perms
 from gbe_forms_text import (
     role_map,
     event_settings,
 )
 from gbe.scheduling.views.functions import (
-    process_post_response,
+    get_start_time,
     setup_event_management_form,
     show_scheduling_occurrence_status,
     shared_groundwork,
 )
+from scheduler.idd import update_occurrence
+from scheduler.data_transfer import Person
 
 
 class EditEventView(ManageVolWizardView):
@@ -157,15 +164,66 @@ class EditEventView(ManageVolWizardView):
         worker_formset = self.make_formset(
             event_settings[self.occurrence.event_style.lower()]['roles'],
             post=request.POST)
-        context, self.success_url, response = process_post_response(
-            request,
-            self.conference,
-            self.success_url,
-            "volunteer_open",
-            self.occurrence,
-            event_settings[self.occurrence.event_style.lower()]['roles'],
-            self.is_formset_valid(worker_formset),
-            worker_formset)
+
+        response = None
+        context = {
+            'event_form': EventBookingForm(request.POST),
+            'scheduling_form': ScheduleOccurrenceForm(
+                request.POST,
+                conference=self.conference,
+                open_to_public=event_settings[
+                    self.occurrence.event_style.lower()]['open_to_public'])
+        }
+        if context['event_form'].is_valid(
+                ) and context['scheduling_form'].is_valid(
+                ) and self.is_formset_valid(worker_formset):
+            people = []
+            for assignment in worker_formset:
+                if assignment.is_valid() and assignment.cleaned_data['worker']:
+                    worker = assignment.cleaned_data['worker']
+                    if worker.__class__.__name__ == "Bio":
+                        user_object = worker.contact.user_object
+                    else:
+                        user_object = worker.user_object
+                    people += [Person(
+                        users=[user_object],
+                        public_id=worker.pk,
+                        public_class=worker.__class__.__name__,
+                        role=assignment.cleaned_data['role'])]
+            if len(people) == 0:
+                people = None
+
+            m = context['scheduling_form'].cleaned_data['duration']*60
+            max_v = context['scheduling_form'].cleaned_data['max_volunteer']
+            r = event_settings[self.occurrence.event_style.lower()]['roles']
+            l = [context['scheduling_form'].cleaned_data['location']]
+            response = update_occurrence(
+                self.occurrence.pk,
+                context['event_form'].cleaned_data['title'],
+                context['event_form'].cleaned_data['description'],
+                get_start_time(context['scheduling_form'].cleaned_data),
+                length=timedelta(minutes=m),
+                max_volunteer=max_v,
+                people=people,
+                roles=r,
+                locations=l,
+                approval=context['scheduling_form'].cleaned_data['approval'],
+                slug=context['event_form'].cleaned_data['slug'])
+
+            if request.POST.get('edit_event', 0) != "Save and Continue":
+                self.success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+                    reverse('manage_event_list',
+                            urlconf='gbe.scheduling.urls',
+                            args=[self.conference.conference_slug]),
+                    self.conference.conference_slug,
+                    context['scheduling_form'].cleaned_data['day'].pk,
+                    str([self.occurrence.pk]),)
+            else:
+                self.success_url = "%s?%s=True" % (self.success_url,
+                                                   "volunteer_open")
+        else:
+            context['start_open'] = True
+
         context['worker_formset'] = worker_formset
         return self.make_post_response(request,
                                        response=response,

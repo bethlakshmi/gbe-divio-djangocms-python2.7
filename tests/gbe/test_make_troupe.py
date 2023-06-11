@@ -2,10 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from django.test import Client
 from tests.factories.gbe_factories import (
-    PersonaFactory,
+    BioFactory,
     ProfileFactory,
     SocialLinkFactory,
-    TroupeFactory,
     UserFactory,
     UserMessageFactory
 )
@@ -15,7 +14,6 @@ from tests.functions.gbe_functions import (
 )
 from gbetext import (
     default_edit_troupe_msg,
-    no_persona_msg,
     troupe_header_text,
 )
 from gbe_utils.text import no_profile_msg
@@ -23,7 +21,9 @@ from gbe.models import (
     SocialLink,
     UserMessage,
 )
+from scheduler.models import People
 from tests.gbe.test_gbe import TestGBE
+from tests.functions.scheduler_functions import get_or_create_bio
 
 
 formset_data = {
@@ -63,22 +63,9 @@ class TestTroupeCreate(TestGBE):
         self.client = Client()
         self.troupe_string = 'Tell Us About Your Troupe'
 
-    def test_create_troupe_no_persona(self):
-        '''edit_troupe view, create flow
-        '''
-        user = ProfileFactory()
-        login_as(user.user_object, self)
-        url = reverse(self.view_name, urlconf='gbe.urls')
-        response = self.client.get(url, follow=True)
-        expected_loc = '%s?next=%s' % (
-            reverse('persona-add', urlconf="gbe.urls", args=[1]),
-            url)
-        self.assertRedirects(response, expected_loc)
-        self.assertContains(response, no_persona_msg)
-
     def test_create_troupe_performer_exists(self):
-        contact = PersonaFactory()
-        login_as(contact.performer_profile, self)
+        contact = BioFactory()
+        login_as(contact.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -96,9 +83,9 @@ class TestTroupeCreate(TestGBE):
             html=True)
 
     def test_create_troupe_no_inactive_users(self):
-        contact = PersonaFactory()
-        inactive = PersonaFactory(contact__user_object__is_active=False)
-        login_as(contact.performer_profile, self)
+        contact = BioFactory()
+        inactive = BioFactory(contact__user_object__is_active=False)
+        login_as(contact.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -112,6 +99,40 @@ class TestTroupeCreate(TestGBE):
                  '"id_links-%d-id">') % (i, i),
                 html=True)
 
+    def test_create_troupe_post(self):
+        msg = UserMessageFactory(
+            view='TroupeCreate',
+            code='SUCCESS')
+        persona = BioFactory()
+        contact = persona.contact
+        other_member = ProfileFactory()
+        url = reverse(self.view_name, urlconf='gbe.urls')
+        login_as(contact, self)
+        data = {'contact': persona.contact.pk,
+                'name':  "New Troupe",
+                'bio': "bio",
+                'year_started': 2001,
+                'awards': "many",
+                'pronouns_0': '',
+                'multiple_performers': True,
+                'pronouns_1': 'custom/pronouns',
+                'membership': [contact.pk, other_member.pk], }
+        data.update(formset_data)
+        response = self.client.post(
+            url,
+            data=data,
+            follow=True
+        )
+        assert_alert_exists(
+            response, 'success', 'Success', msg.description)
+        self.assertEquals(
+            contact.bio_set.filter(multiple_performers=True).count(),
+            1)
+        troupe = contact.bio_set.filter(multiple_performers=True).first()
+        self.assertTrue(
+            People.objects.filter(class_name=troupe.__class__.__name__,
+                                  class_id=troupe.pk).exists())
+
 
 class TestTroupeEdit(TestCase):
     view_name = 'troupe-update'
@@ -121,45 +142,49 @@ class TestTroupeEdit(TestCase):
         self.client = Client()
 
     def submit_troupe(self, name=None):
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
-        link0 = SocialLinkFactory(performer=troupe)
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(multiple_performers=True, contact=contact)
+        people = get_or_create_bio(troupe)
+        link0 = SocialLinkFactory(bio=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(contact.profile, self)
-        data = {'contact': persona.performer_profile.pk,
+        login_as(contact, self)
+        data = {'contact': persona.contact.pk,
                 'name':  name or "New Troupe",
                 'bio': "bio",
                 'year_started': 2001,
                 'awards': "many",
                 'pronouns_0': '',
+                'multiple_performers': True,
                 'pronouns_1': 'custom/pronouns',
-                'membership': [persona.pk], }
+                'membership': [contact.pk], }
         data.update(formset_data)
         data['links-0-id'] = link0.pk
-        data['links-0-performer'] = troupe.pk
+        data['links-0-bio'] = troupe.pk
         data['links-INITIAL_FORMS'] = 1
         response = self.client.post(
             url,
             data=data,
             follow=True
         )
-        self.assertEqual(troupe.membership.first(), persona)
+        self.assertTrue(people.users.filter(
+            pk=contact.user_object.pk).exists())
         return response, data
 
     def test_get_edit_troupe(self):
         '''edit_troupe view, edit flow success
         '''
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
-        link0 = SocialLinkFactory(performer=troupe)
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(contact=contact, multiple_performers=True)
+        people = get_or_create_bio(troupe)
+        link0 = SocialLinkFactory(bio=troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(contact.profile, self)
+        login_as(contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Tell Us About Your Troupe')
@@ -184,17 +209,19 @@ class TestTroupeEdit(TestCase):
     def test_edit_wrong_user(self):
         '''edit_troupe view, edit flow success
         '''
-        persona = PersonaFactory()
-        troupe = TroupeFactory()
+        persona = BioFactory()
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(persona.performer_profile.profile, self)
+        login_as(persona.contact, self)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_no_profile(self):
-        troupe = TroupeFactory()
+        troupe = BioFactory(multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
@@ -223,19 +250,20 @@ class TestTroupeEdit(TestCase):
     def test_edit_troupe_bad_data(self):
         '''edit_troupe view, edit flow success
         '''
-        persona = PersonaFactory()
-        contact = persona.performer_profile
-        troupe = TroupeFactory(contact=contact)
+        persona = BioFactory()
+        contact = persona.contact
+        troupe = BioFactory(contact=contact, multiple_performers=True)
+        people = get_or_create_bio(troupe)
         url = reverse(self.view_name,
                       args=[troupe.pk],
                       urlconf='gbe.urls')
-        login_as(contact.profile, self)
-        data = {'contact': persona.performer_profile.pk,
+        login_as(contact, self)
+        data = {'contact': persona.contact.pk,
                 'name':  "New Troupe",
                 'bio': "bio",
                 'year_started': 'bad',
                 'awards': "many",
-                'membership': [persona.pk]}
+                'membership': [contact.pk]}
         data.update(formset_data)
         response = self.client.post(
             url,

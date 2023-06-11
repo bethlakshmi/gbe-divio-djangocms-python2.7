@@ -33,6 +33,7 @@ from scheduler.idd import (
 from gbe.scheduling.views.functions import show_general_status
 from gbetext import (
     volunteer_action_map,
+    volunteer_data_error,
     set_volunteer_role_summary,
     set_volunteer_role_msg,
     volunteer_allocate_email_fail_msg,
@@ -97,7 +98,7 @@ class ApproveVolunteerView(View):
                               pending_person.public_id,
                               pending_person.booking_id])
             row = {
-                'volunteer': pending_person.user.profile,
+                'volunteer': pending_person.users[0].profile,
                 'occurrence': pending_person.occurrence,
                 'staff_areas': StaffArea.objects.filter(
                     conference=self.conference,
@@ -117,6 +118,26 @@ class ApproveVolunteerView(View):
                 row['status'] = "gbe-table-warning"
             elif pending_person.role == "Pending Volunteer":
                 row['status'] = "gbe-table-info"
+
+            if len(pending_person.users) > 1 or (
+                    pending_person.__class__.__name__ == 'Bio'):
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="DATA_PROBLEM",
+                    defaults={
+                        'summary': "Wrong type of volunteer",
+                        'description': volunteer_data_error}
+                    )[0].description
+                messages.error(
+                    request,
+                    ("%s PEOPLE: booking id: %d, class_id: %d, " +
+                     "class_name: %s user: %s") % (
+                        user_message,
+                        pending_person.booking_id,
+                        pending_person.public_id,
+                        pending_person.public_class,
+                        pending_person.users[0].profile.display_name))
+                row['status'] = "gbe-table-danger"
             rows.append(row)
         return rows
 
@@ -158,7 +179,7 @@ class ApproveVolunteerView(View):
                 self.labels += [area.slug]
 
             response = get_schedule(
-                self.reviewer.user_object,
+                user=self.reviewer.user_object,
                 labels=[self.conference.conference_slug],
                 roles=self.event_roles)
             for item in response.schedule_items:
@@ -180,23 +201,23 @@ class ApproveVolunteerView(View):
                     'summary': "Approve Volunteer First Header",
                     'description': self.view_title})[0].description
 
-    def send_notifications(self, request, response, state, person):
+    def send_notifications(self, request, response, state, profile, role):
         if state == 3:
             email_status = send_schedule_update_mail(
                 "Volunteer",
-                person.user.profile)
+                profile)
         else:
             email_status = send_bid_state_change_mail(
                 "volunteer",
-                person.user.profile.contact_email,
-                person.user.profile.get_badge_name(),
+                profile.contact_email,
+                profile.get_badge_name(),
                 response.occurrence,
                 state)
         staff_status = send_volunteer_update_to_staff(
             self.reviewer,
-            person.user.profile,
+            profile,
             response.occurrence,
-            person.role,
+            role,
             response)
         if email_status or staff_status:
             user_message = UserMessage.objects.get_or_create(
@@ -204,10 +225,16 @@ class ApproveVolunteerView(View):
                 code="EMAIL_FAILURE",
                 defaults={
                     'summary': "Email Failed",
-                    'description': volunteer_allocate_email_fail_msg})
-            messages.error(
-                request,
-                user_message[0].description + "status code: ")
+                    'description': volunteer_allocate_email_fail_msg}
+                    )[0].description
+            if email_status:
+                messages.error(
+                    request,
+                    user_message + "status code: " + email_status)
+            if staff_status:
+                messages.error(
+                    request,
+                    user_message + "status code: " + staff_status)
 
     def set_status(self, request, kwargs):
         if len(self.labels) > 0 or len(self.parent_shows) > 0:
@@ -231,11 +258,11 @@ class ApproveVolunteerView(View):
             check = True
         profile = get_object_or_404(Profile, pk=kwargs['public_id'])
         person = Person(
-            user=profile.user_object,
+            users=[profile.user_object],
             public_id=profile.pk,
+            public_class=profile.__class__.__name__,
             role=volunteer_action_map[kwargs['action']]['role'],
-            booking_id=kwargs['booking_id'],
-            worker=None)
+            booking_id=kwargs['booking_id'])
         response = set_person(person=person)
         show_general_status(request, response, self.__class__.__name__)
         if not response.errors:
@@ -253,7 +280,11 @@ class ApproveVolunteerView(View):
                 response.occurrence.starttime.strftime(
                     GBE_DATETIME_FORMAT))
             messages.success(request, full_msg)
-            self.send_notifications(request, response, state, person)
+            self.send_notifications(request,
+                                    response,
+                                    state,
+                                    profile,
+                                    person.role)
 
     @never_cache
     def get(self, request, *args, **kwargs):

@@ -12,8 +12,8 @@ from scheduler.idd import (
     get_eval_summary,
 )
 from gbe.models import (
+    Bio,
     Conference,
-    Performer,
     UserMessage,
 )
 from settings import GBE_TABLE_FORMAT
@@ -37,7 +37,7 @@ def eval_view(request, occurrence_id=None):
                 detail_response.occurrences) > 0:
             occurrence = detail_response.occurrences[0]
             detail_response.answers.sort(
-                key=lambda answer: (answer.profile.profile.display_name,
+                key=lambda answer: (answer.user.profile.display_name,
                                     answer.question.order))
             details = {
                 'occurrence': occurrence,
@@ -64,7 +64,7 @@ def eval_view(request, occurrence_id=None):
             if person.role == "Interested":
                 interested += [person]
             elif person.role in ("Teacher", "Moderator"):
-                teachers += [Performer.objects.get(pk=person.public_id)]
+                teachers += [Bio.objects.get(pk=person.public_id)]
 
         display_item = {
             'id': occurrence.id,

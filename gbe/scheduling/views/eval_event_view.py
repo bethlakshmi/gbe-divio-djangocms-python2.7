@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
 from gbe.models import (
-    Performer,
+    Bio,
     UserMessage,
 )
 from gbe.functions import check_user_and_redirect
@@ -45,7 +45,7 @@ class EvalEventView(View):
         if response['error_url']:
             return HttpResponseRedirect(response['error_url'])
         self.person = Person(
-            user=response['owner'].user_object,
+            users=[response['owner'].user_object],
             public_id=response['owner'].pk,
             public_class="Profile")
 
@@ -93,7 +93,7 @@ class EvalEventView(View):
             redirect_now = True
         else:
             if verify_bought_conference(
-                    self.person.user, eval_info.occurrences[0].labels
+                    self.person.users[0], eval_info.occurrences[0].labels
                     ) is False:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
@@ -107,10 +107,8 @@ class EvalEventView(View):
             response = get_bookings(
                 occurrence_ids=[eval_info.occurrences[0].pk],
                 roles=['Teacher', 'Moderator', 'Panelist'])
-            user_performers = self.person.user.profile.get_performers()
-            pk_list = []
-            for user_perf in user_performers:
-                pk_list += [user_perf.pk]
+            pk_list = self.person.users[0].profile.bio_set.all(
+                ).values_list('pk', flat=True)
 
             self.presenters = []
             for person in response.people:

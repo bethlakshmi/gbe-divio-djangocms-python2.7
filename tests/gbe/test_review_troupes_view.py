@@ -1,18 +1,16 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ProfileFactory,
-    PersonaFactory,
     ProfilePreferencesFactory,
-    TroupeFactory,
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
     is_login_page,
     login_as,
 )
-from gbe.models import Troupe
+from tests.functions.scheduler_functions import get_or_create_bio
 from tests.contexts import StaffAreaContext
 
 
@@ -20,16 +18,18 @@ class TestReviewTroupes(TestCase):
     '''Tests for admin_profile  view'''
     view_name = 'manage_troupes'
 
-    def setUp(self):
-        self.client = Client()
-        self.profile = ProfilePreferencesFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfilePreferencesFactory(
             profile__purchase_email='test@test.com').profile
-        self.troupe = TroupeFactory(contact=self.profile)
-        self.member = PersonaFactory()
-        self.troupe.membership.add(self.member)
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Registrar')
-        self.url = reverse(self.view_name, urlconf='gbe.urls')
+        cls.troupe = BioFactory(contact=cls.profile,
+                                multiple_performers=True)
+        cls.member = ProfileFactory()
+        people = get_or_create_bio(cls.troupe)
+        people.users.add(cls.member.user_object)
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Registrar')
+        cls.url = reverse(cls.view_name, urlconf='gbe.urls')
 
     def test_non_privileged_user(self):
         login_as(ProfileFactory(), self)
@@ -57,7 +57,7 @@ class TestReviewTroupes(TestCase):
              'gbe-btn-table btn-sm"><i class="far fa-eye"></i></a>') % (
              reverse('admin_landing_page',
                      urlconf='gbe.urls',
-                     args=[self.troupe.contact.resourceitem_id]),
+                     args=[self.troupe.contact.pk]),
              "View Contact Landing Page"),
             html=True)
         self.assertContains(
@@ -66,7 +66,7 @@ class TestReviewTroupes(TestCase):
              'gbe-btn-table btn-sm"><i class="far fa-envelope"></i></a>') % (
              reverse('mail_to_individual',
                      urlconf='gbe.email.urls',
-                     args=[self.troupe.contact.resourceitem_id]),
+                     args=[self.troupe.contact.pk]),
              "Email Contact"),
             html=True)
         self.assertContains(
@@ -75,6 +75,6 @@ class TestReviewTroupes(TestCase):
              'gbe-btn-table btn-sm"><i class="fas fa-eye"></i></a>') % (
              reverse('troupe_view',
                      urlconf='gbe.urls',
-                     args=[self.troupe.resourceitem_id]),
+                     args=[self.troupe.pk]),
              "View Troupe"),
             html=True)

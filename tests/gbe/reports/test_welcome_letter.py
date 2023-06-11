@@ -1,15 +1,11 @@
 from django.urls import reverse
 from django.test import TestCase
-from django.test.client import RequestFactory
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
 )
-from tests.factories.scheduler_factories import (
-    ResourceAllocationFactory,
-    WorkerFactory,
-)
+from tests.factories.scheduler_factories import PeopleAllocationFactory
 from tests.factories.ticketing_factories import (
     RoleEligibilityConditionFactory,
     TransactionFactory,
@@ -23,15 +19,16 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as
 )
+from tests.functions.scheduler_functions import get_or_create_profile
 
 
 class TestWelcomeLetter(TestCase):
-    '''Tests for index view'''
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.priv_profile = ProfileFactory()
-        grant_privilege(self.priv_profile, 'Act Reviewers')
-        self.url = reverse('welcome_letter', urlconf='gbe.reporting.urls')
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.priv_profile = ProfileFactory()
+        grant_privilege(cls.priv_profile, 'Act Reviewers')
+        cls.url = reverse('welcome_letter', urlconf='gbe.reporting.urls')
 
     def test_personal_schedule_fail(self):
         '''personal_schedule view should load for privileged users
@@ -67,7 +64,7 @@ class TestWelcomeLetter(TestCase):
             msg_prefix="Role condition for teacher was not found")
         self.assertContains(
             response,
-            str(context.teacher.performer_profile),
+            str(context.teacher.contact),
             msg_prefix="Teacher is not in the list")
 
     def test_personal_schedule_teacher_booking(self):
@@ -84,7 +81,7 @@ class TestWelcomeLetter(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            str(context.teacher.performer_profile))
+            str(context.teacher.contact))
         self.assertContains(
             response,
             context.bid.b_title)
@@ -116,10 +113,9 @@ class TestWelcomeLetter(TestCase):
         role_condition = RoleEligibilityConditionFactory()
         context = ClassContext()
         profile = ProfileFactory()
-        booking = ResourceAllocationFactory(
-            resource=WorkerFactory(
-                _item=profile,
-                role="Interested"),
+        booking = PeopleAllocationFactory(
+            people=get_or_create_profile(profile),
+            role="Interested",
             event=context.sched_event)
 
         login_as(self.priv_profile, self)
@@ -149,7 +145,7 @@ class TestWelcomeLetter(TestCase):
             conference=transaction.ticket_item.ticketing_event.conference)
         context.set_interest(interested_profile=purchaser)
 
-        request = self.factory.get(
+        request = self.client.get(
             'reports/schedule_all?conf_slug='+conference.conference_slug)
         login_as(self.priv_profile, self)
         response = self.client.get(
@@ -169,7 +165,7 @@ class TestWelcomeLetter(TestCase):
            should have a booking
         '''
         role_condition = RoleEligibilityConditionFactory()
-        teacher = PersonaFactory(contact__user_object__is_active=False)
+        teacher = BioFactory(contact__user_object__is_active=False)
         context = ClassContext(teacher=teacher)
 
         login_as(self.priv_profile, self)
@@ -180,7 +176,7 @@ class TestWelcomeLetter(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(
             response,
-            str(teacher.performer_profile))
+            str(teacher.contact))
         self.assertNotContains(
             response,
             context.bid.b_title)
@@ -196,7 +192,7 @@ class TestWelcomeLetter(TestCase):
             tickets=[transaction.ticket_item]
         )
 
-        request = self.factory.get(
+        request = self.client.get(
             'reports/schedule_all?conf_slug='+conference.conference_slug)
         login_as(self.priv_profile, self)
         response = self.client.get(

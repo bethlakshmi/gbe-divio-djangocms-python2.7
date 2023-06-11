@@ -16,7 +16,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='People',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('class_name', models.CharField(blank=True, max_length=50)),
                 ('class_id', models.IntegerField(blank=True, null=True)),
                 ('users', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
@@ -28,31 +32,66 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='eventevalboolean',
             name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='eventevalcomment',
             name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='eventevalgrade',
             name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
         ),
         migrations.CreateModel(
             name='PeopleAllocation',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('role', models.CharField(blank=True, choices=[('Interested', 'Interested'), ('Moderator', 'Moderator'), ('Panelist', 'Panelist'), ('Performer', 'Performer'), ('Producer', 'Producer'), ('Stage Manager', 'Stage Manager'), ('Staff Lead', 'Staff Lead'), ('Teacher', 'Teacher'), ('Technical Director', 'Technical Director'), ('Volunteer', 'Volunteer'), ('Rejected', 'Rejected'), ('Waitlisted', 'Waitlisted'), ('Pending Volunteer', 'Pending Volunteer')], max_length=50)),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('role', models.CharField(
+                    blank=True,
+                    choices=[('Interested', 'Interested'),
+                             ('Moderator', 'Moderator'),
+                             ('Panelist', 'Panelist'),
+                             ('Performer', 'Performer'),
+                             ('Producer', 'Producer'),
+                             ('Stage Manager', 'Stage Manager'),
+                             ('Staff Lead', 'Staff Lead'),
+                             ('Teacher', 'Teacher'),
+                             ('Technical Director', 'Technical Director'),
+                             ('Volunteer', 'Volunteer'),
+                             ('Rejected', 'Rejected'),
+                             ('Waitlisted', 'Waitlisted'),
+                             ('Pending Volunteer', 'Pending Volunteer')],
+                    max_length=50)),
                 ('label', models.TextField(blank=True)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='scheduler.event')),
-                ('people', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='scheduler.people')),
+                ('event', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='scheduler.event')),
+                ('people', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='scheduler.people')),
             ],
         ),
         migrations.AddField(
             model_name='ordering',
             name='people_allocated',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to='scheduler.peopleallocation'),
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='scheduler.peopleallocation'),
         ),
     ]

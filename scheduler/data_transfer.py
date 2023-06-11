@@ -15,46 +15,49 @@ class Commitment(object):
 class Person(object):
     def __init__(self,
                  booking_id=None,
-                 user=None,
                  public_id=None,
                  public_class="Performer",
                  role=None,
                  label=None,
-                 worker=None,
+                 people=None,
                  booking=None,
                  commitment=None,
                  users=None):
         self.booking_id = None
         self.commitment = None
         self.users = None
+        self.label = None
+
         if booking:
             self.booking_id = booking.pk
             self.occurrence = booking.event
-            worker = booking.resource.worker
+            self.role = booking.role
+            self.label = booking.label
+            people = booking.people
             if hasattr(booking, 'ordering'):
                 self.commitment = booking.ordering
         else:
             self.occurrence = None
             self.commitment = commitment
 
-        if worker:
-            self.role = worker.role
-            self.user = worker._item.as_subtype.user_object
-            self.public_class = worker._item.as_subtype.__class__.__name__
-            self.public_id = worker._item.pk
+        if people:
+            self.users = people.users.all()
+            self.public_class = people.class_name
+            self.public_id = people.class_id
         else:
-            self.user = user
+            self.users = users
             self.public_id = public_id
-            self.role = role
             self.public_class = public_class
 
+        if role:
+            self.role = role
         if booking_id:
             self.booking_id = booking_id
-        self.label = label
-        if users is not None:
+        if label:
+            self.label = label
+
+        if self.users is None:
             self.users = users
-        elif self.user is not None:
-            self.users = [self.user]
 
 
 class ScheduleItem(object):

@@ -83,8 +83,9 @@ class UserPrivView(GbeContextMixin, ListView):
             labels=[conference_slugs(current=True)],
             roles=privileged_event_roles)
         for person in response.people:
-            if not self.queryset.filter(pk=person.user.pk).exists():
-                context['conf_priv_users'] += [person.user]
+            for user in person.users:
+                if not self.queryset.filter(pk=user.pk).exists():
+                    context['conf_priv_users'] += [user]
         for area in StaffArea.objects.exclude(conference__status="completed"):
             if not self.queryset.filter(
                     pk=area.staff_lead.user_object.pk).exists() and (

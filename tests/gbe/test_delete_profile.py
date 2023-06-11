@@ -1,10 +1,10 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    ActFactory,
     BidEvaluationFactory,
+    BioFactory,
     CostumeFactory,
-    PersonaFactory,
     ProfileFactory,
     VendorFactory,
     VolunteerFactory,
@@ -13,20 +13,33 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from gbe.models import Profile
-from tests.contexts.class_context import ClassContext
+from tests.functions.scheduler_functions import (
+    get_or_create_bio,
+    get_or_create_profile,
+)
+from gbe.models import (
+    Bio,
+    Profile,
+)
+from scheduler.models import People
+from tests.contexts import (
+    ClassContext,
+    ShowContext,
+)
 from tests.factories.ticketing_factories import PurchaserFactory
+from tests.factories.scheduler_factories import PeopleFactory
 
 
-class TestAdminProfile(TestCase):
+class TestDeleteProfile(TestCase):
     '''Tests for admin_profile  view'''
     view_name = 'delete_profile'
 
-    def setUp(self):
-        self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Registrar')
-        self.deleted_profile = ProfileFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Registrar')
+        cls.deleted_profile = ProfileFactory()
+        cls.deleted_people = get_or_create_profile(cls.deleted_profile)
 
     def assert_deactivated(self, response, profile):
         self.assertRedirects(response, reverse('manage_users',
@@ -62,11 +75,13 @@ class TestAdminProfile(TestCase):
                                                urlconf='gbe.urls'))
         self.assertNotIn(self.deleted_profile.display_name, response)
         with self.assertRaises(Profile.DoesNotExist):
-            Profile.objects.get(pk=self.deleted_profile)
+            Profile.objects.get(pk=self.deleted_profile.pk)
+        with self.assertRaises(People.DoesNotExist):
+            People.objects.get(pk=self.deleted_people.pk)
 
-    def test_deactivate_if_booked(self):
+    def test_deactivate_if_booked_class(self):
         context = ClassContext()
-        teacher_prof = context.teacher.performer_profile
+        teacher_prof = context.teacher.contact
         url = reverse(self.view_name,
                       args=[teacher_prof.pk],
                       urlconf='gbe.urls')
@@ -74,14 +89,47 @@ class TestAdminProfile(TestCase):
         response = self.client.get(url, follow=True)
         self.assert_deactivated(response, teacher_prof)
 
-    def test_deactivate_if_persona(self):
-        persona_bearer = PersonaFactory()
+    def test_deactivate_if_booked_act(self):
+        act = ActFactory()
+        performer_prof = act.bio.contact
         url = reverse(self.view_name,
-                      args=[persona_bearer.performer_profile.pk],
+                      args=[performer_prof.pk],
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)
-        self.assert_deactivated(response, persona_bearer.performer_profile)
+        self.assert_deactivated(response, performer_prof)
+
+    def test_deactivate_if_booked_troupe_contact(self):
+        troupe = BioFactory(multiple_performers=True)
+        people = PeopleFactory(class_name=troupe.__class__.__name__,
+                               class_id=troupe.pk)
+        people.save()
+        user1 = ProfileFactory()
+        user2 = ProfileFactory()
+        people.users.add(user1.user_object)
+        people.users.add(user2.user_object)
+        context = ShowContext(performer=troupe)
+        url = reverse(self.view_name,
+                      args=[troupe.contact.pk],
+                      urlconf='gbe.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.get(url, follow=True)
+        self.assert_deactivated(response, troupe.contact)
+
+    def test_delete_if_persona(self):
+        persona_bearer = BioFactory()
+        people_bearer = get_or_create_bio(persona_bearer)
+        url = reverse(self.view_name,
+                      args=[persona_bearer.contact.pk],
+                      urlconf='gbe.urls')
+        login_as(self.privileged_user, self)
+        response = self.client.get(url, follow=True)
+        with self.assertRaises(Profile.DoesNotExist):
+            Profile.objects.get(pk=persona_bearer.contact.pk)
+        with self.assertRaises(People.DoesNotExist):
+            People.objects.get(pk=people_bearer.pk)
+        with self.assertRaises(Bio.DoesNotExist):
+            Bio.objects.get(pk=persona_bearer.pk)
 
     def test_deactivate_if_volunteer(self):
         volunteer = VolunteerFactory()

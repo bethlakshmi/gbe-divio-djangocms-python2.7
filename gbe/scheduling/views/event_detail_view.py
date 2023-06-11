@@ -45,9 +45,9 @@ class EventDetailView(View):
         labels = eventitem_view['occurrence'].labels
         if request.user.is_authenticated and hasattr(request.user, 'profile'):
             person = Person(
-                user=request.user,
+                users=[request.user],
                 public_id=request.user.profile.pk,
-                public_class="Profile")
+                public_class=request.user.profile.__class__.__name__)
             all_roles = []
             for n, m in role_options:
                 all_roles += [m]

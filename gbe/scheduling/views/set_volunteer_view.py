@@ -83,7 +83,8 @@ class SetVolunteerView(View):
             roles=["Volunteer", "Pending Volunteer"])
         bookings = []
         for person in volunteers.people:
-            if person.user == self.owner.user_object:
+            if person.public_id == self.owner.pk and (
+                    person.public_class == self.owner.__class__.__name__):
                 bookings += [person]
         schedule_response = None
         if kwargs['state'] == 'on' and len(bookings) == 0:
@@ -96,8 +97,10 @@ class SetVolunteerView(View):
                 default_summary = "User is pending"
                 default_message = set_pending_msg
             person = Person(
-                user=self.owner.user_object,
-                role=role)
+                users=[self.owner.user_object],
+                role=role,
+                public_id=self.owner.pk,
+                public_class=self.owner.__class__.__name__)
             schedule_response = set_person(occurrence_id, person)
             show_general_status(request,
                                 schedule_response,

@@ -48,12 +48,14 @@ class ActChangeStateView(BidChangeStateView):
     def parse_act_schedule(self, schedule_items):
         show = None
         rehearsals = []
+        rehearsal_pks = []
         for item in schedule_items:
             if item.event.event_style == "Show":
                 show = item
-            elif item.event not in rehearsals and (
+            elif item.booking_id not in rehearsal_pks and (
                     item.event.event_style == 'Rehearsal Slot'):
                 rehearsals += [item]
+                rehearsal_pks += [item.booking_id]
         return show, rehearsals
 
     def clear_bookings(self, request, rehearsals, show=None):
@@ -107,15 +109,14 @@ class ActChangeStateView(BidChangeStateView):
                     return super(ActChangeStateView, self).bid_state_change(
                         request)
 
-            person = Person(public_id=self.object.performer.pk,
+            person = Person(public_id=self.object.bio.pk,
+                            public_class=self.object.bio.__class__.__name__,
                             role=role,
                             commitment=Commitment(role=self.casting,
                                                   decorator_class=self.object))
             profiles = self.object.get_performer_profiles()
-            if len(profiles) > 1:
-                person.users = [profile.user_object for profile in profiles]
-            else:
-                person.user = profiles[0].user_object
+            person.users = [profile.user_object for profile in profiles]
+
             if same_show and not same_role:
                 person.booking_id = show.booking_id
                 set_response = set_person(person=person)

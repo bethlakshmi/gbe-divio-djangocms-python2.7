@@ -1,11 +1,9 @@
 from django.test import TestCase
-from django.test.client import RequestFactory
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
     ConferenceDayFactory,
-    PersonaFactory,
     ProfileFactory,
     RoomFactory,
 )
@@ -39,21 +37,20 @@ class TestTicketedEventWizard(TestScheduling):
     '''This view makes Master and Drop In and associates them w. tickets'''
     view_name = 'create_ticketed_event_wizard'
 
-    def setUp(self):
-        self.room = RoomFactory()
-        self.teacher = PersonaFactory()
-        self.current_conference = ConferenceFactory(accepting_bids=True)
-        self.room.conferences.add(self.current_conference)
-        self.day = ConferenceDayFactory(conference=self.current_conference)
-        self.url = reverse(
-            self.view_name,
-            args=[self.current_conference.conference_slug, "master"],
+    @classmethod
+    def setUpTestData(cls):
+        cls.room = RoomFactory()
+        cls.teacher = BioFactory()
+        cls.current_conference = ConferenceFactory(accepting_bids=True)
+        cls.room.conferences.add(cls.current_conference)
+        cls.day = ConferenceDayFactory(conference=cls.current_conference)
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.current_conference.conference_slug, "master"],
             urlconf='gbe.scheduling.urls'
             ) + "?pick_event=Next&event_type=master"
-        self.factory = RequestFactory()
-        self.client = Client()
-        self.privileged_user = ProfileFactory().user_object
-        grant_privilege(self.privileged_user, 'Scheduling Mavens')
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Scheduling Mavens')
 
     def edit_class(self):
         data = {
@@ -286,7 +283,7 @@ class TestTicketedEventWizard(TestScheduling):
         data['alloc_0-role'] = "Producer"
         data['alloc_1-role'] = "Technical Director"
         data['alloc_0-worker'] = self.privileged_user.pk
-        data['alloc_1-worker'] = self.teacher.performer_profile.pk
+        data['alloc_1-worker'] = self.teacher.contact.pk
         data['set_event'] = "More..."
         response = self.client.post(
             self.url,
@@ -322,7 +319,7 @@ class TestTicketedEventWizard(TestScheduling):
         data = self.edit_class()
         data['type'] = "Special"
         data['alloc_0-role'] = "Staff Lead"
-        data['alloc_0-worker'] = self.teacher.performer_profile.pk
+        data['alloc_0-worker'] = self.teacher.contact.pk
         data['set_event'] = "More..."
         data.pop('alloc_1-role', None)
         response = self.client.post(

@@ -1,19 +1,10 @@
 <div class='performer_section'>
-  {% if personae or troupes %}
+  {% if bios %}
     <span class='sched_detail'>Bios</span>
   <br>
-    {% if personae or troupes %}
-      {% for performer in personae %}
-        {% with is_troupe=0 %}
-          {% include 'gbe/profile/incl_performer_block.tmpl' %}
-	      {% endwith %}
-      {% endfor %}
-      {% for performer in troupes %}
-        {% with is_troupe=1 %}
-          {% include 'gbe/profile/incl_performer_block.tmpl' %}
-	      {% endwith %}
-      {% endfor %}
-    {%endif%}
+    {% for performer in bios %}
+      {% include 'gbe/profile/incl_performer_block.tmpl' %}
+    {% endfor %}
   {% else %}
     {{ profile.display_name }} has no stage personae listed.<br>
   {% endif %}

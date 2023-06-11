@@ -17,18 +17,16 @@ from gbe.scheduling.forms import (
     EventBookingForm,
     ScheduleOccurrenceForm,
 )
-from scheduler.data_transfer import Person
 from scheduler.idd import (
     get_occurrence,
     get_occurrences,
     get_people,
-    update_occurrence,
 )
 from django.contrib import messages
 from gbe.models import (
     ActCastingOption,
+    Bio,
     Conference,
-    Performer,
     Profile,
     UserMessage,
 )
@@ -257,84 +255,6 @@ def setup_event_management_form(
             open_to_public=open_to_public,
             initial=initial_form_info)
     return (context, initial_form_info)
-
-
-def update_event(event_form,
-                 scheduling_form,
-                 occurrence_id,
-                 roles=None,
-                 people_formset=[],
-                 slug=None):
-    start_time = get_start_time(scheduling_form.cleaned_data)
-    people = []
-    for assignment in people_formset:
-        if assignment.is_valid() and assignment.cleaned_data['worker']:
-            people += [Person(
-                user=assignment.cleaned_data[
-                    'worker'].workeritem.as_subtype.user_object,
-                public_id=assignment.cleaned_data['worker'].workeritem.pk,
-                role=assignment.cleaned_data['role'])]
-    if len(people) == 0:
-        people = None
-    response = update_occurrence(
-        occurrence_id,
-        event_form.cleaned_data['title'],
-        event_form.cleaned_data['description'],
-        start_time,
-        length=timedelta(
-            minutes=scheduling_form.cleaned_data['duration']*60),
-        max_volunteer=scheduling_form.cleaned_data['max_volunteer'],
-        people=people,
-        roles=roles,
-        locations=[scheduling_form.cleaned_data['location']],
-        approval=scheduling_form.cleaned_data['approval'],
-        slug=event_form.cleaned_data['slug'])
-    return response
-
-
-def process_post_response(request,
-                          conference,
-                          start_success_url,
-                          next_step,
-                          occurrence,
-                          roles=None,
-                          additional_validity=True,
-                          people_forms=[]):
-    success_url = start_success_url
-    context = {}
-    response = None
-    context['event_form'] = EventBookingForm(request.POST)
-    context['scheduling_form'] = ScheduleOccurrenceForm(
-        request.POST,
-        conference=conference,
-        open_to_public=event_settings[
-            occurrence.event_style.lower()]['open_to_public'])
-
-    if context['event_form'].is_valid(
-            ) and context['scheduling_form'].is_valid(
-            ) and additional_validity:
-
-        response = update_event(
-            context['event_form'],
-            context['scheduling_form'],
-            occurrence.pk,
-            roles,
-            people_forms,
-            slug=context['event_form'].cleaned_data['slug'])
-
-        if request.POST.get('edit_event', 0) != "Save and Continue":
-            success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
-                reverse('manage_event_list',
-                        urlconf='gbe.scheduling.urls',
-                        args=[conference.conference_slug]),
-                conference.conference_slug,
-                context['scheduling_form'].cleaned_data['day'].pk,
-                str([occurrence.pk]),)
-        else:
-            success_url = "%s?%s=True" % (success_url, next_step)
-    else:
-        context['start_open'] = True
-    return context, success_url, response
 
 
 def build_icon_links(occurrence,

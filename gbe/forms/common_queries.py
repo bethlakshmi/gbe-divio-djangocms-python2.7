@@ -1,11 +1,10 @@
 from gbe.models import (
-    Performer,
-    Persona,
+    Bio,
     Profile,
 )
 
 
-visible_personas = Persona.objects.filter(
+visible_personas = Bio.objects.filter(
     contact__user_object__is_active=True)
 
 

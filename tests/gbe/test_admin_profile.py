@@ -3,7 +3,7 @@ from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfilePreferencesFactory,
-    PersonaFactory,
+    BioFactory,
     ProfileFactory,
 )
 from tests.functions.gbe_functions import (
@@ -23,7 +23,7 @@ class TestAdminProfile(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.privileged_user = ProfileFactory().user_object
         cls.privileged_user.pageuser.created_by_id = cls.privileged_user.pk
         cls.privileged_user.pageuser.save()

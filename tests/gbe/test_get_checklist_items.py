@@ -6,8 +6,8 @@ from tests.factories.ticketing_factories import (
     TransactionFactory
 )
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory
 )
 from scheduler.idd import get_schedule
@@ -47,17 +47,17 @@ class TestGetCheckListItems(TestCase):
             profile has a role match condition
         '''
         from gbe.ticketing_idd_interface import get_checklist_items
-        teacher = PersonaFactory()
+        teacher = BioFactory()
         conference = ConferenceFactory()
         booking = book_worker_item_for_role(teacher,
                                             self.role_condition.role,
                                             conference=conference)
         self.schedule = get_schedule(
-                teacher.performer_profile.user_object,
+                teacher.contact.user_object,
                 labels=[conference.conference_slug]).schedule_items
 
         ticket_items, role_items = get_checklist_items(
-            teacher.performer_profile,
+            teacher.contact,
             conference,
             self.schedule)
         self.assertEqual(len(role_items), 1)
@@ -93,13 +93,13 @@ class TestGetCheckListItems(TestCase):
             profile meets role and ticket
         '''
         from gbe.ticketing_idd_interface import get_checklist_items
-        teacher = PersonaFactory()
+        teacher = BioFactory()
         conference = ConferenceFactory()
         booking = book_worker_item_for_role(teacher,
                                             self.role_condition.role,
                                             conference=conference)
         purchaser = PurchaserFactory(
-            matched_to_user=teacher.performer_profile.user_object)
+            matched_to_user=teacher.contact.user_object)
         transaction = TransactionFactory(
             purchaser=purchaser)
         transaction.ticket_item.ticketing_event.conference = conference
@@ -108,10 +108,10 @@ class TestGetCheckListItems(TestCase):
         self.ticket_condition.save()
 
         self.schedule = get_schedule(
-                teacher.performer_profile.user_object,
+                teacher.contact.user_object,
                 labels=[conference.conference_slug]).schedule_items
         ticket_items, role_items = get_checklist_items(
-            teacher.performer_profile,
+            teacher.contact,
             conference,
             self.schedule)
         self.assertEqual(len(ticket_items), 1)

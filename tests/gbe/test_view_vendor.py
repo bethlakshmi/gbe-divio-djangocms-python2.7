@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
-    PersonaFactory,
     ProfileFactory,
     VendorFactory,
 )
@@ -24,7 +23,6 @@ class TestViewVendor(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.performer = PersonaFactory()
 
     def test_view_vendor_all_well(self):
         vendor = VendorFactory(submitted=True)

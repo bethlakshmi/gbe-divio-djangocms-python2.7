@@ -14,7 +14,7 @@ class TestViewSummerAct(TestCase):
 
     def setUp(self):
         self.client = Client()
-        login_as(self.act.performer.performer_profile, self)
+        login_as(self.act.performer.contact, self)
 
     @classmethod
     def setUpTestData(cls):

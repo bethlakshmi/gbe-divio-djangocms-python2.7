@@ -4,7 +4,7 @@ from datetime import (
     datetime,
     time,
 )
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
@@ -33,15 +33,15 @@ class TestShowDashboard(TestCase):
     '''Tests for index view'''
     view_name = 'show_dashboard'
 
-    def setUp(self):
-        self.client = Client()
-        self.context = ActTechInfoContext(schedule_rehearsal=True)
-        self.other_context = ActTechInfoContext(
-            conference=self.context.conference)
-        self.profile = self.context.make_priv_role()
-        self.url = reverse(self.view_name,
-                           urlconf='gbe.scheduling.urls',
-                           args=[self.context.sched_event.pk])
+    @classmethod
+    def setUpTestData(cls):
+        cls.context = ActTechInfoContext(schedule_rehearsal=True)
+        cls.other_context = ActTechInfoContext(
+            conference=cls.context.conference)
+        cls.profile = cls.context.make_priv_role()
+        cls.url = reverse(cls.view_name,
+                          urlconf='gbe.scheduling.urls',
+                          args=[cls.context.sched_event.pk])
 
     def get_basic_post(self, order_value=1):
         data = {
@@ -193,7 +193,9 @@ class TestShowDashboard(TestCase):
     def test_get_show_w_no_acts(self):
         no_act_context = ShowContext()
         no_act_context.performer.delete()
+        no_act_context.people.delete()
         no_act_context.acts[0].delete()
+
         no_act_url = reverse(self.view_name,
                              urlconf="gbe.scheduling.urls",
                              args=[no_act_context.sched_event.pk])
@@ -216,7 +218,7 @@ class TestShowDashboard(TestCase):
         self.assertContains(response, reverse(
             'mail_to_individual',
             urlconf='gbe.email.urls',
-            args=[vol_context.profile.resourceitem_id]))
+            args=[vol_context.profile.pk]))
         self.assertContains(response, reverse(
             'detail_view',
             urlconf='gbe.scheduling.urls',

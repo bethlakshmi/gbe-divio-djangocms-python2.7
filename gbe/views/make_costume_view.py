@@ -10,7 +10,7 @@ from gbe.forms import (
 )
 from gbe.models import (
     Costume,
-    Persona,
+    Bio,
     UserMessage
 )
 from gbe_forms_text import (
@@ -52,14 +52,14 @@ class MakeCostumeView(MakeBidView):
             self).groundwork(request, args, kwargs)
         if redirect:
             return redirect
-        self.performers = self.owner.personae.all()
+        self.performers = self.owner.bio_set.all()
         if len(self.performers) == 0:
             return '%s?next=%s' % (
                 reverse('persona-add', urlconf='gbe.urls', args=[0]),
                 reverse('costume_create', urlconf='gbe.urls'))
 
         if self.bid_object and ((self.bid_object.profile != self.owner) or (
-                self.bid_object.performer not in self.performers)):
+                self.bid_object.bio not in self.performers)):
             raise Http404
 
     def get_initial(self):
@@ -110,8 +110,7 @@ class MakeCostumeView(MakeBidView):
         )
 
     def set_up_form(self):
-        self.form.fields['performer'].queryset = Persona.objects.filter(
-            performer_profile_id=self.owner.resourceitem_id)
+        self.form.fields['bio'].queryset = self.owner.bio_set.all()
 
     def make_context(self, request):
         context = super(MakeCostumeView, self).make_context(request)

@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
     CostumeFactory,
-    PersonaFactory,
     ProfileFactory,
 )
 from tests.functions.gbe_functions import (
@@ -22,7 +22,7 @@ class TestReviewCostume(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.performer = PersonaFactory()
+        cls.performer = BioFactory()
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Costume Reviewers')
@@ -41,8 +41,8 @@ class TestReviewCostume(TestCase):
         return data
 
     def test_review_costume_all_well(self):
-        costume = CostumeFactory(performer=self.performer)
-        other_performer = PersonaFactory()
+        costume = CostumeFactory(bio=self.performer)
+        other_performer = BioFactory()
         url = reverse(self.view_name, args=[costume.pk], urlconf="gbe.urls")
         login_as(self.privileged_user, self)
         response = self.client.get(url)
@@ -54,7 +54,7 @@ class TestReviewCostume(TestCase):
     def test_review_costume_past_conference(self):
         conference = ConferenceFactory(status='completed')
         costume = CostumeFactory(b_conference=conference,
-                                 performer=self.performer)
+                                 bio=self.performer)
         url = reverse(self.view_name, args=[costume.pk], urlconf="gbe.urls")
         login_as(self.privileged_user, self)
         response = self.client.get(url, follow=True)
@@ -81,7 +81,7 @@ class TestReviewCostume(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_review_costume_post_valid(self):
-        bid = CostumeFactory(performer=self.performer)
+        bid = CostumeFactory(bio=self.performer)
         url = reverse(self.view_name,
                       args=[bid.pk],
                       urlconf='gbe.urls')

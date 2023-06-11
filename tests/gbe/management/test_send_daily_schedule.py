@@ -5,9 +5,10 @@ from post_office.models import Email
 from django.core.management import call_command
 from django.conf import settings
 from tests.factories.gbe_factories import (
-    TroupeFactory,
-    PersonaFactory,
+    BioFactory,
+    ProfileFactory,
 )
+from tests.factories.scheduler_factories import PeopleFactory
 from tests.contexts import (
     ClassContext,
     ShowContext,
@@ -45,12 +46,17 @@ class TestSendDailySchedule(TestCase):
             context.teacher.user_object.email in queued_email[0].to)
 
     def test_troupe_mail(self):
+        # in this case, contact is NOT a member of troupe, so doesn't get
+        # any schedule mail
         start_time = datetime.combine(
             datetime.now().date() + timedelta(days=1),
             time(0, 0, 0, 0))
-        troupe = TroupeFactory()
-        member = PersonaFactory()
-        troupe.membership.add(member)
+        troupe = BioFactory(multiple_performers=True)
+        member = ProfileFactory()
+        people = PeopleFactory(class_name=troupe.__class__.__name__,
+                               class_id=troupe.pk)
+        people.save()
+        people.users.add(member.user_object)
         context = ShowContext(starttime=start_time,
                               performer=troupe)
         call_command("send_daily_schedule")

@@ -5,8 +5,8 @@ from django.shortcuts import (
 from django.http import Http404
 from django.urls import reverse
 from gbe.models import (
+    Bio,
     Class,
-    Performer,
     StaffArea,
     UserMessage,
 )
@@ -136,9 +136,9 @@ class ListEventsView(View):
         personal_schedule_items = []
         if request.user.is_authenticated and hasattr(request.user, 'profile'):
             person = Person(
-                user=request.user,
+                users=[request.user],
                 public_id=request.user.profile.pk,
-                public_class="Profile")
+                public_class=request.user.profile.__class__.__name__)
             for n, m in role_options:
                 all_roles += [m]
             personal_schedule_items = get_schedule(
@@ -190,7 +190,7 @@ class ListEventsView(View):
                 "Panelist"])
             for person in people_response.people:
                 if person.public_class != "Profile":
-                    presenter = Performer.objects.get(pk=person.public_id)
+                    presenter = Bio.objects.get(pk=person.public_id)
                     if presenter not in presenters:
                         presenters += [presenter]
             bid = None

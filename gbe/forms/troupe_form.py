@@ -1,11 +1,12 @@
 from django.forms import (
+    HiddenInput,
     IntegerField,
     ModelChoiceField,
     ModelMultipleChoiceField,
 )
 from gbe.models import (
+    Bio,
     Profile,
-    Troupe,
 )
 from gbe_forms_text import (
     persona_help_texts,
@@ -27,6 +28,13 @@ class TroupeForm(PersonaForm):
         required=True,
         label=troupe_labels['year_started'],
         help_text=persona_help_texts['year_started'])
+    membership = ModelMultipleChoiceField(
+        queryset=Profile.objects.filter(user_object__is_active=True),
+        widget=autocomplete.ModelSelect2Multiple(
+            url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls'),
+            attrs={
+                'data-minimum-input-length': 3,
+                },))
 
     def clean(self):
         cleaned_data = super(TroupeForm, self).clean()
@@ -35,20 +43,18 @@ class TroupeForm(PersonaForm):
         return cleaned_data
 
     class Meta:
-        model = Troupe
+        model = Bio
         fields = ['contact',
                   'name',
                   'label',
                   'pronouns',
-                  'membership',
                   'bio',
                   'year_started',
                   'awards',
                   'upload_img',
                   'festivals',
+                  'multiple_performers'
                   ]
         help_texts = persona_help_texts
         labels = troupe_labels
-        widgets = {
-            'membership': autocomplete.ModelSelect2Multiple(
-                url=reverse_lazy('persona-autocomplete', urlconf='gbe.urls'))}
+        widgets = {'multiple_performers': HiddenInput()}

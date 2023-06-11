@@ -41,18 +41,16 @@ class BidAdmin(ImportExportActionModelAdmin):
 
 class ClassAdmin(BidAdmin):
     list_display = ('b_title',
-                    'teacher',
                     'teacher_bio',
                     'submitted',
                     'accepted',
                     'created_at',
                     'updated_at')
-    search_fields = ['b_title', 'teacher__name']
+    search_fields = ['b_title', 'teacher_bio__name']
 
 
 class ActAdmin(BidAdmin):
-    list_display = ('performer',
-                    'bio',
+    list_display = ('bio',
                     'b_title',
                     'submitted',
                     'accepted',
@@ -64,11 +62,7 @@ class ActAdmin(BidAdmin):
 class PerformerAdmin(admin.ModelAdmin):
     list_display = ('name', 'contact', 'label')
     search_fields = ['name', 'contact__display_name']
-
-
-class TroupeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'contact')
-    filter_horizontal = ("membership",)
+    list_filter = ['multiple_performers']
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -185,7 +179,6 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
 class SocialLinkAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'performer',
         'bio',
         'order',
         'social_network',
@@ -194,8 +187,8 @@ class SocialLinkAdmin(admin.ModelAdmin):
     list_filter = [
         'social_network',
         ]
-    search_fields = ['performer__name',
-                     'performer__contact__display_name',
+    search_fields = ['bio__name',
+                     'bio__contact__display_name',
                      ]
 
 
@@ -343,8 +336,6 @@ admin.site.register(EmailFrequency, EmailFrequencyAdmin)
 admin.site.register(EvaluationCategory, EvalCategoryAdmin)
 admin.site.register(EmailTemplateSender, EmailTemplateSenderAdmin)
 admin.site.register(FlexibleEvaluation, FlexAdmin)
-admin.site.register(Performer, PerformerAdmin)
-admin.site.register(Persona, PerformerAdmin)
 admin.site.register(Bio, PerformerAdmin)
 admin.site.register(ProfilePreferences, ProfilePreferencesAdmin)
 admin.site.register(Profile, ProfileAdmin)
@@ -352,7 +343,6 @@ admin.site.register(StaffArea, StaffAreaAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(TechInfo)
 admin.site.register(Business, BusinessAdmin)
-admin.site.register(Troupe, TroupeAdmin)
 admin.site.register(SocialLink, SocialLinkAdmin)
 admin.site.register(UserMessage, MessageAdmin)
 admin.site.register(Vendor, VendorAdmin)

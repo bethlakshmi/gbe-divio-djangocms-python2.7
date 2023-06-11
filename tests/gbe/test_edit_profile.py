@@ -243,7 +243,7 @@ class TestEditProfile(TestCase):
             response, 'success', 'Success', default_update_profile_msg)
 
     def test_active_user_cant_remove_vitals(self):
-        ClassFactory(teacher__contact=self.profile)
+        ClassFactory(teacher_bio__contact=self.profile)
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
         login_as(self.profile, self)

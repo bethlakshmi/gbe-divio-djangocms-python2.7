@@ -43,11 +43,6 @@ class ConferenceDayFactory(DjangoModelFactory):
         model = conf.ConferenceDay
 
 
-class WorkerItemFactory(DjangoModelFactory):
-    class Meta:
-        model = sched.WorkerItem
-
-
 class UserFactory(DjangoModelFactory):
     ''' the created_by_id of a Page User is a hack to get to python 3.8,
     Django CMS > 3.7.  If this is ever really fixed, it can be removed:
@@ -81,27 +76,18 @@ class ArticleFactory(DjangoModelFactory):
     slug = Sequence(lambda n: "slug_%s" % str(n))
 
 
-class PersonaFactory(DjangoModelFactory):
+class BioFactory(DjangoModelFactory):
     class Meta:
-        model = conf.Persona
+        model = conf.Bio
     contact = SubFactory(ProfileFactory)
-    performer_profile = LazyAttribute(lambda a: a.contact)
-    name = Sequence(lambda n: 'Test Persona %d' % n)
-    year_started = 2004
-
-
-class TroupeFactory(DjangoModelFactory):
-    class Meta:
-        model = conf.Troupe
-    contact = SubFactory(ProfileFactory)
-    name = Sequence(lambda n: 'Test Troupe %d' % n)
+    name = Sequence(lambda n: 'Test Bio %d' % n)
     year_started = 2004
 
 
 class SocialLinkFactory(DjangoModelFactory):
     class Meta:
         model = conf.SocialLink
-    performer = SubFactory(PersonaFactory)
+    bio = SubFactory(BioFactory)
     social_network = 'Website'
     link = Sequence(lambda n: '"http://www.foo%d.com"' % n)
     order = 1
@@ -130,7 +116,7 @@ class ActFactory(DjangoModelFactory):
 
     submitted = False
     b_title = Sequence(lambda x: "Act #%d" % x)
-    performer = SubFactory(PersonaFactory)
+    bio = SubFactory(BioFactory)
     tech = SubFactory(TechInfoFactory)
     video_link = ""
     video_choice = ""
@@ -155,7 +141,7 @@ class ClassFactory(DjangoModelFactory):
     b_description = LazyAttribute(
         lambda a: "Description for %s" % a.b_title)
     submitted = False
-    teacher = SubFactory(PersonaFactory)
+    teacher_bio = SubFactory(BioFactory)
     minimum_enrollment = 1
     maximum_enrollment = 20
     organization = "Some Organization"

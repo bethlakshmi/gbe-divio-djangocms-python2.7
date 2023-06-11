@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from gbe.models import (
+    Bio,
     Conference,
     StaffArea,
     UserMessage,
@@ -276,11 +277,18 @@ class MailToRolesView(MailToFilterView):
                         roles=self.select_form.cleaned_data['roles'])
                 people += response.people
         for person in people:
-            person_contact = (person.user.email,
-                              person.user.profile.display_name)
-            if person.user.profile.email_allowed(
-                    self.email_type) and person_contact not in to_list:
-                to_list += [person_contact]
+            for user in person.users:
+                person_contact = (user.email, user.profile.display_name)
+                if user.profile.email_allowed(self.email_type) and (
+                        person_contact not in to_list):
+                    to_list += [person_contact]
+            if person.public_class == "Bio":
+                bio = Bio.objects.get(pk=person.public_id)
+                person_contact = (bio.contact.user_object.email,
+                                  bio.contact.display_name)
+                if bio.contact.email_allowed(self.email_type) and (
+                        person_contact not in to_list):
+                    to_list += [person_contact]
         return sorted(to_list, key=lambda s: s[1].lower())
 
     def prep_email_form(self, request):

@@ -3,7 +3,7 @@ from scheduler.data_transfer import (
     ScheduleResponse,
     ScheduleItem,
 )
-from scheduler.models import ResourceAllocation
+from scheduler.models import PeopleAllocation
 from gbetext import not_scheduled_roles
 
 
@@ -14,9 +14,22 @@ def get_schedule(user=None,
                  start_time=None,
                  end_time=None,
                  roles=[],
-                 commitment=None):
-    basic_filter = ResourceAllocation.objects.all()
+                 commitment=None,
+                 public_class=None,
+                 public_id=None):
+    basic_filter = PeopleAllocation.objects.all()
     sched_items = []
+
+    if (public_class is None and public_id is not None) or (
+            public_id is None and public_class is not None):
+        return ScheduleResponse(errors=[Error(
+            code="LINKED_CLASS_AND_ID_REQUIRED",
+            details="Getting a schedule by class & id requires both items.")])
+
+    if public_class is not None and public_id is not None and user is not None:
+        return ScheduleResponse(errors=[Error(
+            code="USER_AND_LINKED_CLASS_INCOMPATIBLE",
+            details="User and Linked Class searching is incompatible.")])
 
     if len(labels) > 0:
         basic_filter = basic_filter.filter(
@@ -30,56 +43,36 @@ def get_schedule(user=None,
             ordering__class_id=commitment.pk)
 
     if len(roles) > 0:
-        worker_filter = basic_filter.filter(
-            resource__worker__role__in=roles,
-        )
+        basic_filter = basic_filter.filter(role__in=roles)
     else:
-        worker_filter = basic_filter.exclude(
-            resource__worker__role__in=not_scheduled_roles)
-    if user:
-        bookable_items = user.profile.get_bookable_items()
-        if len(bookable_items['performers']) > 0:
-            for item in worker_filter.filter(
-                    resource__worker___item__in=bookable_items['performers']):
-                booking_label = None
-                order = None
-                if hasattr(item, 'ordering'):
-                    order = item.ordering
-                if hasattr(item, 'label'):
-                    booking_label = item.label
-                if (start_time and item.event.end_time > start_time) or (
-                        start_time is None):
-                    sched_items += [ScheduleItem(
-                        user=user,
-                        event=item.event,
-                        role=item.resource.as_subtype.role,
-                        label=booking_label,
-                        commitment=order,
-                        booking_id=item.pk)]
-        worker_filter = worker_filter.filter(
-            resource__worker___item=user.profile)
+        basic_filter = basic_filter.exclude(role__in=not_scheduled_roles)
 
-    for item in worker_filter:
+    if user:
+        basic_filter = basic_filter.filter(people__users__in=[user])
+    elif public_class and public_id:
+        basic_filter = basic_filter.filter(people__class_name=public_class,
+                                           people__class_id=public_id)
+
+    for item in basic_filter:
         if (start_time and item.event.end_time >= start_time) or (
                 start_time is None):
-            resource = item.resource.as_subtype
-            booking_label = None
-            if hasattr(item, 'label'):
-                booking_label = item.label
-            if resource.__class__.__name__ == "Worker":
-                order = None
-                if hasattr(item, 'ordering'):
-                    order = item.ordering
-                # TODO - refactor to a schedule side construct, not a GBE side
-                # this covers all troupe members getting included
-                for profile in resource.workeritem.get_profiles():
-                    sched_items += [ScheduleItem(
-                        user=profile.user_object,
-                        event=item.event,
-                        role=resource.role,
-                        label=booking_label,
-                        booking_id=item.pk,
-                        commitment=order)]
+
+            order = None
+            if hasattr(item, 'ordering'):
+                order = item.ordering
+
+            people_list = item.people.users.all()
+            if user:
+                people_list = item.people.users.filter(pk=user.pk)
+            for list_user in people_list:
+                sched_items += [ScheduleItem(
+                    user=list_user,
+                    event=item.event,
+                    role=item.role,
+                    label=item.label,
+                    booking_id=item.pk,
+                    commitment=order)]
+
     response = ScheduleResponse(
         schedule_items=sorted(
             set(sched_items),

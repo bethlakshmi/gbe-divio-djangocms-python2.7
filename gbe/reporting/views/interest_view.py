@@ -9,8 +9,8 @@ from gbe.functions import (
 from django.urls import reverse
 from scheduler.idd import get_occurrences
 from gbe.models import (
+    Bio,
     Class,
-    Performer,
     UserMessage,
 )
 from gbetext import interested_report_explain_msg
@@ -44,7 +44,7 @@ def interest_view(request):
             if person.role == "Interested":
                 interested += [person]
             elif person.role in ("Teacher", "Moderator"):
-                teachers += [Performer.objects.get(pk=person.public_id)]
+                teachers += [Bio.objects.get(pk=person.public_id)]
 
         display_item = {
             'id': occurrence.id,

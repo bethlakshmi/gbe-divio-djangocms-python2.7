@@ -39,16 +39,17 @@
       <th>Number</th>
     </tr>
     {% for contact in opp.people%}
-    {% if contact.role in visible_roles %}
+    {% if contact.role in visible_roles %}{% for user in contact.users %}
     <tr {% if not contact.user.profile.is_active %}class="gbe-form-error"{% endif %}>
       <td>{% for role, commit in role_commit_map.items %}{% if role == contact.role %}
         &nbsp;<i class="{{commit.1}}"></i>
           {% endif %}{% endfor %}</td>
-      <td>{{contact.user.profile}}</td>
+      <td>{{user.profile}}</td>
       <td>{{contact.role}}</td>
-      <td>{{contact.user.email}}</td>
-      <td>{{contact.user.profile.phone}}</td>
+      <td>{{user.email}}</td>
+      <td>{{user.profile.phone}}</td>
     </tr>
+    {% endfor %}
     {% endif %}
     {% endfor %}
   </table>

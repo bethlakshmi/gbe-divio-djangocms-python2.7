@@ -4,7 +4,7 @@ from django.test import Client
 from django.db.models import Max
 from tests.factories.gbe_factories import (
     ActFactory,
-    PersonaFactory,
+    BioFactory,
     UserFactory,
 )
 from tests.contexts import ActTechInfoContext
@@ -27,10 +27,10 @@ from settings import GBE_DATETIME_FORMAT
 from datetime import timedelta
 from gbe.models import (
     Act,
-    Performer,
+    Bio,
 )
 from scheduler.models import (
-    ResourceAllocation,
+    PeopleAllocation,
 )
 
 
@@ -84,7 +84,7 @@ class TestActTechWizard(TestGBE):
                 selected_rehearsal.starttime.strftime(GBE_DATETIME_FORMAT)))
 
     def test_edit_act_techinfo_unauthorized_user(self):
-        random_performer = PersonaFactory()
+        random_performer = BioFactory()
         url = reverse(self.view_name,
                       urlconf='gbe.urls',
                       args=[self.context.act.pk])
@@ -284,7 +284,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        alloc = ResourceAllocation.objects.get(
+        alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
             ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
@@ -306,7 +306,7 @@ class TestActTechWizard(TestGBE):
             'I will need set before my number" '
             'id="id_prop_setup_1" checked />',
             html=True)
-        alloc = ResourceAllocation.objects.filter(
+        alloc = PeopleAllocation.objects.filter(
             ordering__class_id=context.act.pk)
         self.assertEqual(alloc.count(), 2)
         assert_option_state(
@@ -336,7 +336,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = -1
-        alloc = ResourceAllocation.objects.get(
+        alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
             ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
@@ -369,7 +369,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        alloc = ResourceAllocation.objects.get(
+        alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
             ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
@@ -395,7 +395,7 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
-        alloc = ResourceAllocation.objects.aggregate(Max('pk'))['pk__max']+1
+        alloc = PeopleAllocation.objects.aggregate(Max('pk'))['pk__max']+1
         data['%d-booking_id' % context.sched_event.pk] = alloc
         response = self.client.post(url, data)
         self.assertContains(response, rehearsal_book_error)
@@ -431,7 +431,7 @@ class TestActTechWizard(TestGBE):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_act_tech_basic_submit)
-        reload_performer = Performer.objects.get(pk=context.performer.pk)
+        reload_performer = Bio.objects.get(pk=context.performer.pk)
         self.assertEqual('she/her', reload_performer.pronouns)
 
     def test_edit_act_wout_music_and_continue(self):

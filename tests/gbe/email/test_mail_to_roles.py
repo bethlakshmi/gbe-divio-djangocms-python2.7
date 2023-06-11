@@ -2,6 +2,7 @@ from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
+    BioFactory,
     ConferenceFactory,
     ProfileFactory,
     ProfilePreferencesFactory,
@@ -316,8 +317,12 @@ class TestMailToRoles(TestFilters):
             checked=False,
             prefix="event-select")
 
-    def test_pick_performer_specific_show(self):
-        showcontext = ShowContext()
+    def test_pick_troupe_specific_show(self):
+        troupe = BioFactory(multiple_performers=True)
+        showcontext = ShowContext(performer=troupe)
+        member = ProfileFactory()
+        showcontext.people.users.clear()
+        showcontext.people.users.add(member.user_object)
         anothershowcontext = ShowContext(
             conference=showcontext.conference,
         )
@@ -338,9 +343,13 @@ class TestMailToRoles(TestFilters):
         self.assertNotContains(
             response,
             anothershowcontext.performer.contact.user_object.email)
+        # contact should be included, even when not a member
         self.assertContains(
             response,
             showcontext.performer.contact.user_object.email)
+        self.assertContains(
+            response,
+            member.user_object.email)
         self.assert_checkbox(
             response,
             "events",

@@ -8,11 +8,14 @@ from tests.factories.gbe_factories import (
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
     LocationFactory,
+    PeopleAllocationFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
-    WorkerFactory,
 )
-from tests.functions.scheduler_functions import noon
+from tests.functions.scheduler_functions import (
+    get_or_create_profile,
+    noon,
+)
 
 
 class StaffAreaContext:
@@ -63,9 +66,12 @@ class StaffAreaContext:
             volunteer_sched_event = self.add_volunteer_opp()
         if not volunteer:
             volunteer = ProfileFactory()
-        booking = ResourceAllocationFactory(
+        people = get_or_create_profile(volunteer)
+
+        booking = PeopleAllocationFactory(
             event=volunteer_sched_event,
-            resource=WorkerFactory(_item=volunteer, role=role))
+            people=people,
+            role=role)
         return (volunteer, booking)
 
     def get_room(self):

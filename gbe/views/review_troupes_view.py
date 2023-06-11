@@ -6,11 +6,12 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
-    Troupe,
+    Bio,
     UserMessage,
 )
 from gbe.functions import validate_perms
 from gbetext import troupe_intro_msg
+from scheduler.idd import get_bookable_people
 
 
 class ReviewTroupesView(View):
@@ -23,7 +24,8 @@ class ReviewTroupesView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         admin_profile = validate_perms(request, self.reviewer_permissions)
-        troupes = Troupe.objects.filter(contact__user_object__is_active=True)
+        troupes = Bio.objects.filter(contact__user_object__is_active=True,
+                                     multiple_performers=True)
         rows = []
         intro = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
@@ -34,9 +36,11 @@ class ReviewTroupesView(View):
         for troupe in troupes:
             bid_row = {}
             members = ""
-            for member in troupe.membership.filter(
-                    contact__user_object__is_active=True):
-                members += "%s,<br>" % member.name
+            response = get_bookable_people(troupe.pk,
+                                           troupe.__class__.__name__)
+            for member in response.people[0].users:
+                if member.is_active:
+                    members += "%s,<br>" % member.profile.display_name
             bid_row['profile'] = (
                 troupe.name,
                 "%s<br>(<a href='%s'>%s</a>)" % (
@@ -44,25 +48,25 @@ class ReviewTroupesView(View):
                     reverse(
                         'mail_to_individual',
                         urlconf='gbe.email.urls',
-                        args=[troupe.contact.resourceitem_id]),
+                        args=[troupe.contact.pk]),
                     troupe.contact.user_object.email),
                 members)
-            bid_row['id'] = troupe.resourceitem_id
+            bid_row['id'] = troupe.pk
             bid_row['actions'] = [
                 {'url': reverse(
                     'troupe_view',
                     urlconf='gbe.urls',
-                    args=[troupe.resourceitem_id]),
+                    args=[troupe.pk]),
                  'text': "View Troupe"},
                 {'url': reverse(
                     'admin_landing_page',
                     urlconf='gbe.urls',
-                    args=[troupe.contact.resourceitem_id]),
+                    args=[troupe.contact.pk]),
                  'text': "View Contact Landing Page"},
                 {'url': reverse(
                     'mail_to_individual',
                     urlconf='gbe.email.urls',
-                    args=[troupe.contact.resourceitem_id]),
+                    args=[troupe.contact.pk]),
                  'text': "Email Contact"}
             ]
             rows.append(bid_row)

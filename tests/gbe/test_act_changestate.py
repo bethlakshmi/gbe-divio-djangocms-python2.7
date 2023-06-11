@@ -7,16 +7,16 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
     ActFactory,
+    BioFactory,
     EmailTemplateSenderFactory,
-    PersonaFactory,
     ProfileFactory,
-    TroupeFactory,
+    UserFactory,
 )
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
-    ResourceAllocationFactory,
+    PeopleAllocationFactory,
+    PeopleFactory,
     SchedEventFactory,
-    WorkerFactory,
 )
 from tests.contexts import ActTechInfoContext
 from tests.functions.gbe_functions import (
@@ -30,7 +30,7 @@ from tests.functions.gbe_functions import (
 )
 from scheduler.models import (
     Ordering,
-    ResourceAllocation,
+    PeopleAllocation,
 )
 from gbe.models import UserMessage
 from gbetext import (
@@ -88,8 +88,8 @@ class TestActChangestate(TestCase):
         self.assertRedirects(response, reverse(
             'act_review_list',
             urlconf='gbe.urls'))
-        with self.assertRaises(ResourceAllocation.DoesNotExist):
-            self.assertEqual(ResourceAllocation.objects.get(
+        with self.assertRaises(PeopleAllocation.DoesNotExist):
+            self.assertEqual(PeopleAllocation.objects.get(
                 event=rehearsal_event))
         assert_alert_exists(
             response,
@@ -120,10 +120,10 @@ class TestActChangestate(TestCase):
         self.assertRedirects(response, reverse(
             'act_review_list',
             urlconf='gbe.urls'))
-        self.assertEqual(ResourceAllocation.objects.filter(
+        self.assertEqual(PeopleAllocation.objects.filter(
             event=rehearsal_event).count(), 1)
-        self.assertEqual(ResourceAllocation.objects.filter(
-            event=self.context.sched_event).count(), 2)
+        self.assertEqual(PeopleAllocation.objects.filter(
+            event=self.context.sched_event).count(), 1)
         self.assertContains(response, act_status_no_change_msg)
 
     def test_act_change_role_keep_rehearsal(self):
@@ -148,10 +148,10 @@ class TestActChangestate(TestCase):
         self.assertRedirects(response, reverse(
             'act_review_list',
             urlconf='gbe.urls'))
-        self.assertEqual(ResourceAllocation.objects.filter(
+        self.assertEqual(PeopleAllocation.objects.filter(
                 event=rehearsal_event).count(), 1)
-        self.assertEqual(ResourceAllocation.objects.filter(
-                event=self.context.sched_event).count(), 2)
+        self.assertEqual(PeopleAllocation.objects.filter(
+                event=self.context.sched_event).count(), 1)
 
     def test_act_withdrawl(self):
         # accepted -> withdrawn
@@ -171,15 +171,11 @@ class TestActChangestate(TestCase):
             'act_review_list',
             urlconf='gbe.urls'))
 
-        with self.assertRaises(ResourceAllocation.DoesNotExist):
-            rehearsal_booking = ResourceAllocation.objects.get(
+        with self.assertRaises(PeopleAllocation.DoesNotExist):
+            rehearsal_booking = PeopleAllocation.objects.get(
                 event=rehearsal_event)
-        self.assertEqual(1, ResourceAllocation.objects.filter(
+        self.assertEqual(0, PeopleAllocation.objects.filter(
                 event=self.context.sched_event).count())
-        booking = ResourceAllocation.objects.get(
-                event=self.context.sched_event)
-        self.assertEqual(booking.resource.item.as_subtype,
-                         self.context.room)
         assert_alert_exists(
             response,
             'success',
@@ -264,8 +260,8 @@ class TestActChangestate(TestCase):
             'act_tech_wizard',
             args=[self.context.act.pk],
             urlconf='gbe.urls'))
-        with self.assertRaises(ResourceAllocation.DoesNotExist):
-            rehearsal_booking = ResourceAllocation.objects.get(
+        with self.assertRaises(PeopleAllocation.DoesNotExist):
+            rehearsal_booking = PeopleAllocation.objects.get(
                 event=rehearsal_event)
         assert_alert_exists(
             response,
@@ -301,9 +297,12 @@ class TestActChangestate(TestCase):
         # No decision -> accept
         # new show, new role
         act = ActFactory(b_conference=self.context.conference,
-                         performer=TroupeFactory())
-        act.performer.membership.add(PersonaFactory())
-        act.performer.membership.add(PersonaFactory())
+                         bio=BioFactory(multiple_performers=True))
+        troupe = PeopleFactory(class_id=act.bio.pk,
+                               class_name=act.bio.__class__.__name__)
+        troupe.save()
+        troupe.users.add(UserFactory())
+        troupe.users.add(UserFactory())
 
         url = reverse(self.view_name,
                       args=[act.pk],
@@ -313,7 +312,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(url, data=self.data, follow=True)
         self.assertContains(response, "%s<br>Performer/Act: %s " % (
             act_status_change_msg,
-            str(act.performer)))
+            str(act.bio)))
 
     def test_act_changestate_post_waitlisted_act(self):
         # accepted -> waitlist
@@ -321,13 +320,13 @@ class TestActChangestate(TestCase):
         rehearsal_event = self.context._schedule_rehearsal(
             self.context.sched_event,
             act=self.context.act)
-        prev_count2 = ResourceAllocation.objects.filter(
+        prev_count2 = PeopleAllocation.objects.filter(
             event=self.sched_event).count()
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data)
         self.assertEqual(1,
-                         ResourceAllocation.objects.filter(
+                         PeopleAllocation.objects.filter(
                             event=self.sched_event).count() - prev_count2)
         assert_email_template_create(
             'act wait list - %s' % self.sched_event.title.lower(),
@@ -336,8 +335,8 @@ class TestActChangestate(TestCase):
         )
         casting = Ordering.objects.get(class_id=self.context.act.pk)
         assert(casting.role == "Waitlisted")
-        with self.assertRaises(ResourceAllocation.DoesNotExist):
-            ResourceAllocation.objects.get(event=rehearsal_event)
+        with self.assertRaises(PeopleAllocation.DoesNotExist):
+            PeopleAllocation.objects.get(event=rehearsal_event)
 
     def test_act_changestate_unauthorized_user(self):
         login_as(ProfileFactory(), self)
@@ -361,10 +360,9 @@ class TestActChangestate(TestCase):
             starttime=self.context.sched_event.starttime)
         EventLabelFactory(event=conflict,
                           text=self.context.conference.conference_slug)
-        ResourceAllocationFactory(
+        PeopleAllocationFactory(
             event=conflict,
-            resource=WorkerFactory(
-                _item=self.context.performer.performer_profile))
+            people=self.context.people)
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data=self.data,
@@ -394,7 +392,7 @@ class TestActChangestate(TestCase):
         assert_email_contents("Regular Act")
         casting = Ordering.objects.get(
             class_id=new_context.act.pk,
-            allocation__event=self.sched_event)
+            people_allocated__event=self.sched_event)
         assert(casting.role == "Regular Act")
 
     def test_act_accept_notification_template_fail(self):
@@ -509,7 +507,7 @@ class TestActChangestate(TestCase):
                                     data=self.data)
         casting = Ordering.objects.get(
             class_id=new_context.act.pk,
-            allocation__event=self.sched_event)
+            people_allocated__event=self.sched_event)
         assert(casting.role == "Waitlisted")
 
     def test_bad_show(self):

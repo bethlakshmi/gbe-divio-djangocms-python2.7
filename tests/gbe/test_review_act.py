@@ -80,7 +80,7 @@ class TestReviewAct(TestCase):
         self.act.performer.year_started = 0
         self.act.performer.experience = 14
         self.act.performer.save()
-        link = SocialLinkFactory(performer=self.act.performer)
+        link = SocialLinkFactory(bio=self.act.performer)
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -89,7 +89,7 @@ class TestReviewAct(TestCase):
         self.assertContains(response, self.act.performer.experience)
         self.assertContains(
             response,
-            self.act.performer.performer_profile.user_object.email)
+            self.act.performer.contact.user_object.email)
         self.assertContains(response, setup_social_media(link), html=True)
 
     def test_hidden_fields_are_populated(self):

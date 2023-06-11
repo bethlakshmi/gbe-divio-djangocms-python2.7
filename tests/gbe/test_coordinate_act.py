@@ -4,8 +4,8 @@ from django.test.client import RequestFactory
 from django.test import Client
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
 )
 from tests.functions.gbe_functions import (
@@ -40,7 +40,7 @@ class TestCoordinateAct(TestCase):
         cls.url = reverse(cls.view_name, urlconf='gbe.urls')
         Conference.objects.all().delete()
         cls.factory = RequestFactory()
-        cls.performer = PersonaFactory(
+        cls.performer = BioFactory(
             contact__phone="111-222-3333",
             contact__user_object__first_name="first",
             contact__user_object__last_name="last")
@@ -61,7 +61,7 @@ class TestCoordinateAct(TestCase):
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',
-                     'theact-performer': persona.resourceitem_id,
+                     'theact-bio': persona.pk,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk,
                      'submit': 1,
@@ -129,11 +129,11 @@ class TestCoordinateAct(TestCase):
             ).exists())
 
     def test_act_submit_act_incomplete_profile(self):
-        incomplete = PersonaFactory()
+        incomplete = BioFactory()
         tickets = setup_fees(self.current_conference, is_act=True)
         response, data = self.post_act_submission(persona=incomplete)
         just_made = incomplete.acts.all().first()
-        data['theact-performer'] = incomplete.resourceitem_id
+        data['theact-bio'] = incomplete.pk
         self.assertRedirects(response, "%s?next=%s" % (
             reverse('admin_profile',
                     urlconf="gbe.urls",
@@ -173,7 +173,7 @@ class TestCoordinateAct(TestCase):
             response, 'danger', 'Error', no_comp_msg)
 
     def test_bad_priv(self):
-        login_as(self.performer.performer_profile, self)
+        login_as(self.performer.contact, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
 
@@ -181,7 +181,7 @@ class TestCoordinateAct(TestCase):
         data = self.get_act_form()
         original = ActFactory(
             b_conference=self.current_conference,
-            performer=self.performer)
+            bio=self.performer)
         data['theact-b_title'] = original.b_title
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data=data, follow=True)

@@ -1,22 +1,16 @@
-from django.test import (
-    TestCase,
-    Client
-)
+from django.test import TestCase
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
     UserFactory,
 )
-from tests.factories.scheduler_factories import (
-    LabelFactory,
-    ResourceAllocationFactory,
-    WorkerFactory,
-)
+from tests.factories.scheduler_factories import PeopleAllocationFactory
 from tests.contexts import ClassContext
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
 )
+from tests.functions.scheduler_functions import get_or_create_profile
 from django.shortcuts import get_object_or_404
 from gbe.models import Volunteer
 from gbe_utils.text import no_profile_msg
@@ -31,13 +25,14 @@ from gbetext import (
 class TestSetFavorite(TestCase):
     view_name = "set_favorite"
 
-    def setUp(self):
-        self.client = Client()
-        self.profile = ProfileFactory()
-        self.context = ClassContext()
-        self.url = reverse(
-            self.view_name,
-            args=[self.context.sched_event.pk, "on"],
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfileFactory()
+        cls.people = get_or_create_profile(cls.profile)
+        cls.context = ClassContext()
+        cls.url = reverse(
+            cls.view_name,
+            args=[cls.context.sched_event.pk, "on"],
             urlconf="gbe.scheduling.urls")
 
     def test_no_login_gives_error(self):
@@ -84,9 +79,9 @@ class TestSetFavorite(TestCase):
             self.view_name,
             args=[self.context.sched_event.pk, "off"],
             urlconf="gbe.scheduling.urls")
-        ResourceAllocationFactory(event=self.context.sched_event,
-                                  resource=WorkerFactory(_item=self.profile,
-                                                         role="Interested"))
+        PeopleAllocationFactory(event=self.context.sched_event,
+                                people=self.people,
+                                role="Interested")
         login_as(self.profile, self)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')
@@ -99,9 +94,9 @@ class TestSetFavorite(TestCase):
             unset_favorite_msg)
 
     def test_show_interest_duplicate(self):
-        ResourceAllocationFactory(event=self.context.sched_event,
-                                  resource=WorkerFactory(_item=self.profile,
-                                                         role="Interested"))
+        PeopleAllocationFactory(event=self.context.sched_event,
+                                people=self.people,
+                                role="Interested")
         login_as(self.profile, self)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')
@@ -154,11 +149,11 @@ class TestSetFavorite(TestCase):
             self.view_name,
             args=[self.context.sched_event.pk, "off"],
             urlconf="gbe.scheduling.urls")
-        booking = ResourceAllocationFactory(
+        booking = PeopleAllocationFactory(
             event=self.context.sched_event,
-            resource=WorkerFactory(_item=self.profile,
-                                   role="Interested"))
-        LabelFactory(allocation=booking, text="label text")
+            people=self.people,
+            role="Interested",
+            label="label text")
         login_as(self.profile, self)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home', urlconf='gbe.urls')

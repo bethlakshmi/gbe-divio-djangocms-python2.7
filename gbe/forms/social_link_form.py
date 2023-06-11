@@ -7,7 +7,7 @@ from django.forms import (
     URLInput,
 )
 from gbe.models import (
-    Performer,
+    Bio,
     SocialLink,
 )
 
@@ -47,7 +47,7 @@ class SocialLinkForm(ModelForm):
         labels = {'link': '',
                   'username': ''}
 
-SocialLinkFormSet = inlineformset_factory(Performer,
+SocialLinkFormSet = inlineformset_factory(Bio,
                                           SocialLink,
                                           form=SocialLinkForm,
                                           max_num=5,

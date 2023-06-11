@@ -5,12 +5,6 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
 )
-from tests.factories.scheduler_factories import (
-    LabelFactory,
-    ResourceAllocationFactory,
-    SchedEventFactory,
-    WorkerFactory,
-)
 from django.test import (
     Client,
     TestCase,
@@ -234,7 +228,7 @@ class TestEventDetailView(TestCase):
             self.view_name,
             urlconf="gbe.scheduling.urls",
             args=[context.sched_event.pk])
-        login_as(context.performer.performer_profile, self)
+        login_as(context.performer.contact, self)
         response = self.client.get(url)
         self.assertContains(
             response,
@@ -247,7 +241,7 @@ class TestEventDetailView(TestCase):
             self.view_name,
             urlconf="gbe.scheduling.urls",
             args=[context.sched_event.pk])
-        login_as(context.performer.performer_profile, self)
+        login_as(context.performer.contact, self)
         response = self.client.get(url)
         self.assertNotContains(response, 'fa-star')
         self.assertNotContains(response, 'fa-star-o')

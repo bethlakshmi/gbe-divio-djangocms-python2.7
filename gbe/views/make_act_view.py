@@ -1,21 +1,26 @@
-from gbe.views import MakeBidView
-from django.http import Http404
+from django.shortcuts import render
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.http import (
+    Http404,
+    HttpResponseRedirect,
+)
+from gbe.views import MakeBidView
 from gbe.models import (
     Act,
-    Performer,
     TechInfo,
+    UserMessage,
 )
 from gbe.forms import (
     ActEditDraftForm,
     ActEditForm,
 )
 from gbetext import (
+    act_not_unique,
+    default_act_title_conflict,
     default_act_submit_msg,
     default_act_draft_msg,
 )
-from gbe.views.act_display_functions import display_invalid_act
 
 
 class MakeActView(MakeBidView):
@@ -23,14 +28,14 @@ class MakeActView(MakeBidView):
     view_title = 'Propose an Act'
     draft_fields = ['b_title',
                     'b_description',
-                    'performer',
+                    'bio',
                     'first_name',
                     'last_name',
                     'phone']
     submit_fields = ['b_title',
                      'b_description',
                      'shows_preferences',
-                     'performer', ]
+                     'bio', ]
     bid_type = "Act"
     has_draft = True
     submit_msg = default_act_submit_msg
@@ -65,8 +70,8 @@ class MakeActView(MakeBidView):
                 "%screate" % redirect_prefix,
                 urlconf='gbe.urls')
 
-        self.personae = self.owner.personae.all()
-        if len(self.personae) == 0:
+        self.bios = self.owner.bio_set.all()
+        if len(self.bios) == 0:
             return '%s?next=%s' % (
                 reverse('persona-add', urlconf='gbe.urls', args=[1]),
                 reverse('act_create', urlconf='gbe.urls'))
@@ -84,7 +89,7 @@ class MakeActView(MakeBidView):
                 'act_duration': self.bid_object.tech.duration})
         else:
             initial.update({
-                'performer': self.personae[0],
+                'performer': self.bios[0],
                 'b_conference': self.conference,
                 'b_title': "%s Act - %s" % (
                     self.owner,
@@ -108,10 +113,27 @@ class MakeActView(MakeBidView):
         self.form.save()
 
     def get_invalid_response(self, request):
-        return display_invalid_act(
-            request,
-            self.make_context(request),
-            self.form,
-            self.conference,
-            self.owner,
-            'MakeActView')
+        if [act_not_unique] in list(self.form.errors.values()):
+            conflict_msg = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="ACT_TITLE_CONFLICT",
+                defaults={
+                    'summary': "Act Title, User, Conference Conflict",
+                     'description': default_act_title_conflict})
+            conflict = Act.objects.filter(
+                b_conference=self.conference,
+                b_title=self.form.data['theact-b_title'],
+                bio__contact=self.owner).first()
+            if conflict.submitted:
+                link = reverse('act_view',
+                               urlconf='gbe.urls',
+                               args=[conflict.pk])
+            else:
+                link = reverse('act_edit',
+                               urlconf='gbe.urls',
+                               args=[conflict.pk])
+            messages.error(
+                request, conflict_msg[0].description % (
+                    link,
+                    conflict.b_title))
+        return render(request, 'gbe/bid.tmpl', self.make_context(request))

@@ -9,8 +9,9 @@
 	  {{ interested_info |safe }}<br><br>
 	  <ul style="list-style: none;">
 	{% for person in class.interested %}
-	  <li>{{ person.user.profile.display_name }} &lt;{{person.user.email}}&gt;;</li>
-	{% endfor %}
+	  {% for user in person.users %}
+	  <li>{{ user.profile.display_name }} &lt;{{user.email}}&gt;;</li>
+	{% endfor %}{% endfor %}
 	  </ul>
         </div></div>
 	<div class="row"><div class="col-12">

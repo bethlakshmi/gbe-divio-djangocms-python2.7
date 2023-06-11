@@ -1,7 +1,7 @@
 from tests.factories.gbe_factories import (
     ActFactory,
+    BioFactory,
     ConferenceFactory,
-    PersonaFactory,
     ProfileFactory,
     RoomFactory,
     SocialLinkFactory,
@@ -10,11 +10,15 @@ from tests.factories.scheduler_factories import (
     EventLabelFactory,
     LocationFactory,
     OrderingFactory,
+    PeopleAllocationFactory,
     ResourceAllocationFactory,
     SchedEventFactory,
-    WorkerFactory,
 )
 from scheduler.models import Ordering
+from tests.functions.scheduler_functions import (
+    get_or_create_bio,
+    get_or_create_profile,
+)
 from gbe.models import SocialLink
 
 
@@ -29,8 +33,9 @@ class ActTechInfoContext():
                  act_role="Regular Act",
                  set_waitlist=False):
         self.conference = conference or ConferenceFactory()
-        self.performer = performer or PersonaFactory()
-        self.act = act or ActFactory(performer=self.performer,
+        self.performer = performer or BioFactory()
+        self.people = get_or_create_bio(self.performer)
+        self.act = act or ActFactory(bio=self.performer,
                                      b_conference=self.conference,
                                      accepted=3,
                                      submitted=True)
@@ -60,13 +65,12 @@ class ActTechInfoContext():
                 event=self.sched_event,
                 resource=LocationFactory(_item=self.room.locationitem_ptr))
         # schedule the act into the show
-        self.booking = ResourceAllocationFactory(
+        self.booking = PeopleAllocationFactory(
             event=self.sched_event,
-            resource=WorkerFactory(
-                _item=self.act.performer,
-                role=role))
+            people=self.people,
+            role=role)
         self.order = OrderingFactory(
-            allocation=self.booking,
+            people_allocated=self.booking,
             class_id=self.act.pk,
             class_name="Act",
             role=act_role)
@@ -84,31 +88,33 @@ class ActTechInfoContext():
         EventLabelFactory(event=rehearsal_event,
                           text=self.conference.conference_slug)
         if act:
-            booking = ResourceAllocationFactory(
+            people = get_or_create_bio(act.bio)
+            booking = PeopleAllocationFactory(
                 event=rehearsal_event,
-                resource=WorkerFactory(
-                    _item=act.performer,
-                    role="Performer"))
+                people=people,
+                role="Performer")
             OrderingFactory(
-                allocation=booking,
+                people_allocated=booking,
                 class_id=act.pk,
                 class_name="Act")
-
         return rehearsal_event
 
     def order_act(self, act, order):
-        alloc = self.sched_event.resources_allocated.filter(
+        alloc = self.sched_event.peopleallocation_set.filter(
             ordering__class_id=act.pk,
             event=self.sched_event).first()
-        ordering, created = Ordering.objects.get_or_create(allocation=alloc)
+        ordering, created = Ordering.objects.get_or_create(
+            people_allocated=alloc)
         ordering.order = order
         ordering.save()
 
     def make_priv_role(self, role="Stage Manager"):
         profile = ProfileFactory()
-        ResourceAllocationFactory(
+        people = get_or_create_profile(profile)
+        PeopleAllocationFactory(
             event=self.sched_event,
-            resource=WorkerFactory(role=role, _item=profile))
+            role=role,
+            people=people)
         return profile
 
     def set_social_media(self, social_network="Website"):
@@ -119,7 +125,7 @@ class ActTechInfoContext():
         else:
             link = "www.madethisup%d.com" % self.performer.pk
 
-        return SocialLinkFactory(performer=self.performer,
+        return SocialLinkFactory(bio=self.performer,
                                  social_network=social_network,
                                  username=username,
                                  link=link)

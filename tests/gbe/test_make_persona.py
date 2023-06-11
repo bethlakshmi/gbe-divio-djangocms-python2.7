@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
+    BioFactory,
     UserFactory,
     UserMessageFactory,
-    PersonaFactory,
     ProfileFactory,
     SocialLinkFactory,
 )
@@ -18,7 +18,7 @@ from gbetext import (
     default_edit_persona_msg,
 )
 from gbe.models import (
-    Persona,
+    Bio,
     UserMessage,
 )
 from tests.gbe.test_gbe import TestGBE
@@ -66,8 +66,7 @@ class TestPersonaCreate(TestCase):
         login_as(self.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
 
-        data = {'performer_profile': self.profile.pk,
-                'contact': self.profile.pk,
+        data = {'contact': self.profile.pk,
                 'name': name or 'persona for %s' % self.profile.display_name,
                 'bio': 'bio bio bio',
                 'year_started': 2003,
@@ -78,7 +77,9 @@ class TestPersonaCreate(TestCase):
         data.update(formset_data)
         if image:
             data['upload_img'] = image
-        persona_count = self.profile.personae.count()
+        persona_count = Bio.objects.filter(
+            contact=self.profile,
+            multiple_performers=False).count()
         response = self.client.post(
             url,
             data,
@@ -110,21 +111,25 @@ class TestPersonaCreate(TestCase):
             code='SUCCESS')
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
         response, persona_count = self.submit_persona(pic_filename)
+        last_bio = Bio.objects.filter(
+            contact=self.profile,
+            multiple_performers=False).order_by('pk').last()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "gbe_pagebanner.png")
-        self.assertEqual(1, self.profile.personae.count()-persona_count)
+        self.assertEqual(1, Bio.objects.filter(
+            contact=self.profile,
+            multiple_performers=False).count()-persona_count)
         assert_alert_exists(
             response, 'success', 'Success', msg.description)
         self.assertEqual(
             'custom/pronouns',
-            self.profile.personae.order_by('pk').last().pronouns)
+            last_bio.pronouns)
 
     def test_register_persona_invalid_post(self):
         # no pronoun values supplied in either field
         login_as(self.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
-        data = {'performer_profile': self.profile.pk,
-                'contact': self.profile.pk,
+        data = {'contact': self.profile.pk,
                 'name': 'persona name',
                 'bio': 'bio bio bio',
                 'year_started': 2003,
@@ -137,8 +142,7 @@ class TestPersonaCreate(TestCase):
     def test_redirect(self):
         login_as(self.profile, self)
         url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
-        data = {'performer_profile': self.profile.pk,
-                'contact': self.profile.pk,
+        data = {'contact': self.profile.pk,
                 'name': 'persona name',
                 'bio': 'bio bio bio',
                 'year_started': 2003,
@@ -161,7 +165,7 @@ class TestPersonaCreate(TestCase):
         response = self.client.get(
             reverse('persona-add', urlconf='gbe.urls', args=[1]),
         )
-        self.assertContains(response, "Tell Us About Your Stage Persona")
+        self.assertContains(response, "Tell Us About Your Bio")
         self.assertContains(response, "Create Troupe")
         self.assertContains(response,
                             reverse("troupe-add", urlconf="gbe.urls"))
@@ -171,7 +175,7 @@ class TestPersonaCreate(TestCase):
         response = self.client.get(
             reverse('persona-add', urlconf='gbe.urls', args=[0]),
         )
-        self.assertContains(response, "Tell Us About Your Stage Persona")
+        self.assertContains(response, "Tell Us About Your Bio")
         self.assertNotContains(response, "Create Troupe")
         self.assertNotContains(response,
                                reverse("troupe-add", urlconf="gbe.urls"))
@@ -192,24 +196,23 @@ class TestPersonaEdit(TestGBE):
     def setUp(self):
         UserMessage.objects.all().delete()
         self.client = Client()
-        self.expected_string = 'Tell Us About Your Stage Persona'
-        self.persona = PersonaFactory()
-        self.link0 = SocialLinkFactory(performer=self.persona)
+        self.expected_string = 'Tell Us About Your Bio'
+        self.persona = BioFactory()
+        self.link0 = SocialLinkFactory(bio=self.persona)
         self.link1 = SocialLinkFactory(
-            performer=self.persona,
+            bio=self.persona,
             order=2,
             link='',
             username='username',
             social_network='Paypal')
 
     def submit_persona(self, image=None, delete_image=False):
-        login_as(self.persona.performer_profile, self)
+        login_as(self.persona.contact, self)
         new_name = "Fifi"
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.resourceitem_id, 1])
-        data = {'performer_profile': self.persona.performer_profile.pk,
-                'contact': self.persona.performer_profile.pk,
+                      args=[self.persona.pk, 1])
+        data = {'contact': self.persona.contact.pk,
                 'name': new_name,
                 'bio': "bio",
                 'year_started': 2001,
@@ -219,8 +222,8 @@ class TestPersonaEdit(TestGBE):
         data.update(formset_data)
         data['links-0-id'] = self.link0.pk
         data['links-1-id'] = self.link1.pk
-        data['links-0-performer'] = self.persona.pk
-        data['links-1-performer'] = self.persona.pk
+        data['links-0-bio'] = self.persona.pk
+        data['links-1-bio'] = self.persona.pk
         data['links-INITIAL_FORMS'] = 2
         if image:
             data['upload_img'] = image
@@ -236,8 +239,8 @@ class TestPersonaEdit(TestGBE):
     def test_edit_persona(self):
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.resourceitem_id, 0])
-        login_as(self.persona.performer_profile, self)
+                      args=[self.persona.pk, 0])
+        login_as(self.persona.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.expected_string)
@@ -284,8 +287,8 @@ class TestPersonaEdit(TestGBE):
         for i in range(0, 5):
             self.assertContains(
                 response,
-                ('<input type="hidden" name="links-%d-performer" id="id_' +
-                 'links-%d-performer" value="%d">') % (i, i, self.persona.pk),
+                ('<input type="hidden" name="links-%d-bio" id="id_' +
+                 'links-%d-bio" value="%d">') % (i, i, self.persona.pk),
                 html=True)
         self.assert_radio_state(response,
                                 'pronouns_0',
@@ -298,8 +301,8 @@ class TestPersonaEdit(TestGBE):
 
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.resourceitem_id, 1])
-        login_as(self.persona.performer_profile, self)
+                      args=[self.persona.pk, 1])
+        login_as(self.persona.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.persona.img.url)
@@ -316,7 +319,7 @@ class TestPersonaEdit(TestGBE):
 
     def test_edit_persona_change_stage_name(self):
         response, new_name = self.submit_persona()
-        persona_reloaded = Persona.objects.get(pk=self.persona.pk)
+        persona_reloaded = Bio.objects.get(pk=self.persona.pk)
         self.assertEqual(persona_reloaded.name, new_name)
         self.assertEqual(persona_reloaded.pronouns, 'he/him')
 
@@ -327,7 +330,7 @@ class TestPersonaEdit(TestGBE):
         ProfileFactory(user_object__username="admin_img")
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
         response, new_name = self.submit_persona(pic_filename)
-        persona_reloaded = Persona.objects.get(pk=self.persona.pk)
+        persona_reloaded = Bio.objects.get(pk=self.persona.pk)
         self.assertEqual(str(persona_reloaded.img), "gbe_pagebanner.png")
         self.assertEqual(persona_reloaded.links.count(), 0)
         assert_alert_exists(
@@ -342,13 +345,12 @@ class TestPersonaEdit(TestGBE):
         ProfileFactory(user_object__username="admin_img")
         pic_filename = open("tests/gbe/gbe_pagebanner.png", 'rb')
 
-        login_as(self.persona.performer_profile, self)
+        login_as(self.persona.contact, self)
         new_name = "Bitsy Brûlée"
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.resourceitem_id, 0])
-        data = {'performer_profile': self.persona.performer_profile.pk,
-                'contact': self.persona.performer_profile.pk,
+                      args=[self.persona.pk, 0])
+        data = {'contact': self.persona.contact.pk,
                 'name': new_name,
                 'bio': "bio",
                 'year_started': 2001,
@@ -356,9 +358,9 @@ class TestPersonaEdit(TestGBE):
                 'upload_img': pic_filename,
                 'pronouns_0': '',
                 'pronouns_1': 'custom/pronouns',
-                'links-0-performer': self.persona.pk,
-                'links-1-performer': self.persona.pk,
-                'links-2-performer': self.persona.pk,
+                'links-0-bio': self.persona.pk,
+                'links-1-bio': self.persona.pk,
+                'links-2-bio': self.persona.pk,
                 }
         data.update(formset_data)
         data['links-0-id'] = self.link0.pk
@@ -370,16 +372,16 @@ class TestPersonaEdit(TestGBE):
         data['links-1-username'] = self.link1.username
         data['links-2-social_network'] = 'Facebook'
         data['links-2-link'] = 'http://www.facebook.com/somepage'
-        data['links-0-performer'] = self.persona.pk
-        data['links-1-performer'] = self.persona.pk
-        data['links-2-performer'] = self.persona.pk
+        data['links-0-bio'] = self.persona.pk
+        data['links-1-bio'] = self.persona.pk
+        data['links-2-bio'] = self.persona.pk
         data['links-INITIAL_FORMS'] = 2
         response = self.client.post(
             url,
             data,
             follow=True
         )
-        persona_reloaded = Persona.objects.get(pk=self.persona.pk)
+        persona_reloaded = Bio.objects.get(pk=self.persona.pk)
         self.assertEqual(str(persona_reloaded.img), "gbe_pagebanner.png")
         self.assertEqual(persona_reloaded.pronouns, 'custom/pronouns')
         reload_link0 = persona_reloaded.links.get(pk=self.link0.pk)
@@ -401,20 +403,19 @@ class TestPersonaEdit(TestGBE):
         set_image(self.persona)
         self.assertEqual(str(self.persona.img), "gbe_pagebanner.png")
         response, new_name = self.submit_persona(delete_image=True)
-        persona_reloaded = Persona.objects.get(pk=self.persona.pk)
+        persona_reloaded = Bio.objects.get(pk=self.persona.pk)
         self.assertEqual(persona_reloaded.img, None)
         assert_alert_exists(
             response, 'success', 'Success', default_edit_persona_msg)
 
     def test_edit_persona_invalid_post(self):
-        login_as(self.persona.performer_profile, self)
+        login_as(self.persona.contact, self)
         old_name = self.persona.name
         new_name = "Fifi"
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.resourceitem_id, 1])
-        data = {'performer_profile': self.persona.pk,
-                'contact': self.persona.pk,
+                      args=[self.persona.pk, 1])
+        data = {'contact': self.persona.pk,
                 'name': new_name,
                 'bio': "bio",
                 'year_started': 2001,
@@ -422,16 +423,15 @@ class TestPersonaEdit(TestGBE):
         data.update(formset_data)
         response = self.client.post(url, data=data)
         self.assertContains(response, self.expected_string)
-        persona_reloaded = Persona.objects.get(pk=self.persona.pk)
+        persona_reloaded = Bio.objects.get(pk=self.persona.pk)
         self.assertEqual(persona_reloaded.name, old_name)
 
     def test_edit_persona_delete_link(self):
-        login_as(self.persona.performer_profile, self)
+        login_as(self.persona.contact, self)
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.resourceitem_id, 1])
-        data = {'performer_profile': self.persona.performer_profile.pk,
-                'contact': self.persona.performer_profile.pk,
+                      args=[self.persona.pk, 1])
+        data = {'contact': self.persona.contact.pk,
                 'name': "Fifi",
                 'bio': "bio",
                 'pronouns_0': '',
@@ -443,8 +443,8 @@ class TestPersonaEdit(TestGBE):
         data['links-1-id'] = self.link1.pk
         data['links-1-social_network'] = self.link1.social_network
         data['links-1-username'] = self.link1.username
-        data['links-0-performer'] = self.persona.pk
-        data['links-1-performer'] = self.persona.pk
+        data['links-0-bio'] = self.persona.pk
+        data['links-1-bio'] = self.persona.pk
         data['links-INITIAL_FORMS'] = 2
         data['links-0-DELETE'] = 1
         response = self.client.post(
@@ -455,12 +455,11 @@ class TestPersonaEdit(TestGBE):
         self.assertEqual(self.persona.links.count(), 1)
 
     def test_edit_persona_invalid_links(self):
-        login_as(self.persona.performer_profile, self)
+        login_as(self.persona.contact, self)
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.resourceitem_id, 1])
-        data = {'performer_profile': self.persona.performer_profile.pk,
-                'contact': self.persona.performer_profile.pk,
+                      args=[self.persona.pk, 1])
+        data = {'contact': self.persona.contact.pk,
                 'name': "Fifi",
                 'bio': "bio",
                 'year_started': 2001,
@@ -472,8 +471,8 @@ class TestPersonaEdit(TestGBE):
         data['links-1-id'] = self.link1.pk
         data['links-0-social_network'] = 'Venmo'
         data['links-1-social_network'] = 'Website'
-        data['links-0-performer'] = self.persona.pk
-        data['links-1-performer'] = self.persona.pk
+        data['links-0-bio'] = self.persona.pk
+        data['links-1-bio'] = self.persona.pk
         data['links-INITIAL_FORMS'] = 2
         response = self.client.post(
             url,

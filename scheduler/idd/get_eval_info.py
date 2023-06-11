@@ -44,8 +44,8 @@ def get_eval_info(occurrence_id=None, person=None, visible=True):
         if occurrence_id:
             some_answers = some_answers.filter(event__in=occurrences)
         if person:
-            some_answers = some_answers.filter(profile__pk=person.public_id)
-        answers += list(some_answers.order_by('profile__profile__display_name',
+            some_answers = some_answers.filter(user__in=person.users)
+        answers += list(some_answers.order_by('user__profile__display_name',
                                               'question__order'))
     if len(occurrences) == 0:
         for answer in answers:

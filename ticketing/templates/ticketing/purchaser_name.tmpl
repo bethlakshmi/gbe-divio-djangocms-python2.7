@@ -1,5 +1,5 @@
 {% if user.profile %}{% if can_edit %}
-<a href="{% url 'gbe:admin_profile' user.profile.resourceitem_id %}?next={{ request.get_full_path }}" class="gbe-link">
+<a href="{% url 'gbe:admin_profile' user.profile.pk %}?next={{ request.get_full_path }}" class="gbe-link">
 {% endif %}{{ user.profile.display_name }}
 {% if can_edit %}</a>{% endif %}{% else %}
 {{ purchaser.last_name }}, {{ purchaser.first_name }} <br>({{ purchaser.matched_to_user }}){% endif %}

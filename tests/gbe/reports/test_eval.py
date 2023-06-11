@@ -78,20 +78,22 @@ class TestEval(TestCase):
         login_as(self.priv_profile, self)
         grade1 = EventEvalGradeFactory(event=self.context.sched_event,
                                        answer=4)
+        ProfileFactory(user_object=grade1.user)
         grade2 = EventEvalGradeFactory(event=self.context.sched_event,
                                        answer=3,
                                        question=grade1.question)
+        ProfileFactory(user_object=grade2.user)
         bool1 = EventEvalBooleanFactory(event=self.context.sched_event,
                                         answer=True,
-                                        profile=grade1.profile)
+                                        user=grade1.user)
         bool2 = EventEvalBooleanFactory(event=self.context.sched_event,
                                         answer=False,
-                                        profile=grade2.profile,
+                                        user=grade2.user,
                                         question=bool1.question)
         text1 = EventEvalCommentFactory(event=self.context.sched_event,
-                                        profile=grade1.profile)
+                                        user=grade1.user)
         text2 = EventEvalCommentFactory(event=self.context.sched_event,
-                                        profile=grade2.profile,
+                                        user=grade2.user,
                                         question=text1.question)
 
         response = self.client.get(self.url)
@@ -113,20 +115,22 @@ class TestEval(TestCase):
         login_as(self.priv_profile, self)
         grade1 = EventEvalGradeFactory(event=self.context.sched_event,
                                        answer=4)
+        ProfileFactory(user_object=grade1.user)
         grade2 = EventEvalGradeFactory(event=self.context.sched_event,
                                        answer=3,
                                        question=grade1.question)
+        ProfileFactory(user_object=grade2.user)
         bool1 = EventEvalBooleanFactory(event=self.context.sched_event,
                                         answer=True,
-                                        profile=grade1.profile)
+                                        user=grade1.user)
         bool2 = EventEvalBooleanFactory(event=self.context.sched_event,
                                         answer=False,
-                                        profile=grade2.profile,
+                                        user=grade2.user,
                                         question=bool1.question)
         text1 = EventEvalCommentFactory(event=self.context.sched_event,
-                                        profile=grade1.profile)
+                                        user=grade1.user)
         text2 = EventEvalCommentFactory(event=self.context.sched_event,
-                                        profile=grade2.profile,
+                                        user=grade2.user,
                                         question=text1.question)
 
         response = self.client.get(reverse(
@@ -137,8 +141,8 @@ class TestEval(TestCase):
         self.assertContains(response, grade1.question.question, 5)
         self.assertContains(response, bool1.question.question, 2)
         self.assertContains(response, text1.question.question, 2)
-        self.assertContains(response, grade1.profile.profile.display_name)
-        self.assertContains(response, grade2.profile.profile.display_name)
+        self.assertContains(response, grade1.user.profile.display_name)
+        self.assertContains(response, grade2.user.profile.display_name)
         self.assertContains(response, '<td>4</td>')
         self.assertContains(response, '<td>3</td>')
         self.assertContains(response, self.context.bid.b_description)

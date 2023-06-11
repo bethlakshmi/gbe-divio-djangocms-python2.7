@@ -6,9 +6,9 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from django.views.generic import View
-from django.db.models import Q
 from gbe.models import (
     Act,
+    Bio,
     Class,
     Conference,
     Costume,
@@ -35,6 +35,7 @@ from gbe.functions import (
 )
 from gbe_logging import log_func
 from scheduler.idd import (
+    get_bookable_people_by_user,
     get_bookings,
     get_eval_info,
     get_schedule,
@@ -80,7 +81,7 @@ class LandingPageView(ProfileRequiredMixin, View):
         bids_to_review = []
 
         person = Person(
-            user=viewer_profile.user_object,
+            users=[viewer_profile.user_object],
             public_id=viewer_profile.pk,
             public_class="Profile")
         for bid in viewer_profile.bids_to_review():
@@ -91,14 +92,22 @@ class LandingPageView(ProfileRequiredMixin, View):
                                args=[str(bid.id)]),
                 'action': "Review",
                 'bid_type': bid.__class__.__name__}]
-        personae, troupes = viewer_profile.get_performers(organize=True)
+        response = get_bookable_people_by_user(self.viewer_profile.user_object)
+        bio_ids = []
+        # we want both bios the user is included in and bios the user is
+        # the contact for.
+        for people in response.people:
+            if people.public_class == "Bio":
+                bio_ids += [people.public_id]
+        for bio in self.viewer_profile.bio_set.exclude(pk__in=bio_ids):
+            bio_ids += [bio.pk]
+
         bookings = []
         booking_ids = []
         manage_shows = []
         shows = []
         classes = []
-        acts = Act.objects.filter(
-            Q(performer__in=personae) | Q(performer__in=troupes))
+        acts = Act.objects.filter(bio__pk__in=bio_ids)
 
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
@@ -167,9 +176,8 @@ class LandingPageView(ProfileRequiredMixin, View):
         context = {
             'profile': viewer_profile,
             'historical': self.historical,
-            'alerts': viewer_profile.alerts(shows, classes),
-            'personae': personae,
-            'troupes': troupes,
+            'alerts': viewer_profile.alerts(classes),
+            'bios': Bio.objects.filter(pk__in=bio_ids).order_by('name'),
             'manage_shows': manage_shows,
             'businesses': viewer_profile.business_set.all(),
             'acts': acts,

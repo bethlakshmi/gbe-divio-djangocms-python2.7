@@ -25,7 +25,7 @@ class ReviewActListView(ReviewBidListView):
     template = 'gbe/act_bid_review_list.tmpl'
     bid_review_view_name = 'act_review'
     bid_review_list_view_name = 'act_review_list'
-    bid_order_fields = ('accepted', 'performer')
+    bid_order_fields = ('accepted', 'bio')
     status_index = 3
     filter_form = None
 

@@ -168,7 +168,7 @@ class TestManageWorker(TestCase):
 
         login_as(self.privileged_profile, self)
         response = self.client.post(url, data=data, follow=True)
-        alloc = volunteer_opp.resources_allocated.all().order_by(
+        alloc = volunteer_opp.peopleallocation_set.all().order_by(
             'pk').reverse().first()
 
         self.assertIsNotNone(alloc)

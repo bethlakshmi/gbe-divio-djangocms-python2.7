@@ -6,10 +6,10 @@ from django.db.models import (
     Model,
     PositiveIntegerField,
     TextField,
-    URLField,
 )
-from gbe.models import Account
+from gbe.models import Profile
 from filer.fields.image import FilerImageField
+from scheduler.idd import get_bookable_people
 
 
 class Bio(Model):
@@ -18,7 +18,7 @@ class Bio(Model):
     so that the person booked as part of this bio is in the scheduler, while
     this is used purely for the information *about* that entity.
     '''
-    contact = ForeignKey(Account,
+    contact = ForeignKey(Profile,
                          on_delete=CASCADE)
     name = CharField(max_length=100)
     label = CharField(max_length=100, blank=True)
@@ -38,28 +38,23 @@ class Bio(Model):
         '''
         Gets all of the people performing in the act
         '''
-        return Performer.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id).get_profiles()
+        profiles = []
+        response = get_bookable_people(self.pk, self.__class__.__name__)
+        if len(response.people) > 0:
+            profiles = Profile.objects.filter(
+                user_object__in=response.people[0].users)
+        elif not self.multiple_performers:
+            profiles = [self.contact]
+
+        return profiles
 
     def has_bids(self):
-        return Performer.objects.get_subclass(
-            resourceitem_id=self.resourceitem_id).has_bids()
-
-    @property
-    def is_active(self):
-        return self.contact.user_object.is_active
+        return (self.is_teaching.count() > 0 or self.acts.count() > 0 or
+                self.costume_set.count() > 0)
 
     @property
     def user_object(self):
         return self.contact.user_object
-
-    @property
-    def contact_email(self):
-        return self.contact.user_object.email
-
-    @property
-    def describe(self):
-        return self.name
 
     def __str__(self):
         perf_string = self.name

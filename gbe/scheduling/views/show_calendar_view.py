@@ -9,7 +9,6 @@ from gbetext import calendar_type as calendar_type_options
 from gbetext import (
     login_please,
     pending_note,
-    role_options,
 )
 from django.utils.formats import date_format
 from settings import (
@@ -23,8 +22,8 @@ from datetime import (
 import pytz
 from gbe.forms import InvolvedProfileForm
 from gbe.models import (
+    Bio,
     ConferenceDay,
-    Performer,
     UserMessage,
 )
 from gbe.functions import (
@@ -169,7 +168,7 @@ class ShowCalendarView(View):
                     args=[occurrence.pk])
             for person in get_bookings([occurrence.pk],
                                        roles=["Teacher", "Moderator"]).people:
-                presenter = Performer.objects.get(pk=person.public_id)
+                presenter = Bio.objects.get(pk=person.public_id)
                 occurrence_detail['teachers'] += [(person.role, presenter)]
             (occurrence_detail['favorite_link'],
              occurrence_detail['volunteer_link'],
@@ -204,19 +203,15 @@ class ShowCalendarView(View):
             if request.user.is_authenticated and hasattr(
                     request.user,
                     'profile'):
-                all_roles = []
-                for n, m in role_options:
-                    all_roles += [m]
                 sched_response = get_schedule(
                     request.user,
                     labels=[self.calendar_type,
-                            self.conference.conference_slug],
-                    roles=all_roles)
+                            self.conference.conference_slug])
                 personal_schedule = sched_response.schedule_items
                 person = Person(
-                    user=request.user,
+                    users=[request.user],
                     public_id=request.user.profile.pk,
-                    public_class="Profile")
+                    public_class=request.user.__class__.__name__)
                 eval_response = get_eval_info(person=person)
                 if len(eval_response.questions) > 0:
                     eval_occurrences = eval_response.occurrences

@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from gbe_logging import log_func
 from gbe.models import (
+    Bio,
     Profile,
-    Troupe,
     UserMessage,
 )
 from gbe.functions import validate_perms
@@ -45,8 +45,11 @@ def ReviewProfilesView(request):
             last_login = aprofile.user_object.last_login.strftime(
                 GBE_TABLE_FORMAT)
         display_name = aprofile.display_name
-        for troupe in Troupe.objects.filter(contact=aprofile):
-            display_name += "<br>(%s)" % troupe.name
+        for performer in Bio.objects.filter(contact=aprofile):
+            perf_addon = "<br>Performer - %s"
+            if performer.multiple_performers:
+                perf_addon = "<br>Troupe - %s"
+            display_name += perf_addon % performer.name
         bid_row['profile'] = (
             display_name,
             aprofile.user_object.username,
@@ -56,12 +59,12 @@ def ReviewProfilesView(request):
             'purchase_email': aprofile.purchase_email,
             'phone': aprofile.phone
         }
-        bid_row['id'] = aprofile.resourceitem_id
+        bid_row['id'] = aprofile.pk
         bid_row['actions'] = [
             {'url': reverse(
                 'admin_landing_page',
                 urlconf='gbe.urls',
-                args=[aprofile.resourceitem_id]),
+                args=[aprofile.pk]),
              'text': "View Landing Page"},
             {'url': reverse('welcome_letter',
                             urlconf='gbe.reporting.urls',
@@ -70,7 +73,7 @@ def ReviewProfilesView(request):
             {'url': reverse(
                 'mail_to_individual',
                 urlconf='gbe.email.urls',
-                args=[aprofile.resourceitem_id]),
+                args=[aprofile.pk]),
              'text': "Email"}
         ]
         if 'Registrar' in request.user.profile.privilege_groups:
@@ -78,12 +81,12 @@ def ReviewProfilesView(request):
                 {'url': "%s?next=%s" % (reverse(
                     'admin_profile',
                     urlconf='gbe.urls',
-                    args=[aprofile.resourceitem_id]), request.path),
+                    args=[aprofile.pk]), request.path),
                  'text': "Update"}]
             bid_row['actions'] += [
                 {'url': reverse('delete_profile',
                                 urlconf='gbe.urls',
-                                args=[aprofile.resourceitem_id]),
+                                args=[aprofile.pk]),
                  'text': "Delete"}]
 
         rows.append(bid_row)

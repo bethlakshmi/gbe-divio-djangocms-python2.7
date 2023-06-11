@@ -12,12 +12,8 @@ from django.db.models import (
 )
 from scheduler.models import (
     Location,
-    LocationItem,
-    Resource,
-    ResourceItem,
+    People,
     Schedulable,
-    WorkerItem,
-    Worker,
 )
 from scheduler.data_transfer import (
     Person,
@@ -57,7 +53,7 @@ class Event(Schedulable):
     def has_commitment_space(self, commitment_class_name):
         from scheduler.models import Ordering
         return (Ordering.objects.filter(
-            allocation__event=self,
+            people_allocated__event=self,
             class_name=commitment_class_name).count() < self.max_commitments)
 
     # New - fits scheduling API refactor
@@ -86,12 +82,8 @@ class Event(Schedulable):
     @property
     def people(self):
         people = []
-        for booking in self.resources_allocated.all():
-            if booking.resource.as_subtype.__class__.__name__ == "Worker":
-                person = Person(booking=booking)
-                if hasattr(booking, 'label'):
-                    person.label = booking.label.text
-                people += [person]
+        for booking in self.peopleallocation_set.all():
+            people += [Person(booking=booking)]
         return people
 
     # New - from refactoring
@@ -103,49 +95,54 @@ class Event(Schedulable):
         from scheduler.idd import get_schedule
         from scheduler.models import (
             Ordering,
-            ResourceAllocation,
+            PeopleAllocation,
         )
 
         warnings = []
         time_format = GBE_DATETIME_FORMAT
 
         worker = None
-        if person.public_id:
-            item = WorkerItem.objects.get(pk=person.public_id)
-            worker = Worker(_item=item, role=person.role)
-        else:
-            worker = Worker(_item=person.user.profile, role=person.role)
-            # TODO is there a leak here?  what happens to old workers
-            # that aren't linked??
-        worker.save()
+        if not (person.public_id and person.public_class):
+            return BookingResponse(errors=[Error(
+                code="LINKED_CLASS_AND_ID_REQUIRED",
+                details="Allocating a person to an even requires the person" +
+                " to have a publicly linked class and id.")])
 
-        if person.users:
-            users = person.users
-        else:
-            users = [worker.workeritem.user_object]
+        people, created = People.objects.get_or_create(
+            class_id=person.public_id,
+            class_name=person.public_class)
+        people.save()
+        if created:
+            for user in person.users:
+                people.users.add(user)
 
-        for user in users:
-            for conflict in get_schedule(
+        if people.users is not None:
+            for user in people.users.all():
+                for conflict in get_schedule(
                         user=user,
                         start_time=self.start_time,
                         end_time=self.end_time).schedule_items:
-                if not person.booking_id or (
-                        person.booking_id != conflict.booking_id):
-                    warnings += [Warning(code="SCHEDULE_CONFLICT",
-                                         user=user,
-                                         occurrence=conflict.event)]
+                    if not person.booking_id or (
+                            person.booking_id != conflict.booking_id):
+                        warnings += [Warning(code="SCHEDULE_CONFLICT",
+                                             user=user,
+                                             occurrence=conflict.event)]
         if person.booking_id:
-            allocation = ResourceAllocation.objects.get(
+            allocation = PeopleAllocation.objects.get(
                 id=person.booking_id)
-            allocation.resource = worker
+            allocation.people = people
             allocation.event = self
+            allocation.role = person.role
         else:
-            allocation = ResourceAllocation(event=self,
-                                            resource=worker)
+            allocation = PeopleAllocation(event=self,
+                                          people=people,
+                                          role=person.role)
+        if person.label is not None:
+            allocation.label = person.label
         allocation.save()
         if person.commitment:
             ordering, created = Ordering.objects.get_or_create(
-                allocation=allocation)
+                people_allocated=allocation)
             if person.commitment.role is not None:
                 ordering.role = person.commitment.role
             if person.commitment.order:
@@ -158,21 +155,13 @@ class Event(Schedulable):
                 code="OCCURRENCE_OVERBOOKED",
                 details="Over booked by %s volunteers" % (
                     self.extra_volunteers()))]
-        if person.label:
-            # refactor
-            from scheduler.models import Label
-            l, created = Label.objects.get_or_create(allocation=allocation)
-            l.text = person.label
-            l.save()
+
         return BookingResponse(warnings=warnings,
                                booking_id=allocation.pk,
                                occurrence=self)
 
     def role_count(self, role="Volunteer"):
-        allocations = self.resources_allocated.all()
-        participants = allocations.filter(
-            resource__worker__role=role).count()
-        return participants
+        return self.peopleallocation_set.filter(role=role).count()
 
     @property
     def duration(self):
@@ -201,9 +190,7 @@ class Event(Schedulable):
         amount of space remaining (if there are 4 spaces, and 3 volunteers,
         the value will be -1)
         '''
-        count = Worker.objects.filter(allocations__event=self,
-                                      role='Volunteer').count()
-        return count - self.max_volunteer
+        return self.role_count() - self.max_volunteer
 
     # New with Scheduler API
     @property

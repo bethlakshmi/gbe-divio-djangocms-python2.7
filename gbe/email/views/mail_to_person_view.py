@@ -29,7 +29,7 @@ class MailToPersonView(MailView):
         self.user = validate_perms(request, self.email_permissions)
         user_profile = get_object_or_404(
             Profile,
-            resourceitem_id=kwargs.get('profile_id'))
+            pk=kwargs.get('profile_id'))
         return [(user_profile.user_object.email, "%s <%s>" % (
             user_profile.display_name,
             user_profile.user_object.email))]
