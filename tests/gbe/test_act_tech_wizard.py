@@ -341,6 +341,9 @@ class TestActTechWizard(TestGBE):
             ordering__class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
         response = self.client.post(url, data)
+        self.assertTrue(Act.objects.filter(
+            pk=context.act.pk,
+            tech__confirm_no_rehearsal=True).exists())
         assert_alert_exists(
             response, 'success', 'Success', rehearsal_remove_confirmation)
         self.assertNotContains(response, "Current Rehearsal Reservation")
@@ -354,10 +357,13 @@ class TestActTechWizard(TestGBE):
             True)
 
     def test_book_rehearsal_and_continue_no_music(self):
+        # in this case, the act had previously confirmed no music, check
+        # that this state is cleared when rehearsal is booked.
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.act.tech.prop_setup = "[u'I have props I will need set " + \
             "before my number']"
         context.act.tech.confirm_no_music = True
+        context.act.tech.confirm_no_rehearsal = True
         context.act.tech.save()
         extra_rehearsal = context._schedule_rehearsal(context.sched_event)
         extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
@@ -379,6 +385,9 @@ class TestActTechWizard(TestGBE):
             "1",
             "No, I will not need an audio track",
             True)
+        self.assertTrue(Act.objects.filter(
+            pk=context.act.pk,
+            tech__confirm_no_rehearsal=False).exists())
 
     def test_bad_booking_id(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
