@@ -73,7 +73,7 @@ class TestReviewTroupes(TestCase):
             response,
             ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
              'gbe-btn-table btn-sm"><i class="fas fa-users"></i></a>') % (
-             reverse('troupe_view',
+             reverse('bio_view',
                      urlconf='gbe.urls',
                      args=[self.troupe.pk]),
              "View Troupe"),

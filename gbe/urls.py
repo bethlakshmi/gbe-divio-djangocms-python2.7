@@ -50,7 +50,7 @@ from gbe.views import (
     ViewClassView,
     ViewCostumeView,
     ViewSummerActView,
-    ViewTroupeView,
+    ViewBioView,
     ViewVendorView,
     CoordinatorPerformerAutocomplete,
     LimitedBusinessAutocomplete,
@@ -171,8 +171,8 @@ urlpatterns = [
         name='class_changestate'),
 
     #  personae & businesses
-    url(r'^troupe/view/(\d+)/?$',
-        ViewTroupeView, name='troupe_view'),
+    url(r'^bio/view/(\d+)/?$',
+        ViewBioView, name='bio_view'),
     url(r'^persona/add/(?P<include_troupe>\d+)/$',
         PersonaCreate.as_view(),
         name='persona-add'),
