@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block before_table %}
-  <h2 class="gbe-title">Review Class Evaluations</h2>
+  <h2 class="gbe-title">Review Class Evaluations - {{ conference.conference_slug }}</h2>
   <div class="pb-3">{% include "conference_picker.tmpl" %}</div>
   <p>{{ about }}</p>
   {% include "gbe/report/eval_detail.tmpl" %}
