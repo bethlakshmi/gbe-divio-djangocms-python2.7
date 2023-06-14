@@ -27,13 +27,13 @@
      <div class="gbe_no_pic">&nbsp;</div>
   {% endif %}
   <div class="performer_text">
-    {% if performer.contact == profile and admin_message is None %}
+    {% if performer.contact == profile %}
       <a class="gbe-link" href='{% if performer.multiple_performers %}{% url "gbe:troupe-update" performer.pk %}{% else %}{% url "gbe:persona-update" performer.pk 1 %}{% endif %}'>
         {{ performer }}
       </a><br>
     (Click to edit)
     {% else %}
-      <a class="gbe-link" href='{% url "gbe:bio_view" performer.pk %}'>
+      <a class="gbe-link" href='{% url "gbe:troupe_view" performer.pk %}'>
         {{ performer }}
       </a><br>
     {% endif %}

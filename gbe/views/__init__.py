@@ -18,7 +18,7 @@ from .coordinator_performer_autocomplete import (
 from .limited_persona_autocomplete import LimitedPersonaAutocomplete
 from .limited_business_autocomplete import LimitedBusinessAutocomplete
 from .persona_autocomplete import PersonaAutocomplete
-from .view_bio_view import ViewBioView
+from .view_troupe_view import ViewTroupeView
 from .make_persona_view import PersonaCreate, PersonaUpdate
 from .make_troupe_view import TroupeCreate, TroupeUpdate
 from .update_performer_view import PerformerUpdate
