@@ -55,6 +55,7 @@ class TestPerformerSlidesList(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(self.context.act.performer))
-        self.assertContains(response, self.url1.get_url())
+        self.assertContains(response,
+                            "%s - %s" % ("Instagram", self.url1.username))
         self.assertContains(response, self.url2.get_url())
         self.assertContains(response, "3")
