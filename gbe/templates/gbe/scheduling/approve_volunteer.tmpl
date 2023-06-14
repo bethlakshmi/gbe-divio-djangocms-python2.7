@@ -7,7 +7,7 @@
   <div>
     <h2 class="gbe-title">{{view_title}}</h2>
     <h3>{{ conference.conference_name }}</h3>
-<div class="pb-3">{% include "conference_picker.tmpl" %}</div></div>
+{% include "conference_picker.tmpl" %}</div>
   # = Number of current volunteers
   <br/>
   <i class="fas fa-thumbs-up"></i> - Approve &nbsp;&nbsp;||&nbsp;&nbsp;
@@ -53,5 +53,7 @@
 {% block after_table %}
     <br><br>
     <input type="submit" value="Submit Form" class="btn gbe-btn-primary"> 
+  </div>
 </div>
+</form>
 {% endblock %}
