@@ -46,9 +46,9 @@ class PerformerSlidesList(View):
 
         header = ['Order',
                   'Performer',
-                  'URL1',
-                  'URL2',
-                  'URL3',
+                  'Link1',
+                  'Link2',
+                  'Link3',
                   ]
         slide_info = []
         response = get_people(event_ids=[self.occurrence.pk],
@@ -70,7 +70,11 @@ class PerformerSlidesList(View):
                     order = item.commitment.order
             url_set = []
             for link in act.performer.links.filter(order__lt=4):
-                url_set += [link.get_url()]
+                if not link.social_network == "Website":
+                    url_set += ["%s - %s" % (link.social_network,
+                                             link.username)]
+                else:
+                    url_set += [link.get_url()]
             for i in range(len(url_set), 3):
                 url_set += ['']
             slide_info.append([
