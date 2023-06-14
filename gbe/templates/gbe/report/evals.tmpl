@@ -5,7 +5,7 @@
 
 {% block before_table %}
   <h2 class="gbe-title">Review Class Evaluations</h2>
-  <div class="pb-3">{% include "conference_picker.tmpl" %}</div>
+  {% include "conference_picker.tmpl" %}
   <p>{{ about }}</p>
   {% include "gbe/report/eval_detail.tmpl" %}
 {% endblock %}
