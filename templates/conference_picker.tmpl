@@ -1,9 +1,12 @@
 {% if conference_slugs %}
-<div class="dropdown show">
-      <a class="btn gbe-btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Conference</a>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        {% for slug in conference_slugs %}
-        <a class="dropdown-item {% if slug == conference.conference_slug %} active{% endif %}" href="?conf_slug={{ slug }}">{{ slug }}</a>
-        {% endfor %}
-      </div></div>
+    <form action="{{ return_link }}" method="get" enctype="multipart/form-data">
+    <select name="conf_slug" id="conf_slug">
+      {% for slug in conference_slugs %}
+        <option value = "{{ slug }}"{% if slug == conference.conference_slug %} selected{% endif %}>
+	     {{ slug }}
+	</option>
+      {% endfor %}
+    </select>
+    <input type="submit" name="submit" class="gbe-btn-secondary btn-sm btn" value="Select conference">
+    </form>
 {% endif %}
