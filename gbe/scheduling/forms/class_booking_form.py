@@ -4,6 +4,7 @@ from django.forms import (
     IntegerField,
     HiddenInput,
     ModelForm,
+    Textarea,
     TextInput,
 )
 from gbe_forms_text import (
@@ -37,3 +38,4 @@ class ClassBookingForm(ModelForm):
                   ]
         help_texts = classbid_help_texts
         labels = classbid_labels
+        widgets = {'b_description': Textarea(attrs={'id': 'admin-tiny-mce'})}
