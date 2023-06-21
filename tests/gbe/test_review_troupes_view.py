@@ -72,8 +72,8 @@ class TestReviewTroupes(TestCase):
         self.assertContains(
             response,
             ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
-             'gbe-btn-table btn-sm"><i class="fas fa-eye"></i></a>') % (
-             reverse('troupe_view',
+             'gbe-btn-table btn-sm"><i class="fas fa-users"></i></a>') % (
+             reverse('bio_view',
                      urlconf='gbe.urls',
                      args=[self.troupe.pk]),
              "View Troupe"),

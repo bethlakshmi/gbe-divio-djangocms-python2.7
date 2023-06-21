@@ -84,7 +84,10 @@ class TestEditVolunteer(TestGBE):
                     args=[self.context.conference.conference_slug,
                           self.context.sched_event.pk]) + "?")
 
-    def test_authorized_user_can_access_event_w_parent(self):
+    def test_authorized_user_can_access_event_w_long_parent(self):
+        # long titles should get shortened
+        self.context.sched_event.title = "123456789123456789123456789123456789"
+        self.context.sched_event.save()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -96,7 +99,7 @@ class TestEditVolunteer(TestGBE):
             response,
             '<option value="%d" selected>%s - %s</option>' % (
                 self.context.sched_event.pk,
-                self.context.sched_event.title,
+                "123456789123456789123456789...",
                 self.context.sched_event.start_time.strftime(
                     GBE_DATETIME_FORMAT)),
             html=True)
