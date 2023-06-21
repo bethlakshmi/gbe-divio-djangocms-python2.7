@@ -27,7 +27,7 @@
     </div>
     <div id="collapse{{group_dict.group.pk}}" class="collapse">
       <div class="card-body gbe-bg-light">
-{{group_dict.group.test_notes}}
+{{group_dict.group.test_notes | safe}}
 <ul>{% for test_url in group_dict.group.test_urls.all %}
   <li><a href="{{test_url.partial_url}}" class="gbe-link">{{test_url.display_name}}</a> - {{test_url.test_notes}}</li>
 {% endfor %}</ul>
