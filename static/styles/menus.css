@@ -37,3 +37,12 @@
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
 }
+
+@media (min-width: 1px) {
+#demo-toggle {
+    display: initial;
+}}
+
+button.navbar-toggler:focus, button.navbar-toggler:focus-visible {
+  outline: none !important;
+}
