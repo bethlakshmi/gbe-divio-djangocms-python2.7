@@ -125,12 +125,16 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response, 'Approve Pending Volunteers')
         self.assertContains(
             response,
-            '<option value = "%s" selected>' % (
-                second_context.conference.conference_slug))
+            '<a class="dropdown-item active" href="?conf_slug=%s">%s</a>' % (
+                second_context.conference.conference_slug,
+                second_context.conference.conference_slug),
+            html=True)
         self.assertContains(
             response,
-            '<option value = "%s">' % (
-                self.context.conference.conference_slug))
+            '<a class="dropdown-item" href="?conf_slug=%s">%s</a>' % (
+                self.context.conference.conference_slug,
+                self.context.conference.conference_slug),
+            html=True)
 
     def test_list_volunteer_as_staff_lead(self):
         self.context.allocation.role = "Pending Volunteer"

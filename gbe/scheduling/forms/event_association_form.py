@@ -36,7 +36,11 @@ class EventAssociationForm(Form):
             label_sets=[Conference.all_slugs(current=True)])
         if response.occurrences:
             for occurrence in response.occurrences:
+                title = str(occurrence)
+                if len(title) > 30:
+                    title = title[:27] + "..."
+
                 choices += [(occurrence.pk, "%s - %s" % (
-                    str(occurrence),
+                    title,
                     occurrence.start_time.strftime(GBE_DATETIME_FORMAT)))]
         self.fields['parent_event'].choices = BLANK_CHOICE_DASH + choices

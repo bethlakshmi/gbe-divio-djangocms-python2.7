@@ -98,7 +98,7 @@ class TestEval(TestCase):
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<td>0</td>')
+        self.assertContains(response, '<td>0</td>', html=True)
         self.assertContains(response, '<td>2</td>')
         self.assertContains(response, grade1.question.question)
         self.assertNotContains(response, bool1.question.question)
@@ -143,7 +143,7 @@ class TestEval(TestCase):
         self.assertContains(response, text1.question.question, 2)
         self.assertContains(response, grade1.user.profile.display_name)
         self.assertContains(response, grade2.user.profile.display_name)
-        self.assertContains(response, '<td>4</td>')
+        self.assertContains(response, '<td>4</td>', html=True)
         self.assertContains(response, '<td>3</td>')
         self.assertContains(response, self.context.bid.b_description)
 

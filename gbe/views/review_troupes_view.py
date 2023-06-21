@@ -54,7 +54,7 @@ class ReviewTroupesView(View):
             bid_row['id'] = troupe.pk
             bid_row['actions'] = [
                 {'url': reverse(
-                    'troupe_view',
+                    'bio_view',
                     urlconf='gbe.urls',
                     args=[troupe.pk]),
                  'text': "View Troupe"},
