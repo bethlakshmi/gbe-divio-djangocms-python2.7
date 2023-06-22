@@ -142,9 +142,9 @@ TEXT_CKEDITOR_BASE_PATH = os.path.join(STATIC_URL,
                                        'djangocms_text_ckeditor/ckeditor/')
 CKEDITOR_SETTINGS = {
     'stylesSet': [
-        {'name': 'Vast Shadow',
+        {'name': 'Montserrat',
          'element': 'h2',
-         'styles': {'font-family': 'Vast Shadow',
+         'styles': {'font-family': 'Montserrat',
                     'font-size': '20px'}},
         {'name': 'Font Large',
          'element': 'span',

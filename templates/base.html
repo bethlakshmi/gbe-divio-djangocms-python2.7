@@ -12,12 +12,14 @@
 
     {% render_block "css" %}
     {{ ALDRYN_SNAKE.render_head }}
-    <link rel="stylesheet" type="text/css" href='{% static "styles/base.css" %}' media="all"/>
-    <link rel="stylesheet" type="text/css" href='{% static "styles/menus.css" %}' media="all"/>
-    <link rel="stylesheet" type="text/css" href='{% static "styles/gallery.css" %}' media="all"/>
-    <link rel="shortcut icon" href='{% static "img/favicon.ico" %}' type="image/x-icon"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Vast+Shadow&display=swap" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href='{% static "styles/base.css" %}' media="all"/>
+<link rel="stylesheet" type="text/css" href='{% static "styles/menus.css" %}' media="all"/>
+<link rel="stylesheet" type="text/css" href='{% static "styles/gallery.css" %}' media="all"/>
+<link rel="shortcut icon" href='{% static "img/favicon.ico" %}' type="image/x-icon"/>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;600&display=swap" rel="stylesheet">
     {% block theme %}
     <link href="{% url 'themes:theme_style' %}" rel="stylesheet">
     {% endblock theme %}
@@ -27,10 +29,8 @@
   <body class="{% if not view.is_popup %}gbe-body{% else %}gbe-bg-light{% endif %}">
     {% cms_toolbar %}
   {% if not view.is_popup %}
-    <div class="container">
-    <div class='banner'>{% static_placeholder 'banner' %}</div>
-    <nav class="navbar navbar-expand-lg navbar-light navbar-default gbe-navbar-default">
-      <!--<a class="navbar-brand" href="#"><i class="fas fa-home"></i></a>-->
+    <nav class="sticky-top navbar navbar-expand-lg navbar-light navbar-default gbe-navbar-default">
+      <a class="navbar-brand px-2" href="#"><i class="fas fa-home"></i>GBE Image Here</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -38,11 +38,14 @@
         <ul class="navbar-nav mr-auto">
           {% with dropdown=True %}{% show_menu 0 100 100 100 "menu.html" %}{% endwith %}
         </ul>
+      {% static_placeholder 'buttons' %}
 	    {% if not user.is_authenticated %}
 	    {% include "registration/login_popover.tmpl" %}
 	    {% endif %}
       </div>
     </nav>
+    <div class="container">
+    <div class='banner'>{% static_placeholder 'banner' %}</div>
   {% endif %}
     <div class="card gbe-panel">
         <div class="card-body">

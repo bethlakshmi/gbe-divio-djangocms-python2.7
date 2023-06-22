@@ -1,11 +1,18 @@
 /* Base CSS styling for burlexpo */
-body {margin: 0px;border: 0px;padding: 0px; font-size: 14px;font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
+body {
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  background-attachment: fixed;
+}
 .gbe-draft, .gbe-inactive {font-weight: bold;}
 .gbe-form-required {font-weight: bold;}
 .gbe-title {
-  font-family: 'Vast Shadow', cursive;
+  font-family: 'Montserrat', sans-serif;
   letter-spacing: normal;
-  font-weight: normal;
+  font-weight: 600;
   text-transform: none;
   font-style: normal;
   vertical-align: middle;
@@ -18,8 +25,8 @@ h5.gbe-title{font-size:14px}
 h6.gbe-title{font-size:12px}
 /* Used in django CMS provided styles, do not delete */
 .subtitle{
-  font-family: 'Vast Shadow', cursive;
-  font-size: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
   color: #000;
   letter-spacing: normal;
   font-weight: normal;
@@ -163,7 +170,7 @@ button.login-button {
   margin-right: 3px;
   margin-bottom: -1px;
   border-radius: 4px;
-  font-family: 'Vast Shadow', cursive;
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   padding-left: 16px;
   padding-right: 16px;
@@ -231,7 +238,7 @@ span.dropt span {position: absolute; left: -9999px; z-index: 6;
   border-style:solid; border-width:1px;}
 span.dropt:hover span {left: 30%; margin: 0px 0 0 0px; z-index:6;} 
 
-.gbe-head{font-family: 'Vast Shadow', cursive;font-size: 30px;}
+.gbe-head{font-family: 'Montserrat', sans-serif;font-size: 30px;}
 .gbe-header-band{margin-top: 10px;padding-top: 10px;}
 
 /*Schedule detail view*/
@@ -436,7 +443,7 @@ span.opps-errors ul {padding: 0px;}
 #ticket_button {font-size: 12px;}
 #ticket_action {width: 70px;padding: 0px;text-align: center;}
 #ticket_action div a {margin: 2px 0px 2px 0px;}
-.navbar-default {font-family: 'Vast Shadow', cursive;font-size:17px;padding:0px;}
+.navbar-default {font-family: 'Montserrat', sans-serif;font-size:17px;padding:0px;}
 .gbe-dropdown-menu {font-family: Lucida Grande,Tahoma,Verdana,sans-serif;margin-top: -1px;}
 .gbe_dropdown{padding: 5px 18px 5px 10px;}
 @media (min-width:768px){

@@ -15,9 +15,9 @@
 
 CKEDITOR.stylesSet.add( 'default', [
 	/* GBE Styles */
-	{ name: 'Vast Shadow',
+	{ name: 'Montserrat',
 	  element: 'h2',
-	  styles: { 'font-family': 'Vast Shadow', cursive,
+	  styles: { 'font-family': 'Montserrat', sans-serif;,
 	            'font-size': '20px',
 		    'color': '#000;'}},
 	{ name: 'Font Large',
