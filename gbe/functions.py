@@ -112,12 +112,6 @@ def check_user_and_redirect(request, this_url, source):
     return response
 
 
-def get_conf(biddable):
-    conference = biddable.biddable_ptr.b_conference
-    old_bid = conference.status == 'completed'
-    return conference, old_bid
-
-
 def get_current_conference():
     return Conference.current_conf()
 
