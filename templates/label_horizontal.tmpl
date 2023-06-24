@@ -1,9 +1,9 @@
   {% load static %}
   <label for="{{field.name}}" class="control-label">
-    {% if field.errors %}<font class="inventory-form-error">!</font>&nbsp;&nbsp;
+    {% if field.errors %}<font class="gbe-form-error">!</font>&nbsp;&nbsp;
     {% elif field.css_classes == 'required' %}
-      <font class="inventory-form-required">*</font>{% endif %} 
-    {% if field.errors %}<font class="inventory-form-error">{% endif %}
+      <font class="gbe-form-required">*</font>{% endif %} 
+    {% if field.errors %}<font class="gbe-form-error">{% endif %}
     {{ field.label }}
     {% if field.errors %}</font>{% endif %} 
     {% if field.help_text %}

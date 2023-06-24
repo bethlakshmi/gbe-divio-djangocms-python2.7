@@ -19,10 +19,7 @@ from gbe.forms import (
     BidStateChangeForm,
     SummerActForm,
 )
-from gbe.functions import (
-    validate_perms,
-    get_conf,
-)
+from gbe.functions import validate_perms
 from gbe.views.functions import make_show_casting_form
 from gbe.views.act_display_functions import get_act_form
 from gbetext import (
