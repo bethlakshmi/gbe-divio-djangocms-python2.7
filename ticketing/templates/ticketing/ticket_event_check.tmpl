@@ -12,7 +12,7 @@
         <th>&nbsp;</th>
       {% for ticketing_event in events %}
         <th><div><span>
-        <a href="{% url 'ticketing:ticket_item_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
+        <a href="{% url 'ticketing:bptevent_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
         </span></div></th>
       {% endfor %}
       </tr>
@@ -22,7 +22,7 @@
         <th>&nbsp;</th>
       {% for ticketing_event in events %}
         <th><div><span>
-        <a href="{% url 'ticketing:ticket_item_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
+        <a href="{% url 'ticketing:bptevent_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
         </span></div></th>
       {% endfor %}
       </tr>

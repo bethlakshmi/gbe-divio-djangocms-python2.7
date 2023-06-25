@@ -21,19 +21,20 @@
   <div class="card gbe-panel-list">
     <div class="card-header gbe-bg-dark" id="heading{{group_dict.group.pk}}">
       <h2 class="mb-0">
-      <a data-toggle="collapse" href="#collapse{{group_dict.group.pk}}" role="button" aria-expanded="false" aria-controls="collapse{{group_dict.group.pk}}">
+      <a data-toggle="collapse" href="#collapse{{group_dict.group.pk}}" role="button" aria-expanded="false" aria-controls="collapse{{group_dict.group.pk}}" class="gbe-panel-link">
         {{group_dict.group}}</a>
       </h2>
     </div>
     <div id="collapse{{group_dict.group.pk}}" class="collapse">
       <div class="card-body gbe-bg-light">
-{{group_dict.group.test_notes}}
+{{group_dict.group.test_notes | safe}}
 <ul>{% for test_url in group_dict.group.test_urls.all %}
   <li><a href="{{test_url.partial_url}}" class="gbe-link">{{test_url.display_name}}</a> - {{test_url.test_notes}}</li>
 {% endfor %}</ul>
 <table>
   <tbody><tr class="gbe-table-row">{% for element in group_dict.elements %}
-    <td><div class="text-center">{{ element.sample_html|safe }}</div><br><i>{{ element.description }}</i></td>
+    <td><div class="text-center">{{ element.sample_html|safe }}</div><br>
+      <i>{{ element.description|safe }}</i></td>
   {% endfor %}</tr>
   {% for label in group_dict.labels %}
   <tr class="gbe-table-row"><td colspan="{{group_dict.elements|length}}"><b>{{label.name}}</b>
@@ -48,7 +49,8 @@
             {{ hidden }}
           {% endfor %}
           {% for field in form.visible_fields %}
-            {{ field }}
+           {{ field }} {% if field.label != "color" %}
+           {% include "label_horizontal.tmpl" %}<br>{% endif %}
           {% endfor %}
           <font class="gbe-form-error">{% if form.errors %}
           <p class="gbe-form-error"> There is an error on the form.</p>
@@ -71,7 +73,7 @@
     <div class="card gbe-panel-list">
     <div class="card-header gbe-bg-dark" id="headingEverything">
       <h2 class="mb-0">
-      <a data-toggle="collapse" href="#collapseEverything" role="button" aria-expanded="false" aria-controls="collapseEverything">
+      <a data-toggle="collapse" href="#collapseEverything" role="button" aria-expanded="false" aria-controls="collapseEverything" class="gbe-panel-link">
       Everything Else
       </a></h2>
     </div>

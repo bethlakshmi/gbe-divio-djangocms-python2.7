@@ -17,10 +17,7 @@ from gbe.forms import (
     BidEvaluationForm,
     BidStateChangeForm,
 )
-from gbe.functions import (
-    validate_perms,
-    get_conf,
-)
+from gbe.functions import validate_perms
 
 
 class ReviewBidView(View):
@@ -43,7 +40,6 @@ class ReviewBidView(View):
                 'actionform': self.actionform,
                 'actionURL': self.actionURL,
                 'conference': self.b_conference,
-                'old_bid': self.old_bid,
                 'page_title': self.page_title,
                 'view_title': self.view_title,
                 'controller_heading': self.controller_heading}
@@ -105,7 +101,7 @@ class ReviewBidView(View):
         else:
             self.actionform = False
             self.actionURL = False
-        self.b_conference, self.old_bid = get_conf(self.object)
+        self.b_conference = self.object.biddable_ptr.b_conference
         self.set_bid_eval()
         bid_string = self.object.__class__.__name__
         self.page_title = UserMessage.objects.get_or_create(
