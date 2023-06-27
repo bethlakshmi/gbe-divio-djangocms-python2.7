@@ -2,10 +2,10 @@
     {% if evaluate == "disabled"%}
   	<a href="#" class="detail_link-disabled cal-favorite {{ disable_style }}" data-toggle="tooltip"
 	   title="You have already rated this class">
-        <i class="fa fa-tachometer {{size}}" aria-hidden="true"></i></a>
+        <i class="fas fa-tachometer-alt {{size}}" aria-hidden="true"></i></a>
     {% else %}
 	<a href="{{ evaluate }}?next={{ request.get_full_path }}"
 	   class="detail_link  cal-favorite" data-toggle="tooltip" title="Rate this Class">
-        <i class="fa fa-tachometer {{size}}" aria-hidden="true"></i></a>
+        <i class="fas fa-tachometer-alt {{size}}" aria-hidden="true"></i></a>
     {% endif %}
 {% endif %}
