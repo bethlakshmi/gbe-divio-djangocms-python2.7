@@ -1,14 +1,15 @@
 {% extends "base.html" %}
-{% load thumbnail %}
+{% load thumbnail static %}
 
 {% block title %}
   {{conference.conference_slug}}: {{eventitem.occurrence.title}}
 {% endblock %}
 {% block head %}
-    <script src="https://code.iconify.design/iconify-icon/1.0.3/iconify-icon.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/static/styles/gray_grids_css/main.css">
-    <link rel="preload" href="/static/styles/fonts/simple-line-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/static/styles/fonts/simple-line-icons.css"></noscript>{% endblock head %}
+<script src="https://code.iconify.design/iconify-icon/1.0.3/iconify-icon.min.js"></script>
+<link rel="stylesheet" type="text/css" href='{% static "styles/gray_grids_css/main.css" %}'>
+<link rel="preload" href='{% static "styles/fonts/simple-line-icons.css" %}' as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href='{% static "styles/fonts/simple-line-icons.css" %}'></noscript>
+{% endblock head %}
 {% block content %}
 <div class="container"><div class="row">
 {% if tickets %}

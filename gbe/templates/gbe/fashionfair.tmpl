@@ -1,12 +1,12 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}
   Great Burlesque Exposition: Fashion Fair
 {% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="/static/styles/gray_grids_css/main.css">
-    <link rel="preload" href="/static/styles/fonts/simple-line-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/static/styles/fonts/simple-line-icons.css"></noscript>{% endblock head %}
+    <link rel="stylesheet" type="text/css" href='{% static "styles/gray_grids_css/main.css" %}'>
+{% endblock head %}
 
 {% block content %}
 
