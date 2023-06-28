@@ -115,8 +115,8 @@ no_comp_msg = '''Something went wrong with creating a comp ticket.  This can
 volunteer_panel_instr = '''<div>Red text indicates a user that has become
  inactive.</div><div>Yellow background indicates a volunteer session that
  requires approval.</div><div>Blue background indicates volunteers that have
- not yet been approved.  Use the <i class="fa fa-thumbs-o-up"
- aria-hidden="true"></i> to approve or reject them.</div><div>Green
+ not yet been approved.  Use the <i class="far fa-thumbs-up"></i> to approve
+ or reject them.</div><div>Green
  background indicates has max volunteers.  If an event is full, it will not
  show up in the public volunteer calendar.</div>'''
 act_order_form_invalid = '''There was a problem updating the act order.  \
