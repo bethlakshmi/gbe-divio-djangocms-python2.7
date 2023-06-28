@@ -190,7 +190,7 @@ class TestManageEventList(TestCase):
         response = self.client.get(url, data)
         self.assertContains(
             response,
-            '<i class="fa fa-trash-o" aria-hidden="true">')
+            '<i class="far fa-trash-alt"></i>')
         self.assertNotContains(
             response,
             '<i class="fas fa-pencil-alt"></i>')

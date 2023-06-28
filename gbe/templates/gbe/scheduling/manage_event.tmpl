@@ -35,7 +35,7 @@
       </a>
      {% endif %}
       <a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link ml-1">
-       <i class="fa fa-files-o" aria-hidden="true"></i>
+       <i class="far fa-copy"></i>
       </a>
       </label></div>
      {% endfor %}
@@ -75,9 +75,9 @@
          <i class="fas fa-pencil-alt"></i></a>{% endif %}
         {% if occurrence.copy_link %}
         <a href="{{ occurrence.copy_link }}" data-toggle="tooltip" title="Copy" class="btn gbe-btn-table btn-sm" id="action-button">
-         <i class="fa fa-files-o" aria-hidden="true"></i></a>{% endif %}
+         <i class="far fa-copy"></i></a>{% endif %}
         <a href="{{ occurrence.delete_link }}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
-         <i class="fa fa-trash-o" aria-hidden="true"></i></a></div>
+         <i class="far fa-trash-alt"></i></a></div>
         {% if occurrence.type == 'Show' %}
           <br>
           <a href="{% url 'scheduling:show_dashboard' occurrence.id %}" class="btn gbe-btn-secondary btn-sm mt-2">Dashboard</a>{% endif %}
