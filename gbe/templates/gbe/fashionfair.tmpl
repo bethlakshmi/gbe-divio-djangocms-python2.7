@@ -4,8 +4,9 @@
 {% endblock %}
 
 {% block head %}
-      {% include "gray_grids_css.tmpl" %}
-{% endblock head %}
+    <link rel="stylesheet" type="text/css" href="/static/styles/gray_grids_css/main.css">
+    <link rel="preload" href="/static/styles/fonts/simple-line-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/static/styles/fonts/simple-line-icons.css"></noscript>{% endblock head %}
 
 {% block content %}
 
