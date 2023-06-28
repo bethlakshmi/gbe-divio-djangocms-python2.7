@@ -32,13 +32,8 @@
                     <i class="far fa-eye"></i>
                   </a>
             {% endif %}
-            {% if featured.bio.homepage %}
-                  <a class="social" href="{{featured.bio.homepage}}" target="_blank" data-toggle="tooltip" title="Performer Homepage">
-                    <i class="fa fa-link"></i>
-                  </a>
-            {% endif %}
                   <a class="social" href="#" data-toggle="modal" data-target="#Modal{{featured.bio.pk}}" data-backdrop="true" data-toggle="tooltip" title="More...">
-                    <i class="fa fa-external-link"></i>
+                    <i class="fas fa-external-link-alt"></i>
                   </a>
             {% if request.user.is_superuser %}<br><br>{% if featured.bio.img %}
                   <a class="social" href="/admin/filer/image/{{featured.bio.img.pk}}/?_pick=file&_popup=1" target="_blank" data-toggle="tooltip" title="Edit Photo">
