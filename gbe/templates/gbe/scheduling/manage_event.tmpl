@@ -31,7 +31,7 @@
       {{ checkbox.choice_label }}
       {% if conference.status != "completed" %}
       <a href="{% url "scheduling:edit_staff" checkbox.data.value %}" data-toggle="tooltip" title="Edit" class="detail_link ml-1">
-       <i class="fa fa-pencil-square" aria-hidden="true"></i>
+       <i class="far fa-edit"></i>
       </a>
      {% endif %}
       <a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link ml-1">
