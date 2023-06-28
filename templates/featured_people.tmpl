@@ -42,7 +42,7 @@
                   </a>
             {% if request.user.is_superuser %}<br><br>{% if featured.bio.img %}
                   <a class="social" href="/admin/filer/image/{{featured.bio.img.pk}}/?_pick=file&_popup=1" target="_blank" data-toggle="tooltip" title="Edit Photo">
-                    <i class="fa fa-pencil"></i>
+                    <i class="fas fa-pencil-alt"></i>
                   </a>{% endif %}
                   <a class="social" href="/admin/gbe/performer/{{featured.bio.pk}}" target="_blank" data-toggle="tooltip" title="Edit Bio">
                     <i class="fa fa-pencil-square-o"></i>

@@ -7,7 +7,7 @@
   <a href="{% url 'ticketing:ticket_item_edit' %}?event_id={{event.event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn gbe-btn-secondary btn-sm" id="action-button">
     <i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-ticket" aria-hidden="true"></i></a>
   <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-secondary btn-sm" id="action-button">
-    <i class="fa fa-pencil" aria-hidden="true"></i></a>
+    <i class="fas fa-pencil-alt"></i></a>
   <a href="{% url 'ticketing:bptevent_edit' event.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-secondary  btn-sm" id="action-button">
     <i class="fa fa-trash-o" aria-hidden="true"></i></a></div>
 </div></div>
@@ -47,7 +47,7 @@
   <td id="ticket_action">
     <div class="btn-group" role="group" aria-label="...">
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
-        <i class="fa fa-pencil gbe-text-muted" aria-hidden="true" id="ticket_button"></i></a>
+        <i class="fas fa-pencil-alt"></i></a>
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
         <i class="fa fa-trash-o gbe-text-muted" aria-hidden="true" id="ticket_button"></i></a></div></td>
 </tr>
