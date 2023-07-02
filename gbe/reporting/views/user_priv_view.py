@@ -17,6 +17,8 @@ from scheduler.idd import get_people
 
 
 class UserPrivView(GbeContextMixin, ListView):
+    # PRIVILEGES - on this are determined at the URL level with a staff
+    # required control that works at that level.
     model = User
     template_name = 'gbe/report/user_priv.tmpl'
     queryset = User.objects.exclude(groups=None)

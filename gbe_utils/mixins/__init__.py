@@ -1,3 +1,4 @@
+from .conference_list_view import ConferenceListView
 from .gbe_form_mixin import GbeFormMixin
 from .subway_map_mixin import SubwayMapMixin
 from .profile_required_mixin import ProfileRequiredMixin

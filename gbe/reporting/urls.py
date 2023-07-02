@@ -11,6 +11,7 @@ from gbe.reporting.views import (
     PerformerSlidesList,
     PerformerShowComp,
     review_staff_area_view,
+    RoomScheduleView,
     staff_area_view,
     ShowSlidesView,
     UserPrivView,
@@ -19,7 +20,6 @@ from gbe.reporting.views import (
 from gbe.reporting.report_views import (
     env_stuff,
     list_reports,
-    room_schedule,
     room_setup,
 )
 from django.contrib import admin
@@ -59,9 +59,7 @@ urlpatterns = [
         ShowSlidesView.as_view(),
         name='show_slide_list'),
     url(r'^reports/schedule/room/?$',
-        room_schedule, name='room_schedule'),
-    url(r'^reports/schedule/room/(\d+)/?$',
-        room_schedule, name='room_schedule'),
+        RoomScheduleView.as_view(), name='room_schedule'),
     url(r'^reports/setup/room/?$',
         room_setup, name='room_setup'),
     url(r'^reports/interest/?$',
