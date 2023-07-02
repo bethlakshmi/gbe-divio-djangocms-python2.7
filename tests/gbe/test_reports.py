@@ -24,38 +24,6 @@ class TestReports(TestCase):
         self.client = Client()
         self.profile = ProfileFactory()
 
-    def test_list_reports_by_conference(self):
-        Conference.objects.all().delete()
-        conf = ConferenceFactory()
-        grant_privilege(self.profile, 'Act Reviewers')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('report_list',
-                    urlconf="gbe.reporting.urls"),
-            data={"conf_slug": conf.conference_slug})
-        self.assertEqual(response.status_code, 200)
-
-    def test_list_reports_fail(self):
-        '''list_reports view should fail because user
-           is not in one of the privileged groups
-        '''
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('report_list',
-                    urlconf="gbe.reporting.urls"))
-        self.assertEqual(response.status_code, 403)
-
-    def test_list_reports_succeed(self):
-        '''list_reports view should load, user has proper
-           privileges
-        '''
-        grant_privilege(self.profile, 'Act Reviewers')
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('report_list',
-                    urlconf="gbe.reporting.urls"))
-        self.assertEqual(response.status_code, 200)
-
     def test_room_schedule_fail(self):
         '''room_schedule view should load for privileged users,
            and fail for others

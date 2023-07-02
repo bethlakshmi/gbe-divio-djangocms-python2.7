@@ -31,23 +31,6 @@ from gbe.functions import (
 from scheduler.idd import get_people
 
 
-def list_reports(request):
-    '''
-      Shows listing of all reports in this area
-    '''
-    viewer_profile = validate_perms(request, 'any', require=True)
-    if request.GET and request.GET.get('conf_slug'):
-        conference = get_conference_by_slug(request.GET['conf_slug'])
-    else:
-        conference = get_current_conference()
-    return render(request,
-                  'gbe/report/report_list.tmpl', {
-                      'conference_slugs': conference_slugs(),
-                      'conference': conference,
-                      'return_link': reverse('report_list',
-                                             urlconf='gbe.reporting.urls')})
-
-
 @never_cache
 def env_stuff(request, conference_choice=None):
     '''

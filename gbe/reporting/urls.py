@@ -18,7 +18,6 @@ from gbe.reporting.views import (
 )
 from gbe.reporting.report_views import (
     env_stuff,
-    list_reports,
     room_schedule,
     room_setup,
 )
@@ -28,9 +27,6 @@ admin.autodiscover()
 app_name = "reporting"
 
 urlpatterns = [
-    url(r'^reports/?$',
-        list_reports,
-        name='report_list'),
     url(r'^reports/review_volunteers/?$',
         review_staff_area_view,
         name='staff_area'),
