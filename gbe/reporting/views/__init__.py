@@ -10,4 +10,7 @@ from .performer_show_comp_view import PerformerShowComp
 from .performer_slides_list import PerformerSlidesList
 from .user_priv_view import UserPrivView
 from .show_slides_view import ShowSlidesView
-from .room_schedule_view import RoomScheduleView
+from .room_reports import (
+    RoomScheduleView,
+    RoomSetupView,
+)

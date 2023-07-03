@@ -12,6 +12,7 @@ from gbe.reporting.views import (
     PerformerShowComp,
     review_staff_area_view,
     RoomScheduleView,
+    RoomSetupView,
     staff_area_view,
     ShowSlidesView,
     UserPrivView,
@@ -19,7 +20,6 @@ from gbe.reporting.views import (
 )
 from gbe.reporting.report_views import (
     env_stuff,
-    room_setup,
 )
 from django.contrib import admin
 admin.autodiscover()
@@ -57,7 +57,7 @@ urlpatterns = [
     url(r'^reports/schedule/room/?$',
         RoomScheduleView.as_view(), name='room_schedule'),
     url(r'^reports/setup/room/?$',
-        room_setup, name='room_setup'),
+        RoomSetupView.as_view(), name='room_setup'),
     url(r'^reports/interest/?$',
         interest_view, name='interest'),
     url(r'^reports/evaluation/?$',
