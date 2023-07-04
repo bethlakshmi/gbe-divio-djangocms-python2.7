@@ -46,7 +46,7 @@ class RoomScheduleView(RoleRequiredMixin, ConferenceListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        conf_days = self.get_conf_days() 
+        conf_days = self.get_conf_days()
 
         # rearrange the data into the format of:
         #  - room & date of booking
@@ -77,6 +77,7 @@ class RoomScheduleView(RoleRequiredMixin, ConferenceListView):
                               self.room_set_key: day_events}]
         context['room_date'] = room_set
         return context
+
 
 class RoomSetupView(RoomScheduleView):
     template_name = 'gbe/report/room_setup.tmpl'

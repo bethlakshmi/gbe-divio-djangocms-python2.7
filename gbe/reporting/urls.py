@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from gbe.reporting.views import (
     act_techinfo_detail,
     ActTechList,
+    EnvStuffView,
     eval_view,
     interest_view,
     all_volunteer_view,
@@ -17,9 +18,6 @@ from gbe.reporting.views import (
     ShowSlidesView,
     UserPrivView,
     WelcomeLetterView,
-)
-from gbe.reporting.report_views import (
-    env_stuff,
 )
 from django.contrib import admin
 admin.autodiscover()
@@ -36,11 +34,8 @@ urlpatterns = [
     url(r'^reports/review_all_volunteers/?$',
         all_volunteer_view,
         name='all_volunteers'),
-    url(r'^reports/stuffing/(?P<conference_choice>[-\w]+)/?$',
-        env_stuff,
-        name='env_stuff'),
     url(r'^reports/stuffing/?$',
-        env_stuff,
+        EnvStuffView.as_view(),
         name='env_stuff'),
     url(r'^reports/welcome/(?P<profile_id>\d+)/?$',
         WelcomeLetterView.as_view(),
