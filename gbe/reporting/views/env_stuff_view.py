@@ -20,7 +20,6 @@ class EnvStuffView(CSVResponseMixin, RoleRequiredMixin, ConferenceListView):
     view_permissions = ('Registrar',)
     room_set_key = 'events'
 
-
     def get_queryset(self):
         return self.model.objects.filter(
             event__eventlabel__text=self.conference.conference_slug).exclude(
@@ -73,18 +72,18 @@ class EnvStuffView(CSVResponseMixin, RoleRequiredMixin, ConferenceListView):
                     if str(bio) not in people_rows[name]['personae_list']:
                         people_rows[name]['personae_list'] += str(bio) + ', '
 
-        for ticket in Transaction.objects.filter(
+        for t in Transaction.objects.filter(
                 ticket_item__ticketing_event__conference=self.conference,
                 purchaser__matched_to_user__is_active=True,
                 ticket_item__ticketing_event__act_submission_event=False
                 ).exclude(purchaser__matched_to_user__username="limbo"):
-            name = ticket.purchaser.matched_to_user.profile.get_badge_name(
+            name = t.purchaser.matched_to_user.profile.get_badge_name(
                 ).encode('utf-8').strip()
             if name not in people_rows.keys():
                 people_rows[name] = {
-                    'first': ticket.purchaser.matched_to_user.first_name.encode(
+                    'first': t.purchaser.matched_to_user.first_name.encode(
                         'utf-8').strip(),
-                    'last': ticket.purchaser.matched_to_user.last_name.encode(
+                    'last': t.purchaser.matched_to_user.last_name.encode(
                         'utf-8').strip(),
                     'ticket_names': "",
                     'staff_lead_list': "",
@@ -93,7 +92,7 @@ class EnvStuffView(CSVResponseMixin, RoleRequiredMixin, ConferenceListView):
                     'personae_list': "",
                     'show_list': "",
                 }
-            people_rows[name]['ticket_names'] += ticket.ticket_item.title + ", "
+            people_rows[name]['ticket_names'] += t.ticket_item.title + ", "
 
         context['rows'] = []
         for name, details in people_rows.items():
