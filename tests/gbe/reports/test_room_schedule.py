@@ -1,6 +1,6 @@
 from django.urls import reverse
 from datetime import timedelta
-from django.test import TestCase, Client
+from django.test import TestCase
 from gbe.models import Conference
 from tests.factories.gbe_factories import (
     ConferenceDayFactory,
@@ -12,7 +12,6 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
-from gbetext import space_options
 
 
 class TestRoomSchedule(TestCase):
@@ -68,5 +67,11 @@ class TestRoomSchedule(TestCase):
         response = self.client.get(
             reverse('room_schedule',
                     urlconf='gbe.reporting.urls'),
-            data={'conf_slug': conf.conference_slug})
-        self.assertEqual(response.status_code, 200)
+            data={'conference': conf.conference_slug})
+        self.assertContains(
+            response,
+            ('<font style="font-weight: bold"><a href="?conference=%s"' +
+             ' class="gbe-link">%s</a></font>') % (
+             conf.conference_slug,
+             conf.conference_slug),
+            html=True)

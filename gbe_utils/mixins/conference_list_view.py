@@ -8,6 +8,8 @@ class ConferenceListView(ListView):
     def setup(self, request, *args, **kwargs):
         if request.GET and request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
+        elif request.GET and request.GET.get('conference'):
+            self.conference = Conference.by_slug(request.GET['conference'])
         else:
             self.conference = Conference.current_conf()
         return super().setup(request, *args, **kwargs)
