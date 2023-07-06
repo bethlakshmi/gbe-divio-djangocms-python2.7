@@ -1,8 +1,10 @@
 {% extends "base.html" %}
-{% load static cms_tags %}
+{% load static %}
 {% block head %}
-  {% include "gray_grids_css.tmpl" %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">{% endblock head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href='{% static "styles/gray_grids_css/main.css" %}'>
+<link rel="stylesheet" href='{% static "styles/fonts/simple-line-icons.css" %}'>
+{% endblock head %}
 
 {% block title %}
   Great Burlesque Exposition

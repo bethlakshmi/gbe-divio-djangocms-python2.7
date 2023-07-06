@@ -29,23 +29,18 @@
                 <div class="social-icon">
             {% if featured.bio.img %}
                   <a class="social" href="{{featured.bio.img.url}}" data-toggle="tooltip" title="Expand Photo">
-                    <i class="fa fa-eye"></i>
-                  </a>
-            {% endif %}
-            {% if featured.bio.homepage %}
-                  <a class="social" href="{{featured.bio.homepage}}" target="_blank" data-toggle="tooltip" title="Performer Homepage">
-                    <i class="fa fa-link"></i>
+                    <i class="far fa-eye"></i>
                   </a>
             {% endif %}
                   <a class="social" href="#" data-toggle="modal" data-target="#Modal{{featured.bio.pk}}" data-backdrop="true" data-toggle="tooltip" title="More...">
-                    <i class="fa fa-external-link"></i>
+                    <i class="fas fa-external-link-alt"></i>
                   </a>
             {% if request.user.is_superuser %}<br><br>{% if featured.bio.img %}
                   <a class="social" href="/admin/filer/image/{{featured.bio.img.pk}}/?_pick=file&_popup=1" target="_blank" data-toggle="tooltip" title="Edit Photo">
-                    <i class="fa fa-pencil"></i>
+                    <i class="fas fa-pencil-alt"></i>
                   </a>{% endif %}
                   <a class="social" href="/admin/gbe/performer/{{featured.bio.pk}}" target="_blank" data-toggle="tooltip" title="Edit Bio">
-                    <i class="fa fa-pencil-square-o"></i>
+                    <i class="far fa-edit"></i>
                   </a>
             {% endif %}
                 </div>

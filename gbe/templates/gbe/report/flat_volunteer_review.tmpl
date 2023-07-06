@@ -10,7 +10,7 @@
   <br/>
   <div>Red text indicates a user that has become inactive.</div>
   <div>Yellow background indicates a volunteer session that requires approval.</div>
-  <div>Blue background indicates volunteers that have no yet been approved.  Use the <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> to approve or reject them.</div>
+  <div>Blue background indicates volunteers that have no yet been approved.  Use the <i class="far fa-thumbs-up"></i> to approve or reject them.</div>
   <div>Green background indicates has max volunteers.  If an event is full, it will not show up in the volunteer calendar.</div>
   {% endblock %}
 {% block tbody %}
@@ -30,7 +30,7 @@
         <div {% if not contact.profile.is_active %}class="gbe-form-error"{% endif %}>{% for role, commit in role_commit_map.items %}
           {% if role == people.role %}<i class="{{commit.1}}"></i>{% endif %}{% endfor %}
         {{contact.profile}}
-        <a href="{% url 'email:mail_to_individual' contact.profile.pk %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Email"><i class="far fa-envelope"></i></a>{% if people.role == 'Pending Volunteer' %}<a href="{% url 'scheduling:review_pending' %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Approve/Reject Volunteer"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></a>{% endif %}<br> P: {{contact.profile.phone}}</div>
+        <a href="{% url 'email:mail_to_individual' contact.profile.pk %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Email"><i class="far fa-envelope"></i></a>{% if people.role == 'Pending Volunteer' %}<a href="{% url 'scheduling:review_pending' %}" class="btn gbe-btn-table btn-sm float-right" data-toggle="tooltip" title="Approve/Reject Volunteer"><i class="far fa-thumbs-up"></i></a>{% endif %}<br> P: {{contact.profile.phone}}</div>
           {% endfor %}{% endif %}{% endfor %}
   	  </td>
     </tr>
