@@ -31,11 +31,11 @@
       {{ checkbox.choice_label }}
       {% if conference.status != "completed" %}
       <a href="{% url "scheduling:edit_staff" checkbox.data.value %}" data-toggle="tooltip" title="Edit" class="detail_link ml-1">
-       <i class="fa fa-pencil-square" aria-hidden="true"></i>
+       <i class="far fa-edit"></i>
       </a>
      {% endif %}
       <a href="{% url "scheduling:copy_staff_schedule" checkbox.data.value %}" data-toggle="tooltip" title="Copy" class="detail_link ml-1">
-       <i class="fa fa-files-o" aria-hidden="true"></i>
+       <i class="far fa-copy"></i>
       </a>
       </label></div>
      {% endfor %}
@@ -69,15 +69,15 @@
        <td class="{% if occurrence.approval_needed%}approval_needed{%endif%}">{% if occurrence.max_commitments %}{{ occurrence.max_commitments }} acts{% else %}{{ occurrence.max_volunteer }}{% endif %}</td>
        <td><div class="btn-group" role="group" aria-label="...">
         <a href="{{ occurrence.detail_link }}" data-toggle="tooltip" title="View" class="btn gbe-btn-table btn-sm" id="action-button">
-         <i class="fa fa-eye" aria-hidden="true"></i></a>
+         <i class="far fa-eye"></i></a>
         {% if occurrence.edit_link %}
         <a href="{{ occurrence.edit_link }}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
-         <i class="fa fa-pencil" aria-hidden="true"></i></a>{% endif %}
+         <i class="fas fa-pencil-alt"></i></a>{% endif %}
         {% if occurrence.copy_link %}
         <a href="{{ occurrence.copy_link }}" data-toggle="tooltip" title="Copy" class="btn gbe-btn-table btn-sm" id="action-button">
-         <i class="fa fa-files-o" aria-hidden="true"></i></a>{% endif %}
+         <i class="far fa-copy"></i></a>{% endif %}
         <a href="{{ occurrence.delete_link }}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
-         <i class="fa fa-trash-o" aria-hidden="true"></i></a></div>
+         <i class="far fa-trash-alt"></i></a></div>
         {% if occurrence.type == 'Show' %}
           <br>
           <a href="{% url 'scheduling:show_dashboard' occurrence.id %}" class="btn gbe-btn-secondary btn-sm mt-2">Dashboard</a>{% endif %}
