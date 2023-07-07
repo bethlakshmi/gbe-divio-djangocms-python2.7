@@ -7,7 +7,10 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
 )
-from tests.contexts import ClassContext
+from tests.contexts import (
+    ClassContext,
+    ShowContext,
+)
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -37,11 +40,13 @@ class TestRoomSchedule(TestCase):
 
     def test_room_schedule_succeed(self):
         '''room_schedule view should load for privileged users,
-           and fail for others
+           and fail for others, with a conference not selected, default to 
+           current, and not showing setup for non-classes
         '''
         Conference.objects.all().delete()
-        context = ClassContext()
+        context = ShowContext()
         one_day = timedelta(1)
+
         ConferenceDayFactory(conference=context.conference,
                              day=context.sched_event.starttime.date())
         ConferenceDayFactory(
@@ -61,6 +66,8 @@ class TestRoomSchedule(TestCase):
                 context.conference.conference_slug,
                 context.conference.conference_slug),
             html=True)
+        self.assertNotContains(response, context.sched_event.title)
+        self.assertNotContains(response, context.room.name)
 
     def test_room_setup_by_conference_with_permission(self):
         '''room_setup view should load for privileged users,
