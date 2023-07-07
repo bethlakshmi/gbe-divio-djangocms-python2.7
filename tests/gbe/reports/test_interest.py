@@ -31,7 +31,7 @@ class TestInterest(TestCase):
     def test_interest_not_visible_without_permission(self):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_default_conf_success(self):
         login_as(self.priv_profile, self)
