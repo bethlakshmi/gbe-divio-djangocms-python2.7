@@ -26,7 +26,7 @@ class TestAllVolunteer(TestCase):
     def test_review_not_visible_without_permission(self):
         login_as(self.profile, self)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_show_volunteer(self):
         '''staff_area view should load

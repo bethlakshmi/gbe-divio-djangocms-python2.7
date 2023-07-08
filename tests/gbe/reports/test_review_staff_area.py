@@ -26,7 +26,7 @@ class TestReviewStaffArea(TestCase):
         response = self.client.get(
             reverse('staff_area',
                     urlconf="gbe.reporting.urls"))
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_review_staff_area_path(self):
         '''review_staff_area view should load
