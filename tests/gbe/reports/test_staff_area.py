@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -18,7 +18,6 @@ from gbetext import role_commit_map
 
 class TestStaffArea(TestCase):
     def setUp(self):
-        self.client = Client()
         self.profile = ProfileFactory()
 
     def test_staff_area_path_fail(self):

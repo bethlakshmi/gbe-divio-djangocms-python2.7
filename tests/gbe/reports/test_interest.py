@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -15,9 +15,6 @@ from gbetext import interested_report_explain_msg
 
 class TestInterest(TestCase):
     view_name = "interest"
-
-    def setUp(self):
-        self.client = Client()
 
     @classmethod
     def setUpTestData(cls):
