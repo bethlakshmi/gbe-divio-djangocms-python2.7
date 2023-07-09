@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -21,9 +21,6 @@ from tests.factories.scheduler_factories import (
 class TestEval(TestCase):
     view_name = "evaluation"
 
-    def setUp(self):
-        self.client = Client()
-
     @classmethod
     def setUpTestData(cls):
         cls.priv_profile = ProfileFactory()
@@ -35,8 +32,8 @@ class TestEval(TestCase):
 
     def test_not_visible_without_permission(self):
         login_as(ProfileFactory(), self)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_default_conf_success(self):
         login_as(self.priv_profile, self)
