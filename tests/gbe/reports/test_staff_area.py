@@ -29,8 +29,9 @@ class TestStaffArea(TestCase):
         response = self.client.get(
             reverse('staff_area',
                     urlconf="gbe.reporting.urls",
-                    args=[context.area.pk]))
-        self.assertEqual(response.status_code, 403)
+                    args=[context.area.pk]),
+            follow=True)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_staff_area_bad_area(self):
         context = StaffAreaContext()
