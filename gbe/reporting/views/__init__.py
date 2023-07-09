@@ -1,5 +1,5 @@
 from .act_tech_list import ActTechList
-from .act_techinfo_detail import act_techinfo_detail
+from .act_techinfo_detail import ActTechInfoDetail
 from .eval_view import eval_view
 from .interest_view import InterestView
 from .review_staff_area_view import ReviewStaffAreaarView

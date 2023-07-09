@@ -3,7 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 from django.conf.urls.static import static
 from gbe.reporting.views import (
-    act_techinfo_detail,
+    ActTechInfoDetail,
     ActTechList,
     AllVolunteerView,
     EnvStuffView,
@@ -60,8 +60,8 @@ urlpatterns = [
     url(r'^reports/evaluation/(?P<occurrence_id>\d+)/?$',
         eval_view, name='evaluation_detail'),
 
-    url(r'^reports/acttechinfo/detail/(\d+)/?$',
-        act_techinfo_detail,
+    url(r'^reports/acttechinfo/detail/(?P<pk>\d+)/?$',
+        ActTechInfoDetail.as_view(),
         name='act_techinfo_detail'),
     url(r'^reports/act_tech_list/(?P<occurrence_id>\d+)/?$',
         ActTechList.as_view(),

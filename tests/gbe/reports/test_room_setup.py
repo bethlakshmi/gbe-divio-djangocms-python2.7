@@ -40,7 +40,7 @@ class TestRoomSchedule(TestCase):
 
     def test_room_schedule_succeed(self):
         '''room_schedule view should load for privileged users,
-           and fail for others, with a conference not selected, default to 
+           and fail for others, with a conference not selected, default to
            current, and not showing setup for non-classes
         '''
         Conference.objects.all().delete()

@@ -56,8 +56,8 @@ class TestReviewActTechInfo(TestCase):
         '''
         profile = ProfileFactory()
         login_as(profile, self)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_review_act_techinfo_bad_act(self):
         '''review_act_techinfo view should load for Tech Crew

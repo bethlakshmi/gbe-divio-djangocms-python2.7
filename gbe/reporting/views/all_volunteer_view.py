@@ -6,13 +6,12 @@ from scheduler.idd import get_occurrences
 from gbe.scheduling.views.functions import show_general_status
 from gbe.models import StaffArea
 from gbetext import role_commit_map
-\
+
 
 class AllVolunteerView(RoleRequiredMixin, ConferenceListView):
     model = StaffArea
     template_name = 'gbe/report/flat_volunteer_review.tmpl'
     view_permissions = 'any'
-
 
     def get_queryset(self):
         return self.model.objects.filter(conference=self.conference)
@@ -43,11 +42,11 @@ class AllVolunteerView(RoleRequiredMixin, ConferenceListView):
         context['role_commit_map'] = role_commit_map
         context['visible_roles'] = roles
         context['columns'] = ['Event',
-                               'Parent',
-                               'Area',
-                               'Location',
-                               'Date/Time',
-                               'Max',
-                               'Current',
-                               'Volunteers']
+                              'Parent',
+                              'Area',
+                              'Location',
+                              'Date/Time',
+                              'Max',
+                              'Current',
+                              'Volunteers']
         return context

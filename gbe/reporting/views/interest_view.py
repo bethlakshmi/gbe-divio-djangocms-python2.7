@@ -22,12 +22,12 @@ class InterestView(RoleRequiredMixin, ConferenceListView):
         response = get_occurrences(
             labels=[self.conference.conference_slug, "Conference"])
         context['columns'] = ['Class',
-                             'Teacher',
-                             'Location',
-                             'Max attendees',
-                             'Style',
-                             'Interested',
-                             'Action']
+                              'Teacher',
+                              'Location',
+                              'Max attendees',
+                              'Style',
+                              'Interested',
+                              'Action']
 
         display_list = []
         for occurrence in response.occurrences:
