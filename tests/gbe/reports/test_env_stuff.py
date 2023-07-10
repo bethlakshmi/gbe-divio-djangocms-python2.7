@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from gbe.models import Conference
 from tests.factories.gbe_factories import ProfileFactory
 from tests.contexts import (
@@ -17,9 +17,6 @@ from tests.functions.gbe_functions import (
 
 class TestReports(TestCase):
     '''Tests for index view'''
-    def setUp(self):
-        self.client = Client()
-
     @classmethod
     def setUpTestData(cls):
         cls.profile = ProfileFactory()
@@ -35,7 +32,7 @@ class TestReports(TestCase):
         response = self.client.get(
             reverse('env_stuff',
                     urlconf="gbe.reporting.urls"))
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_env_stuff_succeed(self):
         '''env_stuff view should load with no conf choice
@@ -48,7 +45,7 @@ class TestReports(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
+                         'attachment; filename="env_stuff.csv"')
         self.assertContains(
             response,
             "Badge Name,First,Last,Tickets,Personae," +
@@ -77,7 +74,7 @@ class TestReports(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
+                         'attachment; filename="env_stuff.csv"')
         self.assertContains(
             response,
             "Badge Name,First,Last,Tickets,Personae," +
@@ -93,12 +90,11 @@ class TestReports(TestCase):
         login_as(self.profile, self)
         response = self.client.get(reverse(
             'env_stuff',
-            urlconf="gbe.reporting.urls",
-            args=[
-                t.ticket_item.ticketing_event.conference.conference_slug]))
+            urlconf="gbe.reporting.urls"
+            ) + '?conf_slug=' + self.ticket_context.conference.conference_slug)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
+                         'attachment; filename="env_stuff.csv"')
         self.assertContains(
             response,
             "Badge Name,First,Last,Tickets,Personae," +
@@ -121,7 +117,7 @@ class TestReports(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
+                         'attachment; filename="env_stuff.csv"')
         self.assertContains(
             response,
             "Badge Name,First,Last,Tickets,Personae," +
@@ -144,7 +140,7 @@ class TestReports(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
+                         'attachment; filename="env_stuff.csv"')
         self.assertContains(
             response,
             "Badge Name,First,Last,Tickets,Personae," +
@@ -168,7 +164,7 @@ class TestReports(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=env_stuff.csv")
+                         'attachment; filename="env_stuff.csv"')
         self.assertContains(
             response,
             "Badge Name,First,Last,Tickets,Personae," +

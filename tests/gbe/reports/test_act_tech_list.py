@@ -1,6 +1,6 @@
 from pytz import utc
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (
     ActFactory,
@@ -18,9 +18,6 @@ from django.utils.formats import date_format
 class TestReviewActTechInfo(TestCase):
     '''Tests for index view'''
     view_name = 'act_tech_list'
-
-    def setUp(self):
-        self.client = Client()
 
     @classmethod
     def setUpTestData(cls):

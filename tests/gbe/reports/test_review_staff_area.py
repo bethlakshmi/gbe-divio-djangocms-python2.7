@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -17,7 +17,6 @@ from tests.contexts import (
 
 class TestReviewStaffArea(TestCase):
     def setUp(self):
-        self.client = Client()
         self.profile = ProfileFactory()
 
     def test_review_staff_area_not_visible_without_permission(self):
@@ -26,7 +25,7 @@ class TestReviewStaffArea(TestCase):
         response = self.client.get(
             reverse('staff_area',
                     urlconf="gbe.reporting.urls"))
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_review_staff_area_path(self):
         '''review_staff_area view should load

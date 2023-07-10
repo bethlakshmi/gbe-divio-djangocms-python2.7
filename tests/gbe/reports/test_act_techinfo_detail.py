@@ -1,6 +1,6 @@
 from pytz import utc
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.contexts import ActTechInfoContext
 from tests.factories.gbe_factories import (
     ActFactory,
@@ -38,9 +38,6 @@ class TestReviewActTechInfo(TestCase):
         self.context.act.tech.save()
         self.context.act.performer.save()
 
-    def setUp(self):
-        self.client = Client()
-
     @classmethod
     def setUpTestData(cls):
         cls.context = ActTechInfoContext(schedule_rehearsal=True)
@@ -56,8 +53,8 @@ class TestReviewActTechInfo(TestCase):
         '''
         profile = ProfileFactory()
         login_as(profile, self)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_review_act_techinfo_bad_act(self):
         '''review_act_techinfo view should load for Tech Crew
