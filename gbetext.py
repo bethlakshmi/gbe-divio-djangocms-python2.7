@@ -687,6 +687,9 @@ set_volunteer_msg = '''Thank you!  This volunteer shift has been added to \
 your schedule.'''
 unset_volunteer_msg = '''Sorry to see you go!  This volunteer shift has been \
 removed from your personal schedule.'''
+review_vol_msg = '''<b>Please keep this information confidential.</b> This is \
+the place to provide feedback on your experience working with last year's \
+volunteers.'''
 set_pending_msg = '''Thank you!  Your offer to volunteer has been sent and is \
 awaiting approval.'''
 unset_pending_msg = '''Sorry to see you go!  Your offer to volunteer has \
