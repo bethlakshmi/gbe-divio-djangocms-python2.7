@@ -8,7 +8,7 @@
         <td>{% for review in row.reviews %}
           {% if not forloop.first %}<hr/>{% endif %}
           <b>Reviewer:</b> {{ review.evaluator.display_name }}<br>
-          <b>Recommendation:</b> {{ review.get_vote_display }}<br>
+          <b>Recruit next year?</b> {{ review.get_vote_display }}<br>
           <b>Comment:</b> {{ review.notes }}<br>
           {% endfor %}
         </td>

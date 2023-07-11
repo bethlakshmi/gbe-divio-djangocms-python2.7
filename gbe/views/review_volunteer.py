@@ -24,11 +24,12 @@ from gbetext import (
     create_vol_eval_msg,
     update_vol_eval_msg,
 )
+from gbe.forms import VolunteerEvaluationForm
 
 
 class VolunteerEvalCreate(FormToTableMixin, RoleRequiredMixin, CreateView):
     model = VolunteerEvaluation
-    fields = ['vote', 'notes']
+    form_class = VolunteerEvaluationForm
     template_name = 'gbe/admin_html_form.tmpl'
     success_url = reverse_lazy('volunteer_review', urlconf="gbe.urls")
     page_title = 'Create Evaluation'
@@ -72,7 +73,7 @@ class VolunteerEvalDelete(DeleteView):
 
 class VolunteerEvalUpdate(FormToTableMixin, UpdateView):
     model = VolunteerEvaluation
-    fields = ['vote', 'notes']
+    form_class = VolunteerEvaluationForm
     template_name = 'gbe/admin_html_form.tmpl'
     success_url = reverse_lazy('volunteer_review', urlconf="gbe.urls")
     page_title = 'Update Evaluatione'
