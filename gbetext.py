@@ -679,6 +679,8 @@ payment_details_error = '''Your choice for fee selections was not valid, \
 please check the form and try again.'''
 set_volunteer_role_summary = "Volunteer Offer %s"
 set_volunteer_role_msg = "Volunteer offer has been set to %s: <br/>"
+create_vol_eval_msg = '''Your volunteer evaluation has been created.'''
+update_vol_eval_msg = '''Your volunteer evaluation has been updated.'''
 set_favorite_msg = '''Your interest has been set and will appear on your \
                    personal schedule.'''
 unset_favorite_msg = '''Your interest has been removed and will no longer \

@@ -28,6 +28,10 @@ class VolunteerEvaluation(Model):
         Conference,
         on_delete=CASCADE)
 
+    def __str__(self):
+        return "%s, for %s" % (self.volunteer.get_badge_name(),
+                               self.conference.conference_slug)
+
     class Meta:
         app_label = "gbe"
         unique_together = (('evaluator', 'volunteer', 'conference'),)

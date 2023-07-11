@@ -6,7 +6,6 @@ from .review_bid_view import ReviewBidView
 from .view_bid_view import ViewBidView
 from .bid_changestate_view import BidChangeStateView
 from .review_bid_list_view import ReviewBidListView
-from .review_volunteer_list import ReviewVolunteerList
 
 # general bid classes
 from .clone_bid_view import CloneBidView
@@ -55,12 +54,18 @@ from .review_flex_bid_view import FlexibleReviewBidView
 from .review_class_view import ReviewClassView
 from .review_costume_view import ReviewCostumeView
 from .review_vendor_view import ReviewVendorView
+from .review_volunteer import (
+    VolunteerEvalCreate,
+    VolunteerEvalDelete,
+    VolunteerEvalUpdate,
+)
 
 # review list
 from .review_act_list_view import ReviewActListView
 from .review_class_list_view import ReviewClassListView
 from .review_costume_list_view import ReviewCostumeListView
 from .review_vendor_list_view import ReviewVendorListView
+from .review_volunteer_list import ReviewVolunteerList
 
 # change state
 from .act_changestate_view import ActChangeStateView
