@@ -171,6 +171,16 @@ class BidEvaluationFactory(DjangoModelFactory):
     bid = SubFactory(ActFactory)
 
 
+class VolunteerEvaluationFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.VolunteerEvaluation
+
+    evaluator = SubFactory(ProfileFactory)
+    volunteer = SubFactory(ProfileFactory)
+    vote = 3
+    notes = "Notes field for test BidEvaluation"
+    conference = SubFactory(ConferenceFactory)
+
 class ActBidEvaluationFactory(DjangoModelFactory):
     class Meta:
         model = conf.ActBidEvaluation
