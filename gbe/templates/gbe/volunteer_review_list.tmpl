@@ -13,7 +13,8 @@
           {% endfor %}
         </td>
           <td><a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm">
-	          Review</a></td>
+	          Review</a>&nbsp;&nbsp;<a href="{% url 'email:mail_to_individual' volunteer.pk %}" class="btn gbe-btn-table btn-sm" data-toggle="tooltip" title="Email">Email</a><br>
+            P: {{volunteer.phone}}</td>
       </tr>
     {% endfor %}
 {% endblock %}
