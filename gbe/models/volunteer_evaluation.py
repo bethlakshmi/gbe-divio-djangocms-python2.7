@@ -30,3 +30,5 @@ class VolunteerEvaluation(Model):
 
     class Meta:
         app_label = "gbe"
+        unique_together = (('evaluator', 'volunteer', 'conference'),)
+        ordering = ["conference", "volunteer", 'evaluator']

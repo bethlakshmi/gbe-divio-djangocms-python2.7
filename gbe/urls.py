@@ -43,6 +43,7 @@ from gbe.views import (
     ReviewTroupesView,
     ReviewVendorView,
     ReviewVendorListView,
+    ReviewVolunteerList,
     TroupeCreate,
     TroupeUpdate,
     VendorChangeStateView,
@@ -235,6 +236,8 @@ urlpatterns = [
     #  miscellaneous URLs
     url(r'^fashion_faire/$',
         FashionFaireView, name='fashion_faire'),
+    url(r'^volunteer/review/?$',
+        ReviewVolunteerList.as_view(), name='volunteer_review'),
 
     #  site utility stuff
     url(r'^accounts/register/?$',
