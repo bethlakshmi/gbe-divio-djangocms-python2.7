@@ -17,7 +17,7 @@ from gbe.models import (
 )
 from gbe_utils.mixins import (
     GbeContextMixin,
-    FormToTableMixin,
+    GbeFormMixin,
     RoleRequiredMixin,
 )
 from gbetext import (
@@ -27,7 +27,16 @@ from gbetext import (
 from gbe.forms import VolunteerEvaluationForm
 
 
-class VolunteerEvalCreate(FormToTableMixin, RoleRequiredMixin, CreateView):
+
+class VolReviewMixin(GbeFormMixin):
+
+    def get_success_url(self):
+        return "%s?changed_id=%d" % (
+            self.request.GET.get('next', self.success_url),
+            self.object.volunteer.pk)
+
+
+class VolunteerEvalCreate(VolReviewMixin, RoleRequiredMixin, CreateView):
     model = VolunteerEvaluation
     form_class = VolunteerEvaluationForm
     template_name = 'gbe/admin_html_form.tmpl'
@@ -49,7 +58,7 @@ class VolunteerEvalCreate(FormToTableMixin, RoleRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class VolunteerEvalDelete(DeleteView):
+class VolunteerEvalDelete(VolReviewMixin, DeleteView):
     model = VolunteerEvaluation
     success_url = reverse_lazy('volunteer_review', urlconf="gbe.urls")
     template_name = 'gbe/admin_html_form.tmpl'
@@ -71,7 +80,7 @@ class VolunteerEvalDelete(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class VolunteerEvalUpdate(FormToTableMixin, UpdateView):
+class VolunteerEvalUpdate(VolReviewMixin, UpdateView):
     model = VolunteerEvaluation
     form_class = VolunteerEvaluationForm
     template_name = 'gbe/admin_html_form.tmpl'

@@ -52,7 +52,7 @@ class ReviewVolunteerList(RoleRequiredMixin, ConferenceListView):
                     }
                     if not user.profile.is_active:
                         rows[user.profile]['status'] = "gbe-table-danger"
-                    elif review_query.filter(pk=changed_id).exists():
+                    elif user.profile.pk == changed_id:
                         rows[user.profile]['status'] = 'gbe-table-success'
                     elif not review_query.filter(
                             evaluator=self.request.user.profile).exists():

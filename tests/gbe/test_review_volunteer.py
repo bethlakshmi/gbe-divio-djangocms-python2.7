@@ -143,7 +143,6 @@ class TestVolunteerEvalUpdate(TestCase):
             formset_data,
             follow=True
         )
-        print(response.content)
         review_reloaded = VolunteerEvaluation.objects.get(pk=self.review.pk)
         self.assertEqual(review_reloaded.notes, formset_data['notes'])
         self.assertRedirects(response, "%s?changed_id=%d" % (

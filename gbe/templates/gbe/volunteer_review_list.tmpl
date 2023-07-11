@@ -4,7 +4,7 @@
       <tr class="gbe-table-row {{ row.status }}">
         <td>{{ volunteer.get_badge_name}}</td>
         <td>{% for event in row.schedule %}
-	        {{ event.title }} - {{event.starttime}}<br>{% endfor %}</td>
+	        {{ event.title }} {% if event.parent %}({{ event.parent.title}}){% endif %} - {{event.starttime}}<br>{% endfor %}</td>
         <td>{% for review in row.reviews %}
           {% if not forloop.first %}<hr/>{% endif %}
           <b>Reviewer:</b> {{ review.evaluator.display_name }}<br>
