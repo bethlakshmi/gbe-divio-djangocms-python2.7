@@ -82,7 +82,7 @@ class EvalView(RoleRequiredMixin, ConferenceListView):
                     'summary']
 
         user_message = UserMessage.objects.get_or_create(
-            view="InterestView",
+            view=self.__class__.__name__,
             code="ABOUT_EVAL_REPORT",
             defaults={
                 'summary': "About Evaluation Report",
