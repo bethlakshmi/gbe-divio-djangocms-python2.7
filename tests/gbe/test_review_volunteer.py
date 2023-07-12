@@ -81,7 +81,7 @@ class TestVolunteerEvalCreate(TestCase):
             response, 'success', 'Success', msg.description)
         self.assertRedirects(response, "%s?changed_id=%d" % (
             reverse('volunteer_review', urlconf='gbe.urls'),
-            latest.pk))
+            latest.volunteer.pk))
         self.assertEqual(latest.conference.pk, self.conference.pk)
         self.assertEqual(latest.volunteer.pk, self.volunteer.pk)
 
@@ -128,7 +128,7 @@ class TestVolunteerEvalUpdate(TestCase):
         self.assertContains(
             response,
             ('<textarea name="notes" cols="40" rows="10" id="id_notes">%s' +
-            '</textarea>') % self.review.notes,
+             '</textarea>') % self.review.notes,
             html=True)
 
     def test_get_wrong_review(self):
@@ -147,7 +147,7 @@ class TestVolunteerEvalUpdate(TestCase):
         self.assertEqual(review_reloaded.notes, formset_data['notes'])
         self.assertRedirects(response, "%s?changed_id=%d" % (
             reverse('volunteer_review', urlconf='gbe.urls'),
-            review_reloaded.pk))
+            review_reloaded.volunteer.pk))
         assert_alert_exists(
             response, 'success', 'Success', update_vol_eval_msg)
 
@@ -172,8 +172,11 @@ class TestVolunteerEvalDelete(TestCase):
         response = self.client.post(self.url,
                                     data={'submit': 'Confirm'},
                                     follow=True)
-        self.assertRedirects(response,
-                             reverse('volunteer_review', urlconf="gbe.urls"))
+        self.assertRedirects(
+            response,
+            "%s?changed_id=%s" % (
+                reverse('volunteer_review', urlconf="gbe.urls"),
+                self.review.volunteer.pk))
         assert_alert_exists(
             response,
             'success',

@@ -19,7 +19,7 @@ class ReviewVolunteerList(RoleRequiredMixin, ConferenceListView):
     view_title = 'Review Volunteers'
     intro_text = review_vol_msg
     view_permissions = 'any'
-    
+
     def get_queryset(self):
         return self.model.objects.filter(
             conference=self.conference).select_related('evaluator')

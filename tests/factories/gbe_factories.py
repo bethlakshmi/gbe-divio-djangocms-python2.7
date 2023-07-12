@@ -181,6 +181,7 @@ class VolunteerEvaluationFactory(DjangoModelFactory):
     notes = "Notes field for test BidEvaluation"
     conference = SubFactory(ConferenceFactory)
 
+
 class ActBidEvaluationFactory(DjangoModelFactory):
     class Meta:
         model = conf.ActBidEvaluation

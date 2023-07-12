@@ -27,7 +27,6 @@ from gbetext import (
 from gbe.forms import VolunteerEvaluationForm
 
 
-
 class VolReviewMixin(GbeFormMixin):
 
     def get_success_url(self):

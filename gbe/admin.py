@@ -311,6 +311,7 @@ class FlexAdmin(admin.ModelAdmin):
         'evaluator',
         'ranking')
 
+
 class VolunteerEvalAdmin(admin.ModelAdmin):
     list_display = (
         'pk',

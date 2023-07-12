@@ -77,6 +77,9 @@ class TestReviewVolunteerlist(TestCase):
         context.conference.status = "completed"
         context.conference.save()
         vol1, opp1 = context.book_volunteer()
+        opp2 = context.add_volunteer_opp()
+        vo2, book2 = context.book_volunteer(volunteer_sched_event=opp2,
+                                            volunteer=vol1)
         review = VolunteerEvaluationFactory(
             evaluator=self.profile,
             volunteer=vol1,
@@ -87,6 +90,7 @@ class TestReviewVolunteerlist(TestCase):
             context.conference.conference_slug))
         self.assertContains(response, str(vol1))
         self.assertContains(response, opp1.event.title)
+        self.assertContains(response, opp2.title)
         self.assertContains(response, reverse(
             'volunteer-review-update',
             urlconf='gbe.urls',
