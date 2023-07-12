@@ -55,7 +55,7 @@ class InterestView(RoleRequiredMixin, ConferenceListView):
             display_list += [display_item]
 
         context['about'] = UserMessage.objects.get_or_create(
-            view="InterestView",
+            view=self.__class__.__name__,
             code="ABOUT_INTERESTED",
             defaults={
                'summary': "About Interested Attendee Report",
