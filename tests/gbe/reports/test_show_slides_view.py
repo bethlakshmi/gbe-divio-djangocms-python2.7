@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -14,8 +14,6 @@ from gbetext import role_commit_map
 
 
 class TestShowSlidesView(TestCase):
-    def setUp(self):
-        self.client = Client()
 
     @classmethod
     def setUpTestData(cls):
