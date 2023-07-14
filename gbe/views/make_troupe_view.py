@@ -70,13 +70,17 @@ class TroupeUpdate(UpdatePopupMixin,
     model = Bio
     form_class = TroupeForm
     template_name = 'gbe/modal_performer_form.tmpl'
-    success_url = reverse_lazy('home', urlconf="gbe.urls")
     page_title = 'Manage Troupe'
     view_title = 'Tell Us About Your Troupe'
     mode = "update"
     intro_text = troupe_header_text
     valid_message = default_edit_troupe_msg
-    stay_here = True
+
+    def get_success_url(self):
+        return reverse(
+            'troupe-update',
+            urlconf="gbe.urls",
+            args=[self.object.pk])
 
     def get_initial(self):
         initial = super().get_initial()

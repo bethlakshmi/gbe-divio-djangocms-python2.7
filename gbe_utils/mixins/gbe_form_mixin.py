@@ -52,8 +52,4 @@ class GbeFormMixin(ModelFormMixin):
                     'description': self.valid_message})
             messages.success(self.request, msg[0].description)
         return_valid = super().form_valid(form)
-        if self.stay_here and 'next' not in self.request.GET and (
-                not self.is_popup()):
-            return self.render_to_response(self.get_context_data(form=form))
-        else:
-            return return_valid
+        return return_valid
