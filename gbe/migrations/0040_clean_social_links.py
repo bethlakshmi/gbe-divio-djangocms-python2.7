@@ -5,7 +5,9 @@ from django.db import migrations
 
 def clean_bad_social_links(apps, schema_editor):
     SocialLink = apps.get_model("gbe", "SocialLink")
+    Bio = apps.get_model("gbe", "Bio")
     count = 0
+    print("")
     for link in SocialLink.objects.all().order_by('-pk'):
         if SocialLink.objects.filter(
                  bio=link.bio,
@@ -21,6 +23,15 @@ def clean_bad_social_links(apps, schema_editor):
                 ))
             link.delete()
             count = count + 1
+    for bio in Bio.objects.all():
+        i = 1
+        for link in bio.links.all():
+            if link.order != i:
+                link.order = i
+                link.save()
+            i = i + 1
+            if link.order > 5:
+                print("problem for %s - link greater than 5" % bio.name)
     print("Deleted %d links" % count)
 
 
