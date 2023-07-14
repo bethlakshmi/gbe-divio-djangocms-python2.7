@@ -6,7 +6,6 @@ from gbe.models import UserMessage
 class GbeFormMixin(ModelFormMixin):
     # if stay here is true, this should also have the is_popup() mixin or
     # you need to fake that method.  Don't use with Create flows, won't work
-    stay_here = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
