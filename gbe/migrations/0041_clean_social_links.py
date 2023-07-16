@@ -38,7 +38,7 @@ def clean_bad_social_links(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gbe', '0039_auto_20230519_2133'),
+        ('gbe', '0040_volunteerevaluation'),
     ]
 
     operations = [
