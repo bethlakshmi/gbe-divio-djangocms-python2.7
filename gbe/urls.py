@@ -43,6 +43,7 @@ from gbe.views import (
     ReviewTroupesView,
     ReviewVendorView,
     ReviewVendorListView,
+    ReviewVolunteerList,
     TroupeCreate,
     TroupeUpdate,
     VendorChangeStateView,
@@ -52,6 +53,9 @@ from gbe.views import (
     ViewSummerActView,
     ViewBioView,
     ViewVendorView,
+    VolunteerEvalCreate,
+    VolunteerEvalDelete,
+    VolunteerEvalUpdate,
     CoordinatorPerformerAutocomplete,
     LimitedBusinessAutocomplete,
     LimitedPerformerAutocomplete,
@@ -235,6 +239,20 @@ urlpatterns = [
     #  miscellaneous URLs
     url(r'^fashion_faire/$',
         FashionFaireView, name='fashion_faire'),
+
+    # volunteer review
+    url(r'^volunteer/review/?$',
+        ReviewVolunteerList.as_view(),
+        name='volunteer_review'),
+    url(r'^volunteer/review/add/(?P<slug>[-\w\d]+)/(?P<vol_id>\d+)/$',
+        VolunteerEvalCreate.as_view(),
+        name='volunteer-review-add'),
+    url(r'^volunteer/review/delete/(?P<pk>\d+)/$',
+        VolunteerEvalDelete.as_view(),
+        name='volunteer-review-delete'),
+    url(r'^volunteer/review/update/(?P<pk>\d+)/$',
+        VolunteerEvalUpdate.as_view(),
+        name='volunteer-review-update'),
 
     #  site utility stuff
     url(r'^accounts/register/?$',
