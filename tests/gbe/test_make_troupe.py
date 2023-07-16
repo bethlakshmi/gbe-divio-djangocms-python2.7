@@ -240,7 +240,11 @@ class TestTroupeEdit(TestCase):
         response, data = self.submit_troupe(name=name)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Tell Us About Your Troupe')
-        self.assertNotContains(response, name)
+        self.assertContains(
+            response,
+            '<input type="text" name="name" value="extra quotes" ' +
+            'maxlength="100" id="id_name">',
+            html=True)
         self.assertContains(response, name.strip('\"\''))
         self.assertFalse(SocialLink.objects.filter(
             pk=data['links-0-id']).exists())
