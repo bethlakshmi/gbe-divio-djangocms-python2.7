@@ -312,6 +312,20 @@ class FlexAdmin(admin.ModelAdmin):
         'ranking')
 
 
+class VolunteerEvalAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'volunteer',
+        'vote',
+        'evaluator',
+        'conference')
+    list_filter = ['conference']
+    search_fields = ['volunteer__display_name',
+                     'volunteer__user_object__email',
+                     'volunteer__user_object__first',
+                     'volunteer__user_object__last']
+
+
 class EmailFrequencyAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
@@ -347,6 +361,7 @@ admin.site.register(SocialLink, SocialLinkAdmin)
 admin.site.register(UserMessage, MessageAdmin)
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Volunteer, BidAdmin)
+admin.site.register(VolunteerEvaluation, VolunteerEvalAdmin)
 admin.site.register(StyleValue, StyleValueAdmin)
 admin.site.register(StyleProperty, StylePropertyAdmin)
 admin.site.register(StyleSelector, StyleSelectorAdmin)

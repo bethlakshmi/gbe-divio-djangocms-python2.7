@@ -18,6 +18,7 @@ from published.utils import queryset_filter
 from gbe.forms import ArticleForm
 from published.mixins import PublishedListMixin, PublishedDetailMixin
 from gbe_utils.mixins import (
+    GbeContextMixin,
     FormToTableMixin,
     RoleRequiredMixin,
 )
@@ -120,7 +121,7 @@ class ArticleUpdate(FormToTableMixin, RoleRequiredMixin, UpdateView):
         return context
 
 
-class ArticleManageList(RoleRequiredMixin, ListView):
+class ArticleManageList(GbeContextMixin, RoleRequiredMixin, ListView):
     model = Article
     template_name = 'gbe/news/edit_list.tmpl'
     context_object_name = 'articles'
@@ -131,24 +132,6 @@ class ArticleManageList(RoleRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code="PAGE_TITLE",
-            defaults={
-                'summary': "%s Page Title" % self.__class__.__name__,
-                'description': self.page_title})[0].description
-        context['view_title'] = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code="VIEW_TITLE",
-            defaults={
-                'summary': "%s First Header" % self.__class__.__name__,
-                'description': self.view_title})[0].description
-        context['intro_text'] = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code="INSTRUCTIONS",
-            defaults={
-                'summary': "%s Instructions" % self.__class__.__name__,
-                'description': self.intro_text})[0].description
         context['columns'] = ['Published?',
                               'Publication Date',
                               'Author',
