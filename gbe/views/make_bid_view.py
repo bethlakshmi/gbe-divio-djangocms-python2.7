@@ -27,6 +27,7 @@ from gbetext import (
     no_login_msg,
     fee_instructions,
     full_login_msg,
+    not_accepting_bids,
     payment_needed_msg,
     payment_details_error,
 )
@@ -47,6 +48,15 @@ class MakeBidView(SubwayMapMixin, View):
     normal_redirect = reverse_lazy('home', urlconf='gbe.urls')
 
     def groundwork(self, request, args, kwargs):
+        if not Conference.objects.filter(accepting_bids=True).exists():
+            user_message = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="NOT_ACCEPTING_BIDS",
+                defaults={
+                    'summary': "Not Accepting Bids",
+                    'description': not_accepting_bids})
+            messages.error(request, user_message[0].description)
+            return "/"
         self.owner = validate_profile(request, require=False)
         if not self.owner or not self.owner.complete:
             user_message = UserMessage.objects.get_or_create(
@@ -226,7 +236,7 @@ class MakeBidView(SubwayMapMixin, View):
                 view=self.__class__.__name__,
                 code="USER_NOT_LOGGED_IN",
                 defaults={
-                    'summary': "Need Login - %s Bid",
+                    'summary': "Need Login",
                     'description': no_login_msg})
             full_msg = full_login_msg % (
                 user_message[0].description,
