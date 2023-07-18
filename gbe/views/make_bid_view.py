@@ -91,8 +91,6 @@ class MakeBidView(SubwayMapMixin, View):
         else:
             self.conference = Conference.objects.filter(
                     accepting_bids=True).first()
-        if self.conference is None:
-            raise Http404
 
     def get_initial(self):
         initial = {}
