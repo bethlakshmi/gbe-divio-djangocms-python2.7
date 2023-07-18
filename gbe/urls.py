@@ -268,7 +268,7 @@ urlpatterns = [
         HandleUserContactEmailView,
         name='handle_user_contact_email'),
     url(r'^profile/manage/?$',
-        ReviewProfilesView,
+        ReviewProfilesView.as_view(),
         name='manage_users'),
     url(r'^troupe/manage/?$',
         ReviewTroupesView.as_view(),

@@ -1,12 +1,6 @@
 {% extends 'gbe/gbe_table.tmpl' %}
-{% block title %}
-{% if title %}{{title}}{% else %}Manage Users{% endif %}{% endblock %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
-{% endblock %}
 {% block before_table %}
-  <h2 class="gbe-title">{% if title %}{{title}}{% else %}Manage Users{% endif %}</h2>
+  <h2 class="gbe-title">{{view_title}}{% if merge_users %}<a href="" role="button" class="btn btn-secondary ml-2">Merge Users</a>{% endif %}</h2>
   <p>{{intro}}</p>
 {% endblock %}
 {% block tbody %}
