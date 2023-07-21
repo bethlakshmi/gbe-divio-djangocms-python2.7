@@ -2,8 +2,21 @@
 {% block before_table %}
   <h2 class="gbe-title">{{view_title}}</h2>
   <p>{{intro_text}}</p>
+<form action="" method="post" enctype="multipart/form-data">
 {% endblock %}
 {% block tbody %}
+  <tr class="gbe-table-row">
+    <td>User Info</td>
+    <td><b>Username:</b> {{target.user_object.username}}<br>
+    <b>Last login:</b> {{target.user_object.last_login}}<br>
+    (target user account for merge)</td>
+    <td><b>Username:</b> {{otherprofile.user_object.username}}<br>
+    <b>Last login:</b> {{otherprofile.user_object.last_login}}<br>
+    (will be deleted after merge)</td>
+    <td><a href="{% url 'gbe:merge_profiles' otherprofile.pk target.pk %}" class="m-2 btn gbe-btn-secondary">Switch Profiles</a><br>
+    (replaces data with defaults from "to be merged" profile)
+    </td>
+  </tr>
   <tr class="gbe-table-row">
     <td>{{form.first_name.label_tag}}</td>
     <td>{{target.user_object.first_name}}</td>
@@ -164,3 +177,10 @@
   </tr>
 {% endblock %}
 
+{% block after_table %}
+<div class="float-right pt-2">
+<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" formnovalidate>
+<input type="submit" name="merge" class="gbe-btn-primary btn" value="Merge">
+</div>
+</form>
+{% endblock %}
