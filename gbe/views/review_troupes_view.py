@@ -74,7 +74,7 @@ class ReviewTroupesView(View):
         return render(request, 'gbe/profile_review.tmpl', {
             'page_title': "Manage Troupes",
             'view_title': "Manage Troupes",
-            'intro': intro[0].description,
+            'intro_text': intro[0].description,
             'columns': self.header,
             'rows': rows,
             'order': 0,

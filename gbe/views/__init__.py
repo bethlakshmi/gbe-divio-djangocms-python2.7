@@ -33,6 +33,10 @@ from .admin_profile_view import AdminProfileView
 from .delete_profile_view import DeleteProfileView
 from .review_profiles_view import ReviewProfilesView
 from .profile_autocomplete import ProfileAutocomplete
+from .merge_profiles_view import (
+    MergeProfileSelect,
+    MergeProfiles,
+)
 
 # make
 from .make_act_view import MakeActView

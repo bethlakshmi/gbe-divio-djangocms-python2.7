@@ -7,9 +7,7 @@ from django.urls import reverse
 from gbe.models import (
     Bio,
     Profile,
-    UserMessage,
 )
-from gbe.functions import validate_perms
 from settings import GBE_TABLE_FORMAT
 from gbetext import profile_intro_msg
 
@@ -39,7 +37,8 @@ class ReviewProfilesView(GbeContextMixin, RoleRequiredMixin, ListView):
                               'Last Login',
                               'Contact Info',
                               'Action']
-        context['merge_users'] = True
+        if 'Registrar' in self.request.user.profile.privilege_groups:
+            context['merge_users'] = True
         rows = []
         for aprofile in self.get_queryset():
             bid_row = {}
@@ -63,34 +62,42 @@ class ReviewProfilesView(GbeContextMixin, RoleRequiredMixin, ListView):
                 'phone': aprofile.phone
             }
             bid_row['id'] = aprofile.pk
-            bid_row['actions'] = [
-                {'url': reverse('admin_landing_page',
-                                urlconf='gbe.urls',
-                                args=[aprofile.pk]),
-                 'text': "View Landing Page"},
-                {'url': reverse('welcome_letter',
-                                urlconf='gbe.reporting.urls',
-                                args=[aprofile.pk]),
-                 'text': "Welcome Letter"},
-                {'url': reverse(
-                    'mail_to_individual',
-                     urlconf='gbe.email.urls',
-                     args=[aprofile.pk]),
-                 'text': "Email"}]
-            if 'Registrar' in self.request.user.profile.privilege_groups:
-                bid_row['actions'] += [
-                    {'url': "%s?next=%s" % (reverse(
-                        'admin_profile',
-                        urlconf='gbe.urls',
-                        args=[aprofile.pk]), self.request.path),
-                     'text': "Update"}]
-                bid_row['actions'] += [
-                    {'url': reverse('delete_profile',
-                                    urlconf='gbe.urls',
-                                    args=[aprofile.pk]),
-                     'text': "Delete"}]
-
+            bid_row['actions'] = self.set_actions(aprofile)
             rows.append(bid_row)
         context['rows'] = rows
         context['order'] = 0
         return context
+
+    def set_actions(self, profile):
+        actions = [{'url': reverse('admin_landing_page',
+                                urlconf='gbe.urls',
+                                args=[profile.pk]),
+                 'text': "View Landing Page"},
+                {'url': reverse('welcome_letter',
+                                urlconf='gbe.reporting.urls',
+                                args=[profile.pk]),
+                 'text': "Welcome Letter"},
+                {'url': reverse(
+                    'mail_to_individual',
+                     urlconf='gbe.email.urls',
+                     args=[profile.pk]),
+                 'text': "Email"}]
+        if 'Registrar' in self.request.user.profile.privilege_groups:
+            actions += [
+                {'url': "%s?next=%s" % (reverse(
+                    'admin_profile',
+                    urlconf='gbe.urls',
+                    args=[profile.pk]), self.request.path),
+                 'text': "Update"}]
+            actions += [
+                {'url': reverse('start_merge_users',
+                                urlconf='gbe.urls',
+                                args=[profile.pk]),
+                 'text': "Merge"}]
+
+            actions += [
+                {'url': reverse('delete_profile',
+                                urlconf='gbe.urls',
+                                args=[profile.pk]),
+                 'text': "Delete"}]
+        return actions

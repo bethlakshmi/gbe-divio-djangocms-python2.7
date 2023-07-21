@@ -1,7 +1,7 @@
 {% extends 'gbe/gbe_table.tmpl' %}
 {% block before_table %}
-  <h2 class="gbe-title">{{view_title}}{% if merge_users %}<a href="" role="button" class="btn btn-secondary ml-2">Merge Users</a>{% endif %}</h2>
-  <p>{{intro}}</p>
+  <h2 class="gbe-title">{{view_title}}</h2>
+  <p>{{intro_text}}</p>
 {% endblock %}
 {% block tbody %}
   {% for row in rows %}
@@ -21,10 +21,14 @@
 	      <a href="{{ action.url }}" data-toggle="tooltip" title="{{ action.text }}" class="btn gbe-btn-table btn-sm">
 	      {% if action.text == 'Update' %}
 	        <i class="fas fa-edit"></i>
+        {% elif action.text == 'Merge' %}
+          <i class="fas fa-object-group"></i>
+        {% elif action.text == 'Merge Second' %}
+          Merge
 	      {% elif action.text == 'Welcome Letter' %}
 	        <i class="fas fa-list"></i>
 	      {% elif action.text == 'Delete' %}
-	        <i class="fas fa-trash"></i>
+	        <i class="far fa-trash-alt"></i>
         {% elif action.text == 'View Landing Page' or action.text == 'View Contact Landing Page' %}
           <i class="far fa-eye"></i>
         {% elif action.text == 'View Troupe' %}

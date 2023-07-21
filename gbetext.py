@@ -796,6 +796,12 @@ profile_intro_msg = '''This list includes only active users.  Inactive users \
 can be viewed only in the administration pages.  To reactivate a missing \
 user, contact an admin.  Troupes owned by a user are shown in parenthesis \
 under the user's name.'''
+merge_users_msg = '''This list includes only active users.  Select exactly two
+ users to merge.  If additional accounts must be merged, the process can be 
+ repeated.'''
+merge_profile_msg = '''The first profile chosen is the target, the second
+ profile will be merged and then removed.  It's recommended to start with a
+ profile the user can log into, or the one made most recently.'''
 change_day_note = '''Change the day on any current/upcoming conference.  Pick
 the new start day and all conference days will be moved and all events will be
 updated.  This assumes that the conference is the same number of days long.'''
