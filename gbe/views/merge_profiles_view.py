@@ -18,7 +18,7 @@ from gbe.models import (
 )
 from gbe.forms import (
     EmailPreferencesForm,
-    ParticipantForm,
+    ProfileAdminForm,
     ProfilePreferencesForm,
 )
 from gbetext import (
@@ -47,13 +47,14 @@ class MergeProfileSelect(ReviewProfilesView):
 class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
     model = Profile
     success_url = reverse_lazy("manage_users", urlconf="gbe.urls")
-    form_class = ParticipantForm
+    form_class = ProfileAdminForm
     view_permissions = ('Registrar', )
     intro_text = merge_profile_msg
     page_title = 'Merge Users - Verify Info'
     view_title = 'Merge Users - Verify Info'
     template_name = 'gbe/profile_merge.tmpl'
     context_object_name = 'target'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

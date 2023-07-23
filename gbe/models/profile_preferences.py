@@ -34,7 +34,7 @@ class ProfilePreferences(Model):
         if self.inform_about:
             return eval(self.inform_about)
         else:
-            return "None"
+            return None
 
     class Meta:
         verbose_name_plural = 'profile preferences'
