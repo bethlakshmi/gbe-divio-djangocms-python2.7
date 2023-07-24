@@ -802,6 +802,9 @@ merge_users_msg = '''This list includes only active users.  Select exactly two
 merge_profile_msg = '''The first profile chosen is the target, the second
  profile will be merged and then removed.  It's recommended to start with a
  profile the user can log into, or the one made most recently.'''
+merge_bio_msg = '''Choose what Bios to combine.  If there are duplicates, all
+ acls, classes, etc can be combined into one Bio, or bios can be ported.
+ For any troupe membership, the user will ported in the merge.'''
 change_day_note = '''Change the day on any current/upcoming conference.  Pick
 the new start day and all conference days will be moved and all events will be
 updated.  This assumes that the conference is the same number of days long.'''

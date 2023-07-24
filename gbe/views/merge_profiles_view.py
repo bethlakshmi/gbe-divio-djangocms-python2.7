@@ -1,4 +1,7 @@
-from django.views.generic import UpdateView
+from django.views.generic import (
+    FormView,
+    UpdateView,
+)
 from gbe.views import ReviewProfilesView
 from gbe.functions import validate_perms
 from django.shortcuts import get_object_or_404
@@ -17,11 +20,13 @@ from gbe.models import (
     UserMessage,
 )
 from gbe.forms import (
+    BidBioMergeForm,
     EmailPreferencesForm,
     ProfileAdminForm,
     ProfilePreferencesForm,
 )
 from gbetext import (
+    merge_bio_msg,
     merge_profile_msg,
     merge_users_msg,
 )
@@ -46,7 +51,6 @@ class MergeProfileSelect(ReviewProfilesView):
 
 class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
     model = Profile
-    success_url = reverse_lazy("manage_users", urlconf="gbe.urls")
     form_class = ProfileAdminForm
     view_permissions = ('Registrar', )
     intro_text = merge_profile_msg
@@ -55,6 +59,31 @@ class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
     template_name = 'gbe/profile_merge.tmpl'
     context_object_name = 'target'
 
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        prefs_form = ProfilePreferencesForm(self.request.POST,
+                                            instance=self.object.preferences,
+                                            prefix='prefs')
+        email_form = EmailPreferencesForm(self.request.POST,
+                                          instance=self.object.preferences,
+                                          prefix='email_pref')
+        if form.is_valid() and prefs_form.is_valid() and email_form.is_valid():
+            if self.object.purchase_email.strip() == '':
+                self.object.purchase_email = \
+                    self.object.user_object.email.strip()
+            prefs_form.save(commit=True)
+            email_form.save(commit=True)
+        else:
+            # TODO - should I handle differently
+            raise Exception("something has gone very odd, contact the admin")
+        return response
+
+
+    def get_success_url(self):
+        return reverse("merge_bios", urlconf="gbe.urls", args=[
+            self.object.pk,
+            self.kwargs['from_pk']])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,3 +128,33 @@ class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
                 'last_name': self.object.user_object.last_name,
                 'display_name': display_name,
                 'how_heard': how_heard_initial}
+
+class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
+    success_url = reverse_lazy("manage_users", urlconf="gbe.urls")
+    form_class = BidBioMergeForm
+    view_permissions = ('Registrar', )
+    intro_text = merge_bio_msg
+    page_title = 'Merge Users - Merge Bios'
+    view_title = 'Merge Users - Merge Bios'
+    template_name = 'gbe/bid_bio_merge.tmpl'
+
+    def get_initial(self):
+        return {
+            'otherprofile': get_object_or_404(Profile,
+                                              pk=self.kwargs['from_pk']),
+            'targetprofile': get_object_or_404(Profile,
+                                               pk=self.kwargs['pk'])
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['sorting_off'] = True
+        context['columns'] = ['Value',
+                              'Target',
+                              'To be Merged',
+                              'Fix it Here']
+        context['otherprofile'] = get_object_or_404(Profile,
+                                                    pk=self.kwargs['from_pk'])
+        context['targetprofile'] = get_object_or_404(Profile,
+                                                     pk=self.kwargs['pk'])
+        return context

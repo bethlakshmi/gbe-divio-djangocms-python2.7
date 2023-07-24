@@ -1,0 +1,29 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% block before_table %}
+  <h2 class="gbe-title">{{view_title}}</h2>
+  <p>{{intro_text}}</p>
+<form action="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+{% endblock %}
+{% block tbody %}
+  <tr class="gbe-table-row">
+    <td><b>Bios</b><br>This is all bios for the two users - showing all bids over all expos.  You can choose to move the whole bio to the merged profile, along with all its bids, or you can pick a target bio to merge all bids to.  The second option lets us avoid replication of bios.</td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for bio in targetprofile.bio_set.all %}<li>{{bio}}<ul>{% for bid in bio.related_bids %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.accepted }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Bios{% endfor %}</ul></td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for bio in otherprofile.bio_set.all %}<li>{{bio}}<ul>{% for bid in bio.related_bids %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.accepted }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Bios{% endfor %}</ul></td>
+    <td class="gbe-flat-list">{% for field in form.visible_fields %}
+    {{ field.label_tag }}<br>{{ field }}
+    {% if field.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ field.errors }}</font>
+    {% endif %}<br><br>
+    {% endfor %}
+    </td>
+  </tr>
+{% endblock %}
+
+{% block after_table %}
+<div class="float-right pt-2">
+<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" formnovalidate>
+<input type="submit" name="merge" class="gbe-btn-primary btn" value="Merge">
+</div>
+</form>
+{% endblock %}

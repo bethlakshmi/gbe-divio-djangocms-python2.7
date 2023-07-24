@@ -52,6 +52,12 @@ class Bio(Model):
         return (self.is_teaching.count() > 0 or self.acts.count() > 0 or
                 self.costume_set.count() > 0)
 
+    def related_bids(self):
+        bids = list(self.is_teaching.all()) + list(self.acts.all()) + list(
+            self.costume_set.all())
+        bids.sort(reverse=True, key=lambda b: b.b_conference.conference_slug)
+        return bids
+
     @property
     def user_object(self):
         return self.contact.user_object
