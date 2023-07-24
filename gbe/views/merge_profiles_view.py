@@ -139,11 +139,13 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
     template_name = 'gbe/bid_bio_merge.tmpl'
 
     def get_initial(self):
-        return {
-            'otherprofile': get_object_or_404(Profile,
-                                              pk=self.kwargs['from_pk']),
-            'targetprofile': get_object_or_404(Profile,
+        self.otherprofile = get_object_or_404(Profile,
+                                              pk=self.kwargs['from_pk'])
+        self.targetprofile = get_object_or_404(Profile,
                                                pk=self.kwargs['pk'])
+        return {
+            'otherprofile': self.otherprofile,
+            'targetprofile': self.targetprofile,
         }
 
     def get_context_data(self, **kwargs):
@@ -153,8 +155,16 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
                               'Target',
                               'To be Merged',
                               'Fix it Here']
-        context['otherprofile'] = get_object_or_404(Profile,
-                                                    pk=self.kwargs['from_pk'])
-        context['targetprofile'] = get_object_or_404(Profile,
-                                                     pk=self.kwargs['pk'])
+        context['otherprofile'] = self.otherprofile 
+        context['targetprofile'] = self.targetprofile
         return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        for bio in self.otherprofile .bio_set.all():
+            if form.cleaned_data['bio_%d' % bio.pk] == '':
+                print("merge it")
+            else:
+                print("merge bids to %s" % str(Bio.objects.get(
+                    pk=form.cleaned_data['bio_%d' % bio.pk])))
+        return response
