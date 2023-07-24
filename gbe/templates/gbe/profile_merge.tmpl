@@ -1,6 +1,6 @@
 {% extends 'gbe/gbe_table.tmpl' %}
 {% block before_table %}
-  <h2 class="gbe-title">{{header}}</h2>
+  <h2 class="gbe-title">{{view_title}}</h2>
   <p>{{intro_text}}</p>
 <form action="" method="post" enctype="multipart/form-data">
 {% csrf_token %}
