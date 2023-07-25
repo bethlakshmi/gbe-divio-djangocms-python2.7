@@ -32,6 +32,13 @@
     {% endfor %}
     </td>
   </tr>
+  <tr class="gbe-table-row">
+    <td><b>Staff Leadership</b><br>These are the staff leadership roles assigned to each profile.  Provided as an FYI</td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for area in targetprofile.staffarea_set.all|dictsortreversed:"conference.conference_slug" %}<li>{{ area.conference.conference_slug }} - {{ area }}{% empty %}<li>No staff lead responsiblities</li>{% endfor %}</ul></td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for area in otherprofile.staffarea_set.all|dictsortreversed:"conference.conference_slug" %}<li>{{ area.conference.conference_slug }} - {{ area }}{% empty %}<li>No staff lead responsiblities</li>{% endfor %}</ul></td>
+    <td class="gbe-flat-list">All staff leadership current/past info will be merged automatically.  If anything should be removed, it can altered in scheduling after the merge.
+    </td>
+  </tr>
 {% endblock %}
 
 {% block after_table %}

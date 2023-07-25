@@ -20,6 +20,7 @@ from gbe.models import (
     Costume,
     Profile,
     ProfilePreferences,
+    StaffArea,
     UserMessage,
     Vendor,
 )
@@ -187,5 +188,8 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
             else:
                 target_biz = form.cleaned_data['business_%d' % biz.pk]
                 Vendor.objects.filter(business=biz).update(business=target_biz)
+
+        StaffArea.objects.filter(staff_lead=self.otherprofile).update(
+            staff_lead=self.targetprofile)
 
         return response
