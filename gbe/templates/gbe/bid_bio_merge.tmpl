@@ -8,13 +8,27 @@
 {% block tbody %}
   <tr class="gbe-table-row">
     <td><b>Bios</b><br>This is all bios for the two users - showing all bids over all expos.  You can choose to move the whole bio to the merged profile, along with all its bids, or you can pick a target bio to merge all bids to.  The second option lets us avoid replication of bios.</td>
-    <td class="gbe-flat-list"><ul class="p-1">{% for bio in targetprofile.bio_set.all %}<li>{{bio}}<ul>{% for bid in bio.related_bids %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.accepted }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Bios{% endfor %}</ul></td>
-    <td class="gbe-flat-list"><ul class="p-1">{% for bio in otherprofile.bio_set.all %}<li>{{bio}}<ul>{% for bid in bio.related_bids %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.accepted }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Bios{% endfor %}</ul></td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for bio in targetprofile.bio_set.all %}<li>{{bio}}<ul>{% for bid in bio.related_bids %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.get_accepted_display }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Bios{% endfor %}</ul></td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for bio in otherprofile.bio_set.all %}<li>{{bio}}<ul>{% for bid in bio.related_bids %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.get_accepted_display }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Bios{% endfor %}</ul></td>
     <td class="gbe-flat-list">{% for field in form.visible_fields %}
+    {% if 'id_bio_' in field.id_for_label %}
     {{ field.label_tag }}<br>{{ field }}
     {% if field.errors %}
         <br><font class="gbe-form-error gbe-flat-list">{{ field.errors }}</font>
-    {% endif %}<br><br>
+    {% endif %}<br><br>{% endif %}
+    {% endfor %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td><b>Businesses</b><br>This is all the businesses for the two users - showing all vendor bids over all expos.  You can choose to move the ownership of the business to the merged profile, along with all its bids, or you can pick a target business to merge all bids to.  The second option lets us avoid replication of businesses.</td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for biz in targetprofile.business_set.all %}<li>{{biz}}<ul>{% for bid in biz.vendor_set.all|dictsortreversed:"b_conference.conference_slug" %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.get_accepted_display }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Businesses{% endfor %}</ul></td>
+    <td class="gbe-flat-list"><ul class="p-1">{% for biz in otherprofile.business_set.all %}<li>{{biz}}<ul>{% for bid in biz.vendor_set.all|dictsortreversed:"b_conference.conference_slug" %}<li>{{ bid.b_conference.conference_slug }} - {{ bid.class_name }}: {{ bid }} - state: {{ bid.get_accepted_display }}</li>{% empty %}<li>No related bids</li>{% endfor %}</ul></li>{% empty %}No Businesses{% endfor %}</ul></td>
+    <td class="gbe-flat-list">{% for field in form.visible_fields %}
+    {% if 'id_business_' in field.id_for_label %}
+    {{ field.label_tag }}<br>{{ field }}
+    {% if field.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ field.errors }}</font>
+    {% endif %}<br><br>{% endif %}
     {% endfor %}
     </td>
   </tr>

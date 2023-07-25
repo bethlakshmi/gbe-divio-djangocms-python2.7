@@ -25,6 +25,15 @@ class BidBioMergeForm(Form):
                     label=str(bio),
                     required=False,
                 )
-                self.bio_fields += ['bio_%d' % bio.pk]
+
+            biz_choices = [('','Move to Merged Profile')] + [
+                (target.pk, 
+                 str(target)) for target in targetprofile.business_set.all()]
+            for biz in otherprofile.business_set.all():
+                self.fields['business_%d' % biz.pk] = ChoiceField(
+                    choices=biz_choices,
+                    label=str(biz),
+                    required=False,
+                )
         else:
             raise Exception(kwargs)

@@ -14,10 +14,14 @@ from gbe_utils.mixins import (
     RoleRequiredMixin,
 )
 from gbe.models import (
+    Act,
     Bio,
+    Class,
+    Costume,
     Profile,
     ProfilePreferences,
     UserMessage,
+    Vendor,
 )
 from gbe.forms import (
     BidBioMergeForm,
@@ -130,6 +134,8 @@ class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
                 'how_heard': how_heard_initial}
 
 class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
+    # this view consciously discards old Volunteer bids, since they 
+    # should eventually age out of the system.
     success_url = reverse_lazy("manage_users", urlconf="gbe.urls")
     form_class = BidBioMergeForm
     view_permissions = ('Registrar', )
@@ -163,8 +169,23 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
         response = super().form_valid(form)
         for bio in self.otherprofile .bio_set.all():
             if form.cleaned_data['bio_%d' % bio.pk] == '':
-                print("merge it")
+                bio.contact = self.targetprofile
+                bio.save()
             else:
-                print("merge bids to %s" % str(Bio.objects.get(
-                    pk=form.cleaned_data['bio_%d' % bio.pk])))
+                target_bio = form.cleaned_data['bio_%d' % bio.pk]
+                Act.objects.filter(bio=bio).update(bio=target_bio)
+                Class.objects.filter(teacher_bio=bio).update(
+                    teacher_bio=target_bio)
+                Costume.objects.filter(bio=bio).update(bio=target_bio)
+        Costume.objects.filter(profile=self.otherprofile).update(
+            profile=self.targetprofile)
+
+        for biz in self.otherprofile.business_set.all():
+            if form.cleaned_data['business_%d' % biz.pk] == '':
+                biz.owners.add(self.targetprofile)
+                biz.owners.remove(self.otherprofile)
+            else:
+                target_biz = form.cleaned_data['business_%d' % biz.pk]
+                Vendor.objects.filter(business=biz).update(business=target_biz)
+
         return response
