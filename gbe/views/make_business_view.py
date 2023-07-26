@@ -19,7 +19,6 @@ from gbetext import (
 
 class BusinessCreate(CreatePopupMixin,
                      SubwayMapMixin,
-                     GbeFormMixin,
                      ProfileRequiredMixin,
                      CreateView):
     model = Business
@@ -31,6 +30,7 @@ class BusinessCreate(CreatePopupMixin,
     mode = "performer"
     valid_message = default_create_business_msg
     no_tabs = True
+    return_url = reverse_lazy('home', urlconf="gbe.urls")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -51,6 +51,7 @@ class BusinessUpdate(UpdatePopupMixin,
     mode = "update"
     valid_message = default_edit_business_msg
     no_tabs = True
+    return_url = reverse_lazy('home', urlconf="gbe.urls")
 
     def get_queryset(self):
         return self.model.objects.filter(
