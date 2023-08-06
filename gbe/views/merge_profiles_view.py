@@ -181,18 +181,14 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
         for user in replace_people.users:
             # replace the user only if it's in the set
             if user.pk == self.otherprofile.user_object.pk:
-                print("found: " + self.otherprofile.user_object.username)
                 if self.targetprofile.user_object not in replace_people.users:
-                    print("replaced")
                     users += [self.targetprofile.user_object]
             else:
                 users += [user]
-        print(users)
         replace_object = eval(
             replace_people.public_class).objects.get(
             pk=replace_people.public_id)
         response = update_bookable_people(replace_object, users)
-        print("replaced group: " + str(replace_object))
         show_general_status(self.request,
                             response,
                             self.__class__.__name__)
@@ -204,7 +200,6 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
                 bio.contact = self.targetprofile
                 bio.save()
                 response = get_bookable_people(bio.pk, bio.__class__.__name__)
-                print("replace owner on bid: " + str(bio))
                 for bio in response.people:
                     self.replace_in_user_set(bio)
             else:
@@ -249,9 +244,7 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
 
         # get any troupe memberships (not owner) - and replace user
         response = get_bookable_people_by_user(self.otherprofile.user_object)
-        print("replacing troupes")
         for people in response.people:
-            print("bio id: " + str(people.public_id))
             self.replace_in_user_set(people)
 
         # do a check - user should only be in unported bios, and should NOT
