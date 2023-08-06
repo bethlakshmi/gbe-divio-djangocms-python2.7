@@ -20,3 +20,4 @@ from .get_bookable_people import get_bookable_people
 from .get_bookable_people_by_user import get_bookable_people_by_user
 from .create_bookable_people import create_bookable_people
 from .update_bookable_people import update_bookable_people
+from .reschedule import reschedule

@@ -33,14 +33,33 @@
     </td>
   </tr>
   <tr class="gbe-table-row">
-    <td><b>Staff Leadership</b><br>These are the staff leadership roles assigned to each profile.  Provided as an FYI</td>
+    <td><b>Staff Leadership</b><br>These are the staff leadership roles assigned to each profile.  Provided as an FYI.</td>
     <td class="gbe-flat-list"><ul class="p-1">{% for area in targetprofile.staffarea_set.all|dictsortreversed:"conference.conference_slug" %}<li>{{ area.conference.conference_slug }} - {{ area }}{% empty %}<li>No staff lead responsiblities</li>{% endfor %}</ul></td>
     <td class="gbe-flat-list"><ul class="p-1">{% for area in otherprofile.staffarea_set.all|dictsortreversed:"conference.conference_slug" %}<li>{{ area.conference.conference_slug }} - {{ area }}{% empty %}<li>No staff lead responsiblities</li>{% endfor %}</ul></td>
     <td class="gbe-flat-list">All staff leadership current/past info will be merged automatically.  If anything should be removed, it can altered in scheduling after the merge.
     </td>
   </tr>
+  <tr class="gbe-table-row">
+    <td><b>Permissions</b><br>Roles granted to each user, these roles will be merged.  Provided as FYI</td>
+    <td class="gbe-flat-list">
+    <b>Groups:</b><br><ul>
+    {% for group in targetprofile.user_object.groups.all %}<li>{{group}}</li>{% endfor %}</ul>
+    <b>Roles:</b><br><ul>
+    {% for role in targetprofile.get_priv_roles %}<li>{{role}}</li>{% endfor %}</ul>
+    </td>
+    <td class="gbe-flat-list">
+    <b>Groups:</b><br><ul>
+    {% for group in otherprofile.user_object.groups.all %}<li>{{group}}</li>{% endfor %}</ul>
+    <b>Roles:</b><br><ul>
+    {% for role in otherprofile.get_priv_roles %}<li>{{role}}</li>{% endfor %}</ul>
+    </td>
+    <td class="gbe-flat-list">Groups and Roles will be automatically merged, and the resulting profile will get the combination of ALL privileges.  HOWEVER - if staff or superuser permissions are required, go to the Django Admin User settings and set the account.
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td colspan=4><b>Scheduling</b><br>All schedule items assigned to {{ otherprofile.display_name }} will be transferred to {{ targetprofile.display_name }} automatically.</td>
+  </tr>
 {% endblock %}
-
 {% block after_table %}
 <div class="float-right pt-2">
 <input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" formnovalidate>

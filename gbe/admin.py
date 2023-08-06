@@ -60,7 +60,7 @@ class ActAdmin(BidAdmin):
 
 
 class PerformerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'contact', 'label')
+    list_display = ('pk', 'name', 'contact', 'label')
     search_fields = ['name', 'contact__display_name']
     list_filter = ['multiple_performers']
 

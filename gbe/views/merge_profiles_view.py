@@ -5,6 +5,7 @@ from django.views.generic import (
 from gbe.views import ReviewProfilesView
 from gbe.functions import validate_perms
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 from django.urls import (
     reverse,
     reverse_lazy,
@@ -21,7 +22,6 @@ from gbe.models import (
     Profile,
     ProfilePreferences,
     StaffArea,
-    UserMessage,
     Vendor,
 )
 from gbe.forms import (
@@ -35,6 +35,15 @@ from gbetext import (
     merge_profile_msg,
     merge_users_msg,
 )
+from scheduler.idd import (
+    get_bookable_people,
+    get_bookable_people_by_user,
+    get_schedule,
+    reschedule,
+    update_bookable_people,
+)
+from gbe.scheduling.views.functions import show_general_status
+from settings import GBE_DATETIME_FORMAT
 
 
 class MergeProfileSelect(ReviewProfilesView):
@@ -166,18 +175,52 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
         context['targetprofile'] = self.targetprofile
         return context
 
+    def replace_in_user_set(self, replace_people):
+        users = []
+        replaced = False
+        for user in replace_people.users:
+            # replace the user only if it's in the set
+            if user.pk == self.otherprofile.user_object.pk:
+                print("found: " + self.otherprofile.user_object.username)
+                if self.targetprofile.user_object not in replace_people.users:
+                    print("replaced")
+                    users += [self.targetprofile.user_object]
+            else:
+                users += [user]
+        print(users)
+        replace_object = eval(
+            replace_people.public_class).objects.get(
+            pk=replace_people.public_id)
+        response = update_bookable_people(replace_object, users)
+        print("replaced group: " + str(replace_object))
+        show_general_status(self.request,
+                            response,
+                            self.__class__.__name__)
+
     def form_valid(self, form):
-        response = super().form_valid(form)
-        for bio in self.otherprofile .bio_set.all():
+        form_response = super().form_valid(form)
+        for bio in self.otherprofile.bio_set.all():
             if form.cleaned_data['bio_%d' % bio.pk] == '':
                 bio.contact = self.targetprofile
                 bio.save()
+                response = get_bookable_people(bio.pk, bio.__class__.__name__)
+                print("replace owner on bid: " + str(bio))
+                for bio in response.people:
+                    self.replace_in_user_set(bio)
             else:
                 target_bio = form.cleaned_data['bio_%d' % bio.pk]
                 Act.objects.filter(bio=bio).update(bio=target_bio)
                 Class.objects.filter(teacher_bio=bio).update(
                     teacher_bio=target_bio)
                 Costume.objects.filter(bio=bio).update(bio=target_bio)
+                response = reschedule(bio.__class__.__name__,
+                                      bio.pk,
+                                      "Bio",
+                                      target_bio)
+                show_general_status(self.request,
+                                    response,
+                                    self.__class__.__name__)
+
         Costume.objects.filter(profile=self.otherprofile).update(
             profile=self.targetprofile)
 
@@ -191,5 +234,36 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
 
         StaffArea.objects.filter(staff_lead=self.otherprofile).update(
             staff_lead=self.targetprofile)
+        for group in self.otherprofile.user_object.groups.all():
+            if not self.targetprofile.user_object.groups.filter(id=group.id):
+                self.targetprofile.user_object.groups.add(group)
 
-        return response
+        # change all profile scheduling items to new profile
+        response = reschedule(self.otherprofile.__class__.__name__,
+                              self.otherprofile.pk,
+                              self.targetprofile.__class__.__name__,
+                              self.targetprofile.pk)
+        show_general_status(self.request,
+                            response,
+                            self.__class__.__name__)
+
+        # get any troupe memberships (not owner) - and replace user
+        response = get_bookable_people_by_user(self.otherprofile.user_object)
+        print("replacing troupes")
+        for people in response.people:
+            print("bio id: " + str(people.public_id))
+            self.replace_in_user_set(people)
+
+        # do a check - user should only be in unported bios, and should NOT
+        # be scheduled for anything at the end.
+        response = get_schedule(user=self.otherprofile.user_object)
+        for item in response.schedule_items:
+            event_desc = item.event.title + " - " + \
+                item.event.starttime.strftime(GBE_DATETIME_FORMAT)
+            for slug in item.event.labels:
+                event_desc = event_desc+ " - " + slug
+            messages.error(
+                self.request,
+                "Error - the merged profile is still booked for %s" % (
+                    event_desc))
+        return form_response
