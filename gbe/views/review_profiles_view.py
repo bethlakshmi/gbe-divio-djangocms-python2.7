@@ -70,18 +70,17 @@ class ReviewProfilesView(GbeContextMixin, RoleRequiredMixin, ListView):
 
     def set_actions(self, profile):
         actions = [{'url': reverse('admin_landing_page',
-                                urlconf='gbe.urls',
-                                args=[profile.pk]),
-                 'text': "View Landing Page"},
-                {'url': reverse('welcome_letter',
-                                urlconf='gbe.reporting.urls',
-                                args=[profile.pk]),
-                 'text': "Welcome Letter"},
-                {'url': reverse(
-                    'mail_to_individual',
-                     urlconf='gbe.email.urls',
-                     args=[profile.pk]),
-                 'text': "Email"}]
+                                   urlconf='gbe.urls',
+                                   args=[profile.pk]),
+                    'text': "View Landing Page"},
+                   {'url': reverse('welcome_letter',
+                                   urlconf='gbe.reporting.urls',
+                                   args=[profile.pk]),
+                    'text': "Welcome Letter"},
+                   {'url': reverse('mail_to_individual',
+                                   urlconf='gbe.email.urls',
+                                   args=[profile.pk]),
+                   'text': "Email"}]
         if 'Registrar' in self.request.user.profile.privilege_groups:
             actions += [
                 {'url': "%s?next=%s" % (reverse(
@@ -100,4 +99,4 @@ class ReviewProfilesView(GbeContextMixin, RoleRequiredMixin, ListView):
                                 urlconf='gbe.urls',
                                 args=[profile.pk]),
                  'text': "Delete"}]
-        return actions
+        return sorted(actions, key=lambda x: x['text'])

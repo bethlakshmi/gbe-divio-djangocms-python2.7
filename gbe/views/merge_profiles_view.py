@@ -60,7 +60,7 @@ class MergeProfileSelect(ReviewProfilesView):
         return [{'url': reverse('merge_profiles',
                                 urlconf='gbe.urls',
                                 args=[self.kwargs['pk'], profile.pk]),
-                 'text': "Merge Second"}]
+                 'text': "Merge"}]
 
 
 class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
