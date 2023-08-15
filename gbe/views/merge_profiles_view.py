@@ -22,6 +22,7 @@ from gbe.models import (
     Profile,
     ProfilePreferences,
     StaffArea,
+    UserMessage,
     Vendor,
 )
 from gbe.forms import (
@@ -34,6 +35,8 @@ from gbetext import (
     merge_bio_msg,
     merge_profile_msg,
     merge_users_msg,
+    warn_user_merge_delete,
+    warn_user_merge_delete_2,
 )
 from scheduler.idd import (
     get_bookable_people,
@@ -47,8 +50,8 @@ from settings import GBE_DATETIME_FORMAT
 
 
 class MergeProfileSelect(ReviewProfilesView):
-    page_title = 'Merge Users'
-    view_title = 'Merge Users'
+    page_title = 'Merge Users - Pick Second'
+    view_title = 'Merge Users - Pick Second'
     intro_text = merge_users_msg
     view_permissions = ('Registrar', )
 
@@ -108,6 +111,18 @@ class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
                               'Fix it Here']
         context['otherprofile'] = get_object_or_404(Profile,
                                                     pk=self.kwargs['from_pk'])
+
+        if self.request.user == context['otherprofile'].user_object:
+            warning = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="SELF_MERGE_WARNING",
+                defaults={
+                    'summary': "Warning when merge deletes current account",
+                    'description': warn_user_merge_delete})[0].description
+            messages.warning(
+                self.request, 
+                warning)
+
         inform_initial = []
         try:
             if len(self.object.preferences.inform_about.strip()) > 0:
@@ -126,22 +141,27 @@ class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
         return context
 
     def get_initial(self):
-        display_name = ""
+        display_name = self.object.display_name
+        purchase_email = self.object.purchase_email
         how_heard_initial = []
         if self.object.display_name.strip() == '':
             display_name = "%s %s" % (
                 self.object.user_object.first_name.strip(),
                 self.object.user_object.last_name.strip())
-        else:
-            display_name = self.object.display_name
+
         if len(self.object.how_heard.strip()) > 0:
             how_heard_initial = eval(self.object.how_heard)
+
+        if self.object.purchase_email.strip() == '':
+            purchase_email = self.object.user_object.email
 
         return {'email': self.object.user_object.email,
                 'first_name': self.object.user_object.first_name,
                 'last_name': self.object.user_object.last_name,
                 'display_name': display_name,
+                'purchase_email': purchase_email,
                 'how_heard': how_heard_initial}
+
 
 class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
     # this view consciously discards old Volunteer bids, since they 
@@ -154,11 +174,26 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
     view_title = 'Merge Users - Merge Bios'
     template_name = 'gbe/bid_bio_merge.tmpl'
 
+    def has_permission(self):
+        permitted = super().has_permission()
+        if permitted and self.request.user.profile.pk == int(
+                self.kwargs['from_pk']):
+            permitted = False
+            error = UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="SELF_MERGE_ERROR",
+                defaults={
+                    'summary': "Error on self-delete attempt",
+                    'description': warn_user_merge_delete_2})[0].description
+            messages.error(self.request, error)
+        return permitted
+
     def get_initial(self):
         self.otherprofile = get_object_or_404(Profile,
                                               pk=self.kwargs['from_pk'])
         self.targetprofile = get_object_or_404(Profile,
                                                pk=self.kwargs['pk'])
+
         return {
             'otherprofile': self.otherprofile,
             'targetprofile': self.targetprofile,
@@ -171,7 +206,7 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
                               'Target',
                               'To be Merged',
                               'Fix it Here']
-        context['otherprofile'] = self.otherprofile 
+        context['otherprofile'] = self.otherprofile
         context['targetprofile'] = self.targetprofile
         return context
 
@@ -259,4 +294,21 @@ class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
                 self.request,
                 "Error - the merged profile is still booked for %s" % (
                     event_desc))
+        if not response.schedule_items:
+            for bio in self.otherprofile.bio_set.all():
+                messages.success(
+                    self.request,
+                    "Sucessfully deleted bio %s for profile %s." % (
+                        bio.name,
+                        self.otherprofile.get_badge_name()))
+                bio.delete()
+            messages.success(
+                self.request,
+                "Sucessfully deleted profile %s." % (
+                        self.otherprofile.get_badge_name()))
+            self.otherprofile.delete()
+        else:
+            messages.error(
+                self.request,
+                "Skipped deletion because of errors above.  Contact the admin")
         return form_response

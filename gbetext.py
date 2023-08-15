@@ -805,6 +805,14 @@ merge_profile_msg = '''The first profile chosen is the target, the second
 merge_bio_msg = '''Choose what Bios to combine.  If there are duplicates, all
  acls, classes, etc can be combined into one Bio, or bios can be ported.
  For any troupe membership, the user will ported in the merge.'''
+warn_user_merge_delete = '''You cannot do a merge that deletes the account,
+ you are currently using.  If you want to eliminate your current account,
+ contact another member of the Registration team to do it for you.  OR -
+ press "Switch Profiles" to change the merge target to your current account
+ so it won't be deleted.'''
+warn_user_merge_delete_2 = '''You cannot do a merge that deletes the account,
+ you are currently using.  If you want to eliminate your current account,
+ contact another member of the Registration team to do it for you.'''
 change_day_note = '''Change the day on any current/upcoming conference.  Pick
 the new start day and all conference days will be moved and all events will be
 updated.  This assumes that the conference is the same number of days long.'''
