@@ -40,3 +40,7 @@ class TestMergeProfileSelect(TestCase):
         self.assertNotContains(response, self.privileged_user.email)
         self.assertNotContains(response, self.profile.user_object.email)
         self.assertContains(response, self.avail_profile.user_object.email)
+        self.assertContains(response, reverse(
+            'merge_profiles',
+            urlconf='gbe.urls',
+            args=[self.profile.pk, self.avail_profile.pk]))
