@@ -33,11 +33,9 @@ from .admin_profile_view import AdminProfileView
 from .delete_profile_view import DeleteProfileView
 from .review_profiles_view import ReviewProfilesView
 from .profile_autocomplete import ProfileAutocomplete
-from .merge_profiles_view import (
-    MergeBios,
-    MergeProfileSelect,
-    MergeProfiles,
-)
+from .merge_profile_select_view import MergeProfileSelect
+from .merge_profile_data_view import MergeProfileData
+from .merge_profile_extra_view import MergeProfileExtra
 
 # make
 from .make_act_view import MakeActView

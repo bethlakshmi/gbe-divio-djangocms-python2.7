@@ -1,15 +1,7 @@
-from django.views.generic import (
-    FormView,
-    UpdateView,
-)
-from gbe.views import ReviewProfilesView
-from gbe.functions import validate_perms
+from django.views.generic import FormView
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from django.urls import (
-    reverse,
-    reverse_lazy,
-)
+from django.urls import reverse_lazy
 from gbe_utils.mixins import (
     GbeContextMixin,
     RoleRequiredMixin,
@@ -20,22 +12,13 @@ from gbe.models import (
     Class,
     Costume,
     Profile,
-    ProfilePreferences,
     StaffArea,
     UserMessage,
     Vendor,
 )
-from gbe.forms import (
-    BidBioMergeForm,
-    EmailPreferencesForm,
-    ProfileAdminForm,
-    ProfilePreferencesForm,
-)
+from gbe.forms import BidBioMergeForm
 from gbetext import (
     merge_bio_msg,
-    merge_profile_msg,
-    merge_users_msg,
-    warn_user_merge_delete,
     warn_user_merge_delete_2,
 )
 from scheduler.idd import (
@@ -49,121 +32,7 @@ from gbe.scheduling.views.functions import show_general_status
 from settings import GBE_DATETIME_FORMAT
 
 
-class MergeProfileSelect(ReviewProfilesView):
-    page_title = 'Merge Users - Pick Second'
-    view_title = 'Merge Users - Pick Second'
-    intro_text = merge_users_msg
-    view_permissions = ('Registrar', )
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.exclude(pk=self.kwargs['pk'])
-
-    def set_actions(self, profile):
-        return [{'url': reverse('merge_profiles',
-                                urlconf='gbe.urls',
-                                args=[self.kwargs['pk'], profile.pk]),
-                 'text': "Merge"}]
-
-
-class MergeProfiles(GbeContextMixin, RoleRequiredMixin, UpdateView):
-    model = Profile
-    form_class = ProfileAdminForm
-    view_permissions = ('Registrar', )
-    intro_text = merge_profile_msg
-    page_title = 'Merge Users - Verify Info'
-    view_title = 'Merge Users - Verify Info'
-    template_name = 'gbe/profile_merge.tmpl'
-    context_object_name = 'target'
-
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        prefs_form = ProfilePreferencesForm(self.request.POST,
-                                            instance=self.object.preferences,
-                                            prefix='prefs')
-        email_form = EmailPreferencesForm(self.request.POST,
-                                          instance=self.object.preferences,
-                                          prefix='email_pref')
-        if form.is_valid() and prefs_form.is_valid() and email_form.is_valid():
-            if self.object.purchase_email.strip() == '':
-                self.object.purchase_email = \
-                    self.object.user_object.email.strip()
-            prefs_form.save(commit=True)
-            email_form.save(commit=True)
-        else:
-            # TODO - should I handle differently
-            raise Exception("something has gone very odd, contact the admin")
-        return response
-
-
-    def get_success_url(self):
-        return reverse("merge_bios", urlconf="gbe.urls", args=[
-            self.object.pk,
-            self.kwargs['from_pk']])
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['sorting_off'] = True
-        context['columns'] = ['Value',
-                              'Target',
-                              'To be Merged',
-                              'Fix it Here']
-        context['otherprofile'] = get_object_or_404(Profile,
-                                                    pk=self.kwargs['from_pk'])
-
-        if self.request.user == context['otherprofile'].user_object:
-            warning = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="SELF_MERGE_WARNING",
-                defaults={
-                    'summary': "Warning when merge deletes current account",
-                    'description': warn_user_merge_delete})[0].description
-            messages.warning(
-                self.request, 
-                warning)
-
-        inform_initial = []
-        try:
-            if len(self.object.preferences.inform_about.strip()) > 0:
-                inform_initial = eval(self.object.preferences.inform_about)
-        except ProfilePreferences.DoesNotExist:
-            pref = ProfilePreferences(profile=self.object)
-            pref.save()
-        context['prefs_form'] = ProfilePreferencesForm(
-            prefix='prefs',
-            instance=self.object.preferences,
-            initial={'inform_about': inform_initial})
-        context['email_form'] = EmailPreferencesForm(
-            prefix='email_pref',
-            label_suffix="",
-            instance=self.object.preferences)
-        return context
-
-    def get_initial(self):
-        display_name = self.object.display_name
-        purchase_email = self.object.purchase_email
-        how_heard_initial = []
-        if self.object.display_name.strip() == '':
-            display_name = "%s %s" % (
-                self.object.user_object.first_name.strip(),
-                self.object.user_object.last_name.strip())
-
-        if len(self.object.how_heard.strip()) > 0:
-            how_heard_initial = eval(self.object.how_heard)
-
-        if self.object.purchase_email.strip() == '':
-            purchase_email = self.object.user_object.email
-
-        return {'email': self.object.user_object.email,
-                'first_name': self.object.user_object.first_name,
-                'last_name': self.object.user_object.last_name,
-                'display_name': display_name,
-                'purchase_email': purchase_email,
-                'how_heard': how_heard_initial}
-
-
-class MergeBios(GbeContextMixin, RoleRequiredMixin, FormView):
+class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
     # this view consciously discards old Volunteer bids, since they 
     # should eventually age out of the system.
     success_url = reverse_lazy("manage_users", urlconf="gbe.urls")
