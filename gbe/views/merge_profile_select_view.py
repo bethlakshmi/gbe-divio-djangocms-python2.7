@@ -11,7 +11,8 @@ class MergeProfileSelect(ReviewProfilesView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.exclude(pk=self.kwargs['pk'])
+        return queryset.exclude(pk__in=[self.kwargs['pk'],
+                                        self.request.user.profile.pk])
 
     def set_actions(self, profile):
         return [{'url': reverse('merge_profiles',
