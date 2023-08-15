@@ -33,7 +33,7 @@ from settings import GBE_DATETIME_FORMAT
 
 
 class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
-    # this view consciously discards old Volunteer bids, since they 
+    # this view consciously discards old Volunteer bids, since they
     # should eventually age out of the system.
     success_url = reverse_lazy("manage_users", urlconf="gbe.urls")
     form_class = BidBioMergeForm
@@ -158,7 +158,7 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
             event_desc = item.event.title + " - " + \
                 item.event.starttime.strftime(GBE_DATETIME_FORMAT)
             for slug in item.event.labels:
-                event_desc = event_desc+ " - " + slug
+                event_desc = event_desc + " - " + slug
             messages.error(
                 self.request,
                 "Error - the merged profile is still booked for %s" % (

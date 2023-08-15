@@ -16,8 +16,8 @@ class BidBioMergeForm(Form):
                     'initial') and 'targetprofile' in kwargs.get('initial'):
             otherprofile = kwargs.get('initial').get('otherprofile')
             targetprofile = kwargs.get('initial').get('targetprofile')
-            bio_choices = [('','Move to Merged Profile')] + [
-                (target.pk, 
+            bio_choices = [('', 'Move to Merged Profile')] + [
+                (target.pk,
                  str(target)) for target in targetprofile.bio_set.all()]
             for bio in otherprofile.bio_set.all():
                 self.fields['bio_%d' % bio.pk] = ChoiceField(
@@ -26,8 +26,8 @@ class BidBioMergeForm(Form):
                     required=False,
                 )
 
-            biz_choices = [('','Move to Merged Profile')] + [
-                (target.pk, 
+            biz_choices = [('', 'Move to Merged Profile')] + [
+                (target.pk,
                  str(target)) for target in targetprofile.business_set.all()]
             for biz in otherprofile.business_set.all():
                 self.fields['business_%d' % biz.pk] = ChoiceField(

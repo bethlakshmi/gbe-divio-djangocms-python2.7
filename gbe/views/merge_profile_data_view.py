@@ -32,7 +32,6 @@ class MergeProfileData(GbeContextMixin, RoleRequiredMixin, UpdateView):
     template_name = 'gbe/profile_merge.tmpl'
     context_object_name = 'target'
 
-
     def form_valid(self, form):
         response = super().form_valid(form)
         prefs_form = ProfilePreferencesForm(self.request.POST,
@@ -51,7 +50,6 @@ class MergeProfileData(GbeContextMixin, RoleRequiredMixin, UpdateView):
             # TODO - should I handle differently
             raise Exception("something has gone very odd, contact the admin")
         return response
-
 
     def get_success_url(self):
         return reverse("merge_bios", urlconf="gbe.urls", args=[
@@ -76,7 +74,7 @@ class MergeProfileData(GbeContextMixin, RoleRequiredMixin, UpdateView):
                     'summary': "Warning when merge deletes current account",
                     'description': warn_user_merge_delete})[0].description
             messages.warning(
-                self.request, 
+                self.request,
                 warning)
 
         inform_initial = []
