@@ -34,6 +34,9 @@ class MergeProfileData(GbeContextMixin, RoleRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        if not hasattr(self.object, 'preferences'):
+            pref = ProfilePreferences(profile=self.object)
+            pref.save()
         prefs_form = ProfilePreferencesForm(self.request.POST,
                                             instance=self.object.preferences,
                                             prefix='prefs')
