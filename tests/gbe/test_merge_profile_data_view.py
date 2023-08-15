@@ -100,3 +100,15 @@ class TestMergeProfileSelect(TestCase):
         self.assertTrue(updated_target.preferences.send_daily_schedule)
         self.assertEqual(updated_target.preferences.inform_about,
                          "['Performing']")
+        self.assertRedirects(response, reverse(
+            "merge_bios",
+            urlconf="gbe.urls",
+            args=[self.profile.pk, self.avail_profile.pk]) )
+
+    def test_submit_error(self):
+        login_as(self.privileged_user, self)
+        data = self.get_form()
+        data['email'] = self.avail_profile.user_object.email
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(response, 'Merge Users - Verify Info')
+        self.assertContains(response, 'That email address is already in use')

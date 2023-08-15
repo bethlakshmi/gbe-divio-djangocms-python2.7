@@ -2,6 +2,11 @@
 {% block before_table %}
   <h2 class="gbe-title">{{view_title}}</h2>
   <p>{{intro_text}}</p>
+  <font class="gbe-form-error">
+  {% if form.errors %}
+    <p> There is an error on the form.</p>
+  {% endif %}
+  {{ form.non_field_errors }}</font>
 <form action="" method="post" enctype="multipart/form-data">
 {% csrf_token %}
 {% endblock %}
@@ -19,7 +24,7 @@
     </td>
   </tr>
   <tr class="gbe-table-row">
-    <td class="gbe-form-required">{{form.first_name.label_tag}}<font class="gbe-form-required">*</font></td>
+    <td>{{form.first_name.label_tag}}</td>
     <td>{{target.user_object.first_name}}</td>
     <td>{{otherprofile.user_object.first_name}}</td>
     <td>{{form.first_name}}
@@ -29,7 +34,7 @@
     </td>
   </tr>
   <tr class="gbe-table-row">
-    <td class="gbe-form-required">{{form.last_name.label_tag}}<font class="gbe-form-required">*</font></td>
+    <td>{{form.last_name.label_tag}}</td>
     <td>{{target.user_object.last_name}}</td>
     <td>{{otherprofile.user_object.last_name}}</td>
     <td>{{form.last_name}}
