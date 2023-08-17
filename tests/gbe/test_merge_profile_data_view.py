@@ -9,7 +9,7 @@ from gbetext import warn_user_merge_delete
 from gbe.models import Profile
 
 
-class TestMergeProfileSelect(TestCase):
+class TestMergeProfileData(TestCase):
     '''Tests for admin_profile  view'''
     view_name = 'merge_profiles'
     counter = 0
