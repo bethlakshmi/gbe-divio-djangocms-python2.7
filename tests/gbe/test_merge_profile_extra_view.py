@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth.models import User
 from tests.factories.gbe_factories import (
     ActFactory,
     BioFactory,
@@ -21,6 +22,7 @@ from gbe.models import (
     Class,
     Costume,
     Profile,
+    StaffArea,
     Vendor,
 )
 
@@ -154,6 +156,8 @@ class TestMergeProfileExtra(TestCase):
         response = self.client.post(self.url, data={
             "bio_%d" % avail_bio.pk: target_bio.pk}, follow=True)
         updated_profile = Profile.objects.get(pk=self.profile.pk)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
         self.assertFalse(Bio.objects.filter(pk=avail_bio.pk).exists())
         self.assertContains(response, "Sucessfully deleted profile %s." % (
             self.avail_profile.get_badge_name()))
@@ -167,13 +171,6 @@ class TestMergeProfileExtra(TestCase):
         self.assertTrue(
             Class.objects.filter(teacher_bio__pk=target_bio.pk,
                                  pk=klass.pk).exists)
-        fresh_costume = Costume.objects.get(pk=costume.pk)
-        print(costume.profile)
-        print(self.profile)
-        print(self.avail_profile)
-        print(costume.bio)
-        print(target_bio)
-        print(avail_bio)
         self.assertTrue(
             Costume.objects.filter(profile__pk=self.profile.pk,
                                    bio__pk=target_bio.pk,
@@ -188,6 +185,8 @@ class TestMergeProfileExtra(TestCase):
         response = self.client.post(self.url, data={
             "business_%d" % avail_vendor.business.pk: ""}, follow=True)
         updated_profile = Profile.objects.get(pk=self.profile.pk)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
         self.assertTrue(
             updated_profile.business_set.filter(
                 pk=avail_vendor.business.pk).exists())
@@ -206,6 +205,8 @@ class TestMergeProfileExtra(TestCase):
                 "business_%d" % avail_vendor.business.pk: vendor.business.pk},
             follow=True)
         updated_profile = Profile.objects.get(pk=self.profile.pk)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
         self.assertTrue(Business.objects.filter(
             pk=avail_vendor.business.pk).exists())
         self.assertContains(response, "Sucessfully deleted profile %s." % (
@@ -229,6 +230,8 @@ class TestMergeProfileExtra(TestCase):
                 "business_%d" % avail_vendor.business.pk: vendor.business.pk},
             follow=True)
         updated_profile = Profile.objects.get(pk=self.profile.pk)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
         self.assertFalse(Business.objects.filter(
             pk=avail_vendor.business.pk).exists())
         self.assertContains(response, "Sucessfully deleted profile %s." % (
@@ -241,3 +244,28 @@ class TestMergeProfileExtra(TestCase):
         self.assertEqual(
             Vendor.objects.filter(business__pk=vendor.business.pk).count(),
             2)
+
+    def test_get_form_w_staff_lead(self):
+        # should exclude selected profile, and user's own profile
+        login_as(self.privileged_user, self)
+        context = StaffAreaContext(staff_lead=self.avail_profile)
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
+        self.assertContains(response, "Sucessfully deleted profile %s." % (
+            self.avail_profile.get_badge_name()))
+        self.assertTrue(StaffArea.objects.filter(
+            pk=context.area.pk,
+            staff_lead__pk=self.profile.pk).exists())
+
+    def test_get_form_w_privs(self):
+        # should exclude selected profile, and user's own profile
+        login_as(self.privileged_user, self)
+        grant_privilege(self.avail_profile, "Act Coordinator")
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
+        self.assertContains(response, "Sucessfully deleted profile %s." % (
+            self.avail_profile.get_badge_name()))
+        self.assertTrue(User.objects.filter(pk=self.profile.user_object.pk,
+                                            groups__name="Act Coordinator"))
