@@ -9,7 +9,11 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     VendorFactory,
 )
-from tests.contexts import StaffAreaContext
+from tests.contexts import (
+    ClassContext,
+    ShowContext,
+    StaffAreaContext,
+)
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -24,6 +28,9 @@ from gbe.models import (
     Profile,
     StaffArea,
     Vendor,
+)
+from scheduler.models import (
+    PeopleAllocation,
 )
 
 
@@ -134,24 +141,11 @@ class TestMergeProfileExtra(TestCase):
         self.assertContains(response, 'Merge Users - Merge Bios')
         self.assertContains(response, "Act Coordinator")
 
-    def test_move_bio_submit(self):
-        login_as(self.privileged_user, self)
-        target_bio = BioFactory(contact=self.profile)
-        avail_bio = BioFactory(contact=self.avail_profile)
-        response = self.client.post(self.url, data={
-            "bio_%d" % avail_bio.pk: ""}, follow=True)
-        updated_profile = Profile.objects.get(pk=self.profile.pk)
-        self.assertTrue(
-            updated_profile.bio_set.filter(pk=avail_bio.pk).exists())
-        self.assertContains(response, "Sucessfully deleted profile %s." % (
-            self.avail_profile.get_badge_name()))
-
     def test_move_bids_submit(self):
         login_as(self.privileged_user, self)
         target_bio = BioFactory(contact=self.profile)
         avail_bio = BioFactory(contact=self.avail_profile)
         act = ActFactory(bio=avail_bio)
-        klass = ClassFactory(teacher_bio=avail_bio)
         costume = CostumeFactory(profile=self.avail_profile, bio=avail_bio)
         response = self.client.post(self.url, data={
             "bio_%d" % avail_bio.pk: target_bio.pk}, follow=True)
@@ -169,12 +163,65 @@ class TestMergeProfileExtra(TestCase):
         self.assertTrue(Act.objects.filter(bio__pk=target_bio.pk,
                                            pk=act.pk).exists)
         self.assertTrue(
-            Class.objects.filter(teacher_bio__pk=target_bio.pk,
-                                 pk=klass.pk).exists)
-        self.assertTrue(
             Costume.objects.filter(profile__pk=self.profile.pk,
                                    bio__pk=target_bio.pk,
                                    pk=costume.pk).exists())
+
+    def test_move_bio_booked_act_submit(self):
+        login_as(self.privileged_user, self)
+        target_bio = BioFactory(contact=self.profile)
+        avail_bio = BioFactory(contact=self.avail_profile)
+        context = ShowContext(performer=avail_bio)
+        response = self.client.post(self.url, data={
+            "bio_%d" % avail_bio.pk: ""}, follow=True)
+        updated_profile = Profile.objects.get(pk=self.profile.pk)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
+        updated_profile = Profile.objects.get(pk=self.profile.pk)
+        self.assertTrue(
+            updated_profile.bio_set.filter(pk=avail_bio.pk).exists())
+        self.assertContains(response, "Sucessfully deleted profile %s." % (
+            self.avail_profile.get_badge_name()))
+        self.assertTrue(Act.objects.filter(bio__pk=target_bio.pk,
+                                           pk=context.acts[0].pk).exists)
+        self.assertTrue(PeopleAllocation.objects.filter(
+            event=context.sched_event,
+            people__class_id=avail_bio.pk,
+            ordering__class_id=context.acts[0].pk,
+            people__users=self.profile.user_object).exists())
+        self.assertFalse(PeopleAllocation.objects.filter(
+            event=context.sched_event,
+            people__class_id=avail_bio.pk,
+            ordering__class_id=context.acts[0].pk,
+            people__users=self.avail_profile.user_object).exists())
+        self.assertNotContains(response,
+                               "Skipped deletion because of errors above.")
+
+    def test_move_booked_teacher_by_bid_submit(self):
+        login_as(self.privileged_user, self)
+        target_bio = BioFactory(contact=self.profile)
+        avail_bio = BioFactory(contact=self.avail_profile)
+        context = ClassContext(teacher=avail_bio)
+        response = self.client.post(self.url, data={
+            "bio_%d" % avail_bio.pk: target_bio.pk}, follow=True)
+        updated_profile = Profile.objects.get(pk=self.profile.pk)
+        self.assertRedirects(response,
+                             reverse("manage_users", urlconf="gbe.urls"))
+        self.assertFalse(Bio.objects.filter(pk=avail_bio.pk).exists())
+        self.assertContains(response, "Sucessfully deleted profile %s." % (
+            self.avail_profile.get_badge_name()))
+        self.assertContains(
+            response,
+            "Sucessfully deleted bio %s for profile %s." % (
+                avail_bio.name,
+                self.avail_profile.get_badge_name()))
+        self.assertTrue(
+            Class.objects.filter(teacher_bio__pk=target_bio.pk,
+                                 pk=context.bid.pk).exists)
+        self.assertTrue(PeopleAllocation.objects.filter(
+            event=context.sched_event,
+            people__class_id=target_bio.pk,
+            people__users=self.profile.user_object).exists())
 
     def test_move_business_submit(self):
         login_as(self.privileged_user, self)

@@ -113,10 +113,12 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
                 Class.objects.filter(teacher_bio=bio).update(
                     teacher_bio=target_bio)
                 Costume.objects.filter(bio=bio).update(bio=target_bio)
-                response = reschedule(bio.__class__.__name__,
-                                      bio.pk,
-                                      "Bio",
-                                      target_bio)
+                response = reschedule(
+                    bio.__class__.__name__,
+                    bio.pk,
+                    "Bio",
+                    target_bio,
+                    new_users=[self.targetprofile.user_object])
                 show_general_status(self.request,
                                     response,
                                     self.__class__.__name__)
@@ -154,7 +156,8 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
         response = reschedule(self.otherprofile.__class__.__name__,
                               self.otherprofile.pk,
                               self.targetprofile.__class__.__name__,
-                              self.targetprofile.pk)
+                              self.targetprofile.pk,
+                              [self.targetprofile.user_object])
         show_general_status(self.request,
                             response,
                             self.__class__.__name__)
