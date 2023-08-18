@@ -169,7 +169,6 @@ class TestMergeProfileExtra(TestCase):
 
     def test_move_bio_booked_act_submit(self):
         login_as(self.privileged_user, self)
-        target_bio = BioFactory(contact=self.profile)
         avail_bio = BioFactory(contact=self.avail_profile)
         context = ShowContext(performer=avail_bio)
         response = self.client.post(self.url, data={
@@ -182,8 +181,8 @@ class TestMergeProfileExtra(TestCase):
             updated_profile.bio_set.filter(pk=avail_bio.pk).exists())
         self.assertContains(response, "Sucessfully deleted profile %s." % (
             self.avail_profile.get_badge_name()))
-        self.assertTrue(Act.objects.filter(bio__pk=target_bio.pk,
-                                           pk=context.acts[0].pk).exists)
+        self.assertTrue(Act.objects.filter(bio__pk=avail_bio.pk,
+                                           pk=context.acts[0].pk).exists())
         self.assertTrue(PeopleAllocation.objects.filter(
             event=context.sched_event,
             people__class_id=avail_bio.pk,
