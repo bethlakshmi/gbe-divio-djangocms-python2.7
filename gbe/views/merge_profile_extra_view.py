@@ -9,6 +9,7 @@ from gbe_utils.mixins import (
 from gbe.models import (
     Act,
     Bio,
+    Business,
     Class,
     Costume,
     Profile,
@@ -128,8 +129,20 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
                 biz.owners.add(self.targetprofile)
                 biz.owners.remove(self.otherprofile)
             else:
-                target_biz = form.cleaned_data['business_%d' % biz.pk]
-                Vendor.objects.filter(business=biz).update(business=target_biz)
+                target_biz = get_object_or_404(
+                    Business,
+                    pk=int(form.cleaned_data['business_%d' % biz.pk]))
+                Vendor.objects.filter(business=biz).update(
+                    business=target_biz)
+                if biz.owners.count() == 1:
+                    messages.success(
+                        self.request,
+                        "Sucessfully deleted business %s for profile %s." % (
+                            biz.name,
+                            self.otherprofile.get_badge_name()))
+                    biz.delete()
+                else:
+                    biz.owners.remove(self.otherprofile)
 
         StaffArea.objects.filter(staff_lead=self.otherprofile).update(
             staff_lead=self.targetprofile)
@@ -145,6 +158,8 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
         show_general_status(self.request,
                             response,
                             self.__class__.__name__)
+
+        # TODO - swap profile on all bid evaluations.  Any others?
 
         # get any troupe memberships (not owner) - and replace user
         response = get_bookable_people_by_user(self.otherprofile.user_object)
