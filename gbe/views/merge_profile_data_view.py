@@ -44,9 +44,6 @@ class MergeProfileData(GbeContextMixin, RoleRequiredMixin, UpdateView):
                                           instance=self.object.preferences,
                                           prefix='email_pref')
         if form.is_valid() and prefs_form.is_valid() and email_form.is_valid():
-            if self.object.purchase_email.strip() == '':
-                self.object.purchase_email = \
-                    self.object.user_object.email.strip()
             prefs_form.save(commit=True)
             email_form.save(commit=True)
         else:

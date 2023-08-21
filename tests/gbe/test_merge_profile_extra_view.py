@@ -32,6 +32,7 @@ from gbe.models import (
 from scheduler.models import (
     PeopleAllocation,
 )
+from tests.functions.scheduler_functions import get_or_create_bio
 
 
 class TestMergeProfileExtra(TestCase):
@@ -167,9 +168,13 @@ class TestMergeProfileExtra(TestCase):
                                    bio__pk=target_bio.pk,
                                    pk=costume.pk).exists())
 
-    def test_move_bio_booked_act_submit(self):
+    def test_move_bio_booked_troupe_act_submit(self):
+        # Extra setup to make this a troupe that is shared by both 
+        # profiles.  Merge removes the extra profile, leaving a troupe of 1
         login_as(self.privileged_user, self)
         avail_bio = BioFactory(contact=self.avail_profile)
+        people = get_or_create_bio(avail_bio)
+        people.users.add(self.profile.user_object)
         context = ShowContext(performer=avail_bio)
         response = self.client.post(self.url, data={
             "bio_%d" % avail_bio.pk: ""}, follow=True)
@@ -291,7 +296,7 @@ class TestMergeProfileExtra(TestCase):
             Vendor.objects.filter(business__pk=vendor.business.pk).count(),
             2)
 
-    def test_get_form_w_staff_lead(self):
+    def test_post_form_w_staff_lead(self):
         # should exclude selected profile, and user's own profile
         login_as(self.privileged_user, self)
         context = StaffAreaContext(staff_lead=self.avail_profile)
@@ -304,7 +309,7 @@ class TestMergeProfileExtra(TestCase):
             pk=context.area.pk,
             staff_lead__pk=self.profile.pk).exists())
 
-    def test_get_form_w_privs(self):
+    def test_post_form_w_privs(self):
         # should exclude selected profile, and user's own profile
         login_as(self.privileged_user, self)
         grant_privilege(self.avail_profile, "Act Coordinator")

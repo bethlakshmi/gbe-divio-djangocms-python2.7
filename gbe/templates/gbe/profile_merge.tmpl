@@ -163,8 +163,8 @@
   </tr>
   <tr class="gbe-table-row">
     <td>{{prefs_form.inform_about.label_tag}}</td>
-    <td class="gbe-flat-list"><ul class="p-1">{% if target.preferences.inform_about_list %}{% for inform in target.preferences.inform_about_list %}<li>{{inform}}</li>{% endfor %}</ul>{% else %}None{% endif %}</td>
-    <td class="gbe-flat-list">{% if otherprofile.preferences.inform_about_list %}<ul class="p-1">{% for inform in otherprofile.preferences.inform_about_list %}<li>{{inform}}</li>{% endfor %}</ul>{% else %}None{% endif %}</td>
+    <td class="gbe-flat-list"><ul class="p-1">{% if target.preferences.inform_about_list %}{% for inform in target.preferences.inform_about_list %}<li>{{inform}}</li>{% endfor %}</ul>{% else %}No inform about{% endif %}</td>
+    <td class="gbe-flat-list">{% if otherprofile.preferences.inform_about_list %}<ul class="p-1">{% for inform in otherprofile.preferences.inform_about_list %}<li>{{inform}}</li>{% endfor %}</ul>{% else %}No inform about{% endif %}</td>
     <td class="gbe-flat-list">{{prefs_form.inform_about}}
     {% if prefs_form.inform_about.errors %}
         <br><font class="gbe-form-error gbe-flat-list">{{ prefs_form.inform_about.errors }}</font>
