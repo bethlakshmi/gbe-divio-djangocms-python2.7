@@ -8,15 +8,21 @@ from gbe_utils.mixins import (
 )
 from gbe.models import (
     Act,
+    ActBidEvaluation,
+    Article,
+    BidEvaluation,
     Bio,
     Business,
     Class,
     Costume,
+    FlexibleEvaluation,
     Profile,
     StaffArea,
     UserMessage,
     Vendor,
+    VolunteerEvaluation,
 )
+from ticketing.models import Purchaser
 from gbe.forms import BidBioMergeForm
 from gbetext import (
     merge_bio_msg,
@@ -162,7 +168,25 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
                             response,
                             self.__class__.__name__)
 
-        # TODO - swap profile on all bid evaluations.  Any others?
+        ActBidEvaluation.objects.filter(
+            evaluator__pk=self.otherprofile.pk).update(
+            evaluator=self.targetprofile)
+        FlexibleEvaluation.objects.filter(
+            evaluator__pk=self.otherprofile.pk).update(
+            evaluator=self.targetprofile)
+        BidEvaluation.objects.filter(
+            evaluator__pk=self.otherprofile.pk).update(
+            evaluator=self.targetprofile)
+        ActBidEvaluation.objects.filter(
+            evaluator__pk=self.otherprofile.pk).update(
+            evaluator=self.targetprofile)
+        Article.objects.filter(creator__pk=self.otherprofile.pk).update(
+            creator=self.targetprofile)
+        Purchaser.objects.filter(
+            matched_to_user=self.otherprofile.user_object).update(
+            matched_to_user=self.targetprofile.user_object)
+        port_eval_info(self.otherprofile.user_object,
+                       self.targetprofile.user_object)
 
         # get any troupe memberships (not owner) - and replace user
         response = get_bookable_people_by_user(self.otherprofile.user_object)
@@ -193,7 +217,7 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
                 self.request,
                 "Sucessfully deleted profile %s." % (
                         self.otherprofile.get_badge_name()))
-            self.otherprofile.delete()
+            self.otherprofile.user_object.delete()
         else:
             messages.error(
                 self.request,

@@ -115,7 +115,6 @@ class TestMergeProfileData(TestCase):
             args=[self.avail_profile.pk, profile.pk]))
         self.assertContains(response, "No inform about", 2)
 
-
     def test_warn_on_self(self):
         # should exclude selected profile, and user's own profile
         login_as(self.privileged_user, self)
@@ -145,7 +144,7 @@ class TestMergeProfileData(TestCase):
         self.assertRedirects(response, reverse(
             "merge_bios",
             urlconf="gbe.urls",
-            args=[self.profile.pk, self.avail_profile.pk]) )
+            args=[self.profile.pk, self.avail_profile.pk]))
 
     def test_submit_error(self):
         login_as(self.privileged_user, self)

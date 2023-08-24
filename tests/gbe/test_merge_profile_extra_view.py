@@ -49,8 +49,8 @@ class TestMergeProfileExtra(TestCase):
         self.profile = ProfileFactory()
         self.avail_profile = ProfileFactory()
         self.url = reverse(self.view_name,
-                          urlconf='gbe.urls',
-                          args=[self.profile.pk, self.avail_profile.pk])
+                           urlconf='gbe.urls',
+                           args=[self.profile.pk, self.avail_profile.pk])
 
     def test_no_privilege(self):
         random_user = ProfileFactory().user_object
@@ -169,7 +169,7 @@ class TestMergeProfileExtra(TestCase):
                                    pk=costume.pk).exists())
 
     def test_move_bio_booked_troupe_act_submit(self):
-        # Extra setup to make this a troupe that is shared by both 
+        # Extra setup to make this a troupe that is shared by both
         # profiles.  Merge removes the extra profile, leaving a troupe of 1
         login_as(self.privileged_user, self)
         avail_bio = BioFactory(contact=self.avail_profile)
