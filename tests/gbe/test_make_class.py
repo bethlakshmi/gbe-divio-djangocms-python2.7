@@ -193,7 +193,8 @@ class TestEditClass(TestMakeClass):
         cls.teacher = cls.performer
 
     def post_class_edit_submit(self):
-        klass = ClassFactory(teacher_bio=self.teacher)
+        klass = ClassFactory(teacher_bio=self.teacher,
+                             b_conference__accepting_bids=True)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -203,7 +204,8 @@ class TestEditClass(TestMakeClass):
         return response, data
 
     def post_class_edit_draft(self):
-        klass = ClassFactory(teacher_bio=self.teacher)
+        klass = ClassFactory(teacher_bio=self.teacher,
+                             b_conference__accepting_bids=True)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -215,7 +217,7 @@ class TestEditClass(TestMakeClass):
         return response, data
 
     def test_edit_class_profile_is_not_contact(self):
-        klass = ClassFactory()
+        klass = ClassFactory(b_conference__accepting_bids=True)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -225,7 +227,7 @@ class TestEditClass(TestMakeClass):
 
     def test_class_edit_post_form_not_valid(self):
         '''class_edit, if form not valid, should return to ActEditForm'''
-        klass = ClassFactory()
+        klass = ClassFactory(b_conference__accepting_bids=True)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -246,7 +248,7 @@ class TestEditClass(TestMakeClass):
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
-        klass = ClassFactory()
+        klass = ClassFactory(b_conference__accepting_bids=True)
         klass.teacher_bio.contact.phone = "555-666-7777"
         klass.teacher_bio.contact.save()
         url = reverse(self.view_name,
@@ -261,7 +263,7 @@ class TestEditClass(TestMakeClass):
         self.check_subway_state(response)
 
     def test_edit_bid_verify_info_popup_text(self):
-        klass = ClassFactory()
+        klass = ClassFactory(b_conference__accepting_bids=True)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -273,7 +275,8 @@ class TestEditClass(TestMakeClass):
 
     def test_edit_bid_verify_constraints(self):
         klass = ClassFactory(schedule_constraints="[u'0']",
-                             avoided_constraints="[u'1', u'2']")
+                             avoided_constraints="[u'1', u'2']",
+                             b_conference__accepting_bids=True)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')

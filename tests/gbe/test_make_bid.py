@@ -125,8 +125,8 @@ class TestMakeBid(TestCase):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
         login_as(self.performer.contact, self)
-        response = self.client.get(url)
-        self.assertEqual(404, response.status_code)
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '/')
 
     def test_get_new_bid(self):
         url = reverse(self.view_name,
