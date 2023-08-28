@@ -1,6 +1,7 @@
 from django.views.generic import FormView
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
 from gbe_utils.mixins import (
     GbeContextMixin,
@@ -32,6 +33,7 @@ from scheduler.idd import (
     get_bookable_people,
     get_bookable_people_by_user,
     get_schedule,
+    port_eval_info,
     reschedule,
     update_bookable_people,
 )
@@ -156,7 +158,7 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
             staff_lead=self.targetprofile)
         for group in self.otherprofile.user_object.groups.all():
             if not self.targetprofile.user_object.groups.filter(id=group.id):
-                self.targetprofile.user_object.groups.add(group)
+                group.user_set.add(self.targetprofile.user_object)
 
         # change all profile scheduling items to new profile
         response = reschedule(self.otherprofile.__class__.__name__,
@@ -171,13 +173,15 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
         ActBidEvaluation.objects.filter(
             evaluator__pk=self.otherprofile.pk).update(
             evaluator=self.targetprofile)
-        FlexibleEvaluation.objects.filter(
-            evaluator__pk=self.otherprofile.pk).update(
-            evaluator=self.targetprofile)
+        for evaluation in FlexibleEvaluation.objects.filter(
+                evaluator__pk=self.otherprofile.pk):
+            if not FlexibleEvaluation.objects.filter(
+                evaluator__pk=self.targetprofile.pk,
+                bid=evaluation.bid,
+                category=evaluation.category).exists():
+                evaluation.evaluator = self.targetprofile
+                evaluation.save()
         BidEvaluation.objects.filter(
-            evaluator__pk=self.otherprofile.pk).update(
-            evaluator=self.targetprofile)
-        ActBidEvaluation.objects.filter(
             evaluator__pk=self.otherprofile.pk).update(
             evaluator=self.targetprofile)
         Article.objects.filter(creator__pk=self.otherprofile.pk).update(
