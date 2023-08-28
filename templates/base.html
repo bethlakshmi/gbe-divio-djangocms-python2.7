@@ -30,10 +30,10 @@
     {% cms_toolbar %}
   {% if not view.is_popup %}
     <nav class="sticky-top navbar navbar-expand-lg navbar-light navbar-default gbe-navbar-default">
-      <a class="navbar-brand px-2" href="#"><i class="fas fa-home"></i>GBE Image Here</a>
+      <a class="navbar-brand px-2" href="#"><img src="{% static 'img/logo - white.png' %}" height="46" width="105">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
+      </button></a>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           {% with dropdown=True %}{% show_menu 0 100 100 100 "menu.html" %}{% endwith %}
