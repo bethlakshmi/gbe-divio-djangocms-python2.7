@@ -13,6 +13,6 @@
     {% if child.children %}
         <ul class="dropdown-menu gbe-dropdown-menu" aria-labelledby="dropdown-{{ child.get_menu_title|slugify }}">
         {% show_menu from_level to_level extra_inactive extra_active "dropdown.tmpl" "" "" child %}
-        </ul>
+        </ul></li>
     {% endif %}
 {% endfor %}
