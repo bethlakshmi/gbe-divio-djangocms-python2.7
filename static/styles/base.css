@@ -171,7 +171,8 @@ button.login-button {
   margin-bottom: -1px;
   border-radius: 4px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 18px;
+  text-transform: uppercase;
+  font-size: 14px;
   padding-left: 16px;
   padding-right: 16px;
 }
@@ -443,11 +444,12 @@ span.opps-errors ul {padding: 0px;}
 #ticket_button {font-size: 12px;}
 #ticket_action {width: 70px;padding: 0px;text-align: center;}
 #ticket_action div a {margin: 2px 0px 2px 0px;}
-.navbar-default {font-family: 'Montserrat', sans-serif;font-size:17px;padding:0px;}
+.navbar-default {font-family: 'Montserrat', sans-serif;font-size:14px;padding:0px;text-transform: uppercase;}
 .gbe-dropdown-menu {font-family: Lucida Grande,Tahoma,Verdana,sans-serif;margin-top: -1px;}
-.gbe_dropdown{padding: 5px 18px 5px 10px;}
+.gbe_dropdown{padding: 15px 18px 17px 10px;}
 @media (min-width:768px){
-.navbar-nav>li>a#gbe_header_menu{padding:15px 7px 15px; }}
+.navbar-nav>li>a#gbe_header_menu{padding:15px 7px 17px; }}
+.active #gbe_header_menu {text-decoration: underline; text-underline-offset: 6px}
 .navbar-collapse {
     padding-right: 5px;
     padding-left: 5px;
