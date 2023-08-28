@@ -381,30 +381,6 @@ class TestMergeProfileExtra(TestCase):
             pk=flex_evaluation.pk,
             evaluator=self.profile).exists())
 
-    def test_move_bid_reviews(self):
-        flex_evaluation = FlexibleEvaluationFactory(
-            evaluator=self.avail_profile,
-        )
-        act_evaluation = ActBidEvaluationFactory(
-            evaluator=self.avail_profile,
-        )
-        bid_evaluation = BidEvaluationFactory(
-            evaluator=self.avail_profile,
-        )
-        login_as(self.privileged_user, self)
-        response = self.client.post(self.url, data={}, follow=True)
-        self.assertRedirects(response,
-                             reverse("manage_users", urlconf="gbe.urls"))
-        self.assertTrue(ActBidEvaluation.objects.filter(
-            pk=act_evaluation.pk,
-            evaluator=self.profile).exists())
-        self.assertTrue(BidEvaluation.objects.filter(
-            pk=bid_evaluation.pk,
-            evaluator=self.profile).exists())
-        self.assertTrue(FlexibleEvaluation.objects.filter(
-            pk=flex_evaluation.pk,
-            evaluator=self.profile).exists())
-
     def test_move_article(self):
         article = ArticleFactory(creator=self.avail_profile)
 
@@ -446,3 +422,6 @@ class TestMergeProfileExtra(TestCase):
             "Error - the merged profile is still booked for %s" % (
                 context.sched_event.title + " - " + \
                 context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT)))
+        self.assertContains(
+            response,
+            "Skipped deletion because of errors above.  Contact the admin")

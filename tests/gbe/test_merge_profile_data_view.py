@@ -146,6 +146,25 @@ class TestMergeProfileData(TestCase):
             urlconf="gbe.urls",
             args=[self.profile.pk, self.avail_profile.pk]))
 
+    def test_submit_no_prefs(self):
+        profile = ProfileFactory()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[profile.pk, self.avail_profile.pk])
+        login_as(self.privileged_user, self)
+        data = self.get_form()
+        response = self.client.post(url, data=data, follow=True)
+        self.assertContains(response, 'Merge Users - Merge Bios')
+        updated_target = Profile.objects.get(pk=profile.pk)
+        self.assertEqual(updated_target.display_name, data['display_name'])
+        self.assertTrue(updated_target.preferences.send_daily_schedule)
+        self.assertEqual(updated_target.preferences.inform_about,
+                         "['Performing']")
+        self.assertRedirects(response, reverse(
+            "merge_bios",
+            urlconf="gbe.urls",
+            args=[profile.pk, self.avail_profile.pk]))
+
     def test_submit_error(self):
         login_as(self.privileged_user, self)
         data = self.get_form()
