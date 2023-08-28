@@ -176,9 +176,9 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
         for evaluation in FlexibleEvaluation.objects.filter(
                 evaluator__pk=self.otherprofile.pk):
             if not FlexibleEvaluation.objects.filter(
-                evaluator__pk=self.targetprofile.pk,
-                bid=evaluation.bid,
-                category=evaluation.category).exists():
+                    evaluator__pk=self.targetprofile.pk,
+                    bid=evaluation.bid,
+                    category=evaluation.category).exists():
                 evaluation.evaluator = self.targetprofile
                 evaluation.save()
         BidEvaluation.objects.filter(

@@ -420,7 +420,7 @@ class TestMergeProfileExtra(TestCase):
         self.assertContains(
             response,
             "Error - the merged profile is still booked for %s" % (
-                context.sched_event.title + " - " + \
+                context.sched_event.title + " - " +
                 context.sched_event.starttime.strftime(GBE_DATETIME_FORMAT)))
         self.assertContains(
             response,

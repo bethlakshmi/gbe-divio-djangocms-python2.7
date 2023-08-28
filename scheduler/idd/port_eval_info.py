@@ -11,8 +11,9 @@ def port_answer(orig_user, new_user, answer_class):
         if not answer_class.objects.filter(user=new_user,
                                            event=answer.event,
                                            question=answer.question).exists():
-            answer.user=new_user
+            answer.user = new_user
             answer.save()
+
 
 def port_eval_info(orig_user, new_user):
     port_answer(orig_user, new_user, EventEvalBoolean)
