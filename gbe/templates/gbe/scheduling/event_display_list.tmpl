@@ -2,9 +2,6 @@
 {% block title %}
   Great Burlesque Exposition: {{title}}
 {% endblock %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
-{% endblock %}
 {% block content %}
 <div class="container"> <div class="row">
 <div class="col-12">  
@@ -65,14 +62,16 @@
    {% for event in events %}
 <div class="card round gbe-panel-list mx-2 my-4">
   <div class="card-header gbe-bg-dark">
-    <h2 class="card-title">
+    <div class="row">
+    <div class="col-10 col-md-11"><h2 class="card-title">
       <a href='{{event.detail}}' class="gbe-panel-link">{% if event.occurrence.parent %}{{ event.occurrence.parent.title | safe}}: {% endif %}{{ event.occurrence.title }}</a>
-      <div class="pull-right">
+    </h2></div>
+    <div class="text-right ml-auto align-self-center col-2 col-md-1 pt-1 px-md-0">
+      <h2 class="card-title">
         <a href='{{event.detail}}' class="detail_link" title="More information">
-          <i class="fa fa-info-circle fa-lg" aria-hidden="true"></i>
-         </a></div>
-    </h2>
-  </div>
+        <i class="fas fa-info-circle fa-lg"></i>
+    </a></h2></div>
+  </div></div>
   <div class="card-body">
     <div class="card card-body rounded gbe-bg-light">
 	{% if event.presenters|length > 0%}

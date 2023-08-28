@@ -63,3 +63,5 @@ from .basic_rehearsal_form import BasicRehearsalForm
 
 # news
 from .article_form import ArticleForm
+
+from .volunteer_evaluation_form import VolunteerEvaluationForm

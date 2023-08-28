@@ -1,30 +1,20 @@
-from django.shortcuts import render
-from gbe.models import (
-    Conference,
-    StaffArea,
+from gbe_utils.mixins import (
+    ConferenceListView,
+    RoleRequiredMixin,
 )
-from gbe.functions import (
-    conference_slugs,
-    validate_perms,
-)
+from gbe.models import StaffArea
 
 
-def review_staff_area_view(request):
-    '''
-      Shows listing of staff area stuff for drill down
-    '''
-    viewer_profile = validate_perms(request, 'any', require=True)
-    if request.GET and request.GET.get('conf_slug'):
-        conference = Conference.by_slug(request.GET['conf_slug'])
-    else:
-        conference = Conference.current_conf()
+class ReviewStaffAreaarView(RoleRequiredMixin, ConferenceListView):
+    model = StaffArea
+    context_object_name = "areas"
+    template_name = 'gbe/report/staff_areas.tmpl'
+    view_permissions = 'any'
 
-    header = ['Area', 'Leaders', 'Check Staffing']
+    def get_queryset(self):
+        return self.model.objects.filter(conference=self.conference)
 
-    return render(
-        request,
-        'gbe/report/staff_areas.tmpl',
-        {'header': header,
-         'areas': StaffArea.objects.filter(conference=conference),
-         'conference_slugs': conference_slugs(),
-         'conference': conference})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['header'] = ['Area', 'Leaders', 'Check Staffing']
+        return context

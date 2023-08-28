@@ -3,9 +3,6 @@
 {% block title %}
   Review Tickets
 {% endblock %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/font-awesome.min.css">
-{% endblock %}
 {% block content %}
 <div class="container review">
 {% include "conference_tabs.tmpl" %} 
@@ -39,7 +36,7 @@ Act Fees
       </h2>
     </div>
     <div id="collapseOne" class="collapse{% if open_panel == "act" %} show{% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body gbe-bg-light">
+      <div class="card-body">
 <h4>Preview</h4>
 <div class="panel gbe-panel-default">
   <br>

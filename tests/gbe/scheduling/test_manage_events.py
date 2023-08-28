@@ -139,7 +139,7 @@ class TestManageEventList(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<i class="fa fa-pencil" aria-hidden="true">')
+            '<i class="fas fa-pencil-alt"></i>')
 
     def test_good_user_get_success_pick_conf(self):
         old_conf_day = ConferenceDayFactory(
@@ -190,10 +190,10 @@ class TestManageEventList(TestCase):
         response = self.client.get(url, data)
         self.assertContains(
             response,
-            '<i class="fa fa-trash-o" aria-hidden="true">')
+            '<i class="far fa-trash-alt"></i>')
         self.assertNotContains(
             response,
-            '<i class="fa fa-pencil" aria-hidden="true">')
+            '<i class="fas fa-pencil-alt"></i>')
         self.assertNotContains(
             response,
             '<i class="fa fa-plus" aria-hidden="true">')

@@ -61,16 +61,16 @@
           {% endif %}
           </td>
       <td><div class="btn-group"><form action="" method="post"></form>
-    <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" title="View Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-eye"></i></a>
+    <a href="{% url 'reporting:act_techinfo_detail' act.act.pk%}" title="View Tech Info" class="btn gbe-btn-table btn-sm"><i class="far fa-eye"></i></a>
   {% if act.act.video_link and act.act.video_choice != "1" %}
     <a href="{{ act.act.video_link }}" title="Watch Act Video" class="btn gbe-btn-table btn-sm"><i class="fas fa-video"></i></a>{% endif %}
-    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}?next={{ request.get_full_path }}" title="Edit Act Tech Info" class="btn gbe-btn-table btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+    {% if change_acts %}<a href="{% url 'gbe:act_tech_wizard' act.act.id%}?next={{ request.get_full_path }}" title="Edit Act Tech Info" class="btn gbe-btn-table btn-sm"><i class="fas fa-pencil-alt"></i></a>
     <form action="{% url 'gbe:act_changestate' act.act.id%}" method="post">
       {% csrf_token %}
       <input type="hidden" id="id_accepted" name="accepted" value="4">
       <input type="hidden" id="id_next" name="next" value="{{ request.get_full_path }}">
     <button title="Remove Act from Show" type="submit" class="btn gbe-btn-table btn-sm">
-        <i class="fa fa-trash" aria-hidden="true"></i></button></form>{% endif %}
+         <i class="far fa-trash-alt"></i></button></form>{% endif %}
     </div>
         {% if can_rebook %}
         <button type="submit" id="dropdownMenuButton{{act.act.pk}}" class="btn gbe-btn-secondary btn-sm mt-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Show</button>

@@ -14,9 +14,6 @@
   <div class="border_box review-pane gbe-bg-light">
     <h2 class="review-title gbe-title">{{view_title}}</h2>
     <h3>{{ conference.conference_name }}</h3>
-    {% if old_bid %}
-    <h3 class="gbe-subtitle"> This bid is for a conference which has already happened </h3>
-    {% endif %}
 <div class="container">
   {% if readonlyform %}
     {% include "readonly_form_table.tmpl" %}

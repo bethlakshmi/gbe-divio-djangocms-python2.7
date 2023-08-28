@@ -115,8 +115,8 @@ no_comp_msg = '''Something went wrong with creating a comp ticket.  This can
 volunteer_panel_instr = '''<div>Red text indicates a user that has become
  inactive.</div><div>Yellow background indicates a volunteer session that
  requires approval.</div><div>Blue background indicates volunteers that have
- not yet been approved.  Use the <i class="fa fa-thumbs-o-up"
- aria-hidden="true"></i> to approve or reject them.</div><div>Green
+ not yet been approved.  Use the <i class="far fa-thumbs-up"></i> to approve
+ or reject them.</div><div>Green
  background indicates has max volunteers.  If an event is full, it will not
  show up in the public volunteer calendar.</div>'''
 act_order_form_invalid = '''There was a problem updating the act order.  \
@@ -551,6 +551,8 @@ to register for a free account.  If you're planning on applying to perform, \
 want to teach, or are going to be a vendor or a volunteer, you need to \
 register.  You do <b>not</b> need to register if all you're doing is \
 buying tickets.'''
+not_accepting_bids = '''We're sorry, but we are not accepting bids at present.
+Please stay tuned!'''
 full_login_msg = '''%s - <a href="%s">Login</a>'''
 default_deactivate_profile_admin_msg = '''This user is involved in one or \
 more activities on this site.  To protect unintended changes, the user was \
@@ -679,6 +681,8 @@ payment_details_error = '''Your choice for fee selections was not valid, \
 please check the form and try again.'''
 set_volunteer_role_summary = "Volunteer Offer %s"
 set_volunteer_role_msg = "Volunteer offer has been set to %s: <br/>"
+create_vol_eval_msg = '''Your volunteer evaluation has been created.'''
+update_vol_eval_msg = '''Your volunteer evaluation has been updated.'''
 set_favorite_msg = '''Your interest has been set and will appear on your \
                    personal schedule.'''
 unset_favorite_msg = '''Your interest has been removed and will no longer \
@@ -687,6 +691,9 @@ set_volunteer_msg = '''Thank you!  This volunteer shift has been added to \
 your schedule.'''
 unset_volunteer_msg = '''Sorry to see you go!  This volunteer shift has been \
 removed from your personal schedule.'''
+review_vol_msg = '''<b>Please keep this information confidential.</b> This is \
+the place to provide feedback on your experience working with last year's \
+volunteers.'''
 set_pending_msg = '''Thank you!  Your offer to volunteer has been sent and is \
 awaiting approval.'''
 unset_pending_msg = '''Sorry to see you go!  Your offer to volunteer has \

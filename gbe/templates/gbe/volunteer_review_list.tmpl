@@ -1,0 +1,20 @@
+{% extends 'gbe/bid_review_list.tmpl' %}
+{% block tbody %}
+    {% for volunteer, row in rows.items %}
+      <tr class="gbe-table-row {{ row.status }}">
+        <td>{{ volunteer.get_badge_name}}</td>
+        <td>{% for event in row.schedule %}
+	        {{ event.title }} {% if event.parent %}({{ event.parent.title}}){% endif %} - {{event.starttime}}<br>{% endfor %}</td>
+        <td>{% for review in row.reviews %}
+          {% if not forloop.first %}<hr/>{% endif %}
+          <b>Reviewer:</b> {{ review.evaluator.display_name }}<br>
+          <b>Recruit next year?</b> {{ review.get_vote_display }}<br>
+          <b>Comment:</b> {{ review.notes }}<br>
+          {% endfor %}
+        </td>
+          <td><a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm">
+	          Review</a>&nbsp;&nbsp;<a href="{% url 'email:mail_to_individual' volunteer.pk %}" class="btn gbe-btn-table btn-sm" data-toggle="tooltip" title="Email">Email</a><br>
+            P: {{volunteer.phone}}</td>
+      </tr>
+    {% endfor %}
+{% endblock %}
