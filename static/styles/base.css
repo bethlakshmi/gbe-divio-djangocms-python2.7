@@ -455,6 +455,13 @@ span.opps-errors ul {padding: 0px;}
     padding-left: 5px;
     border-top: 1px solid transparent;
 }
+.navbar-toggler.collapsed .close-icon {
+    display: none;
+}
+
+.navbar-toggler:not(.collapsed) .fa-bars {
+    display: none;
+}
 
 /* small display, tabs on landing page */
 .landing-tabs:before, .landing-tabs:after{
