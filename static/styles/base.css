@@ -148,11 +148,11 @@ div.login_text{padding: 5px;}
     overflow:hidden;
     font-size: 14px;
 }
-#login-dp .help-block{font-size:12px    }
+#login-dp .help-block{font-size:12px;padding-top: 8px; padding-bottom: 5px}
 #login-dp {margin-top: -1px}
 #login-dp .bottom{
     clear:both;
-    padding: 14px 18px 14px 16px;
+    padding: 0px 18px 20px 16px;
     width: 100%;
 }
 #login-dp .social-buttons{margin:12px 0;}
@@ -165,16 +165,13 @@ div.login_text{padding: 5px;}
     }
 }
 button.login-button {
-  padding-top: 7px;
-  padding-bottom: 7px;
-  margin-right: 3px;
-  margin-bottom: -1px;
-  border-radius: 4px;
   font-family: 'Montserrat', sans-serif;
   text-transform: uppercase;
+  font-weight: bold;
   font-size: 14px;
   padding-left: 16px;
-  padding-right: 16px;
+  padding-right: 18px;
+  background-image: linear-gradient(to bottom, rgba(254,248,230,1), rgba(240,225,181,1), rgba(241,230,198,1));
 }
 #action-button {padding: 3px 8px 3px 8px;}
 div#middle {
