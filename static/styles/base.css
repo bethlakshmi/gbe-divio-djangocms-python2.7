@@ -444,7 +444,7 @@ span.opps-errors ul {padding: 0px;}
 .navbar-default {font-family: 'Montserrat', sans-serif;font-size:11px;padding:0px;font-weight: bold;}
 .gbe-header-item {text-transform: uppercase;}
 .gbe-dropdown-menu {margin-top: -1px;}
-.gbe-dropdown-menu, li.nav-item.show>a {text-decoration: underline; text-underline-offset: 6px}
+li.nav-item.show>a {text-decoration: underline; text-underline-offset: 6px}
 .gbe-dropdown-menu>li>a {font-weight: 550;}
 .header-buttons>a {font-weight: bold; font-size: 11px; margin-left: 5px; margin-right: 5px; text-transform: uppercase;}
 .gbe_dropdown{padding: 10px 18px 10px 10px; font-size: 14px}
