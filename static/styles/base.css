@@ -150,6 +150,7 @@ div.login_text{padding: 5px;}
     font-size: 14px;
 }
 #login-dp .help-block{font-size:12px    }
+#login-dp {margin-top: 0px}
 #login-dp .bottom{
     clear:both;
     padding:14px;
