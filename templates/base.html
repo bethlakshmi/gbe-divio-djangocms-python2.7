@@ -39,7 +39,7 @@
         <ul class="navbar-nav mr-auto">
           {% with dropdown=True %}{% show_menu 0 100 100 100 "menu.html" %}{% endwith %}
         </ul>
-      {% static_placeholder 'buttons' %}
+      <div class="d-none d-lg-block header-buttons">{% static_placeholder 'buttons' %}</div>
 	    {% if not user.is_authenticated %}
 	    {% include "registration/login_popover.tmpl" %}
 	    {% endif %}
