@@ -2,13 +2,13 @@
 {% for child in children %}
   {%if child.children%}
     <li class="dropdown dropdown-submenu">
-      <a class="dropdown-toggle dropdown-item gbe_dropdown{% if child.selected or child.ancestor %} active{% endif %}" href="#" id="gbe_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="px-4 px-xl-3 pb-1 pt-3 py-xl-1 dropdown-toggle dropdown-item gbe_dropdown{% if child.selected or child.ancestor %} active{% endif %}" href="#" id="gbe_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     	{{ child.get_menu_title }}</a>
       <ul class="dropdown-menu gbe-dropdown-menu" aria-labelledby="dropdown-{{ child.get_menu_title|slugify }}">
         {% show_menu from_level to_level extra_inactive extra_active "dropdown.tmpl" "" "" child %}
       </ul></li>
   {%else%}
-    <li><a class="dropdown-item gbe_dropdown{% if child.selected %} active{% endif %}" id="gbe_dropdown" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
+    <li><a class="px-4 px-xl-3 pb-1 pt-3 py-xl-1 dropdown-item gbe_dropdown{% if child.selected %} active{% endif %}" id="gbe_dropdown" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
         {{ child.get_menu_title }}
     </a></li>
   {%endif%}
