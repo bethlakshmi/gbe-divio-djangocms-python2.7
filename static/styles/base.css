@@ -448,19 +448,19 @@ li.nav-item.show>a {text-decoration: underline; text-underline-offset: 6px}
 .gbe-dropdown-menu>li>a {font-weight: 550;}
 .header-buttons>a {font-weight: bold; font-size: 11px; margin-left: 5px; margin-right: 5px; text-transform: uppercase;}
 .gbe_dropdown{padding: 10px 18px 10px 10px; font-size: 14px}
-@media (min-width:768px){
-.active>.gbe-header-item {text-decoration: underline; text-underline-offset: 6px}
-.navbar-collapse {
-    padding-right: 5px;
-    padding-left: 5px;
-    border-top: 1px solid transparent;
-}
 .navbar-toggler.collapsed .close-icon {
     display: none;
 }
 
 .navbar-toggler:not(.collapsed) .fa-bars {
     display: none;
+}
+@media (min-width:768px){
+.active>.gbe-header-item {text-decoration: underline; text-underline-offset: 6px}
+.navbar-collapse {
+    padding-right: 5px;
+    padding-left: 5px;
+    border-top: 1px solid transparent;
 }
 
 /* small display, tabs on landing page */
