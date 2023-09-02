@@ -441,7 +441,7 @@ span.opps-errors ul {padding: 0px;}
 #ticket_button {font-size: 12px;}
 #ticket_action {width: 70px;padding: 0px;text-align: center;}
 #ticket_action div a {margin: 2px 0px 2px 0px;}
-.navbar-default {font-family: 'Montserrat', sans-serif;font-size:11px;padding:0px;font-weight: bold;}
+.navbar-default {font-family: 'Montserrat', sans-serif;font-size:11px;padding:0px;font-weight: bold;letter-spacing: 0.07em;}
 .gbe-header-item {text-transform: uppercase;}
 .gbe-dropdown-menu {margin-top: -1px;}
 li.nav-item.show>a {text-decoration: underline; text-underline-offset: 6px}
