@@ -10,6 +10,7 @@ from tests.functions.gbe_functions import (
 )
 from gbetext import warn_user_merge_delete
 from gbe.models import Profile
+from gbe.forms import BidBioMergeForm
 
 
 class TestMergeProfileData(TestCase):
@@ -61,6 +62,15 @@ class TestMergeProfileData(TestCase):
         login_as(random_user, self)
         response = self.client.get(self.url)
         self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
+
+    def test_bad_form_setup(self):
+        msg = "no message"
+        try:
+            form = BidBioMergeForm(initial={"stuff": "random"})
+        except Exception as e:
+            msg = e.args[0]
+        self.assertEqual(msg, "Intial with two profiles are required")
+ 
 
     def test_get_form(self):
         # should exclude selected profile, and user's own profile

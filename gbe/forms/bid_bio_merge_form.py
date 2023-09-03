@@ -36,4 +36,4 @@ class BidBioMergeForm(Form):
                     required=False,
                 )
         else:
-            raise Exception(kwargs)
+            raise Exception("Intial with two profiles are required")
