@@ -155,13 +155,13 @@ class ManageConferenceView(View):
                 reverse("calendar_by_day",
                         urlconf='gbe.scheduling.urls',
                         args=['General', each_day.day.strftime(URL_DATE)]))
-            class_calendar_links = "%s<li>%s - %s?day=%s" % (
+            class_calendar_links = "%s<li>%s - %s" % (
                 class_calendar_links,
                 each_day.day.strftime("%A"),
                 reverse("calendar_by_day",
                         urlconf='gbe.scheduling.urls',
                         args=['Conference', each_day.day.strftime(URL_DATE)]))
-            volunteer_calendar_links = "%s<li>%s - %s?day=%s" % (
+            volunteer_calendar_links = "%s<li>%s - %s" % (
                 volunteer_calendar_links,
                 each_day.day.strftime("%A"),
                 reverse("calendar_by_day",
