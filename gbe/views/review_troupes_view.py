@@ -72,8 +72,9 @@ class ReviewTroupesView(View):
             rows.append(bid_row)
 
         return render(request, 'gbe/profile_review.tmpl', {
-            'title': "Manage Troupes",
-            'intro': intro[0].description,
+            'page_title': "Manage Troupes",
+            'view_title': "Manage Troupes",
+            'intro_text': intro[0].description,
             'columns': self.header,
             'rows': rows,
             'order': 0,

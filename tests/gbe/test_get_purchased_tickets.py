@@ -3,7 +3,6 @@ from django.test.client import RequestFactory
 from django.test import Client
 from tests.factories.gbe_factories import ProfileFactory
 from tests.factories.ticketing_factories import TransactionFactory
-import mock
 
 
 class TestGetPurchasedTickets(TestCase):

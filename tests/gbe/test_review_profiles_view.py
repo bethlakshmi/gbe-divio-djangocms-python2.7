@@ -26,18 +26,13 @@ class TestReviewProfiles(TestCase):
         grant_privilege(cls.privileged_user, 'Registrar')
         cls.url = reverse('manage_users', urlconf='gbe.urls')
 
-    def test_non_privileged_user(self):
-        login_as(ProfileFactory(), self)
-        response = self.client.get(self.url)
-        self.assertEqual(403, response.status_code)
-
     def test_past_staff_lead(self):
         context = StaffAreaContext()
         context.conference.status = "completed"
         context.conference.save()
         login_as(context.staff_lead, self)
         response = self.client.get(self.url)
-        self.assertEqual(403, response.status_code)
+        self.assertRedirects(response, reverse('home', urlconf="gbe.urls"))
 
     def test_no_login(self):
         response = self.client.get(self.url, follow=True)

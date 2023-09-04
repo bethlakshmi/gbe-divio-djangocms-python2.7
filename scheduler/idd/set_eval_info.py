@@ -2,8 +2,6 @@ from scheduler.models import (
     EventEvalComment,
     EventEvalGrade,
     EventEvalBoolean,
-    EventEvalQuestion,
-    People,
 )
 from scheduler.data_transfer import (
     EvalInfoResponse,

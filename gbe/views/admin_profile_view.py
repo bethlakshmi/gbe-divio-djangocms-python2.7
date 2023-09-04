@@ -14,11 +14,12 @@ class AdminProfileView(EditProfileView):
     title = "Update User Profile"
     button = "Update User Account"
     header = "Update User's Profile"
+    view_permissions = ('Registrar', 'Act Coordinator', )
 
     def groundwork(self, request, args, kwargs):
         admin_profile = validate_perms(
             request,
-            ('Registrar', 'Act Coordinator', ))
+            self.view_permissions)
         profile_id = kwargs.get("profile_id")
 
         self.profile = get_object_or_404(Profile, pk=profile_id)

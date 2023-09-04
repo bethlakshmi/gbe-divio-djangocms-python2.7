@@ -29,6 +29,13 @@ class ProfilePreferences(Model):
     send_role_notifications = BooleanField(default=True)
     send_schedule_change_notifications = BooleanField(default=True)
 
+    @property
+    def inform_about_list(self):
+        if self.inform_about:
+            return eval(self.inform_about)
+        else:
+            return None
+
     class Meta:
         verbose_name_plural = 'profile preferences'
         app_label = "gbe"

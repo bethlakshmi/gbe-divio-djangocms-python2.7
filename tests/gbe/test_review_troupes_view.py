@@ -53,8 +53,7 @@ class TestReviewTroupes(TestCase):
         self.assertContains(response, self.member)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
-             'gbe-btn-table btn-sm"><i class="far fa-eye"></i></a>') % (
+            '<a class="dropdown-item" href="%s">%s</a>' % (
              reverse('admin_landing_page',
                      urlconf='gbe.urls',
                      args=[self.troupe.contact.pk]),
@@ -62,8 +61,7 @@ class TestReviewTroupes(TestCase):
             html=True)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
-             'gbe-btn-table btn-sm"><i class="far fa-envelope"></i></a>') % (
+            '<a class="dropdown-item" href="%s">%s</a>' % (
              reverse('mail_to_individual',
                      urlconf='gbe.email.urls',
                      args=[self.troupe.contact.pk]),
@@ -71,8 +69,7 @@ class TestReviewTroupes(TestCase):
             html=True)
         self.assertContains(
             response,
-            ('<a href="%s" data-toggle="tooltip" title="%s" class="btn ' +
-             'gbe-btn-table btn-sm"><i class="fas fa-users"></i></a>') % (
+            '<a class="dropdown-item" href="%s">%s</a>' % (
              reverse('bio_view',
                      urlconf='gbe.urls',
                      args=[self.troupe.pk]),

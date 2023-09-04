@@ -21,7 +21,6 @@ from scheduler.data_transfer import (
     Warning,
     Error,
 )
-from settings import GBE_DATETIME_FORMAT
 
 
 class Event(Schedulable):
@@ -99,7 +98,6 @@ class Event(Schedulable):
         )
 
         warnings = []
-        time_format = GBE_DATETIME_FORMAT
 
         worker = None
         if not (person.public_id and person.public_class):

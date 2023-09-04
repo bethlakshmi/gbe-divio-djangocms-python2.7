@@ -91,6 +91,7 @@ class ParticipantForm(ModelForm):
         if commit and self.is_valid():
             partform.save()
             partform.user_object.save()
+            return partform
 
     def __init__(self, *args, **kwargs):
         super(ParticipantForm, self).__init__(*args, **kwargs)
