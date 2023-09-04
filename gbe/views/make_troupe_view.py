@@ -75,6 +75,7 @@ class TroupeUpdate(UpdatePopupMixin,
     mode = "update"
     intro_text = troupe_header_text
     valid_message = default_edit_troupe_msg
+    return_url = reverse_lazy('home', urlconf="gbe.urls")
 
     def get_success_url(self):
         return reverse(

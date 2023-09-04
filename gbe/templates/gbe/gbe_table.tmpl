@@ -95,7 +95,7 @@
 {% addtoblock "js" %}
   <script charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
-  <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+  {% if not sorting_off %}<script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>{% endif %}
   <script>
   $(document).ready(function() {
     $.fn.dataTable.moment( 'MMM D, YYYY, H:mm A' );

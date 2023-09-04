@@ -24,8 +24,6 @@ class ProfileAdminForm(ParticipantForm):
                   'display_name',
                   'email',
                   'purchase_email',
-                  'address1',
-                  'address2',
                   'city',
                   'state',
                   'zip_code',

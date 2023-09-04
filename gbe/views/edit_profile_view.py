@@ -28,6 +28,7 @@ class EditProfileView(LoginRequiredMixin, View):
     title = "Update Your Profile"
     button = "Update My Account"
     header = "Update Your Profile"
+    template_name = 'gbe/update_profile.tmpl'
 
     def dispatch(self, *args, **kwargs):
         return super(EditProfileView, self).dispatch(*args, **kwargs)
@@ -92,7 +93,7 @@ class EditProfileView(LoginRequiredMixin, View):
                                                      inform_initial})
         email_form = EmailPreferencesForm(prefix='email_pref',
                                           instance=self.profile.preferences)
-        return render(request, 'gbe/update_profile.tmpl',
+        return render(request, self.template_name,
                       {'left_forms': [form],
                        'right_forms': [prefs_form],
                        'email_form': email_form,
@@ -133,7 +134,7 @@ class EditProfileView(LoginRequiredMixin, View):
         else:
             return render(
                 request,
-                'gbe/update_profile.tmpl',
+                self.template_name,
                 {'left_forms': [form],
                  'right_forms': [prefs_form],
                  'email_form': email_form,

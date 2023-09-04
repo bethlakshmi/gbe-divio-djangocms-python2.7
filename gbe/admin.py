@@ -56,11 +56,11 @@ class ActAdmin(BidAdmin):
                     'accepted',
                     'created_at',
                     'updated_at')
-    search_fields = ['b_title', 'performer__name']
+    search_fields = ['b_title', 'bio__name']
 
 
 class PerformerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'contact', 'label')
+    list_display = ('pk', 'name', 'contact', 'label')
     search_fields = ['name', 'contact__display_name']
     list_filter = ['multiple_performers']
 

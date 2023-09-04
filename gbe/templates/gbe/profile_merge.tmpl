@@ -1,0 +1,202 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% block before_table %}
+  <h2 class="gbe-title">{{view_title}}</h2>
+  <p>{{intro_text}}</p>
+  <font class="gbe-form-error">
+  {% if form.errors %}
+    <p> There is an error on the form.</p>
+  {% endif %}
+  {{ form.non_field_errors }}</font>
+<form action="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+{% endblock %}
+{% block tbody %}
+  <tr class="gbe-table-row">
+    <td>User Info</td>
+    <td><b>Username:</b> {{target.user_object.username}}<br>
+    <b>Last login:</b> {{target.user_object.last_login}}<br>
+    (target user account for merge)</td>
+    <td><b>Username:</b> {{otherprofile.user_object.username}}<br>
+    <b>Last login:</b> {{otherprofile.user_object.last_login}}<br>
+    (will be deleted after merge)</td>
+    <td><a href="{% url 'gbe:merge_profiles' otherprofile.pk target.pk %}" class="m-2 btn gbe-btn-secondary">Switch Profiles</a><br>
+    (replaces data with defaults from "to be merged" profile)
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.first_name.label_tag}}</td>
+    <td>{{target.user_object.first_name}}</td>
+    <td>{{otherprofile.user_object.first_name}}</td>
+    <td>{{form.first_name}}
+    {% if form.first_name.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.first_name.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.last_name.label_tag}}</td>
+    <td>{{target.user_object.last_name}}</td>
+    <td>{{otherprofile.user_object.last_name}}</td>
+    <td>{{form.last_name}}
+    {% if form.last_name.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.last_name.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td class="gbe-form-required">{{form.display_name.label_tag}}<font class="gbe-form-required">*</font></td>
+    <td>{{target.display_name}}</td>
+    <td>{{otherprofile.display_namee}}</td>
+    <td>{{form.display_name}}
+    {% if form.display_name.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.display_name.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td class="gbe-form-required">{{form.email.label_tag}}<font class="gbe-form-required">*</font></td>
+    <td>{{target.user_object.email}}</td>
+    <td>{{otherprofile.user_object.email}}</td>
+    <td>{{form.email}}
+    {% if form.email.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.email.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td class="gbe-form-required">{{form.purchase_email.label_tag}}<font class="gbe-form-required">*</font></td>
+    <td>{{target.purchase_email}}</td>
+    <td>{{otherprofile.purchase_email}}</td>
+    <td>{{form.purchase_email}}
+    {% if form.purchase_email.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.purchase_email.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.city.label_tag}}</td>
+    <td>{{target.city}}</td>
+    <td>{{otherprofile.city}}</td>
+    <td>{{form.city}}
+    {% if form.city.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.city.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.state.label_tag}}</td>
+    <td>{{target.state}}</td>
+    <td>{{otherprofile.state}}</td>
+    <td>{{form.state}}
+    {% if form.state.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.state.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.zip_code.label_tag}}</td>
+    <td>{{target.zip_code}}</td>
+    <td>{{otherprofile.zip_code}}</td>
+    <td>{{form.zip_code}}
+    {% if form.zip_code.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.zip_code.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.country.label_tag}}</td>
+    <td>{{target.country}}</td>
+    <td>{{otherprofile.country}}</td>
+    <td>{{form.country}}
+    {% if form.country.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.country.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td class="gbe-form-required">{{form.phone.label_tag}}<font class="gbe-form-required">*</font></td>
+    <td>{{target.phone}}</td>
+    <td>{{otherprofile.phone}}</td>
+    <td>{{form.phone}}
+    {% if form.phone.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.phone.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.best_time.label_tag}}</td>
+    <td>{{target.best_time}}</td>
+    <td>{{otherprofile.best_time}}</td>
+    <td>{{form.best_time}}
+    {% if form.best_time.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.best_time.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{form.how_heard.label_tag}}</td>
+    <td class="gbe-flat-list"><ul class="p-1">{% if target.how_heard_list != "None" %}{% for heard in target.how_heard_list %}<li>{{heard}}</li>{% endfor %}</ul>{% else %}{{target.how_heard_list}}{% endif %}</td>
+    <td class="gbe-flat-list"><ul class="p-1">{% if otherprofile.how_heard_list != "None" %}{% for heard in otherprofile.how_heard_list %}<li>{{heard}}</li>{% endfor %}</ul>{% else %}{{otherprofile.how_heard_list}}{% endif %}</td>
+    <td class="gbe-flat-list">{{form.how_heard}}
+    {% if form.how_heard.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ form.how_heard.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>Email Preferences</td>
+    <td class="gbe-flat-list"><ul class="p-1">
+    Send me my schedule: <b>{{target.preferences.send_daily_schedule}}</b><br>
+    Email me based on my past and current proposals: <b>{{target.preferences.send_bid_notifications}}</b><br>
+    Email me based on my past and current activities: <b>{{target.preferences.send_role_notifications}}</b><br>
+    Email me when my schedule at GBE changes: <b>{{target.preferences.send_schedule_change_notifications}}</b><br>
+    </ul></td>
+    <td class="gbe-flat-list"><ul class="p-1">
+    Send me my schedule: <b>{{otherprofile.preferences.send_daily_schedule}}</b><br>
+    Email me based on my past and current proposals: <b>{{otherprofile.preferences.send_bid_notifications}}</b><br>
+    Email me based on my past and current activities: <b>{{otherprofile.preferences.send_role_notifications}}</b><br>
+    Email me when my schedule at GBE changes: <b>{{otherprofile.preferences.send_schedule_change_notifications}}</b><br>
+    </ul></td>
+    <td class="px-2">{% for field in email_form %}
+    {{field}}&nbsp;{{ field.label_tag }}<br>
+    {% endfor %}</td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{prefs_form.inform_about.label_tag}}</td>
+    <td class="gbe-flat-list"><ul class="p-1">{% if target.preferences.inform_about_list %}{% for inform in target.preferences.inform_about_list %}<li>{{inform}}</li>{% endfor %}</ul>{% else %}No inform about{% endif %}</td>
+    <td class="gbe-flat-list">{% if otherprofile.preferences.inform_about_list %}<ul class="p-1">{% for inform in otherprofile.preferences.inform_about_list %}<li>{{inform}}</li>{% endfor %}</ul>{% else %}No inform about{% endif %}</td>
+    <td class="gbe-flat-list">{{prefs_form.inform_about}}
+    {% if prefs_form.inform_about.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ prefs_form.inform_about.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{prefs_form.in_hotel.label_tag}}</td>
+    <td>{{target.preferences.in_hotel}}</td>
+    <td>{{otherprofile.preferences.in_hotel}}</td>
+    <td>{{prefs_form.in_hotel}}
+    {% if prefs_form.in_hotel.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ prefs_form.in_hotel.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+  <tr class="gbe-table-row">
+    <td>{{prefs_form.show_hotel_infobox.label_tag}}</td>
+    <td>{{target.preferences.show_hotel_infobox}}</td>
+    <td>{{otherprofile.preferences.show_hotel_infobox}}</td>
+    <td>{{prefs_form.show_hotel_infobox}}&nbsp;{{prefs_form.show_hotel_infobox.label_tag}}
+    {% if prefs_form.show_hotel_infobox.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ prefs_form.show_hotel_infobox.errors }}</font>
+    {% endif %}
+    </td>
+  </tr>
+{% endblock %}
+
+{% block after_table %}
+<div class="float-right pt-2">
+<input type="submit" name="cancel" value="Cancel" class="btn gbe-btn-light" formnovalidate>
+<input type="submit" name="merge" class="gbe-btn-primary btn" value="Next >">
+</div>
+</form>
+{% endblock %}
