@@ -45,7 +45,7 @@ from scheduler.models import (
 from ticketing.models import Purchaser
 from tests.functions.scheduler_functions import get_or_create_bio
 from settings import GBE_DATETIME_FORMAT
-from mock import patch, Mock
+from mock import patch
 from scheduler.data_transfer import (
     ScheduleResponse,
     ScheduleItem,
