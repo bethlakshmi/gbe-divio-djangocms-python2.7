@@ -47,6 +47,7 @@ class PersonaUpdate(UpdatePopupMixin,
     view_title = 'Tell Us About Your Bio'
     mode = "update"
     valid_message = default_edit_persona_msg
+    return_url = reverse_lazy('home', urlconf="gbe.urls")
 
     def get_success_url(self):
         return reverse(

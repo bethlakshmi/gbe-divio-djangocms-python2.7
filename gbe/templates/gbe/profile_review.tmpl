@@ -1,13 +1,7 @@
 {% extends 'gbe/gbe_table.tmpl' %}
-{% block title %}
-{% if title %}{{title}}{% else %}Manage Users{% endif %}{% endblock %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles/fonts/simple-line-icons.css">
-{% endblock %}
 {% block before_table %}
-  <h2 class="gbe-title">{% if title %}{{title}}{% else %}Manage Users{% endif %}</h2>
-  <p>{{intro}}</p>
+  <h2 class="gbe-title">{{view_title}}</h2>
+  <p>{{intro_text}}</p>
 {% endblock %}
 {% block tbody %}
   {% for row in rows %}
@@ -22,25 +16,18 @@
   	</td>
   {% endif %}
     <td>
-  	  <div class="btn-group" role="group" aria-label="...">
-      {%for action in row.actions %}
-	      <a href="{{ action.url }}" data-toggle="tooltip" title="{{ action.text }}" class="btn gbe-btn-table btn-sm">
-	      {% if action.text == 'Update' %}
-	        <i class="fas fa-edit"></i>
-	      {% elif action.text == 'Welcome Letter' %}
-	        <i class="fas fa-list"></i>
-	      {% elif action.text == 'Delete' %}
-	        <i class="fas fa-trash"></i>
-        {% elif action.text == 'View Landing Page' or action.text == 'View Contact Landing Page' %}
-          <i class="far fa-eye"></i>
-        {% elif action.text == 'View Troupe' %}
-          <i class="fas fa-users"></i>
-	      {% elif action.text == 'Email' or action.text == 'Email Contact' %}
-	        <i class="far fa-envelope"></i>
-	      {% endif %}
-        </a>
+     {% if row.actions|length > 1 %}
+     <div class="dropdown show pb-2">
+      <a class="btn btn-sm gbe-btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+      {% for action in row.actions %}
+        <a class="dropdown-item" href="{{ action.url }}">{{ action.text }}</a>
       {%endfor%}
-      </div></td>
+      </div></div>
+      {% elif row.actions|length == 1 %}
+      <a class="btn btn-sm gbe-btn-secondary" href="{{ row.actions.0.url }}" role="button">{{ row.actions.0.text }}</a>
+      {% endif %}
+    </td>
   </tr>
   {% endfor %}
 {% endblock %}

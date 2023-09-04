@@ -43,6 +43,10 @@ class Biddable(Model):
         return self.b_title
 
     @property
+    def class_name(self):
+        return self.__class__.__name__
+
+    @property
     def ready_for_review(self):
         return (self.submitted and
                 self.accepted == 0)

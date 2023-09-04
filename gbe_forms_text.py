@@ -8,7 +8,7 @@ participant_labels = {
     'display_name': ('Badge Name'),
     'best_time': ('Best time to call'),
     'how_heard': "How did you hear about The Expo?",
-    'purchase_email': ('BPT Purchase Email'),
+    'purchase_email': ('Ticket Purchase Email'),
 }
 
 profile_preferences_help_texts = {
