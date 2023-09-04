@@ -145,6 +145,8 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
                 Vendor.objects.filter(business=biz).update(
                     business=target_biz)
                 if biz.owners.count() == 1:
+                    # if not porting the business, and this is the only owner
+                    # delete it.  Keep if other owner exists.
                     messages.success(
                         self.request,
                         "Sucessfully deleted business %s for profile %s." % (

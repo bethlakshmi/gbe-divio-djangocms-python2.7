@@ -56,7 +56,7 @@ class ActAdmin(BidAdmin):
                     'accepted',
                     'created_at',
                     'updated_at')
-    search_fields = ['b_title', 'performer__name']
+    search_fields = ['b_title', 'bio__name']
 
 
 class PerformerAdmin(admin.ModelAdmin):

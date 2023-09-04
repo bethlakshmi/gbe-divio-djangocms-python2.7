@@ -50,6 +50,7 @@ from scheduler.data_transfer import (
     ScheduleResponse,
     ScheduleItem,
 )
+from gbe.forms import BidBioMergeForm
 
 
 class TestMergeProfileExtra(TestCase):
@@ -115,6 +116,14 @@ class TestMergeProfileExtra(TestCase):
             '<option value="%d">%s</option>' % (target_bio.pk,
                                                 target_bio.name),
             html=True)
+
+    def test_bad_form_setup(self):
+        msg = "no message"
+        try:
+            form = BidBioMergeForm(initial={"stuff": "random"})
+        except Exception as e:
+            msg = e.args[0]
+        self.assertEqual(msg, "Intial with two profiles are required")
 
     def test_get_form_w_business(self):
         # should exclude selected profile, and user's own profile
@@ -184,6 +193,19 @@ class TestMergeProfileExtra(TestCase):
             Costume.objects.filter(profile__pk=self.profile.pk,
                                    bio__pk=target_bio.pk,
                                    pk=costume.pk).exists())
+
+    def test_move_bids_invalid_bio(self):
+        login_as(self.privileged_user, self)
+        target_bio = BioFactory(contact=self.profile)
+        avail_bio = BioFactory(contact=self.avail_profile)
+        invalid_bio = BioFactory()
+        act = ActFactory(bio=avail_bio)
+        response = self.client.post(self.url, data={
+            "bio_%d" % avail_bio.pk: invalid_bio.pk}, follow=True)
+        self.assertContains(
+            response,
+            ("Select a valid choice. %d is not one of the available " +
+             "choices.") % invalid_bio.pk)
 
     def test_move_bio_booked_troupe_act_submit(self):
         # Extra setup to make this a troupe that is shared by both
