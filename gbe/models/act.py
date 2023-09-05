@@ -127,7 +127,7 @@ class Act (Biddable):
         # the act is saved.
         super(Act, self).validate_unique(*args, **kwargs)
         if self.bio is None or not self.bio.contact:
-            raise ValidationError({'performer': "Performer is not valid"})
+            raise ValidationError({'bio': "Performer is not valid"})
         if Act.objects.filter(
                 b_conference=self.b_conference,
                 b_title=self.b_title,

@@ -54,6 +54,7 @@ class TestMakeAct(TestCase):
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',
+                     'theact-num_performers': 1,
                      'theact-bio': performer.pk,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk
@@ -61,7 +62,7 @@ class TestMakeAct(TestCase):
         if submit:
             form_dict['submit'] = 1
         if not valid:
-            del(form_dict['theact-b_description'])
+            del(form_dict['theact-bio'])
         return form_dict
 
     def check_subway_state(self, response, active_state="Apply"):
@@ -132,6 +133,7 @@ class TestCreateAct(TestMakeAct):
                                     data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
+        self.assertContains(response, "Performer is not valid")
         self.check_subway_state(response)
 
     def test_act_bid_post_submit_no_payment(self):
@@ -336,16 +338,16 @@ class TestEditAct(TestMakeAct):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
-    def test_act_edit_post_form_not_valid(self):
+    def test_act_edit_post_form_trigger_group_name_check(self):
         '''act_edit, if form not valid, should return to ActEditForm'''
         act = ActFactory()
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
         login_as(act.performer.contact, self)
-        response = self.client.post(
-            url,
-            self.get_act_form(act.performer, valid=False))
+        data = self.get_act_form(act.performer)
+        data['theact-num_performers'] = 3
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
         self.check_subway_state(response)

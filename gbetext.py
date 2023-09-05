@@ -540,6 +540,7 @@ submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''
 act_not_unique = '''The act has the same title as another act bid for this
  conference by this user.  Please name this act with a different title,
  or change the title of the existing act.'''
+act_group_needs_names = 'Performer names are required for groups of 2 or more'
 no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."
