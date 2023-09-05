@@ -5,6 +5,7 @@ from django.db.models import(
     CharField,
     ForeignKey,
     OneToOneField,
+    PositiveIntegerField,
     TextField,
     URLField,
 )
@@ -24,6 +25,7 @@ from gbetext import (
     video_options,
 )
 from scheduler.idd import get_schedule
+from django.core.validators import MinValueValidator
 
 
 class Act (Biddable):
@@ -44,6 +46,10 @@ class Act (Biddable):
     shows_preferences = TextField(blank=True)
     other_performance = TextField(blank=True)
     why_you = TextField(blank=True)
+    num_performers = PositiveIntegerField(blank=True,
+                                          null=True,
+                                          validators=[MinValueValidator(1)])
+    performer_names = TextField(blank=True)
 
     def clone(self):
         act = Act(
@@ -57,6 +63,8 @@ class Act (Biddable):
             b_description=self.b_description,
             submitted=False,
             accepted=False,
+            num_performers=self.num_performers,
+            performer_names=self.performer_names,
             b_conference=Conference.objects.filter(
                 status="upcoming").first()
         )
