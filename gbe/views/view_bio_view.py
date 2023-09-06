@@ -10,10 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.forms import ModelMultipleChoiceField
 from gbe_logging import log_func
-from gbe.forms import (
-    PersonaForm,
-    TroupeForm,
-)
+from gbe.forms import PersonaForm
 from gbe.functions import (
     validate_perms,
     validate_profile,
@@ -39,7 +36,7 @@ def ViewBioView(request, id=None):
         return HttpResponseRedirect(reverse('profile_update',
                                             urlconf='gbe.urls') +
                                     '?next=' +
-                                    reverse('troupe-add',
+                                    reverse('persona-add',
                                             urlconf='gbe.urls'))
 
     bio = get_object_or_404(Bio, pk=id)
@@ -54,13 +51,7 @@ def ViewBioView(request, id=None):
                                      'Vendor Coordinator',
                                      'Ticketing - Admin'), require=False)):
         raise Http404
-    if bio.multiple_performers:
-        user_ids = [user.pk for user in members]
-        performer_form = TroupeForm(instance=bio, prefix='The Troupe')
-        performer_form.fields['membership'] = ModelMultipleChoiceField(
-            queryset=Profile.objects.filter(user_object__pk__in=user_ids))
-    else:
-        performer_form = PersonaForm(instance=bio, prefix='The Performer')
+    performer_form = PersonaForm(instance=bio, prefix='The Performer')
     owner = get_participant_form(bio.contact, prefix='The Contact')
     return render(request,
                   'gbe/bid_view.tmpl',

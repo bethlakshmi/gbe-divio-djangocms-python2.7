@@ -19,10 +19,7 @@ class PerformerUpdate(UpdatePopupMixin, PermissionRequiredMixin, RedirectView):
                                         contact__user_object=self.request.user)
         except:
             raise Http404
-        if performer.multiple_performers:
-            redirect = reverse('troupe-update',
-                               urlconf="gbe.urls",
-                               args=[kwargs['pk']])
+
         if self.is_popup():
             redirect = redirect + "?_popup=1"
         return redirect

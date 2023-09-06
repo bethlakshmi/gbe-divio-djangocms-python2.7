@@ -27,9 +27,7 @@ class BusinessCreate(CreatePopupMixin,
     success_url = reverse_lazy('home', urlconf="gbe.urls")
     page_title = 'Business'
     view_title = 'Tell Us About Your Business'
-    mode = "performer"
     valid_message = default_create_business_msg
-    no_tabs = True
     return_url = reverse_lazy('home', urlconf="gbe.urls")
 
     def form_valid(self, form):
@@ -48,9 +46,7 @@ class BusinessUpdate(UpdatePopupMixin,
     success_url = reverse_lazy('home', urlconf="gbe.urls")
     page_title = 'Business'
     view_title = 'Tell Us About Your Business'
-    mode = "update"
     valid_message = default_edit_business_msg
-    no_tabs = True
     return_url = reverse_lazy('home', urlconf="gbe.urls")
 
     def get_queryset(self):
