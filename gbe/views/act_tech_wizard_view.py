@@ -2,6 +2,7 @@ from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.utils.formats import date_format
 from django.core.management import call_command
@@ -22,6 +23,7 @@ from gbe.forms import (
 )
 from gbe.models import (
     Act,
+    Profile,
     UserMessage,
 )
 from gbetext import (
@@ -39,6 +41,7 @@ from scheduler.idd import (
     get_schedule,
     remove_booking,
     set_person,
+    update_bookable_people,
 )
 from gbe.scheduling.views.functions import show_general_status
 from scheduler.data_transfer import (
@@ -58,7 +61,7 @@ class ActTechWizardView(View):
                    'Staff Lead')
     default_event_type = None
     page_title = 'Edit Act Technical Information'
-    first_title = 'Set Rehearsal Time'
+    first_title = 'Set Rehearsal Time & Performers'
     second_title = 'Provide Technical Information'
     third_title = 'Advanced Technical Information (Optional)'
 
@@ -87,7 +90,8 @@ class ActTechWizardView(View):
                     initial = {'rehearsal': choices[0][0]}
                 elif len(choices) > 1:
                     initial = {'rehearsal': choices[1][0]}
-
+            initial['membership'] = Profile.objects.filter(
+                user_object__in=self.performers)
             if request:
                 rehearsal_form = BasicRehearsalForm(
                     request.POST,
@@ -117,6 +121,16 @@ class ActTechWizardView(View):
             return error, bookings, forms, request
 
         for rehearsal_form in forms:
+            # update memebership
+            self.performers = User.objects.filter(
+                profile__in=rehearsal_form.cleaned_data['membership'])
+            idd_resp = update_bookable_people(self.act.performer,
+                                              self.performers)
+            show_general_status(self.request,
+                                idd_resp,
+                                self.__class__.__name__)
+
+            # update rehearsal booking
             if int(rehearsal_form.cleaned_data['rehearsal']) >= 0:
                 person = Person(
                     public_id=self.act.performer.pk,
@@ -188,6 +202,7 @@ class ActTechWizardView(View):
                    'shows': self.shows,
                    'rehearsals': self.rehearsals,
                    'rehearsal_forms': rehearsal_forms,
+                   'media_forms': rehearsal_forms,
                    'page_title': self.page_title,
                    'first_title': self.first_title,
                    'rehearsal_instructions': rehearsal_instruct[0].description}
@@ -231,7 +246,7 @@ class ActTechWizardView(View):
             validate_perms(request, self.permissions)
         response = get_schedule(labels=[self.act.b_conference.conference_slug],
                                 commitment=self.act)
-
+        self.performers = []
         for item in response.schedule_items:
             # group acts will have multiple items for same show
             if item.event not in self.shows and (
@@ -240,6 +255,8 @@ class ActTechWizardView(View):
             elif item.event.event_style == 'Rehearsal Slot':
                 show_key = item.event.parent.pk
                 self.rehearsals[show_key] = item
+            if item.user not in self.performers:
+                self.performers += [item.user]
         if len(self.shows) == 0:
             raise Http404
 
