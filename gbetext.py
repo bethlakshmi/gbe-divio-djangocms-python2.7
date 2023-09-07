@@ -46,6 +46,10 @@ not_yours = "You don't own that bid."
 SCHEDULE_REHEARSAL = ('You need to schedule a rehearsal slot and/or update '
                       'act tech info for "%s". <a href = "%s">'
                       'Fix this now!</a>')
+membership_help = '''Include the accounts of all performers in this act.  If
+  you cannot find a performer's name, please ask them to create an account
+  with the Expo.  We need this information to give performer access to the
+  show and for communication.'''
 EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
                  "it. <a href=' %s '>Update it now!</a>")
 

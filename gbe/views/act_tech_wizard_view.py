@@ -95,15 +95,18 @@ class ActTechWizardView(View):
             if request:
                 rehearsal_form = BasicRehearsalForm(
                     request.POST,
-                    prefix=str(show.pk))
+                    prefix=str(show.pk),
+                    act=self.act)
             else:
                 rehearsal_form = BasicRehearsalForm(
                     prefix=str(show.pk),
-                    initial=initial)
+                    initial=initial,
+                    act=self.act)
 
             rehearsal_form.fields['rehearsal'].choices = choices
             rehearsal_form.fields['rehearsal'].label = \
                 "Rehearsal for %s" % str(show.title)
+
             rehearsal_forms += [rehearsal_form]
 
         return rehearsal_forms
@@ -209,6 +212,7 @@ class ActTechWizardView(View):
 
         if basic_form:
             context['first_title'] = "Change Rehearsal"
+            context['show_first'] = True
             tmp = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="BASIC_INSTRUCTIONS",
