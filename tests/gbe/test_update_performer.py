@@ -30,7 +30,7 @@ class TestUpdatePerformer(TestCase):
             "%s?_popup=1" % reverse(
                 'persona-update',
                 urlconf="gbe.urls",
-                args=[performer.pk, 1]))
+                args=[performer.pk]))
 
     def test_update_troupe(self):
         troupe = BioFactory(multiple_performers=True)

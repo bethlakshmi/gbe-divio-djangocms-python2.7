@@ -51,7 +51,7 @@ class PersonaUpdate(UpdatePopupMixin,
         return reverse(
             'persona-update',
             urlconf="gbe.urls",
-            args=[self.object.pk, self.kwargs.get("include_troupe", 1)])
+            args=[self.object.pk])
 
     def get_queryset(self):
         return self.model.objects.filter(

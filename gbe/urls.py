@@ -178,10 +178,10 @@ urlpatterns = [
     #  personae & businesses
     url(r'^bio/view/(\d+)/?$',
         ViewBioView, name='bio_view'),
-    url(r'^persona/add/(?P<include_troupe>\d+)/$',
+    url(r'^persona/add/$',
         PersonaCreate.as_view(),
         name='persona-add'),
-    url(r'^persona/(?P<pk>.*)/(?P<include_troupe>\d+)/$',
+    url(r'^persona/(?P<pk>.*)/$',
         PersonaUpdate.as_view(),
         name='persona-update'),
     url(r'^performer/delete/(?P<pk>.*)/$',

@@ -64,13 +64,14 @@ class TestPersonaCreate(TestCase):
 
     def submit_persona(self, image=None, name=None):
         login_as(self.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
+        url = reverse(self.view_name, urlconf='gbe.urls')
 
         data = {'contact': self.profile.pk,
                 'name': name or 'persona for %s' % self.profile.display_name,
                 'bio': 'bio bio bio',
                 'year_started': 2003,
                 'awards': 'Generic string here',
+                'multiple_performers': 0,
                 'pronouns_0': '',
                 'pronouns_1': 'custom/pronouns',
                 }
@@ -88,7 +89,7 @@ class TestPersonaCreate(TestCase):
 
     def test_register_persona_profile(self):
         login_as(self.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
+        url = reverse(self.view_name, urlconf='gbe.urls')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(
@@ -128,7 +129,7 @@ class TestPersonaCreate(TestCase):
     def test_register_persona_invalid_post(self):
         # no pronoun values supplied in either field
         login_as(self.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
+        url = reverse(self.view_name, urlconf='gbe.urls')
         data = {'contact': self.profile.pk,
                 'name': 'persona name',
                 'bio': 'bio bio bio',
@@ -141,44 +142,33 @@ class TestPersonaCreate(TestCase):
 
     def test_redirect(self):
         login_as(self.profile, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[1])
+        url = reverse(self.view_name, urlconf='gbe.urls')
         data = {'contact': self.profile.pk,
                 'name': 'persona name',
                 'bio': 'bio bio bio',
                 'year_started': 2003,
+                'multiple_performers': 0,
                 'pronouns_0': '',
                 'pronouns_1': 'custom/pronouns',
                 'awards': 'Generic string here'}
         data.update(formset_data)
+        # a weird example, but easy to stage
         response = self.client.post(
-            url + '?next=%s' % reverse("troupe-add", urlconf='gbe.urls'),
+            url + '?next=%s' % reverse(self.view_name, urlconf='gbe.urls'),
             data,
             follow=True)
         assert response.status_code == 200
         self.assertRedirects(response,
-                             reverse('troupe-add', urlconf='gbe.urls'))
-        self.assertContains(response, "Tell Us About Your Troupe")
+                             reverse(self.view_name, urlconf='gbe.urls'))
+        self.assertContains(response, "Tell Us About Your Bio")
         self.assertNotContains(response, '<div class="alert alert-success">')
 
     def test_get(self):
         login_as(self.profile, self)
         response = self.client.get(
-            reverse('persona-add', urlconf='gbe.urls', args=[1]),
+            reverse('persona-add', urlconf='gbe.urls'),
         )
         self.assertContains(response, "Tell Us About Your Bio")
-        self.assertContains(response, "Create Troupe")
-        self.assertContains(response,
-                            reverse("troupe-add", urlconf="gbe.urls"))
-
-    def test_get_no_troupe(self):
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('persona-add', urlconf='gbe.urls', args=[0]),
-        )
-        self.assertContains(response, "Tell Us About Your Bio")
-        self.assertNotContains(response, "Create Troupe")
-        self.assertNotContains(response,
-                               reverse("troupe-add", urlconf="gbe.urls"))
 
     def test_create_persona_make_message(self):
         name = '"extra quotes"'
@@ -211,7 +201,7 @@ class TestPersonaEdit(TestGBE):
         new_name = "Fifi"
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.pk, 1])
+                      args=[self.persona.pk])
         data = {'contact': self.persona.contact.pk,
                 'name': new_name,
                 'bio': "bio",
@@ -239,12 +229,11 @@ class TestPersonaEdit(TestGBE):
     def test_edit_persona(self):
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.pk, 0])
+                      args=[self.persona.pk])
         login_as(self.persona.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.expected_string)
-        self.assertNotContains(response, "Create Troupe")
         self.assertContains(
             response,
             '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
@@ -301,18 +290,17 @@ class TestPersonaEdit(TestGBE):
 
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.pk, 1])
+                      args=[self.persona.pk])
         login_as(self.persona.contact, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.persona.img.url)
-        self.assertContains(response, "Create Troupe")
 
     def test_wrong_profile(self):
         viewer = ProfileFactory()
         url = (reverse(self.view_name,
                        urlconf="gbe.urls",
-                       args=[self.persona.pk, 1]))
+                       args=[self.persona.pk]))
         login_as(viewer, self)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
@@ -349,7 +337,7 @@ class TestPersonaEdit(TestGBE):
         new_name = "Bitsy Brûlée"
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.pk, 0])
+                      args=[self.persona.pk])
         data = {'contact': self.persona.contact.pk,
                 'name': new_name,
                 'bio': "bio",
@@ -414,7 +402,7 @@ class TestPersonaEdit(TestGBE):
         new_name = "Fifi"
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.pk, 1])
+                      args=[self.persona.pk])
         data = {'contact': self.persona.pk,
                 'name': new_name,
                 'bio': "bio",
@@ -430,7 +418,7 @@ class TestPersonaEdit(TestGBE):
         login_as(self.persona.contact, self)
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.pk, 1])
+                      args=[self.persona.pk])
         data = {'contact': self.persona.contact.pk,
                 'name': "Fifi",
                 'bio': "bio",
@@ -458,7 +446,7 @@ class TestPersonaEdit(TestGBE):
         login_as(self.persona.contact, self)
         url = reverse(self.view_name,
                       urlconf="gbe.urls",
-                      args=[self.persona.pk, 1])
+                      args=[self.persona.pk])
         data = {'contact': self.persona.contact.pk,
                 'name': "Fifi",
                 'bio': "bio",

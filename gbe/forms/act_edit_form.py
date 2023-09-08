@@ -85,7 +85,7 @@ class ActEditDraftForm(ModelForm, BasicBidForm):
                     url=reverse_lazy(
                         'limited-performer-autocomplete',
                         urlconf='gbe.urls')),
-                reverse_lazy('persona-add', urlconf='gbe.urls', args=[1]),
+                reverse_lazy('persona-add', urlconf='gbe.urls'),
                 reverse_lazy('performer-update',
                              urlconf='gbe.urls',
                              args=['__fk__'])),

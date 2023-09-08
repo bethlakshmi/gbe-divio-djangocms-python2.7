@@ -111,7 +111,7 @@ class TestCreateAct(TestMakeAct):
         login_as(profile, self)
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, "%s?next=%s" % (
-            reverse('persona-add', urlconf="gbe.urls", args=[1]),
+            reverse('persona-add', urlconf="gbe.urls"),
             self.url))
         self.check_subway_state(response, active_state="Create Bio")
 
