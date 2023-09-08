@@ -26,7 +26,7 @@ class TestGetSchedule(TestCase):
         booking.label = "test_get_act_w_label"
         booking.save()
         response = get_schedule(
-            user=act.performer.get_profiles()[0].user_object)
+            user=act.get_performer_profiles()[0].user_object)
         self.assertEqual(response.schedule_items[0].label, booking.label)
 
     def test_get_class_no_id(self):

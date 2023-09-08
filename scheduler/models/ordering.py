@@ -22,5 +22,3 @@ class Ordering(Model):
     people_allocated = OneToOneField(PeopleAllocation,
                                      on_delete=CASCADE)
     role = CharField(max_length=50, blank=True)
-    class_name = CharField(max_length=50, blank=True)
-    class_id = IntegerField(blank=True, null=True)

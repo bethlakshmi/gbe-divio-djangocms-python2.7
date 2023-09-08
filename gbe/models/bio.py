@@ -34,20 +34,6 @@ class Bio(Model):
     pronouns = CharField(max_length=128, blank=True)
     multiple_performers = BooleanField(default=False)
 
-    def get_profiles(self):
-        '''
-        Gets all of the people performing in the act
-        '''
-        profiles = []
-        response = get_bookable_people(self.pk, self.__class__.__name__)
-        if len(response.people) > 0:
-            profiles = Profile.objects.filter(
-                user_object__in=response.people[0].users)
-        elif not self.multiple_performers:
-            profiles = [self.contact]
-
-        return profiles
-
     def has_bids(self):
         return (self.is_teaching.count() > 0 or self.acts.count() > 0 or
                 self.costume_set.count() > 0)

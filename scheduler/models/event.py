@@ -105,10 +105,16 @@ class Event(Schedulable):
                 code="LINKED_CLASS_AND_ID_REQUIRED",
                 details="Allocating a person to an even requires the person" +
                 " to have a publicly linked class and id.")])
-
-        people, created = People.objects.get_or_create(
-            class_id=person.public_id,
-            class_name=person.public_class)
+        if person.commitment:
+            people, created = People.objects.get_or_create(
+                class_id=person.public_id,
+                class_name=person.public_class,
+                commitment_class_name=person.commitment.class_name,
+                commitment_class_id=person.commitment.class_id)
+        else:
+            people, created = People.objects.get_or_create(
+                class_id=person.public_id,
+                class_name=person.public_class)
         people.save()
         if created:
             for user in person.users:
@@ -145,8 +151,6 @@ class Event(Schedulable):
                 ordering.role = person.commitment.role
             if person.commitment.order:
                 ordering.order = person.commitment.order
-            ordering.class_name = person.commitment.class_name
-            ordering.class_id = person.commitment.class_id
             ordering.save()
         if self.extra_volunteers() > 0:
             warnings += [Warning(

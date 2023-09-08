@@ -17,6 +17,7 @@ from gbe.models import (
     Biddable,
     Bio,
     Conference,
+    Profile,
     TechInfo,
 )
 from gbetext import (
@@ -26,6 +27,7 @@ from gbetext import (
 )
 from scheduler.idd import get_schedule
 from django.core.validators import MinValueValidator
+from scheduler.idd import get_bookable_people
 
 
 class Act (Biddable):
@@ -75,7 +77,19 @@ class Act (Biddable):
         '''
         Gets all of the performers involved in the act.
         '''
-        return self.bio.get_profiles()
+        profiles = []
+        response = get_bookable_people(
+            self.bio.pk,
+            self.bio.__class__.__name__,
+            commitment_class_name=self.__class__.__name__,
+            commitment_class_id=self.pk)
+        if len(response.people) > 0:
+            profiles = Profile.objects.filter(
+                user_object__in=response.people[0].users)
+        else:
+            profiles = [self.bio.contact]
+
+        return profiles
 
     @property
     def performer(self):
