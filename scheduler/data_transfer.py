@@ -21,7 +21,7 @@ class Person(object):
                  label=None,
                  people=None,
                  booking=None,
-                 commitment=None,
+                 order=None,
                  users=None):
         self.booking_id = None
         self.commitment = None
@@ -35,10 +35,11 @@ class Person(object):
             self.label = booking.label
             people = booking.people
             if hasattr(booking, 'ordering'):
-                self.commitment = booking.ordering
+                self.commitment = Commitment(booking.ordering)
         else:
             self.occurrence = None
-            self.commitment = commitment
+            if order:
+                self.commitment = Commitment(order)
 
         if people:
             self.users = people.users.all()
@@ -68,14 +69,25 @@ class ScheduleItem(object):
                  role=None,
                  label=None,
                  booking_id=None,
-                 commitment=None):
+                 order=None):
         self.user = user
         self.group_id = group_id
         self.role = role
         self.label = label
         self.event = event
         self.booking_id = booking_id
-        self.commitment = commitment
+        self.commitment = None
+        if order is not None:
+            self.commitment = Commitment(order)
+
+
+class Commitment(object):
+    def __init__(self, order):
+        self.class_id = order.people_allocated.people.commitment_class_id
+        self.class_name = order.people_allocated.people.commitment_class_name
+        self.role = order.role
+        self.people_allocated = order.people_allocated
+        self.order = order.order
 
 
 class Answer(object):

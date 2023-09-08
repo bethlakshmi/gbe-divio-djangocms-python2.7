@@ -70,7 +70,7 @@ def get_schedule(user=None,
                     role=item.role,
                     label=item.label,
                     booking_id=item.pk,
-                    commitment=order)]
+                    order=order)]
 
     response = ScheduleResponse(
         schedule_items=sorted(
