@@ -102,7 +102,7 @@ class TestActTechWizard(TestGBE):
             response,
             "Technical Info for %s" % self.context.act.b_title)
         self.assertContains(response,
-                            "Booked for: %s" % self.context.sched_event.title)
+                            "<b>Booked for:</b> %s" % self.context.sched_event.title)
 
     def test_edit_act_techinfo_get_bad_act(self):
         bad_act_id = Act.objects.aggregate(Max('pk'))['pk__max']+1
@@ -241,6 +241,8 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book': "Book Rehearsal"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        data['%d-membership' % context.sched_event.pk] = [
+            context.performer.contact.pk]
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         success_msg = "%s  Rehearsal Name:  %s, Start Time: %s" % (
@@ -263,6 +265,8 @@ class TestActTechWizard(TestGBE):
         data = {'book': "Book Rehearsal"}
         data['%d-rehearsal' % self.context.sched_event.pk] = \
             extra_rehearsal.pk + 5
+        data['%d-membership' % self.context.sched_event.pk] = [
+            self.context.performer.contact.pk]
         response = self.client.post(url, data, follow=True)
         self.assertNotContains(response, default_rehearsal_booked)
         self.assertContains(response, "Select a valid choice.")
@@ -284,9 +288,11 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        data['%d-membership' % context.sched_event.pk] = [
+            context.performer.contact.pk]
         alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
-            ordering__class_id=context.act.pk)
+            people__commitment_class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
         response = self.client.post(url, data)
         success_msg = "%s  Rehearsal Name:  %s, Start Time: %s" % (
@@ -307,7 +313,7 @@ class TestActTechWizard(TestGBE):
             'id="id_prop_setup_1" checked />',
             html=True)
         alloc = PeopleAllocation.objects.filter(
-            ordering__class_id=context.act.pk)
+            people__commitment_class_id=context.act.pk)
         self.assertEqual(alloc.count(), 2)
         assert_option_state(
             response,
@@ -336,9 +342,11 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = -1
+        data['%d-membership' % context.sched_event.pk] = [
+            context.performer.contact.pk]
         alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
-            ordering__class_id=context.act.pk)
+            people__commitment_class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
         response = self.client.post(url, data)
         self.assertTrue(Act.objects.filter(
@@ -375,9 +383,11 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        data['%d-membership' % context.sched_event.pk] = [
+            context.performer.contact.pk]
         alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
-            ordering__class_id=context.act.pk)
+            people__commitment_class_id=context.act.pk)
         data['%d-booking_id' % context.sched_event.pk] = alloc.pk
         response = self.client.post(url, data)
         assert_option_state(

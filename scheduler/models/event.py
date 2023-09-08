@@ -49,11 +49,12 @@ class Event(Schedulable):
     connected_id = PositiveIntegerField(blank=True, null=True)
     connected_class = CharField(max_length=128, blank=True)
 
-    def has_commitment_space(self, commitment_class_name):
+    def has_commitment_space(self, commit_class_name):
         from scheduler.models import Ordering
         return (Ordering.objects.filter(
             people_allocated__event=self,
-            class_name=commitment_class_name).count() < self.max_commitments)
+            people_allocated__people__commitment_class_name=commit_class_name
+            ).count() < self.max_commitments)
 
     # New - fits scheduling API refactor
     def set_locations(self, locations):

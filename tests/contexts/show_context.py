@@ -50,6 +50,9 @@ class ShowContext:
                                 accepted=3,
                                 submitted=True)
         self.acts = [act]
+        self.people.commitment_class_name = act.__class__.__name__
+        self.people.commitment_class_id = act.pk
+        self.people.save()
         self.room = room or RoomFactory()
         self.room.conferences.add(self.conference)
         self.sched_event = None
@@ -99,8 +102,6 @@ class ShowContext:
             role=role)
         order = OrderingFactory(
             people_allocated=booking,
-            class_id=act.pk,
-            class_name="Act",
             role=act_role)
         return (act, booking)
 

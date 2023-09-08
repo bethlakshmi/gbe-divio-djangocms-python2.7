@@ -17,7 +17,7 @@ class TestGetSchedule(TestCase):
         booking.label = 'test_get_teacher_w_label'
         booking.save()
         response = get_schedule(
-            user=context.teacher.get_profiles()[0].user_object)
+            user=context.teacher.contact.user_object)
         self.assertEqual(response.schedule_items[0].label, booking.label)
 
     def test_get_act_w_label(self):

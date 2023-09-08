@@ -212,9 +212,9 @@ class TestMergeProfileExtra(TestCase):
         # profiles.  Merge removes the extra profile, leaving a troupe of 1
         login_as(self.privileged_user, self)
         avail_bio = BioFactory(contact=self.avail_profile)
-        people = get_or_create_bio(avail_bio)
-        people.users.add(self.profile.user_object)
         context = ShowContext(performer=avail_bio)
+        context.people.users.add(self.profile.user_object)
+
         response = self.client.post(self.url, data={
             "bio_%d" % avail_bio.pk: ""}, follow=True)
         updated_profile = Profile.objects.get(pk=self.profile.pk)
@@ -230,12 +230,12 @@ class TestMergeProfileExtra(TestCase):
         self.assertTrue(PeopleAllocation.objects.filter(
             event=context.sched_event,
             people__class_id=avail_bio.pk,
-            ordering__class_id=context.acts[0].pk,
+            people__commitment_class_id=context.acts[0].pk,
             people__users=self.profile.user_object).exists())
         self.assertFalse(PeopleAllocation.objects.filter(
             event=context.sched_event,
             people__class_id=avail_bio.pk,
-            ordering__class_id=context.acts[0].pk,
+            people__commitment_class_id=context.acts[0].pk,
             people__users=self.avail_profile.user_object).exists())
         self.assertNotContains(response,
                                "Skipped deletion because of errors above.")

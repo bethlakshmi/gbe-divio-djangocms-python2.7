@@ -101,10 +101,11 @@ class TestApproveVolunteer(TestCase):
             event=self.context.sched_event,
             role="Waitlisted",
             people=get_or_create_bio(waitlisted_act.performer))
+        booking.people.commitment_class_name = "Act"
+        booking.people.commitment_class_id = waitlisted_act.pk
+        booking.people.save()
         order = OrderingFactory(
             people_allocated=booking,
-            class_id=waitlisted_act.pk,
-            class_name="Act",
             role="Waitlisted")
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)

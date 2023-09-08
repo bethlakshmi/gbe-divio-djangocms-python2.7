@@ -1,6 +1,5 @@
 from tests.factories.scheduler_factories import (
     EventLabelFactory,
-    OrderingFactory,
     PeopleFactory,
     PeopleAllocationFactory,
     SchedEventFactory,

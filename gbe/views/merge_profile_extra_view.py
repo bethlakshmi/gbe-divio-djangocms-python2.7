@@ -101,7 +101,11 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
         replace_object = eval(
             replace_people.public_class).objects.get(
             pk=replace_people.public_id)
-        response = update_bookable_people(replace_object, users)
+        response = update_bookable_people(
+            replace_object,
+            users,
+            commitment_class_name=replace_people.commitment.class_name,
+            commitment_class_id=replace_people.commitment.class_id)
         show_general_status(self.request,
                             response,
                             self.__class__.__name__)

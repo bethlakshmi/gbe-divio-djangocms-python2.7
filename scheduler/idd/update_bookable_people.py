@@ -5,10 +5,16 @@ from scheduler.data_transfer import (
 )
 
 
-def update_bookable_people(public_object, users):
+def update_bookable_people(public_object,
+                           users,
+                           commitment_class_name="",
+                           commitment_class_id=None):
+
     people = People.objects.get(
         class_id=public_object.pk,
-        class_name=public_object.__class__.__name__)
+        class_name=public_object.__class__.__name__,
+        commitment_class_name=commitment_class_name,
+        commitment_class_id=commitment_class_id)
 
     people.users.clear()
     for user in users:

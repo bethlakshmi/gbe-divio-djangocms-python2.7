@@ -90,6 +90,8 @@ class ActTechWizardView(View):
                     initial = {'rehearsal': choices[0][0]}
                 elif len(choices) > 1:
                     initial = {'rehearsal': choices[1][0]}
+                else:
+                    initial = {}
             initial['membership'] = Profile.objects.filter(
                 user_object__in=self.performers)
             if request:
@@ -124,11 +126,14 @@ class ActTechWizardView(View):
             return error, bookings, forms, request
 
         for rehearsal_form in forms:
-            # update memebership
+            # update membership
             self.performers = User.objects.filter(
                 profile__in=rehearsal_form.cleaned_data['membership'])
-            idd_resp = update_bookable_people(self.act.performer,
-                                              self.performers)
+            idd_resp = update_bookable_people(
+                self.act.bio,
+                self.performers,
+                commitment_class_name=self.act.__class__.__name__,
+                commitment_class_id=self.act.pk)
             show_general_status(self.request,
                                 idd_resp,
                                 self.__class__.__name__)

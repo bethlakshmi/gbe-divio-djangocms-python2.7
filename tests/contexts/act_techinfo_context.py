@@ -39,6 +39,9 @@ class ActTechInfoContext():
                                      b_conference=self.conference,
                                      accepted=3,
                                      submitted=True)
+        self.people.commitment_class_name = self.act.__class__.__name__
+        self.people.commitment_class_id = self.act.pk
+        self.people.save()
         role = "Performer"
         if set_waitlist:
             self.act.accepted = 2
@@ -71,8 +74,6 @@ class ActTechInfoContext():
             role=role)
         self.order = OrderingFactory(
             people_allocated=self.booking,
-            class_id=self.act.pk,
-            class_name="Act",
             role=act_role)
         if schedule_rehearsal:
             self.rehearsal = self._schedule_rehearsal(
@@ -89,14 +90,15 @@ class ActTechInfoContext():
                           text=self.conference.conference_slug)
         if act:
             people = get_or_create_bio(act.bio)
+            people.commitment_class_name = act.__class__.__name__
+            people.commitment_class_id = act.pk
+            people.save()
             booking = PeopleAllocationFactory(
                 event=rehearsal_event,
                 people=people,
                 role="Performer")
             OrderingFactory(
-                people_allocated=booking,
-                class_id=act.pk,
-                class_name="Act")
+                people_allocated=booking)
         return rehearsal_event
 
     def order_act(self, act, order):

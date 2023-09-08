@@ -70,9 +70,6 @@ class LandingPageView(ProfileRequiredMixin, View):
                                             ['Staff Lead', ],
                                             require=False)
 
-    def dispatch(self, *args, **kwargs):
-        return super(LandingPageView, self).dispatch(*args, **kwargs)
-
     @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
