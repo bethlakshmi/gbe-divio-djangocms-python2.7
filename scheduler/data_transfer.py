@@ -59,6 +59,10 @@ class Person(object):
             self.users = people.users.all()
             self.public_class = people.class_name
             self.public_id = people.class_id
+            if self.commitment is None:
+                self.commitment = Commitment()
+                self.commitment.class_id = people.commitment_class_id
+                self.commitment.class_name = people.commitment_class_name
         else:
             self.users = users
             self.public_id = public_id

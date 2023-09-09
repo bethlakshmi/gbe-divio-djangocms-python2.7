@@ -43,7 +43,6 @@ from scheduler.models import (
     PeopleAllocation,
 )
 from ticketing.models import Purchaser
-from tests.functions.scheduler_functions import get_or_create_bio
 from settings import GBE_DATETIME_FORMAT
 from mock import patch
 from scheduler.data_transfer import (
@@ -211,10 +210,10 @@ class TestMergeProfileExtra(TestCase):
         # Extra setup to make this a troupe that is shared by both
         # profiles.  Merge removes the extra profile, leaving a troupe of 1
         login_as(self.privileged_user, self)
-        avail_bio = BioFactory(contact=self.avail_profile)
+        avail_bio = BioFactory(contact=self.avail_profile,
+                               multiple_performers=True)
         context = ShowContext(performer=avail_bio)
         context.people.users.add(self.profile.user_object)
-
         response = self.client.post(self.url, data={
             "bio_%d" % avail_bio.pk: ""}, follow=True)
         updated_profile = Profile.objects.get(pk=self.profile.pk)

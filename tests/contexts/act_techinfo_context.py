@@ -34,14 +34,13 @@ class ActTechInfoContext():
                  set_waitlist=False):
         self.conference = conference or ConferenceFactory()
         self.performer = performer or BioFactory()
-        self.people = get_or_create_bio(self.performer)
         self.act = act or ActFactory(bio=self.performer,
                                      b_conference=self.conference,
                                      accepted=3,
                                      submitted=True)
-        self.people.commitment_class_name = self.act.__class__.__name__
-        self.people.commitment_class_id = self.act.pk
-        self.people.save()
+        self.people = get_or_create_bio(self.performer,
+                                        self.act.__class__.__name__,
+                                        self.act.pk)
         role = "Performer"
         if set_waitlist:
             self.act.accepted = 2
@@ -89,10 +88,7 @@ class ActTechInfoContext():
         EventLabelFactory(event=rehearsal_event,
                           text=self.conference.conference_slug)
         if act:
-            people = get_or_create_bio(act.bio)
-            people.commitment_class_name = act.__class__.__name__
-            people.commitment_class_id = act.pk
-            people.save()
+            people = get_or_create_bio(act.bio, act.__class__.__name__, act.pk)
             booking = PeopleAllocationFactory(
                 event=rehearsal_event,
                 people=people,

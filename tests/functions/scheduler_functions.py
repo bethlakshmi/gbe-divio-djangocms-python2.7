@@ -49,19 +49,27 @@ def noon(day):
                             time(12, 0, 0))
 
 
-def get_or_create_bio(public_class):
+def get_or_create_bio(public_class,
+                      commitment_class_name="",
+                      commitment_class_id=None):
     people = None
     if not People.objects.filter(
             class_name=public_class.__class__.__name__,
-            class_id=public_class.pk).exists():
+            class_id=public_class.pk,
+            commitment_class_name=commitment_class_name,
+            commitment_class_id=commitment_class_id).exists():
         people = People(class_name=public_class.__class__.__name__,
-                        class_id=public_class.pk)
+                        class_id=public_class.pk,
+                        commitment_class_name=commitment_class_name,
+                        commitment_class_id=commitment_class_id)
         people.save()
         people.users.add(public_class.contact.user_object)
     else:
         people = People.objects.get(
             class_name=public_class.__class__.__name__,
-            class_id=public_class.pk)
+            class_id=public_class.pk,
+            commitment_class_name=commitment_class_name,
+            commitment_class_id=commitment_class_id)
     return people
 
 

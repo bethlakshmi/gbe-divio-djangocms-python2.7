@@ -37,7 +37,6 @@ class ShowContext:
                  starttime=None,
                  act_role='Regular Act'):
         self.performer = performer or BioFactory()
-        self.people = get_or_create_bio(self.performer)
         self.conference = conference or ConferenceFactory()
         if not self.conference.conferenceday_set.exists():
             day = ConferenceDayFactory(conference=self.conference)
@@ -50,9 +49,9 @@ class ShowContext:
                                 accepted=3,
                                 submitted=True)
         self.acts = [act]
-        self.people.commitment_class_name = act.__class__.__name__
-        self.people.commitment_class_id = act.pk
-        self.people.save()
+        self.people = get_or_create_bio(self.performer,
+                                        act.__class__.__name__,
+                                        act.pk)
         self.room = room or RoomFactory()
         self.room.conferences.add(self.conference)
         self.sched_event = None
@@ -94,7 +93,7 @@ class ShowContext:
         act = act or ActFactory(b_conference=self.conference,
                                 accepted=3,
                                 submitted=True)
-        performer = get_or_create_bio(act.bio)
+        performer = get_or_create_bio(act.bio, act.__class__.__name__, act.pk)
         role = "Performer"
         booking = PeopleAllocationFactory(
             event=self.sched_event,

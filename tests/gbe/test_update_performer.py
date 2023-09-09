@@ -7,7 +7,6 @@ from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
 )
-from tests.functions.scheduler_functions import get_or_create_bio
 
 
 class TestUpdatePerformer(TestCase):

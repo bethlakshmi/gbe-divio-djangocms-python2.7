@@ -100,10 +100,9 @@ class TestApproveVolunteer(TestCase):
         booking = PeopleAllocationFactory(
             event=self.context.sched_event,
             role="Waitlisted",
-            people=get_or_create_bio(waitlisted_act.performer))
-        booking.people.commitment_class_name = "Act"
-        booking.people.commitment_class_id = waitlisted_act.pk
-        booking.people.save()
+            people=get_or_create_bio(waitlisted_act.performer,
+                                     "Act",
+                                     waitlisted_act.pk))
         order = OrderingFactory(
             people_allocated=booking,
             role="Waitlisted")
