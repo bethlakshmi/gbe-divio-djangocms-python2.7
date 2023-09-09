@@ -23,6 +23,7 @@ class Commitment(object):
             self.role = role
             self.order = order
 
+
 class Person(object):
     def __init__(self,
                  booking_id=None,

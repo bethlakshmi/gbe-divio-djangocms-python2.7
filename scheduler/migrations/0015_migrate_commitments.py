@@ -31,6 +31,7 @@ def migrate_commitment(apps, schema_editor):
     print("created %d new people" % created_count)
     print("deleted %d new people" % deleted_count)
 
+
 def migrate_commitment_reverse(apps, schema_editor):
     Ordering = apps.get_model("scheduler", "Ordering")
     People = apps.get_model("scheduler", "People")

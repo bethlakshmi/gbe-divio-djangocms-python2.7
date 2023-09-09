@@ -400,7 +400,7 @@ act_help_texts = {
     'intro_text': 'This text will be used by the MC to introduce your act.',
     'notes': ('Please clarify any instructions with respect to prop setting, '
               'clearing, or cueing'),
-    'performer_names': '''Required for groups of 2 more more.  Names of all 
+    'performer_names': '''Required for groups of 2 more more.  Names of all
     performers in this act.''',
 }
 

@@ -14,7 +14,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='act',
             name='num_performers',
-            field=models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1)]),
+            field=models.PositiveIntegerField(
+                blank=True,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(1)]),
         ),
         migrations.AddField(
             model_name='act',

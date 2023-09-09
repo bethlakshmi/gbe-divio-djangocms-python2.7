@@ -44,7 +44,7 @@ def ViewBioView(request, id=None):
     members = []
     if len(response.people) > 0:
         members = response.people[0].users
-    if not (bio.contact == profile or profile.user_object in members or 
+    if not (bio.contact == profile or profile.user_object in members or
             validate_perms(request, ('Registrar',
                                      'Volunteer Coordinator',
                                      'Act Coordinator',

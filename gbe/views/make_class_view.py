@@ -31,7 +31,7 @@ class MakeClassView(MakeBidView):
                      'teacher_bio',
                      'b_description',
                      'schedule_constraints']
-    bid_type = "Class" 
+    bid_type = "Class"
     has_draft = True
     submit_msg = default_class_submit_msg
     draft_msg = default_class_draft_msg

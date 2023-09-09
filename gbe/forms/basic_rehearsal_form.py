@@ -26,7 +26,7 @@ class BasicRehearsalForm(Form):
         queryset=Profile.objects.filter(user_object__is_active=True),
         widget=autocomplete.ModelSelect2Multiple(
             url=reverse_lazy('profile-autocomplete', urlconf='gbe.urls'),
-            attrs={'data-minimum-input-length': 3,},))
+            attrs={'data-minimum-input-length': 3}))
 
     def __init__(self, *args, **kwargs):
         act = None
@@ -50,7 +50,7 @@ class BasicRehearsalForm(Form):
                 membership_msg[0].description + "  Choose up to %d performers"
                 ) % num_performers
         else:
-            self.fields['membership'].widget=MultipleHiddenInput()
+            self.fields['membership'].widget = MultipleHiddenInput()
 
     class Meta:
         fields = ['booking_id', 'rehearsal']

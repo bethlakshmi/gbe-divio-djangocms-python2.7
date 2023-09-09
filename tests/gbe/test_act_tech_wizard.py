@@ -101,8 +101,9 @@ class TestActTechWizard(TestGBE):
         self.assertContains(
             response,
             "Technical Info for %s" % self.context.act.b_title)
-        self.assertContains(response,
-                            "<b>Booked for:</b> %s" % self.context.sched_event.title)
+        self.assertContains(
+            response,
+            "<b>Booked for:</b> %s" % self.context.sched_event.title)
 
     def test_edit_act_techinfo_get_bad_act(self):
         bad_act_id = Act.objects.aggregate(Max('pk'))['pk__max']+1

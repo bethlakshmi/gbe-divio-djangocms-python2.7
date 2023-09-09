@@ -131,6 +131,6 @@ class PersonaForm(ModelForm):
         help_texts = persona_help_texts
         labels = persona_labels
         widgets = {'contact': HiddenInput(),
-                   'multiple_performers': RadioSelect(choices=[(True, 'Yes'), 
+                   'multiple_performers': RadioSelect(choices=[(True, 'Yes'),
                                                                (False, 'No')])
                    }
