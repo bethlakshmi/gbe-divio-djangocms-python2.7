@@ -5,6 +5,7 @@ from django.db.models import Max
 from tests.factories.gbe_factories import (
     ActFactory,
     BioFactory,
+    ProfileFactory,
     UserFactory,
 )
 from tests.contexts import ActTechInfoContext
@@ -18,6 +19,7 @@ from gbetext import (
     default_act_tech_advanced_submit,
     default_act_tech_basic_submit,
     default_rehearsal_booked,
+    membership_help,
     mic_options,
     rehearsal_book_error,
     rehearsal_remove_confirmation,
@@ -104,6 +106,13 @@ class TestActTechWizard(TestGBE):
         self.assertContains(
             response,
             "<b>Booked for:</b> %s" % self.context.sched_event.title)
+        self.assertContains(
+            response,
+            ('<input type="hidden" name="%d-membership" value="%d" ' +
+             'id="id_%d-membership_0">') % (
+             self.context.sched_event.pk,
+             self.context.performer.contact.pk,
+             self.context.sched_event.pk))
 
     def test_edit_act_techinfo_get_bad_act(self):
         bad_act_id = Act.objects.aggregate(Max('pk'))['pk__max']+1
@@ -253,6 +262,32 @@ class TestActTechWizard(TestGBE):
         assert_alert_exists(
             response, 'success', 'Success', success_msg)
 
+    def test_book_too_many_performers(self):
+        # more performers than specified in act
+        context = ActTechInfoContext(schedule_rehearsal=True)
+        extra_rehearsal = context._schedule_rehearsal(context.sched_event)
+        extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
+            hours=1)
+        extra_rehearsal.save()
+        context.act.num_performers = 2
+        context.act.save()
+        troupe_member = ProfileFactory()
+        extra_troupe_member = ProfileFactory()
+        url = reverse(self.view_name,
+                      urlconf='gbe.urls',
+                      args=[context.act.pk])
+        login_as(context.performer.contact, self)
+        data = {'book': "Book Rehearsal"}
+        data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        data['%d-membership' % context.sched_event.pk] = [
+            context.performer.contact.pk,
+            troupe_member.pk,
+            extra_troupe_member.pk]
+        response = self.client.post(url, data, follow=True)
+        self.assertContains(
+            response,
+            'Ensure this value has at most 2 characters (it has 3)')
+
     def test_book_bad_rehearsal(self):
         extra_rehearsal = self.context._schedule_rehearsal(
             self.context.sched_event)
@@ -274,11 +309,14 @@ class TestActTechWizard(TestGBE):
         self.assertContains(response, "Set Rehearsal Time")
         self.assertNotContains(response, "Provide Technical Information")
 
-    def test_book_rehearsal_and_continue(self):
+    def test_book_rehearsal_add_troupe_and_continue(self):
         context = ActTechInfoContext(schedule_rehearsal=True)
         context.act.tech.prop_setup = "[u'I have props I will need set " + \
             "before my number']"
         context.act.tech.save()
+        context.act.num_performers = 2
+        context.act.save()
+        troupe_member = ProfileFactory()
         extra_rehearsal = context._schedule_rehearsal(context.sched_event)
         extra_rehearsal.starttime = extra_rehearsal.starttime - timedelta(
             hours=1)
@@ -290,7 +328,8 @@ class TestActTechWizard(TestGBE):
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
         data['%d-membership' % context.sched_event.pk] = [
-            context.performer.contact.pk]
+            context.performer.contact.pk,
+            troupe_member.pk]
         alloc = PeopleAllocation.objects.get(
             event=context.rehearsal,
             people__commitment_class_id=context.act.pk)
@@ -323,6 +362,10 @@ class TestActTechWizard(TestGBE):
             True)
         self.assertNotContains(response,
                                'Advanced Technical Information (Optional)')
+        self.assertContains(
+            response,
+            "Choose up to 2 performers")
+        self.assertContains(response, troupe_member.display_name)
         self.assert_radio_state(response,
                                 'pronouns_0',
                                 'id_pronouns_0_3',
@@ -415,6 +458,8 @@ class TestActTechWizard(TestGBE):
         login_as(context.performer.contact, self)
         data = {'book_continue': "Book & Continue"}
         data['%d-rehearsal' % context.sched_event.pk] = extra_rehearsal.pk
+        data['%d-membership' % context.sched_event.pk] = [
+            context.performer.contact.pk]
         alloc = PeopleAllocation.objects.aggregate(Max('pk'))['pk__max']+1
         data['%d-booking_id' % context.sched_event.pk] = alloc
         response = self.client.post(url, data)

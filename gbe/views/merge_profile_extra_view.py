@@ -116,7 +116,9 @@ class MergeProfileExtra(GbeContextMixin, RoleRequiredMixin, FormView):
             if form.cleaned_data['bio_%d' % bio.pk] == '':
                 bio.contact = self.targetprofile
                 bio.save()
-                response = get_bookable_people(bio.pk, bio.__class__.__name__)
+                response = get_bookable_people(bio.pk,
+                                               bio.__class__.__name__,
+                                               commitment_class_id='any')
                 for bio in response.people:
                     self.replace_in_user_set(bio)
             else:

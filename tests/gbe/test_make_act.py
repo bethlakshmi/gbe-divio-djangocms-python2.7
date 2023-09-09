@@ -15,6 +15,7 @@ from tests.functions.gbe_functions import (
     make_act_app_ticket,
 )
 from gbetext import (
+    act_group_needs_names,
     default_act_submit_msg,
     default_act_draft_msg,
     default_act_title_conflict,
@@ -344,13 +345,16 @@ class TestEditAct(TestMakeAct):
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
+        tickets = setup_fees(act.b_conference, is_act=True)
         login_as(act.performer.contact, self)
-        data = self.get_act_form(act.performer)
+        data = self.get_act_form(act.performer, submit=True)
+        data['donation'] = 10
         data['theact-num_performers'] = 3
-        response = self.client.post(url, data)
+        response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
         self.check_subway_state(response)
+        self.assertContains(response, act_group_needs_names)
 
     def test_act_edit_post_form_submit_unpaid(self):
         act = ActFactory()
@@ -479,9 +483,6 @@ class TestEditAct(TestMakeAct):
             code='ACT_TITLE_CONFLICT',
             description=message_string)
         response, original = self.post_title_collision(submit_state=True)
-        print(original)
-        print(original.pk)
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         error_msg = message_string % (
             reverse(

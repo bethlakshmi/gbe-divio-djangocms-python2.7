@@ -9,7 +9,6 @@ from django.db.models import (
 )
 from gbe.models import Profile
 from filer.fields.image import FilerImageField
-from scheduler.idd import get_bookable_people
 
 
 class Bio(Model):
