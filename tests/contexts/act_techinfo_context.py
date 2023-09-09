@@ -103,8 +103,7 @@ class ActTechInfoContext():
 
     def order_act(self, act, order):
         alloc = self.sched_event.peopleallocation_set.filter(
-            ordering__class_id=act.pk,
-            event=self.sched_event).first()
+            people__commitment_class_id=act.pk).first()
         ordering, created = Ordering.objects.get_or_create(
             people_allocated=alloc)
         ordering.order = order

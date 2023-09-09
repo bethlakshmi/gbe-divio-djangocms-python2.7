@@ -13,7 +13,7 @@ class PerformerUpdate(UpdatePopupMixin, PermissionRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         redirect = reverse('persona-update',
                            urlconf="gbe.urls",
-                           args=[kwargs['pk'], 1])
+                           args=[kwargs['pk']])
         try:
             performer = Bio.objects.get(pk=kwargs['pk'],
                                         contact__user_object=self.request.user)

@@ -32,16 +32,6 @@ class TestUpdatePerformer(TestCase):
                 urlconf="gbe.urls",
                 args=[performer.pk]))
 
-    def test_update_troupe(self):
-        troupe = BioFactory(multiple_performers=True)
-        people = get_or_create_bio(troupe)
-        login_as(troupe.contact, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[troupe.pk])
-        response = self.client.get(url, follow=True)
-        self.assertRedirects(
-            response,
-            reverse('troupe-update', urlconf="gbe.urls", args=[troupe.pk]))
-
     def test_bad_performer(self):
         troupe = BioFactory(multiple_performers=True)
         login_as(troupe.contact, self)

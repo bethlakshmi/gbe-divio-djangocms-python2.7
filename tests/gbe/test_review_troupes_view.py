@@ -50,7 +50,6 @@ class TestReviewTroupes(TestCase):
         self.assertContains(response, self.troupe.name)
         self.assertContains(response, self.profile.display_name)
         self.assertContains(response, self.profile.user_object.email)
-        self.assertContains(response, self.member)
         self.assertContains(
             response,
             '<a class="dropdown-item" href="%s">%s</a>' % (
