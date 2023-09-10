@@ -33,11 +33,10 @@ class Person(object):
                  label=None,
                  people=None,
                  booking=None,
-                 order=None,
                  commitment=None,
                  users=None):
         self.booking_id = None
-        self.commitment = None
+        self.commitment = commitment
         self.users = None
         self.label = None
 
@@ -51,10 +50,6 @@ class Person(object):
                 self.commitment = Commitment(ordering=booking.ordering)
         else:
             self.occurrence = None
-            if order:
-                self.commitment = Commitment(ordering=order)
-            else:
-                self.commitment = commitment
 
         if people:
             self.users = people.users.all()
@@ -79,7 +74,7 @@ class Person(object):
         if self.users is None:
             self.users = users
         if self.commitment is None:
-            self.commitment = Commitment(object)
+            self.commitment = Commitment()
 
 
 class ScheduleItem(object):

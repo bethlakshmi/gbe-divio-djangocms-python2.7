@@ -83,4 +83,3 @@ class TestReviewTroupes(TestCase):
         self.assertContains(response, self.profile.display_name)
         self.assertContains(response, self.profile.user_object.email)
         self.assertContains(response, member.display_name)
-

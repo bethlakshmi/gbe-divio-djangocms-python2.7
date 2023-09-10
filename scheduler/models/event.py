@@ -106,16 +106,12 @@ class Event(Schedulable):
                 code="LINKED_CLASS_AND_ID_REQUIRED",
                 details="Allocating a person to an even requires the person" +
                 " to have a publicly linked class and id.")])
-        if person.commitment:
-            people, created = People.objects.get_or_create(
-                class_id=person.public_id,
-                class_name=person.public_class,
-                commitment_class_name=person.commitment.class_name,
-                commitment_class_id=person.commitment.class_id)
-        else:
-            people, created = People.objects.get_or_create(
-                class_id=person.public_id,
-                class_name=person.public_class)
+        people, created = People.objects.get_or_create(
+            class_id=person.public_id,
+            class_name=person.public_class,
+            commitment_class_name=person.commitment.class_name,
+            commitment_class_id=person.commitment.class_id)
+
         people.save()
         if created:
             for user in person.users:
