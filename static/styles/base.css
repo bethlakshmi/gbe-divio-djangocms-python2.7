@@ -159,7 +159,7 @@ div.login_text{padding: 5px;}
 #login-dp .social-buttons{margin:12px 0;}
 #login-dp .social-buttons a{width: 49%;}
 #login-dp .form-group {margin-bottom: 10px;}
-
+#login-dp{letter-spacing: normal;}
 @media(max-width:768px){
     #login-dp .bottom{
         border-top:0 none;
