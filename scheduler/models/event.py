@@ -7,6 +7,7 @@ from django.db.models import (
     ForeignKey,
     ManyToManyField,
     PositiveIntegerField,
+    SET_NULL,
     SlugField,
     TextField,
 )
@@ -37,6 +38,12 @@ class Event(Schedulable):
         null=True,
         blank=True,
         related_name="children")
+    peer = ForeignKey(
+        "self",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="other_peer")
     slug = SlugField(null=True)
 
     # from gbe.event

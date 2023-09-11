@@ -166,7 +166,8 @@ class ManageVolWizardView(View):
                          'Day',
                          'Time',
                          'Location',
-                         'Approve']
+                         'Approve',
+                         'Paired Event']
         context.update({'createform': createform,
                         'actionheaders': actionheaders,
                         'manage_vol_url': manage_vol_info}),
