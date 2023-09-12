@@ -10,7 +10,7 @@ body {
 .gbe-draft, .gbe-inactive {font-weight: bold;}
 .gbe-form-required {font-weight: bold;}
 .gbe-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Limelight', cursive;
   letter-spacing: normal;
   font-weight: 600;
   text-transform: none;
@@ -23,9 +23,11 @@ h3.gbe-title{font-size:24px}
 h4.gbe-title{font-size:18px}
 h5.gbe-title{font-size:14px}
 h6.gbe-title{font-size:12px}
+h1, h2, h3{font-family: 'Limelight', cursive;}
+h4, h5, h6{font-family: 'Bebas Neue', sans-serif;}
 /* Used in django CMS provided styles, do not delete */
+.gbe-subtitle{font-family: 'Bebas Neue', sans-serif;}
 .subtitle{
-  font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   color: #000;
   letter-spacing: normal;
