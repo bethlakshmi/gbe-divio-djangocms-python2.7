@@ -14,8 +14,8 @@ div.shadow_event {
 .backward {text-align: left; padding: 0px;}
 .forward {text-align: right; padding: 0px;}
 .calendar-container {border-style:  solid;}
-.header1 {text-align: center;font-family: 'Montserrat', sans-serif;font-size: 20px;font-weight: bold;border-style:  solid;}
-.header2 {text-align: center;font-family: 'Montserrat', sans-serif;font-size: 25px;font-weight: bold;border-style:  solid;}
+.header1 {text-align: center;font-family: 'Limelight', sans-serif;font-size: 20px;font-weight: bold;border-style:  solid;}
+.header2 {text-align: center;font-family: 'Bebas Neue', sans-serif;font-size: 25px;font-weight: bold;border-style:  solid;}
 .cal-favorite {float: right;}
 .vol_shift_div {padding: 0px;}
 .vol_shift_header {border-style:solid;font-size: 12px;padding-left: 2px;padding-right: 2px;}
