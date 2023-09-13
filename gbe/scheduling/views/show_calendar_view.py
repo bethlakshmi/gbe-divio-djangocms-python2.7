@@ -70,11 +70,12 @@ class ShowCalendarView(View):
             if self.calendar_type not in list(calendar_type_options.values()):
                 raise Http404
 
-        if "day" in kwargs:
+        if "day" in self.request.GET:
             try:
                 self.this_day = get_object_or_404(
                     ConferenceDay,
-                    day=datetime.strptime(kwargs['day'], URL_DATE))
+                    day=datetime.strptime(self.request.GET.get('day', None),
+                                          URL_DATE))
             except ValueError:
                 raise Http404
             self.conference = self.this_day.conference
