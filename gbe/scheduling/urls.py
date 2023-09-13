@@ -104,6 +104,8 @@ urlpatterns = [
     url(r'^volunteer/(?P<action>approve|waitlist|reject)/' +
         '(?P<public_id>\d+)/(?P<booking_id>\d+)/?$',
         ApproveVolunteerView.as_view(), name='approve_volunteer'),
+    url(r'^calendar/(?P<calendar_type>[-\w]+)/(?P<day>\d{2}-\d{2}-\d{4})/?$',
+        ShowCalendarView.as_view(), name='calendar_by_day'),
     url(r'^calendar/(?P<calendar_type>[-\w]+)/?$',
         ShowCalendarView.as_view(), name='calendar'),
     url(r'^scheduling/evaluate/(?P<occurrence_id>\d+)/?$',
