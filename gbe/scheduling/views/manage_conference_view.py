@@ -149,24 +149,27 @@ class ManageConferenceView(View):
         volunteer_calendar_links = ""
         for each_day in day.conference.conferenceday_set.filter(
                 open_to_public=True).order_by('day'):
-            general_calendar_links = "%s<li>%s - %s" % (
+            general_calendar_links = "%s<li>%s - %s?day=%s" % (
                 general_calendar_links,
                 each_day.day.strftime("%A"),
-                reverse("calendar_by_day",
+                reverse("calendar",
                         urlconf='gbe.scheduling.urls',
-                        args=['General', each_day.day.strftime(URL_DATE)]))
-            class_calendar_links = "%s<li>%s - %s" % (
+                        args=['General']),
+                each_day.day.strftime(URL_DATE))
+            class_calendar_links = "%s<li>%s - %s?day=%s" % (
                 class_calendar_links,
                 each_day.day.strftime("%A"),
-                reverse("calendar_by_day",
+                reverse("calendar",
                         urlconf='gbe.scheduling.urls',
-                        args=['Conference', each_day.day.strftime(URL_DATE)]))
-            volunteer_calendar_links = "%s<li>%s - %s" % (
+                        args=['Conference']),
+                each_day.day.strftime(URL_DATE))
+            volunteer_calendar_links = "%s<li>%s - %s?day=%s" % (
                 volunteer_calendar_links,
                 each_day.day.strftime("%A"),
-                reverse("calendar_by_day",
+                reverse("calendar",
                         urlconf='gbe.scheduling.urls',
-                        args=['Volunteer', each_day.day.strftime(URL_DATE)]))
+                        args=['Volunteer']),
+                each_day.day.strftime(URL_DATE))
         messages.warning(
             request,
             ("REMINDER: Don't forget to change the calendar links: <ul>" +
