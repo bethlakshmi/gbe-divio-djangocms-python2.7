@@ -188,22 +188,20 @@ class TestCalendarView(TestCase):
         conference_day = ConferenceDayFactory(
             conference=conference,
             day=date(2016, 2, 6))
-        url = reverse('calendar',
+        url = reverse('calendar_by_day',
                       urlconf='gbe.scheduling.urls',
-                      args=['Conference'])
-        data = {'day': "02-02-2016"}
-        response = self.client.get(url, data=data, follow=True)
+                      args=['Conference', "02-02-2016"])
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_invalid_day(self):
         '''
-        There is a day, but that's not the day we're asking for.
+        There is a day, but it's not a day
         '''
-        url = reverse('calendar',
+        url = reverse('calendar_by_day',
                       urlconf='gbe.scheduling.urls',
-                      args=['Conference'])
-        data = {'day': "DEADBEEF"}
-        response = self.client.get(url, data=data, follow=True)
+                      args=['Conference', '23-87-3000'])
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_bad_cal_type(self):
@@ -233,48 +231,49 @@ class TestCalendarView(TestCase):
         '''
         There is no day but today, so no navigation
         '''
-        url = reverse('calendar',
+        url = reverse('calendar_by_day',
                       urlconf="gbe.scheduling.urls",
-                      args=['General'])
+                      args=['General', "02-06-2015"])
         ConferenceDayFactory(
             conference=self.other_conference,
             day=date(2015, 2, 7))
-        data = {'day': "02-06-2015"}
-        response = self.client.get(url, data=data)
+        response = self.client.get(url)
         self.assertContains(
             response,
-            '<a href="?day=02-07-2015" ' +
-            'data-toggle="tooltip" title="02-07-2015">')
+            '<a href="%s" data-toggle="tooltip" title="02-07-2015">' % reverse(
+                'calendar_by_day',
+                urlconf="gbe.scheduling.urls",
+                args=['General', '02-07-2015']))
 
     def test_day_after(self):
         '''
         There is no day but today, so no navigation
         '''
-        url = reverse('calendar',
+        url = reverse('calendar_by_day',
                       urlconf="gbe.scheduling.urls",
-                      args=['General'])
+                      args=['General', "02-07-2015"])
         ConferenceDayFactory(
             conference=self.other_conference,
             day=date(2015, 2, 7))
-        data = {'day': "02-07-2015"}
-        response = self.client.get(url, data=data)
+        response = self.client.get(url)
         self.assertContains(
             response,
-            '<a href="?day=02-06-2015" ' +
-            'data-toggle="tooltip" title="02-06-2015">')
+            '<a href="%s" data-toggle="tooltip" title="02-06-2015">' % reverse(
+                'calendar_by_day',
+                urlconf="gbe.scheduling.urls",
+                args=['General', '02-06-2015']))
 
     def test_no_sched_events(self):
         '''
         There is a day, but that's not the day we're asking for.
         '''
-        url = reverse('calendar',
+        url = reverse('calendar_by_day',
                       urlconf="gbe.scheduling.urls",
-                      args=['General'])
+                      args=['General', "02-07-2015"])
         ConferenceDayFactory(
             conference=self.other_conference,
             day=date(2015, 2, 7))
-        data = {'day': "02-07-2015"}
-        response = self.client.get(url, data=data)
+        response = self.client.get(url)
         self.assertContains(
             response,
             "There are no general events scheduled for this day.")
@@ -476,11 +475,11 @@ class TestCalendarView(TestCase):
         ConferenceDayFactory(conference=self.staffcontext.conference,
                              day=opportunity.starttime)
         login_as(volunteer, self)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url, data={
-            'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
+        url = reverse(
+            'calendar_by_day',
+            urlconf="gbe.scheduling.urls",
+            args=['Volunteer', opportunity.starttime.strftime('%m-%d-%Y')])
+        response = self.client.get(url, follow=True)
         self.assertContains(response, opportunity.title)
         self.assertContains(response,
                             'class="volunteer-icon" alt="You\'ve signed up"/>')
@@ -493,11 +492,11 @@ class TestCalendarView(TestCase):
         opportunity.save()
         ConferenceDayFactory(conference=self.staffcontext.conference,
                              day=opportunity.starttime)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url, data={
-            'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
+        url = reverse(
+            'calendar_by_day',
+            urlconf="gbe.scheduling.urls",
+            args=['Volunteer', opportunity.starttime.strftime('%m-%d-%Y')])
+        response = self.client.get(url, follow=True)
         self.assertContains(response, opportunity.title)
         self.assertContains(
           response,
@@ -511,11 +510,11 @@ class TestCalendarView(TestCase):
         opportunity.save()
         ConferenceDayFactory(conference=self.staffcontext.conference,
                              day=opportunity.starttime)
-        url = reverse('calendar',
-                      urlconf="gbe.scheduling.urls",
-                      args=['Volunteer'])
-        response = self.client.get(url, data={
-            'day': opportunity.starttime.strftime('%m-%d-%Y')}, follow=True)
+        url = reverse(
+            'calendar_by_day',
+            urlconf="gbe.scheduling.urls",
+            args=['Volunteer', opportunity.starttime.strftime('%m-%d-%Y')])
+        response = self.client.get(url, follow=True)
         self.assertContains(response, opportunity.title)
         self.assertContains(response, login_please)
 
