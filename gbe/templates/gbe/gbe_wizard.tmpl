@@ -53,10 +53,8 @@
 </div>
 {% endif %}
 {% addtoblock "js" %}
-HERE
 {% for form in media_forms %}
  {{ form.media.js }}
 {% endfor %}
-THERE
 {% endaddtoblock %}
 {% endblock %}
