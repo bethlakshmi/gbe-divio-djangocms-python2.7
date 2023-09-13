@@ -15,11 +15,15 @@
 
 CKEDITOR.stylesSet.add( 'default', [
 	/* GBE Styles */
-	{ name: 'Montserrat',
-	  element: 'h2',
-	  styles: { 'font-family': 'Montserrat', sans-serif;,
-	            'font-size': '20px',
-		    'color': '#000;'}},
+    { name: 'Montserrat',
+ 	  element: 'font',
+	  styles: {'font-family': 'Montserrat'}},
+    { name: 'Limelight',
+	  element: 'font',
+	  styles: {'font-family': 'Limelight'}},
+    { name: 'Bebas Neue',
+	  element: 'font',
+	  styles: {'font-family': 'Bebas Neue'}},
 	{ name: 'Font Large',
 	  element: 'span',
 	  styles: { 'color': '#000',
