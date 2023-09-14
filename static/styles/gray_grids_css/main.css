@@ -132,10 +132,11 @@ fieldset[disabled] .btn {
 
 .gallery-item .name
 {
-  font-size:15px;
-  font-family: 'Vast Shadow', cursive;
+  font-size:18px;
+  font-family: 'Bebas Neue', sans-serif;
   font-weight: bold;
   text-align:center;
+  letter-spacing: 0.07em;
   text-transform: capitalize;
   height: 25px;
   vertical-align: bottom;

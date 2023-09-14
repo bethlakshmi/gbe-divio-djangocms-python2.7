@@ -1,6 +1,6 @@
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <button class="btn btn-lg dropdown-toggle login-button" data-toggle="dropdown"><i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;Login</button>
+      <ul class="navbar-nav navbar-right">
+      <li class="nav-item dropdown icon-dropdown">
+          <a class="nav-link gbe-header-item dropdown-toggle px-4 px-xl-3 pt-3 py-xl-3" href="#" id="login" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Login</a>
         <ul id="login-dp" class="dropdown-menu dropdown-menu-right ">
           <li>
         <div class="row">
@@ -14,14 +14,14 @@
               <div class="form-group">
             <label class="sr-only" for="exampleInputPassword2">Password</label>
             <input type="password" id="password" name="password" class="form-control" id="exampleInputPassword2" placeholder="Password" required>
-                          <div class="help-block text-right"><a href="{% url 'password_reset' %}">Forget the password ?</a></div>
+                          <div class="help-block text-right"><a href="{% url 'password_reset' %}">Forgot the password ?</a></div>
               </div>
               <div class="form-group">
-            <button type="submit" class="btn gbe-btn-primary btn-block">Sign in</button>
+            <button type="submit" class="btn login-button btn-block">Log In</button>
               </div>
             </form>
           </div>
-<div class="bottom">New here ? <a href="{% url 'gbe:register' %}"><b>Join Us</b></a></div>
+<div class="bottom text-center">New here ? <b><a href="{% url 'gbe:register' %}"><b>Join Us</b></a></b></div>
         </div>
           </li>
         </ul>
