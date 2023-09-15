@@ -19,7 +19,7 @@ from gbe.models import (
     StaffArea,
 )
 from gbe.functions import (
-    get_current_conference,
+    get_latest_conference,
     get_conference_by_slug,
     conference_list,
     validate_perms,
@@ -46,8 +46,8 @@ class ManageEventsView(View):
             self.conference = get_conference_by_slug(
                 kwargs['conference_slug'])
         else:
-            self.conference = get_current_conference()
-
+            self.conference = get_latest_conference()
+            
         day_list = []
         for day in self.conference.conferenceday_set.all():
             day_list += [(day.pk, day.day.strftime(GBE_DATE_FORMAT))]

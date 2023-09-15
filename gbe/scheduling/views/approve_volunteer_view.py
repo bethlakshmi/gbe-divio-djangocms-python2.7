@@ -21,6 +21,7 @@ from gbe.models import (
     UserMessage,
 )
 from gbe.functions import (
+    get_latest_conference,
     validate_profile,
     validate_perms_by_profile,
 )
@@ -164,7 +165,7 @@ class ApproveVolunteerView(View):
         if request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
         else:
-            self.conference = Conference.current_conf()
+            self.conference = get_latest_conference()
 
         self.conference_slugs = Conference.all_slugs()
 

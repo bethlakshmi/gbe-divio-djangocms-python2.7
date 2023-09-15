@@ -11,7 +11,7 @@ from ticketing.models import (
 from django.http import HttpResponse
 import csv
 from django.views.decorators.cache import never_cache
-from gbe.functions import get_current_conference
+from gbe.functions import get_latest_conference
 from scheduler.idd import get_people
 
 
@@ -21,7 +21,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
 
     @never_cache
     def get(self, request):
-        conference = get_current_conference()
+        conference = get_latest_conference()
         badged_usernames = []
 
         badged_purchases = Transaction.objects.filter(

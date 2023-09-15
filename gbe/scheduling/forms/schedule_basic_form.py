@@ -8,7 +8,6 @@ from django.forms import (
     ModelChoiceField,
 )
 from gbe.models import Room
-from gbe.functions import get_current_conference
 from datetime import (
   timedelta,
   time,
