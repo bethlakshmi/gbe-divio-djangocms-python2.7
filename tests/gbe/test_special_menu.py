@@ -1,7 +1,10 @@
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
-from tests.factories.gbe_factories import ProfileFactory
+from tests.factories.gbe_factories import (
+    ConferenceFactory,
+    ProfileFactory,
+)
 from tests.contexts import StaffAreaContext
 from tests.functions.gbe_functions import (
     grant_privilege,
@@ -59,6 +62,29 @@ class TestSpecialMenu(TestCase):
                         status_code=200,
                         msg_prefix='Role %s gets url %s' % (
                             privilege, menu_item['url']))
+
+    def test_privileged_views_test_load_page(self):
+        ''' should always be able to all pages, even when conference not active
+        '''
+        from gbe.special_privileges import special_menu_tree
+        Conference.objects.all().delete()
+        ConferenceFactory(status='completed')
+
+        privileged_profile = setup_admin_w_privs([]).profile
+        grant_privilege(privileged_profile,
+                        'Registrar',
+                        'view_transaction')
+        grant_privilege(privileged_profile,
+                        'Ticketing - Admin',
+                        'view_checklistitem')
+        for privilege in self.special_roles:
+            grant_privilege(privileged_profile.user_object, privilege)
+            login_as(privileged_profile, self)
+
+        for menu_item in special_menu_tree:
+            if len(menu_item['url']) > 0:
+                response = self.client.get(menu_item['url'])
+                self.assertEqual(response.status_code, 200)
 
     def test_privileged_views_get_parent_menus(self):
         ''' each privilege should get the right parent menu

@@ -141,7 +141,7 @@ def get_conference_day(conference, date):
 
 
 def conference_list():
-    return Conference.objects.all()
+    return Conference.objects.all().order_by("-conference_slug")
 
 
 def conference_slugs(current=False):

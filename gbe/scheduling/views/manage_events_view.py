@@ -40,7 +40,7 @@ class ManageEventsView(View):
     def groundwork(self, request, args, kwargs):
         validate_perms(request, ('Scheduling Mavens', 'Admins'))
         self.conference = None
-        conference_set = conference_list().order_by('-conference_slug')
+        conference_set = conference_list()
 
         if "conference_slug" in kwargs:
             self.conference = get_conference_by_slug(

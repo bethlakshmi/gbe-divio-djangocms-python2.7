@@ -8,7 +8,7 @@ from gbe.models import (
     Class,
 )
 from gbe.functions import (
-    get_current_conference,
+    get_latest_conference,
     get_conference_by_slug,
     conference_list,
 )
@@ -22,7 +22,7 @@ def BiosTeachersView(request):
     '''
     conf_slug = request.GET.get('conference', None)
     if not conf_slug:
-        conference = get_current_conference()
+        conference = get_latest_conference()
     else:
         conference = get_conference_by_slug(conf_slug)
     conferences = conference_list()
