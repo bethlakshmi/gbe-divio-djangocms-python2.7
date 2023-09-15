@@ -36,11 +36,22 @@ class ReviewTroupesView(View):
         for troupe in troupes:
             bid_row = {}
             members = ""
-            response = get_bookable_people(troupe.pk,
-                                           troupe.__class__.__name__)
-            for member in response.people[0].users:
-                if member.is_active:
-                    members += "%s,<br>" % member.profile.display_name
+
+            if not troupe.acts.filter(accepted=3).exclude(
+                    b_conference__status='completed').exists():
+                members = "<i>No accepted acts in this conference</i>"
+            else:
+                for act in troupe.acts.filter(accepted=3).exclude(
+                        b_conference__status='completed'):
+                    response = get_bookable_people(
+                        troupe.pk,
+                        troupe.__class__.__name__,
+                        commitment_class_name=act.__class__.__name__,
+                        commitment_class_id=act.pk)
+                    for member in response.people[0].users:
+                        if member.is_active:
+                            members += "%s,<br>" % member.profile.display_name
+
             bid_row['profile'] = (
                 troupe.name,
                 "%s<br>(<a href='%s'>%s</a>)" % (

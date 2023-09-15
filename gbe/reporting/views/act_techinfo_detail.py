@@ -24,7 +24,7 @@ class ActTechInfoDetail(RoleRequiredMixin, DetailView):
             profile = validate_profile(self.request)
             if profile is not None:
                 act = self.get_object()
-                if profile in act.performer.get_profiles():
+                if profile in act.get_performer_profiles():
                     return True
         return role_permitted
 

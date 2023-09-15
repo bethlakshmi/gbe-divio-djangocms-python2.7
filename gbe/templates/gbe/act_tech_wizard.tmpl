@@ -1,8 +1,9 @@
 {% extends 'gbe/gbe_wizard.tmpl' %}
 {% block intro %}
 <h2 class="gbe-title">Technical Info for {{act.b_title}}</h2>
+<b>Performer Name:</b> {{act.bio.name}}<br>
 {% for show in shows %}
-<b>Booked for: {{show}}</b>
+<b>Booked for:</b> {{show}}
 {% for show_id, rehearsal in rehearsals.items %}
   {% if show.pk == show_id %}
   <ul><li>Current Rehearsal Reservation: {{ rehearsal.event }}, at {{ rehearsal.event.starttime|date:"D, M j g:i A" }}</li></ul>

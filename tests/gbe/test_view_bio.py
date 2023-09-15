@@ -91,10 +91,9 @@ class TestViewBio(TestCase):
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "The Troupe")
+        self.assertContains(response, "The Performer")
         self.assertContains(response, troupe.name)
         self.assertContains(response, troupe.contact.user_object.email)
-        self.assertContains(response, member.display_name)
 
     def test_view_troupe_as_random_person(self):
         '''view_troupe view, success

@@ -46,6 +46,10 @@ not_yours = "You don't own that bid."
 SCHEDULE_REHEARSAL = ('You need to schedule a rehearsal slot and/or update '
                       'act tech info for "%s". <a href = "%s">'
                       'Fix this now!</a>')
+membership_help = '''Include the accounts of all performers in this act.  If
+  you cannot find a performer's name, please ask them to create an account
+  with the Expo.  We need this information to give performer access to the
+  show and for communication.'''
 EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
                  "it. <a href=' %s '>Update it now!</a>")
 
@@ -540,6 +544,7 @@ submission for this act.  View or edit that act here:  <a href="%s">%s</a>'''
 act_not_unique = '''The act has the same title as another act bid for this
  conference by this user.  Please name this act with a different title,
  or change the title of the existing act.'''
+act_group_needs_names = 'Performer names are required for groups of 2 or more'
 no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."

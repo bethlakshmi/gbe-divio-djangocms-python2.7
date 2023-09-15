@@ -95,7 +95,7 @@ class TestCreateClass(TestMakeClass):
             follow=True)
         self.assertRedirects(
             response,
-            reverse("persona-add", urlconf='gbe.urls', args=[0]) +
+            reverse("persona-add", urlconf='gbe.urls') +
             "?next=/class/create")
         title = '<h3 class="gbe-title">Tell Us About Your Bio</h3>'
         self.assertContains(response, title, html=True)

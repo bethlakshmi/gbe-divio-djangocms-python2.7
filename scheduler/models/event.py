@@ -49,11 +49,12 @@ class Event(Schedulable):
     connected_id = PositiveIntegerField(blank=True, null=True)
     connected_class = CharField(max_length=128, blank=True)
 
-    def has_commitment_space(self, commitment_class_name):
+    def has_commitment_space(self, commit_class_name):
         from scheduler.models import Ordering
         return (Ordering.objects.filter(
             people_allocated__event=self,
-            class_name=commitment_class_name).count() < self.max_commitments)
+            people_allocated__people__commitment_class_name=commit_class_name
+            ).count() < self.max_commitments)
 
     # New - fits scheduling API refactor
     def set_locations(self, locations):
@@ -105,10 +106,12 @@ class Event(Schedulable):
                 code="LINKED_CLASS_AND_ID_REQUIRED",
                 details="Allocating a person to an even requires the person" +
                 " to have a publicly linked class and id.")])
-
         people, created = People.objects.get_or_create(
             class_id=person.public_id,
-            class_name=person.public_class)
+            class_name=person.public_class,
+            commitment_class_name=person.commitment.class_name,
+            commitment_class_id=person.commitment.class_id)
+
         people.save()
         if created:
             for user in person.users:
@@ -145,8 +148,6 @@ class Event(Schedulable):
                 ordering.role = person.commitment.role
             if person.commitment.order:
                 ordering.order = person.commitment.order
-            ordering.class_name = person.commitment.class_name
-            ordering.class_id = person.commitment.class_id
             ordering.save()
         if self.extra_volunteers() > 0:
             warnings += [Warning(

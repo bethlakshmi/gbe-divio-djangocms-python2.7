@@ -399,7 +399,9 @@ act_help_texts = {
     'video_link': 'Make sure to include \'http://\' ',
     'intro_text': 'This text will be used by the MC to introduce your act.',
     'notes': ('Please clarify any instructions with respect to prop setting, '
-              'clearing, or cueing')
+              'clearing, or cueing'),
+    'performer_names': '''Required for groups of 2 more more.  Names of all
+    performers in this act.''',
 }
 
 summer_help_texts = {
@@ -431,7 +433,8 @@ act_bid_labels = {
     'video_choice': 'Video Notes',
     'why_you': ('Why Would You Like to Perform at The Great Burlesque '
                 'Exposition?'),
-    'video_link': 'URL of Video'
+    'video_link': 'URL of Video',
+    'num_performers': "Number of Performers",
 }
 summer_bid_label = "I am available to perform on"
 persona_labels = {'name': ('Stage Name'),

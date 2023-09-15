@@ -38,8 +38,8 @@ def get_schedule(user=None,
             event__starttime__lt=end_time.replace(tzinfo=None))
     if commitment:
         basic_filter = basic_filter.filter(
-            ordering__class_name=commitment.__class__.__name__,
-            ordering__class_id=commitment.pk)
+            people__commitment_class_name=commitment.__class__.__name__,
+            people__commitment_class_id=commitment.pk)
 
     if len(roles) > 0:
         basic_filter = basic_filter.filter(role__in=roles)
@@ -70,7 +70,7 @@ def get_schedule(user=None,
                     role=item.role,
                     label=item.label,
                     booking_id=item.pk,
-                    commitment=order)]
+                    order=order)]
 
     response = ScheduleResponse(
         schedule_items=sorted(

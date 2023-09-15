@@ -63,10 +63,10 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
                 autocomplete.ModelSelect2(url=reverse_lazy(
                     'limited-persona-autocomplete',
                     urlconf='gbe.urls')),
-                reverse_lazy('persona-add', urlconf='gbe.urls', args=[0]),
+                reverse_lazy('persona-add', urlconf='gbe.urls'),
                 reverse_lazy('persona-update',
                              urlconf='gbe.urls',
-                             args=['__fk__', 0])),
+                             args=['__fk__'])),
             }
 
     def __init__(self, *args, **kwargs):
