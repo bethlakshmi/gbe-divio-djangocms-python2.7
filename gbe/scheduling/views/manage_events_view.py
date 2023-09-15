@@ -47,7 +47,7 @@ class ManageEventsView(View):
                 kwargs['conference_slug'])
         else:
             self.conference = get_latest_conference()
-            
+
         day_list = []
         for day in self.conference.conferenceday_set.all():
             day_list += [(day.pk, day.day.strftime(GBE_DATE_FORMAT))]
