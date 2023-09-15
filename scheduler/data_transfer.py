@@ -4,12 +4,24 @@ class Commitment(object):
     def __init__(self,
                  role=None,
                  decorator_class=None,
-                 order=None):
-        if decorator_class:
-            self.class_name = decorator_class.__class__.__name__
-            self.class_id = decorator_class.pk
-        self.role = role
-        self.order = order
+                 order=None,
+                 ordering=None):
+        self.class_id = None
+        self.class_name = ""
+
+        if ordering is not None:
+            o = ordering
+            self.class_id = o.people_allocated.people.commitment_class_id
+            self.class_name = o.people_allocated.people.commitment_class_name
+            self.role = o.role
+            self.people_allocated = o.people_allocated
+            self.order = o.order
+        else:
+            if decorator_class:
+                self.class_name = decorator_class.__class__.__name__
+                self.class_id = decorator_class.pk
+            self.role = role
+            self.order = order
 
 
 class Person(object):
@@ -24,7 +36,7 @@ class Person(object):
                  commitment=None,
                  users=None):
         self.booking_id = None
-        self.commitment = None
+        self.commitment = commitment
         self.users = None
         self.label = None
 
@@ -35,15 +47,18 @@ class Person(object):
             self.label = booking.label
             people = booking.people
             if hasattr(booking, 'ordering'):
-                self.commitment = booking.ordering
+                self.commitment = Commitment(ordering=booking.ordering)
         else:
             self.occurrence = None
-            self.commitment = commitment
 
         if people:
             self.users = people.users.all()
             self.public_class = people.class_name
             self.public_id = people.class_id
+            if self.commitment is None:
+                self.commitment = Commitment()
+                self.commitment.class_id = people.commitment_class_id
+                self.commitment.class_name = people.commitment_class_name
         else:
             self.users = users
             self.public_id = public_id
@@ -58,6 +73,8 @@ class Person(object):
 
         if self.users is None:
             self.users = users
+        if self.commitment is None:
+            self.commitment = Commitment()
 
 
 class ScheduleItem(object):
@@ -68,14 +85,16 @@ class ScheduleItem(object):
                  role=None,
                  label=None,
                  booking_id=None,
-                 commitment=None):
+                 order=None):
         self.user = user
         self.group_id = group_id
         self.role = role
         self.label = label
         self.event = event
         self.booking_id = booking_id
-        self.commitment = commitment
+        self.commitment = None
+        if order is not None:
+            self.commitment = Commitment(ordering=order)
 
 
 class Answer(object):

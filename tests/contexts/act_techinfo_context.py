@@ -34,11 +34,13 @@ class ActTechInfoContext():
                  set_waitlist=False):
         self.conference = conference or ConferenceFactory()
         self.performer = performer or BioFactory()
-        self.people = get_or_create_bio(self.performer)
         self.act = act or ActFactory(bio=self.performer,
                                      b_conference=self.conference,
                                      accepted=3,
                                      submitted=True)
+        self.people = get_or_create_bio(self.performer,
+                                        self.act.__class__.__name__,
+                                        self.act.pk)
         role = "Performer"
         if set_waitlist:
             self.act.accepted = 2
@@ -71,8 +73,6 @@ class ActTechInfoContext():
             role=role)
         self.order = OrderingFactory(
             people_allocated=self.booking,
-            class_id=self.act.pk,
-            class_name="Act",
             role=act_role)
         if schedule_rehearsal:
             self.rehearsal = self._schedule_rehearsal(
@@ -88,21 +88,18 @@ class ActTechInfoContext():
         EventLabelFactory(event=rehearsal_event,
                           text=self.conference.conference_slug)
         if act:
-            people = get_or_create_bio(act.bio)
+            people = get_or_create_bio(act.bio, act.__class__.__name__, act.pk)
             booking = PeopleAllocationFactory(
                 event=rehearsal_event,
                 people=people,
                 role="Performer")
             OrderingFactory(
-                people_allocated=booking,
-                class_id=act.pk,
-                class_name="Act")
+                people_allocated=booking)
         return rehearsal_event
 
     def order_act(self, act, order):
         alloc = self.sched_event.peopleallocation_set.filter(
-            ordering__class_id=act.pk,
-            event=self.sched_event).first()
+            people__commitment_class_id=act.pk).first()
         ordering, created = Ordering.objects.get_or_create(
             people_allocated=alloc)
         ordering.order = order

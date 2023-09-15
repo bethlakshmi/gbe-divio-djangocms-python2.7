@@ -27,7 +27,6 @@ class PersonaCreate(CreatePopupMixin,
     success_url = reverse_lazy('home', urlconf="gbe.urls")
     page_title = 'Create Bio'
     view_title = 'Tell Us About Your Bio'
-    mode = "performer"
     valid_message = default_create_persona_msg
 
     def get_initial(self):
@@ -45,7 +44,6 @@ class PersonaUpdate(UpdatePopupMixin,
     template_name = 'gbe/modal_performer_form.tmpl'
     page_title = 'Update Bio'
     view_title = 'Tell Us About Your Bio'
-    mode = "update"
     valid_message = default_edit_persona_msg
     return_url = reverse_lazy('home', urlconf="gbe.urls")
 
@@ -53,7 +51,7 @@ class PersonaUpdate(UpdatePopupMixin,
         return reverse(
             'persona-update',
             urlconf="gbe.urls",
-            args=[self.object.pk, self.kwargs.get("include_troupe", 1)])
+            args=[self.object.pk])
 
     def get_queryset(self):
         return self.model.objects.filter(

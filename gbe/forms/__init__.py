@@ -19,7 +19,6 @@ from .social_link_form import (
     SocialLinkFormSet,
 )
 from .persona_form import PersonaForm
-from .troupe_form import TroupeForm
 from .bid_bio_merge_form import BidBioMergeForm
 
 # bid eval forms

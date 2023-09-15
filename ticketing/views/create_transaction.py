@@ -22,8 +22,6 @@ class CreateTransaction(FormToTableMixin, RoleRequiredMixin, CreateView):
     success_url = reverse_lazy('transactions', urlconf="ticketing.urls")
     page_title = 'Create Transaction'
     view_title = 'Create Comp Fee'
-    no_tabs = True
-    mode = "performer"
     valid_message = create_comp_msg
     view_permissions = ('Ticketing - Transactions', )
 

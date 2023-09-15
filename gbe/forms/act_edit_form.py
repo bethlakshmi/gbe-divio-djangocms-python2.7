@@ -3,6 +3,7 @@ from django.forms import (
     CheckboxSelectMultiple,
     DurationField,
     HiddenInput,
+    IntegerField,
     ModelForm,
     MultipleChoiceField,
     Textarea,
@@ -21,8 +22,10 @@ from gbe_forms_text import (
 from gbetext import (
     act_other_perf_options,
     act_shows_options,
+    act_group_needs_names,
 )
 from gbe.functions import jsonify
+from django.core.exceptions import ValidationError
 
 
 class ActEditDraftForm(ModelForm, BasicBidForm):
@@ -66,6 +69,8 @@ class ActEditDraftForm(ModelForm, BasicBidForm):
             'track_title',
             'track_artist',
             'act_duration',
+            'num_performers',
+            'performer_names',
             'video_link',
             'video_choice',
             'b_description',
@@ -80,7 +85,7 @@ class ActEditDraftForm(ModelForm, BasicBidForm):
                     url=reverse_lazy(
                         'limited-performer-autocomplete',
                         urlconf='gbe.urls')),
-                reverse_lazy('persona-add', urlconf='gbe.urls', args=[1]),
+                reverse_lazy('persona-add', urlconf='gbe.urls'),
                 reverse_lazy('performer-update',
                              urlconf='gbe.urls',
                              args=['__fk__'])),
@@ -106,6 +111,10 @@ class ActEditForm(ActEditDraftForm):
         required=True,
         help_text=act_help_texts['act_duration']
     )
+    num_performers = IntegerField(
+        required=True,
+        label=act_bid_labels['num_performers'],
+    )
     shows_preferences = MultipleChoiceField(
         widget=CheckboxSelectMultiple,
         choices=act_shows_options,
@@ -117,3 +126,11 @@ class ActEditForm(ActEditDraftForm):
         label=act_bid_labels['description'],
         help_text=act_help_texts['description'],
         widget=Textarea)
+
+    def clean(self):
+        cleaned_data = super(ActEditForm, self).clean()
+        if cleaned_data["num_performers"] > 1 and not (
+                cleaned_data.get("performer_names")):
+            error = ValidationError(act_group_needs_names)
+            self.add_error('performer_names', error)
+        return cleaned_data

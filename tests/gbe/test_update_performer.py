@@ -7,7 +7,6 @@ from tests.functions.gbe_functions import (
     assert_alert_exists,
     login_as,
 )
-from tests.functions.scheduler_functions import get_or_create_bio
 
 
 class TestUpdatePerformer(TestCase):
@@ -30,17 +29,7 @@ class TestUpdatePerformer(TestCase):
             "%s?_popup=1" % reverse(
                 'persona-update',
                 urlconf="gbe.urls",
-                args=[performer.pk, 1]))
-
-    def test_update_troupe(self):
-        troupe = BioFactory(multiple_performers=True)
-        people = get_or_create_bio(troupe)
-        login_as(troupe.contact, self)
-        url = reverse(self.view_name, urlconf='gbe.urls', args=[troupe.pk])
-        response = self.client.get(url, follow=True)
-        self.assertRedirects(
-            response,
-            reverse('troupe-update', urlconf="gbe.urls", args=[troupe.pk]))
+                args=[performer.pk]))
 
     def test_bad_performer(self):
         troupe = BioFactory(multiple_performers=True)

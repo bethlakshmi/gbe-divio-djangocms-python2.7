@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
-
+{% load sekizai_tags %}
 {% block title %}
 {{page_title}}
 {% endblock %}
-
+{% block head %}
+  {% for form in media_forms %}
+    {{ form.media.css }}
+  {% endfor %}
+{% endblock %}
 {% block content %}
 {% block intro %}
 {% endblock %}
@@ -48,4 +52,9 @@
   </div>
 </div>
 {% endif %}
+{% addtoblock "js" %}
+{% for form in media_forms %}
+ {{ form.media.js }}
+{% endfor %}
+{% endaddtoblock %}
 {% endblock %}

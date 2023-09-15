@@ -142,8 +142,9 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=data,
                                     follow=True)
-        casting = Ordering.objects.get(class_id=self.context.act.pk,
-                                       role="Hosted by...")
+        casting = Ordering.objects.get(
+            people_allocated__people__commitment_class_id=self.context.act.pk,
+            role="Hosted by...")
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -290,7 +291,8 @@ class TestActChangestate(TestCase):
             "Your act has been added to the wait list for %s" % (
                 self.sched_event.title),
         )
-        casting = Ordering.objects.get(class_id=act.pk)
+        casting = Ordering.objects.get(
+            people_allocated__people__commitment_class_id=act.pk)
         assert(casting.role == "Waitlisted")
 
     def test_act_changestate_troupe(self):
@@ -333,7 +335,8 @@ class TestActChangestate(TestCase):
             "Your act has been added to the wait list for %s" % (
                 self.sched_event.title),
         )
-        casting = Ordering.objects.get(class_id=self.context.act.pk)
+        casting = Ordering.objects.get(
+            people_allocated__people__commitment_class_id=self.context.act.pk)
         assert(casting.role == "Waitlisted")
         with self.assertRaises(PeopleAllocation.DoesNotExist):
             PeopleAllocation.objects.get(event=rehearsal_event)
@@ -391,7 +394,7 @@ class TestActChangestate(TestCase):
         )
         assert_email_contents("Regular Act")
         casting = Ordering.objects.get(
-            class_id=new_context.act.pk,
+            people_allocated__people__commitment_class_id=new_context.act.pk,
             people_allocated__event=self.sched_event)
         assert(casting.role == "Regular Act")
 
@@ -430,7 +433,8 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=data,
                                     follow=True)
-        casting = Ordering.objects.get(class_id=self.context.act.pk)
+        casting = Ordering.objects.get(
+            people_allocated__people__commitment_class_id=self.context.act.pk)
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -452,7 +456,8 @@ class TestActChangestate(TestCase):
         response = self.client.post(url,
                                     data=data,
                                     follow=True)
-        casting = Ordering.objects.get(class_id=act.pk)
+        casting = Ordering.objects.get(
+            people_allocated__people__commitment_class_id=act.pk)
         assert(casting.role == data['casting'])
         self.assertRedirects(response, reverse(
             'act_review_list',
@@ -506,7 +511,7 @@ class TestActChangestate(TestCase):
         response = self.client.post(self.url,
                                     data=self.data)
         casting = Ordering.objects.get(
-            class_id=new_context.act.pk,
+            people_allocated__people__commitment_class_id=new_context.act.pk,
             people_allocated__event=self.sched_event)
         assert(casting.role == "Waitlisted")
 

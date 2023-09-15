@@ -28,7 +28,7 @@
   {% endif %}
   <div class="performer_text">
     {% if performer.contact == profile and admin_message is None %}
-      <a class="gbe-link" href='{% if performer.multiple_performers %}{% url "gbe:troupe-update" performer.pk %}{% else %}{% url "gbe:persona-update" performer.pk 1 %}{% endif %}'>
+      <a class="gbe-link" href='{% url "gbe:persona-update" performer.pk %}'>
         {{ performer }}
       </a><br>
     (Click to edit)

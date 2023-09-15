@@ -11,7 +11,7 @@ from tests.functions.gbe_functions import (
     login_as,
 )
 from tests.functions.scheduler_functions import get_or_create_bio
-from tests.contexts import StaffAreaContext
+from tests.contexts import ShowContext
 
 
 class TestReviewTroupes(TestCase):
@@ -24,9 +24,6 @@ class TestReviewTroupes(TestCase):
             profile__purchase_email='test@test.com').profile
         cls.troupe = BioFactory(contact=cls.profile,
                                 multiple_performers=True)
-        cls.member = ProfileFactory()
-        people = get_or_create_bio(cls.troupe)
-        people.users.add(cls.member.user_object)
         cls.privileged_user = ProfileFactory().user_object
         grant_privilege(cls.privileged_user, 'Registrar')
         cls.url = reverse(cls.view_name, urlconf='gbe.urls')
@@ -50,7 +47,6 @@ class TestReviewTroupes(TestCase):
         self.assertContains(response, self.troupe.name)
         self.assertContains(response, self.profile.display_name)
         self.assertContains(response, self.profile.user_object.email)
-        self.assertContains(response, self.member)
         self.assertContains(
             response,
             '<a class="dropdown-item" href="%s">%s</a>' % (
@@ -75,3 +71,15 @@ class TestReviewTroupes(TestCase):
                      args=[self.troupe.pk]),
              "View Troupe"),
             html=True)
+
+    def test_show_member(self):
+        context = ShowContext(performer=self.troupe)
+        member = ProfileFactory()
+        context.people.users.add(member.user_object)
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, self.troupe.name)
+        self.assertContains(response, self.profile.display_name)
+        self.assertContains(response, self.profile.user_object.email)
+        self.assertContains(response, member.display_name)
