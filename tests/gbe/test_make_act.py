@@ -129,7 +129,7 @@ class TestCreateAct(TestMakeAct):
     def test_act_bid_post_form_not_valid(self):
         login_as(self.performer.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
-        data = self.get_act_form(self.performer, submit=True, valid=False)
+        data = {'submit': 1}
         response = self.client.post(url,
                                     data=data)
         self.assertEqual(response.status_code, 200)
