@@ -35,6 +35,7 @@ class MakeActView(MakeBidView):
     submit_fields = ['b_title',
                      'b_description',
                      'shows_preferences',
+                     'num_performers',
                      'bio', ]
     bid_type = "Act"
     has_draft = True
