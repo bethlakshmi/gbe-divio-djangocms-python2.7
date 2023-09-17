@@ -374,6 +374,9 @@ starting_position_choices = [
 
 act_help_texts = {
     'shows_preferences': 'Check as many as apply to you',
+    'b_title': '''This will identify your act in all emails and with the
+        crew, if your act does not have a name, we suggest using the title
+        of your song (track title).''',
     'act_duration': ('Length of entire act in mm:ss - please include any time '
                      'you are performing before or after your song.'),
     'track_duration': ('Please enter the duration of your music or backing '
