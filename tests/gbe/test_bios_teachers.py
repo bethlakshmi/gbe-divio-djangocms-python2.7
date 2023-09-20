@@ -6,11 +6,9 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
 )
 from tests.contexts import ClassContext
-from gbe.models import (
-    Conference
-)
 from django.urls import reverse
 from tests.functions.gbe_functions import (
+    clear_conferences,
     login_as,
     setup_social_media
 )
@@ -28,6 +26,13 @@ class TestBiosTeachers(TestCase):
         cls.conference = ConferenceFactory(status='upcoming',
                                            accepting_bids=True)
         cls.url = reverse(cls.view_name, urlconf="gbe.urls")
+
+    def test_bios_teachers_no_active_conf(self):
+        clear_conferences()
+        other_conference = ConferenceFactory(status="completed")
+        login_as(ProfileFactory(), self)
+        response = self.client.get(self.url)
+        assert response.status_code == 200
 
     def test_bios_teachers_no_conf_slug(self):
         current_context = ClassContext(conference=self.conference)

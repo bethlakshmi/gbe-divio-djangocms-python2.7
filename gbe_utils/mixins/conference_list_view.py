@@ -1,5 +1,6 @@
 from django.views.generic.list import ListView
 from gbe.models import Conference
+from gbe.functions import get_latest_conference
 
 
 class ConferenceListView(ListView):
@@ -11,7 +12,7 @@ class ConferenceListView(ListView):
         elif request.GET and request.GET.get('conference'):
             self.conference = Conference.by_slug(request.GET['conference'])
         else:
-            self.conference = Conference.current_conf()
+            self.conference = get_latest_conference()
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

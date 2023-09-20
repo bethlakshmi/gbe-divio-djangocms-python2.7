@@ -18,7 +18,6 @@ from gbetext import (
     more_shows_options,
     summer_other_perf_options,
 )
-from gbe.functions import get_current_conference
 from gbe.models import Act
 
 
