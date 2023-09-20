@@ -215,6 +215,15 @@ class TestVolunteerSignupView(TestCase):
             response,
             'This calendar is not currently available.')
 
+    def test_no_current_conference(self):
+        clear_conferences()
+        ConferenceFactory(status='completed')
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(
+            response,
+            'There are no active openings for volunteers at this time.')
+
     def test_bad_day(self):
         # There is a day, but that's not the day we're asking for.
         url = "%s?day=02-02-2016" % self.url

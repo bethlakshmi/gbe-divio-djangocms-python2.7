@@ -60,12 +60,12 @@ class ActEditDraftForm(ModelForm, BasicBidForm):
     class Meta:
         model = Act
         fields = [
+            'b_title',
             'bio',
             'first_name',
             'last_name',
             'phone',
             'shows_preferences',
-            'b_title',
             'track_title',
             'track_artist',
             'act_duration',
@@ -129,7 +129,8 @@ class ActEditForm(ActEditDraftForm):
 
     def clean(self):
         cleaned_data = super(ActEditForm, self).clean()
-        if cleaned_data["num_performers"] > 1 and not (
+        if 'num_performers' in cleaned_data.keys() and (
+                cleaned_data["num_performers"] > 1) and not (
                 cleaned_data.get("performer_names")):
             error = ValidationError(act_group_needs_names)
             self.add_error('performer_names', error)

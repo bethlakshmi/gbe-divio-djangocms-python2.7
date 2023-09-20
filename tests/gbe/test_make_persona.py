@@ -97,6 +97,7 @@ class TestPersonaCreate(TestCase):
             '<a href="#" data-toggle="modal" data-target="#DeleteModal" ' +
             'data-backdrop="true" class="btn gbe-btn-secondary">Delete</a>',
             html=True)
+        self.assertContains(response, "Tell Us About Your Bio")
         for i in range(0, 5):
             self.assertContains(
                 response,
@@ -162,13 +163,6 @@ class TestPersonaCreate(TestCase):
                              reverse(self.view_name, urlconf='gbe.urls'))
         self.assertContains(response, "Tell Us About Your Bio")
         self.assertNotContains(response, '<div class="alert alert-success">')
-
-    def test_get(self):
-        login_as(self.profile, self)
-        response = self.client.get(
-            reverse('persona-add', urlconf='gbe.urls'),
-        )
-        self.assertContains(response, "Tell Us About Your Bio")
 
     def test_create_persona_make_message(self):
         name = '"extra quotes"'

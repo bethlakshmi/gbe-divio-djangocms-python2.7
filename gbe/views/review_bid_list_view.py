@@ -7,7 +7,10 @@ from django.urls import reverse
 from django.shortcuts import render
 
 from gbe_logging import log_func
-from gbe.functions import validate_perms
+from gbe.functions import (
+    get_latest_conference,
+    validate_perms,
+)
 from gbe.models import (
     Act,
     BidEvaluation,
@@ -97,7 +100,7 @@ class ReviewBidListView(View):
         if request.GET.get('conf_slug'):
             self.conference = Conference.by_slug(request.GET['conf_slug'])
         else:
-            self.conference = Conference.current_conf()
+            self.conference = get_latest_conference()
         self.conference_slugs = Conference.all_slugs()
 
     def get_context_dict(self):

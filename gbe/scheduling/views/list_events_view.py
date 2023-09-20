@@ -13,7 +13,7 @@ from gbe.models import (
 from gbe.scheduling.forms import DisplayEventForm
 from gbe.forms import InvolvedProfileForm
 from gbe.functions import (
-    get_current_conference,
+    get_latest_conference,
     get_conference_by_slug,
     conference_slugs,
 )
@@ -56,7 +56,7 @@ class ListEventsView(View):
             self.conference = get_conference_by_slug(
                 self.request.GET.get('conference', None))
         else:
-            self.conference = get_current_conference()
+            self.conference = get_latest_conference()
 
         if self.event_type == "Volunteer":
             form = DisplayEventForm(request.GET)

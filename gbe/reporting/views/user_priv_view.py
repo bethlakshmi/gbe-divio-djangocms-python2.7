@@ -6,10 +6,7 @@ from django.contrib.auth.models import (
 )
 from django.db.models import Q
 from gbe.models import StaffArea
-from gbe.functions import (
-    conference_slugs,
-    get_current_conference,
-)
+from gbe.functions import conference_slugs
 from gbetext import privileged_event_roles
 from collections import OrderedDict
 from django.contrib import messages

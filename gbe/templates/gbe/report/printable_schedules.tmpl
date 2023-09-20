@@ -11,7 +11,7 @@
 
 {% for schedule in schedules %}
 {% if schedule.bookings %}  
-  <h3>{{ schedule.person.get_badge_name }}'s Schedule</h3>
+  <h2>{{ schedule.person.get_badge_name }}'s Schedule</h2>
   <i>Welcome!  Here's a schedule for your participation in the expo!
   Keep in mind that some times (like rehearsals) are generalities and that late
   shifts in class schedules could not be printed.</i><br><br>
@@ -36,7 +36,7 @@
 <br>
 {% endif %}
 {% if schedule.ticket_items or schedule.role_items%}
-  <h3>{{ schedule.person.get_badge_name }}'s GBE Package Checklist</h3>
+  <h2 class="gbe-subtitle">{{ schedule.person.get_badge_name }}'s GBE Package Checklist</h2>
   <ul>
   {% for criteria in schedule.ticket_items %}
     <li>Purchased {{criteria.count}} of {{criteria.ticket.title}}, for each item include:</li>

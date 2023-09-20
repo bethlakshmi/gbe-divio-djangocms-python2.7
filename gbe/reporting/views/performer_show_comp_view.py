@@ -9,8 +9,8 @@ from django.shortcuts import (
 )
 from gbe.functions import (
     conference_slugs,
-    get_current_conference,
     get_conference_by_slug,
+    get_latest_conference,
     validate_perms,
 )
 from scheduler.idd import get_schedule
@@ -26,7 +26,7 @@ class PerformerShowComp(View):
         if request.GET and request.GET.get('conf_slug'):
             self.conference = get_conference_by_slug(request.GET['conf_slug'])
         else:
-            self.conference = get_current_conference()
+            self.conference = get_latest_conference()
 
         self.profiles = Profile.objects.filter(
             user_object__is_active=True, bio__isnull=False
