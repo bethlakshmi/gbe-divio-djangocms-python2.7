@@ -60,12 +60,12 @@ class ActEditDraftForm(ModelForm, BasicBidForm):
     class Meta:
         model = Act
         fields = [
+            'b_title',
             'bio',
             'first_name',
             'last_name',
             'phone',
             'shows_preferences',
-            'b_title',
             'track_title',
             'track_artist',
             'act_duration',
