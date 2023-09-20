@@ -116,6 +116,16 @@ def get_current_conference():
     return Conference.current_conf()
 
 
+def get_latest_conference():
+    # this is a safer bet if you're using something linked off the special menu
+    # will always
+    current = Conference.current_conf()
+    if current is None:
+        current = Conference.objects.all().order_by(
+            "-conferenceday__day").first()
+    return current
+
+
 def get_conference_by_slug(slug):
     return Conference.by_slug(slug)
 
@@ -133,7 +143,7 @@ def get_conference_day(conference, date):
 
 
 def conference_list():
-    return Conference.objects.all()
+    return Conference.objects.all().order_by("-conference_slug")
 
 
 def conference_slugs(current=False):

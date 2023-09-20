@@ -27,7 +27,7 @@ from gbe.models import (
     UserMessage,
 )
 from gbe.functions import (
-    get_current_conference,
+    get_latest_conference,
     get_conference_days,
     get_conference_by_slug,
     conference_slugs,
@@ -83,7 +83,7 @@ class ShowCalendarView(View):
             self.conference = get_conference_by_slug(
                 self.request.GET.get('conference', None))
         else:
-            self.conference = get_current_conference()
+            self.conference = get_latest_conference()
 
         if not self.this_day:
             self.this_day = get_conference_days(

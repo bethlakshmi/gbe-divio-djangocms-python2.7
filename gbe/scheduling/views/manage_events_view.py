@@ -19,7 +19,7 @@ from gbe.models import (
     StaffArea,
 )
 from gbe.functions import (
-    get_current_conference,
+    get_latest_conference,
     get_conference_by_slug,
     conference_list,
     validate_perms,
@@ -40,13 +40,13 @@ class ManageEventsView(View):
     def groundwork(self, request, args, kwargs):
         validate_perms(request, ('Scheduling Mavens', 'Admins'))
         self.conference = None
-        conference_set = conference_list().order_by('-conference_slug')
+        conference_set = conference_list()
 
         if "conference_slug" in kwargs:
             self.conference = get_conference_by_slug(
                 kwargs['conference_slug'])
         else:
-            self.conference = get_current_conference()
+            self.conference = get_latest_conference()
 
         day_list = []
         for day in self.conference.conferenceday_set.all():

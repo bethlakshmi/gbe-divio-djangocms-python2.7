@@ -9,7 +9,7 @@ from django.shortcuts import (
 )
 from gbe.functions import (
     conference_slugs,
-    get_current_conference,
+    get_latest_conference,
     get_conference_by_slug,
     validate_perms,
 )
@@ -26,7 +26,7 @@ class WelcomeLetterView(View):
         if request.GET and request.GET.get('conf_slug'):
             self.conference = get_conference_by_slug(request.GET['conf_slug'])
         else:
-            self.conference = get_current_conference()
+            self.conference = get_latest_conference()
 
         if "profile_id" in kwargs:
             self.profiles = [get_object_or_404(

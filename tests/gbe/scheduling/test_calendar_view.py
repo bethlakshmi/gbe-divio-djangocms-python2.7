@@ -179,6 +179,15 @@ class TestCalendarView(TestCase):
             response,
             'This calendar is not currently available.')
 
+    def test_no_current_conference(self):
+        clear_conferences()
+        ConferenceFactory(status='completed')
+        url = reverse('calendar',
+                      urlconf='gbe.scheduling.urls',
+                      args=['Conference'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_bad_day(self):
         '''
         There is a day, but that's not the day we're asking for.

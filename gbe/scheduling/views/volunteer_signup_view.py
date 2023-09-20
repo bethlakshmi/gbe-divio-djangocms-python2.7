@@ -86,7 +86,7 @@ class VolunteerSignupView(View):
         # volunteer events happen on non-public days, as well, but we'll
         # default to a public day to start navigation as those tend to have
         # more need for help.
-        if not self.this_day:
+        if not self.this_day and self.conference is not None:
             self.this_day = get_conference_days(
                 self.conference,
                 open_to_public=True).order_by("day").first()
@@ -226,6 +226,3 @@ class VolunteerSignupView(View):
             context['col_fraction'] = 100.0/len(context['grid_list'])
 
         return render(request, self.template, context)
-
-    def dispatch(self, *args, **kwargs):
-        return super(VolunteerSignupView, self).dispatch(*args, **kwargs)
