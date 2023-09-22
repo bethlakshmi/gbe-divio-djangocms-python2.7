@@ -4,6 +4,7 @@ from django.forms import (
     ImageField,
     IntegerField,
     ModelForm,
+    RadioSelect,
     Textarea,
 )
 from gbe.models import (
@@ -123,10 +124,13 @@ class PersonaForm(ModelForm):
                   'pronouns',
                   'bio',
                   'year_started',
+                  'multiple_performers',
                   'awards',
                   'contact',
                   ]
         help_texts = persona_help_texts
         labels = persona_labels
         widgets = {'contact': HiddenInput(),
+                   'multiple_performers': RadioSelect(choices=[(True, 'Yes'),
+                                                               (False, 'No')])
                    }

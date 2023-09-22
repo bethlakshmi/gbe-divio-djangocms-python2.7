@@ -34,7 +34,7 @@ class TestIsExcluded(TestCase):
         cls.conference = Conference.objects.filter(
             conference_slug__in=booking.event.labels)[0]
         cls.schedule = get_schedule(
-                cls.teacher.get_profiles()[0].user_object,
+                cls.teacher.contact.user_object,
                 labels=[cls.conference.conference_slug]).schedule_items
 
     def setUp(self):

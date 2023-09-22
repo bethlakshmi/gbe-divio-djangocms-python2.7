@@ -35,6 +35,7 @@ class MakeActView(MakeBidView):
     submit_fields = ['b_title',
                      'b_description',
                      'shows_preferences',
+                     'num_performers',
                      'bio', ]
     bid_type = "Act"
     has_draft = True
@@ -73,7 +74,7 @@ class MakeActView(MakeBidView):
         self.bios = self.owner.bio_set.all()
         if len(self.bios) == 0:
             return '%s?next=%s' % (
-                reverse('persona-add', urlconf='gbe.urls', args=[1]),
+                reverse('persona-add', urlconf='gbe.urls'),
                 reverse('act_create', urlconf='gbe.urls'))
 
         if self.bid_object and (
@@ -90,10 +91,7 @@ class MakeActView(MakeBidView):
         else:
             initial.update({
                 'performer': self.bios[0],
-                'b_conference': self.conference,
-                'b_title': "%s Act - %s" % (
-                    self.owner,
-                    self.conference.conference_slug)})
+                'b_conference': self.conference})
         return initial
 
     def set_valid_form(self, request):

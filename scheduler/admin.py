@@ -78,14 +78,14 @@ class OrderAdmin(admin.ModelAdmin):
                     'performer',
                     'people_id',
                     'role',
-                    'class_id',
                     'event',
                     'people')
     list_filter = ['people_allocated__event', ]
     search_fields = ['people_allocated__people__users__profile__display_name',
                      'people_allocated__people__users__username',
                      'people_allocated__people__users__email',
-                     'people_allocated__event__title']
+                     'people_allocated__event__title',
+                     'people_allocated__people__commitment_class_id']
 
     def event(self, obj):
         return obj.people_allocated.event
@@ -105,11 +105,16 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class PeopleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'class_name', 'class_id', 'user_list')
+    list_display = ('id',
+                    'class_name',
+                    'class_id',
+                    'commitment_class_id',
+                    'user_list')
     list_filter = ['class_name']
     search_fields = ['users__username',
                      'users__profile__display_name',
-                     'class_id']
+                     'class_id',
+                     'commitment_class_id']
 
     def user_list(self, obj):
         people = ""

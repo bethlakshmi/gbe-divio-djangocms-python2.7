@@ -15,6 +15,7 @@ from tests.functions.gbe_functions import (
     make_act_app_ticket,
 )
 from gbetext import (
+    act_group_needs_names,
     default_act_submit_msg,
     default_act_draft_msg,
     default_act_title_conflict,
@@ -54,6 +55,7 @@ class TestMakeAct(TestCase):
                      'theact-track_title': 'a track',
                      'theact-track_artist': 'an artist',
                      'theact-b_description': 'a description',
+                     'theact-num_performers': 1,
                      'theact-bio': performer.pk,
                      'theact-act_duration': '1:00',
                      'theact-b_conference': self.current_conference.pk
@@ -61,7 +63,7 @@ class TestMakeAct(TestCase):
         if submit:
             form_dict['submit'] = 1
         if not valid:
-            del(form_dict['theact-b_description'])
+            del(form_dict['theact-bio'])
         return form_dict
 
     def check_subway_state(self, response, active_state="Apply"):
@@ -110,7 +112,7 @@ class TestCreateAct(TestMakeAct):
         login_as(profile, self)
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, "%s?next=%s" % (
-            reverse('persona-add', urlconf="gbe.urls", args=[1]),
+            reverse('persona-add', urlconf="gbe.urls"),
             self.url))
         self.check_subway_state(response, active_state="Create Bio")
 
@@ -127,11 +129,12 @@ class TestCreateAct(TestMakeAct):
     def test_act_bid_post_form_not_valid(self):
         login_as(self.performer.contact, self)
         url = reverse(self.view_name, urlconf='gbe.urls')
-        data = self.get_act_form(self.performer, submit=True, valid=False)
+        data = {'submit': 1}
         response = self.client.post(url,
                                     data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
+        self.assertContains(response, "Performer is not valid")
         self.check_subway_state(response)
 
     def test_act_bid_post_submit_no_payment(self):
@@ -336,19 +339,22 @@ class TestEditAct(TestMakeAct):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
 
-    def test_act_edit_post_form_not_valid(self):
+    def test_act_edit_post_form_trigger_group_name_check(self):
         '''act_edit, if form not valid, should return to ActEditForm'''
         act = ActFactory()
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
+        tickets = setup_fees(act.b_conference, is_act=True)
         login_as(act.performer.contact, self)
-        response = self.client.post(
-            url,
-            self.get_act_form(act.performer, valid=False))
+        data = self.get_act_form(act.performer, submit=True)
+        data['donation'] = 10
+        data['theact-num_performers'] = 3
+        response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Propose an Act')
         self.check_subway_state(response)
+        self.assertContains(response, act_group_needs_names)
 
     def test_act_edit_post_form_submit_unpaid(self):
         act = ActFactory()
@@ -477,9 +483,6 @@ class TestEditAct(TestMakeAct):
             code='ACT_TITLE_CONFLICT',
             description=message_string)
         response, original = self.post_title_collision(submit_state=True)
-        print(original)
-        print(original.pk)
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         error_msg = message_string % (
             reverse(

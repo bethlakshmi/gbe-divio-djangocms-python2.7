@@ -15,7 +15,12 @@ class People(Model):
     users = ManyToManyField(User)
     class_name = CharField(max_length=50, blank=True)
     class_id = IntegerField(blank=True, null=True)
+    commitment_class_name = CharField(max_length=50, blank=True)
+    commitment_class_id = IntegerField(blank=True, null=True)
 
     class Meta:
         app_label = "scheduler"
-        unique_together = (('class_name', 'class_id'),)
+        unique_together = (('class_name',
+                            'class_id',
+                            'commitment_class_name',
+                            'commitment_class_id'),)

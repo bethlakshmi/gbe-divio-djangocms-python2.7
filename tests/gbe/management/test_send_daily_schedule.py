@@ -53,12 +53,10 @@ class TestSendDailySchedule(TestCase):
             time(0, 0, 0, 0))
         troupe = BioFactory(multiple_performers=True)
         member = ProfileFactory()
-        people = PeopleFactory(class_name=troupe.__class__.__name__,
-                               class_id=troupe.pk)
-        people.save()
-        people.users.add(member.user_object)
         context = ShowContext(starttime=start_time,
                               performer=troupe)
+        context.people.users.add(member.user_object)
+        context.people.users.remove(troupe.contact.user_object)
         call_command("send_daily_schedule")
         queued_email = Email.objects.filter(
             status=2,

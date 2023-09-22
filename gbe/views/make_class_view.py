@@ -47,7 +47,7 @@ class MakeClassView(MakeBidView):
         self.teachers = self.owner.bio_set.filter(multiple_performers=False)
         if len(self.teachers) == 0:
             return '%s?next=%s' % (
-                reverse('persona-add', urlconf='gbe.urls', args=[0]),
+                reverse('persona-add', urlconf='gbe.urls'),
                 reverse('class_create', urlconf='gbe.urls'))
 
         if self.bid_object and (

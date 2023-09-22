@@ -5,6 +5,7 @@ from django.db.models import(
     CharField,
     ForeignKey,
     OneToOneField,
+    PositiveIntegerField,
     TextField,
     URLField,
 )
@@ -16,6 +17,7 @@ from gbe.models import (
     Biddable,
     Bio,
     Conference,
+    Profile,
     TechInfo,
 )
 from gbetext import (
@@ -24,6 +26,8 @@ from gbetext import (
     video_options,
 )
 from scheduler.idd import get_schedule
+from django.core.validators import MinValueValidator
+from scheduler.idd import get_bookable_people
 
 
 class Act (Biddable):
@@ -44,6 +48,10 @@ class Act (Biddable):
     shows_preferences = TextField(blank=True)
     other_performance = TextField(blank=True)
     why_you = TextField(blank=True)
+    num_performers = PositiveIntegerField(blank=True,
+                                          null=True,
+                                          validators=[MinValueValidator(1)])
+    performer_names = TextField(blank=True)
 
     def clone(self):
         act = Act(
@@ -57,6 +65,8 @@ class Act (Biddable):
             b_description=self.b_description,
             submitted=False,
             accepted=False,
+            num_performers=self.num_performers,
+            performer_names=self.performer_names,
             b_conference=Conference.objects.filter(
                 status="upcoming").first()
         )
@@ -67,7 +77,19 @@ class Act (Biddable):
         '''
         Gets all of the performers involved in the act.
         '''
-        return self.bio.get_profiles()
+        profiles = []
+        response = get_bookable_people(
+            self.bio.pk,
+            self.bio.__class__.__name__,
+            commitment_class_name=self.__class__.__name__,
+            commitment_class_id=self.pk)
+        if len(response.people) > 0:
+            profiles = Profile.objects.filter(
+                user_object__in=response.people[0].users)
+        else:
+            profiles = [self.bio.contact]
+
+        return profiles
 
     @property
     def performer(self):
@@ -119,7 +141,7 @@ class Act (Biddable):
         # the act is saved.
         super(Act, self).validate_unique(*args, **kwargs)
         if self.bio is None or not self.bio.contact:
-            raise ValidationError({'performer': "Performer is not valid"})
+            raise ValidationError({'bio': "Performer is not valid"})
         if Act.objects.filter(
                 b_conference=self.b_conference,
                 b_title=self.b_title,

@@ -117,6 +117,14 @@ class TestViewList(TestFilters):
             follow=True)
         self.assertEqual(404, response.status_code)
 
+    def test_only_past_conf(self):
+        clear_conferences()
+        ConferenceFactory(status="completed")
+        login_as(ProfileFactory(), self)
+        response = self.client.get(reverse("event_list",
+                                           urlconf="gbe.scheduling.urls"))
+        self.assertEqual(200, response.status_code)
+
     def test_view_list_event_type_not_in_list_titles(self):
         param = 'classification'
         url = reverse("event_list",

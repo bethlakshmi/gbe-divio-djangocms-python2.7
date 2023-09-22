@@ -2,14 +2,13 @@ from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
 from tests.factories.gbe_factories import (
+    ConferenceFactory,
     ConferenceDayFactory,
     ProfileFactory,
 )
-from gbe.models import (
-    Conference,
-    StaffArea,
-)
+from gbe.models import StaffArea
 from tests.functions.gbe_functions import (
+    clear_conferences,
     grant_privilege,
     login_as,
 )
@@ -89,6 +88,13 @@ class TestManageEventList(TestCase):
         login_as(ProfileFactory(), self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
+
+    def test_no_active_conference(self):
+        clear_conferences()
+        ConferenceFactory(status="completed")
+        login_as(self.privileged_profile, self)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
 
     def test_good_user_get_success(self):
         old_conf_day = ConferenceDayFactory(

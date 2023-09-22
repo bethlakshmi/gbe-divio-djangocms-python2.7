@@ -13,16 +13,13 @@ class PerformerUpdate(UpdatePopupMixin, PermissionRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         redirect = reverse('persona-update',
                            urlconf="gbe.urls",
-                           args=[kwargs['pk'], 1])
+                           args=[kwargs['pk']])
         try:
             performer = Bio.objects.get(pk=kwargs['pk'],
                                         contact__user_object=self.request.user)
         except:
             raise Http404
-        if performer.multiple_performers:
-            redirect = reverse('troupe-update',
-                               urlconf="gbe.urls",
-                               args=[kwargs['pk']])
+
         if self.is_popup():
             redirect = redirect + "?_popup=1"
         return redirect

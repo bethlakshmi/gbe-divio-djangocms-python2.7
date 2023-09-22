@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+{% if conference %}
 <h2 class="gbe-title">Volunteer for {{ conference }}</h2>
 <div>{{ view_header_text | safe }}</div><br>
 <div class="container calendar-container">
@@ -93,4 +94,8 @@
 </div></div>
 {% endif %}
 </div>
+{% else %}
+<h2>Please come back soon...</h2>
+There are no active openings for volunteers at this time.
+{% endif %}
 {% endblock %}

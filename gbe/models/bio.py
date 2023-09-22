@@ -9,7 +9,6 @@ from django.db.models import (
 )
 from gbe.models import Profile
 from filer.fields.image import FilerImageField
-from scheduler.idd import get_bookable_people
 
 
 class Bio(Model):
@@ -33,20 +32,6 @@ class Bio(Model):
     festivals = TextField(blank=True)     # placeholder only
     pronouns = CharField(max_length=128, blank=True)
     multiple_performers = BooleanField(default=False)
-
-    def get_profiles(self):
-        '''
-        Gets all of the people performing in the act
-        '''
-        profiles = []
-        response = get_bookable_people(self.pk, self.__class__.__name__)
-        if len(response.people) > 0:
-            profiles = Profile.objects.filter(
-                user_object__in=response.people[0].users)
-        elif not self.multiple_performers:
-            profiles = [self.contact]
-
-        return profiles
 
     def has_bids(self):
         return (self.is_teaching.count() > 0 or self.acts.count() > 0 or

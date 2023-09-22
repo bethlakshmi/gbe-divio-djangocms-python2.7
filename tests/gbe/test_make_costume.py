@@ -151,7 +151,7 @@ class TestCreateCostume(TestMakeCostume):
         response = self.client.get(url, follow=True)
         self.assertRedirects(
             response,
-            reverse("persona-add", urlconf='gbe.urls', args=[0]) +
+            reverse("persona-add", urlconf='gbe.urls') +
             "?next=/costume/create")
         self.check_subway_state(response, active_state="Create Bio")
 

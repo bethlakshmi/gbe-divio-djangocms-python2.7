@@ -188,6 +188,9 @@ class TestReviewActTechInfo(TestCase):
         people.users.add(member.user_object)
         self.context.act.bio = troupe
         self.context.act.save()
+        people.commitment_class_name = self.context.act.__class__.__name__
+        people.commitment_class_id = self.context.act.pk
+        people.save()
         self.set_the_basics()
         login_as(member, self)
         response = self.client.get(self.url)
