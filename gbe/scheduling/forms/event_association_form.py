@@ -8,8 +8,10 @@ from gbe.models import (
     Conference,
     StaffArea,
 )
-from scheduler.models import Event
-from scheduler.idd import get_occurrences
+from scheduler.idd import (
+    get_event_list,
+    get_occurrences,
+)
 from django.db.models.fields import BLANK_CHOICE_DASH
 from settings import GBE_DATETIME_FORMAT
 from dal import (
@@ -32,10 +34,10 @@ class EventAssociationForm(Form):
         queryset=StaffArea.objects.exclude(conference__status="completed"),
         required=False)
 
-    peer_event = ModelChoiceField(
-        queryset=Event.objects.filter(event_style="Volunteer"),
+    peer_event = autocomplete.Select2ListChoiceField(
+        choice_list=get_event_list(),
         required=False,
-        widget=autocomplete.ModelSelect2(
+        widget=autocomplete.ListSelect2(
             url=reverse_lazy('volunteer-autocomplete',
                              urlconf="gbe.scheduling.urls"),
             attrs={'data-minimum-input-length': 3}))
@@ -51,6 +53,8 @@ class EventAssociationForm(Form):
             label_set = [[self.conference.conference_slug]]
             self.fields['peer_event'].widget.forward = (
                 forward.Const(self.conference.conference_slug, 'label'), )
+            self.fields['peer_event'].choice_list = get_event_list(
+                label=self.conference.conference_slug)
 
         response = get_occurrences(
             event_styles=["Show", "Special"],
