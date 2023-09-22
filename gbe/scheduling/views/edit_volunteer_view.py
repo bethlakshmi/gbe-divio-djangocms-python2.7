@@ -57,6 +57,9 @@ class EditVolunteerView(ManageWorkerView):
         self.parent_id = -1
         if self.occurrence.parent is not None:
             self.parent_id = self.occurrence.parent.pk
+        self.peer_id = -1
+        if self.occurrence.peer is not None:
+            self.peer_id = self.occurrence.peer.pk
         self.manage_worker_url = reverse('manage_workers',
                                          urlconf='gbe.scheduling.urls',
                                          args=[self.conference.conference_slug,
@@ -78,7 +81,9 @@ class EditVolunteerView(ManageWorkerView):
         if 'association_form' not in context:
             context['association_form'] = EventAssociationForm(initial={
               'staff_area': self.area,
-              'parent_event': self.parent_id})
+              'parent_event': self.parent_id,
+              'peer_event': self.peer_id,
+              'conference': self.conference})
         context['edit_title'] = self.title
         context['scheduling_form'].fields['approval'].widget = CheckboxInput()
 
@@ -131,7 +136,9 @@ class EditVolunteerView(ManageWorkerView):
         context['association_form'] = EventAssociationForm(
             request.POST,
             initial={'staff_area': self.area,
-                     'parent_event': self.parent_id})
+                     'parent_event': self.parent_id,
+                     'peer_event': self.peer_id,
+                     'conference': self.conference})
         context['event_form'] = EventBookingForm(request.POST)
         context['scheduling_form'] = ScheduleOccurrenceForm(
             request.POST,
@@ -154,6 +161,10 @@ class EditVolunteerView(ManageWorkerView):
             if context['association_form'].cleaned_data['parent_event']:
                 parent_id = int(
                     context['association_form'].cleaned_data['parent_event'])
+            peer_id = -1
+            if context['association_form'].cleaned_data['peer_event']:
+                peer_id = context['association_form'].cleaned_data[
+                    'peer_event'].pk
             response = update_occurrence(
                 self.occurrence.pk,
                 title=context['event_form'].cleaned_data['title'],
@@ -170,6 +181,7 @@ class EditVolunteerView(ManageWorkerView):
                 approval=context['scheduling_form'].cleaned_data['approval'],
                 labels=labels,
                 parent_event_id=parent_id,
+                peer_id=peer_id,
                 slug=context['event_form'].cleaned_data['slug'])
 
             if request.POST.get('edit_event', 0) != "Save and Continue":
