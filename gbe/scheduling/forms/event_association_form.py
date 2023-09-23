@@ -36,6 +36,7 @@ class EventAssociationForm(Form):
 
     peer_event = autocomplete.Select2ListChoiceField(
         choice_list=get_event_list(),
+        label="Paired Event",
         required=False,
         widget=autocomplete.ListSelect2(
             url=reverse_lazy('volunteer-autocomplete',

@@ -83,6 +83,7 @@ class ManageEventsView(View):
                 'id': occurrence.id,
                 'start':  occurrence.start_time,
                 'title': occurrence.title,
+                'peer': occurrence.peer,
                 'location': occurrence.location,
                 'duration': occurrence.length.total_seconds(
                     ) / timedelta(hours=1).total_seconds(),

@@ -57,7 +57,7 @@
 {% block tbody %}
     {% for occurrence in occurrences %}
       <tr class="gbe-table-row{% if occurrence.id in success_occurrences %} gbe-table-success{% endif %}">
-       <td>{{ occurrence.title}}</td>
+       <td>{{ occurrence.title}}{% if occurrence.peer %} <i class="fas fa-link" title="Linked to {{occurrence.peer.title}}"></i>{% endif %}</td>
        <td>{% if occurrence.parent_title %}<a href="{{occurrence.parent_link}}" class="gbe-table-link" data-toggle="tooltip" title="Edit">{{ occurrence.parent_title}}</a>{% endif %}</td>
        <td>{% for area in occurrence.staff_areas %}
         {% if conference.status != "completed" %}<a href="{% url "scheduling:edit_staff" area.pk %}"  class="gbe-table-link" data-toggle="tooltip" title="Edit">{% endif %}{{area.slug}}{% if conference.status != "completed" %}</a>{% endif %}{% endfor %}</td>
