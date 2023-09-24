@@ -85,6 +85,31 @@ class Event(Schedulable):
                 ra = ResourceAllocation(resource=loc, event=self)
                 ra.save()
 
+    # Don't set self.peer directly, use this, to maintain bidirectional state
+    def set_peer(self, new_peer):
+        if self.peer == new_peer and new_peer.peer == self:
+            return
+
+        for event in self.other_peer.all():
+            event.peer = None
+            event.save()
+        for event in new_peer.other_peer.all():
+            event.peer = None
+            event.save()
+
+        self.peer = new_peer
+        self.save()
+        new_peer.peer = self
+        new_peer.save()
+
+    # Don't clear a peer directly, use this, to maintain bidirectional state
+    def clear_peer(self):
+        self.peer = None
+        self.save()
+        for event in self.peer.other_peer.all():
+            event.peer = None
+            event.save()
+
     # New - from refactoring
     @property
     def people(self):

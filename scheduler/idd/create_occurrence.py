@@ -51,7 +51,7 @@ def create_occurrence(title,
         response.occurrence.parent = parent_response.occurrence
 
     if peer_id:
-        response.occurrence.peer = peer_response.occurrence
+        response.occurrence.set_peer(peer_response.occurrence)
 
     response.occurrence.save()
 

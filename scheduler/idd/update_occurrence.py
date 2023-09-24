@@ -58,9 +58,9 @@ def update_occurrence(occurrence_id,
             peer = get_occurrence(peer_id)
             if peer.errors:
                 return peer
-            occurrence.peer = peer.occurrence
+            occurrence.set_peer(peer.occurrence)
         else:
-            occurrence.peer = None
+            occurrence.clear_peer()
 
     if start_time or max_volunteer or approval or max_commitments or slug or (
             parent_event_id is not None):
