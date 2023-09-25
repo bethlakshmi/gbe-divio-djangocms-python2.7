@@ -21,6 +21,7 @@ from django.urls import reverse
 from gbetext import (
     calendar_for_event,
     login_please,
+    paired_alert_msg,
     pending_note,
     role_options,
 )
@@ -108,6 +109,12 @@ class EventDetailView(View):
             defaults={
                 'summary': "Login or setup account message",
                 'description': login_please})
+        paired_alert = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="PAIRED_EVENT_MSG",
+            defaults={
+                'summary': "Shown in any Paired Event Popup",
+                'description': paired_alert_msg})
         return render(request, template, {
             'eventitem': eventitem_view,
             'conference': conference,
@@ -117,6 +124,7 @@ class EventDetailView(View):
             'bid': bid,
             'schedule_items': schedule_items,
             'pending_note': pending_instructions[0].description,
+            'paired_event_alert': paired_alert[0].description,
             'login_please': login_please_msg[0].description,
             'complete_profile_form': complete_profile_form})
 

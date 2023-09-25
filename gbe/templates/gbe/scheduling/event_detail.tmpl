@@ -25,6 +25,9 @@
           <label class="sched_label">Materials Fee:</label>&nbsp;&nbsp;${{bid.fee}}<br>
         {% endif %}
       </div>
+{% if eventitem.occurrence.peer %}<div class="alert gbe-alert-info m-3">
+    {{ paired_event_alert }}
+</div>{% endif %}
       {% if schedule_items %}
 <div class="m-3 sched_times gbe-bg-dark container">
 	{% for sched_event in schedule_items %}
@@ -34,11 +37,19 @@
       {% include "gbe/scheduling/volunteer_link_display.tmpl" with size="fa-2x" icon_class="volunteer-icon-large" disable_style="detail_link-detail_disable" occurrence=eventitem.occurrence %}
       {% include "gbe/scheduling/evaluate_icon.tmpl" with size="fa-2x" disable_style="detail_link-detail_disable" evaluate=sched_event.evaluate%}
 	  </div>
-	  <div class="col-11 col-sm-10 col-md-9 col-lg-4">
+	  <div class="col-11 col-sm-10 col-md-9 col-lg-7">
       <div class="row">
-        <div class="col-3"><label class="sched_label">Time:</label></div>
-        <div class="col-8">{{ eventitem.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
-        {{ eventitem.occurrence.end_time|date:_("TIME_FORMAT")}}</div>
+        {% if eventitem.occurrence.peer %}
+          <div class="col-12"><label class="sched_label">Multiple Commitments for Postion:</label></div>
+          <div class="col-12"><ul>
+            <li>{{ eventitem.occurrence.start_time|date:_("DATETIME_FORMAT")}} - {{ eventitem.occurrence.end_time|date:_("TIME_FORMAT")}}</li>
+            <li>{{ eventitem.occurrence.peer.start_time|date:_("DATETIME_FORMAT")}} - {{ eventitem.occurrence.peer.end_time|date:_("TIME_FORMAT")}} - <a href='{% url 'scheduling:detail_view' eventitem.occurrence.peer.pk %}' class="detail_link" >(View Event)</a></li>
+          </ul></div>
+        {% else %}
+          <div class="col-3"><label class="sched_label">Time:</label></div>
+          <div class="col-8">{{ eventitem.occurrence.start_time|date:_("DATETIME_FORMAT")}} - 
+          {{ eventitem.occurrence.end_time|date:_("TIME_FORMAT")}}</div>
+        {% endif %}
       </div>
       <div class="row">
 	      <div class="col-3"><label class="sched_label">Location:</label></div>
@@ -50,7 +61,7 @@
 	    </div>
     </div>
     {% if eventitem.occurrence.location.as_subtype.map_embed %}
-    <div class="col-12 col-lg-7 text-center sched-sub-box">
+    <div class="col-12 col-lg-4 text-center sched-sub-box">
       {{eventitem.occurrence.location.as_subtype.map_embed | safe}}
     </div>
     {% endif %}
