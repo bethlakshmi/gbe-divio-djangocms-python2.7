@@ -34,6 +34,7 @@ from gbetext import (
     class_styles,
     login_please,
     role_options,
+    paired_alert_msg,
     pending_note,
 )
 
@@ -83,6 +84,12 @@ class ListEventsView(View):
                 defaults={
                     'summary': "Text on top of event list pages",
                     'description': list_text.get(self.event_type.lower(), "")})
+        paired_alert = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="PAIRED_EVENT_MSG",
+            defaults={
+                'summary': "Shown in any Paired Event Popup",
+                'description': paired_alert_msg})
         context = {
             'conf_slug': self.conference.conference_slug,
             'conference_slugs': conference_slugs(),
@@ -91,6 +98,8 @@ class ListEventsView(View):
             'view_header_text': header_text[0].description,
             'pending_note': pending_instructions[0].description,
             'login_please': login_please_msg[0].description,
+            'paired_event_alert': paired_alert[0].description
+
         }
 
         return context
