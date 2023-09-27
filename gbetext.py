@@ -77,20 +77,29 @@ clear_filter_msg = ("The filter has been cleared (no choices made = all "
 apply_filter_msg = ("Results have been filtered.  Note, entries with an " +
                     "empty value are included in all search resulrts.")
 act_shows_options = [
-    (4, mark_safe('Thursday, May 4, 8PM: <b>Star Bras!</b><br><small>Show us '
-                  'your space opera! Visitors from any planet (or universe) '
-                  'are welcome, just bring us your best sci-fi acts!</small>'
+    (4, mark_safe('<i>Thursday, April 25 @ 8pm</i> <b>Half-o-Ween!</b><br>'
+                  '<small>Whatever happened to the <i>Transylvania Twist</i>?'
+                  '  It\'s now the BurlExpo\'s salute to spooky season! '
+                  'We\'ll take anything that goes bump in the night — as long '
+                  'as they\'re your best!</small>'
                   )),
-    (5, mark_safe('Friday, May 5, 9:30PM: <b>The Burlesk Bordello</b><br>'
-                  '<small>21+. We want your sexiest, raunchiest, kinkiest, '
-                  'and most erotic numbers for this intimate, late-night '
-                  'Cabaret</small>')),
-    (6, mark_safe('Saturday, May 6, 7:30PM: <b>The Main Event, not in '
-                  'competition</b><br><small>An amazing opportunity for newer '
-                  'performers or those who want to be seen on the big stage '
-                  'without the pressure of competition!</small>')),
-    (7, mark_safe('Saturday, May 6, 9PM: <b>The Main Event, competition</b>'
-                  '<br><small>Bring us your best act to compete for titles, '
+    (5, mark_safe('<i>Thursday, April 25 @ 10pm</i> <b>Opening Night Party</b>'
+                  '<br><small>We\'re taking over <a href="https://www.deacon'
+                  'giles.com/the-speakeasy-lab" class="gbe-link">The Speakeasy'
+                  ' Lab at Deacon Giles</a>. Something really special happens '
+                  'when performers are performing for other performers.'
+                  '</small>')),
+    (6, mark_safe('<i>Friday, April 26 @ 10pm</i> <b>The Burlesk Bordello</b>'
+                  '<br><small>21+! This intimate, late-night cabaret lets you'
+                  ' get up close and personal with the audience. Bring us '
+                  'your sexiest, kinkiest, steamiest acts!</small>')),
+    (7, mark_safe('<i>Saturday, April 27 @ 7:30PM</i> <b>The Main Event, not '
+                  'in competition</b><br><small>An amazing opportunity for '
+                  'newer performers or those who want to be seen on the big '
+                  'stage without the pressure of competition!</small>')),
+    (8, mark_safe('<i>Saturday, April 27 @ 9pm</i> <b>The Main Event, '
+                  'competition</b><br><small>Our big event gets even bigger '
+                  'this year! Bring us your best act to compete for titles, '
                   'prizes, and cash!</small>'))]
 act_shows_options_short = [
     (4, mark_safe('<b>Star Bras!</b><br>Thursday, May 4, 8PM')),
