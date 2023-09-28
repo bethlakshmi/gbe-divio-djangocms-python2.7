@@ -134,6 +134,9 @@ class SetVolunteerView(View):
                                     self.__class__.__name__)
                 if schedule_response.booking_id:
                     changed_occurrences += [booking.occurrence]
+                if booking.occurrence.approval_needed:
+                    approval_needed_events += [booking.occurrence]
+
                     user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
                         code="REMOVE_%s" % role.replace(" ", "_").upper(),
@@ -148,13 +151,18 @@ class SetVolunteerView(View):
                     self.owner.contact_email,
                     self.owner.get_badge_name(),
                     approval_needed_events)
-            elif kwargs['state'] == 'off' and (
-                    occ_response.occurrence.approval_needed):
+            elif kwargs['state'] == 'off' and len(approval_needed_events) >= 0:
+                titles = ""
+                for event in approval_needed_events:
+                    if len(titles) > 0:
+                        titles = titles + ", and " + event.title
+                    else:
+                        titles = event.title
                 email_status = send_bid_state_change_mail(
                     "volunteer",
                     self.owner.contact_email,
                     self.owner.get_badge_name(),
-                    occ_response.occurrence.title,
+                    titles,
                     4)
             else:
                 email_status = send_schedule_update_mail("Volunteer",
