@@ -90,16 +90,21 @@ class SetVolunteerView(View):
                 bookings += [person]
         schedule_response = None
         changed_occurrences = []
+        approval_needed_events = []
         if kwargs['state'] == 'on' and len(bookings) == 0:
             paired_event, schedule_response = self.book_volunteer(
                 request,
                 occ_response.occurrence)
             changed_occurrences += [occ_response.occurrence]
+            if occ_response.occurrence.approval_needed:
+                approval_needed_events += [occ_response.occurrence]
 
             if paired_event:
                 paired_event_OK, schedule_response = self.book_volunteer(
                     request,
                     occ_response.occurrence.peer)
+                if occ_response.occurrence.peer.approval_needed:
+                    approval_needed_events += [occ_response.occurrence.peer]
                 changed_occurrences += [occ_response.occurrence.peer]
                 if paired_event_OK:
                     user_message = UserMessage.objects.get_or_create(
@@ -137,13 +142,12 @@ class SetVolunteerView(View):
                             'description': default_message})
                     messages.success(request, user_message[0].description)
         if schedule_response and schedule_response.booking_id:
-            if kwargs['state'] == 'on' and (
-                    occ_response.occurrence.approval_needed):
+            if kwargs['state'] == 'on' and len(approval_needed_events) >= 0:
                 email_status = send_awaiting_approval_mail(
                     "volunteer",
                     self.owner.contact_email,
                     self.owner.get_badge_name(),
-                    occ_response.occurrence)
+                    approval_needed_events)
             elif kwargs['state'] == 'off' and (
                     occ_response.occurrence.approval_needed):
                 email_status = send_bid_state_change_mail(

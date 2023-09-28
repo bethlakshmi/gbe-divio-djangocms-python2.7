@@ -177,13 +177,13 @@ def send_awaiting_approval_mail(
         bid_type,
         email,
         badge_name,
-        occurrence):
+        occurrences):
     site = Site.objects.get_current()
     context = {
         'name': badge_name,
         'badge_name': badge_name,
         'bid_type': "offer to volunteer",
-        'occurrence': occurrence,
+        'occurrences': occurrences,
         'status': "awaiting approval",
         'site': site.domain,
         'site_name': site.name}
