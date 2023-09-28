@@ -18,6 +18,7 @@ from gbe.functions import (
     validate_perms,
 )
 from gbetext import (
+    paired_event_set_vol_msg,
     set_volunteer_msg,
     unset_volunteer_msg,
     set_pending_msg,
@@ -80,7 +81,8 @@ class SetVolunteerView(View):
 
         volunteers = get_bookings(
             [occurrence_id],
-            roles=["Volunteer", "Pending Volunteer"])
+            roles=["Volunteer", "Pending Volunteer"],
+            get_peers=True)
         bookings = []
         for person in volunteers.people:
             if person.public_id == self.owner.pk and (
@@ -88,34 +90,23 @@ class SetVolunteerView(View):
                 bookings += [person]
         schedule_response = None
         if kwargs['state'] == 'on' and len(bookings) == 0:
-            # if this person hasn't volunteered yet, and wants to
-            role = "Volunteer"
-            default_summary = "User has volunteered"
-            default_message = set_volunteer_msg
-            if occ_response.occurrence.approval_needed:
-                role = "Pending Volunteer"
-                default_summary = "User is pending"
-                default_message = set_pending_msg
-            person = Person(
-                users=[self.owner.user_object],
-                role=role,
-                public_id=self.owner.pk,
-                public_class=self.owner.__class__.__name__)
-            schedule_response = set_person(occurrence_id, person)
-            show_general_status(request,
-                                schedule_response,
-                                self.__class__.__name__,
-                                False)
-            if len(schedule_response.errors) == 0 and (
-                   schedule_response.booking_id):
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="SET_%s" % role.replace(" ", "_").upper(),
-                    defaults={
-                        'summary': default_summary,
-                        'description': default_message})
-                messages.success(request, user_message[0].description)
-
+            paired_event = self.book_volunteer(request,
+                                               occ_response.occurrence)
+            if paired_event:
+                paired_event_OK = self.book_volunteer(
+                    request,
+                    occ_response.occurrence.peer)
+                if paired_event_OK:
+                    user_message = UserMessage.objects.get_or_create(
+                        view=self.__class__.__name__,
+                        code="SET_PAIR",
+                        defaults={
+                            'summary': "User Volunteers for Paired Event",
+                            'description': paired_event_set_vol_msg})
+                    msg = (user_message[0].description +
+                        occ_response.occurrence.title + ', ' +
+                        occ_response.occurrence.peer.title)
+                    messages.success(request, msg)
         elif kwargs['state'] == 'off' and len(bookings) > 0:
             # if this person has volunteered, and is withdrawing
             success = True
@@ -126,7 +117,7 @@ class SetVolunteerView(View):
                 if role == "Pending Volunteer":
                     default_summary = "Pending user withdrew"
                     default_message = unset_pending_msg
-                schedule_response = remove_booking(occurrence_id,
+                schedule_response = remove_booking(booking.occurrence.pk,
                                                    booking.booking_id)
                 show_general_status(request,
                                     schedule_response,
@@ -179,5 +170,38 @@ class SetVolunteerView(View):
                     user_message[0].description + "status code: ")
         return HttpResponseRedirect(redirect_to)
 
-    def dispatch(self, *args, **kwargs):
-        return super(SetVolunteerView, self).dispatch(*args, **kwargs)
+    def book_volunteer(self, request, occurrence):
+        paired_event = False
+
+        # if this person hasn't volunteered yet, and wants to
+        person = Person(
+            users=[self.owner.user_object],
+            role="Volunteer",
+            public_id=self.owner.pk,
+            public_class=self.owner.__class__.__name__)
+        default_summary = "User has volunteered"
+        default_message = set_volunteer_msg
+        if occurrence.approval_needed:
+            person.role = "Pending Volunteer"
+            default_summary = "User is pending"
+            default_message = set_pending_msg
+
+        schedule_response = set_person(occurrence.pk, person)
+        show_general_status(request,
+                            schedule_response,
+                            self.__class__.__name__,
+                            False)
+        if len(schedule_response.errors) == 0 and (
+                schedule_response.booking_id):
+            if occurrence.peer is None:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="SET_%s" % person.role.replace(" ", "_").upper(),
+                    defaults={
+                        'summary': default_summary,
+                        'description': default_message})
+                messages.success(request, user_message[0].description)
+            else:
+                paired_event = True
+
+        return paired_event

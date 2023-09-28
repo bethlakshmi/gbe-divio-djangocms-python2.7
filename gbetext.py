@@ -694,6 +694,8 @@ unset_favorite_msg = '''Your interest has been removed and will no longer \
                    appear on your personal schedule.'''
 set_volunteer_msg = '''Thank you!  This volunteer shift has been added to \
 your schedule.'''
+paired_event_set_vol_msg = '''Thank you for volunteering!  You've been signed
+ up for the following shifts:  '''
 unset_volunteer_msg = '''Sorry to see you go!  This volunteer shift has been \
 removed from your personal schedule.'''
 review_vol_msg = '''<b>Please keep this information confidential.</b> This is \
