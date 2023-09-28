@@ -357,7 +357,7 @@ def notify_admin_on_error(activity, error, target_link):
 def send_volunteer_update_to_staff(
         active_user,
         vol_profile,
-        occurrence,
+        occurrences,
         state,
         update_response):
     name = 'volunteer changed schedule'
@@ -366,16 +366,36 @@ def send_volunteer_update_to_staff(
         "volunteer_schedule_change",
         "Volunteer Schedule Change")
     to_list = []
+    occurrence_ids = []
+    labels = []
+    set_of_events = []
+    for occurrence in occurrences:
+        occurrence_ids += [occurrence.pk]
+        for label in occurrence.labels:
+            labels += [label]
+        state_change = state
+        if state == "on":
+            if occurrence.approval_needed:
+                state_change = "Awaiting Approval"
+            else:
+                state_change = "Volunteered"
+        elif state == "off":
+            state_change = "Withdrawn"
+        set_of_events += [{
+            'occurrence': occurrence,
+            'start': occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
+            'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
+            'state_change': state_change}]
     leads = get_all_container_bookings(
-        occurrence_ids=[occurrence.pk],
+        occurrence_ids=occurrence_ids,
         roles=['Staff Lead', ])
     for lead in leads.people:
         for user in lead.users:
             if user.email not in to_list:
                 to_list += [user.email]
     for area in StaffArea.objects.filter(
-            conference__conference_slug__in=occurrence.labels,
-            slug__in=occurrence.labels,
+            conference__conference_slug__in=labels,
+            slug__in=labels,
             staff_lead__isnull=False):
         if area.staff_lead.user_object.email not in to_list:
             to_list += [area.staff_lead.user_object.email]
@@ -386,16 +406,6 @@ def send_volunteer_update_to_staff(
             groups__name='Volunteer Coordinator',
             is_active=True)]
 
-    state_change = ""
-    if state == "on":
-        if occurrence.approval_needed:
-            state_change = "Awaiting Approval"
-        else:
-            state_change = "Volunteered"
-    elif state == "off":
-        state_change = "Withdrawn"
-    else:
-        state_change = state
     warnings = []
     for warning in update_response.warnings:
         warnings += [make_warning_msg(warning, "", False)]
@@ -407,12 +417,9 @@ def send_volunteer_update_to_staff(
             context={
                 'active_profile': active_user,
                 'profile': vol_profile,
-                'occurrence': occurrence,
-                'start':  occurrence.start_time.strftime(GBE_DATETIME_FORMAT),
-                'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
+                'occurrences': set_of_events,
                 'error': update_response.errors,
-                'warnings': warnings,
-                'state_change': state_change},
+                'warnings': warnings},
             from_name=template.sender.from_name)
 
 

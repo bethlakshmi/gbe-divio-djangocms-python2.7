@@ -89,13 +89,18 @@ class SetVolunteerView(View):
                     person.public_class == self.owner.__class__.__name__):
                 bookings += [person]
         schedule_response = None
+        changed_occurrences = []
         if kwargs['state'] == 'on' and len(bookings) == 0:
-            paired_event = self.book_volunteer(request,
-                                               occ_response.occurrence)
+            paired_event, schedule_response = self.book_volunteer(
+                request,
+                occ_response.occurrence)
+            changed_occurrences += [occ_response.occurrence]
+
             if paired_event:
-                paired_event_OK = self.book_volunteer(
+                paired_event_OK, schedule_response = self.book_volunteer(
                     request,
                     occ_response.occurrence.peer)
+                changed_occurrences += [occ_response.occurrence.peer]
                 if paired_event_OK:
                     user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
@@ -123,6 +128,7 @@ class SetVolunteerView(View):
                                     schedule_response,
                                     self.__class__.__name__)
                 if schedule_response.booking_id:
+                    changed_occurrences += [booking.occurrence]
                     user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
                         code="REMOVE_%s" % role.replace(" ", "_").upper(),
@@ -152,7 +158,7 @@ class SetVolunteerView(View):
             staff_status = send_volunteer_update_to_staff(
                 self.owner,
                 self.owner,
-                occ_response.occurrence,
+                changed_occurrences,
                 kwargs['state'],
                 schedule_response)
             if (email_status or staff_status) and validate_perms(
@@ -204,4 +210,4 @@ class SetVolunteerView(View):
             else:
                 paired_event = True
 
-        return paired_event
+        return paired_event, schedule_response
