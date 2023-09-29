@@ -47,7 +47,7 @@ class TestMakeAct(TestCase):
 
     def get_act_form(self, performer, submit=False, valid=True):
 
-        form_dict = {'theact-shows_preferences': [4],
+        form_dict = {'theact-shows_preferences': [8],
                      'theact-phone': '111-222-3333',
                      'theact-first_name': 'Jane',
                      'theact-last_name': 'Smith',
@@ -420,7 +420,7 @@ class TestEditAct(TestMakeAct):
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
-        act = ActFactory(shows_preferences="[u'5']")
+        act = ActFactory(shows_preferences="[u'9']")
         url = reverse(self.view_name,
                       args=[act.pk],
                       urlconf="gbe.urls")
@@ -438,7 +438,7 @@ class TestEditAct(TestMakeAct):
             response,
             constraint_selected % (
                 "shows_preferences",
-                5,
+                9,
                 "shows_preferences",
                 1),
             html=True)

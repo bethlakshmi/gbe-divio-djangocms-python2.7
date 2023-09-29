@@ -77,32 +77,48 @@ clear_filter_msg = ("The filter has been cleared (no choices made = all "
 apply_filter_msg = ("Results have been filtered.  Note, entries with an " +
                     "empty value are included in all search resulrts.")
 act_shows_options = [
-    (4, mark_safe('Thursday, May 4, 8PM: <b>Star Bras!</b><br><small>Show us '
-                  'your space opera! Visitors from any planet (or universe) '
-                  'are welcome, just bring us your best sci-fi acts!</small>'
+    (8, mark_safe('<i>Thursday, April 25 @ 8pm</i> <b>Half-o-Ween!</b><br>'
+                  '<small>Whatever happened to the <i>Transylvania Twist</i>?'
+                  '  It\'s now the BurlExpo\'s salute to spooky season! '
+                  'We\'ll take anything that goes bump in the night — as long '
+                  'as they\'re your best!</small>'
                   )),
-    (5, mark_safe('Friday, May 5, 9:30PM: <b>The Burlesk Bordello</b><br>'
-                  '<small>21+. We want your sexiest, raunchiest, kinkiest, '
-                  'and most erotic numbers for this intimate, late-night '
-                  'Cabaret</small>')),
-    (6, mark_safe('Saturday, May 6, 7:30PM: <b>The Main Event, not in '
-                  'competition</b><br><small>An amazing opportunity for newer '
-                  'performers or those who want to be seen on the big stage '
-                  'without the pressure of competition!</small>')),
-    (7, mark_safe('Saturday, May 6, 9PM: <b>The Main Event, competition</b>'
-                  '<br><small>Bring us your best act to compete for titles, '
+    (9, mark_safe('<i>Thursday, April 25 @ 10pm</i> <b>Opening Night Party</b>'
+                  '<br><small>We\'re taking over <a href="https://www.deacon'
+                  'giles.com/the-speakeasy-lab" class="gbe-link">The Speakeasy'
+                  ' Lab at Deacon Giles</a>. Something really special happens '
+                  'when performers are performing for other performers.'
+                  '</small>')),
+    (10, mark_safe('<i>Friday, April 26 @ 10pm</i> <b>The Burlesk Bordello</b>'
+                  '<br><small>21+! This intimate, late-night cabaret lets you'
+                  ' get up close and personal with the audience. Bring us '
+                  'your sexiest, kinkiest, steamiest acts!</small>')),
+    (11, mark_safe('<i>Saturday, April 27 @ 7:30PM</i> <b>The Main Event, not '
+                  'in competition</b><br><small>An amazing opportunity for '
+                  'newer performers or those who want to be seen on the big '
+                  'stage without the pressure of competition!</small>')),
+    (12, mark_safe('<i>Saturday, April 27 @ 9pm</i> <b>The Main Event, '
+                  'competition</b><br><small>Our big event gets even bigger '
+                  'this year! Bring us your best act to compete for titles, '
                   'prizes, and cash!</small>'))]
 act_shows_options_short = [
+    (8, mark_safe('<b>Half-o-Ween!</b><br>Thursday, April 25 @ 8pm')),
+    (9, mark_safe('<b>The Burlesk Bordello</b><br>April 26 @ 10pm')),
+    (10, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
+                   'April 27 @ 7:30PM')),
+    (11, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
+                  'April 27 @ 9pm'))]
+old_act_shows_options = [
+    (0, 'The Bordello (Fri. Late)'),
+    (1, 'The Main Event, in competition'),
+    (2, 'The Main Event, not in competition'),
+    (3, 'The Newcomer\'s Showcase'),
     (4, mark_safe('<b>Star Bras!</b><br>Thursday, May 4, 8PM')),
     (5, mark_safe('<b>The Burlesk Bordello</b><br>Friday, May 5, 9:30PM')),
     (6, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                   'May 6, 7:30PM')),
     (7, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
                   'May 6, 9PM'))]
-old_act_shows_options = [(0, 'The Bordello (Fri. Late)'),
-                         (1, 'The Main Event, in competition'),
-                         (2, 'The Main Event, not in competition'),
-                         (3, 'The Newcomer\'s Showcase')]
 act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
  act order before clicking other buttons in this dashboard.<br><br></div>
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
