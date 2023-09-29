@@ -23,6 +23,7 @@ from gbetext import (
     unset_volunteer_msg,
     set_pending_msg,
     unset_pending_msg,
+    vol_opp_full_msg,
     vol_prof_update_failure,
     volunteer_allocate_email_fail_msg,
 )
@@ -92,34 +93,46 @@ class SetVolunteerView(View):
         changed_occurrences = []
         approval_needed_events = []
         if kwargs['state'] == 'on' and len(bookings) == 0:
-            paired_event, schedule_response = self.book_volunteer(
-                request,
-                occ_response.occurrence)
-            changed_occurrences += [occ_response.occurrence]
-            if occ_response.occurrence.approval_needed:
-                approval_needed_events += [occ_response.occurrence]
-
-            if paired_event:
-                paired_event_OK, schedule_response = self.book_volunteer(
-                    request,
-                    occ_response.occurrence.peer)
-                if occ_response.occurrence.peer.approval_needed:
-                    approval_needed_events += [occ_response.occurrence.peer]
-                changed_occurrences += [occ_response.occurrence.peer]
-                if paired_event_OK:
-                    user_message = UserMessage.objects.get_or_create(
+            if occ_response.occurrence.extra_volunteers() >= 0 or (
+                    occ_response.occurrence.peer is not None and 
+                    occ_response.occurrence.peer.extra_volunteers() >= 0):
+                user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
-                        code="SET_PAIR",
+                        code="VOL_OPP_FULL",
                         defaults={
-                            'summary': "User Volunteers for Paired Event",
-                            'description': paired_event_set_vol_msg})
-                    msg = (user_message[0].description +
-                        occ_response.occurrence.title + ', ' +
-                        occ_response.occurrence.peer.title)
-                    messages.success(request, msg)
+                            'summary': "Volunteer slot or Linked slot is full",
+                            'description': vol_opp_full_msg})
+                messages.success(request, user_message[0].description)
+            else:
+                paired_event, schedule_response = self.book_volunteer(
+                    request,
+                    occ_response.occurrence)
+                changed_occurrences += [occ_response.occurrence]
+                if occ_response.occurrence.approval_needed:
+                    approval_needed_events += [occ_response.occurrence]
+
+                if paired_event:
+                    paired_event_OK, schedule_response = self.book_volunteer(
+                        request,
+                        occ_response.occurrence.peer)
+                    if occ_response.occurrence.peer.approval_needed:
+                        approval_needed_events += [occ_response.occurrence.peer]
+                    changed_occurrences += [occ_response.occurrence.peer]
+                    if paired_event_OK:
+                        user_message = UserMessage.objects.get_or_create(
+                            view=self.__class__.__name__,
+                            code="SET_PAIR",
+                            defaults={
+                                'summary': "User Volunteers for Paired Event",
+                                'description': paired_event_set_vol_msg})
+                        msg = (user_message[0].description +
+                            occ_response.occurrence.title + ', ' +
+                            occ_response.occurrence.peer.title)
+                        messages.success(request, msg)
         elif kwargs['state'] == 'off' and len(bookings) > 0:
             # if this person has volunteered, and is withdrawing
             success = True
+            approval_needed = False
             for booking in bookings:
                 role = booking.role
                 default_summary = "User withdrew"
@@ -136,14 +149,15 @@ class SetVolunteerView(View):
                     changed_occurrences += [booking.occurrence]
                 if booking.occurrence.approval_needed:
                     approval_needed_events += [booking.occurrence]
+            if len(approval_needed_events) > 0:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="REMOVE_%s" % role.replace(" ", "_").upper(),
+                    defaults={
+                        'summary': default_summary,
+                        'description': default_message})
+                messages.success(request, user_message[0].description)
 
-                    user_message = UserMessage.objects.get_or_create(
-                        view=self.__class__.__name__,
-                        code="REMOVE_%s" % role.replace(" ", "_").upper(),
-                        defaults={
-                            'summary': default_summary,
-                            'description': default_message})
-                    messages.success(request, user_message[0].description)
         if schedule_response and schedule_response.booking_id:
             if kwargs['state'] == 'on' and len(approval_needed_events) >= 0:
                 email_status = send_awaiting_approval_mail(

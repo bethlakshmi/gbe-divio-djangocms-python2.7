@@ -701,6 +701,8 @@ removed from your personal schedule.'''
 review_vol_msg = '''<b>Please keep this information confidential.</b> This is \
 the place to provide feedback on your experience working with last year's \
 volunteers.'''
+vol_opp_full_msg = '''We're sorry, but the volunteer position has been filled,
+ please sign up for a different opportunity.'''
 set_pending_msg = '''Thank you!  Your offer to volunteer has been sent and is \
 awaiting approval.'''
 unset_pending_msg = '''Sorry to see you go!  Your offer to volunteer has \
