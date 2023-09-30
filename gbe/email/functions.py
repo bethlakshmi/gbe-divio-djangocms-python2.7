@@ -409,7 +409,8 @@ def send_volunteer_update_to_staff(
 
     warnings = []
     for warning in warnings:
-        warnings += [make_warning_msg(warning, "", False)]
+        if not (state == "Rejected" and warning.code == "SCHEDULE_CONFLICT"):
+            warnings += [make_warning_msg(warning, "", False)]
     if len(to_list) > 0:
         return mail_send_gbe(
             to_list,

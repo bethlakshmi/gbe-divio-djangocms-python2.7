@@ -279,6 +279,12 @@ class ApproveVolunteerView(View):
             role=volunteer_action_map[kwargs['action']]['role'],
             booking_id=kwargs['booking_id'])
         response = set_person(person=person)
+        new_warnings = []
+        for warning in response.warnings:
+            if not(person.role == "Rejected" and (
+                    warning.code == "SCHEDULE_CONFLICT")):
+                new_warnings += [warning]
+        response.warnings = new_warnings
         show_general_status(request, response, self.__class__.__name__)
         occurrences += [response.occurrence]
         warnings = response.warnings
@@ -303,6 +309,12 @@ class ApproveVolunteerView(View):
                 person.booking_id = None
                 response = set_person(response.occurrence.peer.pk,
                                       person=person)
+            new_warnings = []
+            for warning in response.warnings:
+                if not(person.role == "Rejected" and (
+                        warning.code == "SCHEDULE_CONFLICT")):
+                    new_warnings += [warning]
+            response.warnings = new_warnings
             show_general_status(request, response, self.__class__.__name__)
             for warning in response.warnings:
                 warnings += [warning]
