@@ -13,6 +13,7 @@
   <i class="far fa-thumbs-up"></i> - Approve &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fas fa-clock"></i> - Put on a Waitlist &nbsp;&nbsp;||&nbsp;&nbsp;
   <i class="fas fa-window-close"></i> - Reject<br/><br/>
+  <i>(Italic Text in Parens)</i> = Linked Events.  Approving volunteers for an event will also approve them for a linked event.  Rejecting or Waitlisting will remove/waitlist the volunteer from the linked event.<br><br>
 {% endblock %}
 {% block tbody %}
         {% for row in rows %}
@@ -22,7 +23,7 @@
             </td>
             <td>
 <a href="{% url 'scheduling:edit_event' conference.conference_slug row.occurrence.pk %}" class="gbe-table-link">
-              {{ row.occurrence }}</a>
+              {{ row.occurrence }}</a>{% if row.occurrence.peer %}<br><i>({{row.occurrence.peer}})</i>{% endif %}
             </td>
             <td>{{row.occurrence.start_time|date:"M j, Y, g:i A"}}</td>
             <td>

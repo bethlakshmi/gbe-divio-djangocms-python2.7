@@ -359,7 +359,8 @@ def send_volunteer_update_to_staff(
         vol_profile,
         occurrences,
         state,
-        update_response):
+        warnings=[],
+        errors=[]):
     name = 'volunteer changed schedule'
     template = get_or_create_template(
         name,
@@ -407,7 +408,7 @@ def send_volunteer_update_to_staff(
             is_active=True)]
 
     warnings = []
-    for warning in update_response.warnings:
+    for warning in warnings:
         warnings += [make_warning_msg(warning, "", False)]
     if len(to_list) > 0:
         return mail_send_gbe(
@@ -418,7 +419,7 @@ def send_volunteer_update_to_staff(
                 'active_profile': active_user,
                 'profile': vol_profile,
                 'occurrences': set_of_events,
-                'error': update_response.errors,
+                'error': errors,
                 'warnings': warnings},
             from_name=template.sender.from_name)
 

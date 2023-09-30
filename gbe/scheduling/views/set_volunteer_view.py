@@ -39,6 +39,8 @@ class SetVolunteerView(View):
 
     @never_cache
     def post(self, request, *args, **kwargs):
+        warnings = []
+        errors = []
         redirect_to = request.GET.get(
             "next", reverse('volunteer_signup',
                             urlconf='gbe.scheduling.urls'))
@@ -107,6 +109,8 @@ class SetVolunteerView(View):
                 paired_event, schedule_response = self.book_volunteer(
                     request,
                     occ_response.occurrence)
+                warnings = schedule_response.warnings
+                errors = schedule_response.errors
                 changed_occurrences += [occ_response.occurrence]
                 if occ_response.occurrence.approval_needed:
                     approval_needed_events += [occ_response.occurrence]
@@ -115,6 +119,8 @@ class SetVolunteerView(View):
                     paired_event_OK, schedule_response = self.book_volunteer(
                         request,
                         occ_response.occurrence.peer)
+                    warnings = warnings + schedule_response.warnings
+                    errors = errors + schedule_response.errors
                     if occ_response.occurrence.peer.approval_needed:
                         approval_needed_events += [occ_response.occurrence.peer]
                     changed_occurrences += [occ_response.occurrence.peer]
@@ -145,6 +151,8 @@ class SetVolunteerView(View):
                 show_general_status(request,
                                     schedule_response,
                                     self.__class__.__name__)
+                warnings = warnings + schedule_response.warnings
+                errors = errors + schedule_response.errors
                 if schedule_response.booking_id:
                     changed_occurrences += [booking.occurrence]
                 if booking.occurrence.approval_needed:
@@ -186,7 +194,8 @@ class SetVolunteerView(View):
                 self.owner,
                 changed_occurrences,
                 kwargs['state'],
-                schedule_response)
+                warnings=warnings,
+                errors=errors)
             if (email_status or staff_status) and validate_perms(
                     request,
                     'any',
