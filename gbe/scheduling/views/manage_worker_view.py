@@ -176,7 +176,7 @@ class ManageWorkerView(View):
                 response = remove_booking(
                     self.occurrence.pk,
                     booking_id=int(request.POST['alloc_id']))
-                if response.booking_id:
+                if response.booking_ids:
                     email_status = send_schedule_update_mail(
                         "Volunteer", data['worker'])
             elif data.get('worker', None):

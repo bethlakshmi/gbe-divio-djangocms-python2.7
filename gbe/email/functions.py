@@ -359,8 +359,7 @@ def send_volunteer_update_to_staff(
         vol_profile,
         occurrences,
         state,
-        warnings=[],
-        errors=[]):
+        update_response):
     name = 'volunteer changed schedule'
     template = get_or_create_template(
         name,
@@ -420,7 +419,7 @@ def send_volunteer_update_to_staff(
                 'active_profile': active_user,
                 'profile': vol_profile,
                 'occurrences': set_of_events,
-                'error': errors,
+                'error': update_response.errors,
                 'warnings': warnings},
             from_name=template.sender.from_name)
 

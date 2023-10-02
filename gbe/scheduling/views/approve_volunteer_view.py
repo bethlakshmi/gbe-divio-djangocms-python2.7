@@ -202,20 +202,14 @@ class ApproveVolunteerView(View):
                     'summary': "Approve Volunteer First Header",
                     'description': self.view_title})[0].description
 
-    def send_notifications(self,
-                           request,
-                           occurrences,
-                           state,
-                           profile,
-                           role,
-                           warnings):
+    def send_notifications(self, request, response, state, profile, role):
         if state == 3:
             email_status = send_schedule_update_mail(
                 "Volunteer",
                 profile)
         else:
             titles = ""
-            for event in occurrences:
+            for event in response.occurrences:
                 if len(titles) > 0:
                     titles = titles + ", and " + event.title
                 else:
@@ -229,9 +223,9 @@ class ApproveVolunteerView(View):
         staff_status = send_volunteer_update_to_staff(
             self.reviewer,
             profile,
-            occurrences,
+            response.occurrences,
             role,
-            warnings=warnings)
+            response)
         if email_status or staff_status:
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
@@ -251,7 +245,6 @@ class ApproveVolunteerView(View):
 
     def set_status(self, request, kwargs):
         occurrences = []
-        warnings = []
         if len(self.labels) > 0 or len(self.parent_shows) > 0:
             within_scope = False
             response = get_occurrence(booking_id=kwargs['booking_id'])
@@ -286,38 +279,6 @@ class ApproveVolunteerView(View):
                 new_warnings += [warning]
         response.warnings = new_warnings
         show_general_status(request, response, self.__class__.__name__)
-        occurrences += [response.occurrence]
-        warnings = response.warnings
-
-        if not response.errors and response.occurrence.peer is not None:
-            occurrences += [response.occurrence.peer]
-            sched_response = get_schedule(
-                user=profile.user_object,
-                labels=[self.conference.conference_slug],
-                roles=["Volunteer",
-                       "Pending Volunteer",
-                       "Waitlisted",
-                       "Rejected"])
-            peer_booking = None
-            for item in sched_response.schedule_items:
-                if item.event.pk == response.occurrence.peer.pk:
-                    peer_booking = item
-            if peer_booking is not None:
-                person.booking_id = peer_booking.booking_id
-                response = set_person(person=person)
-            else:
-                person.booking_id = None
-                response = set_person(response.occurrence.peer.pk,
-                                      person=person)
-            new_warnings = []
-            for warning in response.warnings:
-                if not(person.role == "Rejected" and (
-                        warning.code == "SCHEDULE_CONFLICT")):
-                    new_warnings += [warning]
-            response.warnings = new_warnings
-            show_general_status(request, response, self.__class__.__name__)
-            for warning in response.warnings:
-                warnings += [warning]
                 
         if not response.errors:
             user_message = UserMessage.objects.get_or_create(
@@ -328,18 +289,17 @@ class ApproveVolunteerView(View):
                     'description': set_volunteer_role_msg % person.role})
             msg = "%s Person: %s<br/>" % (user_message[0].description,
                                           str(profile))
-            for occurrence in occurrences:
+            for occurrence in response.occurrences:
                 msg = '%sEvent: %s, Start Time: %s<br>' % (
                     msg,
                     str(occurrence),
                     occurrence.starttime.strftime(GBE_DATETIME_FORMAT))
             messages.success(request, msg)
             self.send_notifications(request,
-                                    occurrences,
+                                    response,
                                     state,
                                     profile,
-                                    person.role,
-                                    warnings)
+                                    person.role)
 
     @never_cache
     def get(self, request, *args, **kwargs):

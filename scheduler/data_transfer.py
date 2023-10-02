@@ -152,13 +152,18 @@ class OccurrencesResponse(GeneralResponse):
 
 
 class BookingResponse(GeneralResponse):
+    booking_ids = []
+    occurrences = []
+
     def __init__(self,
                  booking_id=None,
                  occurrence=None,
                  warnings=[],
                  errors=[]):
-        self.booking_id = booking_id
-        self.occurrence = occurrence
+        if booking_id:
+            self.booking_ids = [booking_id]
+        if occurrence:
+            self.occurrences = [occurrence]
         super(BookingResponse, self).__init__(warnings, errors)
 
 

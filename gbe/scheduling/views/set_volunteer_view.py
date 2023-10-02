@@ -84,15 +84,13 @@ class SetVolunteerView(View):
 
         volunteers = get_bookings(
             [occurrence_id],
-            roles=["Volunteer", "Pending Volunteer"],
-            get_peers=True)
+            roles=["Volunteer", "Pending Volunteer"])
         bookings = []
         for person in volunteers.people:
             if person.public_id == self.owner.pk and (
                     person.public_class == self.owner.__class__.__name__):
                 bookings += [person]
         schedule_response = None
-        changed_occurrences = []
         approval_needed_events = []
         if kwargs['state'] == 'on' and len(bookings) == 0:
             if occ_response.occurrence.extra_volunteers() >= 0 or (
@@ -106,35 +104,14 @@ class SetVolunteerView(View):
                             'description': vol_opp_full_msg})
                 messages.success(request, user_message[0].description)
             else:
-                paired_event, schedule_response = self.book_volunteer(
+                schedule_response = self.book_volunteer(
                     request,
                     occ_response.occurrence)
-                warnings = schedule_response.warnings
-                errors = schedule_response.errors
-                changed_occurrences += [occ_response.occurrence]
                 if occ_response.occurrence.approval_needed:
                     approval_needed_events += [occ_response.occurrence]
+                if occ_response.occurrence.peer.approval_needed:
+                    approval_needed_events += [occ_response.occurrence.peer]
 
-                if paired_event:
-                    paired_event_OK, schedule_response = self.book_volunteer(
-                        request,
-                        occ_response.occurrence.peer)
-                    warnings = warnings + schedule_response.warnings
-                    errors = errors + schedule_response.errors
-                    if occ_response.occurrence.peer.approval_needed:
-                        approval_needed_events += [occ_response.occurrence.peer]
-                    changed_occurrences += [occ_response.occurrence.peer]
-                    if paired_event_OK:
-                        user_message = UserMessage.objects.get_or_create(
-                            view=self.__class__.__name__,
-                            code="SET_PAIR",
-                            defaults={
-                                'summary': "User Volunteers for Paired Event",
-                                'description': paired_event_set_vol_msg})
-                        msg = (user_message[0].description +
-                            occ_response.occurrence.title + ', ' +
-                            occ_response.occurrence.peer.title)
-                        messages.success(request, msg)
         elif kwargs['state'] == 'off' and len(bookings) > 0:
             # if this person has volunteered, and is withdrawing
             success = True
@@ -151,10 +128,6 @@ class SetVolunteerView(View):
                 show_general_status(request,
                                     schedule_response,
                                     self.__class__.__name__)
-                warnings = warnings + schedule_response.warnings
-                errors = errors + schedule_response.errors
-                if schedule_response.booking_id:
-                    changed_occurrences += [booking.occurrence]
                 if booking.occurrence.approval_needed:
                     approval_needed_events += [booking.occurrence]
             if len(approval_needed_events) > 0:
@@ -166,7 +139,7 @@ class SetVolunteerView(View):
                         'description': default_message})
                 messages.success(request, user_message[0].description)
 
-        if schedule_response and schedule_response.booking_id:
+        if schedule_response and len(schedule_response.booking_ids) > 0:
             if kwargs['state'] == 'on' and len(approval_needed_events) >= 0:
                 email_status = send_awaiting_approval_mail(
                     "volunteer",
@@ -192,10 +165,9 @@ class SetVolunteerView(View):
             staff_status = send_volunteer_update_to_staff(
                 self.owner,
                 self.owner,
-                changed_occurrences,
+                schedule_response.occurrences,
                 kwargs['state'],
-                warnings=warnings,
-                errors=errors)
+                schedule_response)
             if (email_status or staff_status) and validate_perms(
                     request,
                     'any',
@@ -222,7 +194,8 @@ class SetVolunteerView(View):
             public_class=self.owner.__class__.__name__)
         default_summary = "User has volunteered"
         default_message = set_volunteer_msg
-        if occurrence.approval_needed:
+        if occurrence.approval_needed or (occurrence.peer is not None and
+                occurrence.peer.approval_needed):
             person.role = "Pending Volunteer"
             default_summary = "User is pending"
             default_message = set_pending_msg
@@ -232,17 +205,25 @@ class SetVolunteerView(View):
                             schedule_response,
                             self.__class__.__name__,
                             False)
-        if len(schedule_response.errors) == 0 and (
-                schedule_response.booking_id):
-            if occurrence.peer is None:
+        if len(schedule_response.errors) == 0:
+            msg = ""
+            if len(schedule_response.booking_ids) == 1:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
                     code="SET_%s" % person.role.replace(" ", "_").upper(),
                     defaults={
                         'summary': default_summary,
                         'description': default_message})
-                messages.success(request, user_message[0].description)
-            else:
-                paired_event = True
+                msg = user_message[0].description
+            elif len(schedule_response.booking_ids) > 1:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="SET_PAIR",
+                    defaults={'summary': "User Volunteers for Paired Event",
+                              'description': paired_event_set_vol_msg})
+                msg = (user_message[0].description +
+                       occurrence.title + ', ' +
+                       occurrence.peer.title)
+            messages.success(request, msg)
 
-        return paired_event, schedule_response
+        return schedule_response
