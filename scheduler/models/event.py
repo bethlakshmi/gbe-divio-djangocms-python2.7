@@ -141,7 +141,8 @@ class Event(Schedulable):
         if person.label is not None:
             allocation.label = person.label
         allocation.save()
-        if person.commitment:
+        if person.commitment is not None and (
+                 person.commitment.class_id is not None):
             ordering, created = Ordering.objects.get_or_create(
                 people_allocated=allocation)
             if person.commitment.role is not None:
