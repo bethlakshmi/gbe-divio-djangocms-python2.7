@@ -43,7 +43,7 @@ class TestReviewActList(TestCase):
             4,
             b_conference=cls.conference,
             submitted=True,
-            shows_preferences=['4', '5'])
+            shows_preferences=['8', '9'])
 
     def setUp(self):
         self.client = Client()
@@ -189,7 +189,7 @@ class TestReviewActList(TestCase):
         other_show = ActFactory(
             b_conference=self.conference,
             submitted=True,
-            shows_preferences=['5'])
+            shows_preferences=['10'])
         no_pref_show = ActFactory(
             b_conference=self.conference,
             submitted=True,
@@ -197,7 +197,7 @@ class TestReviewActList(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.post(
             self.url,
-            data={'shows_preferences': ['4'],
+            data={'shows_preferences': ['9'],
                   'filter': "Filter Interest"})
         self.assertContains(response, apply_filter_msg)
         self.assertContains(response, self.acts[0].b_title)
@@ -208,7 +208,7 @@ class TestReviewActList(TestCase):
         other_show = ActFactory(
             b_conference=self.conference,
             submitted=True,
-            shows_preferences=['5'])
+            shows_preferences=['9'])
         login_as(self.privileged_user, self)
         response = self.client.post(
             self.url,
@@ -222,7 +222,7 @@ class TestReviewActList(TestCase):
         other_show = ActFactory(
             b_conference=self.conference,
             submitted=True,
-            shows_preferences=['5'])
+            shows_preferences=['9'])
         login_as(self.privileged_user, self)
         response = self.client.post(
             self.url,

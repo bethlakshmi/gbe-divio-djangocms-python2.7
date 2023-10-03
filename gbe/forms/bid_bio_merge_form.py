@@ -2,7 +2,6 @@ from django.forms import (
     ChoiceField,
     Form,
 )
-from gbetext import act_shows_options_short
 
 
 class BidBioMergeForm(Form):

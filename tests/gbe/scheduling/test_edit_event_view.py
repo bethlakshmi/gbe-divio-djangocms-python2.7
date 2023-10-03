@@ -8,7 +8,11 @@ from tests.factories.gbe_factories import (
     RoomFactory,
     ProfileFactory,
 )
-from scheduler.models import Event
+from scheduler.models import (
+    Event,
+    Ordering,
+    PeopleAllocation,
+)
 from tests.functions.gbe_functions import (
     assert_alert_exists,
     assert_option_state,
@@ -221,6 +225,23 @@ class TestEditEventView(TestScheduling):
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['title'])
+        # staff lead should be created, without order.  If order is created,
+        # landing page will fail to fetch act with 500 error.
+        prof = self.privileged_user.profile.__class__.__name__
+        self.assertTrue(PeopleAllocation.objects.filter(
+            people__class_id=self.privileged_user.profile.pk,
+            people__class_name=prof,
+            people__commitment_class_id__isnull=True,
+            event=self.context.sched_event,
+            role=data['alloc_0-role']
+            ).exists())
+        self.assertFalse(Ordering.objects.filter(
+            people_allocated__people__class_id=self.privileged_user.profile.pk,
+            people_allocated__people__class_name=prof,
+            people_allocated__people__commitment_class_id__isnull=True,
+            people_allocated__event=self.context.sched_event,
+            people_allocated__role=data['alloc_0-role']
+            ).exists())
 
     def test_edit_event_without_staffing(self):
         login_as(self.privileged_user, self)
