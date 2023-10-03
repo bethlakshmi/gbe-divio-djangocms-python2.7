@@ -161,11 +161,11 @@ class ActTechWizardView(View):
                                         self.__class__.__name__)
                 self.act.tech.confirm_no_rehearsal = False
                 self.act.tech.save()
-                if response.occurrence:
-                    bookings += [response.occurrence]
+                if response.occurrences:
+                    bookings += response.occurrences
                     self.rehearsals[int(rehearsal_form.prefix)] = ScheduleItem(
-                        event=response.occurrence,
-                        booking_id=response.booking_id)
+                        event=response.occurrences[0],
+                        booking_id=response.booking_ids[0])
             else:
                 if rehearsal_form.cleaned_data['booking_id']:
                     response = remove_booking(
