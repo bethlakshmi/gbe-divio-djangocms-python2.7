@@ -2,11 +2,9 @@ Hello Staff Leads and Volunteer Coordinators,
 
 The user {{ profile.display_name }} has changed their volunteer 
 schedule.  The change was:
-
-Event: {{occurrence}}
-Date/Time: {{start}}-{{end}}
-Change: {{state_change}}
-
+{% for occurrence in occurrences %}
+- Event: {{occurrence}}, Date/Time: {{start}}-{{end}}, Change: {{state_change}}
+{% endfor }
 {% if errors %}
 Errors while processing this change:{% for error in errors %}
   - {{error.code}} - {{error.details}}{% endfor %}

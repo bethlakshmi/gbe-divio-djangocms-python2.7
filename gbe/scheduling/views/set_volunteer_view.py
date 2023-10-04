@@ -109,7 +109,8 @@ class SetVolunteerView(View):
                     occ_response.occurrence)
                 if occ_response.occurrence.approval_needed:
                     approval_needed_events += [occ_response.occurrence]
-                if occ_response.occurrence.peer.approval_needed:
+                if occ_response.occurrence.peer is not None and (
+                        occ_response.occurrence.peer.approval_needed):
                     approval_needed_events += [occ_response.occurrence.peer]
 
         elif kwargs['state'] == 'off' and len(bookings) > 0:
@@ -140,13 +141,14 @@ class SetVolunteerView(View):
                 messages.success(request, user_message[0].description)
 
         if schedule_response and len(schedule_response.booking_ids) > 0:
-            if kwargs['state'] == 'on' and len(approval_needed_events) >= 0:
+            if kwargs['state'] == 'on' and len(approval_needed_events) > 0:
                 email_status = send_awaiting_approval_mail(
                     "volunteer",
                     self.owner.contact_email,
                     self.owner.get_badge_name(),
                     approval_needed_events)
-            elif kwargs['state'] == 'off' and len(approval_needed_events) >= 0:
+
+            elif kwargs['state'] == 'off' and len(approval_needed_events) > 0:
                 titles = ""
                 for event in approval_needed_events:
                     if len(titles) > 0:

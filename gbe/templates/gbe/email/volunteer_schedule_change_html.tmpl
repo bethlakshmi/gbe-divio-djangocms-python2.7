@@ -2,9 +2,11 @@
 
 <p>The user {{ profile.display_name }} has changed their volunteer schedule.  The change was:</p>
 
-<b>Event:</b> {{occurrence}}
-<b>Date/Time:</b> {{start}}-{{end}}
-<b>Change:</b> {{state_change}}
+<ul>
+{% for occurrence in occurrences %}
+<li><b>Event:</b> {{occurrence}}, <b>Date/Time:</b> {{start}}-{{end}}, <b>Change:</b> {{state_change}}</li>
+{% endfor %}
+</ul>
 
 {% if errors %}
 Errors while processing this change:<ul>{% for error in errors %}

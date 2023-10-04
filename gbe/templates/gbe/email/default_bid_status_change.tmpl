@@ -1,6 +1,6 @@
 Dear {{ name }},
 
-The status of your {{ bid_type }} for {% if bid %}{{ bid }}{% elif occurrence %}{{occurrence.title}}{% endif %} - has been changed to {{ status }}. {% if casting %}Your role is {{ casting }}{% endif %}.  You can always check the status of your submissions or your schedule by visiting your personal pane on {{site}}.
+The status of your {{ bid_type }} for {% if bid %}{{ bid }}{% endif %}{% for occurrence in occurrences %}{{occurrence.title}}{% endfor %} - has been changed to {{ status }}. {% if casting %}Your role is {{ casting }}{% endif %}.  You can always check the status of your submissions or your schedule by visiting your personal pane on {{site}}.
 
 {% if show and status == 'Accepted' %}
 Congratulations!  Your act, {{ bid }} was cast in {{ show }}.  We've posted you as one of
