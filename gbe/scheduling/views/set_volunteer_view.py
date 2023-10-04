@@ -131,14 +131,14 @@ class SetVolunteerView(View):
                                     self.__class__.__name__)
                 if booking.occurrence.approval_needed:
                     approval_needed_events += [booking.occurrence]
-            if len(approval_needed_events) > 0:
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="REMOVE_%s" % role.replace(" ", "_").upper(),
-                    defaults={
-                        'summary': default_summary,
-                        'description': default_message})
-                messages.success(request, user_message[0].description)
+                if len(schedule_response.occurrences) > 0:
+                    user_message = UserMessage.objects.get_or_create(
+                        view=self.__class__.__name__,
+                        code="REMOVE_%s" % role.replace(" ", "_").upper(),
+                        defaults={
+                            'summary': default_summary,
+                            'description': default_message})
+                    messages.success(request, user_message[0].description)
 
         if schedule_response and len(schedule_response.booking_ids) > 0:
             if kwargs['state'] == 'on' and len(approval_needed_events) > 0:

@@ -407,7 +407,7 @@ def send_volunteer_update_to_staff(
             is_active=True)]
 
     warnings = []
-    for warning in warnings:
+    for warning in update_response.warnings:
         if not (state == "Rejected" and warning.code == "SCHEDULE_CONFLICT"):
             warnings += [make_warning_msg(warning, "", False)]
     if len(to_list) > 0:

@@ -4,7 +4,7 @@ The user {{ profile.display_name }} has changed their volunteer
 schedule.  The change was:
 {% for occurrence in occurrences %}
 - Event: {{occurrence}}, Date/Time: {{start}}-{{end}}, Change: {{state_change}}
-{% endfor }
+{% endfor %}
 {% if errors %}
 Errors while processing this change:{% for error in errors %}
   - {{error.code}} - {{error.details}}{% endfor %}
