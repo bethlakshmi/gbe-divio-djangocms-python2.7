@@ -103,10 +103,11 @@ act_shows_options = [
                   'prizes, and cash!</small>'))]
 act_shows_options_short = [
     (8, mark_safe('<b>Half-o-Ween!</b><br>Thursday, April 25 @ 8pm')),
-    (9, mark_safe('<b>The Burlesk Bordello</b><br>April 26 @ 10pm')),
-    (10, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
+    (9, mark_safe('<b>Opening Night Party</b><br>Thursday, April 25 @ 10pm')),
+    (10, mark_safe('<b>The Burlesk Bordello</b><br>April 26 @ 10pm')),
+    (11, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                    'April 27 @ 7:30PM')),
-    (11, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
+    (12, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
                   'April 27 @ 9pm'))]
 old_act_shows_options = [
     (0, 'The Bordello (Fri. Late)'),
@@ -118,7 +119,7 @@ old_act_shows_options = [
     (6, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                   'May 6, 7:30PM')),
     (7, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
-                  'May 6, 9PM'))]
+                  'May 6, 9PM'))] + act_shows_options
 act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
  act order before clicking other buttons in this dashboard.<br><br></div>
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
@@ -148,20 +149,10 @@ more_shows_options = [
     (6, 'Sunday, July 30'),
     (7, 'Please also consider this act for GBE12, January 5-7, 2018')]
 
-act_other_perf_options = [(0, ("Go-go dance during one or more of the shows "
-                               "(we'll ask which one later)")),
-                          (1, ("Be part of the opening number for The Main "
-                               "Event")),
-                          (2, "Model in the Fashion Show (Sunday afternoon)"),
-                          (3, ("Model in the Swimsuit Show (Saturday night "
-                               "late)"))]
-
 summer_other_perf_options = [
     (0, "Go-go dance during a show"),
     (1, "Be part of the opening number."),
     (2, "Model in the Fashion Show (Saturday afternoon)")]
-
-all_shows_options = act_shows_options + [(4, 'The Rhinestone Review')]
 
 cue_options = [('Theater', 'Theater'),
                ('Alternate', 'Alternate'),
@@ -710,11 +701,15 @@ unset_favorite_msg = '''Your interest has been removed and will no longer \
                    appear on your personal schedule.'''
 set_volunteer_msg = '''Thank you!  This volunteer shift has been added to \
 your schedule.'''
+paired_event_set_vol_msg = '''Thank you for volunteering!  You've been signed
+ up for the following shifts:  '''
 unset_volunteer_msg = '''Sorry to see you go!  This volunteer shift has been \
 removed from your personal schedule.'''
 review_vol_msg = '''<b>Please keep this information confidential.</b> This is \
 the place to provide feedback on your experience working with last year's \
 volunteers.'''
+vol_opp_full_msg = '''We're sorry, but the volunteer position has been filled,
+ please sign up for a different opportunity.'''
 set_pending_msg = '''Thank you!  Your offer to volunteer has been sent and is \
 awaiting approval.'''
 unset_pending_msg = '''Sorry to see you go!  Your offer to volunteer has \
@@ -725,6 +720,9 @@ with a highlighted box require approval, when you volunteer, your offer will \
 be reviewed and a response will be sent shortly.'''
 pending_note = '''This is a shift that requires approval.  When you volunteer,\
  your offer will be reviewed and a response will be sent shortly.'''
+paired_alert_msg = '''This volunteer opportunity requires you to attend two
+ connected timeslots.  You must be available for both.  Please check the times
+ listed at the top of this window.'''
 login_please = '''To volunteer, you must have an account with the expo.  \
 Set up an account or login and we'll bring you back here to volunteer.'''
 interested_explain_msg = '''Anyone with an account with The Great Burlesque \

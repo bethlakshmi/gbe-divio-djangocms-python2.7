@@ -27,5 +27,4 @@ def get_act_form(act, form, header):
             label=act_bid_labels['video_choice'])
     act_form.fields['shows_preferences'].choices = old_act_shows_options + \
         act_shows_options
-
     return act_form

@@ -23,6 +23,7 @@ from gbe.models import (
 from gbetext import (
     acceptance_states,
     act_not_unique,
+    old_act_shows_options,
     video_options,
 )
 from scheduler.idd import get_schedule
@@ -72,6 +73,17 @@ class Act (Biddable):
         )
         act.save()
         return act
+
+    @property
+    def shows_preferences_list(self):
+        if self.shows_preferences:
+            prefs = []
+            for pref in eval(self.shows_preferences):
+               prefs += [opt[1] for opt in old_act_shows_options
+                         if opt[0] == int(pref)]
+            return prefs
+        else:
+            return None
 
     def get_performer_profiles(self):
         '''
