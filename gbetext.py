@@ -103,10 +103,11 @@ act_shows_options = [
                   'prizes, and cash!</small>'))]
 act_shows_options_short = [
     (8, mark_safe('<b>Half-o-Ween!</b><br>Thursday, April 25 @ 8pm')),
-    (9, mark_safe('<b>The Burlesk Bordello</b><br>April 26 @ 10pm')),
-    (10, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
+    (9, mark_safe('<b>Opening Night Party</b><br>Thursday, April 25 @ 10pm')),
+    (10, mark_safe('<b>The Burlesk Bordello</b><br>April 26 @ 10pm')),
+    (11, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                    'April 27 @ 7:30PM')),
-    (11, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
+    (12, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
                   'April 27 @ 9pm'))]
 old_act_shows_options = [
     (0, 'The Bordello (Fri. Late)'),
@@ -148,20 +149,10 @@ more_shows_options = [
     (6, 'Sunday, July 30'),
     (7, 'Please also consider this act for GBE12, January 5-7, 2018')]
 
-act_other_perf_options = [(0, ("Go-go dance during one or more of the shows "
-                               "(we'll ask which one later)")),
-                          (1, ("Be part of the opening number for The Main "
-                               "Event")),
-                          (2, "Model in the Fashion Show (Sunday afternoon)"),
-                          (3, ("Model in the Swimsuit Show (Saturday night "
-                               "late)"))]
-
 summer_other_perf_options = [
     (0, "Go-go dance during a show"),
     (1, "Be part of the opening number."),
     (2, "Model in the Fashion Show (Saturday afternoon)")]
-
-all_shows_options = act_shows_options + [(4, 'The Rhinestone Review')]
 
 cue_options = [('Theater', 'Theater'),
                ('Alternate', 'Alternate'),
