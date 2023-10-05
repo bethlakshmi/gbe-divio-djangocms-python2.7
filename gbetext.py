@@ -119,7 +119,7 @@ old_act_shows_options = [
     (6, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                   'May 6, 7:30PM')),
     (7, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
-                  'May 6, 9PM'))]
+                  'May 6, 9PM'))] + act_shows_options
 act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
  act order before clicking other buttons in this dashboard.<br><br></div>
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
