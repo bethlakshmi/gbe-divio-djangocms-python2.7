@@ -244,7 +244,7 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response,
                             '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Waitlisted"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),
@@ -289,7 +289,7 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response,
                             '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Rejected"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),
@@ -319,7 +319,7 @@ class TestApproveVolunteer(TestCase):
         self.assertNotContains(response,
                                '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),
@@ -443,7 +443,7 @@ class TestApproveVolunteer(TestCase):
                   booking.pk])
         response = self.client.get(approve_url)
         alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(volunteer),
                 str(booking.event),
@@ -496,13 +496,12 @@ class TestApproveVolunteer(TestCase):
             args=["approve",
                   self.context.profile.pk,
                   self.context.allocation.pk])
-        response = get_schedule(user=stage_mgr.user_object)
         response = self.client.get("%s?next=%s" % (
             approve_url,
             reverse('home', urlconf='gbe.urls')), follow=True)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),

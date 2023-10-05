@@ -781,8 +781,8 @@ eval_as_presenter_error = '''You cannot evaluate a class in which you were \
 the Teacher, Moderator or Panelist.  If you have feedback regardling your \
 class, please contact the coordinator directly.'''
 parent_event_delete_warning = '''This scheduled event is a parent to other \
-schedule items.  These schedule items have not been deleted, and will remain \
-on the calendar.'''
+schedule items.  These schedule items have also been deleted and any people
+ booked for these events are no longer scheduled for them.'''
 no_conf_day_msg = '''The target conference has not been properly configured. \
 Specify the days for this conference before proceeding.'''
 rehearsal_delete_msg = '''This rehearsal slot was deleted.  If any acts were \

@@ -56,7 +56,7 @@ class ApproveVolunteerView(View):
                    'Technical Director',
                    'Producer']
     review_list_view_name = 'approve_volunteer'
-    changed_id = -1
+    changed_ids = []
     page_title = 'Approve Volunteers'
     view_title = 'Approve Pending Volunteers'
     labels = []
@@ -110,7 +110,7 @@ class ApproveVolunteerView(View):
                 'action_links': action_links}
             if pending_person.occurrence.parent is not None:
                 row['parent_event'] = pending_person.occurrence.parent
-            if pending_person.booking_id == self.changed_id:
+            if pending_person.booking_id in self.changed_ids:
                 row['status'] = 'gbe-table-success'
             elif not row['volunteer'].is_active:
                 row['status'] = "gbe-table-danger"
@@ -281,6 +281,7 @@ class ApproveVolunteerView(View):
         show_general_status(request, response, self.__class__.__name__)
                 
         if not response.errors:
+            self.changed_ids = response.booking_ids
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="SET_%s" % person.role,
