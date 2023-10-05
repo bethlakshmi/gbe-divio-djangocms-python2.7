@@ -15,6 +15,7 @@ def set_person(occurrence_id=None, person=None):
 
     occurrence = None
     alloc = None
+    orig_person = None
     if occurrence_id:
         occ_response = get_occurrence(occurrence_id)
         if occ_response.errors:
@@ -37,16 +38,18 @@ def set_person(occurrence_id=None, person=None):
         return BookingResponse(errors=[Error(
                 code="BOOKING_NOT_FOUND",
                 details="Booking id %s not found" % person.booking_id), ])
+    elif person.booking_id and occurrence.peer is not None:
+        orig_person = PeopleAllocation.objects.get(pk=person.booking_id).people
+
     response = occurrence.allocate_person(person)
     if occurrence.peer is not None:
-        if PeopleAllocation.objects.filter(
+        if orig_person is not None and PeopleAllocation.objects.filter(
                 event__peer__pk=occurrence.pk,
-                people__class_id=person.public_id,
-                people__class_name=person.public_class).exists():
+                people=orig_person):
+            #  Assumption - there is only 1 because pairs are exclusive
             peer_booking = PeopleAllocation.objects.filter(
                 event__peer__pk=occurrence.pk,
-                people__class_id=person.public_id,
-                people__class_name=person.public_class).first()
+                people=orig_person).first()
             person.booking_id = peer_booking.pk
         else:
             person.booking_id = None
