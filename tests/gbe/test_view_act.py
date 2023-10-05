@@ -12,12 +12,14 @@ from gbetext import (
     bid_not_submitted_msg,
     bid_not_paid_msg,
     default_submit_msg,
+    more_shows_options,
 )
 
 
 class TestViewAct(TestCase):
     '''Tests for view_act view'''
     view_name = 'act_view'
+    test_string = 'Submitted proposals cannot be modified'
 
     def setUp(self):
         self.client = Client()
@@ -29,23 +31,10 @@ class TestViewAct(TestCase):
                       urlconf='gbe.urls')
         login_as(act.performer.contact, self)
         response = self.client.get(url)
-        test_string = 'Submitted proposals cannot be modified'
+        
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, test_string)
+        self.assertContains(response, self.test_string)
         self.assertContains(response, default_submit_msg)
-
-    def test_edit_bid_w_redirect(self):
-        '''edit_bid, not post, should take us to edit process'''
-        act = ActFactory(submitted=True)
-        url = reverse("summeract_view",
-                      args=[act.pk],
-                      urlconf="gbe.urls")
-
-        login_as(act.performer.contact, self)
-        response = self.client.get(url)
-        self.assertRedirects(
-            response,
-            reverse(self.view_name, args=[act.pk], urlconf="gbe.urls"))
 
     def test_view_act_not_paid(self):
         act = ActFactory()
@@ -54,9 +43,8 @@ class TestViewAct(TestCase):
                       urlconf='gbe.urls')
         login_as(act.performer.contact, self)
         response = self.client.get(url)
-        test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, test_string)
+        self.assertContains(response, self.test_string)
         self.assertContains(response, bid_not_paid_msg)
 
     def test_view_act_not_submitted(self):
@@ -68,7 +56,20 @@ class TestViewAct(TestCase):
                               act.performer.contact.user_object)
         login_as(act.performer.contact, self)
         response = self.client.get(url)
-        test_string = 'Submitted proposals cannot be modified'
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, test_string)
+        self.assertContains(response, self.test_string)
         self.assertContains(response, bid_not_submitted_msg)
+
+    def test_view_summer_act_all_well(self):
+        act = ActFactory(b_conference__act_style="summer",
+                         shows_preferences=[5, 6],
+                         submitted=True)
+        url = reverse(self.view_name,
+                      args=[act.pk],
+                      urlconf='gbe.urls')
+        login_as(act.performer.contact, self)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.test_string)
+        self.assertContains(response, more_shows_options[1][1])
+        self.assertContains(response, more_shows_options[2][1])
