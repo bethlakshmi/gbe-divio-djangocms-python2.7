@@ -92,7 +92,6 @@ class FlexibleReviewBidView(ReviewBidView):
                                              request.GET['next'])
         context = super(FlexibleReviewBidView, self).make_context()
         context.update({
-            'act': self.object,
             'performer': self.object.performer,
             'notes_form': self.notes_form,
             'review_results': self.review_results,
