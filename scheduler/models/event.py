@@ -106,9 +106,10 @@ class Event(Schedulable):
     def clear_peer(self):
         self.peer = None
         self.save()
-        for event in self.peer.other_peer.all():
-            event.peer = None
-            event.save()
+        if self.other_peer is not None:
+            for event in self.other_peer.all():
+                event.peer = None
+                event.save()
 
     # New - from refactoring
     @property
