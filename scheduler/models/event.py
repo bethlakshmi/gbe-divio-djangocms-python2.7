@@ -1,3 +1,4 @@
+from settings import GBE_DATETIME_FORMAT
 from django.db.models import (
     BooleanField,
     CharField,
@@ -55,6 +56,13 @@ class Event(Schedulable):
     event_style = CharField(max_length=128, blank=False)
     connected_id = PositiveIntegerField(blank=True, null=True)
     connected_class = CharField(max_length=128, blank=True)
+
+    def form_label(self):
+        label = "%s - %s" % (self.title,
+                             self.starttime.strftime(GBE_DATETIME_FORMAT))
+        if self.parent is not None:
+            label = self.parent.title + ' - ' + label
+        return label
 
     def has_commitment_space(self, commit_class_name):
         from scheduler.models import Ordering

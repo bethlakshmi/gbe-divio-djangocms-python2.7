@@ -163,8 +163,8 @@ class EditVolunteerView(ManageWorkerView):
                     context['association_form'].cleaned_data['parent_event'])
             peer_id = -1
             if context['association_form'].cleaned_data['peer_event']:
-                peer_id = int(context['association_form'].cleaned_data[
-                    'peer_event'])
+                peer_id = context['association_form'].cleaned_data[
+                    'peer_event'].pk
             response = update_occurrence(
                 self.occurrence.pk,
                 title=context['event_form'].cleaned_data['title'],

@@ -1,19 +1,30 @@
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from scheduler.idd import get_event_list
+from scheduler.models import Event
+from django.db.models import Q
+from settings import GBE_DATETIME_FORMAT
 
 
 class VolunteerAutocomplete(PermissionRequiredMixin,
-                            autocomplete.Select2ListView):
+                            autocomplete.Select2QuerySetView):
 
     permission_required = 'scheduler.view_event'
 
-    def get_list(self):
-        text = None
-
+    def get_queryset(self):
         label = self.forwarded.get('label', None)
+
+        qs = Event.objects.filter(event_style="Volunteer")
 
         if self.q:
             text = self.q
 
-        return get_event_list(label=label, text=text)
+        if label:
+            qs = qs.filter(eventlabel__text=label)
+
+        if self.q:
+            qs = qs.filter(Q(title__icontains=self.q) |
+                           Q(parent__title__icontains=self.q))
+        return qs
+
+    def get_result_label(self, result):
+        return result.form_label()

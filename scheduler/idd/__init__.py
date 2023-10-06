@@ -7,7 +7,6 @@ from .set_person import set_person
 from .update_occurrence import update_occurrence
 from .get_bookings import get_bookings
 from .get_all_container_bookings import get_all_container_bookings
-from .get_event_list import get_event_list
 from .get_people import get_people
 from .get_roles import get_roles
 from .get_schedule import get_schedule
