@@ -24,6 +24,7 @@ from gbe.models import (
     FlexibleEvaluation,
 )
 from gbetext import (
+    act_shows_options,
     video_options,
     default_act_review_error_msg,
     default_act_review_success_msg,
@@ -41,7 +42,7 @@ class TestReviewAct(TestCase):
         grant_privilege(cls.privileged_user, 'Act Coordinator')
         cls.eval_cat = EvaluationCategoryFactory()
         cls.eval_cat_invisible = EvaluationCategoryFactory(visible=False)
-        cls.act = ActFactory()
+        cls.act = ActFactory(shows_preferences=[8, 10])
         cls.url = reverse('act_review',
                           urlconf='gbe.urls',
                           args=[cls.act.pk])
@@ -91,6 +92,8 @@ class TestReviewAct(TestCase):
             response,
             self.act.performer.contact.user_object.email)
         self.assertContains(response, setup_social_media(link), html=True)
+        self.assertContains(response, act_shows_options[0][1])
+        self.assertContains(response, act_shows_options[2][1])
 
     def test_hidden_fields_are_populated(self):
         login_as(self.privileged_user, self)
@@ -400,16 +403,6 @@ class TestReviewAct(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, 'Video Notes:')
         self.assertNotContains(response, video_options[1][1])
-
-    def test_review_summer_act(self):
-        act = ActFactory(b_conference__act_style="summer")
-        url = reverse('act_review',
-                      urlconf='gbe.urls',
-                      args=[act.pk])
-        login_as(self.privileged_user, self)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'The Summer Act')
 
     def test_review_default_role_present(self):
         response = self.get_act_w_roles(self.act)

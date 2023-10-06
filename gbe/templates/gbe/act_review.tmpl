@@ -1,0 +1,25 @@
+ {% if act %}<div class="row">
+  <div class="col-12"><h3 class="readonlyform gbe-subtitle">The Act</h3></div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Name of Act:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.b_title}}</div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Show Interests:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info"><ul>{% for pref in act.shows_preferences_list %}<li>{{ pref | safe }}</li>{% endfor %}</ul></div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Track Title:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.tech.track_title}}</div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Track Artist:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.tech.track_artist}}</div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Act Duration (hh:mm:ss):</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.tech.duration}}</div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Number of Performers:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.num_performers}}</div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Performer Names:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{% if act.performer_names %}{{act.performer_names}}{% else %}NONE (soloist){% endif %}</div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">URL of Video:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{% if act.video_link %}<a href="{{act.video_link}}">Go to URL of Video</a>{%else%}No video available{% endif %}</div> 
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Video Notes:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.get_video_choice_display}}</div>
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Description</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.b_description | safe}}</div> 
+  <div class="col-md-3 col-sm-4 col-12 read-only-label">Why would you like to perform at the Great Burlesque Expo?:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.why_you}}</div>
+  </div>{% endif %}

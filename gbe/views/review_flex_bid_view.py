@@ -15,13 +15,10 @@ from gbe.models import (
 from gbe.forms import (
     ActBidEvaluationForm,
     FlexibleEvaluationForm,
-    ActEditForm,
     BidStateChangeForm,
-    SummerActForm,
 )
 from gbe.functions import validate_perms
 from gbe.views.functions import make_show_casting_form
-from gbe.views.act_display_functions import get_act_form
 from gbetext import (
     default_act_review_error_msg,
     default_act_review_success_msg,
@@ -45,6 +42,7 @@ class FlexibleReviewBidView(ReviewBidView):
     review_results = None
     reviewers = None
     notes = None
+    readonlyform_pieces = None
 
     def create_action_form(self, act):
         self.actionform = self.bid_state_change_form(instance=act)
@@ -94,6 +92,7 @@ class FlexibleReviewBidView(ReviewBidView):
                                              request.GET['next'])
         context = super(FlexibleReviewBidView, self).make_context()
         context.update({
+            'act': self.object,
             'performer': self.object.performer,
             'notes_form': self.notes_form,
             'review_results': self.review_results,
@@ -158,17 +157,6 @@ class FlexibleReviewBidView(ReviewBidView):
         self.categories = EvaluationCategory.objects.filter(
                     visible=True).order_by('category')
         super(FlexibleReviewBidView, self).groundwork(request, args, kwargs)
-        if self.object.b_conference.act_style == "summer":
-            self.object_form = get_act_form(
-                self.object,
-                SummerActForm,
-                "The Summer Act")
-        else:
-            self.object_form = get_act_form(
-                self.object,
-                ActEditForm,
-                "The Act")
-        self.readonlyform_pieces = [self.object_form]
         self.bid_notes = ActBidEvaluation.objects.filter(
             bid_id=self.object.pk,
             evaluator_id=self.reviewer.pk).first()

@@ -2,8 +2,6 @@ from django.views.generic import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from gbe_logging import log_func
-from django.http import HttpResponseRedirect
-
 from django.shortcuts import (
     render,
     get_object_or_404,
@@ -23,9 +21,6 @@ class ViewBidView(View):
     # Any view inheriting from this view should have an edit_view that
     # is named as "bidobject_edit" where the model BidObject is lower case
     performer = None
-
-    def check_bid(self):
-        return None
 
     def make_context(self):
         context = self.get_messages()
@@ -94,10 +89,6 @@ class ViewBidView(View):
     def get(self, request, *args, **kwargs):
         bid_id = kwargs.get("bid_id")
         self.bid = get_object_or_404(self.bid_type, id=bid_id)
-        redirect = self.check_bid()
-        if redirect:
-            return HttpResponseRedirect(redirect)
-
         self.is_owner = True
         if request.user.profile not in self.bid.profiles:
             validate_perms(request, self.viewer_permissions, require=True)
