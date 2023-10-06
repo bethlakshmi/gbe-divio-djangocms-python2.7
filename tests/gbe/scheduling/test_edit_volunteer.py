@@ -23,6 +23,7 @@ from tests.contexts import (
 )
 from datetime import timedelta
 from tests.gbe.test_gbe import TestGBE
+from scheduler.models import Event
 
 
 class TestEditVolunteer(TestGBE):
@@ -288,6 +289,48 @@ class TestEditVolunteer(TestGBE):
                 other_context.opp_event.start_time.strftime(
                     GBE_DATETIME_FORMAT)),
             html=True)
+        check_event = Event.objects.get(pk=other_context.opp_event.pk)
+        check_peer = Event.objects.get(pk=self.context.opp_event.pk)
+        self.assertEqual(check_event.peer.pk, check_peer.pk)
+        self.assertEqual(check_peer.peer.pk, check_event.pk)
+
+    def test_edit_event_set_invalid_linked_event(self):
+        other_context = VolunteerContext()
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['peer_event'] = other_context.opp_event.pk
+        data['edit_event'] = "Save and Continue"
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertContains(
+            response,
+            'That choice is not one of the available choices.')
+
+    def test_edit_event_clear_linked_event(self):
+        other_context = VolunteerContext(conference=self.context.conference)
+        self.context.opp_event.set_peer(other_context.opp_event)
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['peer_event'] = ""
+        data['edit_event'] = "Save and Continue"
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertRedirects(
+            response,
+            "%s?worker_open=True" % self.url)
+        self.assertNotContains(
+            response,
+            other_context.opp_event.title)
+        check_event = Event.objects.get(pk=other_context.opp_event.pk)
+        check_peer = Event.objects.get(pk=self.context.opp_event.pk)
+        self.assertTrue(check_event.peer is None)
+        self.assertTrue(check_peer.peer is None)
 
     def test_edit_event_error_w_change_parent(self):
         other_context = VolunteerContext(conference=self.context.conference)

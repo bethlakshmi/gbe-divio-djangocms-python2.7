@@ -53,6 +53,8 @@ class EventAssociationForm(Form):
             self.fields['peer_event'].widget.forward = (
                 forward.Const(self.conference.conference_slug, 'label'), )
             self.fields['peer_event'].label_from_instance = Event.form_label
+            self.fields['peer_event'].queryset = Event.objects.filter(
+                eventlabel__text=self.conference.conference_slug)
 
         response = get_occurrences(
             event_styles=["Show", "Special"],
