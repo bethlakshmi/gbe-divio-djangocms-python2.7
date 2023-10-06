@@ -51,7 +51,6 @@ from gbe.views import (
     ViewActView,
     ViewClassView,
     ViewCostumeView,
-    ViewSummerActView,
     ViewBioView,
     ViewVendorView,
     VolunteerEvalCreate,
@@ -147,8 +146,6 @@ urlpatterns = [
         MakeSummerActView.as_view(), name='summeract_create'),
     url(r'^summer_act/edit/(?P<bid_id>\d+)/?$',
         MakeSummerActView.as_view(), name='summeract_edit'),
-    url(r'^summer_act/view/(?P<bid_id>\d+)/?$',
-        ViewSummerActView.as_view(), name='summeract_view'),
 
     #  act tech info - delete act_techinfo_edit after GBE 2020
     url(r'^acttechinfo/edit/(\d+)/?$',

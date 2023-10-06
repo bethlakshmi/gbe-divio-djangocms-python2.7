@@ -20,7 +20,6 @@ from gbe_forms_text import (
     act_bid_labels,
 )
 from gbetext import (
-    act_other_perf_options,
     act_shows_options,
     act_group_needs_names,
 )

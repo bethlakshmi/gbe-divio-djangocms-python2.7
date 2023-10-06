@@ -45,7 +45,7 @@ class TestMakeAct(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def get_act_form(self, performer, submit=False, valid=True):
+    def get_act_form(self, performer, submit=False):
 
         form_dict = {'theact-shows_preferences': [8],
                      'theact-phone': '111-222-3333',
@@ -62,8 +62,6 @@ class TestMakeAct(TestCase):
                      }
         if submit:
             form_dict['submit'] = 1
-        if not valid:
-            del(form_dict['theact-bio'])
         return form_dict
 
     def check_subway_state(self, response, active_state="Apply"):
