@@ -34,6 +34,7 @@ from gbetext import (
     unset_volunteer_msg,
     set_pending_msg,
     unset_pending_msg,
+    vol_opp_full_msg,
     vol_prof_update_failure,
     volunteer_allocate_email_fail_msg,
 )
@@ -119,6 +120,27 @@ class TestSetVolunteer(TestCase):
             [self.context.staff_lead.user_object.email],
             outbox_size=2,
             message_index=1)
+
+    def test_volunteer_for_full_linked_event(self):
+        context = VolunteerContext()
+        lead = context.set_staff_lead()
+        link_opp = context.add_opportunity()
+        link_opp.set_peer(context.opp_event)
+        self.context.book_volunteer(
+            volunteer_sched_event=context.opp_event)
+        context.opp_event.max_volunteer = 1
+        context.opp_event.save()
+        login_as(self.profile, self)
+        response = self.client.post(
+            reverse(self.view_name,
+                    args=[context.opp_event.pk, "on"],
+                    urlconf="gbe.scheduling.urls"),
+            follow=True)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            vol_opp_full_msg)
 
     def test_volunteer_for_linked_event(self):
         context = VolunteerContext()
@@ -382,6 +404,37 @@ class TestSetVolunteer(TestCase):
             "Your volunteer proposal has changed status to Withdrawn",
             outbox_size=2)
         assert(self.volunteeropp.title in msg.body)
+
+    def test_remove_pending_volunteer_linked_event(self):
+        context = VolunteerContext(conference=self.context.conference)
+        self.volunteeropp.set_peer(context.opp_event)
+        context.opp_event.approval_needed = True
+        context.opp_event.starttime = datetime(2015, 2, 6)
+        context.opp_event.save()
+        self.context.book_volunteer(
+            volunteer_sched_event=self.volunteeropp,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        self.context.book_volunteer(
+            volunteer_sched_event=context.opp_event,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        login_as(self.profile, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.volunteeropp.pk, "off"],
+            urlconf="gbe.scheduling.urls")
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, self.volunteeropp.title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            unset_pending_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to Withdrawn",
+            outbox_size=2)
+        assert(context.opp_event.title in msg.body)
 
     def test_volunteer_conflict(self):
         self.privileged_profile = ProfileFactory()

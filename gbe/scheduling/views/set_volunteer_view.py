@@ -130,8 +130,9 @@ class SetVolunteerView(View):
                 show_general_status(request,
                                     schedule_response,
                                     self.__class__.__name__)
-                if booking.occurrence.approval_needed:
-                    approval_needed_events += [booking.occurrence]
+                for item in schedule_response.occurrences:
+                    if item.approval_needed:
+                        approval_needed_events += [item]
                 if len(schedule_response.occurrences) > 0:
                     user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
