@@ -111,7 +111,8 @@ class SetVolunteerView(View):
                     approval_needed_events += [occ_response.occurrence]
                 if occ_response.occurrence.peer is not None and (
                         occ_response.occurrence.peer.approval_needed):
-                    approval_needed_events += [occ_response.occurrence.peer]
+                    approval_needed_events = [occ_response.occurrence,
+                                              occ_response.occurrence.peer]
 
         elif kwargs['state'] == 'off' and len(bookings) > 0:
             # if this person has volunteered, and is withdrawing
@@ -187,6 +188,7 @@ class SetVolunteerView(View):
 
     def book_volunteer(self, request, occurrence):
         paired_event = False
+        approval_needed = False
 
         # if this person hasn't volunteered yet, and wants to
         person = Person(
@@ -194,13 +196,10 @@ class SetVolunteerView(View):
             role="Volunteer",
             public_id=self.owner.pk,
             public_class=self.owner.__class__.__name__)
-        default_summary = "User has volunteered"
-        default_message = set_volunteer_msg
         if occurrence.approval_needed or (occurrence.peer is not None and
                 occurrence.peer.approval_needed):
             person.role = "Pending Volunteer"
-            default_summary = "User is pending"
-            default_message = set_pending_msg
+            approval_needed = True
 
         schedule_response = set_person(occurrence.pk, person)
         show_general_status(request,
@@ -209,13 +208,21 @@ class SetVolunteerView(View):
                             False)
         if len(schedule_response.errors) == 0:
             msg = ""
-            if len(schedule_response.booking_ids) == 1:
+            if approval_needed:
                 user_message = UserMessage.objects.get_or_create(
                     view=self.__class__.__name__,
-                    code="SET_%s" % person.role.replace(" ", "_").upper(),
+                    code="SET_PENDING_VOLUNTEER",
                     defaults={
-                        'summary': default_summary,
-                        'description': default_message})
+                        'summary': "User is pending",
+                        'description': set_pending_msg})
+                msg = user_message[0].description
+            elif len(schedule_response.booking_ids) == 1:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="SET_VOLUNTEER",
+                    defaults={
+                        'summary': "User has volunteered",
+                        'description': set_volunteer_msg})
                 msg = user_message[0].description
             elif len(schedule_response.booking_ids) > 1:
                 user_message = UserMessage.objects.get_or_create(
