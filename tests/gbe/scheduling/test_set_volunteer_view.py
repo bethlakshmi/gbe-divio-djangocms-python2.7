@@ -436,6 +436,40 @@ class TestSetVolunteer(TestCase):
             outbox_size=2)
         assert(context.opp_event.title in msg.body)
 
+    def test_remove_pending_volunteer_both_linked_event(self):
+        context = VolunteerContext(conference=self.context.conference)
+        self.volunteeropp.set_peer(context.opp_event)
+        context.opp_event.approval_needed = True
+        context.opp_event.starttime = datetime(2015, 2, 6)
+        context.opp_event.save()
+        self.volunteeropp.approval_needed = True
+        self.volunteeropp.save()
+        self.context.book_volunteer(
+            volunteer_sched_event=self.volunteeropp,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        self.context.book_volunteer(
+            volunteer_sched_event=context.opp_event,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        login_as(self.profile, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.volunteeropp.pk, "off"],
+            urlconf="gbe.scheduling.urls")
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, self.volunteeropp.title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            unset_pending_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to Withdrawn",
+            outbox_size=2)
+        assert(context.opp_event.title in msg.body)
+        assert(self.volunteeropp.title in msg.body)
+
     def test_volunteer_conflict(self):
         self.privileged_profile = ProfileFactory()
         self.privileged_user = self.privileged_profile.user_object
