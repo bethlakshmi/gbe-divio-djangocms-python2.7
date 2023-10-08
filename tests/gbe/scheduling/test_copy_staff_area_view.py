@@ -9,7 +9,10 @@ from tests.factories.gbe_factories import (
     ProfileFactory,
     RoomFactory,
 )
-from scheduler.models import Event
+from scheduler.models import (
+    Event,
+    EventLabel,
+)
 from gbe.models import StaffArea
 from tests.functions.gbe_functions import (
     assert_alert_exists,
@@ -229,6 +232,36 @@ class TestCopyStaffArea(TestGBE):
         self.assertRedirects(response, redirect_url)
         self.assertContains(response, new_room)
 
+    def test_copy_linked_child_event_same_area(self):
+        target_context = StaffAreaContext()
+        linked_opp = self.context.add_volunteer_opp()
+        self.vol_opp.set_peer(linked_opp)
+        target_day = ConferenceDayFactory(
+            conference=target_context.conference,
+            day=self.context.conf_day.day + timedelta(days=340))
+        new_room = target_context.get_room()
+        data = {
+            'copy_mode': 'copy_children_only',
+            'target_event': target_context.area.pk,
+            'copied_event': self.vol_opp.pk,
+            'room': new_room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        last_event = Event.objects.latest('pk')
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[target_context.conference.conference_slug]),
+            target_context.conference.conference_slug,
+            target_day.pk,
+            str([last_event.pk, last_event.pk-1]),)
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, new_room)
+        self.assertEqual(linked_opp.peer.title, last_event.title)
+        self.assertEqual(linked_opp.title, last_event.peer.title)
+
     def test_copy_only_area(self):
         area_context = StaffAreaContext()
         conf_day = ConferenceDayFactory(
@@ -397,6 +430,31 @@ class TestCopyStaffArea(TestGBE):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data=data, follow=True)
         self.assertNotContains(response, new_room.name)
+
+    def test_copy_child_parent_events_keep_room_linked_event_other_area(self):
+        new_room = self.context.get_room()
+        linked_opp = self.context.add_volunteer_opp()
+        area_label = EventLabel.objects.get(text=self.context.area.slug,
+                                            event=linked_opp)
+        area_label.text = "alt_area_slug"
+        area_label.save()
+        self.vol_opp.set_peer(linked_opp)
+        data = {
+            'copy_mode': 'include_parent',
+            'copy_to_day': self.context.conf_day.pk,
+            'copied_event': self.vol_opp.pk,
+            'room': new_room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(response, new_room.name)
+        last_event = Event.objects.latest('pk')
+        self.assertEqual(linked_opp.peer.title, last_event.title)
+        self.assertEqual(linked_opp.title, last_event.peer.title)
+        self.assertEqual(len(last_event.peer.labels), 2)
+        self.assertFalse(self.context.area.slug in last_event.peer.labels)
+
 
     def test_copy_only_parent_event(self):
         another_day = ConferenceDayFactory()

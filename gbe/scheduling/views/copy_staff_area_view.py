@@ -152,7 +152,7 @@ class CopyStaffAreaView(CopyCollectionsView):
                    labels,
                    root=None):
         new_event_room = room
-        event_labels = labels
+        event_labels = labels.copy()
         peer_id = None
         peer_response = None
         if root:
@@ -182,8 +182,7 @@ class CopyStaffAreaView(CopyCollectionsView):
                 description=occurrence.peer.description,
                 labels=peer_labels,
                 approval=occurrence.peer.approval_needed,
-                slug=occurrence.peer.slug,
-                peer_id=peer_id)
+                slug=occurrence.peer.slug)
             peer_id = peer_response.occurrence.pk
 
         response = create_occurrence(
@@ -196,7 +195,8 @@ class CopyStaffAreaView(CopyCollectionsView):
             description=occurrence.duration,
             labels=event_labels,
             approval=occurrence.approval_needed,
-            slug=occurrence.slug
+            slug=occurrence.slug,
+            peer_id=peer_id
         )
         return response, peer_response
 
