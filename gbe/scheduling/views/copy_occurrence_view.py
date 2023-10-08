@@ -101,10 +101,35 @@ class CopyOccurrenceView(CopyCollectionsView):
                    parent_event_id=None,
                    set_room=False):
         new_event_room = room
+        peer_response = None
+        peer_id = None
         if (not set_room) and \
                 occurrence.location.as_subtype.conferences.filter(
                 pk=conference.pk).exists():
             new_event_room = occurrence.location
+
+        if occurrence.peer is not None:
+            peer_parent = None
+            # peers share labels - same conf, both volunteer positions
+            # if the parents are the same, use the parent, if not, leave null
+            if occurrence.peer.parent is not None and (
+                    occurrence.parent is not None) and (
+                    occurrence.peer.parent.pk == occurrence.parent.pk):
+                peer_parent = parent_event_id
+            peer_response = create_occurrence(
+                occurrence.peer.title,
+                occurrence.peer.duration,
+                occurrence.peer.event_style,
+                occurrence.peer.starttime + delta,
+                max_volunteer=occurrence.peer.max_volunteer,
+                max_commitments=occurrence.peer.max_commitments,
+                locations=[new_event_room],
+                description=occurrence.peer.description,
+                parent_event_id=peer_parent,
+                labels=labels,
+                approval=occurrence.peer.approval_needed,
+                slug=occurrence.peer.slug)
+            peer_id = peer_response.occurrence.pk
 
         response = create_occurrence(
             occurrence.title,
@@ -118,19 +143,20 @@ class CopyOccurrenceView(CopyCollectionsView):
             parent_event_id=parent_event_id,
             labels=labels,
             approval=occurrence.approval_needed,
-            slug=occurrence.slug
+            slug=occurrence.slug,
+            peer_id=peer_id,
         )
-        return response
+        return response, peer_response
 
     def copy_root(self, request, delta, conference, room):
-        new_occurrence = None
+        new_occurrences = []
         labels = [conference.conference_slug,
                   calendar_for_event[self.occurrence.event_style]]
         for area in StaffArea.objects.filter(
                 conference=conference,
                 slug__in=self.occurrence.labels):
             labels += [area.slug]
-        response = self.copy_event(
+        response, peer_response = self.copy_event(
             self.occurrence,
             delta,
             conference,
@@ -141,13 +167,21 @@ class CopyOccurrenceView(CopyCollectionsView):
             request,
             response,
             self.__class__.__name__)
+        if peer_response is not None:
+            show_scheduling_occurrence_status(
+                request,
+                response,
+                self.__class__.__name__)
         if response.occurrence:
-            new_occurrence = response.occurrence
-        return new_occurrence
+            new_occurrences += [response.occurrence]
+        if peer_response is not None and peer_response.occurrence:
+            new_occurrences += [peer_response.occurrence]
+        return new_occurrences
 
     def copy_solo(self, request, context):
         delta = None
         parent_event_id = None
+        occurrence_ids = []
         copy_mode = context['copy_solo_mode'].cleaned_data['copy_mode']
         if copy_mode_solo_choices[2][0] in copy_mode:
             target_day = context['copy_solo_mode'].cleaned_data['copy_to_day']
@@ -168,7 +202,7 @@ class CopyOccurrenceView(CopyCollectionsView):
         if copy_mode_solo_choices[1][0] in copy_mode:
             labels += [context['copy_solo_mode'].cleaned_data['area'].slug]
 
-        response = self.copy_event(
+        response, peer_response = self.copy_event(
             self.occurrence,
             delta,
             conference,
@@ -181,11 +215,20 @@ class CopyOccurrenceView(CopyCollectionsView):
             request,
             response,
             self.__class__.__name__)
+        if peer_response:
+            show_scheduling_occurrence_status(
+                request,
+                peer_response,
+                self.__class__.__name__)
+            if peer_response.occurrence:
+                occurrence_ids += [peer_response.occurrence.pk]
         if response.occurrence:
             target_day = ConferenceDay.objects.filter(
                 day=response.occurrence.starttime.date(),
                 conference=conference
                 ).first()
+            occurrence_ids += [response.occurrence.pk]
+
             return HttpResponseRedirect(
                 "%s?%s-day=%d&filter=Filter&new=%s" % (
                     reverse('manage_event_list',
@@ -193,7 +236,7 @@ class CopyOccurrenceView(CopyCollectionsView):
                             args=[conference.conference_slug]),
                     conference.conference_slug,
                     target_day.pk,
-                    str([response.occurrence.pk]),))
+                    str(occurrence_ids)))
 
     def get_child_copy_settings(self, form):
         response = get_occurrence(

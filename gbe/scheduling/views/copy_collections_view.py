@@ -104,6 +104,7 @@ class CopyCollectionsView(View):
         new_root = None
         if form.is_valid():
             copied_ids = []
+            finished_ids = []
             alt_id = None
             room = form.cleaned_data['room']
             if form.cleaned_data['copy_mode'] == "copy_children_only":
@@ -115,36 +116,53 @@ class CopyCollectionsView(View):
                 target_day = form.cleaned_data['copy_to_day']
                 delta = target_day.day - self.start_day
                 conference = form.cleaned_data['copy_to_day'].conference
-                new_root = self.copy_root(
+                new_roots = self.copy_root(
                     request,
                     delta,
                     form.cleaned_data['copy_to_day'].conference,
                     room)
-                if new_root and new_root.__class__.__name__ == "Event":
-                    copied_ids += [new_root.pk]
+                if len(new_roots) > 0 and (
+                        new_roots[0].__class__.__name__ == "Event"):
+                    for item in new_roots:
+                        copied_ids += [item.pk]
+                    finished_ids += [self.occurrence.pk]
+                    if self.occurrence.peer is not None:
+                        finished_ids += [self.occurrence.peer.pk]
                 else:
-                    alt_id = new_root.pk
+                    alt_id = new_roots[0].pk
+                new_root = new_roots[0]
 
             for sub_event_id in form.cleaned_data["copied_event"]:
-                response = get_occurrence(sub_event_id)
-                labels = [conference.conference_slug]
-                if calendar_for_event[response.occurrence.event_style]:
-                    labels += [calendar_for_event[
-                        response.occurrence.event_style]]
+                if int(sub_event_id) not in finished_ids:
+                    response = get_occurrence(sub_event_id)
+                    labels = [conference.conference_slug]
+                    if calendar_for_event[response.occurrence.event_style]:
+                        labels += [calendar_for_event[
+                            response.occurrence.event_style]]
 
-                response = self.copy_event(
-                    response.occurrence,
-                    delta,
-                    conference,
-                    room,
-                    labels,
-                    new_root.pk)
-                show_scheduling_occurrence_status(
-                    request,
-                    response,
-                    self.__class__.__name__)
-                if response.occurrence:
-                    copied_ids += [response.occurrence.pk]
+                    copy_response, peer_response = self.copy_event(
+                        response.occurrence,
+                        delta,
+                        conference,
+                        room,
+                        labels,
+                        new_root.pk)
+                    show_scheduling_occurrence_status(
+                        request,
+                        copy_response,
+                        self.__class__.__name__)
+                    if copy_response.occurrence:
+                        copied_ids += [copy_response.occurrence.pk]
+                        finished_ids += [response.occurrence.pk]
+                    if peer_response:
+                        show_scheduling_occurrence_status(
+                            request,
+                            peer_response,
+                            self.__class__.__name__)
+                        if peer_response.occurrence:
+                            copied_ids += [peer_response.occurrence.pk]
+                            finished_ids += [response.occurrence.peer.pk]
+
             url = "%s?%s-day=%d&filter=Filter" % (
                 reverse('manage_event_list',
                         urlconf='gbe.scheduling.urls',

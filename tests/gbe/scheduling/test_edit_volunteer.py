@@ -309,6 +309,42 @@ class TestEditVolunteer(TestGBE):
             response,
             'That choice is not one of the available choices.')
 
+    def test_edit_event_change_linked_event(self):
+        other_context = VolunteerContext(conference=self.context.conference)
+        prev_pair = other_context.add_opportunity()
+        other_context.opp_event.set_peer(prev_pair)
+        orig_opp = other_context.add_opportunity()
+        self.context.opp_event.set_peer(orig_opp)
+        grant_privilege(self.privileged_user, 'Volunteer Coordinator')
+        login_as(self.privileged_user, self)
+        data = self.edit_event()
+        data['peer_event'] = other_context.opp_event.pk
+        data['edit_event'] = "Save and Continue"
+        response = self.client.post(
+            self.url,
+            data=data,
+            follow=True)
+        self.assertRedirects(
+            response,
+            "%s?worker_open=True" % self.url)
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s - %s - %s</option>' % (
+                other_context.opp_event.pk,
+                other_context.sched_event.title,
+                other_context.opp_event.title,
+                other_context.opp_event.start_time.strftime(
+                    GBE_DATETIME_FORMAT)),
+            html=True)
+        check_event = Event.objects.get(pk=other_context.opp_event.pk)
+        check_peer = Event.objects.get(pk=self.context.opp_event.pk)
+        self.assertEqual(check_event.peer.pk, check_peer.pk)
+        self.assertEqual(check_peer.peer.pk, check_event.pk)
+        check_pair1 = Event.objects.get(pk=prev_pair.pk)
+        check_pair2 = Event.objects.get(pk=orig_opp.pk)
+        self.assertTrue(check_pair1.peer is None)
+        self.assertTrue(check_pair2.peer is None)
+
     def test_edit_event_clear_linked_event(self):
         other_context = VolunteerContext(conference=self.context.conference)
         self.context.opp_event.set_peer(other_context.opp_event)
