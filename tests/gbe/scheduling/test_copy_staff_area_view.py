@@ -455,7 +455,6 @@ class TestCopyStaffArea(TestGBE):
         self.assertEqual(len(last_event.peer.labels), 2)
         self.assertFalse(self.context.area.slug in last_event.peer.labels)
 
-
     def test_copy_only_parent_event(self):
         another_day = ConferenceDayFactory()
         another_room = RoomFactory()

@@ -90,17 +90,17 @@ act_shows_options = [
                   'when performers are performing for other performers.'
                   '</small>')),
     (10, mark_safe('<i>Friday, April 26 @ 10pm</i> <b>The Burlesk Bordello</b>'
-                  '<br><small>21+! This intimate, late-night cabaret lets you'
-                  ' get up close and personal with the audience. Bring us '
-                  'your sexiest, kinkiest, steamiest acts!</small>')),
+                   '<br><small>21+! This intimate, late-night cabaret lets you'
+                   ' get up close and personal with the audience. Bring us '
+                   'your sexiest, kinkiest, steamiest acts!</small>')),
     (11, mark_safe('<i>Saturday, April 27 @ 7:30PM</i> <b>The Main Event, not '
-                  'in competition</b><br><small>An amazing opportunity for '
-                  'newer performers or those who want to be seen on the big '
-                  'stage without the pressure of competition!</small>')),
+                   'in competition</b><br><small>An amazing opportunity for '
+                   'newer performers or those who want to be seen on the big '
+                   'stage without the pressure of competition!</small>')),
     (12, mark_safe('<i>Saturday, April 27 @ 9pm</i> <b>The Main Event, '
-                  'competition</b><br><small>Our big event gets even bigger '
-                  'this year! Bring us your best act to compete for titles, '
-                  'prizes, and cash!</small>'))]
+                   'competition</b><br><small>Our big event gets even bigger '
+                   'this year! Bring us your best act to compete for titles, '
+                   'prizes, and cash!</small>'))]
 act_shows_options_short = [
     (8, mark_safe('<b>Half-o-Ween!</b><br>Thursday, April 25 @ 8pm')),
     (9, mark_safe('<b>Opening Night Party</b><br>Thursday, April 25 @ 10pm')),
@@ -108,7 +108,7 @@ act_shows_options_short = [
     (11, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                    'April 27 @ 7:30PM')),
     (12, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
-                  'April 27 @ 9pm'))]
+                   'April 27 @ 9pm'))]
 old_act_shows_options = [
     (0, 'The Bordello (Fri. Late)'),
     (1, 'The Main Event, in competition'),

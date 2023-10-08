@@ -338,7 +338,7 @@ class TestSetVolunteer(TestCase):
         redirect_url = reverse('home', urlconf="gbe.urls")
         login_as(self.profile, self)
         response = self.client.post("%s?next=%s" % (
-            self.url, 
+            self.url,
             redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
         # absent because pending events not on schedule to begin with

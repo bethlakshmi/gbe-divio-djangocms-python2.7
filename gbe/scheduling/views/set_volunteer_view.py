@@ -94,7 +94,7 @@ class SetVolunteerView(View):
         approval_needed_events = []
         if kwargs['state'] == 'on' and len(bookings) == 0:
             if occ_response.occurrence.extra_volunteers() >= 0 or (
-                    occ_response.occurrence.peer is not None and 
+                    occ_response.occurrence.peer is not None and
                     occ_response.occurrence.peer.extra_volunteers() >= 0):
                 user_message = UserMessage.objects.get_or_create(
                         view=self.__class__.__name__,
@@ -198,7 +198,7 @@ class SetVolunteerView(View):
             public_id=self.owner.pk,
             public_class=self.owner.__class__.__name__)
         if occurrence.approval_needed or (occurrence.peer is not None and
-                occurrence.peer.approval_needed):
+                                          occurrence.peer.approval_needed):
             person.role = "Pending Volunteer"
             approval_needed = True
 

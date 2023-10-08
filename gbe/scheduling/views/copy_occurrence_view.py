@@ -110,12 +110,19 @@ class CopyOccurrenceView(CopyCollectionsView):
 
         if occurrence.peer is not None:
             peer_parent = None
+            peer_event_room = room
+
             # peers share labels - same conf, both volunteer positions
             # if the parents are the same, use the parent, if not, leave null
             if occurrence.peer.parent is not None and (
                     occurrence.parent is not None) and (
                     occurrence.peer.parent.pk == occurrence.parent.pk):
                 peer_parent = parent_event_id
+            if (not set_room) and \
+                    occurrence.peer.location.as_subtype.conferences.filter(
+                    pk=conference.pk).exists():
+                peer_event_room = occurrence.peer.location
+
             peer_response = create_occurrence(
                 occurrence.peer.title,
                 occurrence.peer.duration,
@@ -123,7 +130,7 @@ class CopyOccurrenceView(CopyCollectionsView):
                 occurrence.peer.starttime + delta,
                 max_volunteer=occurrence.peer.max_volunteer,
                 max_commitments=occurrence.peer.max_commitments,
-                locations=[new_event_room],
+                locations=[peer_event_room],
                 description=occurrence.peer.description,
                 parent_event_id=peer_parent,
                 labels=labels,

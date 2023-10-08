@@ -615,6 +615,58 @@ class TestCopyOccurrence(TestGBE):
                     show_context.opp_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
 
+    def test_copy_child_event_preserve_room_link_shares_parent(self):
+        show_context = VolunteerContext()
+        linked_opp = show_context.add_opportunity()
+        show_context.opp_event.set_peer(linked_opp)
+        target_context = ShowContext(room=show_context.room)
+        url = reverse(
+            self.view_name,
+            args=[show_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'copy_children_only',
+            'target_event': target_context.sched_event.pk,
+            'copied_event': show_context.opp_event.pk,
+            'room': self.context.room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=data, follow=True)
+        last_event = Event.objects.latest('pk')
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[target_context.conference.conference_slug]),
+            target_context.conference.conference_slug,
+            target_context.days[0].pk,
+            str([last_event.pk, last_event.pk-1]),)
+        self.assertRedirects(response, redirect_url)
+        self.assertEqual(linked_opp.peer.title, last_event.title)
+        self.assertEqual(linked_opp.title, last_event.peer.title)
+        self.assertContains(response, show_context.room.name)
+        self.assertNotContains(response, self.context.room.name)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                show_context.opp_event.title,
+                datetime.combine(
+                    target_context.days[0].day,
+                    show_context.opp_event.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                linked_opp.title,
+                datetime.combine(
+                    target_context.days[0].day,
+                    linked_opp.starttime.time()).strftime(
+                        GBE_DATETIME_FORMAT)))
+
     def test_copy_child_change_room(self):
         show_context = VolunteerContext()
         target_context = ShowContext()
@@ -635,6 +687,36 @@ class TestCopyOccurrence(TestGBE):
         response = self.client.post(url, data=data, follow=True)
         self.assertContains(response, target_context.room.name, 2)
         self.assertNotContains(response, show_context.room.name)
+
+    def test_copy_child_change_room_linked_event_diff_parent(self):
+        show_context = VolunteerContext()
+        target_context = ShowContext()
+        linked_opp = show_context.add_opportunity()
+        linked_opp.parent = None
+        linked_opp.save()
+        show_context.opp_event.set_peer(linked_opp)
+        show_context.conference.status_code = 'completed'
+        show_context.conference.save()
+        url = reverse(
+            self.view_name,
+            args=[show_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'copy_children_only',
+            'target_event': target_context.sched_event.pk,
+            'copied_event': show_context.opp_event.pk,
+            'room': target_context.room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=data, follow=True)
+        last_event = Event.objects.latest('pk')
+        self.assertNotContains(response, show_context.room.name)
+        self.assertContains(response, target_context.room.name, 3)
+        self.assertEqual(linked_opp.peer.title, last_event.title)
+        self.assertEqual(linked_opp.title, last_event.peer.title)
+        self.assertTrue(last_event.peer.parent is None)
+        self.assertTrue(last_event.parent is not None)
 
     def test_copy_child_parent_events(self):
         another_day = ConferenceDayFactory()

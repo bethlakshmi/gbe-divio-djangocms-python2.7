@@ -279,7 +279,7 @@ class ApproveVolunteerView(View):
                 new_warnings += [warning]
         response.warnings = new_warnings
         show_general_status(request, response, self.__class__.__name__)
-                
+
         if not response.errors:
             self.changed_ids = response.booking_ids
             user_message = UserMessage.objects.get_or_create(
