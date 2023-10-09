@@ -252,6 +252,49 @@ class TestCopyOccurrence(TestGBE):
                     self.context.opp_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
 
+    def test_copy_single_linked_event(self):
+        linked_opp = self.context.add_opportunity()
+        self.context.opp_event.set_peer(linked_opp)
+        login_as(self.privileged_user, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.context.opp_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data, another_day, other_room = self.get_solo_data()
+        response = self.client.post(self.url,
+                                    data=data,
+                                    follow=True)
+        last_event = Event.objects.latest('pk')
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[another_day.conference.conference_slug]),
+            another_day.conference.conference_slug,
+            another_day.pk,
+            str([last_event.pk-1, last_event.pk]),)
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, other_room.name)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                self.context.opp_event.title,
+                datetime.combine(
+                    another_day.day,
+                    self.context.opp_event.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                linked_opp.title,
+                datetime.combine(
+                    another_day.day,
+                    linked_opp.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
+
     def test_copy_single_event_date_wins(self):
         login_as(self.privileged_user, self)
         self.url = reverse(
@@ -902,7 +945,54 @@ class TestCopyOccurrence(TestGBE):
                     another_day.day,
                     show_context.sched_event.starttime.time()).strftime(
                     GBE_DATETIME_FORMAT)))
-        self.assertContains(response, "Occurrence has been updated.<br>", 1)
+
+    def test_copy_parent_w_link_event(self):
+        # currently not doable in UI as designed, but doaable in code.
+        another_day = ConferenceDayFactory()
+        show_context = VolunteerContext()
+        linked_opp = show_context.add_opportunity()
+        show_context.sched_event.set_peer(linked_opp)
+        url = reverse(
+            self.view_name,
+            args=[show_context.sched_event.pk],
+            urlconf='gbe.scheduling.urls')
+        data = {
+            'copy_mode': 'include_parent',
+            'copy_to_day': another_day.pk,
+            'room': self.context.room.pk,
+            'pick_event': "Finish",
+        }
+        login_as(self.privileged_user, self)
+        response = self.client.post(url, data=data, follow=True)
+        last_event = Event.objects.latest('pk')
+        redirect_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
+            reverse('manage_event_list',
+                    urlconf='gbe.scheduling.urls',
+                    args=[another_day.conference.conference_slug]),
+            another_day.conference.conference_slug,
+            another_day.pk,
+            str([last_event.pk, last_event.pk-1]),)
+        self.assertRedirects(response, redirect_url)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                show_context.sched_event.title,
+                datetime.combine(
+                    another_day.day,
+                    show_context.sched_event.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            'Occurrence has been updated.<br>%s, Start Time: %s' % (
+                linked_opp.title,
+                datetime.combine(
+                    another_day.day,
+                    linked_opp.starttime.time()).strftime(
+                    GBE_DATETIME_FORMAT)))
 
     def test_copy_parent_w_area(self):
         show_context = VolunteerContext()

@@ -177,7 +177,7 @@ class CopyOccurrenceView(CopyCollectionsView):
         if peer_response is not None:
             show_scheduling_occurrence_status(
                 request,
-                response,
+                peer_response,
                 self.__class__.__name__)
         if response.occurrence:
             new_occurrences += [response.occurrence]
