@@ -48,6 +48,7 @@ def update_occurrence(occurrence_id,
         if parent_event_id > -1:
             parent = get_occurrence(parent_event_id)
             if parent.errors:
+                parent.errors[0].code = "GET_PARENT_" + (parent.errors[0].code)
                 return parent
             occurrence.parent = parent.occurrence
         else:
@@ -57,6 +58,7 @@ def update_occurrence(occurrence_id,
         if peer_id > -1:
             peer = get_occurrence(peer_id)
             if peer.errors:
+                peer.errors[0].code = "GET_PEER_" + (peer.errors[0].code)
                 return peer
             occurrence.set_peer(peer.occurrence)
         else:

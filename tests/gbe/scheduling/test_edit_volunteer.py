@@ -192,9 +192,13 @@ class TestEditVolunteer(TestGBE):
             '<td>%s</td>' % data['title'])
 
     def test_edit_event_and_continue(self):
+        # keep same peer
+        other_context = VolunteerContext(conference=self.context.conference)
+        self.context.opp_event.set_peer(other_context.opp_event)
         grant_privilege(self.privileged_user, 'Volunteer Coordinator')
         login_as(self.privileged_user, self)
         data = self.edit_event()
+        data['peer_event'] = other_context.opp_event.pk
         data['edit_event'] = "Save and Continue"
         response = self.client.post(
             self.url,
@@ -240,6 +244,15 @@ class TestEditVolunteer(TestGBE):
                 self.context.sched_event.pk,
                 self.context.sched_event.title,
                 self.context.sched_event.start_time.strftime(
+                    GBE_DATETIME_FORMAT)),
+            html=True)
+        self.assertContains(
+            response,
+            '<option value="%d" selected>%s - %s - %s</option>' % (
+                other_context.opp_event.pk,
+                other_context.sched_event.title,
+                other_context.opp_event.title,
+                other_context.opp_event.start_time.strftime(
                     GBE_DATETIME_FORMAT)),
             html=True)
 
