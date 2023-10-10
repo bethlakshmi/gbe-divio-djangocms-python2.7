@@ -26,11 +26,15 @@ def create_occurrence(title,
     if parent_event_id:
         parent_response = get_occurrence(parent_event_id)
         if parent_response.errors:
+            parent_response.errors[0].code = "GET_PARENT_" + (
+                parent_response.errors[0].code)
             return parent_response
 
     if peer_id:
         peer_response = get_occurrence(peer_id)
         if peer_response.errors:
+            peer_response.errors[0].code = "GET_PEER_" + (
+                peer_response.errors[0].code)
             return peer_response
 
     response = OccurrenceResponse()
