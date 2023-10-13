@@ -52,9 +52,9 @@ class TestEditShowWizard(TestCase):
             'new_slot-title': 'New Rehearsal Slot',
             'new_slot-event_style': "Rehearsal Slot",
             'new_slot-max_volunteer': '1',
-            'new_slot-duration': '1.0',
+            'new_slot-duration': '0.25',
             'new_slot-day': self.context.days[0].pk,
-            'new_slot-time': '10:00:00',
+            'new_slot-time': '10:15:00',
             'new_slot-location': self.room.pk}
         return data
 
@@ -123,7 +123,7 @@ class TestEditShowWizard(TestCase):
             html=True)
         self.assertContains(
             response,
-            '<input type="number" name="duration" value="7.5" min="0.5" ' +
+            '<input type="number" name="duration" value="7.5" min="0.25" ' +
             'max="12" step="any" required id="id_duration">',
             html=True)
 
