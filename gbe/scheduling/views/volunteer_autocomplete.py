@@ -15,9 +15,6 @@ class VolunteerAutocomplete(PermissionRequiredMixin,
 
         qs = Event.objects.filter(event_style="Volunteer")
 
-        if self.q:
-            text = self.q
-
         if label:
             qs = qs.filter(eventlabel__text=label)
 
