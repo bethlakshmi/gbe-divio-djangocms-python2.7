@@ -162,7 +162,7 @@ class TestEditEventView(TestScheduling):
             'name="max_volunteer" value="2"')
         self.assertContains(
             response,
-            '<input type="number" name="duration" value="7.5" min="0.5" ' +
+            '<input type="number" name="duration" value="7.5" min="0.25" ' +
             'max="12" step="any" required id="id_duration">',
             html=True)
 

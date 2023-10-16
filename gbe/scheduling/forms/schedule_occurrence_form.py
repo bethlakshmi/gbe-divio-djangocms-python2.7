@@ -27,7 +27,7 @@ time_start = 8 * 60
 time_stop = 24 * 60
 conference_times = [(time(int(mins/60), mins % 60),
                      time(int(mins/60), mins % 60).strftime(GBE_TIME_FORMAT))
-                    for mins in range(time_start, time_stop, 30)]
+                    for mins in range(time_start, time_stop, 15)]
 
 
 class DayChoiceField(ModelChoiceField):
@@ -43,7 +43,7 @@ class ScheduleOccurrenceForm(Form):
                          empty_label=None,
                          required=True)
     time = ChoiceField(choices=conference_times, required=True)
-    duration = FloatField(min_value=0.5,
+    duration = FloatField(min_value=0.25,
                           max_value=12,
                           required=True,
                           label=schedule_occurrence_labels['duration'])
