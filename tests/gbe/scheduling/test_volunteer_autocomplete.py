@@ -12,7 +12,7 @@ from tests.contexts import (
 from tests.factories.gbe_factories import ProfileFactory
 
 
-class TestPersonaAutoComplete(TestCase):
+class TestVolunteerAutoComplete(TestCase):
 
     @classmethod
     def setUpTestData(cls):
