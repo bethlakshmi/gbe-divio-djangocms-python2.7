@@ -97,11 +97,11 @@ class SetVolunteerView(View):
                     occ_response.occurrence.peer is not None and
                     occ_response.occurrence.peer.extra_volunteers() >= 0):
                 user_message = UserMessage.objects.get_or_create(
-                        view=self.__class__.__name__,
-                        code="VOL_OPP_FULL",
-                        defaults={
-                            'summary': "Volunteer slot or Linked slot is full",
-                            'description': vol_opp_full_msg})
+                    view=self.__class__.__name__,
+                    code="VOL_OPP_FULL",
+                    defaults={
+                        'summary': "Volunteer slot or Linked slot is full",
+                        'description': vol_opp_full_msg})
                 messages.success(request, user_message[0].description)
             else:
                 schedule_response = self.book_volunteer(
