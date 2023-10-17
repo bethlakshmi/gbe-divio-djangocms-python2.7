@@ -79,8 +79,8 @@ class ReviewActListView(ReviewBidListView):
         no_decision_count = 0
         for accept_state in self.object_type.objects.filter(
                 b_conference=self.conference,
-                submitted=True).values('accepted').annotate(count=
-                Count("id")).order_by():
+                submitted=True).values('accepted').annotate(
+                count=Count("id")).order_by():
             accept_metrics[acceptance_states[
                 accept_state['accepted']][1]] = accept_state['count']
             if accept_state['accepted'] == 0:
