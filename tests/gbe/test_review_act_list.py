@@ -156,8 +156,13 @@ class TestReviewActList(TestCase):
         self.assertContains(response, 'gbe-table-row gbe-table-info')
         self.assertContains(response, self.metric_row % ("No Decision", 4))
         self.assertContains(response, self.metric_row % (
-            "Total Acts Pending Review",
-            1), html=True)
+            "Acts with no review at all",
+            3), html=True)
+        self.assertContains(
+            response,
+            ('<tr class="gbe-table-row"><td><b>Total Acts Pending Review' +
+             '</b></td><td><b>4</b></td></tr>'),
+            html=True)
 
     def test_review_act_has_average(self):
         ActBidEvaluationFactory(
@@ -179,7 +184,6 @@ class TestReviewActList(TestCase):
         response = self.client.get(
             self.url,
             data={'conf_slug': self.conference.conference_slug})
-        print(response.content)
         self.assertContains(response, str(3.67))
         self.assertContains(response, str(flex_eval.ranking))
         self.assertContains(response, "4.0", 2)
