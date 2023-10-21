@@ -261,23 +261,15 @@ class TestIndex(TestCase):
         staff_profile = ProfileFactory(user_object__is_staff=True)
         grant_privilege(staff_profile, "Act Reviewers")
         login_as(staff_profile, self)
-        act = ActFactory(submitted=True,
-                         b_conference=self.current_conf)
-        url = reverse('home', urlconf='gbe.urls')
-        response = self.client.get(url)
-        self.assertContains(response, act.b_title)
-
-    def test_act_was_reviewed(self):
-        staff_profile = ProfileFactory(user_object__is_staff=True)
-        grant_privilege(staff_profile, "Act Reviewers")
-        login_as(staff_profile, self)
         reviewed_act = ActFactory(submitted=True,
                                   b_conference=self.current_conf)
         FlexibleEvaluationFactory(bid=reviewed_act,
                                   evaluator=staff_profile)
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
-        self.assertNotContains(response, reviewed_act.b_title)
+        self.assertContains(response, 'Act:  1 out of 2')
+        self.assertContains(response,
+                            reverse('act_review_list', urlconf='gbe.urls'))
 
     def test_classes_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
@@ -287,29 +279,29 @@ class TestIndex(TestCase):
                              b_conference=self.current_conf)
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
-        self.assertContains(response, klass.b_title)
+        self.assertContains(response, 'Class:  1 out of 1')
+        self.assertContains(response,
+                            reverse('class_review_list', urlconf='gbe.urls'))
 
     def test_vendors_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
         grant_privilege(staff_profile, "Vendor Reviewers")
         login_as(staff_profile, self)
-        vendor = VendorFactory(submitted=True,
-                               b_conference=self.current_conf)
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
-
-        self.assertContains(response, vendor.business.name)
+        self.assertContains(response, 'Vendor:  1 out of 1')
+        self.assertContains(response,
+                            reverse('vendor_review_list', urlconf='gbe.urls'))
 
     def test_costumes_to_review(self):
         staff_profile = ProfileFactory(user_object__is_staff=True)
         grant_privilege(staff_profile, "Costume Reviewers")
         login_as(staff_profile, self)
-        costume = CostumeFactory(submitted=True,
-                                 b_conference=self.current_conf)
         url = reverse('home', urlconf='gbe.urls')
         response = self.client.get(url)
-
-        self.assertContains(response, costume.b_title)
+        self.assertContains(response, 'Costume:  1 out of 1')
+        self.assertContains(response,
+                            reverse('costume_review_list', urlconf='gbe.urls'))
 
     def test_profile_image(self):
         set_image(self.performer)

@@ -11,7 +11,41 @@
         <a class="dropdown-item" href="{% url 'gbe:act_coord_create' %}">Create & Comp Act</a>
         <a class="dropdown-item" href="{% url 'ticketing:comp_ticket' %}?next={{ request.get_full_path }}">Send a Comp</a>
       </div></div>{% endif %}
+      <button class="btn gbe-btn-primary my-3" type="button" data-toggle="collapse" data-target="#actMetricCollapse" aria-expanded="false" aria-controls="actMetricCollapse">
+      Act Review Metrics
+      </button>
   </div></div>
+  <div class="row">
+  <div class="col">
+  <div class="collapse width" id="actMetricCollapse">
+    <div class="card card-body gbe-bg-light border_box">
+      <h4>Act Status</h4>
+      <table>
+      <thead><tr class="gbe-table-header"><th>State</th><th>Count</th></tr></thead>
+      <tbody>
+      {% for act_state, act_count in review_metrics.total_by_status.items %}
+      <tr class="gbe-table-row"><td>{{ act_state }}</td><td>{{ act_count }}</td></tr>
+      {% endfor %}
+      </tbody></table>
+      <br>
+      <h4># of Acts Reviewed, by Reviewer</h4>
+      Only "No Decision" acts are listed here.  Once an act is accepted, rejected, etc, it no longer counts here.<br>
+      <b>All Act Reviewers:</b> {% for reviewer in review_metrics.act_reviewers %}
+      {{reviewer.display_name}}, {% endfor %}
+      <i>Reviewers who have not yet reviewed any acts this year will not be shown in the table below</i>
+      <table>
+      <thead><tr class="gbe-table-header"><th>Reviewer</th><th>Count</th></tr></thead>
+      <tbody>
+      {% for row in review_metrics.total_by_reviewer %}
+      <tr class="gbe-table-row"><td>
+          {% if row.actbidevaluation__evaluator__display_name %}{{ row.actbidevaluation__evaluator__display_name }}
+          {% else %}
+          Acts with no review at all{% endif %}</td><td>{{ row.count }}</td></tr>
+      {% endfor %}
+      <tr class='gbe-table-row'><td><b>Total Acts Pending Review</b></td><td><b>{{ review_metrics.total_no_decision }}</b></td></tr>
+      </tbody></table>
+    </div>
+  </div></div></div>
  {% endblock %}
 {% block tbody %}
   {% for row in rows %}

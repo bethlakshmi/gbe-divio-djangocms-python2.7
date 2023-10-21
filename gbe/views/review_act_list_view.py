@@ -5,12 +5,14 @@ from gbe.models import (
     ActBidEvaluation,
     EvaluationCategory,
     FlexibleEvaluation,
+    Profile,
     UserMessage,
 )
 from gbe.views import ReviewBidListView
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.contrib import messages
 from gbetext import (
+    acceptance_states,
     apply_filter_msg,
     clear_filter_msg,
     no_filter_msg,
@@ -73,11 +75,34 @@ class ReviewActListView(ReviewBidListView):
 
     def get_context_dict(self):
         context = super(ReviewActListView, self).get_context_dict()
+        accept_metrics = {}
+        no_decision_count = 0
+        for accept_state in self.object_type.objects.filter(
+                b_conference=self.conference,
+                submitted=True).values('accepted').annotate(
+                count=Count("id")).order_by():
+            accept_metrics[acceptance_states[
+                accept_state['accepted']][1]] = accept_state['count']
+            if accept_state['accepted'] == 0:
+                no_decision_count = accept_state['count']
+
         context.update(
             {'vertical_columns': EvaluationCategory.objects.filter(
                 visible=True).order_by('category').values_list(
                 'category', flat=True),
-             'last_columns': ['Average', 'Action']})
+             'last_columns': ['Average', 'Action'],
+             'review_metrics':  {
+                'total_by_status': accept_metrics,
+                'total_by_reviewer': self.object_type.objects.filter(
+                    b_conference=self.conference,
+                    submitted=True,
+                    accepted=0).values(
+                    'actbidevaluation__evaluator__display_name'
+                    ).annotate(count=Count("id")).order_by(),
+                'total_no_decision': no_decision_count,
+                'act_reviewers': Profile.objects.filter(
+                    user_object__groups__name__in=self.reviewer_permissions)
+            }})
 
         if self.conference.status in ('upcoming', 'ongoing'):
             if self.filter_form is not None:

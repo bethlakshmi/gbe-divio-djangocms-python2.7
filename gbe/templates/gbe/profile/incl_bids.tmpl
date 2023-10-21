@@ -5,8 +5,7 @@
     <br>{{ profile.display_name }} has these bids to review<br>
     <ul>
       {% for review_item in review_items %}
-      <li>{{review_item.bid_type}}:  {{ review_item.bid }} - 
-        <a class="gbe-link" href="{{review_item.url}}">{{ review_item.action }}</a>
+      <li>{{review_item.bid_type}}:  {{ review_item.unreviewed_bids }} out of {{ review_item.total_bids }}{% if review_item.unreviewed_bids > 0 %} - <a class="gbe-link" href="{{review_item.url}}">Review Now</a>{% endif %}
     	</li>
       {% endfor %}
     </ul>

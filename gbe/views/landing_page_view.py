@@ -75,20 +75,10 @@ class LandingPageView(ProfileRequiredMixin, View):
         self.groundwork(request, args, kwargs)
         viewer_profile = self.viewer_profile
         context = {}
-        bids_to_review = []
-
         person = Person(
             users=[viewer_profile.user_object],
             public_id=viewer_profile.pk,
             public_class="Profile")
-        for bid in viewer_profile.bids_to_review():
-            bids_to_review += [{
-                'bid': bid,
-                'url': reverse('%s_review' % bid.__class__.__name__.lower(),
-                               urlconf='gbe.urls',
-                               args=[str(bid.id)]),
-                'action': "Review",
-                'bid_type': bid.__class__.__name__}]
         response = get_bookable_people_by_user(self.viewer_profile.user_object)
         bio_ids = []
         # we want both bios the user is included in and bios the user is
@@ -183,7 +173,7 @@ class LandingPageView(ProfileRequiredMixin, View):
                 self.historical),
             'vendors': viewer_profile.vendors(self.historical),
             'costumes': viewer_profile.get_costumebids(self.historical),
-            'review_items': bids_to_review,
+            'review_items': viewer_profile.bids_to_review(),
             'tickets': get_purchased_tickets(viewer_profile.user_object),
             'acceptance_states': acceptance_states,
             'admin_message': self.admin_message,

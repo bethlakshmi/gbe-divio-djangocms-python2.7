@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.test import Client
 from tests.factories.gbe_factories import (
+    ActBidEvaluationFactory,
     ActCastingOptionFactory,
     ActFactory,
     BioFactory,
@@ -27,6 +28,7 @@ from gbetext import (
 class TestReviewActList(TestCase):
     '''Tests for review_act_list view'''
     view_name = 'act_review'
+    metric_row = '<tr class="gbe-table-row"><td>%s</td><td>%d</td></tr>'
 
     @classmethod
     def setUpTestData(cls):
@@ -87,6 +89,7 @@ class TestReviewActList(TestCase):
             data={'conf_slug': context.conference.conference_slug})
         self.assertContains(response, context.acts[0].b_title)
         self.assertContains(response, context.sched_event.title)
+        self.assertContains(response, self.metric_row % ("Accepted", 1))
 
     def test_review_act_assigned_show_role(self):
         context = ShowContext(act_role="Hosted By...")
@@ -96,6 +99,7 @@ class TestReviewActList(TestCase):
             data={'conf_slug': context.conference.conference_slug})
         self.assertContains(response, context.sched_event.title)
         self.assertContains(response, "Hosted By...")
+        self.assertContains(response, self.metric_row % ("Accepted", 1))
 
     def test_review_act_assigned_two_shows(self):
         context = ShowContext()
@@ -109,8 +113,12 @@ class TestReviewActList(TestCase):
         self.assertContains(response, context.acts[0].b_title)
         self.assertContains(response, context.sched_event.title)
         self.assertContains(response, context2.sched_event.title)
+        self.assertContains(response, self.metric_row % ("Accepted", 1))
 
     def test_review_act_has_reviews(self):
+        ActBidEvaluationFactory(
+            bid=self.acts[0],
+            evaluator=self.privileged_profile)
         flex_eval = FlexibleEvaluationFactory(
             bid=self.acts[0],
             evaluator=self.privileged_profile,
@@ -124,8 +132,15 @@ class TestReviewActList(TestCase):
         self.assertContains(response, str(flex_eval.ranking))
         self.assertContains(response, "No Decision")
         self.assertContains(response, 'gbe-table-row gbe-table-success')
+        self.assertContains(response, self.metric_row % ("No Decision", 4))
+        self.assertContains(response, self.metric_row % (
+            self.privileged_profile.display_name,
+            1), html=True)
 
     def test_review_act_has_empty_reviews(self):
+        ActBidEvaluationFactory(
+            bid=self.acts[0],
+            evaluator=self.privileged_profile)
         flex_eval = FlexibleEvaluationFactory(
             bid=self.acts[0],
             evaluator=self.privileged_profile,
@@ -139,8 +154,20 @@ class TestReviewActList(TestCase):
         self.assertContains(response, str("--"))
         self.assertContains(response, "Needs Review")
         self.assertContains(response, 'gbe-table-row gbe-table-info')
+        self.assertContains(response, self.metric_row % ("No Decision", 4))
+        self.assertContains(response, self.metric_row % (
+            "Acts with no review at all",
+            3), html=True)
+        self.assertContains(
+            response,
+            ('<tr class="gbe-table-row"><td><b>Total Acts Pending Review' +
+             '</b></td><td><b>4</b></td></tr>'),
+            html=True)
 
     def test_review_act_has_average(self):
+        ActBidEvaluationFactory(
+            bid=self.acts[0],
+            evaluator=self.privileged_profile)
         flex_eval = FlexibleEvaluationFactory(
             bid=self.acts[0],
             evaluator=self.privileged_profile,
@@ -161,9 +188,15 @@ class TestReviewActList(TestCase):
         self.assertContains(response, str(flex_eval.ranking))
         self.assertContains(response, "4.0", 2)
         self.assertContains(response, '<td>--</td>', 12)
+        self.assertContains(response, self.metric_row % (
+            self.privileged_profile.display_name,
+            1), html=True)
 
     def test_review_act_has_average_w_zero(self):
         EvaluationCategory.objects.all().delete()
+        ActBidEvaluationFactory(
+            bid=self.acts[0],
+            evaluator=self.privileged_profile)
         flex_eval = FlexibleEvaluationFactory(
             bid=self.acts[0],
             evaluator=self.privileged_profile,
@@ -184,6 +217,9 @@ class TestReviewActList(TestCase):
         self.assertContains(response, "5.0", 1)
         self.assertContains(response, "3.0", 1)
         self.assertContains(response, "2.67", 1)
+        self.assertContains(response, self.metric_row % (
+            self.privileged_profile.display_name,
+            1), html=True)
 
     def test_review_act_list_filter(self):
         other_show = ActFactory(
