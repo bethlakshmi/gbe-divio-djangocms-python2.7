@@ -12,11 +12,14 @@ class PayPalSettingsAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('ticket_item',
+    list_display = ('id',
+                    'ticket_item',
                     'purchaser',
                     'amount',
                     'order_date',
                     'import_date')
+    list_display_links = ('id',)
+    list_editable = ['ticket_item', ]
     list_filter = ['ticket_item__ticketing_event__conference',
                    'order_date',
                    'import_date',
