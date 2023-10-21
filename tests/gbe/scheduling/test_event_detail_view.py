@@ -31,6 +31,7 @@ from datetime import (
 )
 from gbetext import (
     login_please,
+    paired_alert_msg,
     pending_note,
 )
 
@@ -316,11 +317,16 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, 'awaiting_approval.gif')
         self.assertContains(response, pending_note)
 
-    def test_view_volunteers(self):
+    def test_view_volunteers_and_links(self):
         staff_context = StaffAreaContext()
         opportunity = staff_context.add_volunteer_opp()
+        linked_opportunity = staff_context.add_volunteer_opp()
+
         opportunity.starttime = datetime.now() + timedelta(days=1)
         opportunity.save()
+        linked_opportunity.starttime = datetime.now() + timedelta(days=2)
+        linked_opportunity.save()
+        opportunity.set_peer(linked_opportunity)
         url = reverse(self.view_name,
                       urlconf="gbe.scheduling.urls",
                       args=[opportunity.pk])
@@ -336,3 +342,8 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, reverse('login'))
         self.assertContains(response, reverse('register', urlconf="gbe.urls"))
         self.assertContains(response, login_please)
+        self.assertContains(response, paired_alert_msg)
+        self.assertContains(response, reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[linked_opportunity.pk]))

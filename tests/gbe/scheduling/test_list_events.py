@@ -25,8 +25,12 @@ from datetime import (
     datetime,
     timedelta,
 )
-from gbetext import pending_note
+from gbetext import (
+    paired_alert_msg,
+    pending_note,
+)
 from tests.gbe.test_filters import TestFilters
+from django.utils.formats import date_format
 
 
 class TestViewList(TestFilters):
@@ -226,6 +230,10 @@ class TestViewList(TestFilters):
         opportunity = staff_context.add_volunteer_opp()
         opportunity.starttime = datetime.now() + timedelta(days=1)
         opportunity.save()
+        linked_opportunity = staff_context.add_volunteer_opp()
+        linked_opportunity.starttime = datetime.now() + timedelta(days=2)
+        linked_opportunity.save()
+        opportunity.set_peer(linked_opportunity)
         login_as(ProfileFactory(), self)
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
@@ -256,6 +264,10 @@ class TestViewList(TestFilters):
         self.assertNotContains(response, 'fa-star-o')
         self.assertNotContains(response,
                                reverse('register', urlconf="gbe.urls"))
+        self.assertContains(response, paired_alert_msg)
+        self.assertContains(
+            response,
+            date_format(linked_opportunity.starttime, "DATETIME_FORMAT"))
 
     def test_view_volunteers_filtered(self):
         staff_context = StaffAreaContext(conference=self.conf)
