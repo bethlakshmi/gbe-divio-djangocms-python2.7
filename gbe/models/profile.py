@@ -82,26 +82,33 @@ class Profile(Model):
             self.user_object.first_name) and (self.user_object.last_name)
 
     def bids_to_review(self):
-        from gbe.models import Biddable
+        from gbe.models import Act, Class, Costume, Vendor
+        accessible_bids = []
         reviews = []
-        reviewer = False
         priv_grps = self.privilege_groups
-        for priv in ['Act Reviewers',
-                     'Class Reviewers',
-                     'Costume Reviewers',
-                     'Vendor Reviewers']:
-            if priv in priv_grps:
-                reviewer = True
-        if reviewer:
-            bids_to_review = Biddable.objects.filter(
-                b_conference__status__in=('upcoming', 'ongoing'),
-                submitted=True,
-                accepted=0).exclude(
-                bidevaluation__evaluator=self).exclude(
-                flexibleevaluation__evaluator=self).select_subclasses()
-            for bid in bids_to_review:
-                if "%s Reviewers" % bid.__class__.__name__ in priv_grps:
-                    reviews += [bid]
+        if 'Act Reviewers' in priv_grps:
+            accessible_bids += [Act]
+        if 'Class Reviewers' in priv_grps:
+            accessible_bids += [Class]
+        if 'Costume Reviewers' in priv_grps:
+            accessible_bids += [Costume]
+        if 'Vendor Reviewers' in priv_grps:
+            accessible_bids += [Vendor]
+
+        if len(accessible_bids) > 0:
+            for bid_class in accessible_bids:
+                bid_base = bid_class.objects.filter(
+                    b_conference__status__in=('upcoming', 'ongoing'),
+                    submitted=True,
+                    accepted=0)
+                reviews += [{
+                    'bid_type': bid_class.__name__,
+                    'url': reverse(bid_class.__name__.lower() + '_review_list',
+                                   urlconf='gbe.urls'),
+                    'total_bids': bid_base.count(),
+                    'unreviewed_bids': bid_base.exclude(
+                        bidevaluation__evaluator=self).exclude(
+                        flexibleevaluation__evaluator=self).count()}]
         return reviews
 
     @property
