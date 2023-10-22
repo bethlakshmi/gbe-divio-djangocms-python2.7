@@ -51,26 +51,6 @@ class MakeActView(MakeBidView):
         if redirect:
             return redirect
 
-        redirect_prefix = None
-        # first, diagnose if we have a act/view mismatch
-        if self.conference.act_style == "summer" and (
-                self.__class__.__name__ == "MakeActView"):
-            redirect_prefix = 'summeract_'
-        elif self.conference.act_style == "normal" and (
-                self.__class__.__name__ == "MakeSummerActView"):
-            redirect_prefix = 'act_'
-
-        # then determine where to reverse
-        if redirect_prefix and self.bid_object:
-            return reverse(
-                "%sedit" % redirect_prefix,
-                urlconf='gbe.urls',
-                args=[self.bid_object.pk])
-        elif redirect_prefix:
-            return reverse(
-                "%screate" % redirect_prefix,
-                urlconf='gbe.urls')
-
         self.bios = self.owner.bio_set.all()
         if len(self.bios) == 0:
             return '%s?next=%s' % (

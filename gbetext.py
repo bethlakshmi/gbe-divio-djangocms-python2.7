@@ -119,7 +119,12 @@ old_act_shows_options = [
     (6, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                   'May 6, 7:30PM')),
     (7, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
-                  'May 6, 9PM'))] + act_shows_options
+                  'May 6, 9PM')),
+    (13, 'Friday, July 28'),
+    (14, 'Saturday, July 29'),
+    (15, 'Sunday, July 30'),
+    (16, 'Please also consider this act for GBE12, January 5-7, 2018'),
+    ] + act_shows_options
 act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
  act order before clicking other buttons in this dashboard.<br><br></div>
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
@@ -148,15 +153,6 @@ more_shows_options = [
     (5, 'Saturday, July 29'),
     (6, 'Sunday, July 30'),
     (7, 'Please also consider this act for GBE12, January 5-7, 2018')]
-
-summer_other_perf_options = [
-    (0, "Go-go dance during a show"),
-    (1, "Be part of the opening number."),
-    (2, "Model in the Fashion Show (Saturday afternoon)")]
-
-cue_options = [('Theater', 'Theater'),
-               ('Alternate', 'Alternate'),
-               ('None', 'None')]
 
 best_time_to_call_options = [('Any', 'Any'),
                              ('Mornings', 'Mornings'),
@@ -271,12 +267,6 @@ space_options = (('Movement Class Floor',
 schedule_options = (('Preferred Time', "Preferred Time"),
                     ('Available', "Available"),
                     ('Not Available', "Not Available"))
-time_options = (('Morning', "Morning (before noon)"),
-                ('Early Afternoon', "Early Afternoon (12PM-3PM)"),
-                ('Late Afternoon', "Late Afternoon (3PM-6PM)"))
-day_options = (('Fri', "Friday"),
-               ('Sat', "Saturday"),
-               ('Sun', "Sunday"))
 system_options = [
     (0, 'local/debug'),
     (1, 'test/live')]

@@ -28,7 +28,6 @@ from gbe.views import (
     MakeClassView,
     MakeCostumeView,
     MakeVendorView,
-    MakeSummerActView,
     MergeProfileData,
     MergeProfileExtra,
     MergeProfileSelect,
@@ -141,11 +140,6 @@ urlpatterns = [
         name='act_changestate'),
     url(r'^act/coordinate/?$',
         CoordinateActView.as_view(), name='act_coord_create'),
-
-    url(r'^summer_act/create/?$',
-        MakeSummerActView.as_view(), name='summeract_create'),
-    url(r'^summer_act/edit/(?P<bid_id>\d+)/?$',
-        MakeSummerActView.as_view(), name='summeract_edit'),
 
     #  act tech info - delete act_techinfo_edit after GBE 2020
     url(r'^acttechinfo/edit/(\d+)/?$',
