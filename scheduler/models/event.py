@@ -1,3 +1,4 @@
+from settings import GBE_DATETIME_FORMAT
 from django.db.models import (
     BooleanField,
     CharField,
@@ -7,6 +8,7 @@ from django.db.models import (
     ForeignKey,
     ManyToManyField,
     PositiveIntegerField,
+    SET_NULL,
     SlugField,
     TextField,
 )
@@ -37,6 +39,12 @@ class Event(Schedulable):
         null=True,
         blank=True,
         related_name="children")
+    peer = ForeignKey(
+        "self",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="other_peer")
     slug = SlugField(null=True)
 
     # from gbe.event
@@ -48,6 +56,13 @@ class Event(Schedulable):
     event_style = CharField(max_length=128, blank=False)
     connected_id = PositiveIntegerField(blank=True, null=True)
     connected_class = CharField(max_length=128, blank=True)
+
+    def form_label(self):
+        label = "%s - %s" % (self.title,
+                             self.starttime.strftime(GBE_DATETIME_FORMAT))
+        if self.parent is not None:
+            label = self.parent.title + ' - ' + label
+        return label
 
     def has_commitment_space(self, commit_class_name):
         from scheduler.models import Ordering
@@ -77,6 +92,32 @@ class Event(Schedulable):
                     loc.save()
                 ra = ResourceAllocation(resource=loc, event=self)
                 ra.save()
+
+    # Don't set self.peer directly, use this, to maintain bidirectional state
+    def set_peer(self, new_peer):
+        if self.peer == new_peer and new_peer.peer == self:
+            return
+
+        for event in self.other_peer.all():
+            event.peer = None
+            event.save()
+        for event in new_peer.other_peer.all():
+            event.peer = None
+            event.save()
+
+        self.peer = new_peer
+        self.save()
+        new_peer.peer = self
+        new_peer.save()
+
+    # Don't clear a peer directly, use this, to maintain bidirectional state
+    def clear_peer(self):
+        self.peer = None
+        self.save()
+        if self.other_peer is not None:
+            for event in self.other_peer.all():
+                event.peer = None
+                event.save()
 
     # New - from refactoring
     @property

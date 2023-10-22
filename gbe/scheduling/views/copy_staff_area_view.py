@@ -1,3 +1,4 @@
+from collections import Counter
 from gbe.scheduling.views import CopyCollectionsView
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -121,7 +122,7 @@ class CopyStaffAreaView(CopyCollectionsView):
             "%s<br>Staff Area: %s" % (
                 user_message[0].description,
                 new_area.title))
-        return new_area
+        return [new_area]
 
     def copy_solo(self, request, context):
         target_day = context['pick_day'].cleaned_data['copy_to_day']
@@ -132,7 +133,7 @@ class CopyStaffAreaView(CopyCollectionsView):
             target_day.conference,
             context['pick_day'].cleaned_data['room'])
 
-        if new_root:
+        if len(new_root) > 0:
             slug = target_day.conference.conference_slug
             return HttpResponseRedirect(
                 "%s?%s-day=%d&filter=Filter&new=%s" % (
@@ -141,7 +142,7 @@ class CopyStaffAreaView(CopyCollectionsView):
                                 args=[slug]),
                         slug,
                         target_day.pk,
-                        str([new_root.pk]),))
+                        str([new_root[0].pk]),))
 
     def copy_event(self,
                    occurrence,
@@ -151,11 +152,38 @@ class CopyStaffAreaView(CopyCollectionsView):
                    labels,
                    root=None):
         new_event_room = room
+        event_labels = labels.copy()
+        peer_id = None
+        peer_response = None
         if root:
-            labels += [self.area.slug]
+            event_labels += [self.area.slug]
         if occurrence.location.as_subtype.conferences.filter(
                 pk=conference.pk).exists():
             new_event_room = occurrence.location
+
+        if occurrence.peer is not None:
+            # peers share labels - same conf, both volunteer positions
+            # if the parents are the same, use the parent, if not, leave null
+            peer_room = room
+            peer_labels = labels
+            if occurrence.peer.location.as_subtype.conferences.filter(
+                    pk=conference.pk).exists():
+                peer_room = occurrence.peer.location
+            if Counter(occurrence.peer.labels) == Counter(occurrence.labels):
+                peer_labels = event_labels
+            peer_response = create_occurrence(
+                occurrence.peer.title,
+                occurrence.peer.duration,
+                occurrence.peer.event_style,
+                occurrence.peer.starttime + delta,
+                max_volunteer=occurrence.peer.max_volunteer,
+                max_commitments=occurrence.peer.max_commitments,
+                locations=[peer_room],
+                description=occurrence.peer.description,
+                labels=peer_labels,
+                approval=occurrence.peer.approval_needed,
+                slug=occurrence.peer.slug)
+            peer_id = peer_response.occurrence.pk
 
         response = create_occurrence(
             occurrence.title,
@@ -165,11 +193,12 @@ class CopyStaffAreaView(CopyCollectionsView):
             max_volunteer=occurrence.max_volunteer,
             locations=[new_event_room],
             description=occurrence.duration,
-            labels=labels,
+            labels=event_labels,
             approval=occurrence.approval_needed,
-            slug=occurrence.slug
+            slug=occurrence.slug,
+            peer_id=peer_id
         )
-        return response
+        return response, peer_response
 
     def get_child_copy_settings(self, form):
         new_root = StaffArea.objects.get(

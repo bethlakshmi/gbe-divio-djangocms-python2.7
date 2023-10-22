@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy
 from django.forms import (
     ChoiceField,
     ModelChoiceField,
@@ -10,6 +11,11 @@ from gbe.models import (
 from scheduler.idd import get_occurrences
 from django.db.models.fields import BLANK_CHOICE_DASH
 from settings import GBE_DATETIME_FORMAT
+from dal import (
+    autocomplete,
+    forward
+)
+from scheduler.models import Event
 
 
 class EventAssociationForm(Form):
@@ -26,14 +32,33 @@ class EventAssociationForm(Form):
         queryset=StaffArea.objects.exclude(conference__status="completed"),
         required=False)
 
+    peer_event = ModelChoiceField(
+        queryset=Event.objects.filter(event_style="Volunteer"),
+        label="Paired Event",
+        required=False,
+        widget=autocomplete.ListSelect2(
+            url=reverse_lazy('volunteer-autocomplete',
+                             urlconf="gbe.scheduling.urls"),
+            attrs={'data-minimum-input-length': 3}))
+
     def __init__(self, *args, **kwargs):
-        event_type = None
         choices = []
-        events = None
+        self.conference = None
         super(EventAssociationForm, self).__init__(*args, **kwargs)
+
+        label_set = [Conference.all_slugs(current=True)]
+        if 'initial' in kwargs and 'conference' in kwargs['initial']:
+            self.conference = kwargs['initial']['conference']
+            label_set = [[self.conference.conference_slug]]
+            self.fields['peer_event'].widget.forward = (
+                forward.Const(self.conference.conference_slug, 'label'), )
+            self.fields['peer_event'].label_from_instance = Event.form_label
+            self.fields['peer_event'].queryset = Event.objects.filter(
+                eventlabel__text=self.conference.conference_slug)
+
         response = get_occurrences(
             event_styles=["Show", "Special"],
-            label_sets=[Conference.all_slugs(current=True)])
+            label_sets=label_set)
         if response.occurrences:
             for occurrence in response.occurrences:
                 title = str(occurrence)

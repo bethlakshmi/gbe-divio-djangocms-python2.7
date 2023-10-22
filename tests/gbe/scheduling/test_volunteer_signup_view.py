@@ -4,6 +4,10 @@ from django.test import (
     Client,
     TestCase,
 )
+from settings import (
+    GBE_DATETIME_FORMAT,
+    GBE_TIME_FORMAT,
+)
 from tests.functions.gbe_functions import login_as
 from tests.factories.gbe_factories import (
     ConferenceFactory,
@@ -29,6 +33,7 @@ from gbe.models import (
 from gbetext import (
     full_login_msg,
     no_login_msg,
+    paired_alert_msg,
     pending_note,
     volunteer_instructions,
 )
@@ -107,6 +112,33 @@ class TestVolunteerSignupView(TestCase):
             "not_yet_volunteered.gif")
         self.assertContains(response, volunteer_instructions)
         self.assertContains(response, "btn btn-default disabled", 2)
+
+    def test_signup_w_linked_slots(self):
+        self.linkedopp = self.staffcontext.add_volunteer_opp()
+        self.linkedopp.peer = self.volunteeropp
+        self.volunteeropp.peer = self.linkedopp
+        self.linkedopp.save()
+        self.volunteeropp.save()
+        login_as(self.profile, self)
+        response = self.client.get(self.url)
+        self.assertContains(response, paired_alert_msg)
+        self.assertContains(
+            response,
+            ('<b>%s</b> <i class="fas fa-link" title="Paired with another ' +
+             'event"></i>') % self.volunteeropp.title,
+            html=True)
+        self.assertContains(
+            response,
+            '<ul><li>%s-%s - %s</li><li>%s-%s - %s</li></ul>' % (
+                self.volunteeropp.start_time.strftime(
+                        GBE_DATETIME_FORMAT),
+                self.volunteeropp.end_time.strftime(GBE_TIME_FORMAT),
+                self.volunteeropp.location,
+                self.linkedopp.start_time.strftime(
+                        GBE_DATETIME_FORMAT),
+                self.linkedopp.end_time.strftime(GBE_TIME_FORMAT),
+                self.linkedopp.location),
+            html=True)
 
     def test_signup_w_need_approval_slot(self):
         self.volunteeropp.approval_needed = True

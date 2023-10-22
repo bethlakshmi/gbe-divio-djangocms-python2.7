@@ -5,6 +5,7 @@ from .rehearsal_wizard_view import RehearsalWizardView
 from .staff_area_wizard_view import StaffAreaWizardView
 from .ticketed_event_wizard_view import TicketedEventWizardView
 from .volunteer_wizard_view import VolunteerWizardView
+from .volunteer_autocomplete import VolunteerAutocomplete
 
 # Brand new edit (will deprecate make_occurrence)
 from .manage_vol_wizard_view import ManageVolWizardView

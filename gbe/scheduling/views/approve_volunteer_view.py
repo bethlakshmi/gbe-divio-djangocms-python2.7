@@ -56,7 +56,7 @@ class ApproveVolunteerView(View):
                    'Technical Director',
                    'Producer']
     review_list_view_name = 'approve_volunteer'
-    changed_id = -1
+    changed_ids = []
     page_title = 'Approve Volunteers'
     view_title = 'Approve Pending Volunteers'
     labels = []
@@ -110,7 +110,7 @@ class ApproveVolunteerView(View):
                 'action_links': action_links}
             if pending_person.occurrence.parent is not None:
                 row['parent_event'] = pending_person.occurrence.parent
-            if pending_person.booking_id == self.changed_id:
+            if pending_person.booking_id in self.changed_ids:
                 row['status'] = 'gbe-table-success'
             elif not row['volunteer'].is_active:
                 row['status'] = "gbe-table-danger"
@@ -208,16 +208,22 @@ class ApproveVolunteerView(View):
                 "Volunteer",
                 profile)
         else:
+            titles = ""
+            for event in response.occurrences:
+                if len(titles) > 0:
+                    titles = titles + ", and " + event.title
+                else:
+                    titles = event.title
             email_status = send_bid_state_change_mail(
                 "volunteer",
                 profile.contact_email,
                 profile.get_badge_name(),
-                response.occurrence,
+                titles,
                 state)
         staff_status = send_volunteer_update_to_staff(
             self.reviewer,
             profile,
-            response.occurrence,
+            response.occurrences,
             role,
             response)
         if email_status or staff_status:
@@ -238,6 +244,7 @@ class ApproveVolunteerView(View):
                     user_message + "status code: " + staff_status)
 
     def set_status(self, request, kwargs):
+        occurrences = []
         if len(self.labels) > 0 or len(self.parent_shows) > 0:
             within_scope = False
             response = get_occurrence(booking_id=kwargs['booking_id'])
@@ -265,22 +272,30 @@ class ApproveVolunteerView(View):
             role=volunteer_action_map[kwargs['action']]['role'],
             booking_id=kwargs['booking_id'])
         response = set_person(person=person)
+        new_warnings = []
+        for warning in response.warnings:
+            if not(person.role == "Rejected" and (
+                    warning.code == "SCHEDULE_CONFLICT")):
+                new_warnings += [warning]
+        response.warnings = new_warnings
         show_general_status(request, response, self.__class__.__name__)
+
         if not response.errors:
-            self.changed_id = response.booking_id
+            self.changed_ids = response.booking_ids
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="SET_%s" % person.role,
                 defaults={
                     'summary': set_volunteer_role_summary % person.role,
                     'description': set_volunteer_role_msg % person.role})
-            full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
-                user_message[0].description,
-                str(profile),
-                str(response.occurrence),
-                response.occurrence.starttime.strftime(
-                    GBE_DATETIME_FORMAT))
-            messages.success(request, full_msg)
+            msg = "%s Person: %s<br/>" % (user_message[0].description,
+                                          str(profile))
+            for occurrence in response.occurrences:
+                msg = '%sEvent: %s, Start Time: %s<br>' % (
+                    msg,
+                    str(occurrence),
+                    occurrence.starttime.strftime(GBE_DATETIME_FORMAT))
+            messages.success(request, msg)
             self.send_notifications(request,
                                     response,
                                     state,

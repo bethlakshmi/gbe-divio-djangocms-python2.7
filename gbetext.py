@@ -90,17 +90,17 @@ act_shows_options = [
                   'when performers are performing for other performers.'
                   '</small>')),
     (10, mark_safe('<i>Friday, April 26 @ 10pm</i> <b>The Burlesk Bordello</b>'
-                  '<br><small>21+! This intimate, late-night cabaret lets you'
-                  ' get up close and personal with the audience. Bring us '
-                  'your sexiest, kinkiest, steamiest acts!</small>')),
+                   '<br><small>21+! This intimate, late-night cabaret lets you'
+                   ' get up close and personal with the audience. Bring us '
+                   'your sexiest, kinkiest, steamiest acts!</small>')),
     (11, mark_safe('<i>Saturday, April 27 @ 7:30PM</i> <b>The Main Event, not '
-                  'in competition</b><br><small>An amazing opportunity for '
-                  'newer performers or those who want to be seen on the big '
-                  'stage without the pressure of competition!</small>')),
+                   'in competition</b><br><small>An amazing opportunity for '
+                   'newer performers or those who want to be seen on the big '
+                   'stage without the pressure of competition!</small>')),
     (12, mark_safe('<i>Saturday, April 27 @ 9pm</i> <b>The Main Event, '
-                  'competition</b><br><small>Our big event gets even bigger '
-                  'this year! Bring us your best act to compete for titles, '
-                  'prizes, and cash!</small>'))]
+                   'competition</b><br><small>Our big event gets even bigger '
+                   'this year! Bring us your best act to compete for titles, '
+                   'prizes, and cash!</small>'))]
 act_shows_options_short = [
     (8, mark_safe('<b>Half-o-Ween!</b><br>Thursday, April 25 @ 8pm')),
     (9, mark_safe('<b>Opening Night Party</b><br>Thursday, April 25 @ 10pm')),
@@ -108,7 +108,7 @@ act_shows_options_short = [
     (11, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                    'April 27 @ 7:30PM')),
     (12, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
-                  'April 27 @ 9pm'))]
+                   'April 27 @ 9pm'))]
 old_act_shows_options = [
     (0, 'The Bordello (Fri. Late)'),
     (1, 'The Main Event, in competition'),
@@ -701,11 +701,15 @@ unset_favorite_msg = '''Your interest has been removed and will no longer \
                    appear on your personal schedule.'''
 set_volunteer_msg = '''Thank you!  This volunteer shift has been added to \
 your schedule.'''
+paired_event_set_vol_msg = '''Thank you for volunteering!  You've been signed
+ up for the following shifts:  '''
 unset_volunteer_msg = '''Sorry to see you go!  This volunteer shift has been \
 removed from your personal schedule.'''
 review_vol_msg = '''<b>Please keep this information confidential.</b> This is \
 the place to provide feedback on your experience working with last year's \
 volunteers.'''
+vol_opp_full_msg = '''We're sorry, but the volunteer position has been filled,
+ please sign up for a different opportunity.'''
 set_pending_msg = '''Thank you!  Your offer to volunteer has been sent and is \
 awaiting approval.'''
 unset_pending_msg = '''Sorry to see you go!  Your offer to volunteer has \
@@ -716,6 +720,9 @@ with a highlighted box require approval, when you volunteer, your offer will \
 be reviewed and a response will be sent shortly.'''
 pending_note = '''This is a shift that requires approval.  When you volunteer,\
  your offer will be reviewed and a response will be sent shortly.'''
+paired_alert_msg = '''This volunteer opportunity requires you to attend two
+ connected timeslots.  You must be available for both.  Please check the times
+ listed at the top of this window.'''
 login_please = '''To volunteer, you must have an account with the expo.  \
 Set up an account or login and we'll bring you back here to volunteer.'''
 interested_explain_msg = '''Anyone with an account with The Great Burlesque \
@@ -765,8 +772,8 @@ eval_as_presenter_error = '''You cannot evaluate a class in which you were \
 the Teacher, Moderator or Panelist.  If you have feedback regardling your \
 class, please contact the coordinator directly.'''
 parent_event_delete_warning = '''This scheduled event is a parent to other \
-schedule items.  These schedule items have not been deleted, and will remain \
-on the calendar.'''
+schedule items.  These schedule items have also been deleted and any people
+ booked for these events are no longer scheduled for them.'''
 no_conf_day_msg = '''The target conference has not been properly configured. \
 Specify the days for this conference before proceeding.'''
 rehearsal_delete_msg = '''This rehearsal slot was deleted.  If any acts were \

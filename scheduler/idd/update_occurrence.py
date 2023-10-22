@@ -20,7 +20,8 @@ def update_occurrence(occurrence_id,
                       approval=None,
                       parent_event_id=None,
                       labels=None,
-                      slug=None):
+                      slug=None,
+                      peer_id=None):
     response = get_occurrence(occurrence_id)
     if response.errors:
         return response
@@ -47,10 +48,21 @@ def update_occurrence(occurrence_id,
         if parent_event_id > -1:
             parent = get_occurrence(parent_event_id)
             if parent.errors:
+                parent.errors[0].code = "GET_PARENT_" + (parent.errors[0].code)
                 return parent
             occurrence.parent = parent.occurrence
         else:
             occurrence.parent = None
+
+    if peer_id is not None:
+        if peer_id > -1:
+            peer = get_occurrence(peer_id)
+            if peer.errors:
+                peer.errors[0].code = "GET_PEER_" + (peer.errors[0].code)
+                return peer
+            occurrence.set_peer(peer.occurrence)
+        else:
+            occurrence.clear_peer()
 
     if start_time or max_volunteer or approval or max_commitments or slug or (
             parent_event_id is not None):

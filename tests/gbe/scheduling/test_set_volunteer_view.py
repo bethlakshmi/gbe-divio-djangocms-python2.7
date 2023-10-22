@@ -29,15 +29,18 @@ from gbe.models import (
 from gbetext import (
     no_login_msg,
     full_login_msg,
+    paired_event_set_vol_msg,
     set_volunteer_msg,
     unset_volunteer_msg,
     set_pending_msg,
     unset_pending_msg,
+    vol_opp_full_msg,
     vol_prof_update_failure,
     volunteer_allocate_email_fail_msg,
 )
 from gbe_utils.text import no_profile_msg
 from settings import GBE_DATETIME_FORMAT
+from datetime import datetime
 
 
 class TestSetVolunteer(TestCase):
@@ -118,6 +121,68 @@ class TestSetVolunteer(TestCase):
             outbox_size=2,
             message_index=1)
 
+    def test_volunteer_for_full_linked_event(self):
+        context = VolunteerContext()
+        lead = context.set_staff_lead()
+        link_opp = context.add_opportunity()
+        link_opp.set_peer(context.opp_event)
+        self.context.book_volunteer(
+            volunteer_sched_event=context.opp_event)
+        context.opp_event.max_volunteer = 1
+        context.opp_event.save()
+        login_as(self.profile, self)
+        response = self.client.post(
+            reverse(self.view_name,
+                    args=[context.opp_event.pk, "on"],
+                    urlconf="gbe.scheduling.urls"),
+            follow=True)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            vol_opp_full_msg)
+
+    def test_volunteer_for_linked_event(self):
+        context = VolunteerContext()
+        lead = context.set_staff_lead()
+        link_opp = context.add_opportunity()
+        link_opp.set_peer(context.opp_event)
+
+        login_as(self.profile, self)
+        response = self.client.post(
+            reverse(self.view_name,
+                    args=[context.opp_event.pk, "on"],
+                    urlconf="gbe.scheduling.urls"),
+            follow=True)
+        redirect_url = reverse('volunteer_signup',
+                               urlconf="gbe.scheduling.urls")
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, context.opp_event.title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            paired_event_set_vol_msg +
+            context.opp_event.title + ', ' +
+            link_opp.title)
+        msg = assert_email_template_used(
+            "A change has been made to your Volunteer Schedule!",
+            outbox_size=2)
+        assert("http://%s%s" % (
+            Site.objects.get_current().domain,
+            reverse('home', urlconf='gbe.urls')) in msg.body)
+        assert_email_recipient([self.profile.user_object.email], outbox_size=2)
+        staff_msg = assert_email_template_used(
+            "Volunteer Schedule Change",
+            outbox_size=2,
+            message_index=1)
+        assert(context.opp_event.title in staff_msg.body)
+        assert(link_opp.title in staff_msg.body)
+        assert_email_recipient(
+            [lead.user_object.email],
+            outbox_size=2,
+            message_index=1)
+
     def test_incomplete_volunteer_update(self):
         incomplete = ProfileFactory()
         login_as(incomplete, self)
@@ -186,6 +251,52 @@ class TestSetVolunteer(TestCase):
             outbox_size=2,
             message_index=1)
 
+    def test_remove_linked_event_volunteer(self):
+        context = VolunteerContext()
+        lead = context.set_staff_lead()
+        link_opp = context.add_opportunity()
+        link_opp.set_peer(context.opp_event)
+        self.url = reverse(
+            self.view_name,
+            args=[context.opp_event.pk, "off"],
+            urlconf="gbe.scheduling.urls")
+        # Shitty but effective
+        self.context.book_volunteer(
+            volunteer_sched_event=context.opp_event,
+            volunteer=self.profile)
+        self.context.book_volunteer(
+            volunteer_sched_event=link_opp,
+            volunteer=self.profile)
+        redirect_url = reverse('volunteer_signup',
+                               urlconf="gbe.scheduling.urls")
+        login_as(self.profile, self)
+        response = self.client.post("%s?next=%s" % (
+            self.url, redirect_url), follow=True)
+        self.assertRedirects(response, redirect_url)
+        self.assertContains(response, self.volunteeropp.title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            unset_volunteer_msg)
+        msg = assert_email_template_used(
+            "A change has been made to your Volunteer Schedule!",
+            outbox_size=2)
+        assert("http://%s%s" % (
+            Site.objects.get_current().domain,
+            reverse('home', urlconf='gbe.urls')) in msg.body)
+        assert_email_recipient([self.profile.user_object.email], outbox_size=2)
+        staff_msg = assert_email_template_used(
+            "Volunteer Schedule Change",
+            outbox_size=2,
+            message_index=1)
+        assert(context.opp_event.title in staff_msg.body)
+        assert(link_opp.title in staff_msg.body)
+        assert_email_recipient(
+            [lead.user_object.email],
+            outbox_size=2,
+            message_index=1)
+
     def test_volunteer_duplicate(self):
         self.context.book_volunteer(
             volunteer_sched_event=self.volunteeropp,
@@ -227,10 +338,35 @@ class TestSetVolunteer(TestCase):
         redirect_url = reverse('home', urlconf="gbe.urls")
         login_as(self.profile, self)
         response = self.client.post("%s?next=%s" % (
+            self.url,
+            redirect_url), follow=True)
+        self.assertRedirects(response, redirect_url)
+        # absent because pending events not on schedule to begin with
+        self.assertNotContains(response, self.volunteeropp.title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            set_pending_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to awaiting approval",
+            outbox_size=2)
+        assert(self.volunteeropp.title in msg.body)
+
+    def test_linked_event_needs_approval(self):
+        context = VolunteerContext(conference=self.context.conference)
+        self.volunteeropp.set_peer(context.opp_event)
+        context.opp_event.approval_needed = True
+        context.opp_event.starttime = datetime(2015, 2, 5)
+        context.opp_event.save()
+        redirect_url = reverse('home', urlconf="gbe.urls")
+        login_as(self.profile, self)
+        response = self.client.post("%s?next=%s" % (
             self.url, redirect_url), follow=True)
         self.assertRedirects(response, redirect_url)
         # absent because pending events not on schedule to begin with
         self.assertNotContains(response, self.volunteeropp.title)
+        self.assertNotContains(response, context.opp_event.title)
         assert_alert_exists(
             response,
             'success',
@@ -267,6 +403,71 @@ class TestSetVolunteer(TestCase):
         msg = assert_email_template_used(
             "Your volunteer proposal has changed status to Withdrawn",
             outbox_size=2)
+        assert(self.volunteeropp.title in msg.body)
+
+    def test_remove_pending_volunteer_linked_event(self):
+        context = VolunteerContext(conference=self.context.conference)
+        self.volunteeropp.set_peer(context.opp_event)
+        context.opp_event.approval_needed = True
+        context.opp_event.starttime = datetime(2015, 2, 6)
+        context.opp_event.save()
+        self.context.book_volunteer(
+            volunteer_sched_event=self.volunteeropp,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        self.context.book_volunteer(
+            volunteer_sched_event=context.opp_event,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        login_as(self.profile, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.volunteeropp.pk, "off"],
+            urlconf="gbe.scheduling.urls")
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, self.volunteeropp.title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            unset_pending_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to Withdrawn",
+            outbox_size=2)
+        assert(context.opp_event.title in msg.body)
+
+    def test_remove_pending_volunteer_both_linked_event(self):
+        context = VolunteerContext(conference=self.context.conference)
+        self.volunteeropp.set_peer(context.opp_event)
+        context.opp_event.approval_needed = True
+        context.opp_event.starttime = datetime(2015, 2, 6)
+        context.opp_event.save()
+        self.volunteeropp.approval_needed = True
+        self.volunteeropp.save()
+        self.context.book_volunteer(
+            volunteer_sched_event=self.volunteeropp,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        self.context.book_volunteer(
+            volunteer_sched_event=context.opp_event,
+            volunteer=self.profile,
+            role="Pending Volunteer")
+        login_as(self.profile, self)
+        self.url = reverse(
+            self.view_name,
+            args=[self.volunteeropp.pk, "off"],
+            urlconf="gbe.scheduling.urls")
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, self.volunteeropp.title)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            unset_pending_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to Withdrawn",
+            outbox_size=2)
+        assert(context.opp_event.title in msg.body)
         assert(self.volunteeropp.title in msg.body)
 
     def test_volunteer_conflict(self):

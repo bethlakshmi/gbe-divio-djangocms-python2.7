@@ -29,7 +29,9 @@
     <h2 class="card-title">{{ opp.starttime}}<br>
       {% if opp.parent %}{{opp.parent.title}}: {% endif %}{{ opp.title}}
     {% if conference.status != "completed" %}<a href="{% url 'scheduling:edit_event' conference.conference_slug opp.pk %}" role="button" class="btn gbe-btn-primary float-right">Edit</a>{% endif %}</h2></div>
-  <div class="card-body"><b>Location:</b>  {{opp.location}}<br>{% if opp.role_count %}Max people: {{opp.role_count}}{% endif %}</div>
+  <div class="card-body">
+  {% if opp.peer %}<b>Linked to:</b>  {% if opp.peer.parent %}{{opp.parent.title}}: {% endif %}{{opp.peer}}, {{ opp.peer.starttime }} - <i>volunteers in linked events are scheduled for both events</i>.<br>{% endif %}
+  <b>Location:</b>  {{opp.location}}<br>{% if opp.role_count %}Max people: {{opp.role_count}}{% endif %}</div>
   <table class="table gbe-panel-table">
     <tr>
       <th>&nbsp;</th>

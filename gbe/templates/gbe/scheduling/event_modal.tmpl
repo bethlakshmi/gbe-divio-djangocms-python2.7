@@ -1,6 +1,6 @@
 <!-- Event Modal Start -->
               <div class="modal" id="Modal{{occurrence.object.pk}}" role="dialog">
-              <div class="modal-dialog modal-dialog-centered modal-md">
+              <div class="modal-dialog modal-dialog-centered modal-xl">
               <div class="modal-content gbe-modal-content">
                 <form action="{{occurrence.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">
                 <div class="modal-header gbe-modal-header">
@@ -9,8 +9,16 @@
                 </div>
                 <div class="modal-body">
                   {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon-large" %}
+                  {% if occurrence.peer %}
+                  <b>Multiple Commitments for Postion:</b>
+                  <ul>
+                    <li>{{ occurrence.startday }}-{{ occurrence.end }} - {{ occurrence.location }}</li>
+                    <li>{{ occurrence.peer.startday }}-{{ occurrence.peer.end }} - {{ occurrence.peer.location }}</li>
+                  </ul>
+                  {% else %}
                   <b>Time:</b> {{ occurrence.start }}-{{ occurrence.end }}<br>
                   <b>Location:</b> {{ occurrence.location }}<br>
+                  {% endif %}
                   <b>Currently Staffed:</b> {{ occurrence.object.role_count }} out of {{ occurrence.object.max_volunteer }} volunteers<br>
                   {% if occurrence.description %}
                   <b>Description:</b><br>
@@ -25,8 +33,11 @@
                   <i>This opportunity is in support of 
 <a href="{% url 'scheduling:detail_view' occurrence.parent_event.pk%}" class="gbe-link">
 {{occurrence.parent_event}}</a></i>{% endif %}
-                  {% if occurrence.approval_needed %}<div class="well well-sm">
+                  {% if occurrence.approval_needed %}<div class="gbe-bg-dark py-3 px-4">
                     {{ pending_note}}
+                  </div>{% endif %}
+                  {% if occurrence.peer %}<div class="alert gbe-alert-info">
+                    {{ paired_event_alert }}
                   </div>{% endif %}
                   {% if complete_profile_form %}
                   <div class="pt-4">{% include "form_table.tmpl" with form=complete_profile_form %}</div>

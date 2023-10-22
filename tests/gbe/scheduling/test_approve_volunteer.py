@@ -50,9 +50,6 @@ class TestApproveVolunteer(TestCase):
     view_name = 'review_pending'
     approve_name = 'approve_volunteer'
 
-    def setUp(self):
-        self.client = Client()
-
     @classmethod
     def setUpTestData(cls):
         Conference.objects.all().delete()
@@ -244,7 +241,7 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response,
                             '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Waitlisted"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),
@@ -258,6 +255,60 @@ class TestApproveVolunteer(TestCase):
         assert_email_template_used(
             "Your volunteer proposal has changed status to Wait List",
             outbox_size=2)
+
+    def test_set_waitlist_linked_event(self):
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
+        pair = self.context.add_opportunity()
+        self.context.opp_event.set_peer(pair)
+        pair_allocation = PeopleAllocationFactory(
+            people=self.context.allocation.people,
+            role="Pending Volunteer",
+            event=pair)
+        login_as(self.privileged_user, self)
+        response = self.client.get(reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["waitlist",
+                  self.context.profile.pk,
+                  self.context.allocation.pk]))
+        self.assert_volunteer_state(
+            response,
+            self.context.allocation,
+            "waitlist")
+        self.assert_volunteer_state(
+            response,
+            pair_allocation,
+            "waitlist")
+        # Display of linked event in italics in any linked row
+        self.assertContains(response,
+                            "<i>(%s)</i>" % self.context.opp_event.title)
+        self.assertContains(response,
+                            "<i>(%s)</i>" % pair.title)
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-success">',
+                            2)
+        alert_msg = set_volunteer_role_msg % "Waitlisted"
+        full_msg = ('%s Person: %s<br/>Event: %s, Start Time: %s<br>' +
+                    'Event: %s, Start Time: %s<br>') % (
+                    alert_msg,
+                    str(self.context.profile),
+                    str(self.context.opp_event),
+                    self.context.opp_event.starttime.strftime(
+                        GBE_DATETIME_FORMAT),
+                    str(pair),
+                    pair.starttime.strftime(
+                        GBE_DATETIME_FORMAT))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            full_msg)
+        msg = assert_email_template_used(
+            "Your volunteer proposal has changed status to Wait List",
+            outbox_size=2)
+        assert(self.context.opp_event.title in msg.body)
+        assert(pair.title in msg.body)
 
     def test_redirects(self):
         self.context.allocation.role = "Pending Volunteer"
@@ -289,12 +340,58 @@ class TestApproveVolunteer(TestCase):
         self.assertContains(response,
                             '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Rejected"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),
                 self.context.opp_event.starttime.strftime(
                     GBE_DATETIME_FORMAT))
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            full_msg)
+        assert_email_template_used(
+            "Your volunteer proposal has changed status to Reject",
+            outbox_size=2)
+
+    def test_set_reject_linked_event(self):
+        # in this case, the linked event does not have an allocation to this
+        # volunteer, but because they are linked, an association gets made.
+        self.context.allocation.role = "Pending Volunteer"
+        self.context.allocation.save()
+        pair = self.context.add_opportunity()
+        self.context.opp_event.set_peer(pair)
+
+        login_as(self.privileged_user, self)
+        response = self.client.get(reverse(
+            self.approve_name,
+            urlconf='gbe.scheduling.urls',
+            args=["reject",
+                  self.context.profile.pk,
+                  self.context.allocation.pk]))
+        self.assert_volunteer_state(
+            response,
+            self.context.allocation,
+            "reject")
+        self.assert_volunteer_state(
+            response,
+            pair.peopleallocation_set.all().first(),
+            "reject")
+        self.assertContains(response,
+                            '<tr class="gbe-table-row gbe-table-success">',
+                            2)
+        alert_msg = set_volunteer_role_msg % "Rejected"
+        full_msg = ('%s Person: %s<br/>Event: %s, Start Time: %s<br>' +
+                    'Event: %s, Start Time: %s<br>') % (
+                    alert_msg,
+                    str(self.context.profile),
+                    str(self.context.opp_event),
+                    self.context.opp_event.starttime.strftime(
+                        GBE_DATETIME_FORMAT),
+                    str(pair),
+                    pair.starttime.strftime(
+                        GBE_DATETIME_FORMAT))
         assert_alert_exists(
             response,
             'success',
@@ -319,7 +416,7 @@ class TestApproveVolunteer(TestCase):
         self.assertNotContains(response,
                                '<tr class="gbe-table-row gbe-table-success">')
         alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),
@@ -443,7 +540,7 @@ class TestApproveVolunteer(TestCase):
                   booking.pk])
         response = self.client.get(approve_url)
         alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(volunteer),
                 str(booking.event),
@@ -496,13 +593,12 @@ class TestApproveVolunteer(TestCase):
             args=["approve",
                   self.context.profile.pk,
                   self.context.allocation.pk])
-        response = get_schedule(user=stage_mgr.user_object)
         response = self.client.get("%s?next=%s" % (
             approve_url,
             reverse('home', urlconf='gbe.urls')), follow=True)
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         alert_msg = set_volunteer_role_msg % "Volunteer"
-        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s' % (
+        full_msg = '%s Person: %s<br/>Event: %s, Start Time: %s<br>' % (
                 alert_msg,
                 str(self.context.profile),
                 str(self.context.opp_event),

@@ -12,4 +12,5 @@ def get_bookings(occurrence_ids, roles=[]):
         bookings = bookings.filter(role__in=roles)
     for booking in bookings:
         people += [Person(booking=booking)]
+
     return PeopleResponse(people=people)

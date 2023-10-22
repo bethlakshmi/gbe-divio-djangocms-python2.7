@@ -13,11 +13,21 @@
                <form action="{{sched_event.volunteer_link}}?next={{ request.get_full_path }}" method="post" enctype="multipart/form-data">{% endif %}
                <div class="modal-body">
                   {% include "gbe/scheduling/volunteer_icon.tmpl" with icon_class="volunteer-icon-large" occurrence=sched_event %}
+                  {% if occurrence.peer %}
+                  <ul class="my-0">
+                  <li>{{ occurrence.start_time|date:_("DATETIME_FORMAT") }} - {{ occurrence.end_time|date:_("TIME_FORMAT") }} - {{ occurrence.location }}</li>
+                  <li>{{ occurrence.peer.start_time|date:_("DATETIME_FORMAT") }} - {{ occurrence.peer.end_time|date:_("TIME_FORMAT") }} - {{ occurrence.peer.location }}</li>
+                  </ul>
+                  {% else %}
                   <b>Time:</b> {{ occurrence.start_time|date:"M j, Y, g:i A"}} - 
-        {{ occurrence.end_time|date:"g:i A"}}<br>
+        {{ occurrence.end_time|date:"g:i A"}}{% endif %}
+                  <br>
                   <b>Location:</b> {{ occurrence.location }}<br>
-                  {% if sched_event.approval_needed %}<div class="well well-sm">
+                  {% if sched_event.approval_needed %}<div class="gbe-bg-dark py-3 px-4">
                     {{ pending_note}}
+                  </div>{% endif %}
+                  {% if occurrence.peer %}<div class="alert gbe-alert-info">
+                  {{ paired_event_alert }}
                   </div>{% endif %}
                {% if user.is_authenticated %}
                   {% csrf_token %}

@@ -21,11 +21,21 @@ def create_occurrence(title,
                       approval=False,
                       slug=None,
                       connected_class="",
-                      connected_id=None):
+                      connected_id=None,
+                      peer_id=None):
     if parent_event_id:
         parent_response = get_occurrence(parent_event_id)
         if parent_response.errors:
+            parent_response.errors[0].code = "GET_PARENT_" + (
+                parent_response.errors[0].code)
             return parent_response
+
+    if peer_id:
+        peer_response = get_occurrence(peer_id)
+        if peer_response.errors:
+            peer_response.errors[0].code = "GET_PEER_" + (
+                peer_response.errors[0].code)
+            return peer_response
 
     response = OccurrenceResponse()
     response.occurrence = Event(
@@ -43,6 +53,9 @@ def create_occurrence(title,
 
     if parent_event_id:
         response.occurrence.parent = parent_response.occurrence
+
+    if peer_id:
+        response.occurrence.set_peer(peer_response.occurrence)
 
     response.occurrence.save()
 

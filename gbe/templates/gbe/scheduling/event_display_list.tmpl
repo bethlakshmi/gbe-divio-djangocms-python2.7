@@ -85,15 +85,24 @@
 	</div></div>
 	{% endif %}
 	<div class="row">
-	<div class="col-xs-12 col-sm-2">
+	<div class="col-xs-12 col-md-3 col-lg-2">
 	  <label class="sched_detail">Time/Place:</label></div>
- 	  <div class="col-xs-12 col-sm-10">
+ 	  <div class="col-1">
       {% include "gbe/scheduling/favorite_star.tmpl" with sched_event=event%}
       {% include "gbe/scheduling/volunteer_link_display.tmpl" with icon_class="volunteer-icon" sched_event=event occurrence=event.occurrence %}
       {% include "gbe/scheduling/evaluate_icon.tmpl" with evaluate=event.evaluate %}
-      {{ event.occurrence.start_time|date:_("DATETIME_FORMAT") }} -
-	    {{ event.occurrence.end_time|date:_("TIME_FORMAT") }} - {{ event.occurrence.location }}
-	  <br/>
+      </div><div class="col-10 col-sm-11 col-md-8 p-0">
+      {% if event.occurrence.peer %}
+        <ul class="my-0">
+        <li>{{ event.occurrence.start_time|date:_("DATETIME_FORMAT") }} - {{ event.occurrence.end_time|date:_("TIME_FORMAT") }} - {{ event.occurrence.location }}</li>
+        <li>{{ event.occurrence.peer.start_time|date:_("DATETIME_FORMAT") }} - {{ event.occurrence.peer.end_time|date:_("TIME_FORMAT") }} - {{ event.occurrence.peer.location }}</li>
+        </ul>
+      {% else %}
+          {{ event.occurrence.start_time|date:_("DATETIME_FORMAT") }} -
+	        {{ event.occurrence.end_time|date:_("TIME_FORMAT") }} - {{ event.occurrence.location }}
+        <br/>
+    {% endif %}
+
           </div></div>
 	{% if event.bid and event.bid.fee %}
 	<div class="row">
@@ -105,6 +114,9 @@
     </div>
     <br>
     {{event.occurrence.description | safe}}
+    {% if event.occurrence.peer %}<div class="alert gbe-alert-info">
+        {{ paired_event_alert }}
+    </div>{% endif %}
   </div>
 </div>
    {% empty %}

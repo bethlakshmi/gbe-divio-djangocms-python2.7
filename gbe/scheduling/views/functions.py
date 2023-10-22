@@ -120,7 +120,7 @@ def show_scheduling_booking_status(request,
                                    view):
     show_general_status(request, booking_response, view)
 
-    if booking_response.booking_id:
+    if booking_response.booking_ids:
         user_message = UserMessage.objects.get_or_create(
                 view=view,
                 code="BOOKING_UPDATE_SUCCESS",

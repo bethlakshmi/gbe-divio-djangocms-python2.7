@@ -81,16 +81,10 @@ class TestManageWorker(TestCase):
                              notes,
                              role="Volunteer",
                              allocations=2):
-        if volunteer == -1:
-            assert_option_state(response,
-                                "",
-                                "---------",
-                                True)
-        else:
-            assert_option_state(response,
-                                str(volunteer.pk),
-                                str(volunteer),
-                                True)
+        assert_option_state(response,
+                            str(volunteer.pk),
+                            str(volunteer),
+                            True)
         assert_option_state(response,
                             role,
                             role,

@@ -5,12 +5,14 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from gbetext import (
+    paired_alert_msg,
     pending_note,
     role_options,
     volunteer_instructions,
 )
 from django.utils.formats import date_format
 from settings import (
+    GBE_DATETIME_FORMAT,
     GBE_TIME_FORMAT,
     URL_DATE,
 )
@@ -102,11 +104,18 @@ class VolunteerSignupView(View):
             defaults={
                 'summary': "Pending Instructions (in modal, approval needed)",
                 'description': pending_note})
+        paired_alert = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="PAIRED_EVENT_MSG",
+            defaults={
+                'summary': "Shown in any Paired Event Popup",
+                'description': paired_alert_msg})
         context = {
             'conference': self.conference,
             'this_day': self.this_day,
             'view_header_text': instructions[0].description,
             'pending_note': pending_instructions[0].description,
+            'paired_event_alert': paired_alert[0].description
         }
         if self.this_day:
             if ConferenceDay.objects.filter(
@@ -140,6 +149,8 @@ class VolunteerSignupView(View):
                 occurrence_detail = {
                     'object': occurrence,
                     'start':  occurrence.start_time.strftime(GBE_TIME_FORMAT),
+                    'startday':  occurrence.start_time.strftime(
+                        GBE_DATETIME_FORMAT),
                     'end': occurrence.end_time.strftime(GBE_TIME_FORMAT),
                     'title': occurrence.title,
                     'description': occurrence.description,
@@ -153,6 +164,14 @@ class VolunteerSignupView(View):
                         slug__in=occurrence.labels)}
                 if occurrence.parent is not None:
                     occurrence_detail['parent_event'] = occurrence.parent
+                if occurrence.peer is not None:
+                    occurrence_detail['peer'] = {
+                        'startday':  occurrence.start_time.strftime(
+                            GBE_DATETIME_FORMAT),
+                        'end': occurrence.peer.end_time.strftime(
+                            GBE_TIME_FORMAT),
+                        'location': occurrence.peer.location,
+                    }
                 toggle_state = "on"
                 if role:
                     toggle_state = "off"

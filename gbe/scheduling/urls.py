@@ -23,6 +23,7 @@ from gbe.scheduling.views import (
     ShowDashboard,
     StaffAreaWizardView,
     TicketedEventWizardView,
+    VolunteerAutocomplete,
     VolunteerSignupView,
     VolunteerWizardView,
 )
@@ -120,4 +121,8 @@ urlpatterns = [
         ListEventsView.as_view(), name='event_list'),
     url(r'^scheduling/details/(?P<occurrence_id>\d+)/?$',
         EventDetailView.as_view(), name='detail_view'),
+
+    url(r'^volunteer-autocomplete/$',
+        VolunteerAutocomplete.as_view(),
+        name='volunteer-autocomplete'),
 ]
