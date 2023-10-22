@@ -12,8 +12,8 @@
   <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.tech.duration}}</div>
   <div class="col-md-3 col-sm-4 col-12 read-only-label">Number of Performers:</div>
   <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.num_performers}}</div>
-  <div class="col-md-3 col-sm-4 col-12 read-only-label">Performer Names:</div>
-  <div class="col-md-9 col-sm-8 col-12 read-only-info">{% if act.performer_names %}{{act.performer_names}}{% else %}NONE (soloist){% endif %}</div>
+  {% if act.performer_names %}<div class="col-md-3 col-sm-4 col-12 read-only-label">Act Member Names:</div>
+  <div class="col-md-9 col-sm-8 col-12 read-only-info">{{act.performer_names}}</div>{% endif %}
   <div class="col-md-3 col-sm-4 col-12 read-only-label">URL of Video:</div>
   <div class="col-md-9 col-sm-8 col-12 read-only-info">{% if act.video_link %}<a href="{{act.video_link}}">Go to URL of Video</a>{%else%}No video available{% endif %}</div> 
   <div class="col-md-3 col-sm-4 col-12 read-only-label">Video Notes:</div>
