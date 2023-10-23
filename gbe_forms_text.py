@@ -410,7 +410,6 @@ act_help_texts = {
 act_bid_labels = {
     'performer': 'Performer',
     'b_title': 'Name of Act',
-    'summer_shows_preferences': 'I am available to perform on',
     'shows_preferences': 'I am interested in',
     'other_performance': 'Other performance opportunities',
     'song_title': ' Name of Song',

@@ -22,11 +22,6 @@ conference_statuses = (
     ('completed', 'completed'),
 )
 
-act_format = (
-    ('normal', 'normal'),
-    ('summer', 'summer'),
-)
-
 landing_page_no_profile_alert = ("There's been an issue with your "
                                  "registration. Contact "
                                  "registrar@burlesque-expo.com")
