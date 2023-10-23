@@ -7,7 +7,7 @@
     {% for act in acts %}
       <div>
         {% if act.submitted %}
-	        <i class="fas fa-check-circle gbe-text-success"></i> {{ act }} - {{act.get_accepted_display}} 
+	        <i class="fas fa-check-circle gbe-text-success"></i> {{ act }} - {% if act.accepted != 0 %}{{act.get_accepted_display}}{% else %}Submitted{% endif %}
           <ul>
             <li> 
               <a class="gbe-link" href='{% url 'gbe:act_view' act.id %}'>View</a> act
