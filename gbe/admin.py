@@ -15,7 +15,7 @@ class ConferenceAdmin(admin.ModelAdmin):
                     'conference_slug',
                     'status',
                     'accepting_bids')
-    list_filter = ['status', 'act_style']
+    list_filter = ['status', ]
 
 
 class StaffAreaAdmin(admin.ModelAdmin):

@@ -23,7 +23,6 @@ from gbe.models import (
 from gbetext import (
     acceptance_states,
     act_not_unique,
-    more_shows_options,
     old_act_shows_options,
     video_options,
 )

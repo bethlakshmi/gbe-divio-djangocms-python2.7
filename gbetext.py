@@ -119,12 +119,7 @@ old_act_shows_options = [
     (6, mark_safe('<b>The Main Event, not in competition</b><br>Saturday, '
                   'May 6, 7:30PM')),
     (7, mark_safe('<b>The Main Event, competition</b><br>Saturday, '
-                  'May 6, 9PM')),
-    (13, 'Friday, July 28'),
-    (14, 'Saturday, July 29'),
-    (15, 'Sunday, July 30'),
-    (16, 'Please also consider this act for GBE12, January 5-7, 2018'),
-    ] + act_shows_options
+                  'May 6, 9PM'))] + act_shows_options
 act_panel_instr = '''<div>Be sure to press "Schedule Acts" to update the
  act order before clicking other buttons in this dashboard.<br><br></div>
 <div><span class="gbe-form-error">Highlighted text</span> reflects incomplete
@@ -148,11 +143,6 @@ volunteer_panel_instr = '''<div>Red text indicates a user that has become
 act_order_form_invalid = '''There was a problem updating the act order.  \
 Check the list of acts for more information on the error.'''
 act_order_submit_success = '''The order of acts has been updated.'''
-more_shows_options = [
-    (4, 'Friday, July 28'),
-    (5, 'Saturday, July 29'),
-    (6, 'Sunday, July 30'),
-    (7, 'Please also consider this act for GBE12, January 5-7, 2018')]
 
 best_time_to_call_options = [('Any', 'Any'),
                              ('Mornings', 'Mornings'),
