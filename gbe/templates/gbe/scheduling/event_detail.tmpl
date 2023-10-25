@@ -24,7 +24,11 @@
 	      {% if bid and bid.fee %}
           <label class="sched_label">Materials Fee:</label>&nbsp;&nbsp;${{bid.fee}}<br>
         {% endif %}
+        {% if bid and bid.difficulty %}
+          <label class="sched_label">Difficulty:</label>&nbsp;&nbsp;{{bid.difficulty}}:</b> {{bid.get_difficulty_description}}<br>
+        {% endif %}
       </div>
+  
 {% if eventitem.occurrence.peer %}<div class="alert gbe-alert-info m-3">
     {{ paired_event_alert }}
 </div>{% endif %}
