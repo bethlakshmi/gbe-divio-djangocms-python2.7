@@ -1,7 +1,7 @@
 from django.urls import reverse
+from gbe_forms_text import difficulty_default_text
 from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
-    ClassFactory,
     ConferenceFactory,
     ProfileFactory,
 )
@@ -250,6 +250,8 @@ class TestEventDetailView(TestCase):
     def test_eval_class(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))
         context.setup_eval()
+        context.bid.difficulty = "Easy"
+        context.bid.save()
         link = context.set_social_media("CashApp")
         package, this_class = context.setup_tickets()
         url = reverse(
@@ -267,6 +269,7 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, package.ticketing_event.title)
         self.assertContains(response, this_class.ticketing_event.title)
         self.assertContains(response, setup_social_media(link))
+        self.assertContains(response, difficulty_default_text["Easy"])
 
     def test_class_already_evaled(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))

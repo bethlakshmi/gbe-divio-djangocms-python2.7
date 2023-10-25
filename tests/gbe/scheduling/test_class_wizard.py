@@ -35,7 +35,8 @@ class TestClassWizard(TestScheduling):
         cls.test_class = ClassFactory(b_conference=cls.current_conference,
                                       accepted=3,
                                       teacher_bio=cls.teacher,
-                                      submitted=True)
+                                      submitted=True,
+                                      difficulty="Medium")
         cls.url = reverse(
             cls.view_name,
             args=[cls.current_conference.conference_slug],
@@ -60,6 +61,7 @@ class TestClassWizard(TestScheduling):
             'b_description': 'Description',
             'maximum_enrollment': 10,
             'fee': 0,
+            'difficulty': "Hard",
             'max_volunteer': 0,
             'day': self.day.pk,
             'time': '11:00:00',
@@ -123,6 +125,11 @@ class TestClassWizard(TestScheduling):
             '<option value="%d" selected>%s</option>' % (
                 self.test_class.teacher.pk,
                 str(self.test_class.teacher)),
+            html=True)
+        self.assertContains(
+            response,
+            ('<input type="radio" name="difficulty" value="Medium" ' +
+             'id="id_difficulty_1" checked/>'),
             html=True)
 
     def test_auth_user_can_pick_class(self):
@@ -237,6 +244,7 @@ class TestClassWizard(TestScheduling):
             data=data,
             follow=True)
         occurrence = Event.objects.filter(connected_id=self.test_class.pk)
+        updated_class = Class.objects.get(pk=self.test_class.pk)
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -258,6 +266,7 @@ class TestClassWizard(TestScheduling):
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['b_title'])
+        self.assertEqual(updated_class.difficulty, data['difficulty'])
 
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)

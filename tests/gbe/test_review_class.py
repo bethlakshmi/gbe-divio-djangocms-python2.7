@@ -15,6 +15,7 @@ from tests.functions.gbe_functions import (
 )
 from gbe.models import BidEvaluation
 from scheduler.models import Event as sEvent
+from gbe_forms_text import difficulty_default_text
 
 
 class TestReviewClass(TestCase):
@@ -40,7 +41,7 @@ class TestReviewClass(TestCase):
                 'bid': bid.pk}
 
     def test_review_class_all_well(self):
-        klass = ClassFactory()
+        klass = ClassFactory(difficulty="Hard")
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -53,6 +54,7 @@ class TestReviewClass(TestCase):
         self.assertContains(response, "Set Class State")
         self.assertNotContains(response, 'name="extra_button"')
         self.assertContains(response, self.performer.year_started)
+        self.assertContains(response, difficulty_default_text["Hard"])
 
     def test_review_class_w_scheduling(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')

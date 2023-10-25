@@ -98,7 +98,8 @@ class Class(Biddable):
 
     @property
     def get_difficulty_description(self):
-        return difficulty_default_text[self.difficulty]
+        if self.difficulty:
+            return difficulty_default_text[self.difficulty]
 
     @property
     def bid_review_header(self):
