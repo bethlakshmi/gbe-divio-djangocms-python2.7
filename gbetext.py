@@ -249,6 +249,9 @@ class_options = (('Lecture', "Lecture"),
                  ('Panel', "Panel"),
                  ('Workshop', "Workshop"))
 class_styles = ['Lecture', 'Movement', 'Panel', 'Workshop']
+difficulty_options = (("Easy", "Easy"),
+                      ("Medium", "Medium"),
+                      ("Hard", "Hard"))
 length_options = ((30, "30"),
                   (60, "60"),
                   (90, "90"),

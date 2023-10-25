@@ -583,6 +583,16 @@ class_schedule_options = [('0', 'Friday Afternoon'),
                           ('2', 'Saturday Afternoon'),
                           ('3', 'Sunday Morning'),
                           ('4', 'Sunday Afternoon')]
+# keys must line up with keys in gbetext difficulty_options
+difficulty_default_text = {
+    'Easy': '''An introductory level.  Good for folks in the first 1-3 years
+    of burlesque, or newcomers to a given topic''',
+    'Medium': '''Good for folks who have already been introduced to burlesque,
+    or who have some familiarity with the topic or an adjacent skill''',
+    'Hard': '''A challenging class - either physically or mentally (or both!).
+    Even those who are familiar with the topic/skill should expect to learn
+    something new''',
+    }
 
 space_type_error1 = ('''A workshop has seating in a ring around the room, \
     other options are not available.''')

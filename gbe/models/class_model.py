@@ -17,6 +17,7 @@ from gbetext import (
     acceptance_states,
     class_length_options,
     class_options,
+    difficulty_options,
     space_options,
     yesno_options,
 )
@@ -39,6 +40,9 @@ class Class(Biddable):
                      choices=class_options,
                      blank=True,
                      default="Lecture")
+    difficulty = CharField(max_length=128,
+                           choices=difficulty_options,
+                           blank=True)
     fee = IntegerField(blank=True, default=0, null=True)
     other_teachers = CharField(max_length=128, blank=True)
     length_minutes = IntegerField(choices=class_length_options,
@@ -53,7 +57,8 @@ class Class(Biddable):
                             default='')
     physical_restrictions = TextField(blank=True)
     multiple_run = CharField(max_length=20,
-                             choices=yesno_options, default="No")
+                             choices=yesno_options,
+                             default="No")
 
     def clone(self):
         new_class = Class()
