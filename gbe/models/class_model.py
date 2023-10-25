@@ -21,6 +21,7 @@ from gbetext import (
     space_options,
     yesno_options,
 )
+from gbe_forms_text import difficulty_default_text
 from settings import GBE_TABLE_FORMAT
 
 
@@ -94,6 +95,10 @@ class Class(Biddable):
                 if key == self.space_needs:
                     needs = top + " - " + sub_level
         return needs
+
+    @property
+    def get_difficulty_description(self):
+        return difficulty_default_text[self.difficulty]
 
     @property
     def bid_review_header(self):

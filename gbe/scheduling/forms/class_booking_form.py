@@ -1,18 +1,27 @@
+from django.utils.safestring import mark_safe
 from django.forms import (
     BooleanField,
     ChoiceField,
     IntegerField,
     HiddenInput,
     ModelForm,
+    RadioSelect,
     Textarea,
     TextInput,
 )
 from gbe_forms_text import (
     classbid_help_texts,
     classbid_labels,
+    difficulty_default_text,
 )
-from gbe.models import Class
-from gbetext import class_options
+from gbe.models import (
+    Class,
+    UserMessage,
+)
+from gbetext import (
+    class_options,
+    difficulty_options,
+)
 
 
 class ClassBookingForm(ModelForm):
@@ -24,6 +33,27 @@ class ClassBookingForm(ModelForm):
         widget=HiddenInput)
     submitted = BooleanField(widget=HiddenInput, initial=True)
     type = ChoiceField(choices=class_options)
+    difficulty = ChoiceField(
+        widget=RadioSelect,
+        choices=difficulty_options,
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(ClassBookingForm, self).__init__(*args, **kwargs)
+        dynamic_difficulty_options = []
+        for choice in difficulty_options:
+            # keep view hardcoding, because we want to keep consistent
+            label_desc, created = UserMessage.objects.get_or_create(
+                view="MakeClassView",
+                code="%s_DIFFICULTY" % choice[0].upper(),
+                defaults={
+                    'summary': "%s Difficulty Description" % choice[0],
+                    'description': difficulty_default_text[choice[0]]})
+            dynamic_difficulty_options += [(
+                choice[0], 
+                mark_safe("<b>%s:</b> %s" % (choice[1],
+                                             label_desc.description)))]
+        self.fields['difficulty'].choices = dynamic_difficulty_options
 
     class Meta:
         model = Class
@@ -32,6 +62,7 @@ class ClassBookingForm(ModelForm):
                   'b_description',
                   'maximum_enrollment',
                   'fee',
+                  'difficulty',
                   'accepted',
                   'submitted',
                   'id',
