@@ -5,6 +5,7 @@ from django.db.models import (
     CharField,
     ForeignKey,
     IntegerField,
+    Model,
     Q,
     TextField,
 )
@@ -129,3 +130,14 @@ class Class(Biddable):
     class Meta:
         verbose_name_plural = 'classes'
         app_label = "gbe"
+
+class ClassLabel (Model):
+    '''
+    A decorator allowing free-entry "tags" on allocations
+    '''
+    text = CharField(default='', max_length=200)
+    class_bid = ForeignKey(Class, on_delete=CASCADE)
+
+    class Meta:
+        app_label = "gbe"
+        unique_together = (('text', 'class_bid'), )
