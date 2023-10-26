@@ -41,7 +41,6 @@ from .make_act_view import MakeActView
 from .make_class_view import MakeClassView
 from .make_costume_view import MakeCostumeView
 from .make_vendor_view import MakeVendorView
-from .make_summer_act_view import MakeSummerActView
 from .coordinate_act_view import CoordinateActView
 
 # view
