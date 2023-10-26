@@ -12,7 +12,6 @@ from gbetext import (
     bid_not_submitted_msg,
     bid_not_paid_msg,
     default_submit_msg,
-    more_shows_options,
 )
 
 
@@ -59,17 +58,3 @@ class TestViewAct(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.test_string)
         self.assertContains(response, bid_not_submitted_msg)
-
-    def test_view_summer_act_all_well(self):
-        act = ActFactory(b_conference__act_style="summer",
-                         shows_preferences=[5, 6],
-                         submitted=True)
-        url = reverse(self.view_name,
-                      args=[act.pk],
-                      urlconf='gbe.urls')
-        login_as(act.performer.contact, self)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.test_string)
-        self.assertContains(response, more_shows_options[1][1])
-        self.assertContains(response, more_shows_options[2][1])

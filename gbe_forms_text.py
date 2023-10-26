@@ -407,24 +407,9 @@ act_help_texts = {
     performers in this act.''',
 }
 
-summer_help_texts = {
-    'shows_preferences': 'Check as many as apply to you',
-    'act_duration': (
-        'Length of entire act in mm:ss - please include any time you are '
-        'performing before or after your song.  There is no maximum length '
-        'for acts, but remember we are trying to accommodate as many '
-        'performers as possible. The longer the act, the more stringent '
-        'the selection criteria'),
-    'track_duration': (
-        'Please enter the duration of your music or backing track in minutes '
-        'and seconds.  Something that was four minutes and twenty seconds '
-        'would be entered as "04:20".'),
-}
-
 act_bid_labels = {
     'performer': 'Performer',
     'b_title': 'Name of Act',
-    'summer_shows_preferences': 'I am available to perform on',
     'shows_preferences': 'I am interested in',
     'other_performance': 'Other performance opportunities',
     'song_title': ' Name of Song',
@@ -439,7 +424,6 @@ act_bid_labels = {
     'video_link': 'URL of Video',
     'num_performers': "Number of Performers",
 }
-summer_bid_label = "I am available to perform on"
 persona_labels = {'name': ('Stage Name'),
                   'contact': ('Agent/Contact'),
                   'bio': ('Bio'),
@@ -509,20 +493,6 @@ avoided_constraints_popup_text = '''<strong>Info!</strong>
     classes, but please realize that is not always possible. The more to
     flexible you can be, the more likely we are to be able schedule your
     class. Thanks for your understanding!'''
-
-summer_act_popup_text = '''<strong>Instructions (please read!):
-    </strong> Thanks for submitting an act for consideration at the Summer
-    2017 MiniBurlExpo. As long as you have completed all of the bold fields,
-    you will be able to save this form as a draft and come back and edit it.
-    Once you are happy with it, pay your application fee, wait a few moments,
-    and come back here to submit this act by pressing the Submit button at
-    the bottom of the page.<br><br>
-    The MiniBurlExpo is a new venture for us. We don't know how many shows
-    we're having or even how many nights of shows. Please let us know all
-    nights that you would be able to be in town and perform. The current
-    plans is to have one show on Saturday night and classes during the day.
-    If there is demand, we?ll add a second show on Saturday, and then a
-    show on Friday, and then a show on Sunday.'''
 
 classbid_labels = {
     'min_size': ('Minimum Size'),

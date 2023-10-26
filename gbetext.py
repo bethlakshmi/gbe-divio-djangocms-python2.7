@@ -22,11 +22,6 @@ conference_statuses = (
     ('completed', 'completed'),
 )
 
-act_format = (
-    ('normal', 'normal'),
-    ('summer', 'summer'),
-)
-
 landing_page_no_profile_alert = ("There's been an issue with your "
                                  "registration. Contact "
                                  "registrar@burlesque-expo.com")
@@ -143,20 +138,6 @@ volunteer_panel_instr = '''<div>Red text indicates a user that has become
 act_order_form_invalid = '''There was a problem updating the act order.  \
 Check the list of acts for more information on the error.'''
 act_order_submit_success = '''The order of acts has been updated.'''
-more_shows_options = [
-    (4, 'Friday, July 28'),
-    (5, 'Saturday, July 29'),
-    (6, 'Sunday, July 30'),
-    (7, 'Please also consider this act for GBE12, January 5-7, 2018')]
-
-summer_other_perf_options = [
-    (0, "Go-go dance during a show"),
-    (1, "Be part of the opening number."),
-    (2, "Model in the Fashion Show (Saturday afternoon)")]
-
-cue_options = [('Theater', 'Theater'),
-               ('Alternate', 'Alternate'),
-               ('None', 'None')]
 
 best_time_to_call_options = [('Any', 'Any'),
                              ('Mornings', 'Mornings'),
@@ -271,12 +252,6 @@ space_options = (('Movement Class Floor',
 schedule_options = (('Preferred Time', "Preferred Time"),
                     ('Available', "Available"),
                     ('Not Available', "Not Available"))
-time_options = (('Morning', "Morning (before noon)"),
-                ('Early Afternoon', "Early Afternoon (12PM-3PM)"),
-                ('Late Afternoon', "Late Afternoon (3PM-6PM)"))
-day_options = (('Fri', "Friday"),
-               ('Sat', "Saturday"),
-               ('Sun', "Sunday"))
 system_options = [
     (0, 'local/debug'),
     (1, 'test/live')]
