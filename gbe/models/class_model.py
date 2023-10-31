@@ -5,8 +5,10 @@ from django.db.models import (
     CharField,
     ForeignKey,
     IntegerField,
+    ManyToManyField,
     Model,
     Q,
+    SET_NULL,
     TextField,
 )
 from gbe.models import (
@@ -24,6 +26,17 @@ from gbetext import (
 )
 from gbe_forms_text import difficulty_default_text
 from settings import GBE_TABLE_FORMAT
+
+
+
+class ClassLabel(Model):
+    '''
+    A decorator allowing free-entry "tags" on allocations
+    '''
+    text = CharField(max_length=200, unique=True)
+
+    class Meta:
+        app_label = "gbe"
 
 
 class Class(Biddable):
@@ -61,6 +74,7 @@ class Class(Biddable):
     multiple_run = CharField(max_length=20,
                              choices=yesno_options,
                              default="No")
+    labels = ManyToManyField(ClassLabel)
 
     def clone(self):
         new_class = Class()
@@ -130,14 +144,3 @@ class Class(Biddable):
     class Meta:
         verbose_name_plural = 'classes'
         app_label = "gbe"
-
-class ClassLabel (Model):
-    '''
-    A decorator allowing free-entry "tags" on allocations
-    '''
-    text = CharField(default='', max_length=200)
-    class_bid = ForeignKey(Class, on_delete=CASCADE)
-
-    class Meta:
-        app_label = "gbe"
-        unique_together = (('text', 'class_bid'), )

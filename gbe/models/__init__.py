@@ -10,7 +10,10 @@ from .tech_info import TechInfo
 from .biddable import Biddable
 from .act import Act
 from .staff_area import StaffArea
-from .class_model import Class
+from .class_model import (
+    Class,
+    ClassLabel,
+)
 from .costume import Costume
 from .business import Business
 from .vendor import Vendor

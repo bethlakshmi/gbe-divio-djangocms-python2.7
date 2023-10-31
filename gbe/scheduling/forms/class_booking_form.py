@@ -1,10 +1,12 @@
 from django.utils.safestring import mark_safe
+from django.urls import reverse_lazy
 from django.forms import (
     BooleanField,
     ChoiceField,
     IntegerField,
     HiddenInput,
     ModelForm,
+    ModelMultipleChoiceField,
     RadioSelect,
     Textarea,
     TextInput,
@@ -16,12 +18,14 @@ from gbe_forms_text import (
 )
 from gbe.models import (
     Class,
+    ClassLabel,
     UserMessage,
 )
 from gbetext import (
     class_options,
     difficulty_options,
 )
+from dal import autocomplete
 
 
 class ClassBookingForm(ModelForm):
@@ -37,6 +41,10 @@ class ClassBookingForm(ModelForm):
         widget=RadioSelect,
         choices=difficulty_options,
         required=False)
+    labels = ModelMultipleChoiceField(
+        queryset=ClassLabel.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url=reverse_lazy('classlabel-autocomplete', urlconf='gbe.urls')))
 
     def __init__(self, *args, **kwargs):
         super(ClassBookingForm, self).__init__(*args, **kwargs)
@@ -62,6 +70,7 @@ class ClassBookingForm(ModelForm):
                   'b_description',
                   'maximum_enrollment',
                   'fee',
+                  'labels',
                   'difficulty',
                   'accepted',
                   'submitted',
