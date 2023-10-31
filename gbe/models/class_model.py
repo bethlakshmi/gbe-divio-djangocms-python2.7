@@ -35,6 +35,9 @@ class ClassLabel(Model):
     '''
     text = CharField(max_length=200, unique=True)
 
+    def __str__(self):
+        return self.text
+
     class Meta:
         app_label = "gbe"
 
