@@ -15,7 +15,6 @@ from gbe.scheduling.views import (
     ListEventsView,
     ManageConferenceView,
     ManageEventsView,
-    ManageVolWizardView,
     RehearsalWizardView,
     SetFavoriteView,
     SetVolunteerView,

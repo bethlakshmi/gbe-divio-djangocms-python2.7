@@ -260,8 +260,8 @@ class TestViewList(TestFilters):
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon"')
         self.assertNotContains(response, this_class.b_title)
-        self.assertNotContains(response, 'fa-star')
-        self.assertNotContains(response, 'fa-star-o')
+        self.assertNotContains(response, 'fas fa-star')
+        self.assertNotContains(response, 'far fa-star')
         self.assertNotContains(response,
                                reverse('register', urlconf="gbe.urls"))
         self.assertContains(response, paired_alert_msg)

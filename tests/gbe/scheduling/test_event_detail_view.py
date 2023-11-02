@@ -244,8 +244,8 @@ class TestEventDetailView(TestCase):
             args=[context.sched_event.pk])
         login_as(context.performer.contact, self)
         response = self.client.get(url)
-        self.assertNotContains(response, 'fa-star')
-        self.assertNotContains(response, 'fa-star-o')
+        self.assertNotContains(response, 'fas fa-star')
+        self.assertNotContains(response, 'far fa-star')
 
     def test_eval_class(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))
