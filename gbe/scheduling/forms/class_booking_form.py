@@ -8,6 +8,7 @@ from django.forms import (
     ModelForm,
     ModelMultipleChoiceField,
     RadioSelect,
+    SlugField,
     Textarea,
     TextInput,
 )
@@ -15,6 +16,7 @@ from gbe_forms_text import (
     classbid_help_texts,
     classbid_labels,
     difficulty_default_text,
+    event_help_texts,
 )
 from gbe.models import (
     Class,
@@ -42,9 +44,12 @@ class ClassBookingForm(ModelForm):
         choices=difficulty_options,
         required=False)
     labels = ModelMultipleChoiceField(
+        required=False,
         queryset=ClassLabel.objects.all(),
         widget=autocomplete.ModelSelect2Multiple(
             url=reverse_lazy('classlabel-autocomplete', urlconf='gbe.urls')))
+    slug = SlugField(help_text=event_help_texts['slug'],
+                     required=False)
 
     def __init__(self, *args, **kwargs):
         super(ClassBookingForm, self).__init__(*args, **kwargs)
@@ -75,6 +80,7 @@ class ClassBookingForm(ModelForm):
                   'accepted',
                   'submitted',
                   'id',
+                  'slug',
                   ]
         help_texts = classbid_help_texts
         labels = classbid_labels

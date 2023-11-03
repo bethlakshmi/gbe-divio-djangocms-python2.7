@@ -102,6 +102,7 @@ class ClassWizardView(EventWizardView):
 
     def book_event(self,
                    bid,
+                   bid_form,
                    scheduling_form,
                    people_formset):
         start_time = get_start_time(scheduling_form.cleaned_data)
@@ -128,7 +129,8 @@ class ClassWizardView(EventWizardView):
             labels=labels,
             approval=scheduling_form.cleaned_data['approval'],
             connected_class=bid.__class__.__name__,
-            connected_id=bid.pk)
+            connected_id=bid.pk,
+            slug=bid_form.cleaned_data['slug'])
         return response
 
     @never_cache
@@ -187,7 +189,7 @@ class ClassWizardView(EventWizardView):
             if context['third_form'].is_valid(
                     ) and context['scheduling_form'].is_valid(
                     ) and self.is_formset_valid(context['worker_formset']):
-                working_class = context['third_form'].save(commit=False)
+                working_class = context['third_form'].save()
                 working_class.duration = timedelta(
                     minutes=context['scheduling_form'].cleaned_data[
                         'duration']*60)
@@ -216,6 +218,7 @@ class ClassWizardView(EventWizardView):
                 working_class.save()
                 response = self.book_event(
                     working_class,
+                    context['third_form'],
                     context['scheduling_form'],
                     context['worker_formset'])
                 success = self.finish_booking(
