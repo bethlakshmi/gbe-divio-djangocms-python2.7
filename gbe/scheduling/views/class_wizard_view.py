@@ -189,10 +189,7 @@ class ClassWizardView(EventWizardView):
             if context['third_form'].is_valid(
                     ) and context['scheduling_form'].is_valid(
                     ) and self.is_formset_valid(context['worker_formset']):
-                working_class = context['third_form'].save()
-                working_class.duration = timedelta(
-                    minutes=context['scheduling_form'].cleaned_data[
-                        'duration']*60)
+                working_class = context['third_form'].save(commit=False)
                 if not hasattr(working_class, 'teacher_bio'):
                     teacher = None
                     for form in context['worker_formset']:
@@ -214,8 +211,16 @@ class ClassWizardView(EventWizardView):
                             user_message[0].description)
                         return render(request, self.template, context)
                     working_class.b_conference = self.conference
-
+                # this strange order is to make sure that both the labels
+                # and the teacher bios save when there is both a new (not bid)
+                # class, and when the labels are used.
                 working_class.save()
+                working_class = context['third_form'].save()
+                working_class.duration = timedelta(
+                    minutes=context['scheduling_form'].cleaned_data[
+                        'duration']*60)
+                working_class.save()
+
                 response = self.book_event(
                     working_class,
                     context['third_form'],

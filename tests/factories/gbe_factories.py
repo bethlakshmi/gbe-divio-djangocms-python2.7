@@ -134,6 +134,13 @@ class RoomFactory(DjangoModelFactory):
     overbook_size = 50
 
 
+class ClassLabelFactory(DjangoModelFactory):
+    class Meta:
+        model = conf.ClassLabel
+
+    text = Sequence(lambda n: "Test Conference %d" % n)
+
+
 class ClassFactory(DjangoModelFactory):
     class Meta:
         model = conf.Class

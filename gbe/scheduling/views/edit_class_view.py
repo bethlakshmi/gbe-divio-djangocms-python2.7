@@ -1,42 +1,20 @@
 from gbe.scheduling.views import EditEventView
-from django.views.decorators.cache import never_cache
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from datetime import timedelta
-from gbe.models import (
-    Class,
-    Conference,
-)
+from gbe.models import Class
 from gbe.views.class_display_functions import get_scheduling_info
-from gbe.scheduling.forms import (
-    ClassBookingForm,
-    PersonAllocationForm,
-    ScheduleOccurrenceForm,
-)
+from gbe.scheduling.forms import ClassBookingForm
 from gbe.functions import validate_perms
-from gbe_forms_text import (
-    role_map,
-    event_settings,
-)
-from gbe.scheduling.views.functions import (
-    get_start_time,
-    setup_event_management_form,
-    show_scheduling_occurrence_status,
-    shared_groundwork,
-)
+from gbe_forms_text import event_settings
+from gbe.scheduling.views.functions import get_start_time
 from scheduler.idd import update_occurrence
-from scheduler.data_transfer import Person
 
 
 class EditClassView(EditEventView):
     title = "Edit Class"
     event_form_class = ClassBookingForm
+    class_bid = None
 
     def groundwork(self, request, args, kwargs):
         error_url = super(EditClassView,
@@ -47,22 +25,23 @@ class EditClassView(EditEventView):
                                    urlconf='gbe.scheduling.urls',
                                    args=[self.conference.conference_slug,
                                          self.occurrence.pk])
+        self.class_bid = get_object_or_404(Class,
+                                           pk=self.occurrence.connected_id)
 
     def make_context(self, request, errorcontext=None):
         context = super(EditClassView,
                         self).make_context(request, errorcontext)
-        class_bid = Class.objects.get(pk=self.occurrence.connected_id)
         if context['event_form'].__class__ != self.event_form_class:
             context['event_form'] = self.event_form_class(
-                instance=class_bid,
+                instance=self.class_bid,
                 initial={'slug': self.occurrence.slug})
-        context['scheduling_info'] = get_scheduling_info(class_bid)
+        context['scheduling_info'] = get_scheduling_info(self.class_bid)
         return context
 
     def setup_event_post_form(self, request):
         return self.event_form_class(
             request.POST,
-            instance=Class.objects.get(pk=self.occurrence.connected_id))
+            instance=self.class_bid)
 
     def update_event(self, context, people):
         m = context['scheduling_form'].cleaned_data['duration']*60

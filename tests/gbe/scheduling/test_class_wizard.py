@@ -3,6 +3,7 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     BioFactory,
     ClassFactory,
+    ClassLabelFactory,
     ConferenceFactory,
     ConferenceDayFactory,
     ProfileFactory,
@@ -239,6 +240,9 @@ class TestClassWizard(TestScheduling):
     def test_auth_user_edit_class(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()
+        label = ClassLabelFactory()
+        data['labels'] = [label.pk]
+        data['slug'] = "classsluggy"
         response = self.client.post(
             self.url,
             data=data,
@@ -267,6 +271,9 @@ class TestClassWizard(TestScheduling):
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['b_title'])
         self.assertEqual(updated_class.difficulty, data['difficulty'])
+        self.assertTrue(updated_class.labels.filter(pk=label.pk).exists())
+        self.assertEqual(occurrence[0].slug, data['slug'])
+
 
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)

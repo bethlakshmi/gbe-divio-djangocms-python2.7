@@ -3,17 +3,10 @@ from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
+from django.shortcuts import render
 from django.urls import reverse
 from datetime import timedelta
-from gbe.models import (
-    Class,
-    Conference,
-)
-from gbe.views.class_display_functions import get_scheduling_info
+from gbe.models import Conference
 from gbe.scheduling.forms import (
     EventBookingForm,
     PersonAllocationForm,
