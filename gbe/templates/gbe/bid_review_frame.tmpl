@@ -47,7 +47,7 @@
         {% endif %}
         <form action="{{ actionURL }}" method="post">
         {% csrf_token %}
-        <table>
+        <table class="gbe-flat-list">
           {{ actionform.as_table }}
         </table>
         <br><br>
