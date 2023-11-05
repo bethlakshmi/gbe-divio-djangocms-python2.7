@@ -6,8 +6,7 @@ from gbe.functions import validate_perms
 
 class ClassLabelAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not validate_perms(self.request, ['Class Coordinator']):
-            return ClassLabel.objects.none()
+        validate_perms(self.request, ['Class Coordinator'])
 
         qs = ClassLabel.objects.all()
 

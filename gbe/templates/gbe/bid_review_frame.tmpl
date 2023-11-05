@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static sekizai_tags %}
 
 {% block title %}
    {{page_title}}
@@ -60,5 +60,7 @@
     {% endif %}
     </div>
   </div>
-  
+{% addtoblock "js" %}
+{{ actionform.media }}
+{% endaddtoblock %}
 {% endblock %}

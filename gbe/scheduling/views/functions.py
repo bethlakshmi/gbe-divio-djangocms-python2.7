@@ -57,28 +57,34 @@ def get_start_time(data):
 # These messages are not mutually exclusive.  Order of operation is most
 #   severe (error) to least severe (success)
 #
-def show_general_status(request, status_response, view, show_user=True):
+def show_general_status(request,
+                        status_response,
+                        view,
+                        show_user=True,
+                        mask_code=None):
     for error in status_response.errors:
-        user_message = UserMessage.objects.get_or_create(
+        if mask_code is None or error.code != mask_code:
+            user_message = UserMessage.objects.get_or_create(
                 view=view,
                 code=error.code,
                 defaults={
                     'summary': error.code,
                     'description': error.code})
-        messages.error(
-            request,
-            '%s  %s' % (user_message[0].description, error.details))
+            messages.error(
+                request,
+                '%s  %s' % (user_message[0].description, error.details))
 
     for warning in status_response.warnings:
-        user_message = UserMessage.objects.get_or_create(
+        if mask_code is None or warning.code != mask_code:
+            user_message = UserMessage.objects.get_or_create(
                 view=view,
                 code=warning.code,
                 defaults={
                     'summary': warning.code,
                     'description': warning.code})
-        messages.warning(request, '%s  %s' % (
-            user_message[0].description,
-            make_warning_msg(warning, use_user=show_user)))
+            messages.warning(request, '%s  %s' % (
+                user_message[0].description,
+                make_warning_msg(warning, use_user=show_user)))
 
 
 #

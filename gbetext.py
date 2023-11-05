@@ -533,6 +533,7 @@ act_group_needs_names = 'Performer names are required for groups of 2 or more'
 no_casting_msg = '''The casting role you've specified is not one our defined \
 roles.  Check the dropdown and try again.'''
 act_status_change_msg = "Act status has been changed."
+class_status_change_msg = "Class status has been changed."
 act_status_no_change_msg = "Act status has not been changed."
 no_login_msg = '''Please set up and account and give us some ways to \
 contact you, or login, if you already have an account.'''
