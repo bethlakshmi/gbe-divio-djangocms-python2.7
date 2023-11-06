@@ -2,13 +2,11 @@ from django.urls import reverse
 from gbe_forms_text import difficulty_default_text
 from tests.factories.gbe_factories import (
     ActCastingOptionFactory,
+    ClassLabelFactory,
     ConferenceFactory,
     ProfileFactory,
 )
-from django.test import (
-    Client,
-    TestCase,
-)
+from django.test import TestCase
 from tests.contexts import (
     ActTechInfoContext,
     ClassContext,
@@ -52,9 +50,7 @@ class TestEventDetailView(TestCase):
             cls.view_name,
             urlconf="gbe.scheduling.urls",
             args=[cls.context.sched_event.pk])
-
-    def setUp(self):
-        self.client = Client()
+        cls.label = ClassLabelFactory()
 
     def test_no_permission_required(self):
         response = self.client.get(self.url)
@@ -252,6 +248,7 @@ class TestEventDetailView(TestCase):
         context.setup_eval()
         context.bid.difficulty = "Easy"
         context.bid.save()
+        context.bid.labels.add(self.label)
         link = context.set_social_media("CashApp")
         package, this_class = context.setup_tickets()
         url = reverse(
@@ -270,6 +267,11 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, this_class.ticketing_event.title)
         self.assertContains(response, setup_social_media(link))
         self.assertContains(response, difficulty_default_text["Easy"])
+        self.assertContains(
+            response,
+            '<span class="badge badge-pill gbe-badge">%s</span>' % (
+                self.label.text),
+            html=True)
 
     def test_class_already_evaled(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))

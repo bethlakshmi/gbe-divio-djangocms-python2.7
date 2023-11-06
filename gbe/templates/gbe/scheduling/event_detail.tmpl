@@ -18,7 +18,7 @@
 
 <div class="mt-5 col-12">
   <h2 class="gbe-title">{{eventitem.occurrence.title}}
-  {% if bid.labels.count > 0 %}
+  {% if bid and bid.labels.count > 0 %}
           {% for label in bid.labels.all %}<span class="badge badge-pill gbe-badge">{{label.text }}</span>{% endfor %}{% endif %}</h2></div>
     <div class="mx-3 col-12">
       {{eventitem.occurrence.description |safe}}
@@ -27,7 +27,7 @@
           <label class="sched_label">Materials Fee:</label>&nbsp;&nbsp;${{bid.fee}}<br>
         {% endif %}
         {% if bid and bid.difficulty %}
-          <label class="sched_label">Difficulty:</label>&nbsp;&nbsp;{{bid.difficulty}}:</b> {{bid.get_difficulty_description}}<br>
+          <label class="sched_label">Difficulty:</label>&nbsp;&nbsp;{{bid.difficulty}}:{{bid.get_difficulty_description}}<br>
         {% endif %}
       </div>
   

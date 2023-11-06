@@ -778,7 +778,7 @@ list_titles = {
 
 list_text = {
     'class': '''    <p> \
-        The Conference at <b></b>The Great Burlesque Exposition</b> \
+        The Conference at <b>The Great Burlesque Exposition</b> \
         features more than 60 hours of \
         class time over threee days.  It is the original Professional \
         Development Conference for \
