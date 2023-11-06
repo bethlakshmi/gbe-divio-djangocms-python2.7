@@ -34,6 +34,8 @@
   <div class="card-header gbe-bg-dark">
     <h2 class="card-title">
       {{ bid.b_title }}
+      {% if bid.labels.count > 0 %}
+          {% for label in bid.labels.all %}<span class="badge badge-pill gbe-badge">{{label.text }}</span>{% endfor %}{% endif %}
     </h2>
   </div>
   <div class="card-body">
@@ -64,7 +66,8 @@
   <div class="card-header gbe-bg-dark">
     <div class="row">
     <div class="col-10 col-md-11"><h2 class="card-title">
-      <a href='{{event.detail}}' class="gbe-panel-link">{% if event.occurrence.parent %}{{ event.occurrence.parent.title | safe}}: {% endif %}{{ event.occurrence.title }}</a>
+      <a href='{{event.detail}}' class="gbe-panel-link">{% if event.occurrence.parent %}{{ event.occurrence.parent.title | safe}}: {% endif %}{{ event.occurrence.title }}</a>{% if event.bid.labels.count > 0 %}
+          {% for label in event.bid.labels.all %}<span class="badge badge-pill gbe-badge">{{label.text }}</span>{% endfor %}{% endif %}
     </h2></div>
     <div class="text-right ml-auto align-self-center col-2 col-md-1 pt-1 px-md-0">
       <h2 class="card-title">
@@ -104,12 +107,19 @@
     {% endif %}
 
           </div></div>
-	{% if event.bid and event.bid.fee %}
+	{% if event.bid %}
+  {% if event.bid.fee %}
 	<div class="row">
 	<div class="col-xs-12 col-sm-2">
 	  <label class="sched_detail">Materials Fee:</label></div>
  	<div class="col-xs-12 col-sm-10">
-          ${{event.bid.fee}}</div></div>
+          ${{event.bid.fee}}</div></div>{% endif %}
+  {% if event.bid.difficulty %}
+  <div class="row">
+  <div class="col-xs-12 col-sm-2">
+    <label class="sched_detail">Difficulty:</label></div>
+  <div class="col-xs-12 col-sm-10">
+          {{event.bid.difficulty}}</div></div>{% endif %}
 	{% endif %}
     </div>
     <br>
