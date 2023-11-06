@@ -411,7 +411,7 @@ ul.long_choice
   -moz-column-count: 2; /* Firefox */
   column-count: 2;
 }
-.helptext {font-size: smaller; font-style: italic;}
+.helptext {font-size: small; color: #6c757d!important;}
 .form_field ul {padding: 5px 0px; margin-bottom: 1px;}
 td.form_field.long_choice ul li{width: 250px;height: 20px;}
 .form-group div div div ul li{list-style-type: none;}
