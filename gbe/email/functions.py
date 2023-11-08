@@ -133,17 +133,19 @@ def send_bid_state_change_mail(
         'status': acceptance_states[status][1],
         'site': site.domain,
         'site_name': site.name}
+    if context['status'] == "No Decision":
+        context['status'] = "Submitted"
     if casting:
         context['casting'] = casting
     if show:
         name = '%s %s - %s' % (
             bid_type.lower(),
-            acceptance_states[status][1].lower(),
+            context['status'].lower(),
             str(show).lower())
         action = 'Your %s has been cast in %s' % (
             bid_type,
             str(show))
-        if acceptance_states[status][1].lower() == 'wait list':
+        if context['status'].lower() == 'wait list':
             action = 'Your %s has been added to the wait list for %s' % (
                 bid_type,
                 str(show))
@@ -157,7 +159,7 @@ def send_bid_state_change_mail(
             args=[bid.pk],
             urlconf='gbe.urls')
     else:
-        name = '%s %s' % (bid_type, acceptance_states[status][1].lower())
+        name = '%s %s' % (bid_type, context['status'].lower())
         action = 'Your %s proposal has changed status to %s' % (
             bid_type,
             acceptance_states[status][1])
@@ -456,6 +458,17 @@ def get_user_email_templates(user):
                         'default_subject': subject % (show.title), }]
             elif priv != "volunteer" and state[1] == 'Awaiting Approval':
                 pass
+            elif state[1] == "No Decision":
+                # this is when the bidder submits.
+                template_set += [{
+                    'name': "%s submitted" % priv,
+                    'description': email_template_desc[state[1]] % priv,
+                    'category': priv,
+                    'default_base': "default_bid_status_change",
+                    'default_subject':
+                        'Your %s proposal has changed status to %s' % (
+                            priv,
+                            "Submitted"), }]
             else:
                 template_set += [{
                     'name': "%s %s" % (priv, state[1].lower()),
