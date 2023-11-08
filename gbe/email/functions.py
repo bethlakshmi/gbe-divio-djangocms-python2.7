@@ -162,7 +162,7 @@ def send_bid_state_change_mail(
         name = '%s %s' % (bid_type, context['status'].lower())
         action = 'Your %s proposal has changed status to %s' % (
             bid_type,
-            acceptance_states[status][1])
+            context['status'])
     template = get_or_create_template(
         name,
         "default_bid_status_change",

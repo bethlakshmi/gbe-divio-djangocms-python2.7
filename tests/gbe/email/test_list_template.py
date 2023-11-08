@@ -41,7 +41,7 @@ class TestTemplateList(TestCase):
         templates = ["volunteer accepted",
                      "volunteer awaiting approval",
                      "volunteer duplicate",
-                     "volunteer no decision",
+                     "volunteer submitted",
                      "volunteer reject",
                      "volunteer schedule update",
                      "volunteer changed schedule",
@@ -61,7 +61,7 @@ class TestTemplateList(TestCase):
 
         templates = ["act accepted - %s" % context.sched_event.title.lower(),
                      "act duplicate",
-                     "act no decision",
+                     "act submitted",
                      "act reject",
                      "act submission notification",
                      "act wait list - %s" % context.sched_event.title.lower(),
@@ -78,7 +78,7 @@ class TestTemplateList(TestCase):
 
             templates = ["%s accepted",
                          "%s duplicate",
-                         "%s no decision",
+                         "%s submitted",
                          "%s reject",
                          "%s submission notification",
                          "%s wait list",
