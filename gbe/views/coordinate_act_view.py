@@ -11,6 +11,7 @@ from gbetext import (
     missing_profile_info,
     no_comp_msg,
 )
+from gbe.email.functions import send_bid_state_change_mail
 from gbe.ticketing_idd_interface import comp_act
 from gbe.models import UserMessage
 from django.contrib import messages
@@ -63,6 +64,12 @@ class CoordinateActView(PermissionRequiredMixin, MakeActView):
     def submit_bid(self, request):
         self.bid_object.submitted = True
         self.bid_object.save()
+        send_bid_state_change_mail(
+            str(self.bid_class.__name__).lower(),
+            self.bid_object.profile.contact_email,
+            self.bid_object.profile.get_badge_name(),
+            self.bid_object,
+            self.bid_object.accepted)
 
         redirect = reverse('act_review',
                            urlconf="gbe.urls",
