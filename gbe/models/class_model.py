@@ -28,7 +28,6 @@ from gbe_forms_text import difficulty_default_text
 from settings import GBE_TABLE_FORMAT
 
 
-
 class ClassLabel(Model):
     '''
     A decorator allowing free-entry "tags" on allocations

@@ -63,7 +63,7 @@ class ClassBookingForm(ModelForm):
                     'summary': "%s Difficulty Description" % choice[0],
                     'description': difficulty_default_text[choice[0]]})
             dynamic_difficulty_options += [(
-                choice[0], 
+                choice[0],
                 mark_safe("<b>%s:</b> %s" % (choice[1],
                                              label_desc.description)))]
         self.fields['difficulty'].choices = dynamic_difficulty_options

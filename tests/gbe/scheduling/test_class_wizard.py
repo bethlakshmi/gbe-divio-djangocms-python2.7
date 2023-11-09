@@ -274,7 +274,6 @@ class TestClassWizard(TestScheduling):
         self.assertTrue(updated_class.labels.filter(pk=label.pk).exists())
         self.assertEqual(occurrence[0].slug, data['slug'])
 
-
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()

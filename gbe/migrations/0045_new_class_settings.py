@@ -13,14 +13,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ClassLabel',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True,
+                                        serialize=False,
+                                        verbose_name='ID')),
                 ('text', models.CharField(max_length=200, unique=True)),
             ],
         ),
         migrations.AddField(
             model_name='class',
             name='difficulty',
-            field=models.CharField(blank=True, choices=[('Easy', 'Easy'), ('Medium', 'Medium'), ('Hard', 'Hard')], max_length=128),
+            field=models.CharField(blank=True, choices=[
+                ('Easy', 'Easy'),
+                ('Medium', 'Medium'),
+                ('Hard', 'Hard')], max_length=128),
         ),
         migrations.AddField(
             model_name='class',
