@@ -1,4 +1,3 @@
-from django.utils.safestring import mark_safe
 from django.forms import (
     CharField,
     CheckboxSelectMultiple,
@@ -12,20 +11,19 @@ from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
 from dal import autocomplete
 from django.urls import reverse_lazy
 from gbe.forms import BasicBidForm
-from gbe.models import (
-    Class,
-    UserMessage,
-)
+from gbe.models import Class
 from gbe_forms_text import (
     available_time_conflict,
     unavailable_time_conflict,
     classbid_help_texts,
     classbid_labels,
     class_schedule_options,
-    difficulty_default_text,
 )
 from gbetext import difficulty_options
-from gbe.functions import jsonify
+from gbe.functions import (
+    dynamic_difficulty_options,
+    jsonify,
+)
 
 
 class ClassBidDraftForm(ModelForm, BasicBidForm):
@@ -92,19 +90,7 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
             if obj_data['avoided_constraints']:
                 self.initial['avoided_constraints'] = jsonify(
                     obj_data['avoided_constraints'])
-        dynamic_difficulty_options = []
-        for choice in difficulty_options:
-            label_desc, created = UserMessage.objects.get_or_create(
-                view="MakeClassView",
-                code="%s_DIFFICULTY" % choice[0].upper(),
-                defaults={
-                    'summary': "%s Difficulty Description" % choice[0],
-                    'description': difficulty_default_text[choice[0]]})
-            dynamic_difficulty_options += [(
-                choice[0],
-                mark_safe("<b>%s:</b> %s" % (choice[1],
-                                             label_desc.description)))]
-        self.fields['difficulty'].choices = dynamic_difficulty_options
+        self.fields['difficulty'].choices = dynamic_difficulty_options()
 
     def clean(self):
         cleaned_data = super(ClassBidDraftForm, self).clean()

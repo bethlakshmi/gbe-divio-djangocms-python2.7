@@ -251,7 +251,7 @@ class TestEditClass(TestMakeClass):
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
         msg = UserMessageFactory(
-            view='MakeClassView',
+            view='ClassDifficulty',
             code='MEDIUM_DIFFICULTY',
             description="Mwah ha ha ha ha")
         klass = ClassFactory(b_conference__accepting_bids=True)
