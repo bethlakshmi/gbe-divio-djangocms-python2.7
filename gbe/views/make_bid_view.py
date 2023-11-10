@@ -22,7 +22,10 @@ from gbe_logging import log_func
 from gbe.functions import (
     validate_profile,
 )
-from gbe.email.functions import notify_reviewers_on_bid_change
+from gbe.email.functions import (
+    notify_reviewers_on_bid_change,
+    send_bid_state_change_mail,
+)
 from gbetext import (
     no_login_msg,
     fee_instructions,
@@ -222,6 +225,12 @@ class MakeBidView(SubwayMapMixin, View):
             '%s Reviewers' % self.bid_type,
             reverse('%s_review' % self.bid_type.lower(),
                     urlconf='gbe.urls'))
+        send_bid_state_change_mail(
+            str(self.bid_class.__name__).lower(),
+            self.owner.contact_email,
+            self.owner.get_badge_name(),
+            self.bid_object,
+            self.bid_object.accepted)
 
     @never_cache
     @log_func

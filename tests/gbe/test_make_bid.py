@@ -137,7 +137,9 @@ class TestMakeBid(TestCase):
         self.assertContains(response, self.conference.conference_name)
         self.assertContains(response, 'We will do our best to accommodate')
 
-    def test_class_posting_sends_mail_to_reviewers(self):
+    def test_class_posting_sends_mails(self):
+        # 1 mail to reviewers
+        # 1 mail to submitter as confirmation
         privileged_profile = ProfileFactory()
         grant_privilege(
             privileged_profile.user_object,
@@ -160,13 +162,18 @@ class TestMakeBid(TestCase):
         self.assertRedirects(response, reverse("home", urlconf='gbe.urls'))
         assert_right_mail_right_addresses(
             0,
-            1,
+            2,
             "bidder: %s, bid: %s" % (
                 str(self.performer.contact),
                 data['theclass-b_title']),
             [privileged_profile.contact_email],
             from_email="class@notify.com",
             from_name="Class Committee")
+        assert_right_mail_right_addresses(
+            1,
+            2,
+            'Your class proposal has changed status to Submitted',
+            [self.performer.contact.contact_email])
 
     def test_class_submit_has_message(self):
         '''class_bid, not submitting and no other problems,

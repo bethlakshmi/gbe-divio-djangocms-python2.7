@@ -342,8 +342,8 @@ calendar_for_event = {
 email_template_desc = {
     'submission notification': '''This email is sent to reviewers when a(n) \
     %s is submitted and ready for review.''',
-    'No Decision': '''This email is sent to a bidder when the coordinator \
-    sets the %s to the state "No Decision"''',
+    'No Decision': '''This email is sent to a bidder when the bidder has
+    submitted their %s''',
     'Reject': '''This email is sent to the bidder when the coordinator \
     rejects the %s''',
     'Wait List': '''This email is sent to the bidder when the %s is put on a \

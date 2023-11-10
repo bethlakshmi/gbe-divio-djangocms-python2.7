@@ -12,6 +12,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
     assert_alert_exists,
+    assert_right_mail_right_addresses,
 )
 from gbetext import (
     default_act_draft_msg,
@@ -109,6 +110,11 @@ class TestCoordinateAct(TestCase):
             ticket_item__ticketing_event__act_submission_event=True,
             ticket_item__ticketing_event__conference=self.current_conference
             ).exists())
+        assert_right_mail_right_addresses(
+            0,
+            1,
+            'Your act proposal has changed status to Submitted',
+            [just_made.performer.contact.contact_email])
 
     def test_act_submit_draft(self):
         tickets = setup_fees(self.current_conference, is_act=True)
