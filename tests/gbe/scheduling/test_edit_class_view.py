@@ -25,7 +25,7 @@ from datetime import timedelta
 from tests.gbe.scheduling.test_scheduling import TestScheduling
 
 
-class TestEditEventView(TestScheduling):
+class TestEditClassView(TestScheduling):
     '''This view edits classes that were made through the wizard'''
     view_name = 'edit_class'
 
