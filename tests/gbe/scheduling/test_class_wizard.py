@@ -13,6 +13,7 @@ from scheduler.models import Event
 from gbe.models import Class
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -38,6 +39,8 @@ class TestClassWizard(TestScheduling):
                                       teacher_bio=cls.teacher,
                                       submitted=True,
                                       difficulty="Medium")
+        cls.orig_label = ClassLabelFactory()
+        cls.test_class.labels.add(cls.orig_label)
         cls.url = reverse(
             cls.view_name,
             args=[cls.current_conference.conference_slug],
@@ -132,6 +135,10 @@ class TestClassWizard(TestScheduling):
             ('<input type="radio" name="difficulty" value="Medium" ' +
              'id="id_difficulty_1" checked/>'),
             html=True)
+        assert_option_state(response,
+                            self.orig_label.pk,
+                            self.orig_label.text,
+                            True)
 
     def test_auth_user_can_pick_class(self):
         login_as(self.privileged_user, self)

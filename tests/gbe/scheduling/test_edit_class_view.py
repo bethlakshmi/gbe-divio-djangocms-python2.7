@@ -28,6 +28,8 @@ class TestEditClassView(TestScheduling):
 
     def setUp(self):
         self.context = ClassContext()
+        self.orig_label = ClassLabelFactory()
+        self.context.bid.labels.add(self.orig_label)
         self.label = ClassLabelFactory()
         self.context.sched_event.slug = "origslug"
         self.context.sched_event.save()
@@ -70,6 +72,10 @@ class TestEditClassView(TestScheduling):
         self.assertContains(response, self.context.sched_event.title)
         self.assertContains(response, "Booking Information")
         self.assertContains(response, self.context.sched_event.slug)
+        assert_option_state(response,
+                            self.orig_label.pk,
+                            self.orig_label.text,
+                            True)
 
     def test_edit_not_class(self):
         context = VolunteerContext()
