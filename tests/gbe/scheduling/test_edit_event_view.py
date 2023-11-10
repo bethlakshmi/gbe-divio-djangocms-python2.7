@@ -1,6 +1,3 @@
-from django.test import TestCase
-from django.test.client import RequestFactory
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     BioFactory,
@@ -50,7 +47,6 @@ class TestEditEventView(TestScheduling):
             args=[self.context.conference.conference_slug,
                   self.context.sched_event.pk],
             urlconf='gbe.scheduling.urls')
-        self.client = Client()
         self.privileged_user = ProfileFactory().user_object
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
 
