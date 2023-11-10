@@ -212,6 +212,7 @@ def check_forum_spam(email):
             reverse('register', urlconf='gbe.urls'))
     return found_it
 
+
 def dynamic_difficulty_options():
     dynamic_difficulty_options = []
     for choice in difficulty_options:

@@ -47,7 +47,7 @@ class EditEventView(ManageVolWizardView):
             self.parent_id = self.occurrence.pk
 
         # TO DO - rework the request.GET.urlencode - it's a bad security
-        # practice.  But there's a enough complexity here, I want it as a 
+        # practice.  But there's a enough complexity here, I want it as a
         # separate change
         if self.occurrence.event_style == "Show" and "/edit/" in request.path:
             return HttpResponseRedirect("%s?%s" % (
