@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static sekizai_tags %}
 
 {% block title %}
    {{page_title}}
@@ -25,7 +25,7 @@
 </div>
   </div>
   <div class="bid_review container">
-    <div class="row">
+    <div class="row mb-3">
  
     {% block review_form %}
     {% endblock %}
@@ -33,7 +33,9 @@
     {% if actionURL %}
     {% block review_results %}
     {% endblock %}
-    <div class="border_box gbe-bg-light col-lg-4 col-md-5 col-sm-12">
+    </div>
+    <div class="row">
+    <div class="border_box gbe-bg-light col-11 pt-2">
       <h2 class="gbe-title">{{controller_heading}}</h2>
         {% if actionform.errors %}
         <p class="gbe-form-error"> There is an error on the form.  </p>
@@ -47,18 +49,19 @@
         {% endif %}
         <form action="{{ actionURL }}" method="post">
         {% csrf_token %}
-        <table>
+        <table class="gbe-flat-list">
           {{ actionform.as_table }}
         </table>
-        <br><br>
         {% if extra_button %}
-        <input type="submit" name="extra_button" value="{{extra_button}}" class="gbe-btn-primary">&nbsp;
+        <input type="submit" name="extra_button" value="{{extra_button}}" class="gbe-btn-primary btn btn-sm">&nbsp;
         {% endif %}
-        <input type="submit" value="Submit Form" class="gbe-btn-primary"><br><br>
+        <input type="submit" value="Submit Form" class="gbe-btn-primary btn btn-sm"><br><br>
         </form>
     </div>
     {% endif %}
     </div>
   </div>
-  
+{% addtoblock "js" %}
+{{ actionform.media }}
+{% endaddtoblock %}
 {% endblock %}

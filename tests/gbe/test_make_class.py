@@ -16,6 +16,7 @@ from gbetext import (
     default_class_submit_msg,
     default_class_draft_msg
 )
+from gbe_forms_text import difficulty_default_text
 from gbe.models import (
     Class,
     Conference,
@@ -44,6 +45,7 @@ class TestMakeClass(TestCase):
                 "theclass-b_title": 'A class',
                 "theclass-b_description": 'a description',
                 "theclass-length_minutes": 60,
+                'theclass-difficulty': 'Hard',
                 'theclass-maximum_enrollment': 20,
                 'theclass-fee': 0,
                 'theclass-schedule_constraints': ['0'],
@@ -248,6 +250,10 @@ class TestEditClass(TestMakeClass):
 
     def test_edit_bid_not_post(self):
         '''edit_bid, not post, should take us to edit process'''
+        msg = UserMessageFactory(
+            view='ClassDifficulty',
+            code='MEDIUM_DIFFICULTY',
+            description="Mwah ha ha ha ha")
         klass = ClassFactory(b_conference__accepting_bids=True)
         klass.teacher_bio.contact.phone = "555-666-7777"
         klass.teacher_bio.contact.save()
@@ -261,6 +267,8 @@ class TestEditClass(TestMakeClass):
         self.assertContains(response, klass.b_title)
         self.assertContains(response, "555-666-7777")
         self.check_subway_state(response)
+        self.assertContains(response, difficulty_default_text['Easy'])
+        self.assertContains(response, msg.description)
 
     def test_edit_bid_verify_info_popup_text(self):
         klass = ClassFactory(b_conference__accepting_bids=True)

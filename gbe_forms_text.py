@@ -553,6 +553,16 @@ class_schedule_options = [('0', 'Friday Afternoon'),
                           ('2', 'Saturday Afternoon'),
                           ('3', 'Sunday Morning'),
                           ('4', 'Sunday Afternoon')]
+# keys must line up with keys in gbetext difficulty_options
+difficulty_default_text = {
+    'Easy': '''An introductory level.  Good for folks in the first 1-3 years
+    of burlesque, or newcomers to a given topic''',
+    'Medium': '''Good for folks who have already been introduced to burlesque,
+    or who have some familiarity with the topic or an adjacent skill''',
+    'Hard': '''A challenging class - either physically or mentally (or both!).
+    Even those who are familiar with the topic/skill should expect to learn
+    something new''',
+    }
 
 space_type_error1 = ('''A workshop has seating in a ring around the room, \
     other options are not available.''')
@@ -716,7 +726,7 @@ link_event_labels = {
 link_event_help_text = {
     'display_icon': '''What is shown on the 'I Want to Buy Tickets'
         page.  Description is not shown there, it's pulled from BPT but not
-        shown.  Display Icon must come from http://simplelineicons.com/ 
+        shown.  Display Icon must come from http://simplelineicons.com/
         https://icons.getbootstrap.com/ (version 1.10.2) or
         https://nagoshiashumari.github.io/Rpg-Awesome/
         -- NOTE:  use only the icon class, for example
@@ -768,7 +778,7 @@ list_titles = {
 
 list_text = {
     'class': '''    <p> \
-        The Conference at <b></b>The Great Burlesque Exposition</b> \
+        The Conference at <b>The Great Burlesque Exposition</b> \
         features more than 60 hours of \
         class time over threee days.  It is the original Professional \
         Development Conference for \

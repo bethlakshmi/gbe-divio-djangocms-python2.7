@@ -7,14 +7,19 @@ from tests.contexts import (
 )
 from tests.factories.gbe_factories import (
     ClassFactory,
+    ClassLabelFactory,
     ProfileFactory
 )
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
 )
+from gbe.models import Class
 from scheduler.models import Event
-from gbetext import parent_event_delete_warning
+from gbetext import (
+    acceptance_states,
+    parent_event_delete_warning,
+)
 
 
 class TestClassChangestate(TestCase):
@@ -62,14 +67,19 @@ class TestClassChangestate(TestCase):
     def test_class_changestate_immediate_schedule(self):
         grant_privilege(self.privileged_user, 'Scheduling Mavens')
         context = ClassContext()
+        label = ClassLabelFactory()
         url = reverse(self.view_name,
                       args=[context.bid.pk],
                       urlconf='gbe.urls')
         login_as(self.privileged_user, self)
         response = self.client.post(
             url,
-            data={'accepted': '3', 'extra_button': "Schedule >>"},
+            data={'accepted': '3',
+                  'difficulty': 'Hard',
+                  'labels': [label.pk],
+                  'extra_button': "Schedule >>"},
             follow=True)
+        updated_class = Class.objects.get(pk=context.bid.pk)
         self.assertRedirects(
             response,
             "%s?accepted_class=%d" % (
@@ -77,6 +87,13 @@ class TestClassChangestate(TestCase):
                         urlconf='gbe.scheduling.urls',
                         args=[context.conference.conference_slug]),
                 context.bid.pk))
+        self.assertContains(response,
+                            "Teacher/Class: %s - %s<br>State: %s" % (
+                                updated_class.teacher_bio.name,
+                                updated_class.b_title,
+                                acceptance_states[3][1]))
+        self.assertEqual(updated_class.difficulty, 'Hard')
+        self.assertTrue(updated_class.labels.filter(pk=label.pk).exists())
 
     def test_class_changestate_bad_data(self):
         url = reverse(self.view_name,
@@ -102,3 +119,8 @@ class TestClassChangestate(TestCase):
         response = self.client.post(url, data={'accepted': '1'}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, parent_event_delete_warning)
+        self.assertContains(response,
+                            "Teacher/Class: %s - %s<br>State: %s" % (
+                                parent_context.bid.teacher_bio.name,
+                                parent_context.bid.b_title,
+                                acceptance_states[1][1]))

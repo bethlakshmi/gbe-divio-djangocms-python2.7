@@ -3,17 +3,10 @@ from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
+from django.shortcuts import render
 from django.urls import reverse
 from datetime import timedelta
-from gbe.models import (
-    Class,
-    Conference,
-)
-from gbe.views.class_display_functions import get_scheduling_info
+from gbe.models import Conference
 from gbe.scheduling.forms import (
     EventBookingForm,
     PersonAllocationForm,
@@ -38,6 +31,7 @@ class EditEventView(ManageVolWizardView):
     template = 'gbe/scheduling/edit_event.tmpl'
     permissions = ('Scheduling Mavens',)
     title = "Edit Event"
+    event_form_class = EventBookingForm
 
     def groundwork(self, request, args, kwargs):
         groundwork_data = shared_groundwork(request, kwargs, self.permissions)
@@ -52,6 +46,9 @@ class EditEventView(ManageVolWizardView):
                 conference_slug__in=self.occurrence.labels)
             self.parent_id = self.occurrence.pk
 
+        # TO DO - rework the request.GET.urlencode - it's a bad security
+        # practice.  But there's a enough complexity here, I want it as a
+        # separate change
         if self.occurrence.event_style == "Show" and "/edit/" in request.path:
             return HttpResponseRedirect("%s?%s" % (
                 reverse('edit_show',
@@ -62,6 +59,14 @@ class EditEventView(ManageVolWizardView):
         elif self.occurrence.event_style == "Volunteer":
             return HttpResponseRedirect("%s?%s" % (
                 reverse('edit_volunteer',
+                        urlconf='gbe.scheduling.urls',
+                        args=[self.conference.conference_slug,
+                              self.occurrence.pk]),
+                request.GET.urlencode()))
+        elif self.occurrence.connected_class == "Class" and (
+                "/edit/" in request.path):
+            return HttpResponseRedirect("%s?%s" % (
+                reverse('edit_class',
                         urlconf='gbe.scheduling.urls',
                         args=[self.conference.conference_slug,
                               self.occurrence.pk]),
@@ -118,9 +123,6 @@ class EditEventView(ManageVolWizardView):
             self.occurrence,
             context)
         context['edit_title'] = self.title
-        if self.occurrence.connected_class == 'Class':
-            context['scheduling_info'] = get_scheduling_info(
-                Class.objects.get(pk=self.occurrence.connected_id))
 
         if 'worker_formset' not in context:
             context['worker_formset'] = self.make_formset(
@@ -167,7 +169,7 @@ class EditEventView(ManageVolWizardView):
 
         response = None
         context = {
-            'event_form': EventBookingForm(request.POST),
+            'event_form': self.setup_event_post_form(request),
             'scheduling_form': ScheduleOccurrenceForm(
                 request.POST,
                 conference=self.conference,
@@ -193,22 +195,7 @@ class EditEventView(ManageVolWizardView):
             if len(people) == 0:
                 people = None
 
-            m = context['scheduling_form'].cleaned_data['duration']*60
-            max_v = context['scheduling_form'].cleaned_data['max_volunteer']
-            r = event_settings[self.occurrence.event_style.lower()]['roles']
-            l = [context['scheduling_form'].cleaned_data['location']]
-            response = update_occurrence(
-                self.occurrence.pk,
-                context['event_form'].cleaned_data['title'],
-                context['event_form'].cleaned_data['description'],
-                get_start_time(context['scheduling_form'].cleaned_data),
-                length=timedelta(minutes=m),
-                max_volunteer=max_v,
-                people=people,
-                roles=r,
-                locations=l,
-                approval=context['scheduling_form'].cleaned_data['approval'],
-                slug=context['event_form'].cleaned_data['slug'])
+            response = self.update_event(context, people)
 
             if request.POST.get('edit_event', 0) != "Save and Continue":
                 self.success_url = "%s?%s-day=%d&filter=Filter&new=%s" % (
@@ -228,3 +215,25 @@ class EditEventView(ManageVolWizardView):
         return self.make_post_response(request,
                                        response=response,
                                        errorcontext=context)
+
+    def setup_event_post_form(self, request):
+        return self.event_form_class(request.POST)
+
+    def update_event(self, context, people):
+        m = context['scheduling_form'].cleaned_data['duration']*60
+        max_v = context['scheduling_form'].cleaned_data['max_volunteer']
+        r = event_settings[self.occurrence.event_style.lower()]['roles']
+        l = [context['scheduling_form'].cleaned_data['location']]
+        response = update_occurrence(
+            self.occurrence.pk,
+            context['event_form'].cleaned_data['title'],
+            context['event_form'].cleaned_data['description'],
+            get_start_time(context['scheduling_form'].cleaned_data),
+            length=timedelta(minutes=m),
+            max_volunteer=max_v,
+            people=people,
+            roles=r,
+            locations=l,
+            approval=context['scheduling_form'].cleaned_data['approval'],
+            slug=context['event_form'].cleaned_data['slug'])
+        return response

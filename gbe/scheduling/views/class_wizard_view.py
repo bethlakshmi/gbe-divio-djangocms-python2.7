@@ -102,6 +102,7 @@ class ClassWizardView(EventWizardView):
 
     def book_event(self,
                    bid,
+                   bid_form,
                    scheduling_form,
                    people_formset):
         start_time = get_start_time(scheduling_form.cleaned_data)
@@ -128,7 +129,8 @@ class ClassWizardView(EventWizardView):
             labels=labels,
             approval=scheduling_form.cleaned_data['approval'],
             connected_class=bid.__class__.__name__,
-            connected_id=bid.pk)
+            connected_id=bid.pk,
+            slug=bid_form.cleaned_data['slug'])
         return response
 
     @never_cache
@@ -188,9 +190,6 @@ class ClassWizardView(EventWizardView):
                     ) and context['scheduling_form'].is_valid(
                     ) and self.is_formset_valid(context['worker_formset']):
                 working_class = context['third_form'].save(commit=False)
-                working_class.duration = timedelta(
-                    minutes=context['scheduling_form'].cleaned_data[
-                        'duration']*60)
                 if not hasattr(working_class, 'teacher_bio'):
                     teacher = None
                     for form in context['worker_formset']:
@@ -212,10 +211,19 @@ class ClassWizardView(EventWizardView):
                             user_message[0].description)
                         return render(request, self.template, context)
                     working_class.b_conference = self.conference
-
+                # this strange order is to make sure that both the labels
+                # and the teacher bios save when there is both a new (not bid)
+                # class, and when the labels are used.
                 working_class.save()
+                working_class = context['third_form'].save()
+                working_class.duration = timedelta(
+                    minutes=context['scheduling_form'].cleaned_data[
+                        'duration']*60)
+                working_class.save()
+
                 response = self.book_event(
                     working_class,
+                    context['third_form'],
                     context['scheduling_form'],
                     context['worker_formset'])
                 success = self.finish_booking(

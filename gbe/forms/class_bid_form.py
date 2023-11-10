@@ -1,8 +1,10 @@
 from django.forms import (
     CharField,
     CheckboxSelectMultiple,
+    ChoiceField,
     ModelForm,
     MultipleChoiceField,
+    RadioSelect,
     Textarea,
 )
 from django_addanother.widgets import AddAnotherEditSelectedWidgetWrapper
@@ -17,7 +19,11 @@ from gbe_forms_text import (
     classbid_labels,
     class_schedule_options,
 )
-from gbe.functions import jsonify
+from gbetext import difficulty_options
+from gbe.functions import (
+    dynamic_difficulty_options,
+    jsonify,
+)
 
 
 class ClassBidDraftForm(ModelForm, BasicBidForm):
@@ -39,6 +45,10 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
         required=True,
         widget=Textarea(attrs={'id': 'user-tiny-mce'}),
         label=classbid_labels['b_description'])
+    difficulty = ChoiceField(
+        widget=RadioSelect,
+        choices=difficulty_options,
+        required=False)
 
     class Meta:
         model = Class
@@ -50,6 +60,7 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
                   'b_description',
                   'maximum_enrollment',
                   'type',
+                  'difficulty',
                   'fee',
                   'length_minutes',
                   'history',
@@ -79,6 +90,7 @@ class ClassBidDraftForm(ModelForm, BasicBidForm):
             if obj_data['avoided_constraints']:
                 self.initial['avoided_constraints'] = jsonify(
                     obj_data['avoided_constraints'])
+        self.fields['difficulty'].choices = dynamic_difficulty_options()
 
     def clean(self):
         cleaned_data = super(ClassBidDraftForm, self).clean()

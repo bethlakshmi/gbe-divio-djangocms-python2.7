@@ -1,7 +1,4 @@
-from django.test import (
-    TestCase,
-    Client
-)
+from django.test import TestCase
 from django.urls import reverse
 from tests.functions.gbe_functions import (
     clear_conferences,
@@ -12,6 +9,7 @@ from tests.factories.gbe_factories import (
     BioFactory,
     ConferenceFactory,
     ClassFactory,
+    ClassLabelFactory,
     ProfileFactory,
 )
 from tests.factories.scheduler_factories import PeopleAllocationFactory
@@ -35,10 +33,11 @@ from django.utils.formats import date_format
 
 class TestViewList(TestFilters):
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         clear_conferences()
-        self.client = Client()
-        self.conf = ConferenceFactory()
+        cls.conf = ConferenceFactory()
+        cls.label = ClassLabelFactory()
 
     def test_view_list_given_slug(self):
         other_conf = ConferenceFactory()
@@ -197,6 +196,9 @@ class TestViewList(TestFilters):
         context = ClassContext(conference=self.conf,
                                starttime=datetime.now()-timedelta(days=1))
         context.bid.teacher_bio = BioFactory()
+        context.bid.difficulty = "Easy"
+        context.bid.labels.add(self.label)
+        context.bid.save()
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
                       args=['Class'])
@@ -204,6 +206,12 @@ class TestViewList(TestFilters):
         response = self.client.get(url)
         self.assertContains(response, str(context.teacher.name))
         self.assertNotContains(response, str(context.bid.teacher.name))
+        self.assertContains(response, "Easy")
+        self.assertContains(
+            response,
+            '<span class="badge badge-pill gbe-badge">%s</span>' % (
+                self.label.text),
+            html=True)
 
     def test_view_panels(self):
         this_class = ClassFactory.create(accepted=3,
@@ -211,6 +219,7 @@ class TestViewList(TestFilters):
                                          type="Panel")
         that_class = ClassFactory.create(accepted=3,
                                          b_conference=self.conf)
+        this_class.labels.add(self.label)
         login_as(ProfileFactory(), self)
         url = reverse("event_list",
                       urlconf="gbe.scheduling.urls",
@@ -221,6 +230,11 @@ class TestViewList(TestFilters):
         self.assertContains(response, this_class.b_title)
         self.assertNotContains(response, that_class.b_title)
         self.assertContains(response, this_class.teacher.name)
+        self.assertContains(
+            response,
+            '<span class="badge badge-pill gbe-badge">%s</span>' % (
+                self.label.text),
+            html=True)
 
     def test_view_volunteers(self):
         this_class = ClassFactory.create(accepted=3,
@@ -260,8 +274,8 @@ class TestViewList(TestFilters):
         self.assertContains(response,
                             'volunteered.gif" class="volunteer-icon"')
         self.assertNotContains(response, this_class.b_title)
-        self.assertNotContains(response, 'fa-star')
-        self.assertNotContains(response, 'fa-star-o')
+        self.assertNotContains(response, 'fas fa-star')
+        self.assertNotContains(response, 'far fa-star')
         self.assertNotContains(response,
                                reverse('register', urlconf="gbe.urls"))
         self.assertContains(response, paired_alert_msg)

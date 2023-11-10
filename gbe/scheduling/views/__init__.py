@@ -11,6 +11,7 @@ from .volunteer_autocomplete import VolunteerAutocomplete
 from .manage_vol_wizard_view import ManageVolWizardView
 from .manage_worker_view import ManageWorkerView
 from .edit_event_view import EditEventView
+from .edit_class_view import EditClassView
 from .edit_show_view import EditShowView
 from .edit_volunteer_view import EditVolunteerView
 from .edit_staff_area_view import EditStaffAreaView

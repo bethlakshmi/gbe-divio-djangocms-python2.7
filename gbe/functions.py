@@ -1,3 +1,4 @@
+from django.utils.safestring import mark_safe
 from gbe.models import (
     Class,
     Conference,
@@ -14,9 +15,11 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.contrib import messages
 from gbetext import (
+    difficulty_options,
     no_login_msg,
     full_login_msg,
 )
+from gbe_forms_text import difficulty_default_text
 from gbe_utils.text import no_profile_msg
 import json
 import urllib
@@ -208,3 +211,19 @@ def check_forum_spam(email):
              'to verify email %s') % (sys.exc_info()[0], url, email),
             reverse('register', urlconf='gbe.urls'))
     return found_it
+
+
+def dynamic_difficulty_options():
+    dynamic_difficulty_options = []
+    for choice in difficulty_options:
+        label_desc, created = UserMessage.objects.get_or_create(
+            view="ClassDifficulty",
+            code="%s_DIFFICULTY" % choice[0].upper(),
+            defaults={
+                'summary': "%s Difficulty Description" % choice[0],
+                'description': difficulty_default_text[choice[0]]})
+        dynamic_difficulty_options += [(
+            choice[0],
+            mark_safe("<b>%s:</b> %s" % (choice[1],
+                                         label_desc.description)))]
+    return dynamic_difficulty_options

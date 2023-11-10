@@ -3,6 +3,7 @@ from django.urls import reverse
 from tests.factories.gbe_factories import (
     BioFactory,
     ClassFactory,
+    ClassLabelFactory,
     ConferenceFactory,
     ConferenceDayFactory,
     ProfileFactory,
@@ -12,6 +13,7 @@ from scheduler.models import Event
 from gbe.models import Class
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    assert_option_state,
     grant_privilege,
     login_as,
 )
@@ -35,7 +37,10 @@ class TestClassWizard(TestScheduling):
         cls.test_class = ClassFactory(b_conference=cls.current_conference,
                                       accepted=3,
                                       teacher_bio=cls.teacher,
-                                      submitted=True)
+                                      submitted=True,
+                                      difficulty="Medium")
+        cls.orig_label = ClassLabelFactory()
+        cls.test_class.labels.add(cls.orig_label)
         cls.url = reverse(
             cls.view_name,
             args=[cls.current_conference.conference_slug],
@@ -60,6 +65,7 @@ class TestClassWizard(TestScheduling):
             'b_description': 'Description',
             'maximum_enrollment': 10,
             'fee': 0,
+            'difficulty': "Hard",
             'max_volunteer': 0,
             'day': self.day.pk,
             'time': '11:00:00',
@@ -124,6 +130,15 @@ class TestClassWizard(TestScheduling):
                 self.test_class.teacher.pk,
                 str(self.test_class.teacher)),
             html=True)
+        self.assertContains(
+            response,
+            ('<input type="radio" name="difficulty" value="Medium" ' +
+             'id="id_difficulty_1" checked/>'),
+            html=True)
+        assert_option_state(response,
+                            self.orig_label.pk,
+                            self.orig_label.text,
+                            True)
 
     def test_auth_user_can_pick_class(self):
         login_as(self.privileged_user, self)
@@ -232,11 +247,15 @@ class TestClassWizard(TestScheduling):
     def test_auth_user_edit_class(self):
         login_as(self.privileged_user, self)
         data = self.edit_class()
+        label = ClassLabelFactory()
+        data['labels'] = [label.pk]
+        data['slug'] = "classsluggy"
         response = self.client.post(
             self.url,
             data=data,
             follow=True)
         occurrence = Event.objects.filter(connected_id=self.test_class.pk)
+        updated_class = Class.objects.get(pk=self.test_class.pk)
         self.assertRedirects(
             response,
             "%s?%s-day=%d&filter=Filter&new=[%d]" % (
@@ -258,6 +277,9 @@ class TestClassWizard(TestScheduling):
             response,
             '<tr class="gbe-table-row gbe-table-success">\n       ' +
             '<td>%s</td>' % data['b_title'])
+        self.assertEqual(updated_class.difficulty, data['difficulty'])
+        self.assertTrue(updated_class.labels.filter(pk=label.pk).exists())
+        self.assertEqual(occurrence[0].slug, data['slug'])
 
     def test_auth_user_create_class(self):
         login_as(self.privileged_user, self)

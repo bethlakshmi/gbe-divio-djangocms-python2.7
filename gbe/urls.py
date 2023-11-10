@@ -14,6 +14,7 @@ from gbe.views import (
     BusinessCreate,
     BusinessUpdate,
     ClassChangeStateView,
+    ClassLabelAutocomplete,
     CloneBidView,
     CoordinateActView,
     CostumeChangeStateView,
@@ -116,6 +117,9 @@ urlpatterns = [
         r'^persona-autocomplete/$',
         PersonaAutocomplete.as_view(),
         name='persona-autocomplete'),
+    url(r'^classlabel-autocomplete/$',
+        ClassLabelAutocomplete.as_view(create_field='text'),
+        name='classlabel-autocomplete'),
 
     #  bios
     url(r'^bios/teachers/?$',

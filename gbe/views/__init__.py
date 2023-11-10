@@ -42,6 +42,7 @@ from .make_class_view import MakeClassView
 from .make_costume_view import MakeCostumeView
 from .make_vendor_view import MakeVendorView
 from .coordinate_act_view import CoordinateActView
+from .classlabel_autocomplete import ClassLabelAutocomplete
 
 # view
 from .view_act_view import ViewActView

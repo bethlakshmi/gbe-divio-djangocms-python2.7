@@ -5,7 +5,10 @@ from django.db.models import (
     CharField,
     ForeignKey,
     IntegerField,
+    ManyToManyField,
+    Model,
     Q,
+    SET_NULL,
     TextField,
 )
 from gbe.models import (
@@ -17,10 +20,25 @@ from gbetext import (
     acceptance_states,
     class_length_options,
     class_options,
+    difficulty_options,
     space_options,
     yesno_options,
 )
+from gbe_forms_text import difficulty_default_text
 from settings import GBE_TABLE_FORMAT
+
+
+class ClassLabel(Model):
+    '''
+    A decorator allowing free-entry "tags" on allocations
+    '''
+    text = CharField(max_length=200, unique=True)
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        app_label = "gbe"
 
 
 class Class(Biddable):
@@ -39,6 +57,9 @@ class Class(Biddable):
                      choices=class_options,
                      blank=True,
                      default="Lecture")
+    difficulty = CharField(max_length=128,
+                           choices=difficulty_options,
+                           blank=True)
     fee = IntegerField(blank=True, default=0, null=True)
     other_teachers = CharField(max_length=128, blank=True)
     length_minutes = IntegerField(choices=class_length_options,
@@ -53,7 +74,9 @@ class Class(Biddable):
                             default='')
     physical_restrictions = TextField(blank=True)
     multiple_run = CharField(max_length=20,
-                             choices=yesno_options, default="No")
+                             choices=yesno_options,
+                             default="No")
+    labels = ManyToManyField(ClassLabel)
 
     def clone(self):
         new_class = Class()
@@ -89,6 +112,11 @@ class Class(Biddable):
                 if key == self.space_needs:
                     needs = top + " - " + sub_level
         return needs
+
+    @property
+    def get_difficulty_description(self):
+        if self.difficulty:
+            return difficulty_default_text[self.difficulty]
 
     @property
     def bid_review_header(self):

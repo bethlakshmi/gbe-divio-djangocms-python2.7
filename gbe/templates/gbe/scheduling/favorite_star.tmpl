@@ -2,10 +2,10 @@
       <a href="{{sched_event.favorite_link}}?next={{ request.get_full_path }}"
          class="detail_link cal-favorite" data-toggle="tooltip"
          title="{%if sched_event.highlight == "interested" %}Remove from Schedule{% else %}Add to Schedule{% endif %}">
-       <i class="fa {%if sched_event.highlight == "interested" %}fa-star{% else %}fa-star-o{% endif %} {{size}}" aria-hidden="true"></i>
+       <i class="{%if sched_event.highlight == "interested" %}fas fa-star{% else %}far fa-star{% endif %} {{size}}" aria-hidden="true"></i>
       </a>
      {% elif sched_event.favorite_link %}
       <a href="#" class="cal-favorite {% if disable_style %}{{ disable_style }}{% else %}detail_link-disabled{% endif %}" data-toggle="tooltip"
-         title="You are a {{ sched_event.highlight }} - contact the coordinator to change your schedule">
-       <i class="fa fa-star {{size}}" aria-hidden="true"></i></a>
+         title="You are a {{ sched_event.highlight }} for this event - contact the coordinator to change your schedule">
+       <i class="fas fa-star {{size}}" aria-hidden="true"></i></a>
      {% endif %}

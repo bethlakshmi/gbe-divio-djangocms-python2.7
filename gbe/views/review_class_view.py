@@ -2,6 +2,7 @@ from gbe.functions import validate_perms
 from gbe.forms import (
     PersonaForm,
     ClassBidForm,
+    ClassStateChangeForm,
 )
 from gbe.models import Class
 from gbe.views import ReviewBidView
@@ -19,6 +20,7 @@ class ReviewClassView(ReviewBidView):
     bid_view_name = 'class_view'
     review_list_view_name = 'class_review_list'
     changestate_view_name = 'class_changestate'
+    bid_state_change_form = ClassStateChangeForm
 
     def groundwork(self, request, args, kwargs):
         super(ReviewClassView, self).groundwork(request, args, kwargs)

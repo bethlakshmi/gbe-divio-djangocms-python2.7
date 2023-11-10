@@ -5,6 +5,7 @@ from gbe.scheduling.views import (
     CopyOccurrenceView,
     CopyStaffAreaView,
     DeleteEventView,
+    EditClassView,
     EditEventView,
     EditShowView,
     EditStaffAreaView,
@@ -15,7 +16,6 @@ from gbe.scheduling.views import (
     ListEventsView,
     ManageConferenceView,
     ManageEventsView,
-    ManageVolWizardView,
     RehearsalWizardView,
     SetFavoriteView,
     SetVolunteerView,
@@ -74,6 +74,10 @@ urlpatterns = [
         '(?P<occurrence_id>\d+)/?$',
         EditShowView.as_view(),
         name='edit_show'),
+    url(r'^scheduling/class_edit/(?P<conference>[-\w]+)/' +
+        '(?P<occurrence_id>\d+)/?$',
+        EditClassView.as_view(),
+        name='edit_class'),
     url(r'^scheduling/volunteer_edit/(?P<conference>[-\w]+)/' +
         '(?P<occurrence_id>\d+)/?$',
         EditVolunteerView.as_view(),
