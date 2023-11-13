@@ -17,6 +17,7 @@ from gbe.reporting.views import (
     StaffAreaView,
     ShowSlidesView,
     UserPrivView,
+    VendorHistory,
     WelcomeLetterView,
 )
 from django.contrib import admin
@@ -72,4 +73,7 @@ urlpatterns = [
     url(r'^reports/privileges/?$',
         staff_member_required(UserPrivView.as_view()),
         name='user_privs'),
+    url(r'^reports/vendors_over_time/?$',
+        VendorHistory.as_view(),
+        name='vendor_history'),
 ]
