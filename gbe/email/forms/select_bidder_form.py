@@ -6,6 +6,7 @@ from django.forms import (
 )
 from django.forms.widgets import CheckboxSelectMultiple
 from gbetext import acceptance_states
+from gbe_forms_text import inform_about_options
 from gbe.models import Conference
 
 
@@ -28,6 +29,10 @@ class SelectBidderForm(Form):
         choices=((('Draft', 'Draft'),) + acceptance_states),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=True)
+    profile_interest = MultipleChoiceField(
+        required=False,
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        choices=inform_about_options)
     x_conference = MultiConferenceField(
         queryset=Conference.objects.all().order_by('conference_slug'),
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
@@ -42,6 +47,11 @@ class SelectBidderForm(Form):
         widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         label="State",
         required=False)
+    x_profile_interest = MultipleChoiceField(
+        required=False,
+        widget=CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        label="Profile Interest",
+        choices=inform_about_options)
 
     def __init__(self, *args, **kwargs):
         if 'bid_types' in kwargs:
