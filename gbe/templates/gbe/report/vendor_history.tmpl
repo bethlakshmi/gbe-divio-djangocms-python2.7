@@ -11,15 +11,20 @@
     <a class="social" href="{{vendor.business.website}}" target="_blank">
       <i class="fa fa-link"></i></a>{% endif %}
   <td>{% for bid in biz.vendor_set.all %}
-    {{ bid.b_conference.conference_slug }}{% if bid.level %} - {{ bid.level }}{% elif not bid.submitted %} - DRAFT{% endif %}<br>
+      {% if bid.b_conference.status != "completed" %}<b>{% endif %}
+      {{ bid.b_conference.conference_slug }}{% if bid.level %} - {{ bid.level }}{% elif not bid.submitted %} - DRAFT{% endif %}<br>
+      {% if bid.b_conference.status != "completed" %}</b>{% endif %}
   {% endfor %}</td>
-  <td>{% for bid in biz.vendor_set.all %}{% if bid.b_conference.status != "completed" %}
-    {% if bid.submitted %}{{ bid.get_accepted_display }}
-    {% else %}DRAFT{% endif %}<br>{% endif %}
-  {% endfor %}</td>
-  <td>{{ biz.show_owners }}{% if biz.show_owners|length == 0 %}<span class="gbe-form-error gbe-inactive"><i>All owners are inactive</i></span>{% endif %}</td>
+  <td>{{ biz.physical_address|safe }}</td>
   <td>{{ biz.description|safe }}</td>
-  <td>EMAIL!</td>
+  <td>{% for owner in biz.active_owners %}
+    <b>{{ owner}}</b><br>
+    E: <a href='mailto:{{owner.user_object.email}}'>
+    {{ owner.user_object.email }}</a><br>
+    T: <a href='tel:{{owner.phone}}'>
+    {{ owner.phone }}</a><br>
+    <br>
+  {% empty %}<span class="gbe-form-error gbe-inactive"><i>All owners are inactive</i></span>{% endfor %}</td>
   </tr>
 {% endfor %}
 {% endblock %}

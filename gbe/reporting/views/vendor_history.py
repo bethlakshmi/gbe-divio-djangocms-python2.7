@@ -15,8 +15,7 @@ class VendorHistory(RoleRequiredMixin, ListView):
         context['title'] = self.title
         context['columns'] = ['Business',
                              'Conferences Attended',
-                             'Current Bid?',
-                             'Owner(s)',
+                             'Address',
                              'Description',
-                             'Actions']
+                             'Contact']
         return context
