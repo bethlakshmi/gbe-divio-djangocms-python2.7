@@ -14,8 +14,8 @@ class VendorHistory(RoleRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = self.title
         context['columns'] = ['Business',
-                             'Conferences Attended',
-                             'Address',
-                             'Description',
-                             'Contact']
+                              'Conferences Attended',
+                              'Address',
+                              'Description',
+                              'Contact']
         return context
