@@ -62,25 +62,8 @@ class SelectBidderForm(Form):
 
 
 class SecretBidderInfoForm(SelectBidderForm):
-    conference = ModelMultipleChoiceField(
-        queryset=Conference.objects.all().order_by('conference_name'),
-        widget=MultipleHiddenInput(),
-        required=True)
-    bid_type = MultipleChoiceField(
-        widget=MultipleHiddenInput(),
-        required=True)
-    state = MultipleChoiceField(
-        choices=((('Draft', 'Draft'),) + acceptance_states),
-        widget=MultipleHiddenInput(),
-        required=True)
-    x_conference = ModelMultipleChoiceField(
-        queryset=Conference.objects.all().order_by('conference_name'),
-        widget=MultipleHiddenInput(),
-        required=False)
-    x_bid_type = MultipleChoiceField(
-        widget=MultipleHiddenInput(),
-        required=False)
-    x_state = MultipleChoiceField(
-        choices=((('Draft', 'Draft'),) + acceptance_states),
-        widget=MultipleHiddenInput(),
-        required=False)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget = MultipleHiddenInput()
+

@@ -6,6 +6,7 @@ from gbe.models import (
     Class,
     Conference,
     Costume,
+    Profile,
     UserMessage,
     Vendor,
     Volunteer,
@@ -51,19 +52,23 @@ class MailToBiddersView(MailToFilterView):
                 bid_types=self.bid_type_choices)
 
     def get_to_list(self):
+
         exclude_list = []
-        if len(self.select_form.cleaned_data['x_conference']) > 0 and len(
+        if (len(self.select_form.cleaned_data['x_conference']) > 0 and len(
                 self.select_form.cleaned_data['x_bid_type']) > 0 and len(
-                self.select_form.cleaned_data['x_state']) > 0:
+                self.select_form.cleaned_data['x_state']) > 0) or len(
+                self.select_form.cleaned_data['x_profile_interest']) > 0:
             exclude_list = self.build_any_list(
                 self.select_form.cleaned_data['x_conference'],
                 self.select_form.cleaned_data['x_bid_type'],
-                self.select_form.cleaned_data['x_state'])
+                self.select_form.cleaned_data['x_state'],
+                self.select_form.cleaned_data['x_profile_interest'])
 
         to_list = self.build_any_list(
             self.select_form.cleaned_data['conference'],
             self.select_form.cleaned_data['bid_type'],
             self.select_form.cleaned_data['state'],
+            self.select_form.cleaned_data['profile_interest'],
             exclude_list)
         return sorted(to_list, key=lambda s: s[1].lower())
 
@@ -71,6 +76,7 @@ class MailToBiddersView(MailToFilterView):
                        conferences,
                        bid_types,
                        accept_states,
+                       interest_states,
                        exclude_list=[]):
         any_list = []
         already_excluded = []
@@ -110,6 +116,19 @@ class MailToBiddersView(MailToFilterView):
                                 any_list += [bidder]
                             elif bidder not in already_excluded:
                                 already_excluded += [bidder]
+        for interest in interest_states:
+            for profile in Profile.objects.filter(
+                    preferences__inform_about__contains=interest,
+                    user_object__is_active=True):
+                bidder = (profile.user_object.email,
+                          profile.display_name)
+                if bidder not in any_list:
+                    if bidder not in exclude_list:
+                        any_list += [bidder]
+                    elif bidder not in already_excluded:
+                        already_excluded += [bidder]
+                print(str(profile) + " interested in " + interest)
+
         self.excluded_count = len(already_excluded)
         return any_list
 
