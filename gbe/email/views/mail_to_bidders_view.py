@@ -127,7 +127,6 @@ class MailToBiddersView(MailToFilterView):
                         any_list += [bidder]
                     elif bidder not in already_excluded:
                         already_excluded += [bidder]
-                print(str(profile) + " interested in " + interest)
 
         self.excluded_count = len(already_excluded)
         return any_list
