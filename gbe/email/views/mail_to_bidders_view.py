@@ -18,7 +18,6 @@ from gbe.email.forms import (
 from gbe.email.views import MailToFilterView
 from gbetext import to_list_empty_msg
 from django.db.models import Q
-from operator import itemgetter
 
 
 class MailToBiddersView(MailToFilterView):
