@@ -95,9 +95,13 @@ class EditEmailView(View):
         if 'email_disable' in request.GET:
             email_focus = str(request.GET['email_disable'])
             email_initial[email_focus] = False
+        if 'interest_disable' in request.GET:
+            interest_disable = eval(request.GET['interest_disable'])
 
-        email_form = EmailPreferencesNoLoginForm(instance=profile.preferences,
-                                                 initial=email_initial)
+        email_form = EmailPreferencesNoLoginForm(
+            instance=profile.preferences,
+            initial=email_initial,
+            interest_disable=interest_disable)
         return render(request, 'gbe/update_email.tmpl',
                       {'email_form': email_form,
                        'email_note': self.get_intro()[0].description,
