@@ -24,12 +24,18 @@ class EmailPreferencesForm(ModelForm):
         label=profile_preferences_labels['inform_about'])
 
     def __init__(self, *args, **kwargs):
-        if 'instance' in kwargs and kwargs.get('instance') is not None and (
-                len(kwargs.get('instance').inform_about.strip()) > 0):
-            kwargs['initial']['inform_about'] = eval(
-                kwargs.get('instance').inform_about)
+        interest_disable = []
         if 'interest_disable' in kwargs:
             interest_disable = kwargs.pop('interest_disable')
+        if 'instance' in kwargs and kwargs.get('instance') is not None and (
+                len(kwargs.get('instance').inform_about.strip()) > 0):
+            if 'initial' not in kwargs:
+                kwargs['initial'] = {}
+            kwargs['initial']['inform_about'] = []
+            for interest in eval(kwargs.get('instance').inform_about):
+                if interest not in interest_disable:
+                    kwargs['initial']['inform_about'] += [interest]
+
         super(EmailPreferencesForm, self).__init__(*args, **kwargs)
         inform_choices = []
         for choice in inform_about_options:
