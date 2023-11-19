@@ -15,6 +15,7 @@ from gbe.email.forms import (
     SecretBidderInfoForm,
     SelectBidderForm,
 )
+from gbe.email.functions import create_unsubscribe_link
 from gbe.email.views import MailToFilterView
 from gbetext import to_list_empty_msg
 from django.db.models import Q
@@ -141,6 +142,16 @@ class MailToBiddersView(MailToFilterView):
     def get_select_forms(self):
         return {"selection_form": self.select_form,
                 "excluded_count": self.excluded_count}
+
+    def create_unsubscribe_link(self, email):
+        email_disable = None
+        interests = self.select_form.cleaned_data['profile_interest']
+        if len(self.select_form.cleaned_data['bid_type']) > 0:
+            email_disable = "send_%s" % self.email_type
+
+        return create_unsubscribe_link(email,
+                                       disable=email_disable,
+                                       interests=interests)
 
     def filter_emails(self, request):
         to_list = self.get_to_list()
