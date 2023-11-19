@@ -77,6 +77,7 @@ class EditEmailView(View):
             'button': self.button,
             'header': self.header,
         }
+
     @never_cache
     @log_func
     def get(self, request, *args, **kwargs):

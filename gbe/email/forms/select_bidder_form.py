@@ -76,7 +76,7 @@ class SelectBidderForm(Form):
         x_bid_len = len(cleaned_data['x_bid_type'])
         x_state_len = len(cleaned_data['x_state'])
 
-        if con_len == 0 and bid_len == 0 and state_len== 0 and (
+        if con_len == 0 and bid_len == 0 and state_len == 0 and (
                 interest_len == 0):
             raise ValidationError(
                 UMsg.objects.get_or_create(
@@ -152,4 +152,3 @@ class SecretBidderInfoForm(SelectBidderForm):
         super().__init__(*args, **kwargs)
         for name, field in self.fields.items():
             field.widget = MultipleHiddenInput()
-
