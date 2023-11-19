@@ -65,6 +65,18 @@ class EditEmailView(View):
                        'button': "Send Link",
                        'email_note': intro[0].description})
 
+    def get_context(self, request):
+        email_focus = None
+        if 'email_disable' in request.GET:
+            email_focus = str(request.GET['email_disable'])
+        return {
+            'email_focus': email_focus,
+            'email_note': self.get_intro()[0].description,
+            'title': self.title,
+            'view_title': "Email Options",
+            'button': self.button,
+            'header': self.header,
+        }
     @never_cache
     @log_func
     def get(self, request, *args, **kwargs):
@@ -90,26 +102,19 @@ class EditEmailView(View):
             pref = ProfilePreferences(profile=profile)
             pref.save()
 
-        email_focus = None
-        email_initial = {'token': kwargs.get("token")}
-        if 'email_disable' in request.GET:
-            email_focus = str(request.GET['email_disable'])
-            email_initial[email_focus] = False
+        context = self.get_context(request)
+
         if 'interest_disable' in request.GET:
             interest_disable = eval(request.GET['interest_disable'])
+        email_initial = {'token': kwargs.get("token")}
+        if 'email_disable' in request.GET:
+            email_initial[context['email_focus']] = False
 
-        email_form = EmailPreferencesNoLoginForm(
+        context['email_form'] = EmailPreferencesNoLoginForm(
             instance=profile.preferences,
             initial=email_initial,
             interest_disable=interest_disable)
-        return render(request, 'gbe/update_email.tmpl',
-                      {'email_form': email_form,
-                       'email_note': self.get_intro()[0].description,
-                       'email_focus': email_focus,
-                       'title': self.title,
-                       'view_title': "Email Options",
-                       'button': self.button,
-                       'header': self.header})
+        return render(request, 'gbe/update_email.tmpl', context)
 
     @never_cache
     @log_func
@@ -162,7 +167,9 @@ class EditEmailView(View):
                         'description': default_update_profile_msg})
                 messages.success(request, user_message[0].description)
                 return self.success_redirect(request)
-        return self.get_email_link(request, form)
+        context = self.get_context(request)
+        context['email_form'] = form
+        return render(request, 'gbe/update_email.tmpl', context)
 
     def token_parse_error(self, request):
         user_message = UserMessage.objects.get_or_create(
