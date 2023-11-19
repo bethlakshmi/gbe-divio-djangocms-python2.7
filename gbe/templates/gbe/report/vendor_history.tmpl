@@ -1,0 +1,30 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% block title %}
+   Vendors for All Conferences
+{% endblock %}
+
+{% block tbody %}
+{% for biz in businesses %}
+<tr class="gbe-table-row">
+  <td>{{ biz.name }}
+  {% if biz.website %}
+    <a class="social" href="{{vendor.business.website}}" target="_blank">
+      <i class="fa fa-link"></i></a>{% endif %}
+  <td>{% for bid in biz.vendor_set.all %}
+      {% if bid.b_conference.status != "completed" %}<b>{% endif %}
+      {{ bid.b_conference.conference_slug }}{% if bid.level %} - {{ bid.level }}{% elif not bid.submitted %} - DRAFT{% endif %}<br>
+      {% if bid.b_conference.status != "completed" %}</b>{% endif %}
+  {% endfor %}</td>
+  <td>{{ biz.physical_address|safe }}</td>
+  <td>{{ biz.description|safe }}</td>
+  <td>{% for owner in biz.active_owners %}
+    <b>{{ owner}}</b><br>
+    E: <a href='mailto:{{owner.user_object.email}}'>
+    {{ owner.user_object.email }}</a><br>
+    T: <a href='tel:{{owner.phone}}'>
+    {{ owner.phone }}</a><br>
+    <br>
+  {% empty %}<span class="gbe-form-error gbe-inactive"><i>All owners are inactive</i></span>{% endfor %}</td>
+  </tr>
+{% endfor %}
+{% endblock %}

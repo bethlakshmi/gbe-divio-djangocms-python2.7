@@ -15,3 +15,4 @@ from .room_reports import (
     RoomSetupView,
 )
 from .env_stuff_view import EnvStuffView
+from .vendor_history import VendorHistory
