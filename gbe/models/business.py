@@ -38,6 +38,10 @@ class Business(Model):
                 owners = "%s (inactive), %s" % (owner, owners)
         return owners.strip()[:-1]
 
+    @property
+    def active_owners(self):
+        return self.owners.filter(user_object__is_active=True)
+
     def __str__(self):
         return self.name  # "title" here is company name
 
