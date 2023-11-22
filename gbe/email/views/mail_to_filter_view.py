@@ -121,13 +121,24 @@ class MailToFilterView(MailView):
                         request,
                         self.template,
                         context)
+            else:
+                user_message = UserMessage.objects.get_or_create(
+                    view=self.__class__.__name__,
+                    code="NO_RECIPIENTS",
+                    defaults={
+                        'summary': "To List was Empty",
+                        'description': unknown_request})
+                messages.error(
+                        request,
+                        user_message[0].description)
         elif 'everyone' in list(request.POST.keys()):
             return self.filter_everyone(request)
         elif ('filter' in list(request.POST.keys()) or 'refine' in list(
-                request.POST.keys())) and self.select_form_is_valid():
-            return self.filter_emails(request)
-        elif not self.select_form_is_valid():
-            messages.error(request, "Filter selection is not valid")
+                request.POST.keys())):
+            if self.select_form_is_valid():
+                return self.filter_emails(request)
+            else:
+                messages.error(request, "Filter selection is not valid")
         else:
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,

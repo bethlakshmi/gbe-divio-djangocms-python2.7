@@ -12,9 +12,6 @@ from gbe_forms_text import (
     bid_conf_required,
     bid_state_required,
     bid_type_required,
-    bid_conf_exclude,
-    bid_state_exclude,
-    bid_type_exclude,
     inform_about_options,
 )
 from gbe.models import Conference
@@ -68,13 +65,13 @@ class SelectBidderForm(Form):
         cleaned_data = super(SelectBidderForm, self).clean()
 
         # temp variables for reuseable readability
-        con_len = len(cleaned_data['conference'])
-        bid_len = len(cleaned_data['bid_type'])
-        state_len = len(cleaned_data['state'])
-        interest_len = len(cleaned_data['profile_interest'])
-        x_con_len = len(cleaned_data['x_conference'])
-        x_bid_len = len(cleaned_data['x_bid_type'])
-        x_state_len = len(cleaned_data['x_state'])
+        con_len = len(cleaned_data.get('conference', []))
+        bid_len = len(cleaned_data.get('bid_type', []))
+        state_len = len(cleaned_data.get('state', []))
+        interest_len = len(cleaned_data.get('profile_interest', []))
+        x_con_len = len(cleaned_data.get('x_conference', []))
+        x_bid_len = len(cleaned_data.get('x_bid_type', []))
+        x_state_len = len(cleaned_data.get('x_state', []))
 
         if con_len == 0 and bid_len == 0 and state_len == 0 and (
                 interest_len == 0):
@@ -113,30 +110,6 @@ class SelectBidderForm(Form):
                         'description': bid_state_required
                         })[0].description
 
-        if (x_con_len + x_bid_len + x_state_len) > 0 and x_con_len == 0:
-            self._errors['x_conference'] = UMsg.objects.get_or_create(
-                view="MailToBiddersView",
-                code="CONFERENCE_REQUIRED_FOR_EXCLUDE_BID",
-                defaults={
-                    'summary': "Conference required - Exclude",
-                    'description': bid_conf_exclude
-                    })[0].description
-        if (x_con_len + x_bid_len + x_state_len) > 0 and x_bid_len == 0:
-            self._errors['x_bid_type'] = UMsg.objects.get_or_create(
-                view="MailToBiddersView",
-                code="TYPE_REQUIRED_FOR_EXCLUDE_BID",
-                defaults={
-                    'summary': "Bid Type required - Exclude",
-                    'description': bid_type_exclude
-                    })[0].description
-        if (x_con_len + x_bid_len + x_state_len) > 0 and x_state_len == 0:
-            self._errors['x_state'] = UMsg.objects.get_or_create(
-                view="MailToBiddersView",
-                code="STATE_REQUIRED_FOR_EXCLUDE_BID",
-                defaults={
-                    'summary': "Bid State required - Exclude",
-                    'description': bid_state_exclude
-                    })[0].description
         return self.cleaned_data
 
     def __init__(self, *args, **kwargs):

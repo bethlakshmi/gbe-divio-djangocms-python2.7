@@ -1,6 +1,5 @@
 from django.urls import reverse
 from django.test import TestCase
-from django.test import Client
 from tests.factories.gbe_factories import (
     ActFactory,
     ClassFactory,
@@ -27,6 +26,12 @@ from gbetext import (
     unknown_request,
     unsubscribe_text,
 )
+from gbe_forms_text import (
+    bidder_select_one,
+    bid_conf_required,
+    bid_state_required,
+    bid_type_required,
+)
 from django.contrib.auth.models import User
 from gbe.models import Conference
 from post_office.models import Email
@@ -48,7 +53,6 @@ class TestMailToBidders(TestFilters):
         cls.url = reverse(cls.view_name, urlconf="gbe.email.urls")
 
     def setUp(self):
-        self.client = Client()
         self.context = ClassContext()
 
     def tearDown(self):
@@ -416,10 +420,7 @@ class TestMailToBidders(TestFilters):
             'filter': True,
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertContains(
-            response,
-            'Select a valid choice. Class is not one of the available choices.'
-            )
+        self.assertContains(response, bid_type_required)
 
     def test_pick_reduced_priv(self):
         second_bid = ActFactory(submitted=True)
@@ -573,10 +574,7 @@ class TestMailToBidders(TestFilters):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertContains(
-            response,
-            'Select a valid choice. Class is not one of the available choices.'
-            )
+        self.assertContains(response, bid_type_required)
 
     def test_send_email_reduced_to_list_no_hack(self):
         reduced_profile = self.reduced_login()
@@ -743,6 +741,7 @@ class TestMailToBidders(TestFilters):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
+        print(response.content)
         assert_alert_exists(
             response, 'danger', 'Error', unknown_request)
 

@@ -143,7 +143,10 @@ class MailToBiddersView(MailToFilterView):
         return {"selection_form": self.select_form,
                 "excluded_count": self.excluded_count}
 
-    def create_unsubscribe_link(self, email):
+    def create_unsubscribe_link(self, email, request):
+        if 'everyone' in list(request.POST.keys()):
+            return super().create_unsubscribe_link(email, request)
+
         email_disable = None
         interests = self.select_form.cleaned_data['profile_interest']
         if len(self.select_form.cleaned_data['bid_type']) > 0:

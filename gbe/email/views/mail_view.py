@@ -32,7 +32,7 @@ class MailView(View):
             email_form.fields['sender_name'].widget = HiddenInput()
         return email_form
 
-    def create_unsubscribe_link(self, email):
+    def create_unsubscribe_link(self, email, request):
         return create_unsubscribe_link(email,
                                        "send_%s" % self.email_type)
 
@@ -58,7 +58,7 @@ class MailView(View):
                 if self.email_type != "individual":
                     footer = unsubscribe_text % (
                         Site.objects.get_current().domain,
-                        self.create_unsubscribe_link(email))
+                        self.create_unsubscribe_link(email, request))
                     message = mail_form.cleaned_data['html_message'] + footer
                 else:
                     message = mail_form.cleaned_data['html_message']
