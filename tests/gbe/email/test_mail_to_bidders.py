@@ -741,7 +741,6 @@ class TestMailToBidders(TestFilters):
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
-        print(response.content)
         assert_alert_exists(
             response, 'danger', 'Error', unknown_request)
 

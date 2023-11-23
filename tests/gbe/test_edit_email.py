@@ -64,10 +64,12 @@ class TestEditEmail(TestCase):
         self.assertContains(response, send_link_message)
 
     def test_update_email_good_token(self):
-        self.url = create_unsubscribe_link(
-            self.profile.user_object.email
-            ) + "?email_disable=send_schedule_change_notifications"
-        response = self.client.get(self.url)
+        url = create_unsubscribe_link(
+            self.profile.user_object.email,
+            disable="send_schedule_change_notifications"
+            )
+        response = self.client.get(url)
+
         self.assertContains(response, escape(email_pref_note))
         self.assertContains(response, "Email Options")
         self.assertNotContains(response, "Email:")

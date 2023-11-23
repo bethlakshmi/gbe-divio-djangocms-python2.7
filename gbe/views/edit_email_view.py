@@ -81,6 +81,7 @@ class EditEmailView(View):
     @never_cache
     @log_func
     def get(self, request, *args, **kwargs):
+        interest_disable = []
         if "token" in kwargs and kwargs.get("token") is not None:
             email = extract_email(kwargs.get("token"))
         else:
@@ -108,6 +109,7 @@ class EditEmailView(View):
         if 'interest_disable' in request.GET:
             interest_disable = eval(request.GET['interest_disable'])
         email_initial = {'token': kwargs.get("token")}
+
         if 'email_disable' in request.GET:
             email_initial[context['email_focus']] = False
 
@@ -168,6 +170,10 @@ class EditEmailView(View):
                         'description': default_update_profile_msg})
                 messages.success(request, user_message[0].description)
                 return self.success_redirect(request)
+            elif "token" in form.errors.keys():
+                self.token_parse_error(request)
+                return self.get_email_link(request)
+
         context = self.get_context(request)
         context['email_form'] = form
         return render(request, 'gbe/update_email.tmpl', context)
