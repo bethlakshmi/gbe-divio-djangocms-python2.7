@@ -370,6 +370,60 @@ class TestMailToBidders(TestFilters):
             response,
             second_bid.teacher.contact.user_object.email)
 
+    def test_pick_just_interest(self):
+        interested = ProfilePreferencesFactory(
+            inform_about=str(['Exhibiting Art or Costumes']))
+        not_interested = ProfilePreferencesFactory()
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [],
+            'email-select-bid_type': [],
+            'email-select-state': [],
+            'email-select-profile_interest': ['Exhibiting Art or Costumes'],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertNotContains(
+            response,
+            not_interested.profile.user_object.email)
+        self.assertContains(
+            response,
+            interested.profile.user_object.email)
+
+    def test_missing_conference(self):
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [],
+            'email-select-bid_type': ["Class"],
+            'email-select-state': ["Draft"],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(response, bid_conf_required)
+
+    def test_missing_state(self):
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': ["Class"],
+            'email-select-state': [],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(response, bid_state_required)
+
+    def test_missing_everything(self):
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [],
+            'email-select-bid_type': [],
+            'email-select-state': [],
+            'email-select-profile_interest': [],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(response, bidder_select_one, html=True)
+
     def test_draft_exclude_unsubscribed(self):
         second_bid = ClassFactory()
         ProfilePreferencesFactory(
@@ -794,6 +848,27 @@ class TestMailToBidders(TestFilters):
         self.assertContains(
             response,
             second_conference.teacher.contact.user_object.email)
+        self.assertNotContains(
+            response,
+            dual_context.teacher.contact.user_object.email)
+        self.assertContains(response, "Excluded:  1")
+
+    def test_exclude_interested_teacher(self):
+        dual_context = ClassContext(conference=self.context.conference)
+        ProfilePreferencesFactory(profile=dual_context.teacher.contact,
+                                  inform_about=str(["Teaching"]))
+        login_as(self.privileged_profile, self)
+        data = {
+            'email-select-conference': [self.context.conference.pk],
+            'email-select-bid_type': ["Class"],
+            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'email-select-x_profile_interest': ["Teaching"],
+            'filter': True,
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertContains(
+            response,
+            self.context.teacher.contact.user_object.email)
         self.assertNotContains(
             response,
             dual_context.teacher.contact.user_object.email)
