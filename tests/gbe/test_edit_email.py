@@ -33,7 +33,11 @@ from django.core.signing import TimestampSigner
 
 
 class TestEditEmail(TestCase):
-    '''Tests for update_profile  view'''
+    '''Tests for editing email (w no login) view'''
+    '''This flow uses the 'I'm not a robot' widget (recaptcha).  To make
+    most tests run, the recaptcha is disabled.  However, there's one test
+    at the bottom that invokes it in order to see a failed recaptcha happens
+    with decent error messaging'''
     view_name = 'email_update'
 
     def setUp(self):
@@ -66,7 +70,8 @@ class TestEditEmail(TestCase):
     def test_update_email_good_token(self):
         url = create_unsubscribe_link(
             self.profile.user_object.email,
-            disable="send_schedule_change_notifications"
+            disable="send_schedule_change_notifications",
+            interests=['Performing']
             )
         response = self.client.get(url)
 
@@ -78,6 +83,11 @@ class TestEditEmail(TestCase):
             '<input type="checkbox" ' +
             'name="send_schedule_change_notifications"' +
             ' id="id_send_schedule_change_notifications" />',
+            html=True)
+        self.assertContains(
+            response,
+            '<input type="checkbox" name="inform_about" value="Performing" ' +
+            'id="id_inform_about_1">',
             html=True)
         self.assertContains(
             response, "shadow-highlight")
@@ -217,6 +227,21 @@ class TestEditEmail(TestCase):
             disable="send_schedule_change_notifications")
         response = self.client.post(self.url, follow=True, data={},)
         self.assertContains(response, send_link_message)
+
+    def test_update_email_post_invalid_form_failed_recaptcha(self):
+        del os.environ['RECAPTCHA_DISABLE']
+        self.url = create_unsubscribe_link(
+            self.profile.user_object.email
+            ) + "?email_disable=send_schedule_change_notifications"
+        response = self.client.post(self.url, follow=True, data={
+            'token': TimestampSigner().sign(self.profile.user_object.email),
+            'send_daily_schedule': True,
+            'send_bid_notifications': False,
+            'send_role_notifications': False,
+            'send_schedule_change_notifications': True})
+        os.environ['RECAPTCHA_DISABLE'] = 'True'
+        self.assertContains(response, "There is an error on the form.")
+        self.assertContains(response, "This field is required.")
 
     def tearDown(self):
         del os.environ['RECAPTCHA_DISABLE']
