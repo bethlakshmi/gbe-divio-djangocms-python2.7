@@ -13,6 +13,7 @@ from tests.factories.gbe_factories import(
     StylePropertyFactory,
     TestURLFactory,
     TechInfoFactory,
+    UserMessageFactory,
     VendorFactory,
 )
 from tests.functions.gbe_functions import (
@@ -32,6 +33,12 @@ class GBEAdminChangeListTests(TestCase):
     def setUp(self):
         self.client = Client()
         login_as(self.privileged_user, self)
+
+    def test_get_usermessage_item(self):
+        msg = UserMessageFactory()
+        response = self.client.get('/admin/gbe/usermessage/%d/change/' % (
+            msg.pk), follow=True)
+        self.assertContains(response, str(msg))
 
     def test_get_techinfo(self):
         act = ActFactory()

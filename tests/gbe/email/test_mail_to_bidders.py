@@ -41,7 +41,7 @@ from tests.gbe.test_filters import TestFilters
 class TestMailToBidders(TestFilters):
     view_name = 'mail_to_bidders'
     priv_list = ['Act', 'Class', 'Costume', 'Vendor', 'Volunteer']
-    get_param = "?email_disable=send_bid_notifications"
+    get_param = "email_disable=send_bid_notifications"
 
     @classmethod
     def setUpTestData(cls):
@@ -569,6 +569,7 @@ class TestMailToBidders(TestFilters):
             'email-select-state': [0, 1, 2, 3, 4, 5],
             'email-select-conference': [self.context.conference.pk],
             'email-select-bid_type': self.priv_list,
+            'email-select-profile_interest': ['Teaching'],
             'send': True
         }
         response = self.client.post(self.url, data=data, follow=True)
@@ -582,7 +583,7 @@ class TestMailToBidders(TestFilters):
                 'email_update',
                 urlconf='gbe.urls',
                 args=[self.context.teacher.contact.user_object.email]
-                )])
+                ), "interest_disable=['Teaching']"])
 
     def test_send_email_reduced_w_fixed_from(self):
         reduced_profile = self.reduced_login()

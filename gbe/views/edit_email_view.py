@@ -11,6 +11,7 @@ from gbe.forms import (
     EmailPreferencesNoLoginForm,
     SendEmailLinkForm,
 )
+from gbe_forms_text import inform_about_options
 from gbe.models import (
     Profile,
     ProfilePreferences,
@@ -107,7 +108,11 @@ class EditEmailView(View):
         context = self.get_context(request)
 
         if 'interest_disable' in request.GET:
-            interest_disable = eval(request.GET['interest_disable'])
+            # avoid eval here - security risk
+            disable_request = request.GET['interest_disable']
+            for option in inform_about_options:
+                if option[0] in disable_request:
+                    interest_disable += [option[0]]
         email_initial = {'token': kwargs.get("token")}
 
         if 'email_disable' in request.GET:
