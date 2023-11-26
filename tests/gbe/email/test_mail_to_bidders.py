@@ -856,20 +856,21 @@ class TestMailToBidders(TestFilters):
 
     def test_exclude_interested_teacher(self):
         dual_context = ClassContext(conference=self.context.conference)
+        keeper = ClassContext(conference=self.context.conference)
         ProfilePreferencesFactory(profile=dual_context.teacher.contact,
-                                  inform_about=str(["Teaching"]))
+                                  inform_about=str(["Teaching", "Performing"]))
+        ProfilePreferencesFactory(profile=keeper.teacher.contact,
+                                  inform_about=str(["Performing"]))
         login_as(self.privileged_profile, self)
         data = {
-            'email-select-conference': [self.context.conference.pk],
-            'email-select-bid_type': ["Class"],
-            'email-select-state': [0, 1, 2, 3, 4, 5],
+            'email-select-profile_interest': ["Performing"],
             'email-select-x_profile_interest': ["Teaching"],
             'filter': True,
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            self.context.teacher.contact.user_object.email)
+            keeper.teacher.contact.user_object.email)
         self.assertNotContains(
             response,
             dual_context.teacher.contact.user_object.email)
