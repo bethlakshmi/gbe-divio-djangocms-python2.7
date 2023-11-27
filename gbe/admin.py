@@ -74,8 +74,7 @@ class ProfileAdmin(admin.ModelAdmin):
 class ProfilePreferencesAdmin(admin.ModelAdmin):
     list_display = ('profile',
                     'in_hotel',
-                    'inform_about',
-                    'show_hotel_infobox')
+                    'inform_about')
     list_filter = ['in_hotel', 'inform_about']
     search_fields = ['profile__display_name',
                      'profile__user_object__email']

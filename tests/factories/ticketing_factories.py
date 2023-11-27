@@ -62,11 +62,6 @@ class PurchaserFactory(DjangoModelFactory):
         model = tickets.Purchaser
     first_name = Sequence(lambda x: "purchaser_first: #%d" % x)
     last_name = Sequence(lambda x: "purchaser_last: #%d" % x)
-    address = Sequence(lambda x: "purchaser_address: #%d" % x)
-    city = "Boston"
-    state = "MA"
-    zip = "12312"
-    country = "USA"
     email = Sequence(lambda x: "purchaser_%d@test.com" % x)
     phone = "111-222-3333"
     matched_to_user = SubFactory(UserFactory)

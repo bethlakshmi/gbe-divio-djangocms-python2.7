@@ -38,7 +38,6 @@ profile_preferences_help_texts = {
 profile_preferences_labels = {
     'inform_about': 'Please let me know about...',
     'in_hotel': 'I am staying at the hotel',
-    'show_hotel_infobox': ('Show hotel booking info on your landing page?'),
     'send_daily_schedule': ('Send me my schedule'),
     'send_bid_notifications': (
       'Email me based on my past and current proposals'),

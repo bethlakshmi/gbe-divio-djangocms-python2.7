@@ -22,7 +22,6 @@ class ProfilePreferences(Model):
                          blank=True,
                          choices=yes_no_maybe_options)
     inform_about = TextField(blank=True)
-    show_hotel_infobox = BooleanField(default=True)
 
     send_daily_schedule = BooleanField(default=True)
     send_bid_notifications = BooleanField(default=True)

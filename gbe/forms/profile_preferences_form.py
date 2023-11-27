@@ -20,6 +20,6 @@ class ProfilePreferencesForm(ModelForm):
 
     class Meta:
         model = ProfilePreferences
-        fields = ['inform_about', 'in_hotel', 'show_hotel_infobox']
+        fields = ['inform_about', 'in_hotel']
         help_texts = profile_preferences_help_texts
         labels = profile_preferences_labels

@@ -15,6 +15,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = ('ticket_item',
                     'purchaser',
                     'amount',
+                    'payment_source',
                     'order_date',
                     'import_date')
     list_filter = ['ticket_item__ticketing_event__conference',
@@ -34,8 +35,6 @@ class PurchaserAdmin(admin.ModelAdmin):
                     'last_name',
                     'email',
                     'phone')
-    list_filter = ['state',
-                   'country']
     search_fields = ['matched_to_user__username',
                      'first_name',
                      'last_name',
