@@ -943,3 +943,6 @@ style_value_help = {
 }
 sender_name_help = ('The name of the sender.  Recipients will get email ' +
                     'from "Sender Name <From>')
+event_search_guide = "You can search by title, event type or id (pk)"
+resource_search_guide = '''You can search by name (of room), or id (pk) -
+ pardon the mess, there is residue from old data that needs cleanup'''

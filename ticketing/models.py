@@ -274,9 +274,6 @@ class EligibilityCondition(models.Model):
             ticketingexclusion__condition=self).exclude(
             ticketing_event__conference__status="completed")
 
-    def __str__(self):
-        return str(self.checklistitem)
-
 
 class TicketingEligibilityCondition(EligibilityCondition):
     '''

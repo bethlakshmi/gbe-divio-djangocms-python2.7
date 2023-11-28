@@ -91,6 +91,14 @@ class TicketingChangeListTests(TestCase):
         self.assertContains(response, role_condition.role)
         self.assertContains(response, role_condition.checklistitem)
 
+    def test_edit_role_eligibility(self):
+        role_condition = RoleEligibilityConditionFactory()
+        response = self.client.get(
+            '/admin/ticketing/roleeligibilitycondition/%d/change/' % (
+                role_condition.pk),
+            follow=True)
+        self.assertContains(response, role_condition.checklistitem.description)
+
     def test_get_ticketing_eligibility_edit_ticket_exclude(self):
         ticket = TicketItemFactory()
         ticket2 = TicketItemFactory(ticketing_event__title=None)

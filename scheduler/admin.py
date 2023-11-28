@@ -22,11 +22,8 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj=obj, change=change, **kwargs)
-        form.base_fields["event"].help_text = (
-            "You can search by title, event type or id (pk)")
-        form.base_fields["resource"].help_text = (
-            "You can search by name (of room), or id (pk) - pardon the mess," +
-            " there is residue from old data that needs cleanup")
+        form.base_fields["event"].help_text = event_search_guide
+        form.base_fields["resource"].help_text = resource_search_guide
         return form
 
     def resource_type(self, obj):
@@ -77,8 +74,7 @@ class PeopleAllocationAdmin(ImportExportActionModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj=obj, change=change, **kwargs)
-        form.base_fields["event"].help_text = (
-            "You can search by title, event type or id (pk)")
+        form.base_fields["event"].help_text = event_search_guide
         return form
 
 
@@ -104,11 +100,8 @@ class EventAdmin(ImportExportModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj=obj, change=change, **kwargs)
-        form.base_fields["parent"].help_text = (
-            "You can search by title, event type or id (pk)")
-        form.base_fields["peer"].help_text = (
-            "You can search by title, event type or id (pk)")
-
+        form.base_fields["parent"].help_text = event_search_guide
+        form.base_fields["peer"].help_text = event_search_guide
         return form
 
 
@@ -171,8 +164,7 @@ class EventLabelAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj=obj, change=change, **kwargs)
-        form.base_fields["event"].help_text = (
-            "You can search by title, event type or id (pk)")
+        form.base_fields["event"].help_text = event_search_guide
         return form
 
 

@@ -22,6 +22,10 @@ from tests.contexts import(
     ShowContext,
     VolunteerContext,
 )
+from gbe_forms_text import (
+    event_search_guide,
+    resource_search_guide,
+)
 from django.contrib.admin.sites import AdminSite
 from datetime import datetime
 
@@ -31,6 +35,7 @@ class SchedulerChangeListTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.privileged_user = setup_admin_w_privs([])
+        cls.context = VolunteerContext()
 
     def setUp(self):
         self.client = Client()
@@ -57,15 +62,43 @@ class SchedulerChangeListTests(TestCase):
                             "Error in resource allocation, no resource")
         self.assertContains(response, "Resource (no child)")
 
+    def test_edit_allocation(self):
+        allocation = ResourceAllocationFactory()
+        response = self.client.get(
+            '/admin/scheduler/resourceallocation/%d/change/' % allocation.pk,
+            follow=True)
+        self.assertContains(response, event_search_guide)
+        self.assertContains(response, resource_search_guide)
+
     def test_get_allocation_w_profile(self):
-        context = VolunteerContext()
         response = self.client.get(
             '/admin/scheduler/peopleallocation/?event__eventlabel__text=%s' % (
-                context.conference.conference_slug), follow=True)
+                self.context.conference.conference_slug), follow=True)
         self.assertContains(response, "Volunteer")
-        self.assertContains(response, str(context.conference.conference_slug))
-        self.assertContains(response, context.people.pk)
-        self.assertContains(response, context.profile.display_name)
+        self.assertContains(response,
+                            str(self.context.conference.conference_slug))
+        self.assertContains(response, self.context.people.pk)
+        self.assertContains(response, self.context.profile.display_name)
+
+    def test_edit_people_alloc(self):
+        context = ActTechInfoContext(act_role="Featured")
+        response = self.client.get(
+            '/admin/scheduler/peopleallocation/%d/change/' % (
+                context.booking.pk), follow=True)
+        self.assertContains(response, event_search_guide)
+        self.assertContains(response, " for Act pk: %d" % (
+            context.act.pk))
+
+    def test_edit_event(self):
+        response = self.client.get(
+            '/admin/scheduler/event/%d/change/' % (
+                self.context.sched_event.pk), follow=True)
+        self.assertContains(response, event_search_guide)
+
+    def test_create_event_label(self):
+        response = self.client.get('/admin/scheduler/eventlabel/add/',
+                                   follow=True)
+        self.assertContains(response, event_search_guide)
 
     def test_get_allocation_class_type(self):
         context = ClassContext()
