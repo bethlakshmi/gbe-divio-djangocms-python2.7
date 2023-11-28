@@ -18,6 +18,15 @@ class People(Model):
     commitment_class_name = CharField(max_length=50, blank=True)
     commitment_class_id = IntegerField(blank=True, null=True)
 
+    def __str__(self):
+        descr = self.class_name + " " + str(self.class_id) + " for "
+        for user in self.users.all():
+            descr = descr + str(user) + ', '
+        if self.commitment_class_name:
+            descr = descr + " for %s pk: %d" % (self.commitment_class_name,
+                                                self.commitment_class_id)
+        return descr
+
     class Meta:
         app_label = "scheduler"
         unique_together = (('class_name',

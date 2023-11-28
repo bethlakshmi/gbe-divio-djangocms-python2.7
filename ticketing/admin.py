@@ -196,7 +196,8 @@ class TicketExcludeAdmin(admin.ModelAdmin):
     list_display = ('pk',
                     'condition',
                     '__str__')
-    autocomplete_fields = ['condition', 'tickets']
+    autocomplete_fields = ['condition']
+    filter_horizontal = ("tickets",)
 
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)

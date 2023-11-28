@@ -279,6 +279,7 @@ class UserStylePreviewAdmin(admin.ModelAdmin):
         'previewer')
     autocomplete_fields = ['previewer']
 
+
 class VendorAdmin(BidAdmin):
     list_display = (
         'pk',
