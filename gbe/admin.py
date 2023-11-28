@@ -178,6 +178,7 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
                      'selector__used_for',
                      'selector__description',
                      'style_property']
+    autocomplete_fields = ['selector']
 
 
 class SocialLinkAdmin(admin.ModelAdmin):
@@ -213,6 +214,7 @@ class StyleValueAdmin(ImportExportActionModelAdmin):
         'style_property__style_property']
     search_fields = ['style_property__style_property',
                      'style_property__selector__selector']
+    autocomplete_fields = ['style_property']
 
 
 class StyleVersionAdmin(ImportExportActionModelAdmin):
@@ -275,7 +277,7 @@ class UserStylePreviewAdmin(admin.ModelAdmin):
     list_display = (
         'version',
         'previewer')
-
+    autocomplete_fields = ['previewer']
 
 class VendorAdmin(BidAdmin):
     list_display = (

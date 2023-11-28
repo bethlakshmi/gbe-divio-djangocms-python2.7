@@ -31,3 +31,4 @@ class Room(LocationItem):
 
     class Meta:
         app_label = "gbe"
+        ordering = ['name']
