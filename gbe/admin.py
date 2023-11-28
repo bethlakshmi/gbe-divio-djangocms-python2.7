@@ -27,6 +27,7 @@ class StaffAreaAdmin(admin.ModelAdmin):
                      'staff_lead',)
     list_display_links = ('id',)
     list_filter = ['conference__conference_slug', 'slug']
+    autocomplete_fields = ['staff_lead']
 
 
 class BidAdmin(ImportExportActionModelAdmin):
@@ -47,6 +48,7 @@ class ClassAdmin(BidAdmin):
                     'created_at',
                     'updated_at')
     search_fields = ['b_title', 'teacher_bio__name']
+    autocomplete_fields = ['teacher_bio']
 
 
 class ActAdmin(BidAdmin):
@@ -57,18 +59,21 @@ class ActAdmin(BidAdmin):
                     'created_at',
                     'updated_at')
     search_fields = ['b_title', 'bio__name']
+    autocomplete_fields = ['bio']
 
 
 class PerformerAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'contact', 'label')
     search_fields = ['name', 'contact__display_name']
     list_filter = ['multiple_performers']
+    autocomplete_fields = ['contact']
 
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('display_name', 'user_object', 'phone', 'purchase_email')
     search_fields = ['display_name',
                      'user_object__email']
+    autocomplete_fields = ['user_object']
 
 
 class ProfilePreferencesAdmin(admin.ModelAdmin):
@@ -335,6 +340,7 @@ class EmailFrequencyAdmin(admin.ModelAdmin):
 class ArticleAdmin(PublishedAdmin):
     readonly_fields = [] + add_to_readonly_fields()
     list_display = ['pk', 'title', ] + add_to_list_display()
+    autocomplete_fields = ['creator']
 
 
 admin.site.register(ActCastingOption, CastingAdmin)
