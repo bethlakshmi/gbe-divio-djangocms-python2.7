@@ -254,7 +254,11 @@ inform_about_options = [('Exhibiting Art or Costumes',
                         ('Teaching', 'Teaching'),
                         ('Vending', 'Vending'),
                         ('Volunteering', 'Volunteering at the Expo')]
-
+bidder_select_one = '''You must select at least one set of criteria - either
+    the bidder (conference, statue and bid type) or the profile's interest'''
+bid_state_required = "At least one bid state is required when emailing bidders"
+bid_type_required = "At least one bid type is required when emailing bidders"
+bid_conf_required = "At least one conference is required when emailing bidders"
 how_heard_options = [('Previous attendee', 'Attended Previously'),
                      ('B.A.B.E.', 'B.A.B.E.'),
                      ('Facebook', 'Facebook'),
