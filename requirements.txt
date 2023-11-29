@@ -8,7 +8,7 @@
 
 aiocontextvars==0.2.2
     # via aldryn-django
-aldryn-addons @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-addons/2.2.0/8c3dde04-debd-4e6e-bc8d-fd913ca258e2/aldryn-addons-2.2.0.tar.gz
+aldryn-addons @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-addons/2.1.0/ea070c92-bab4-4d6c-aea0-59b99579885f/aldryn-addons-2.1.0.tar.gz
     # via
     #   -r /workspace/requirements.in
     #   aldryn-django
@@ -22,7 +22,7 @@ aldryn-common @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-common
     # via -r /workspace/requirements.in
 aldryn-django @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django/3.2.23.0/b41816bb-f7e9-4e99-b5de-88b2912730b1/aldryn-django-3.2.23.0.tar.gz
     # via -r /workspace/requirements.in
-aldryn-django-cms @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.11.4.0/69112a40-de7f-4d97-bb5b-3a6566fc7326/aldryn-django-cms-3.11.4.0.tar.gz
+aldryn-django-cms @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-django-cms/3.11.1.0/7a6cb951-9840-4fd2-b734-36a2d49d41d8/aldryn-django-cms-3.11.1.0.tar.gz
     # via -r /workspace/requirements.in
 aldryn-sites==0.6.0
     # via aldryn-django
@@ -117,7 +117,7 @@ django-classy-tags==4.1.0
     # via
     #   django-cms
     #   django-sekizai
-django-cms==3.11.4
+django-cms==3.11.1
     # via
     #   aldryn-django-cms
     #   djangocms-attributes-field
@@ -291,9 +291,7 @@ openpyxl==3.1.2
 orderedmultidict==1.0.1
     # via furl
 packaging==23.2
-    # via
-    #   django-cms
-    #   pytest
+    # via pytest
 pep8==1.7.1
     # via -r /workspace/requirements.in
 pillow==10.1.0
