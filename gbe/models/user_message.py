@@ -7,6 +7,9 @@ class UserMessage(models.Model):
     view = models.CharField(max_length=128)
     code = models.CharField(max_length=128)
 
+    def __str__(self):
+        return "%s: %s" % (self.view, self.code)
+
     class Meta:
         app_label = "gbe"
         unique_together = (('view', 'code'),)

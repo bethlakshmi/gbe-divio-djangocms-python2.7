@@ -26,11 +26,8 @@
       {% else %}Select Recipients{% endif %}</h3>
   </div>
   {% if everyone %}<div id="collapse1" class="panel-collapse collapse">{% endif %}
-  <div class="card-body">
+  <div class="card-body gbe-flat-list">
   <font class="gbe-form-error">
-  {% if selection_form.errors %}
-    <p class="gbe-form-error"> There is an error on the selection form.</p>
-  {% endif %}
   {{ selection_form.non_field_errors }}</font>
   {% block select_recipent_form %}{% endblock %}
   </div>

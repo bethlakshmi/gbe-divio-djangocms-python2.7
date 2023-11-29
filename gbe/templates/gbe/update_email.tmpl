@@ -23,8 +23,9 @@
   {% for hidden in email_form.hidden_fields %}
     {{ hidden }}
   {% endfor %}
-  {% for field in email_form.visible_fields%}
+  {% for field in email_form.visible_fields %}
   <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %}">
+  {% if not field.name == "inform_about" %}
     <div class="col-lg-2 col-md-2 col-xs-2 text-right">{% if field.label == "" %}<br>{% endif %}
     {{ field }}</div>
     <div class="col-lg-10 col-md-9 col-xs-9">
@@ -34,9 +35,13 @@
           <span style="width:200px;float:right;text-align:left;">
           {{ field.help_text }}
           </span></span>{% endif %}
-      {% if field.errors %}<br>
-      <font class="gbe-form-error">{{ field.errors }}</font>{% endif %}</div>
-  </div>
+  {% else %}</div>
+  <br>
+  <h3 class="gbe-subtitle">{{field.label}}</h3>
+  <div class="row"><div class="col-12 gbe-flat-list">
+  {{ field }}{% endif %}
+  {% if field.errors %}<br>
+  <font class="gbe-form-error">{{ field.errors }}</font>{% endif %}</div></div>
   {% endfor %}
   {% include "form_table.tmpl" %}
 </div>

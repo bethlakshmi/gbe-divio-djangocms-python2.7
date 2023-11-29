@@ -22,10 +22,16 @@
   <h3 class="gbe-subtitle">Email Options</h3>
   {% for field in email_form.visible_fields%}
   <div class="row {% if field.name == email_focus %}font-weight-bold shadow-highlight{% endif %} pb-3">
+  {% if not field.name == "inform_about" %}
     <div class="col-lg-1 col-md-1 col-xs-1">{{ field }}</div>
     <div class="col-lg-11 col-md-10 col-xs-10">
       {{ field.label }}{% if field.help_text %}<br>
       <small>{{ field.help_text }}</small>{% endif %}</div>
+  {% else %}</div>
+    <br>
+    <h3 class="gbe-subtitle">{{field.label}}</h3>
+    <div class="row"><div class="col-12 gbe-flat-list">
+    {{ field }}</div>{% endif %}
   </div>
   {% endfor %}
 </div>

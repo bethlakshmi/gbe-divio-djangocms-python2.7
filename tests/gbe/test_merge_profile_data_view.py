@@ -47,7 +47,7 @@ class TestMergeProfileData(TestCase):
                 'phone': '617-555-2121',
                 'best_time': 'Any',
                 'how_heard': 'Facebook',
-                'prefs-inform_about': 'Performing',
+                'email_pref-inform_about': 'Performing',
                 'in_hotel': True,
                 'email_pref-send_daily_schedule': True,
                 'email_pref-send_bid_notifications': False,
@@ -79,8 +79,8 @@ class TestMergeProfileData(TestCase):
             html=True)
         self.assertContains(
             response,
-            '<input type="checkbox" name="prefs-inform_about" ' +
-            'value="Performing" id="id_prefs-inform_about_1" checked>',
+            '<input type="checkbox" name="email_pref-inform_about" ' +
+            'value="Performing" id="id_email_pref-inform_about_1" checked>',
             html=True)
         self.assertContains(
             response,

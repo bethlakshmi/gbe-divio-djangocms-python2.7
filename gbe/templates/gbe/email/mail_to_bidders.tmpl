@@ -8,25 +8,41 @@
   <form class="form-inline" action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <ul class="list-group list-group-flush"><li class="list-group-item gbe-bg-light">
-      <h3 class="card-subtitle mb-2 gbe-text-muted">Include</h3><br>
+      <h2 class="card-subtitle mb-2 gbe-text-muted">Include</h2><br>
     <div class="row email-select">
     {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.conference %}
+    <div class="col-12"><hr></div>
     </div>
     <div class="row email-select">
     {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.bid_type %}
+    <div class="col-12"><hr></div>
     </div>
     <div class="row email-select">
     {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.state %}
-    </div></li><li class="list-group-item gbe-bg-light">
-      <h3 class="card-subtitle mb-2 gbe-text-muted">Exclude</h3><br>
+    <div class="col-5"><hr></div><div class="col-2"><h4 class="gbe-text-muted">AND / OR</h4></div><div class="col-5"><hr></div>
+    </div>
+    <div class="row email-select">
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.profile_interest %}
+    </div></li>
+
+    <li class="list-group-item gbe-bg-light">
+      <h2 class="card-subtitle mb-2 gbe-text-muted">Exclude</h2><br>
     <div class="row email-select">
     {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_conference %}
+    <div class="col-12"><hr></div>
     </div>
     <div class="row email-select">
     {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_bid_type %}
+    <div class="col-12"><hr></div>
     </div>
     <div class="row email-select">
-    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_state %}</div></li></ul>
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_state %}
+    <div class="col-5"><hr></div><div class="col-2"><h4 class="gbe-text-muted">AND / OR</h4></div><div class="col-5"><hr></div>
+    </div>
+    <div class="row email-select">
+    {% include "filter_checkbox_horizontal.tmpl" with field=selection_form.x_profile_interest %}
+    </div>
+    </li></ul>
     <div class="row email-select justify-content-end mt-3">
       <button class="btn gbe-btn-primary" type="submit" name="filter" value="Filter">Filter</button>
     </div>

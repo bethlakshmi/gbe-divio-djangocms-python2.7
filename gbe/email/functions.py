@@ -489,11 +489,13 @@ def get_user_email_templates(user):
                   key=lambda item: (item['name'], item['category']))
 
 
-def create_unsubscribe_link(email, disable=None):
+def create_unsubscribe_link(email, disable=None, interests=None):
     token = TimestampSigner().sign(email)
-    link = reverse('email_update', urlconf='gbe.urls', args=[token])
-    if disable:
-        link = link + "?email_disable=" + disable
+    link = reverse('email_update', urlconf='gbe.urls', args=[token]) + "?"
+    if disable is not None:
+        link = link + "email_disable=" + disable + "&"
+    if interests is not None and len(interests) > 0:
+        link = link + "interest_disable=" + str(interests)
     return link
 
 
