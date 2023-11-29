@@ -135,7 +135,7 @@ django-compressor==4.4
     # via aldryn-django-cms
 django-debug-toolbar==4.2.0
     # via -r /workspace/requirements.in
-django-filer @ https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.2.6/de2941f5-d8de-40ca-8ca1-b3533b0f61db/django-filer-2.2.6.tar.gz
+django-filer @ https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.2.4/fec06386-b801-4861-b100-b48310c26ff7/django-filer-2.2.4.tar.gz
     # via
     #   -r /workspace/requirements.in
     #   djangocms-bootstrap4
