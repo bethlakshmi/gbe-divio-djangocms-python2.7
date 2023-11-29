@@ -79,18 +79,12 @@ class EditProfileView(LoginRequiredMixin, View):
             'last_name': self.profile.user_object.last_name,
             'display_name': display_name,
             'how_heard': how_heard_initial})
-        inform_initial = []
-        try:
-            if len(self.profile.preferences.inform_about.strip()) > 0:
-                inform_initial = eval(self.profile.preferences.inform_about)
-        except ProfilePreferences.DoesNotExist:
+        if not hasattr(self.profile, 'preferences'):
             pref = ProfilePreferences(profile=self.profile)
             pref.save()
 
         prefs_form = ProfilePreferencesForm(prefix='prefs',
-                                            instance=self.profile.preferences,
-                                            initial={'inform_about':
-                                                     inform_initial})
+                                            instance=self.profile.preferences)
         email_form = EmailPreferencesForm(prefix='email_pref',
                                           instance=self.profile.preferences)
         return render(request, self.template_name,

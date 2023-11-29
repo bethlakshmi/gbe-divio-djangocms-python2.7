@@ -52,7 +52,7 @@ class ParticipantForm(ModelForm):
         label=participant_labels['how_heard'])
 
     def clean(self):
-        changed = self.changed_data
+        cleaned_data = super(ParticipantForm, self).clean()
         if self.has_changed() and 'email' in self.cleaned_data:
             from gbe.models import UserMessage
             if User.objects.filter(
