@@ -294,7 +294,7 @@ packaging==23.2
     # via pytest
 pep8==1.7.1
     # via -r /workspace/requirements.in
-pillow==10.1.0
+pillow==9.5.0
     # via
     #   -r /workspace/requirements.in
     #   django-simple-captcha
