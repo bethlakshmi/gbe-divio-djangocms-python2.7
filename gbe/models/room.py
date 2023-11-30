@@ -21,7 +21,7 @@ class Room(LocationItem):
         blank=True,
         help_text="This can include HTML, and it will be for formatting.")
     map_embed = TextField(
-        max_length=1000, 
+        max_length=1000,
         blank=True,
         help_text="Use the embedded map instructions and this will display " +
         "on event pages.  With Google, small size is recommended.")
@@ -31,3 +31,4 @@ class Room(LocationItem):
 
     class Meta:
         app_label = "gbe"
+        ordering = ['name']

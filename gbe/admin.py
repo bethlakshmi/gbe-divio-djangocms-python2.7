@@ -27,6 +27,7 @@ class StaffAreaAdmin(admin.ModelAdmin):
                      'staff_lead',)
     list_display_links = ('id',)
     list_filter = ['conference__conference_slug', 'slug']
+    autocomplete_fields = ['staff_lead']
 
 
 class BidAdmin(ImportExportActionModelAdmin):
@@ -47,6 +48,7 @@ class ClassAdmin(BidAdmin):
                     'created_at',
                     'updated_at')
     search_fields = ['b_title', 'teacher_bio__name']
+    autocomplete_fields = ['teacher_bio']
 
 
 class ActAdmin(BidAdmin):
@@ -57,25 +59,27 @@ class ActAdmin(BidAdmin):
                     'created_at',
                     'updated_at')
     search_fields = ['b_title', 'bio__name']
+    autocomplete_fields = ['bio']
 
 
 class PerformerAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'contact', 'label')
     search_fields = ['name', 'contact__display_name']
     list_filter = ['multiple_performers']
+    autocomplete_fields = ['contact']
 
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('display_name', 'user_object', 'phone', 'purchase_email')
     search_fields = ['display_name',
                      'user_object__email']
+    autocomplete_fields = ['user_object']
 
 
 class ProfilePreferencesAdmin(admin.ModelAdmin):
     list_display = ('profile',
                     'in_hotel',
-                    'inform_about',
-                    'show_hotel_infobox')
+                    'inform_about')
     list_filter = ['in_hotel', 'inform_about']
     search_fields = ['profile__display_name',
                      'profile__user_object__email']
@@ -174,6 +178,7 @@ class StylePropertyAdmin(ImportExportActionModelAdmin):
                      'selector__used_for',
                      'selector__description',
                      'style_property']
+    autocomplete_fields = ['selector']
 
 
 class SocialLinkAdmin(admin.ModelAdmin):
@@ -209,6 +214,7 @@ class StyleValueAdmin(ImportExportActionModelAdmin):
         'style_property__style_property']
     search_fields = ['style_property__style_property',
                      'style_property__selector__selector']
+    autocomplete_fields = ['style_property']
 
 
 class StyleVersionAdmin(ImportExportActionModelAdmin):
@@ -271,6 +277,7 @@ class UserStylePreviewAdmin(admin.ModelAdmin):
     list_display = (
         'version',
         'previewer')
+    autocomplete_fields = ['previewer']
 
 
 class VendorAdmin(BidAdmin):
@@ -336,6 +343,7 @@ class EmailFrequencyAdmin(admin.ModelAdmin):
 class ArticleAdmin(PublishedAdmin):
     readonly_fields = [] + add_to_readonly_fields()
     list_display = ['pk', 'title', ] + add_to_list_display()
+    autocomplete_fields = ['creator']
 
 
 admin.site.register(ActCastingOption, CastingAdmin)

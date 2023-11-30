@@ -67,7 +67,6 @@ class TestEditProfile(TestCase):
                 'how_heard': 'Facebook',
                 'prefs-inform_about': 'Performing',
                 'in_hotel': True,
-                'show_hotel_infobox': False,
                 'email_pref-send_daily_schedule': True,
                 'email_pref-send_bid_notifications': False,
                 'email_pref-send_role_notifications': False,

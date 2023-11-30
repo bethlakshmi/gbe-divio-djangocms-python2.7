@@ -18,6 +18,13 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
     list_filter = ['event__event_style',
                    'event__eventlabel__text',
                    'resource__location']
+    autocomplete_fields = ['event', 'resource']
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj=obj, change=change, **kwargs)
+        form.base_fields["event"].help_text = event_search_guide
+        form.base_fields["resource"].help_text = resource_search_guide
+        return form
 
     def resource_type(self, obj):
         resource = Resource.objects.filter(allocations=obj)[0]
@@ -25,6 +32,13 @@ class ResourceAllocationAdmin(ImportExportActionModelAdmin):
 
     def event_type(self, obj):
         return str(obj.event.event_style)
+
+
+class ResourceAdmin(admin.ModelAdmin):
+    list_display = ('id',
+                    'type',
+                    'as_subtype')
+    search_fields = ['id', 'location']
 
 
 class PeopleAllocationAdmin(ImportExportActionModelAdmin):
@@ -39,6 +53,12 @@ class PeopleAllocationAdmin(ImportExportActionModelAdmin):
                    'event__eventlabel__text',
                    'role',
                    'people__class_name']
+    search_fields = ['people__users__profile__display_name',
+                     'people__users__username',
+                     'people__users__email',
+                     'event__title',
+                     'people__commitment_class_id']
+    autocomplete_fields = ['people', 'event']
 
     def user_list(self, obj):
         people = ""
@@ -51,6 +71,11 @@ class PeopleAllocationAdmin(ImportExportActionModelAdmin):
 
     def event_type(self, obj):
         return str(obj.event.event_style)
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj=obj, change=change, **kwargs)
+        form.base_fields["event"].help_text = event_search_guide
+        return form
 
 
 class EventAdmin(ImportExportModelAdmin):
@@ -70,7 +95,14 @@ class EventAdmin(ImportExportModelAdmin):
                    'max_volunteer',
                    'max_commitments',
                    'approval_needed', ]
-    search_fields = ['title', 'event_style']
+    search_fields = ['title', 'event_style', 'id']
+    autocomplete_fields = ['parent', 'peer']
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj=obj, change=change, **kwargs)
+        form.base_fields["parent"].help_text = event_search_guide
+        form.base_fields["peer"].help_text = event_search_guide
+        return form
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -86,6 +118,7 @@ class OrderAdmin(admin.ModelAdmin):
                      'people_allocated__people__users__email',
                      'people_allocated__event__title',
                      'people_allocated__people__commitment_class_id']
+    autocomplete_fields = ['people_allocated']
 
     def event(self, obj):
         return obj.people_allocated.event
@@ -115,6 +148,7 @@ class PeopleAdmin(admin.ModelAdmin):
                      'users__profile__display_name',
                      'class_id',
                      'commitment_class_id']
+    filter_horizontal = ("users",)
 
     def user_list(self, obj):
         people = ""
@@ -126,6 +160,12 @@ class PeopleAdmin(admin.ModelAdmin):
 class EventLabelAdmin(admin.ModelAdmin):
     list_display = ('text', 'event')
     list_filter = ['text']
+    autocomplete_fields = ['event']
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj=obj, change=change, **kwargs)
+        form.base_fields["event"].help_text = event_search_guide
+        return form
 
 
 @admin.register(EventEvalQuestion)
@@ -148,7 +188,7 @@ admin.site.register(Location)
 admin.site.register(LocationItem)
 admin.site.register(Ordering, OrderAdmin)
 admin.site.register(ResourceItem)
-admin.site.register(Resource)
+admin.site.register(Resource, ResourceAdmin)
 admin.site.register(ResourceAllocation, ResourceAllocationAdmin)
 admin.site.register(PeopleAllocation, PeopleAllocationAdmin)
 admin.site.register(People, PeopleAdmin)

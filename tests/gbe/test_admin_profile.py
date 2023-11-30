@@ -43,8 +43,7 @@ class TestAdminProfile(TestCase):
                 'best_time': 'Any',
                 'how_heard': 'Facebook',
                 'prefs-inform_about': 'Performing',
-                'in_hotel': True,
-                'show_hotel_infobox': False}
+                'in_hotel': True}
         if invalid:
             del(data['email'])
         return data

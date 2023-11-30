@@ -101,11 +101,6 @@ def pay_application_fee(sender, **kwargs):
             buyer = Purchaser(matched_to_user=user,
                               first_name=ipn_obj.first_name,
                               last_name=ipn_obj.last_name,
-                              address=ipn_obj.address_street,
-                              city=ipn_obj.address_city,
-                              state=ipn_obj.address_state,
-                              zip=ipn_obj.address_zip,
-                              country=ipn_obj.address_country,
                               email=ipn_obj.payer_email,
                               phone=ipn_obj.contact_phone)
             buyer.save()
