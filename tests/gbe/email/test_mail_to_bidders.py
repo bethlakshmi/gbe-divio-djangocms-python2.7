@@ -517,8 +517,8 @@ class TestMailToBidders(TestFilters):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertContains(
             response,
-            '<input type="email" name="sender" ' +
-            'value="%s" id="id_sender" />' % (
+            ('<input type="email" name="sender" value="%s" ' +
+             'maxlength="320" id="id_sender">')  % (
                 self.privileged_profile.user_object.email),
             html=True)
 
