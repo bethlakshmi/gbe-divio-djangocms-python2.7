@@ -31,7 +31,8 @@ mock
 pytest
 pytest-django
 pytest-cov
-pillow
+# locked to old due to compatibility with easy-thumbnails
+pillow==9.5.0
 tablib
 aldryn-snake
 django-paypal
