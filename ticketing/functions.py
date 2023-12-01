@@ -5,6 +5,7 @@ from ticketing.models import (
     TicketItem,
 )
 from ticketing.eventbrite import import_eb_ticket_items
+from ticketing.humantix import HumantixClient
 from ticketing.brown_paper import import_bpt_ticket_items
 from gbetext import class_styles
 
@@ -14,10 +15,12 @@ def import_ticket_items():
         # import BPT
         msg = "0"
         is_success = True
+        humantix = HumantixClient()
         msg, is_success = import_eb_ticket_items()
+        hmsg, his_success = humantix.import_ticket_items()
         count = import_bpt_ticket_items()
-
         return [(msg, is_success),
+                (hmsg, his_success),
                 ("BPT: imported %d tickets" % count, True)]
 
 
