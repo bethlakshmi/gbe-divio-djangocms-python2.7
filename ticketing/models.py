@@ -137,6 +137,7 @@ class TicketItem(models.Model):
     '''
     ticket_id = models.CharField(max_length=30)
     title = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
     cost = models.DecimalField(max_digits=20, decimal_places=2)
     datestamp = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=30)
@@ -173,6 +174,20 @@ class TicketItem(models.Model):
 
     class Meta:
         ordering = ['cost']
+
+
+class TicketType(TicketItem):
+    '''With Humanitix, the event is the whole conference.  Ticket types
+    are what can actually link to Scheduled Events.'''
+    linked_events = models.ManyToManyField('scheduler.Event', blank=True)
+
+
+class TicketPackage(TicketItem):
+    '''Humantix gives us a way to package tickets together, these also work
+    like our passes - Whole Shebang, Conference, etc.'''
+    ticket_types = models.ManyToManyField(TicketType, blank=True)
+    conference_only_pass = models.BooleanField(default=False)
+    whole_shebang = models.BooleanField(default=False)
 
 
 class Purchaser(models.Model):

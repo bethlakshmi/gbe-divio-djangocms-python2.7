@@ -49,7 +49,7 @@ class HumantixClient:
         if not proceed:
             return return_tuple
 
-        event_count, msg = self.load_events()
+        event_count, msg = self.load_tickets()
 
         if len(msg) > 0:
             status = SyncStatus(is_success=False,
@@ -63,21 +63,6 @@ class HumantixClient:
                 is_success=True,
                 import_type=self.import_type)
             status.import_number = event_count
-            status.save()
-
-        tickets_count, msg = self.load_tickets()
-        if len(msg) > 0:
-            status = SyncStatus(is_success=False,
-                                error_msg=msg,
-                                import_type=self.import_type,
-                                import_number=tickets_count)
-            status.save()
-            return msg, False
-        else:
-            status, created = SyncStatus.objects.get_or_create(
-                is_success=True,
-                import_type=self.import_type)
-            status.import_number = tickets_count
             status.save()
 
         return "Successfully imported %d events, %d tickets" % (
@@ -96,8 +81,6 @@ class HumantixClient:
                 'page': page,
                 'inFutureOnly': 'true',
                 })
-            raise Exception(response.json())
-
             if response.status_code != 200 or 'events' not in response.json():
                 return 0, self.error_create(response)
             elif len(response.json()['events']) == 0:
