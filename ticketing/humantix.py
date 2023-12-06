@@ -2,7 +2,6 @@ import requests
 import re
 import pytz
 from datetime import datetime
-from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth.models import User
 from ticketing.models import (
@@ -10,7 +9,7 @@ from ticketing.models import (
     Purchaser,
     SyncStatus,
     TicketingEvents,
-    TicketItem,
+    TicketType,
     Transaction,
 )
 from gbetext import (
@@ -49,7 +48,7 @@ class HumantixClient:
         if not proceed:
             return return_tuple
 
-        event_count, msg = self.load_tickets()
+        load_counts, msg = self.load_events()
 
         if len(msg) > 0:
             status = SyncStatus(is_success=False,
@@ -62,18 +61,21 @@ class HumantixClient:
             status, created = SyncStatus.objects.get_or_create(
                 is_success=True,
                 import_type=self.import_type)
-            status.import_number = event_count
+            status.import_number = load_counts['events']
             status.save()
 
-        return "Successfully imported %d events, %d tickets" % (
-            event_count,
-            tickets_count), True
+        return "Successfully imported %d events, %d tickets, %d packages" % (
+            load_counts['events'],
+            load_counts['tickettypes'],
+            load_counts['ticketpackages']), True
 
 
     def load_events(self):
         from gbe.functions import get_current_conference
         has_more_items = True
         event_count = 0
+        ticket_count = 0
+        package_count = 0
         page = 1
         conference = get_current_conference()
         while has_more_items:
@@ -83,7 +85,8 @@ class HumantixClient:
                 })
             if response.status_code != 200 or 'events' not in response.json():
                 return 0, self.error_create(response)
-            elif len(response.json()['events']) == 0:
+            elif len(response.json()['events']) == 0 or (
+                    response.json()['total'] < response.json()['pageSize']):
                 has_more_items = False
             else:
                 page = page + 1
@@ -92,17 +95,54 @@ class HumantixClient:
                 if self.organizer_id is None or len(
                         self.organizer_id) == 0 or (
                         event["organiserId"] == self.organizer_id):
+                    ticketed_event = None
                     if not TicketingEvents.objects.filter(
                             event_id=event['_id']).exists():
-                        new_event = TicketingEvents(
+                        ticketed_event = TicketingEvents(
                             event_id=event['_id'],
                             title=event['name'],
                             description=event['description'],
                             conference=conference,
                             source=3)
-                        new_event.save()
+                        ticketed_event.save()
                         event_count = event_count + 1
-        return event_count, ""
+                    else:
+                        ticketed_event = TicketingEvents.objects.get(
+                            event_id=event['_id'])
+                    ticket_count = self.load_tickets(
+                        event["ticketTypes"],
+                        ticketed_event) + ticket_count
+        return {'events': event_count,
+                'tickettypes': ticket_count,
+                'ticketpackages': package_count}, ""
+
+
+    def load_tickets(self, ticketTypes, event):
+        ti_count = 0
+        for tickettype in ticketTypes:
+            if not TicketType.objects.filter(
+                    ticket_id=tickettype['_id']).exists():
+                ticket = TicketType(
+                    ticket_id=tickettype['_id'],
+                    title=tickettype['name'],
+                    modified_by="Humanitix Import",
+                    ticketing_event=event)
+                ti_count = ti_count + 1
+            else:
+                ticket = TicketType.objects.get(ticket_id=tickettype['_id'])
+            
+            ticket.live = not tickettype['disabled']
+
+            if 'priceRange' in tickettype.keys() and (
+                    tickettype['priceRange']['enabled']) and (
+                    'min' in tickettype['priceRange'].keys()):
+                ticket.cost = tickettype['priceRange']['min']
+                ticket.is_minimum = True
+            else:
+                ticket.cost = tickettype['price']
+            ticket.save()
+
+        return ti_count
 
 
     def perform_api_call(self, path, params):
