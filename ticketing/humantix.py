@@ -9,6 +9,7 @@ from ticketing.models import (
     Purchaser,
     SyncStatus,
     TicketingEvents,
+    TicketPackage,
     TicketType,
     Transaction,
 )
@@ -112,6 +113,9 @@ class HumantixClient:
                     ticket_count = self.load_tickets(
                         event["ticketTypes"],
                         ticketed_event) + ticket_count
+                    package_count = self.load_packages(
+                        event["packagedTickets"],
+                        ticketed_event) + package_count
         return {'events': event_count,
                 'tickettypes': ticket_count,
                 'ticketpackages': package_count}, ""
@@ -127,10 +131,12 @@ class HumantixClient:
                     title=tickettype['name'],
                     modified_by="Humanitix Import",
                     ticketing_event=event)
+                if 'description' in tickettype.keys():
+                    ticket.description = tickettype['description']
                 ti_count = ti_count + 1
             else:
                 ticket = TicketType.objects.get(ticket_id=tickettype['_id'])
-            
+
             ticket.live = not tickettype['disabled']
 
             if 'priceRange' in tickettype.keys() and (
@@ -140,6 +146,29 @@ class HumantixClient:
                 ticket.is_minimum = True
             else:
                 ticket.cost = tickettype['price']
+            ticket.save()
+
+        return ti_count
+
+
+    def load_packages(self, packages, event):
+        ti_count = 0
+        for package in packages:
+            if not TicketPackage.objects.filter(
+                    ticket_id=package['_id']).exists():
+                ticket = TicketPackage(
+                    ticket_id=package['_id'],
+                    title=package['name'],
+                    modified_by="Humanitix Import",
+                    ticketing_event=event)
+                ti_count = ti_count + 1
+                if 'description' in package.keys():
+                    ticket.description = package['description']
+            else:
+                ticket = TicketPackage.objects.get(ticket_id=package['_id'])
+            
+            ticket.live = not package['disabled']
+            ticket.cost = package['price']
             ticket.save()
 
         return ti_count

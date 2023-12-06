@@ -192,6 +192,7 @@ admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
 admin.site.register(TicketType, TicketItemAdmin)
+admin.site.register(TicketPackage, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TicketingEligibilityCondition,
