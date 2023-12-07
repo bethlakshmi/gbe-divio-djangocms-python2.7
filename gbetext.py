@@ -643,6 +643,12 @@ no_settings_error = '''There are no Eventbrite settings for this server.  Go \
 to admin and ticketing -> EventbrightSettings and enter settings.  Oauth
 token can be found in the API settings in EventBrite.  After that, return
 here to get the organization id.'''
+no_ht_settings_error = '''There are no Humanitix settings for this server.  \
+Go to admin and ticketing -> HumanitixSettings and enter settings.  API key
+ can be found in your Humantix profile under Advanced Settings --> Public API
+  Key.  Organisation ID is the Host's ID, you can find it in the URL that
+  is shown in your Profile on the Host's page, it's the inscruitable string
+  between two slashes.'''
 intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \
 events.  For Paypal, it's simply a container for a set of prices.  These \
 containers define payment for act fees, vendor fees, or entry into the expo \

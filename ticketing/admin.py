@@ -188,6 +188,7 @@ class TicketExcludeAdmin(admin.ModelAdmin):
 
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
+admin.site.register(HumanitixSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)

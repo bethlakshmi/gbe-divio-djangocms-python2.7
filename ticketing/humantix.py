@@ -5,7 +5,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.models import User
 from ticketing.models import (
-    EventbriteSettings,
+    HumanitixSettings,
     Purchaser,
     SyncStatus,
     TicketingEvents,
@@ -14,7 +14,7 @@ from ticketing.models import (
     Transaction,
 )
 from gbetext import (
-    no_settings_error,
+    no_ht_settings_error,
     org_id_instructions,
     import_transaction_message,
     sync_off_instructions,
@@ -26,13 +26,34 @@ from ticketing.brown_paper import (
 
 
 class HumantixClient:
-
-    # TODO - make into a setting in DB
-    settings = {
-        'api_key': "c60d691db03f9e8d6276c4fc60e44de39f7fb3fda86f7a3178306e38c7a9c1f2d128074401bfcaad3533078a9e1c045e9f92406698007180968f96526512489d418dc2219c0c40d79fd7df32c1414203067424994730561a051d9b6c2b43768d88fd3f92faf999179732e0003308bd",
-        'endpoint': "https://api.humanitix.com"}
-    organizer_id = "6568c4ba44bea90207cb28ef"
     import_type = "Humanitix Event"
+    settings = None
+
+    def setup_api(self):
+        from gbe.models import UserMessage
+        system_state = 1
+        if settings.DEBUG:
+            system_state = 0
+        if HumanitixSettings.objects.filter(system=system_state).exists():
+            self.settings = HumanitixSettings.objects.get(system=system_state)
+        else:
+            return False, (UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="NO_OAUTH",
+                defaults={
+                    'summary': "Instructions to Set Humanitix API token",
+                    'description': no_ht_settings_error}
+                )[0].description, False)
+
+        if not self.settings.active_sync:
+            return False, (UserMessage.objects.get_or_create(
+                view=self.__class__.__name__,
+                code="SYNC_OFF",
+                defaults={
+                    'summary': "Ticketing Sync is OFF",
+                    'description': sync_off_instructions}
+                )[0].description % "Humanitix", True)
+        return True, ("", "")
 
     def import_ticket_items(self):
 
@@ -41,11 +62,9 @@ class HumantixClient:
           - a message
           - a is_success boolean false = failure, true = success
         '''
-        eventbrite = None
-        settings = None
         msg = "No message available"
-        proceed = True
 
+        proceed, return_tuple = self.setup_api()
         if not proceed:
             return return_tuple
 
@@ -93,9 +112,9 @@ class HumantixClient:
                 page = page + 1
 
             for event in response.json()['events']:
-                if self.organizer_id is None or len(
-                        self.organizer_id) == 0 or (
-                        event["organiserId"] == self.organizer_id):
+                if self.settings.organiser_id is None or len(
+                        self.settings.organiser_id) == 0 or (
+                        event["organiserId"] == self.settings.organiser_id):
                     ticketed_event = None
                     if not TicketingEvents.objects.filter(
                             event_id=event['_id']).exists():
@@ -177,9 +196,9 @@ class HumantixClient:
     def perform_api_call(self, path, params):
         # Basic formatting for all calls to Humantix
 
-        headers = {'x-api-key': self.settings['api_key'],
+        headers = {'x-api-key': self.settings.api_key,
                    'Accept': 'application/json'}
-        full_path = self.settings['endpoint'] + path
+        full_path = self.settings.endpoint + path
         return requests.get(full_path,
                             headers=headers,
                             params=params)
@@ -188,7 +207,7 @@ class HumantixClient:
     def error_create(self, response):
         from gbe.models import UserMessage
         msg = UserMessage.objects.get_or_create(
-            view="SyncTicketItems",
+            view=self.__class__.__name__,
             code=response['error'],
             defaults={'summary': "Error from sending request to humanitix",
                       'description': response.json()['message']

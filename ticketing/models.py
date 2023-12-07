@@ -42,6 +42,25 @@ class EventbriteSettings(models.Model):
         verbose_name_plural = 'Eventbrite Settings'
 
 
+class HumanitixSettings(models.Model):
+    '''
+    if oath exists, the "sync" thread will first attempt to get org id
+    if org id is present, then it will sync events & tickets & transactions
+    automatically and/or on button click in ticketing
+    '''
+    api_key = models.CharField(max_length=500)
+    organiser_id = models.CharField(max_length=128, blank=True, null=True)
+    system = models.IntegerField(choices=system_options, unique=True)
+    active_sync = models.BooleanField()
+    endpoint = models.CharField(max_length=200)
+
+    def __str__(self):
+        return system_options[self.system][1]
+
+    class Meta:
+        verbose_name_plural = 'Humanitix Settings'
+
+
 class SyncStatus(models.Model):
     is_success = models.BooleanField(default=True)
     import_type = models.CharField(max_length=128)
