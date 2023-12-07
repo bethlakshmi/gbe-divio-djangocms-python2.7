@@ -14,6 +14,9 @@
 {% include 'ticketing/event_details.tmpl' %}
 {% endfor %}
 
+
+{% for item in ticket_types %}
+{% if forloop.first %}
 <div class="row"><div class="col-12"><br>
 <h3 class="gbe-subtitle">Humanitix Ticket Types</h3>
 </div></div>
@@ -31,7 +34,7 @@
   </tr>
   </thead>
   <tbody>
-{% for item in ticket_types %}
+{% endif %}
 <tr class="{% if item.active %}dedicated-sched {% endif %}{% if item.id in updated_tickets %}gbe-table-success {% endif %}gbe-table-row">    
   <td>{{item.ticket_id}}</td>
   <td>{{ item.title | safe }}</td>
@@ -55,9 +58,14 @@
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
         <i class="far fa-trash-alt"></i></a></div></td>
 </tr>
-{% endfor %}
+{% if forloop.last %}
 </tbody></table>
+{% endif %}
+{% endfor %}
 
+
+{% for item in packages %}
+{% if forloop.first %}
 <div class="row"><div class="col-12"><br>
 <h3 class="gbe-subtitle">Humanitix Packages</h3>
 </div></div>
@@ -76,7 +84,7 @@
   </tr>
   </thead>
   <tbody>
-{% for item in packages %}
+{% endif %}
 <tr class="{% if item.active %}dedicated-sched {% endif %}{% if item.id in updated_tickets %}gbe-table-success {% endif %}gbe-table-row">    
   <td>{{item.ticket_id}}</td>
   <td>{{ item.title | safe }}</td>
@@ -102,5 +110,7 @@
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
         <i class="far fa-trash-alt"></i></a></div></td>
 </tr>
-{% endfor %}
+{% if forloop.last %}
 </tbody></table>
+{% endif %}
+{% endfor %}
