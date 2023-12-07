@@ -86,6 +86,7 @@ Vendor Fees
 {% if events|length > 0 %}
   {% include "ticketing/ticket_event_check.tmpl" %}
   {% include "ticketing/ticket_list_display.tmpl" with events=events%}
+  {% include "ticketing/humanitix_ticket_display.tmpl" %}
 {% else %}
   No ticket events have been created, use the "Create Event" button above to create some.
 {% endif %}
