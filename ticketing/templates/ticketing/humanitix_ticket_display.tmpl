@@ -25,7 +25,7 @@
     <th>Visibility to Users</th>
     <th>Payment Format</th>
     <th>Cost</th>
-    <th>Source of Input</th>
+    <th>Linked Events</th>
     <th>Last Modified Date</th>
     <th>Action</th>
   </tr>
@@ -46,7 +46,7 @@
   <td>{% if item.is_minimum %}Minimum Donation
     {% elif item.add_on %}Optional Add-On{% else %}Regular Fee{% endif %}</td>
   <td>${{ item.cost }}</td>
-  <td>{{ item.modified_by }}</td>
+  <td>{% for event in item.linked_events.all %}{{ event.title }}<br>{% endfor %}</td>
   <td>{{ item.datestamp }}</td>
   <td id="ticket_action">
     <div class="btn-group" role="group" aria-label="...">
@@ -69,8 +69,9 @@
     <th>Visibility to Users</th>
     <th>Payment Format</th>
     <th>Cost</th>
-    <th>Source of Input</th>
     <th>Last Modified Date</th>
+    <th>Special Powers</th>
+    <th>Linked Tickets</th>
     <th>Action</th>
   </tr>
   </thead>
@@ -90,8 +91,10 @@
   <td>{% if item.is_minimum %}Minimum Donation
     {% elif item.add_on %}Optional Add-On{% else %}Regular Fee{% endif %}</td>
   <td>${{ item.cost }}</td>
-  <td>{{ item.modified_by }}</td>
   <td>{{ item.datestamp }}</td>
+  <td>Whole Shebang: {{ item.whole_shebang }}<br>
+      Conference: {{ item.conference_only_pass }}<br></td>
+  <td>{% for ticket in item.ticket_types.all %}{{ticket.title}}<br>{% endfor %}</div>
   <td id="ticket_action">
     <div class="btn-group" role="group" aria-label="...">
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">

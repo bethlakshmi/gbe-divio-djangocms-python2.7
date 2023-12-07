@@ -68,6 +68,31 @@ class TicketItemAdmin(admin.ModelAdmin):
         return obj.active
 
 
+class TicketTypeAdmin(admin.ModelAdmin):
+    list_display = ('title',
+                    'ticket_id',
+                    'active',
+                    'cost',
+                    'datestamp',
+                    'modified_by',
+                    'conference')
+    list_filter = ['datestamp',
+                   'modified_by',
+                   'ticketing_event__conference',
+                   'live',
+                   'has_coupon']
+    search_fields = ['title',
+                     'ticketing_event__conference__conference_name',
+                     'ticketing_event__conference__conference_slug']
+    filter_horizontal = ['linked_events']
+
+    def conference(self, obj):
+        return obj.ticketing_event.conference
+
+    def active(self, obj):
+        return obj.active
+
+
 class DetailInline(admin.TabularInline):
     model = EventDetail
 
@@ -192,7 +217,7 @@ admin.site.register(HumanitixSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
-admin.site.register(TicketType, TicketItemAdmin)
+admin.site.register(TicketType, TicketTypeAdmin)
 admin.site.register(TicketPackage, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)

@@ -190,6 +190,14 @@ class HumantixClient:
             ticket.cost = package['price']
             ticket.save()
 
+            ticket.ticket_types.clear()
+            for ticket_type in package['tickets']:
+                # NOTE - not finding a tickettype is a silent error.
+                if TicketType.objects.filter(
+                        ticket_id=ticket_type['ticketTypeId']).exists():
+                    ticket.ticket_types.add(TicketType.objects.get(
+                        ticket_id=ticket_type['ticketTypeId']))
+
         return ti_count
 
 
