@@ -103,7 +103,7 @@
   <td>{% for ticket in item.ticket_types.all %}{{ticket.title}}<br>{% endfor %}</div>
   <td id="ticket_action">
     <div class="btn-group" role="group" aria-label="...">
-      <a href="{% url 'ticketing:ticket_item_edit' item.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
+      <a href="{% url 'ticketing:ticket_package_update' item.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
         <i class="fas fa-pencil-alt"></i></a>
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
         <i class="far fa-trash-alt"></i></a></div></td>

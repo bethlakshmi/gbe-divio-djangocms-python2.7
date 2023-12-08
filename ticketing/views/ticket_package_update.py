@@ -10,23 +10,23 @@ from gbe_utils.mixins import (
     RoleRequiredMixin,
 )
 from gbetext import (
-    edit_ticket_message,
-    ticket_type_intro,
+    edit_package_message,
+    ticket_package_intro,
 )
-from ticketing.models import TicketType
-from ticketing.forms import TicketTypeForm
+from ticketing.models import TicketPackage
+from ticketing.forms import TicketPackageForm
 from gbe.models import UserMessage
 
 
-class TicketTypeUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
-    model = TicketType
-    form_class = TicketTypeForm
+class TicketPackageUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
+    model = TicketPackage
+    form_class = TicketPackageForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('ticket_items', urlconf='ticketing.urls')
-    page_title = "Edit Ticket Type"
-    view_title = "Edit Ticket Type"
-    valid_message = edit_ticket_message
-    intro_text = ticket_type_intro
+    page_title = "Edit Package Type"
+    view_title = "Edit Package Type"
+    valid_message = edit_package_message
+    intro_text = ticket_package_intro
     view_permissions = ('Ticketing - Admin', )
 
     def get_context_data(self, **kwargs):
@@ -45,10 +45,9 @@ class TicketTypeUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
                 defaults={
                     'summary': "Successful Submission",
                     'description': self.valid_message})
-            messages.success(
-                self.request,
-                "%s  Ticket Type Id: %s, Title: %s" % (msg[0].description,
-                                                       self.object.ticket_id,
-                                                       self.object.title))
+            messages.success(self.request, "%s  Package Id: %s, Title: %s" % (
+                msg[0].description,
+                self.object.ticket_id,
+                self.object.title))
         return HttpResponseRedirect(self.get_success_url() + (
             "?updated_tickets=[%s]" % self.object.pk))

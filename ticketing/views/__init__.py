@@ -7,4 +7,5 @@ from .transactions import transactions
 from .create_transaction import CreateTransaction
 from .ticket_item_edit import ticket_item_edit
 from .ticket_type_update import TicketTypeUpdate
+from .ticket_package_update import TicketPackageUpdate
 from .checklistitem_list import CheckListItemList

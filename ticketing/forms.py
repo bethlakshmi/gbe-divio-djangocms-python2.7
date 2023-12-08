@@ -129,6 +129,37 @@ class TicketTypeForm(TicketItemForm):
         return form
 
 
+class TicketPackageForm(TicketItemForm):
+
+    class Meta:
+        model = TicketPackage
+        fields = ['ticket_id',
+                  'title',
+                  'cost',
+                  'ticketing_event',
+                  'has_coupon',
+                  'special_comp',
+                  'live',
+                  'start_time',
+                  'end_time',
+                  'is_minimum',
+                  'ticket_types',
+                  'conference_only_pass',
+                  'whole_shebang',
+                  ]
+        labels = ticket_item_labels
+        help_texts = ticket_item_help_text
+
+    def save(self, user, commit=True):
+        # had to override, something w the shenanigans there messes with m2m
+        form = super(TicketItemForm, self).save(commit)
+        form.modified_by = user
+
+        if commit:
+            form.save()
+        return form
+
+
 class PickBPTEventField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return "%s - %s" % (obj.event_id, obj.title)

@@ -659,12 +659,17 @@ this ticket defines what the customer gets when they pay for the ticket.'''
 ticket_type_intro = '''Ticket Types in our use of Humantix represent individual
  events in GBE.  These tickets can then be combined into packages.  Remember
  that the cost shown here will automatically update from Humantix.'''
+ticket_package_intro = '''Ticket Packages contain ticket types, and also
+ can grant the big package qualities that events did with other systems.
+  Remember that the cost, and linked ticket types shown here will
+ automatically update from Humantix.'''
 purchase_intro_msg = '''Welcome!<br>Thanks for your interest in the Great \
 Burlesque Expo.  Below are the ticket options available for purchase. \
 There are many ways you can be a part of the convention, so please read \
 the descriptions carefully.'''
 edit_event_message = '''Event has been successfully updated.'''
 edit_ticket_message = '''Ticket has been successfully updated.'''
+edit_package_message = '''Package has been successfully updated.'''
 delete_ticket_fail_message = '''Deletion failed, transactions exist for this \
 ticket.'''
 delete_ticket_success_message = '''The ticket was successfully deleted (no \
