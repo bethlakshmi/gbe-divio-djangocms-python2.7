@@ -7,6 +7,8 @@
 from ticketing.models import (
     TicketingEvents,
     TicketItem,
+    TicketType,
+    TicketPackage,
     Transaction,
 )
 from gbe.functions import get_ticketable_gbe_events
@@ -88,6 +90,39 @@ class TicketItemForm(forms.ModelForm):
         exists = TicketItem.objects.filter(ticket_id=form.ticket_id)
         if (exists.count() > 0):
             form.id = exists[0].id
+
+        if commit:
+            form.save()
+        return form
+
+
+class TicketTypeForm(TicketItemForm):
+    linked_events = forms.ModelMultipleChoiceField(
+        queryset=get_ticketable_gbe_events().order_by('title'),
+        required=False,
+        label=ticketing_event_labels['linked_events'])
+
+    class Meta:
+        model = TicketType
+        fields = ['ticket_id',
+                  'title',
+                  'cost',
+                  'ticketing_event',
+                  'has_coupon',
+                  'special_comp',
+                  'live',
+                  'start_time',
+                  'end_time',
+                  'is_minimum',
+                  'linked_events'
+                  ]
+        labels = ticket_item_labels
+        help_texts = ticket_item_help_text
+
+    def save(self, user, commit=True):
+        # had to override, something w the shenanigans there messes with m2m
+        form = super(TicketItemForm, self).save(commit)
+        form.modified_by = user
 
         if commit:
             form.save()

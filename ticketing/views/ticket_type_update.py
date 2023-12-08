@@ -14,13 +14,13 @@ from gbetext import (
     ticket_type_intro,
 )
 from ticketing.models import TicketType
-from ticketing.forms import TicketItemForm
+from ticketing.forms import TicketTypeForm
 from gbe.models import UserMessage
 
 
 class TicketTypeUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
     model = TicketType
-    form_class = TicketItemForm
+    form_class = TicketTypeForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('ticket_items', urlconf='ticketing.urls')
     page_title = "Edit Ticket Type"
