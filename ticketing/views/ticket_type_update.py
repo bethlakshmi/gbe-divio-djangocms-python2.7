@@ -31,9 +31,10 @@ class TicketTypeUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['delete_url'] = reverse("news-delete",
-                                        urlconf="gbe.urls",
-                                        args=[self.get_object().pk])
+        context['delete_url'] = reverse(
+            "ticket_item_edit",
+            urlconf="ticketing.urls",
+            args=[self.get_object().pk]) + "?delete_item=True"
         return context
 
     def form_valid(self, form):
