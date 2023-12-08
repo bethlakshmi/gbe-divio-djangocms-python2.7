@@ -4,8 +4,6 @@
 ({{event}})
 </div><div class="col-xs-5 col-sm-3 col-md-3 text-right">
 <div class="btn-group pt-4" role="group" aria-label="...">
-  <a href="{% url 'ticketing:ticket_item_edit' %}?event_id={{event.event_id}}" data-toggle="tooltip" title="Add Tickets" class="btn gbe-btn-secondary btn-sm" id="action-button">
-    <i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-ticket" aria-hidden="true"></i></a>
   <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-secondary btn-sm" id="action-button">
     <i class="fas fa-pencil-alt"></i></a>
   <a href="{% url 'ticketing:bptevent_edit' event.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-secondary  btn-sm" id="action-button">
@@ -53,7 +51,7 @@
   <td>{{ item.datestamp }}</td>
   <td id="ticket_action">
     <div class="btn-group" role="group" aria-label="...">
-      <a href="{% url 'ticketing:ticket_item_edit' item.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
+      <a href="{% url 'ticketing:ticket_type_update' item.pk %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
         <i class="fas fa-pencil-alt"></i></a>
       <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
         <i class="far fa-trash-alt"></i></a></div></td>

@@ -4,6 +4,7 @@ from ticketing.views import (
     BadgePrintView,
     CheckListItemList,
     CreateTransaction,
+    TicketTypeUpdate,
 )
 
 app_name = "ticketing"
@@ -18,6 +19,9 @@ urlpatterns = [
     url(r'^ticketing/ticket_item_edit/(?P<item_id>\d+)/?$',
         views.ticket_item_edit,
         name='ticket_item_edit'),
+    url(r'^ticketing/ticket_type_update/(?P<pk>.*)/?$',
+        TicketTypeUpdate.as_view(),
+        name='ticket_type_update'),
     url(r'^ticketing/ticket_event_edit/?$', views.ticket_event_edit,
         name='bptevent_edit'),
     url(r'^ticketing/ticket_event_edit/(?P<event_id>\d+)/?$',

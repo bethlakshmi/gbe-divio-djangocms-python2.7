@@ -156,8 +156,6 @@ class HumantixClient:
             else:
                 ticket = TicketType.objects.get(ticket_id=tickettype['_id'])
 
-            ticket.live = not tickettype['disabled']
-
             if 'priceRange' in tickettype.keys() and (
                     tickettype['priceRange']['enabled']) and (
                     'min' in tickettype['priceRange'].keys()):
@@ -186,7 +184,6 @@ class HumantixClient:
             else:
                 ticket = TicketPackage.objects.get(ticket_id=package['_id'])
             
-            ticket.live = not package['disabled']
             ticket.cost = package['price']
             ticket.save()
 

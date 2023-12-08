@@ -656,6 +656,9 @@ for all or some events.'''
 intro_make_ticket_message = '''This page makes an individual ticket (and \
 price) for either a fee or entry into the expo.  The BPT Event connected to \
 this ticket defines what the customer gets when they pay for the ticket.'''
+ticket_type_intro = '''Ticket Types in our use of Humantix represent individual
+ events in GBE.  These tickets can then be combined into packages.  Remember
+ that the cost shown here will automatically update from Humantix.'''
 purchase_intro_msg = '''Welcome!<br>Thanks for your interest in the Great \
 Burlesque Expo.  Below are the ticket options available for purchase. \
 There are many ways you can be a part of the convention, so please read \
