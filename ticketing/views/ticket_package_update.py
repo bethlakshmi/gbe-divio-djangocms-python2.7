@@ -51,4 +51,4 @@ class TicketPackageUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
                 self.object.ticket_id,
                 self.object.title))
         return HttpResponseRedirect(self.get_success_url() + (
-            "?updated_tickets=[%s]" % self.object.pk))
+            "?updated_tickets=[%s]&open_panel=ticket" % self.object.pk))
