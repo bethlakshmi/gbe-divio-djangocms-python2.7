@@ -208,6 +208,11 @@ class TicketPackage(TicketItem):
     conference_only_pass = models.BooleanField(default=False)
     whole_shebang = models.BooleanField(default=False)
 
+    @property
+    def linked_events(self):
+        from scheduler.models import Event
+        return Event.objects.filter(tickettype__ticketpackage=self)
+
 
 class Purchaser(models.Model):
     '''

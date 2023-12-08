@@ -42,8 +42,12 @@ urlpatterns = [
     url(r'^ticketing/badges/?$',
         BadgePrintView.as_view(),
         name='badge_print'),
-    url(r'^ticketing/set_ticket_to_event/(?P<event_id>\w+)/' +
+    url(r'^ticketing/set_ticket_to_event/(?P<pk>.*)/(?P<ticket_class>\w+)/' +
         '(?P<state>on|off)/(?P<gbe_event_id>\d+)/?$',
         views.set_ticket_to_event,
         name='set_ticket_to_event'),
+    url(r'^ticketing/set_ticket_type_to_event/(?P<pk>.*)/' +
+        '(?P<state>on|off)/(?P<gbe_event_id>\d+)/?$',
+        views.set_ticket_to_event,
+        name='set_ticket_type_to_event'),
 ]
