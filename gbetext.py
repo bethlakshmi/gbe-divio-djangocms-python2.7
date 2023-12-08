@@ -265,7 +265,8 @@ source_options = [
     (3, 'Humanitix')]
 ticket_link = {
     1: 'http://www.brownpapertickets.com/event/ID-user_id/%s/',
-    2: 'https://www.eventbrite.com/e/%s'}
+    2: 'https://www.eventbrite.com/e/%s',
+    3: 'https://events.humanitix.com/%s'}
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),

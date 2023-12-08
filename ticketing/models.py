@@ -113,6 +113,7 @@ class TicketingEvents(models.Model):
     title = models.CharField(max_length=50, blank=True, null=True)
     display_icon = models.CharField(max_length=50, blank=True)
     source = models.IntegerField(choices=source_options, default=0)
+    slug = models.SlugField(blank=True)
 
     def __str__(self):
         return "%s - %s" % (self.event_id, self.title)
@@ -132,7 +133,10 @@ class TicketingEvents(models.Model):
 
     @property
     def link(self):
-        return ticket_link[self.source] % self.event_id
+        if self.source != 3:
+            return ticket_link[self.source] % self.event_id
+        else:
+            return ticket_link[self.source] % self.slug
 
     class Meta:
         verbose_name_plural = 'Ticketing Events'

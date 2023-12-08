@@ -123,6 +123,7 @@ class HumantixClient:
                             title=event['name'],
                             description=event['description'],
                             conference=conference,
+                            slug=event['slug'],
                             source=3)
                         ticketed_event.save()
                         event_count = event_count + 1
@@ -149,7 +150,8 @@ class HumantixClient:
                     ticket_id=tickettype['_id'],
                     title=tickettype['name'],
                     modified_by="Humanitix Import",
-                    ticketing_event=event)
+                    ticketing_event=event,
+                    live=not tickettype['disabled'])
                 if 'description' in tickettype.keys():
                     ticket.description = tickettype['description']
                 ti_count = ti_count + 1
@@ -177,7 +179,8 @@ class HumantixClient:
                     ticket_id=package['_id'],
                     title=package['name'],
                     modified_by="Humanitix Import",
-                    ticketing_event=event)
+                    ticketing_event=event,
+                    live=not package['disabled'])
                 ti_count = ti_count + 1
                 if 'description' in package.keys():
                     ticket.description = package['description']

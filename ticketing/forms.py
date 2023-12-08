@@ -221,6 +221,7 @@ class BPTEventForm(forms.ModelForm):
         fields = [
             'conference',
             'event_id',
+            'slug',
             'source',
             'title',
             'description',

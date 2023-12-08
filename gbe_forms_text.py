@@ -759,6 +759,8 @@ ticketing_event_help_text = {
                      'Opportunities'),
     'ticket_style': 'Special instructions for Reg Desk',
     'display_icon': link_event_help_text['display_icon'],
+    'slug': 'At present, the slug is only used for Humanitix tickets, as \
+    part of the URL generation.'
 }
 
 donation_labels = {'donation': 'Fee (pay what you will)'}
