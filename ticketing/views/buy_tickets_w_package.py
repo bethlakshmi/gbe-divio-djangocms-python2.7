@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.sites.shortcuts import get_current_site
 from django.views.generic import ListView
 from ticketing.models import (
     TicketPackage,
@@ -43,13 +42,13 @@ class TicketAndPackageList(GbeContextMixin, ListView):
                         events[gbe_event]['min_price'] = ticket.cost
                     if events[gbe_event]['max_price'] < ticket.cost:
                         events[gbe_event]['max_price'] = ticket.cost
+                        events[gbe_event]['expensive_ticket'] = ticket
                 else:
                     events[gbe_event] = {
                     'min_price': ticket.cost,
                     'max_price': ticket.cost,
-                    'ticket_event': ticket.ticketing_event}
-        context = {'events': events,
-                   'user_id': self.request.user.id,
-                   'site_name': get_current_site(self.request).name,
-                }
+                    'ticket_event': ticket.ticketing_event,
+                    'expensive_ticket': ticket}
+        context['events'] = events
+        context['user_id'] = self.request.user.id,
         return context
