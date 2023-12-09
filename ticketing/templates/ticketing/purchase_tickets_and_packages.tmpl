@@ -7,7 +7,6 @@
 <link rel="stylesheet" href='{% static "styles/css/rpg-awesome.min.css" %}'>
 {% endblock head %}
 {% block content %}
-
     <!-- Pricing Table Section Start -->
     <section id="pricing" class="section">
       <div class="container">
@@ -18,8 +17,8 @@
             <p>{{ introduction|safe }}</p>
           </div>
         </div>
-{% for item in events %}
-    {% ifchanged item.conference %}
+{% for item, details in events.items %}
+    {% ifchanged details.ticket_event.conference %}
         {% if not forloop.first %}</div>{% endif %}
         <div class="row">
           <div class="col-md-12">
@@ -29,32 +28,30 @@
         </div>
         <div class="row">
     {% endifchanged %}
-    {% if item.visible %}
-          <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="pricing-table">
-              {% if request.user.is_superuser %}<div class="edit-icon">
-                <a href="/admin/ticketing/ticketingevents/{{item.pk}}" target="_blank">
-                    <i class="icon-pencil"></i>
-                </a></div>{% endif %}
-              <div class="table-icon">
-                <i class="{{ item.display_icon }}"></i>
-              </div>
-              <h3>{{ item.title }}</h3>
-              <ul class="plan-info">
-                {% for detail in item.eventdetail_set.all %}
-                <li><i class="icon-star"></i> {{ detail.detail }}</li>
-                {% endfor %}
-              </ul>
-              <div class="button-area">
-                <a href="{{ item.link }}" target="_blank" class="btn gbe-btn-common">
-                    ${{ item.min_price|floatformat:2 }}
-                {% if item.min_price < item.max_price%}
-                - ${{ item.max_price|floatformat:2 }}{% endif %}</a>
-              </div>
-            </div>
+      <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="pricing-table">
+          {% if request.user.is_superuser %}<div class="edit-icon">
+            <a href="/admin/ticketing/ticketingevents/{{item.pk}}" target="_blank">
+                <i class="icon-pencil"></i>
+            </a></div>{% endif %}
+          <div class="table-icon">
+            <i class="{{ item.display_icon }}"></i>
           </div>
-        {% if forloop.last %}</div>{% endif %}
-    {% endif %}
+          <h3>{{ item.title }}</h3>
+          <ul class="plan-info">
+            {% for detail in item.eventdetail_set.all %}
+              <li><i class="icon-star"></i> {{ detail.detail }}</li>
+            {% endfor %}
+          </ul>
+          <div class="button-area">
+            <a href="{{ details.ticket_event.link }}" target="_blank" class="btn gbe-btn-common">
+                ${{ details.min_price|floatformat:2 }}
+            {% if details.min_price < details.max_price%}
+              - ${{ details.max_price|floatformat:2 }}{% endif %}</a>
+          </div>
+        </div>
+      </div>
+  {% if forloop.last %}</div>{% endif %}
 {% endfor %}
 
       </div>

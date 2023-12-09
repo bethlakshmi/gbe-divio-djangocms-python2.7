@@ -1,5 +1,6 @@
 from .badge_print_view import BadgePrintView
 from .buy_tickets import index
+from .buy_tickets_w_package import TicketAndPackageList
 from .set_ticket_to_event import set_ticket_to_event
 from .ticket_event_edit import ticket_event_edit
 from .ticket_items import ticket_items

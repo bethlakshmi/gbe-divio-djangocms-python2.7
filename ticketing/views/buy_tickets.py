@@ -4,7 +4,6 @@ from ticketing.models import (
     TicketingEvents,
     TicketItem,
 )
-from gbe.functions import validate_perms
 from gbe.models import UserMessage
 from gbetext import purchase_intro_msg
 from django.db.models import (
