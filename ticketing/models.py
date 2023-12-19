@@ -53,6 +53,7 @@ class HumanitixSettings(models.Model):
     system = models.IntegerField(choices=system_options, unique=True)
     active_sync = models.BooleanField()
     endpoint = models.CharField(max_length=200)
+    widget_page = models.URLField(blank=True)
 
     def __str__(self):
         return system_options[self.system][1]

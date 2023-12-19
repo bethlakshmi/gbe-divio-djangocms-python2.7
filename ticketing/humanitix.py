@@ -25,7 +25,7 @@ from ticketing.brown_paper import (
 )
 
 
-class HumantixClient:
+class HumanitixClient:
     import_type = "Humanitix Event"
     settings = None
 

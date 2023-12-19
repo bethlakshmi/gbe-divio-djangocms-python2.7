@@ -7,7 +7,7 @@ from ticketing.models import (
     TicketType,
 )
 from ticketing.eventbrite import import_eb_ticket_items
-from ticketing.humantix import HumantixClient
+from ticketing.humanitix import HumanitixClient
 from ticketing.brown_paper import import_bpt_ticket_items
 from gbetext import class_styles
 from django.db.models import Q
@@ -18,9 +18,9 @@ def import_ticket_items():
         # import BPT
         msg = "0"
         is_success = True
-        humantix = HumantixClient()
+        humanitix = HumanitixClient()
         msg, is_success = import_eb_ticket_items()
-        hmsg, his_success = humantix.import_ticket_items()
+        hmsg, his_success = humanitix.import_ticket_items()
         count = import_bpt_ticket_items()
         return [(msg, is_success),
                 (hmsg, his_success),
@@ -75,11 +75,11 @@ def get_tickets(linked_event):
         start_time__gt=datetime.now()).exclude(
         end_time__lt=datetime.now())
 
-    # with Humantix, there is only 1 event, so all links are the same
-    if packages.count() > 0:
-        link = packages.first().ticketing_event.link
-    elif tickets.count() > 0:
-        link = tickets.first().ticketing_event.link
+    # with Humanitix, there is only 1 event, so all links are the same
+    humanitix = HumanitixClient()
+    humanitix_active, status_info = humanitix.setup_api()
+    if humanitix_active:
+        link = humanitix.settings.widget_page
 
     return {"events": ticket_events,
             "link": link,
