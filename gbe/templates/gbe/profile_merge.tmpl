@@ -181,16 +181,6 @@
     {% endif %}
     </td>
   </tr>
-  <tr class="gbe-table-row">
-    <td>{{prefs_form.show_hotel_infobox.label_tag}}</td>
-    <td>{{target.preferences.show_hotel_infobox}}</td>
-    <td>{{otherprofile.preferences.show_hotel_infobox}}</td>
-    <td>{{prefs_form.show_hotel_infobox}}&nbsp;{{prefs_form.show_hotel_infobox.label_tag}}
-    {% if prefs_form.show_hotel_infobox.errors %}
-        <br><font class="gbe-form-error gbe-flat-list">{{ prefs_form.show_hotel_infobox.errors }}</font>
-    {% endif %}
-    </td>
-  </tr>
 {% endblock %}
 
 {% block after_table %}

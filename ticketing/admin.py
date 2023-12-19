@@ -15,6 +15,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = ('ticket_item',
                     'purchaser',
                     'amount',
+                    'payment_source',
                     'order_date',
                     'import_date')
     list_filter = ['ticket_item__ticketing_event__conference',
@@ -25,6 +26,7 @@ class TransactionAdmin(admin.ModelAdmin):
     search_fields = ['ticket_item__title',
                      'purchaser__matched_to_user__username',
                      'purchaser__email']
+    autocomplete_fields = ["ticket_item", "purchaser"]
 
 
 class PurchaserAdmin(admin.ModelAdmin):
@@ -34,12 +36,11 @@ class PurchaserAdmin(admin.ModelAdmin):
                     'last_name',
                     'email',
                     'phone')
-    list_filter = ['state',
-                   'country']
     search_fields = ['matched_to_user__username',
                      'first_name',
                      'last_name',
                      'email']
+    autocomplete_fields = ["matched_to_user"]
 
 
 class TicketItemAdmin(admin.ModelAdmin):
@@ -60,6 +61,7 @@ class TicketItemAdmin(admin.ModelAdmin):
                      'ticketing_event__title',
                      'ticketing_event__conference__conference_name',
                      'ticketing_event__conference__conference_slug']
+    autocomplete_fields = ["ticketing_event"]
 
     def conference(self, obj):
         return obj.ticketing_event.conference
@@ -95,6 +97,11 @@ class TicketTypeAdmin(admin.ModelAdmin):
 
 class DetailInline(admin.TabularInline):
     model = EventDetail
+
+
+class ChecklistItemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'badge_title', 'description']
+    search_fields = ['badge_title', 'description']
 
 
 class TicketingEventsAdmin(admin.ModelAdmin):
@@ -162,6 +169,9 @@ class EligibilityConditionAdmin(admin.ModelAdmin):
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+    autocomplete_fields = ["checklistitem"]
+    search_fields = ["checklistitem__badge_title",
+                     "checklistitem__description"]
 
     def ticketing_exclusions(self, obj):
         return obj.ticketing_ticketingexclusion.count()
@@ -204,12 +214,15 @@ class RoleExcludeAdmin(admin.ModelAdmin):
                     'condition',
                     'role',
                     'event')
+    autocomplete_fields = ['event']
 
 
 class TicketExcludeAdmin(admin.ModelAdmin):
     list_display = ('pk',
                     'condition',
                     '__str__')
+    autocomplete_fields = ['condition']
+    filter_horizontal = ("tickets",)
 
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
@@ -223,9 +236,11 @@ admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TicketingEligibilityCondition,
                     TicketEligibilityConditionAdmin)
+admin.site.register(EligibilityCondition,
+                    EligibilityConditionAdmin)
 admin.site.register(RoleEligibilityCondition,
                     EligibilityConditionAdmin)
-admin.site.register(CheckListItem)
+admin.site.register(CheckListItem, ChecklistItemAdmin)
 admin.site.register(SyncStatus, SyncStatusAdmin)
 admin.site.register(TicketingExclusion, TicketExcludeAdmin)
 admin.site.register(RoleExclusion, RoleExcludeAdmin)

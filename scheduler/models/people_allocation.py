@@ -23,3 +23,9 @@ class PeopleAllocation(Model):
                         on_delete=CASCADE)
     role = CharField(max_length=50, choices=role_options, blank=True)
     label = TextField(blank=True)
+
+    def __str__(self):
+        descr = self.event.title + ": " + str(self.people)
+        if self.role:
+            descr = descr + " with role " + self.role
+        return descr

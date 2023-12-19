@@ -252,7 +252,6 @@ class ProfilePreferencesFactory(DjangoModelFactory):
     profile = SubFactory(ProfileFactory)
     in_hotel = "No"
     inform_about = []
-    show_hotel_infobox = True
 
 
 class CostumeFactory(DjangoModelFactory):

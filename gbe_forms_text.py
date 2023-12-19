@@ -38,7 +38,6 @@ profile_preferences_help_texts = {
 profile_preferences_labels = {
     'inform_about': 'Please let me know about...',
     'in_hotel': 'I am staying at the hotel',
-    'show_hotel_infobox': ('Show hotel booking info on your landing page?'),
     'send_daily_schedule': ('Send me my schedule'),
     'send_bid_notifications': (
       'Email me based on my past and current proposals'),
@@ -950,3 +949,6 @@ style_value_help = {
 }
 sender_name_help = ('The name of the sender.  Recipients will get email ' +
                     'from "Sender Name <From>')
+event_search_guide = "You can search by title, event type or id (pk)"
+resource_search_guide = '''You can search by name (of room), or id (pk) -
+ pardon the mess, there is residue from old data that needs cleanup'''
