@@ -142,6 +142,13 @@ class TicketingEvents(models.Model):
         verbose_name_plural = 'Ticketing Events'
 
 
+class EventDetail(models.Model):
+    detail = models.CharField(max_length=50, blank=True)
+    ticketing_event = models.ForeignKey(TicketingEvents,
+                                        on_delete=models.CASCADE,
+                                        blank=True)
+
+
 class TicketItem(models.Model):
     '''
     This class represents a type of ticket.  There is one ticket per price
@@ -168,7 +175,6 @@ class TicketItem(models.Model):
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     is_minimum = models.BooleanField(default=False)
-    display_icon = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         basic = "%s (%s)" % (self.title, self.ticket_id)
@@ -211,17 +217,6 @@ class TicketPackage(TicketItem):
         from scheduler.models import Event
         return Event.objects.filter(tickettype__ticketpackage=self)
 
-
-class EventDetail(models.Model):
-    detail = models.CharField(max_length=50, blank=True)
-    ticketing_event = models.ForeignKey(TicketingEvents,
-                                        on_delete=models.CASCADE,
-                                        blank=True,
-                                        null=True)
-    ticket = models.ForeignKey(TicketItem,
-                               on_delete=models.CASCADE,
-                               blank=True,
-                               null=True)
 
 class Purchaser(models.Model):
     '''

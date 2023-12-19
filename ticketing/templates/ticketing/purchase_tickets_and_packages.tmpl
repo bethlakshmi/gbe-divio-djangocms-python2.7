@@ -12,14 +12,9 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12">
-            <h2 class="gbe-title">{{ view_title }}</h2>
-            <p>{{ intro_text|safe }}</p>
-          </div>
-        </div>
-    <!-- Individual Tickets -->
-        <div class="row">
-          <div class="col-md-12 pb-0 mb-0">
-            <h2 class="gbe-subtitle">Individual Event Tickets</h2>
+            <h2 class="gbe-title">
+                Ticket Purchase Options for {{ site_name }}</h2>
+            <p>{{ introduction|safe }}</p>
           </div>
         </div>
 {% for item, details in events.items %}
@@ -27,7 +22,8 @@
         {% if not forloop.first %}</div>{% endif %}
         <div class="row">
           <div class="col-md-12">
-            <h4>{{ details.ticket_event.conference }}</h4>
+            <h2 class="gbe-subtitle">
+                {{ item.conference }}</h2>
           </div>
         </div>
         <div class="row">
@@ -35,16 +31,15 @@
       <div class="col-md-4 col-sm-6 col-xs-12">
         <div class="pricing-table">
           {% if request.user.is_superuser %}<div class="edit-icon">
-            <a href="/admin/ticketing/tickettype/{{details.expensive_ticket.pk}}" target="_blank">
+            <a href="/admin/ticketing/ticketingevents/{{item.pk}}" target="_blank">
                 <i class="icon-pencil"></i>
-            </a>{% endif %}</div>
+            </a></div>{% endif %}
           <div class="table-icon">
-            <i class="{{ details.expensive_ticket.display_icon }}"></i>
+            <i class="{{ item.display_icon }}"></i>
           </div>
           <h3>{{ item.title }}</h3>
-          <b>{{ item.start_time|date:_("DATETIME_FORMAT")}} - {{ item.end_time|date:_("TIME_FORMAT")}}</b><br><br>
           <ul class="plan-info">
-            {% for detail in details.expensive_ticket.eventdetail_set.all %}
+            {% for detail in item.eventdetail_set.all %}
               <li><i class="icon-star"></i> {{ detail.detail }}</li>
             {% endfor %}
           </ul>
@@ -53,52 +48,6 @@
                 ${{ details.min_price|floatformat:2 }}
             {% if details.min_price < details.max_price%}
               - ${{ details.max_price|floatformat:2 }}{% endif %}</a>
-          </div>
-        </div>
-      </div>
-  {% if forloop.last %}</div>{% endif %}
-{% endfor %}
-      <!-- Ticket Packages -->
-        <div class="row">
-          <div class="col-md-12 pb-0 mb-0">
-            <h2 class="gbe-subtitle">Packages</h2>
-          </div>
-        </div>
-{% for package in packages %}
-    {% ifchanged package.ticket_event.conference %}
-        {% if not forloop.first %}</div>{% endif %}
-        <div class="row">
-          <div class="col-md-12">
-            <h4>{{ package.ticket_event.conference }}</h4>
-          </div>
-        </div>
-        <div class="row">
-    {% endifchanged %}
-      <div class="col-md-4 col-sm-6 col-xs-12">
-        <div class="pricing-table">
-          {% if request.user.is_superuser %}<div class="edit-icon">
-            <a href="/admin/ticketing/ticketpackage/{{package.pk}}" target="_blank">
-                <i class="icon-pencil"></i>
-            </a>{% endif %}</div>
-          <div class="table-icon">
-            <i class="{{ package.display_icon }}"></i>
-          </div>
-          <h3>{{ package.title }}</h3>
-          <ul class="plan-info">
-            {% for detail in package.eventdetail_set.all %}
-              <li><i class="icon-star"></i> {{ detail.detail }}</li>
-            {% endfor %}
-          </ul>
-          <br><h4>Includes:</h4>
-          <ul class="plan-info">
-            {% for ticket in package.ticket_types.all %}
-              <li><i class="icon-star"></i> {{ ticket.title }}</li>
-            {% endfor %}
-          </ul>
-
-          <div class="button-area">
-            <a href="{{ package.ticket_event.link }}" target="_blank" class="btn gbe-btn-common">
-                ${{ package.cost|floatformat:2 }}</a>
           </div>
         </div>
       </div>

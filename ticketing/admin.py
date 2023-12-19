@@ -11,11 +11,6 @@ class PayPalSettingsAdmin(admin.ModelAdmin):
     list_display = ('business_email', )
 
 
-class DetailInline(admin.StackedInline):
-    model = EventDetail
-    fields = ['detail']
-
-
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('ticket_item',
                     'purchaser',
@@ -73,11 +68,6 @@ class TicketItemAdmin(admin.ModelAdmin):
         return obj.active
 
 
-class TicketPackageAdmin(TicketItemAdmin):
-    inlines = [
-        DetailInline,
-    ]
-
 class TicketTypeAdmin(admin.ModelAdmin):
     list_display = ('title',
                     'ticket_id',
@@ -95,14 +85,16 @@ class TicketTypeAdmin(admin.ModelAdmin):
                      'ticketing_event__conference__conference_name',
                      'ticketing_event__conference__conference_slug']
     filter_horizontal = ['linked_events']
-    inlines = [
-        DetailInline,
-    ]
+
     def conference(self, obj):
         return obj.ticketing_event.conference
 
     def active(self, obj):
         return obj.active
+
+
+class DetailInline(admin.TabularInline):
+    model = EventDetail
 
 
 class TicketingEventsAdmin(admin.ModelAdmin):
@@ -226,7 +218,7 @@ admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
 admin.site.register(TicketType, TicketTypeAdmin)
-admin.site.register(TicketPackage, TicketPackageAdmin)
+admin.site.register(TicketPackage, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TicketingEligibilityCondition,
