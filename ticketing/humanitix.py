@@ -89,7 +89,6 @@ class HumanitixClient:
             load_counts['tickettypes'],
             load_counts['ticketpackages']), True
 
-
     def load_events(self):
         from gbe.functions import get_current_conference
         has_more_items = True
@@ -140,7 +139,6 @@ class HumanitixClient:
                 'tickettypes': ticket_count,
                 'ticketpackages': package_count}, ""
 
-
     def load_tickets(self, ticketTypes, event):
         ti_count = 0
         for tickettype in ticketTypes:
@@ -169,7 +167,6 @@ class HumanitixClient:
 
         return ti_count
 
-
     def load_packages(self, packages, event):
         ti_count = 0
         for package in packages:
@@ -186,7 +183,7 @@ class HumanitixClient:
                     ticket.description = package['description']
             else:
                 ticket = TicketPackage.objects.get(ticket_id=package['_id'])
-            
+
             ticket.cost = package['price']
             ticket.save()
 
@@ -200,7 +197,6 @@ class HumanitixClient:
 
         return ti_count
 
-
     def perform_api_call(self, path, params):
         # Basic formatting for all calls to Humantix
 
@@ -210,7 +206,6 @@ class HumanitixClient:
         return requests.get(full_path,
                             headers=headers,
                             params=params)
-
 
     def error_create(self, response):
         from gbe.models import UserMessage
