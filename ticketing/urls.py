@@ -4,7 +4,6 @@ from ticketing.views import (
     BadgePrintView,
     CheckListItemList,
     CreateTransaction,
-    TicketAndPackageList,
     TicketPackageUpdate,
     TicketTypeUpdate,
 )
@@ -12,9 +11,6 @@ from ticketing.views import (
 app_name = "ticketing"
 
 urlpatterns = [
-    url('^ticketing/$',
-        TicketAndPackageList.as_view(),
-        name='index'),
     url('^ticketing/original/$',
         views.index,
         name='original_index'),
