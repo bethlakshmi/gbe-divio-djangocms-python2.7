@@ -47,6 +47,16 @@ class EventbriteSettingsFactory(DjangoModelFactory):
     active_sync = True
 
 
+class HumanitixSettingsFactory(DjangoModelFactory):
+    class Meta:
+        model = tickets.HumanitixSettings
+    api_key = "UseAMock"
+    organiser_id = "12345678"
+    system = 1
+    active_sync = True
+    endpoint = "test.an.endpoint"
+
+
 class TicketItemFactory(DjangoModelFactory):
     class Meta:
         model = tickets.TicketItem
