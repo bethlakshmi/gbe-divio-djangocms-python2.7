@@ -78,13 +78,22 @@ def get_tickets(linked_event):
     # with Humanitix, there is only 1 event, so all links are the same
     humanitix = HumanitixClient()
     humanitix_active, status_info = humanitix.setup_api()
-    if humanitix_active:
+    if humanitix_active and humanitix.settings.widget_page is not None and (
+            len(humanitix.settings.widget_page) > 0):
         link = humanitix.settings.widget_page
+    elif tickets.count() > 0:
+        link = tickets.first().ticketing_event.link
+    elif packages.count() > 0:
+        link = packages.first().ticketing_event.link
 
-    return {"events": ticket_events,
-            "link": link,
-            "tickets": tickets,
-            "packages": packages}
+
+    if len(ticket_events) > 0 or tickets.count() > 0 or packages.count() > 0:
+        return {"events": ticket_events,
+                "link": link,
+                "tickets": tickets,
+                "packages": packages}
+    else:
+        return None
 
 
 def get_fee_list(bid_type, conference):

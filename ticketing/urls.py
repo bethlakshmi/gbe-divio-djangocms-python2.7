@@ -13,7 +13,7 @@ app_name = "ticketing"
 urlpatterns = [
     url('^ticketing/original/$',
         views.index,
-        name='original_index'),
+        name='index'),
     url(r'^ticketing/ticket_items/$', views.ticket_items,
         name='ticket_items'),
     url(r'^ticketing/ticket_item_edit/?$', views.ticket_item_edit,
