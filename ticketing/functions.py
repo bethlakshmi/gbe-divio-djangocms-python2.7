@@ -50,8 +50,8 @@ def get_tickets(linked_event):
             general_events,
             TicketingEvents.objects.filter(
                 include_conference=True,
-                conference__conference_slug__in=linked_event.labels))).exclude(
-            source=3)
+                conference__conference_slug__in=linked_event.labels).exclude(
+                source=3)))
 
         packages = package_query.filter(
             Q(conference_only_pass=True) | Q(whole_shebang=True))

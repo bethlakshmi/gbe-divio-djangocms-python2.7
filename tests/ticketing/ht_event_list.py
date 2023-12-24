@@ -210,7 +210,7 @@ get_events = {
       "description": "<p>The Great Burlesque Exposition is a multi-day event that draws burlesque performers and fans from all over the world.  The festival includes a conference for more serious students, free classes for the general public, 5 burlesque showcases, a prestigious competition, shopping, historic events, special events, and more.</p>",
       "slug": "test-event-2-m3xw9aw1",
       "userId": "wItDWjWEdndHSHQgmRL71GGOWDb2",
-      "organiserId": "6500d613a66ab3cb5aae3110",
+      "organiserId": "12345678",
       "tagIds": [],
       "classification": {
         "type": "convention",

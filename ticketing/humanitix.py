@@ -15,7 +15,6 @@ from ticketing.models import (
 )
 from gbetext import (
     no_ht_settings_error,
-    org_id_instructions,
     import_transaction_message,
     sync_off_instructions,
 )

@@ -10,6 +10,7 @@ from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
     BrownPaperSettings,
+    HumanitixSettings,
     TicketPackage,
     TicketType,
 )
@@ -26,8 +27,8 @@ from tests.factories.scheduler_factories import (
 )
 from gbetext import (
     eventbrite_error,
-    no_settings_error,
-    org_id_instructions,
+    no_ht_settings_error,
+    sync_off_instructions,
 )
 from tests.ticketing.ht_event_list import get_events
 from tests.functions.gbe_functions import (
@@ -56,9 +57,13 @@ class TestGetHumanitixTickets(TestCase):
     view_name = 'ticket_items'
 
     def setUp(self):
-        self.privileged_user = ProfileFactory.create().user_object
-        grant_privilege(self.privileged_user, 'Ticketing - Admin')
-        self.url = reverse(self.view_name, urlconf='ticketing.urls')
+        TicketingEvents.objects.all().delete()
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.privileged_user = ProfileFactory.create().user_object
+        grant_privilege(cls.privileged_user, 'Ticketing - Admin')
+        cls.url = reverse(cls.view_name, urlconf='ticketing.urls')
         BrownPaperSettingsFactory(active_sync=False)
 
     def import_tickets(self):
@@ -70,8 +75,6 @@ class TestGetHumanitixTickets(TestCase):
     @patch('requests.get', autospec=True)
     def test_get_ht_inventory_no_organiser(self, m_humanitix):
         # privileged user gets the inventory of ALL tickets from (fake) HT
-        TicketingEvents.objects.all().delete()
-        event = TicketingEventsFactory()
         HumanitixSettingsFactory(organiser_id=None)
 
         m_humanitix.side_effect = [MockHTResponse(json_data=get_events,
@@ -87,44 +90,41 @@ class TestGetHumanitixTickets(TestCase):
                                    ticket_id='6568c4ee7cf8549dd8238a0c')
         self.assertEqual(ticket.cost, Decimal('200.50'))
 
+    @override_settings(DEBUG=True)
+    @patch('requests.get', autospec=True)
+    def test_get_eb_debug_server_w_organiser(self, m_humanitix):
+        HumanitixSettingsFactory(system=0)
+        m_humanitix.side_effect = [MockHTResponse(json_data=get_events,
+                                                  status_code=200)]
+
+        response = self.import_tickets()
+        assert_alert_exists(response, 'success', 'Success', (
+            "Successfully imported 1 events, 11 tickets, 3 packages"))
+        self.assertFalse(TicketPackage.objects.filter(
+            ticket_id='6568c6ca6e0f8730e1bd5f1d').exists())
+        ticket = get_object_or_404(TicketType,
+                                   ticket_id='650e0b1b00c168315ead7e0c')
+        self.assertEqual(ticket.cost, Decimal('45.00'))
+
+    def test_humanitix_settings_missing(self):
+        HumanitixSettings.objects.all().delete()
+        login_as(self.privileged_user, self)
+        response = self.import_tickets()
+        assert_alert_exists(response,
+                            'danger',
+                            'Error',
+                            no_ht_settings_error)
+
+    def test_humanitix_sync_off(self):
+        HumanitixSettingsFactory(active_sync=False)
+        login_as(self.privileged_user, self)
+        response = self.import_tickets()
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            sync_off_instructions % "Humanitix")
 
 '''
-    @override_settings(DEBUG=True)
-    @patch('eventbrite.Eventbrite.get', autospec=True)
-    def test_get_eb_debug_server(self, m_eventbrite):
-        # test case for debug server being different, w no events to sync
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
-        EventbriteSettingsFactory(system=0)
-        empty_event_dict = copy.deepcopy(event_dict)
-        empty_event_dict['events'] = []
-        m_eventbrite.side_effect = [empty_event_dict]
-
-        response = self.import_tickets()
-        assert_alert_exists(response, 'success', 'Success', (
-            "Successfully imported %d events, %d tickets") % (0, 0))
-        assert_alert_exists(response, 'success', 'Success', (
-            "BPT: imported %d tickets") % (0))
-
-    @patch('eventbrite.Eventbrite.get', autospec=True)
-    def test_get_eb_no_org(self, m_eventbrite):
-        # privileged user gets the inventory of tickets from (fake) EB
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
-        EventbriteSettingsFactory(organization_id=None)
-
-        m_eventbrite.side_effect = [org_dict]
-
-        response = self.import_tickets()
-        assert_alert_exists(
-            response,
-            'danger',
-            'Error',
-            "%s<br>%s - %s" % (org_id_instructions, "547440371489", "GBE Dev"))
-
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_get_eb_org_fail(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
