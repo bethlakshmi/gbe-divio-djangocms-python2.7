@@ -73,7 +73,7 @@ class HumanitixClient:
             status = SyncStatus(is_success=False,
                                 error_msg=msg,
                                 import_type=self.import_type,
-                                import_number=event_count)
+                                import_number=load_counts['events'])
             status.save()
             return msg, False
         else:
@@ -102,7 +102,8 @@ class HumanitixClient:
                 'inFutureOnly': 'true',
                 })
             if response.status_code != 200 or 'events' not in response.json():
-                return 0, self.error_create(response)
+                return ({'events': 0, 'tickettypes': 0, 'ticketpackages': 0},
+                        self.error_create(response))
             elif len(response.json()['events']) == 0 or (
                     response.json()['total'] < response.json()['pageSize']):
                 has_more_items = False
@@ -210,9 +211,9 @@ class HumanitixClient:
         from gbe.models import UserMessage
         msg = UserMessage.objects.get_or_create(
             view=self.__class__.__name__,
-            code=response['error'],
+            code=response.json()['error'],
             defaults={'summary': "Error from sending request to humanitix",
                       'description': response.json()['message']
                       })[0].description
-        msg = msg % (response.status_code, response.json()['message'])
+        msg = response.json()['error'] + ' - ' + msg
         return msg

@@ -43,9 +43,18 @@ from datetime import (
 
 
 class MockHTResponse:
-    def __init__(self, json_data, status_code):
-        self.json_data = json_data
+    def __init__(self,
+                 json_data=None,
+                 status_code=200,
+                 error=False,
+                 message=None):
+        if json_data is not None:
+            self.json_data = json_data
         self.status_code = status_code
+        if error:
+            self.error = error
+        if message is not None:
+            self.message = message
 
     # mock json() method always returns a specific testing dictionary
     def json(self):
@@ -77,8 +86,7 @@ class TestGetHumanitixTickets(TestCase):
         # privileged user gets the inventory of ALL tickets from (fake) HT
         HumanitixSettingsFactory(organiser_id=None)
 
-        m_humanitix.side_effect = [MockHTResponse(json_data=get_events,
-                                                  status_code=200)]
+        m_humanitix.side_effect = [MockHTResponse(json_data=get_events)]
 
         response = self.import_tickets()
         assert_alert_exists(response, 'success', 'Success', (
@@ -94,8 +102,7 @@ class TestGetHumanitixTickets(TestCase):
     @patch('requests.get', autospec=True)
     def test_get_eb_debug_server_w_organiser(self, m_humanitix):
         HumanitixSettingsFactory(system=0)
-        m_humanitix.side_effect = [MockHTResponse(json_data=get_events,
-                                                  status_code=200)]
+        m_humanitix.side_effect = [MockHTResponse(json_data=get_events)]
 
         response = self.import_tickets()
         assert_alert_exists(response, 'success', 'Success', (
@@ -124,28 +131,23 @@ class TestGetHumanitixTickets(TestCase):
                             'Success',
                             sync_off_instructions % "Humanitix")
 
-'''
-    @patch('eventbrite.Eventbrite.get', autospec=True)
-    def test_get_eb_org_fail(self, m_eventbrite):
-        # privileged user gets the inventory of tickets from (fake) EB
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
-        EventbriteSettingsFactory(organization_id=None)
 
-        m_eventbrite.side_effect = [{
-            "status_code": 403,
-            "error_description": "Made up error",
-            "error": "NOT_ALLOWED"}]
+    @patch('requests.get', autospec=True)
+    def test_bad_api_key(self, m_humanitix):
+        HumanitixSettingsFactory(organiser_id=None)
+        m_humanitix.side_effect = [MockHTResponse(
+           json_data={'error': "Bad Request",
+                      'message': "Invalid api key format provided."},
+            status_code=400)]
 
         response = self.import_tickets()
         assert_alert_exists(
             response,
             'danger',
             'Error',
-            eventbrite_error % (403, "Made up error"))
+            'Bad Request - Invalid api key format provided.')
 
+'''
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_get_eb_inventory_no_organizer(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
