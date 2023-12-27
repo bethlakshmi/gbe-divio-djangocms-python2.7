@@ -119,15 +119,6 @@ class TicketTypeForm(TicketItemForm):
         labels = ticket_item_labels
         help_texts = ticket_item_help_text
 
-    def save(self, user, commit=True):
-        # had to override, something w the shenanigans there messes with m2m
-        form = super(TicketItemForm, self).save(commit)
-        form.modified_by = user
-
-        if commit:
-            form.save()
-        return form
-
 
 class TicketPackageForm(TicketItemForm):
 
@@ -149,15 +140,6 @@ class TicketPackageForm(TicketItemForm):
                   ]
         labels = ticket_item_labels
         help_texts = ticket_item_help_text
-
-    def save(self, user, commit=True):
-        # had to override, something w the shenanigans there messes with m2m
-        form = super(TicketItemForm, self).save(commit)
-        form.modified_by = user
-
-        if commit:
-            form.save()
-        return form
 
 
 class PickBPTEventField(forms.ModelMultipleChoiceField):

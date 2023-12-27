@@ -67,6 +67,17 @@ class TicketItemFactory(DjangoModelFactory):
     modified_by = "Ticket Item Mock"
 
 
+class TicketTypeFactory(TicketItemFactory):
+    class Meta:
+        model = tickets.TicketType
+
+
+class TicketPackageFactory(TicketItemFactory):
+    class Meta:
+        model = tickets.TicketPackage
+    whole_shebang = True
+
+
 class PurchaserFactory(DjangoModelFactory):
     class Meta:
         model = tickets.Purchaser
