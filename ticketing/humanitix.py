@@ -156,13 +156,14 @@ class HumanitixClient:
             else:
                 ticket = TicketType.objects.get(ticket_id=tickettype['_id'])
 
-            if 'priceRange' in tickettype.keys() and (
-                    tickettype['priceRange']['enabled']) and (
-                    'min' in tickettype['priceRange'].keys()):
-                ticket.cost = tickettype['priceRange']['min']
-                ticket.is_minimum = True
-            else:
+            if 'price' in tickettype.keys():
                 ticket.cost = tickettype['price']
+
+            if 'priceRange' in tickettype.keys() and (
+                    tickettype['priceRange']['enabled']): 
+                if 'min' in tickettype['priceRange'].keys():
+                    ticket.cost = tickettype['priceRange']['min']
+                ticket.is_minimum = True
             ticket.save()
 
         return ti_count

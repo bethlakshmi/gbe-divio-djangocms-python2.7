@@ -2,7 +2,6 @@ import copy
 import eventbrite
 from django.core.files import File
 from django.test import TestCase
-from django.test import Client
 from django.test.utils import override_settings
 from mock import patch, Mock
 import urllib
@@ -53,7 +52,6 @@ class TestListTickets(TestCase):
     view_name = 'ticket_items'
 
     def setUp(self):
-        self.client = Client()
         self.privileged_user = ProfileFactory.create().\
             user_object
         grant_privilege(self.privileged_user, 'Ticketing - Admin')
@@ -479,11 +477,8 @@ class TestListTickets(TestCase):
             live=True,
             ticketing_event=at.ticketing_event)
 
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
-        response = self.client.get(url, data={
+        response = self.client.get(self.url, data={
             "conference": at.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
@@ -552,11 +547,8 @@ class TestListTickets(TestCase):
     def test_ticket_active_donation(self):
         at = TicketItemFactory(live=True, is_minimum=True)
 
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
-        response = self.client.get(url, data={
+        response = self.client.get(self.url, data={
             "conference": at.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
@@ -567,11 +559,9 @@ class TestListTickets(TestCase):
         active_ticket = TicketItemFactory(
             live=True,
             ticketing_event__include_conference=True)
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
+
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "All Conference Classes")
@@ -591,11 +581,9 @@ class TestListTickets(TestCase):
         EventLabelFactory(
             event=event,
             text=active_ticket.ticketing_event.conference.conference_slug)
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
+
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "All Conference Classes")
@@ -620,10 +608,16 @@ class TestListTickets(TestCase):
             text=active_ticket.ticketing_event.conference.conference_slug)
         active_ticket.ticketing_event.linked_events.add(event)
         active_ticket.ticketing_event.save()
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
-        login_as(self.privileged_user, self)
-        response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 200)
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.url)
+
+        self.assertContains(response, "fas fa-check")
+        self.assertContains(response, reverse(
+            'set_ticket_to_event',
+            urlconf='ticketing.urls',
+            args=[active_ticket.ticketing_event.pk,
+                  'TicketingEvents',
+                  'off',
+                  event.pk]))
+        self.assertContains(response, "Remove Event from Ticket")

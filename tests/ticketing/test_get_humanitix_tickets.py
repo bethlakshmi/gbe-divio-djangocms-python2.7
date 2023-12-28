@@ -1,9 +1,7 @@
 import copy
-from django.core.files import File
 from django.test import TestCase
 from django.test.utils import override_settings
 from mock import patch, Mock
-import urllib
 from django.shortcuts import get_object_or_404
 from decimal import Decimal
 from django.urls import reverse
@@ -27,7 +25,6 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
 )
 from gbetext import (
-    eventbrite_error,
     no_ht_settings_error,
     sync_off_instructions,
 )
@@ -36,10 +33,6 @@ from tests.functions.gbe_functions import (
     assert_alert_exists,
     grant_privilege,
     login_as,
-)
-from datetime import (
-    datetime,
-    timedelta,
 )
 
 
@@ -96,6 +89,8 @@ class TestGetHumanitixTickets(TestCase):
         ticket = get_object_or_404(TicketType,
                                    ticket_id='650e0b1b00c168315ead7e0c')
         self.assertEqual(ticket.cost, Decimal('45.00'))
+        self.assertTrue(TicketType.objects.get(
+            ticket_id="6581f5ab7e2ccc7b22e27e18").is_minimum)
 
     def test_humanitix_settings_missing(self):
         HumanitixSettings.objects.all().delete()
@@ -137,7 +132,8 @@ class TestGetHumanitixTickets(TestCase):
         #  chained to event. This pagination is a bit of a fake, since we 
         # only ever have 1 event I have no way to live test this.
         HumanitixSettingsFactory()
-        event = TicketingEventsFactory(event_id="6500d67ba66ab3cb5aae377c")
+        event = TicketingEventsFactory(event_id="6500d67ba66ab3cb5aae377c",
+                                       source=3)
         package = TicketPackageFactory(
             ticket_id="650e0c68949d9cc723ed3330",
             ticketing_event=event,
@@ -170,7 +166,8 @@ class TestGetHumanitixTickets(TestCase):
         # event & ticket does not get reimported but cost is changed.
         # uses Price Range to test min cost.
         HumanitixSettingsFactory(organiser_id=None)
-        event = TicketingEventsFactory(event_id="6568c47844bea90207cb25af")
+        event = TicketingEventsFactory(event_id="6568c47844bea90207cb25af",
+                                       source=3)
         ticket = TicketTypeFactory(
             ticket_id="656b90657cf8549dd8238a10",
             has_coupon=True,
@@ -196,179 +193,74 @@ class TestGetHumanitixTickets(TestCase):
         assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported 1 events, 16 tickets, 5 packages"))
 
-'''
 
-    def test_list_tickets_for_conf(self):
-        # privileged user gets the list for a conference
-        t = TicketItemFactory()
+    def test_package_includes_conference(self):
+        package = TicketPackageFactory(
+            live=True,
+            conference_only_pass=True,
+            ticketing_event__source=3)
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
-        login_as(self.privileged_user, self)
-        response = self.client.get(
-            url,
-            data={"conference": t.ticketing_event.conference.conference_slug})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "All Conference Classes")
-        self.assertNotContains(response, "fas fa-check")
-
-    def test_ticket_active_state(self):
-        # privileged user gets the list for a conference
-        at = TicketItemFactory(live=True)
-        not_live_ticket = TicketItemFactory(
-            live=False,
-            ticketing_event=at.ticketing_event)
-        coupon_ticket = TicketItemFactory(
-            has_coupon=True,
-            live=True,
-            ticketing_event=at.ticketing_event)
-
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
-        login_as(self.privileged_user, self)
-        response = self.client.get(url, data={
-            "conference": at.ticketing_event.conference.conference_slug})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Visible')
-        self.assertContains(response, 'Hidden')
-        self.assertContains(response, 'Requires Coupon')
-        self.assertContains(response, 'Regular Fee', 3)
-
-    def test_ticket_currently_active(self):
-        at = TicketItemFactory(
-            live=True,
-            start_time=datetime.now()-timedelta(days=1),
-            end_time=datetime.now()+timedelta(days=1))
-
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
-            "conference": at.ticketing_event.conference.conference_slug})
+            "conference": package.ticketing_event.conference.conference_slug})
+        print(response.content)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            at.start_time.strftime('%m/%d/%Y'))
-        self.assertContains(
-            response,
-            at.end_time.strftime('%m/%d/%Y'))
-        self.assertContains(
-            response,
-            '<tr class="dedicated-sched gbe-table-row">')
-
-    def test_ticket_not_yet_active(self):
-        it = TicketItemFactory(
-            live=True,
-            start_time=datetime.now()+timedelta(days=1))
-
-        login_as(self.privileged_user, self)
-        response = self.client.get(self.url, data={
-            "conference": it.ticketing_event.conference.conference_slug}
-            )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            it.start_time.strftime('%m/%d/%Y'))
-        self.assertNotContains(
-            response,
-            '<tr class="dedicated-sched gbe-table-row">')
-
-    def test_ticket_no_longer_active(self):
-        it = TicketItemFactory(
-            live=True,
-            end_time=datetime.now()-timedelta(days=1))
-
-        login_as(self.privileged_user, self)
-        response = self.client.get(self.url, data={
-            "conference": it.ticketing_event.conference.conference_slug}
-            )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            it.end_time.strftime('%m/%d/%Y'))
-        self.assertNotContains(
-            response,
-            '<tr class="dedicated-sched gbe-table-row">')
-
-    def test_ticket_active_donation(self):
-        at = TicketItemFactory(live=True, is_minimum=True)
-
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
-        login_as(self.privileged_user, self)
-        response = self.client.get(url, data={
-            "conference": at.ticketing_event.conference.conference_slug})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Visible')
-        self.assertContains(response, 'Minimum Donation')
-
-    def test_ticket_includes_conference(self):
-        active_ticket = TicketItemFactory(
-            live=True,
-            ticketing_event__include_conference=True)
-        url = reverse(
-            self.view_name,
-            urlconf='ticketing.urls')
-        login_as(self.privileged_user, self)
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "All Conference Classes")
+        self.assertContains(response, "Conference: True")
         self.assertContains(response, "fas fa-check")
         self.assertNotContains(response, "set_ticket_to_event")
         self.assertContains(
             response,
-            "To change, edit ticket and remove 'Includes Most' or " +
-            "'Includes Conference'")
-        self.assertContains(response, "Includes all Conference Classes")
+            "To change, edit package and remove 'Whole Shebang' or " +
+            "'Conference Only Pass'")
 
-    def test_ticket_includes_most(self):
-        active_ticket = TicketItemFactory(
+    def test_package_includes_whole_shebang(self):
+        package = TicketPackageFactory(
             live=True,
-            ticketing_event__include_most=True)
+            whole_shebang=True,
+            ticketing_event__source=3)
         event = SchedEventFactory()
         EventLabelFactory(
             event=event,
-            text=active_ticket.ticketing_event.conference.conference_slug)
+            text=package.ticketing_event.conference.conference_slug)
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
-        response = self.client.get(url)
+        response = self.client.get(self.url, data={
+            "conference": package.ticketing_event.conference.conference_slug})
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "All Conference Classes")
+        self.assertContains(response, "Whole Shebang: True")
         self.assertContains(response, event.title)
         self.assertContains(response, "fas fa-check", 2)
         self.assertNotContains(response, "set_ticket_to_event")
         self.assertContains(
             response,
-            "To change, edit ticket and remove 'Includes Most'")
+            "To change, edit package and remove 'Whole Shebang' or " +
+            "'Conference Only Pass'")
         self.assertContains(
             response,
-            "To change, edit ticket and remove 'Includes Most' or " +
-            "'Includes Conference'")
-        self.assertContains(response,
-                            "Includes all events except Master Classes")
+            "To change, edit package and remove 'Whole Shebang'")
 
-    def test_ticket_linked_event(self):
-        active_ticket = TicketItemFactory(live=True)
+    def test_tickettype_linked_event(self):
+        active_ticket = TicketTypeFactory(live=True, ticketing_event__source=3)
         event = SchedEventFactory()
         EventLabelFactory(
             event=event,
             text=active_ticket.ticketing_event.conference.conference_slug)
-        active_ticket.ticketing_event.linked_events.add(event)
-        active_ticket.ticketing_event.save()
+        active_ticket.linked_events.add(event)
+        active_ticket.save()
         url = reverse(
             self.view_name,
             urlconf='ticketing.urls')
         login_as(self.privileged_user, self)
         response = self.client.get(url)
-
-        self.assertEqual(response.status_code, 200)
-'''
+        self.assertContains(response, "fas fa-check")
+        self.assertContains(response, reverse(
+            'set_ticket_to_event',
+            urlconf='ticketing.urls',
+            args=[active_ticket.pk, 'TicketType', 'off', event.pk]))
+        self.assertContains(response, "Remove Event from Ticket")
