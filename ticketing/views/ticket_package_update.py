@@ -23,8 +23,8 @@ class TicketPackageUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
     form_class = TicketPackageForm
     template_name = 'gbe/modal_performer_form.tmpl'
     success_url = reverse_lazy('ticket_items', urlconf='ticketing.urls')
-    page_title = "Edit Package Type"
-    view_title = "Edit Package Type"
+    page_title = "Edit Package"
+    view_title = "Edit Package"
     valid_message = edit_package_message
     intro_text = ticket_package_intro
     view_permissions = ('Ticketing - Admin', )
