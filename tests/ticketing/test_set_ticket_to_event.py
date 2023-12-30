@@ -3,6 +3,7 @@ from django.test import Client
 from tests.factories.gbe_factories import ProfileFactory
 from tests.factories.ticketing_factories import (
     TicketingEventsFactory,
+    TicketTypeFactory,
     TransactionFactory,
 )
 from django.urls import reverse
@@ -19,9 +20,7 @@ from scheduler.models import Event
 from django.db.models import Max
 
 
-class TestEditBPTEvent(TestCase):
-    '''Tests for bptevent_edit view'''
-
+class TestSetTicketToEvent(TestCase):
     def setUp(self):
         self.client = Client()
 
@@ -60,6 +59,40 @@ class TestEditBPTEvent(TestCase):
                 str(self.ticketing_event.conference.conference_slug),
                 self.ticketing_event.id))
         self.assertContains(response, link_event_to_ticket_success_msg)
+
+    def test_set_link_on_ticket_type(self):
+        ticket_type = TicketTypeFactory(
+            ticketing_event__source=3,
+            ticketing_event__conference=self.ticketing_event.conference)
+        login_as(self.privileged_user, self)
+        url = reverse('set_ticket_to_event',
+                      urlconf='ticketing.urls',
+                      args=[ticket_type.pk,
+                            ticket_type.__class__.__name__,
+                            "on",
+                            self.gbe_event.pk])
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(
+            response,
+            "%s?conference=%s&open_panel=ticket&updated_events=[%s]" % (
+                reverse('ticket_items', urlconf='ticketing.urls'),
+                str(self.ticketing_event.conference.conference_slug),
+                ticket_type.id))
+        self.assertContains(response, link_event_to_ticket_success_msg)
+
+    def test_bad_class_name(self):
+        ticket_type = TicketTypeFactory(
+            ticketing_event__source=3,
+            ticketing_event__conference=self.ticketing_event.conference)
+        login_as(self.privileged_user, self)
+        url = reverse('set_ticket_to_event',
+                      urlconf='ticketing.urls',
+                      args=[ticket_type.pk,
+                            "BadClassName",
+                            "on",
+                            self.gbe_event.pk])
+        response = self.client.get(url, follow=True)
+        self.assertEqual(404, response.status_code)
 
     def test_set_link_off(self):
         self.ticketing_event.linked_events.add(self.gbe_event)
