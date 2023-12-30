@@ -94,6 +94,7 @@ class Class(Biddable):
         new_class.multiple_run = self.multiple_run
         new_class.b_title = self.b_title
         new_class.b_description = self.b_description
+        new_class.difficulty = self.difficulty
         new_class.b_conference = Conference.objects.filter(
             status="upcoming").first()
 
