@@ -8,7 +8,7 @@ get_events = {
       "location": "US",
       "currency": "USD",
       "name": "Betty Birthday Bash",
-      "description": "<p>This is not a real event, this is Betty simulating the Burlesque Expo with something silly.</p>",
+      "description": " Betty simulating the Burlesque Expo",
       "slug": "betty-birthday-bash-new-slug",
       "userId": "Z9oxLgQiYodN9CiExWFtjg79TpC2",
       "tagIds": [],
@@ -44,7 +44,7 @@ get_events = {
           "name": "Thursday",
           "price": 200,
           "quantity": 100,
-          "description": "Thursday festivities.  Reminder fake event you get what you pay for.",
+          "description": "Thursday festivities.",
           "disabled": False,
           "deleted": False,
           "isDonation": False
@@ -54,7 +54,7 @@ get_events = {
           "name": "Friday",
           "price": 200.5,
           "quantity": 100,
-          "description": "Friday funday. Reminder fake event you get what you pay for.",
+          "description": "Friday funday.",
           "disabled": False,
           "deleted": False,
           "isDonation": False
@@ -207,7 +207,7 @@ get_events = {
       "location": "US",
       "currency": "USD",
       "name": "The Great Burlesque Exposition of 2024",
-      "description": "<p>The Great Burlesque Exposition is a multi-day event that draws burlesque performers and fans from all over the world.  The festival includes a conference for more serious students, free classes for the general public, 5 burlesque showcases, a prestigious competition, shopping, historic events, special events, and more.</p>",
+      "description": "<p>The Great Burlesque Exposition is a multi-day</p>",
       "slug": "test-event-2-m3xw9aw1",
       "userId": "wItDWjWEdndHSHQgmRL71GGOWDb2",
       "organiserId": "12345678",
@@ -389,7 +389,7 @@ get_events = {
             "enabled": True
           },
           "quantity": 1,
-          "description": "The Great Burlesque Exposition is one of the fabulous aspects of The Professional Burlesque Society.  You can support our educational mission of preserving and promoting the Art of the Tease with a donation of any size.",
+          "description": "The Great Burlesque Exposition is one",
           "disabled": False,
           "deleted": False,
           "isDonation": True
@@ -428,7 +428,7 @@ get_events = {
           "name": "The Whole Shebang",
           "price": 500,
           "quantity": 150,
-          "description": "The Whole Shebang includes everything *except* Master Classes (which have an additional fee)",
+          "description": "The Whole Shebang includes everything *except*",
           "disabled": False,
           "deleted": False,
           "tickets": [
@@ -494,7 +494,7 @@ get_events = {
           "name": "The Socialite",
           "price": 350,
           "quantity": 25,
-          "description": "For our party people, The Socialite includes all of the Burlesque Showcases, the Historic Walking Tour, and admission to the Exhibit Hall.",
+          "description": "For our party people, The Socialite",
           "disabled": False,
           "deleted": False,
           "tickets": [
@@ -552,7 +552,7 @@ get_events = {
           "createdAt": "2023-12-19T21:22:00.475Z",
           "updatedAt": "2023-12-19T21:22:00.475Z",
           "question": "Name on Badge",
-          "description": "if you are getting a Whole Shebang, Scholar, or Socialite package, you will get a name badge.  What name do you want on that badge? If you do not answer, it will be your first name.",
+          "description": "if you are getting a Whole Shebang, Scholar, ",
           "required": False,
           "perOrder": False,
           "disabled": False

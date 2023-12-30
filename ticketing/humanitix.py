@@ -160,7 +160,7 @@ class HumanitixClient:
                 ticket.cost = tickettype['price']
 
             if 'priceRange' in tickettype.keys() and (
-                    tickettype['priceRange']['enabled']): 
+                    tickettype['priceRange']['enabled']):
                 if 'min' in tickettype['priceRange'].keys():
                     ticket.cost = tickettype['priceRange']['min']
                 ticket.is_minimum = True

@@ -104,13 +104,12 @@ class TestGetHumanitixTickets(TestCase):
                             'Success',
                             sync_off_instructions % "Humanitix")
 
-
     @patch('requests.get', autospec=True)
     def test_bad_api_key(self, m_humanitix):
         HumanitixSettingsFactory(organiser_id=None)
         m_humanitix.side_effect = [MockHTResponse(
-           json_data={'error': "Bad Request",
-                      'message': "Invalid api key format provided."},
+            json_data={'error': "Bad Request",
+                       'message': "Invalid api key format provided."},
             status_code=400)]
 
         response = self.import_tickets()
@@ -123,7 +122,7 @@ class TestGetHumanitixTickets(TestCase):
     @patch('requests.get', autospec=True)
     def test_get_w_pagination_package_exists(self, m_humanitix):
         # event & package does not get reimported, new tickets/packages get.
-        #  chained to event. This pagination is a bit of a fake, since we 
+        # chained to event. This pagination is a bit of a fake, since we
         # only ever have 1 event I have no way to live test this.
         HumanitixSettingsFactory()
         event = TicketingEventsFactory(event_id="6500d67ba66ab3cb5aae377c",
@@ -153,7 +152,6 @@ class TestGetHumanitixTickets(TestCase):
         self.assertTrue(TicketPackage.objects.filter(
             ticket_id='65820750ea22e8338a0fae2b',
             ticketing_event=event).exists())
-
 
     @patch('requests.get', autospec=True)
     def test_get_w_ticket_exists_no_org(self, m_humanitix):
@@ -186,7 +184,6 @@ class TestGetHumanitixTickets(TestCase):
         self.assertEqual(refresh_ticket.live, False)
         assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported 1 events, 16 tickets, 5 packages"))
-
 
     def test_package_includes_conference(self):
         package = TicketPackageFactory(

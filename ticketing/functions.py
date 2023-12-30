@@ -86,7 +86,6 @@ def get_tickets(linked_event):
     elif packages != [] and packages.count() > 0:
         link = packages.first().ticketing_event.link
 
-
     if len(ticket_events) > 0 or tickets.count() > 0 or (
             packages != [] and packages.count() > 0):
         return {"events": ticket_events,

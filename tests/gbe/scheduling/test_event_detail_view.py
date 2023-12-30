@@ -286,7 +286,7 @@ class TestEventDetailView(TestCase):
         context.bid.save()
         context.bid.labels.add(self.label)
         link = context.set_social_media("CashApp")
-        # TODO:  With transaction mapping, make sure evals can be done w 
+        # TODO:  With transaction mapping, make sure evals can be done w
         # new logic
         package, this_class = context.setup_tickets()
         url = reverse(

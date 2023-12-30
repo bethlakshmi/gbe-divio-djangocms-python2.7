@@ -15,10 +15,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HumanitixSettings',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True,
+                                        serialize=False,
+                                        verbose_name='ID')),
                 ('api_key', models.CharField(max_length=500)),
-                ('organiser_id', models.CharField(blank=True, max_length=128, null=True)),
-                ('system', models.IntegerField(choices=[(0, 'local/debug'), (1, 'test/live')], unique=True)),
+                ('organiser_id', models.CharField(blank=True,
+                                                  max_length=128,
+                                                  null=True)),
+                ('system', models.IntegerField(
+                    choices=[(0, 'local/debug'), (1, 'test/live')],
+                    unique=True)),
                 ('active_sync', models.BooleanField()),
                 ('endpoint', models.CharField(max_length=200)),
                 ('widget_page', models.URLField(blank=True)),
@@ -40,23 +47,42 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ticketingevents',
             name='source',
-            field=models.IntegerField(choices=[(0, 'Paypal'), (1, 'Brown Paper'), (2, 'Eventbrite'), (3, 'Humanitix')], default=0),
+            field=models.IntegerField(choices=[(0, 'Paypal'),
+                                               (1, 'Brown Paper'),
+                                               (2, 'Eventbrite'),
+                                               (3, 'Humanitix')], default=0),
         ),
         migrations.CreateModel(
             name='TicketType',
             fields=[
-                ('ticketitem_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ticketing.ticketitem')),
-                ('linked_events', models.ManyToManyField(blank=True, to='scheduler.Event')),
+                ('ticketitem_ptr', models.OneToOneField(
+                    auto_created=True,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    parent_link=True,
+                    primary_key=True,
+                    serialize=False,
+                    to='ticketing.ticketitem')),
+                ('linked_events', models.ManyToManyField(
+                    blank=True,
+                    to='scheduler.Event')),
             ],
             bases=('ticketing.ticketitem',),
         ),
         migrations.CreateModel(
             name='TicketPackage',
             fields=[
-                ('ticketitem_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ticketing.ticketitem')),
+                ('ticketitem_ptr', models.OneToOneField(
+                    auto_created=True,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    parent_link=True,
+                    primary_key=True,
+                    serialize=False,
+                    to='ticketing.ticketitem')),
                 ('conference_only_pass', models.BooleanField(default=False)),
                 ('whole_shebang', models.BooleanField(default=False)),
-                ('ticket_types', models.ManyToManyField(blank=True, to='ticketing.TicketType')),
+                ('ticket_types', models.ManyToManyField(
+                    blank=True,
+                    to='ticketing.TicketType')),
             ],
             bases=('ticketing.ticketitem',),
         ),
