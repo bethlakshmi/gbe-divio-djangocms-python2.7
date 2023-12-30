@@ -39,16 +39,10 @@ from tests.functions.gbe_functions import (
 class MockHTResponse:
     def __init__(self,
                  json_data=None,
-                 status_code=200,
-                 error=False,
-                 message=None):
+                 status_code=200):
         if json_data is not None:
             self.json_data = json_data
         self.status_code = status_code
-        if error:
-            self.error = error
-        if message is not None:
-            self.message = message
 
     # mock json() method always returns a specific testing dictionary
     def json(self):
