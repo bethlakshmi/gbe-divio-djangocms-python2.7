@@ -5,6 +5,7 @@ from django.test import (
 from django.contrib.auth.models import User
 from tests.factories.ticketing_factories import(
     EventbriteSettingsFactory,
+    HumanitixSettingsFactory,
     NoEventRoleExclusionFactory,
     RoleEligibilityConditionFactory,
     RoleExclusionFactory,
@@ -42,6 +43,13 @@ class TicketingChangeListTests(TestCase):
         settings = EventbriteSettingsFactory()
         response = self.client.get(
             '/admin/ticketing/eventbritesettings/',
+            follow=True)
+        self.assertContains(response, str(settings))
+
+    def test_get_htsettings_active(self):
+        settings = HumanitixSettingsFactory()
+        response = self.client.get(
+            '/admin/ticketing/humanitixsettings/',
             follow=True)
         self.assertContains(response, str(settings))
 

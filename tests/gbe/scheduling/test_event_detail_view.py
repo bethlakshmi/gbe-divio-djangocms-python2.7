@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
     ConferenceFactory,
     ProfileFactory,
 )
+from tests.factories.ticketing_factories import HumanitixSettingsFactory
 from django.test import TestCase
 from tests.contexts import (
     ActTechInfoContext,
@@ -181,7 +182,7 @@ class TestEventDetailView(TestCase):
             "/admin/filer/image/%d/?_pick=file&_popup=1" % (
                 context.performer.img.pk))
 
-    def test_interested_in_event(self):
+    def test_interested_in_event_orig_ticket_logic(self):
         context = ShowContext()
         package, this_show = context.setup_tickets()
         interested_profile = context.set_interest()
@@ -200,6 +201,41 @@ class TestEventDetailView(TestCase):
             url))
         self.assertContains(response, package.ticketing_event.title)
         self.assertContains(response, this_show.ticketing_event.title)
+
+    def test_display_humanitix_ticket_type(self):
+        context = ShowContext()
+        package = context.setup_package()
+        url = reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[context.sched_event.pk])
+        response = self.client.get(url)
+        self.assertContains(response, package.title)
+        self.assertContains(response, package.ticketing_event.link)
+
+    def test_display_humanitix_package(self):
+        context = ShowContext()
+        this_show = context.setup_ticket_type()
+        url = reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[context.sched_event.pk])
+        response = self.client.get(url)
+        self.assertContains(response, this_show.title)
+        self.assertContains(response, this_show.ticketing_event.link)
+
+    def test_display_humanitix_widget_page(self):
+        settings = HumanitixSettingsFactory(
+            widget_page="https://widget.test.com")
+        context = ShowContext()
+        this_show = context.setup_ticket_type()
+        url = reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[context.sched_event.pk])
+        response = self.client.get(url)
+        self.assertContains(response, this_show.title)
+        self.assertContains(response, settings.widget_page)
 
     def test_not_really_interested_in_event(self):
         context = ShowContext()
@@ -250,6 +286,8 @@ class TestEventDetailView(TestCase):
         context.bid.save()
         context.bid.labels.add(self.label)
         link = context.set_social_media("CashApp")
+        # TODO:  With transaction mapping, make sure evals can be done w 
+        # new logic
         package, this_class = context.setup_tickets()
         url = reverse(
             self.view_name,
