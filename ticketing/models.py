@@ -205,6 +205,9 @@ class TicketType(TicketItem):
     are what can actually link to Scheduled Events.'''
     linked_events = models.ManyToManyField('scheduler.Event', blank=True)
 
+    def __str__(self):
+        return "%s (%s)" % (self.title, self.ticket_id)
+
 
 class TicketPackage(TicketItem):
     '''Humantix gives us a way to package tickets together, these also work
@@ -217,6 +220,9 @@ class TicketPackage(TicketItem):
     def linked_events(self):
         from scheduler.models import Event
         return Event.objects.filter(tickettype__ticketpackage=self)
+
+    def __str__(self):
+        return "%s (%s)" % (self.title, self.ticket_id)
 
 
 class Purchaser(models.Model):

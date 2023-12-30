@@ -1,6 +1,6 @@
 from django.contrib import admin
 from ticketing.models import *
-from gbe_forms_text import link_event_help_text
+from gbe_forms_text import ticketing_event_help_text
 
 
 class BrownPaperSettingsAdmin(admin.ModelAdmin):
@@ -55,6 +55,7 @@ class TicketItemAdmin(admin.ModelAdmin):
     list_filter = ['datestamp',
                    'modified_by',
                    'ticketing_event',
+                   'ticketing_event__conference',
                    'live',
                    'has_coupon']
     search_fields = ['title',
@@ -66,11 +67,8 @@ class TicketItemAdmin(admin.ModelAdmin):
     def conference(self, obj):
         return obj.ticketing_event.conference
 
-    def active(self, obj):
-        return obj.active
 
-
-class TicketTypeAdmin(admin.ModelAdmin):
+class TicketTypeAdmin(TicketItemAdmin):
     list_display = ('title',
                     'ticket_id',
                     'active',
@@ -78,21 +76,12 @@ class TicketTypeAdmin(admin.ModelAdmin):
                     'datestamp',
                     'modified_by',
                     'conference')
-    list_filter = ['datestamp',
-                   'modified_by',
-                   'ticketing_event__conference',
+    list_filter = ['ticketing_event__conference',
                    'live',
+                   'datestamp',
+                   'modified_by',
                    'has_coupon']
-    search_fields = ['title',
-                     'ticketing_event__conference__conference_name',
-                     'ticketing_event__conference__conference_slug']
     filter_horizontal = ['linked_events']
-
-    def conference(self, obj):
-        return obj.ticketing_event.conference
-
-    def active(self, obj):
-        return obj.active
 
 
 class DetailInline(admin.TabularInline):
@@ -145,7 +134,7 @@ class TicketingEventsAdmin(admin.ModelAdmin):
         }),
         ("Display Text", {
             'fields': ('display_icon', 'title', 'description'),
-            'description': link_event_help_text['display_icon'],
+            'description': ticketing_event_help_text['display_icon'],
         }),
     )
 

@@ -215,17 +215,6 @@ def get_checklist_items(profile, conference, user_schedule):
     return (ticket_items, role_items)
 
 
-def create_ticketing_event(event_id, conference, events=[], display_icon=None):
-    event = TicketingEvents.objects.create(
-            event_id=event_id,
-            conference=conference,
-            display_icon=display_icon)
-    if len(events) > 0:
-        event.linked_events.add(*events)
-    event.save()
-    count = import_bpt_ticket_items([event])
-    return event, count
-
 
 def get_ticket_form(bid_type, conference, post=None):
     form = None
