@@ -1,6 +1,6 @@
 {% for event in events %}
 <div class="row"><div class="col-xs-7 col-sm-9 col-md-9{% if event.id in updated_events %} shadow-highlight{% endif %}"><br>
-<h3 class="gbe-subtitle">{{event.title}}</h3>
+<h3 class="gbe-subtitle">{{event.title}} - {{event.get_source_display}}</h3>
 ({{event}})
 </div><div class="col-xs-5 col-sm-3 col-md-3 text-right">
 <div class="btn-group pt-4" role="group" aria-label="...">
@@ -21,7 +21,7 @@
     <th>Visibility to Users</th>
     <th>Payment Format</th>
     <th>Cost</th>
-    <th>Source of Input</th>
+    <th>Last Modified By</th>
     <th>Last Modified Date</th>
     <th>Action</th>
   </tr>

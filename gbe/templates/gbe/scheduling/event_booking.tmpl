@@ -139,62 +139,28 @@ Changing fields in this section will change them in all calendar items.</p>
 
 <div class="form-row">
 {% if tickets %}
-   <div class="col-12 mt-4">
+<div class="col-12 mt-4">
       <h4 class="gbe-subtitle">Set Tickets for Event</h4>
       Choose from any number of existing BPT event tickets, and/or create a new one.
       You can do any or all of these options, or skip it and set the tickets later.<br><br>
-    </div>
+  {% for field in tickets.visible_fields %}
   <div class="form-row">
       <div class="col-12 event-booking-cell gbe-flat-list">
-	<label for="{{tickets.ticketing_events.name}}" class="control-label">	      
-          {% if tickets.ticketing_events.errors %}
+    	<label for="{{field.name}}" class="control-label">	      
+          {% if field.errors %}
             <font class="gbe-form-error">!&nbsp;&nbsp;{% endif %}
-          {{ tickets.ticketing_events.label_tag }}
-          {% if tickets.ticketing_events.errors %}</font>{% endif %} 
-        </label>
-	{{ tickets.ticketing_events }}
-        {% if tickets.ticketing_events.errors %}
- 	<br><label>
-	  <font class="gbe-form-error">{{ tickets.ticketing_events.errors }}</font>
-        </label>{% endif %}
-      </div>
-      <div class="col-md-2 col-sm-3 col-12 event-booking-cell">
-	<label for="{{tickets.event_id.name}}" class="control-label">	      
-          {% if tickets.event_id.errors %}
-            <font class="gbe-form-error">!&nbsp;&nbsp;
-          {% endif %} 
-          {{ tickets.event_id.label_tag }}
-          {% if tickets.event_id.errors %}</font>{% endif %} 
-      </label></div>
-      <div class="col-md-3 col-sm-9 col-12 event-booking-cell">
-	{{ tickets.event_id }}
-        {% if tickets.event_id.errors %}
- 	<br><label>
-	  <font class="gbe-form-error">{{ tickets.event_id.errors }}</font>
-        </label>{% endif %}
-      </div>
-      <div class="col-md-2 col-sm-3 col-12 event-booking-cell">
-	<label for="{{tickets.display_icon.name}}" class="control-label">	      
-          {% if tickets.display_icon.errors %}
-            <font class="gbe-form-error">!&nbsp;&nbsp;
-          {% endif %} 
-          {{ tickets.display_icon.label_tag }}
-          {% if tickets.display_icon.errors %}</font>{% endif %} 
+          {{ field.label_tag }}
+          {% if field.errors %}</font>{% endif %} 
       </label>
-      {% if tickets.display_icon.help_text %}<span class="dropt" title="Help">
-            <img src= "{% static "img/question.png" %}" alt="?"/>
-            <span style="width:200px;float:right;text-align:left;">
-              {{ tickets.display_icon.help_text }}
-          </span></span>{% endif %}
-      </div>
-      <div class="col-md-3 col-sm-9 col-12 event-booking-cell">
-	{{ tickets.display_icon }}
-        {% if tickets.display_icon.errors %}
- 	<br><label>
-	  <font class="gbe-form-error">{{ tickets.display_icon.errors }}</font>
-        </label>{% endif %}
+	    {{ field }}
+      {% if field.errors %}
+    	<br><label>
+	    <font class="gbe-form-error">{{ field.errors }}</font>
+      </label>{% endif %}
       </div>
   </div>
+  {% endfor %}
+</div>
 {% endif %}
 </div>
 {% addtoblock "js" %}

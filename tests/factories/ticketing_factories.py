@@ -47,6 +47,16 @@ class EventbriteSettingsFactory(DjangoModelFactory):
     active_sync = True
 
 
+class HumanitixSettingsFactory(DjangoModelFactory):
+    class Meta:
+        model = tickets.HumanitixSettings
+    api_key = "UseAMock"
+    organiser_id = "12345678"
+    system = 1
+    active_sync = True
+    endpoint = "test.an.endpoint"
+
+
 class TicketItemFactory(DjangoModelFactory):
     class Meta:
         model = tickets.TicketItem
@@ -55,6 +65,17 @@ class TicketItemFactory(DjangoModelFactory):
     title = Sequence(lambda x: "Ticket Item #%d" % x)
     cost = 99.99
     modified_by = "Ticket Item Mock"
+
+
+class TicketTypeFactory(TicketItemFactory):
+    class Meta:
+        model = tickets.TicketType
+
+
+class TicketPackageFactory(TicketItemFactory):
+    class Meta:
+        model = tickets.TicketPackage
+    whole_shebang = True
 
 
 class PurchaserFactory(DjangoModelFactory):

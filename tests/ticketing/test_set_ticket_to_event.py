@@ -3,6 +3,7 @@ from django.test import Client
 from tests.factories.gbe_factories import ProfileFactory
 from tests.factories.ticketing_factories import (
     TicketingEventsFactory,
+    TicketTypeFactory,
     TransactionFactory,
 )
 from django.urls import reverse
@@ -19,9 +20,7 @@ from scheduler.models import Event
 from django.db.models import Max
 
 
-class TestEditBPTEvent(TestCase):
-    '''Tests for bptevent_edit view'''
-
+class TestSetTicketToEvent(TestCase):
     def setUp(self):
         self.client = Client()
 
@@ -33,9 +32,16 @@ class TestEditBPTEvent(TestCase):
         grant_privilege(cls.privileged_user, 'Ticketing - Admin')
         cls.url = reverse('set_ticket_to_event',
                           urlconf='ticketing.urls',
-                          args=[cls.ticketing_event.event_id,
+                          args=[cls.ticketing_event.pk,
+                                cls.ticketing_event.__class__.__name__,
                                 "on",
                                 cls.gbe_event.pk])
+        cls.url_off = reverse('set_ticket_to_event',
+                              urlconf='ticketing.urls',
+                              args=[cls.ticketing_event.pk,
+                                    cls.ticketing_event.__class__.__name__,
+                                    "off",
+                                    cls.gbe_event.pk])
 
     def test_use_user_is_not_ticketing(self):
         user = ProfileFactory.create().user_object
@@ -54,16 +60,45 @@ class TestEditBPTEvent(TestCase):
                 self.ticketing_event.id))
         self.assertContains(response, link_event_to_ticket_success_msg)
 
+    def test_set_link_on_ticket_type(self):
+        ticket_type = TicketTypeFactory(
+            ticketing_event__source=3,
+            ticketing_event__conference=self.ticketing_event.conference)
+        login_as(self.privileged_user, self)
+        url = reverse('set_ticket_to_event',
+                      urlconf='ticketing.urls',
+                      args=[ticket_type.pk,
+                            ticket_type.__class__.__name__,
+                            "on",
+                            self.gbe_event.pk])
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(
+            response,
+            "%s?conference=%s&open_panel=ticket&updated_events=[%s]" % (
+                reverse('ticket_items', urlconf='ticketing.urls'),
+                str(self.ticketing_event.conference.conference_slug),
+                ticket_type.id))
+        self.assertContains(response, link_event_to_ticket_success_msg)
+
+    def test_bad_class_name(self):
+        ticket_type = TicketTypeFactory(
+            ticketing_event__source=3,
+            ticketing_event__conference=self.ticketing_event.conference)
+        login_as(self.privileged_user, self)
+        url = reverse('set_ticket_to_event',
+                      urlconf='ticketing.urls',
+                      args=[ticket_type.pk,
+                            "BadClassName",
+                            "on",
+                            self.gbe_event.pk])
+        response = self.client.get(url, follow=True)
+        self.assertEqual(404, response.status_code)
+
     def test_set_link_off(self):
         self.ticketing_event.linked_events.add(self.gbe_event)
         self.ticketing_event.save()
-        self.url = reverse('set_ticket_to_event',
-                           urlconf='ticketing.urls',
-                           args=[self.ticketing_event.event_id,
-                                 "off",
-                                 self.gbe_event.pk])
         login_as(self.privileged_user, self)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.get(self.url_off, follow=True)
         self.assertRedirects(
             response,
             "%s?conference=%s&open_panel=ticket&updated_events=[%s]" % (
@@ -73,13 +108,8 @@ class TestEditBPTEvent(TestCase):
         self.assertContains(response, unlink_event_to_ticket_success_msg)
 
     def test_bad_logic(self):
-        self.url = reverse('set_ticket_to_event',
-                           urlconf='ticketing.urls',
-                           args=[self.ticketing_event.event_id,
-                                 "off",
-                                 self.gbe_event.pk])
         login_as(self.privileged_user, self)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.get(self.url_off, follow=True)
         self.assertRedirects(
             response,
             "%s?conference=%s&open_panel=ticket&updated_events=[%s]" % (
@@ -93,7 +123,8 @@ class TestEditBPTEvent(TestCase):
         bad_pk = Event.objects.aggregate(Max('pk'))['pk__max']+1
         self.url = reverse('set_ticket_to_event',
                            urlconf='ticketing.urls',
-                           args=[self.ticketing_event.event_id,
+                           args=[self.ticketing_event.pk,
+                                 self.ticketing_event.__class__.__name__,
                                  "off",
                                  bad_pk])
         login_as(self.privileged_user, self)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from ticketing.models import *
-from gbe_forms_text import link_event_help_text
+from gbe_forms_text import ticketing_event_help_text
 
 
 class BrownPaperSettingsAdmin(admin.ModelAdmin):
@@ -55,6 +55,7 @@ class TicketItemAdmin(admin.ModelAdmin):
     list_filter = ['datestamp',
                    'modified_by',
                    'ticketing_event',
+                   'ticketing_event__conference',
                    'live',
                    'has_coupon']
     search_fields = ['title',
@@ -66,8 +67,21 @@ class TicketItemAdmin(admin.ModelAdmin):
     def conference(self, obj):
         return obj.ticketing_event.conference
 
-    def active(self, obj):
-        return obj.active
+
+class TicketTypeAdmin(TicketItemAdmin):
+    list_display = ('title',
+                    'ticket_id',
+                    'active',
+                    'cost',
+                    'datestamp',
+                    'modified_by',
+                    'conference')
+    list_filter = ['ticketing_event__conference',
+                   'live',
+                   'datestamp',
+                   'modified_by',
+                   'has_coupon']
+    filter_horizontal = ['linked_events']
 
 
 class DetailInline(admin.TabularInline):
@@ -120,7 +134,7 @@ class TicketingEventsAdmin(admin.ModelAdmin):
         }),
         ("Display Text", {
             'fields': ('display_icon', 'title', 'description'),
-            'description': link_event_help_text['display_icon'],
+            'description': ticketing_event_help_text['display_icon'],
         }),
     )
 
@@ -201,9 +215,12 @@ class TicketExcludeAdmin(admin.ModelAdmin):
 
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
+admin.site.register(HumanitixSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
+admin.site.register(TicketType, TicketTypeAdmin)
+admin.site.register(TicketPackage, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TicketingEligibilityCondition,

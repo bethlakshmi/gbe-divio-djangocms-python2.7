@@ -12,14 +12,9 @@ from gbe.scheduling.forms import (
     ShowBookingForm,
 )
 from gbe.scheduling.views import EventWizardView
-from ticketing.forms import LinkBPTEventForm
-from gbe.ticketing_idd_interface import create_ticketing_event
+from ticketing.forms import LinkTicketsForm
 from gbe.functions import validate_perms
-from gbetext import (
-    create_ticket_event_success_msg,
-    link_event_to_ticket_success_msg,
-    no_tickets_found_msg,
-)
+from gbetext import link_event_to_ticket_success_msg
 from gbe_forms_text import event_settings
 
 
@@ -53,9 +48,16 @@ class TicketedEventWizardView(EventWizardView):
         for ticket_event in ticket_form.cleaned_data['ticketing_events']:
             ticket_event.linked_events.add(new_event)
             ticket_event.save()
-            ticket_list += "%s - %s, %s" % (
+            ticket_list = "%s - %s, %s" % (
                 ticket_event.event_id,
                 ticket_event.title,
+                ticket_list)
+        for ticket in ticket_form.cleaned_data['ticket_types']:
+            ticket.linked_events.add(new_event)
+            ticket.save()
+            ticket_list = "%s - %s, %s" % (
+                ticket.ticket_id,
+                ticket.title,
                 ticket_list)
         if len(ticket_list) > 0:
             user_message = UserMessage.objects.get_or_create(
@@ -67,35 +69,6 @@ class TicketedEventWizardView(EventWizardView):
             messages.success(
                 request,
                 user_message[0].description + ticket_list)
-
-        if ticket_form.cleaned_data['event_id']:
-            ticket_event, ticket_count = create_ticketing_event(
-                ticket_form.cleaned_data['event_id'],
-                conference=self.conference,
-                events=[new_event],
-                display_icon=ticket_form.cleaned_data['display_icon'],
-            )
-            if ticket_event:
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="NEW_TICKETING_EVENT",
-                    defaults={
-                        'summary': "Created New Ticked Event",
-                        'description': create_ticket_event_success_msg})
-                messages.success(request, "%s %s - %s" % (
-                    user_message[0].description,
-                    ticket_event.event_id,
-                    ticket_event.title))
-            if ticket_count == 0:
-                user_message = UserMessage.objects.get_or_create(
-                    view=self.__class__.__name__,
-                    code="NO_TICKETS_FOR_EVENT",
-                    defaults={
-                        'summary': "Tickets not found for BPT Event",
-                        'description': no_tickets_found_msg, })
-                messages.warning(
-                    request,
-                    user_message[0].description)
 
     @never_cache
     @method_decorator(login_required)
@@ -117,7 +90,7 @@ class TicketedEventWizardView(EventWizardView):
         context['worker_formset'] = self.make_formset(
             event_settings[self.event_type]['roles'])
         if validate_perms(request, ('Ticketing - Admin',), require=False):
-            context['tickets'] = LinkBPTEventForm(initial={
+            context['tickets'] = LinkTicketsForm(initial={
                 'conference': self.conference, })
         return render(request, self.template, context)
 
@@ -138,7 +111,7 @@ class TicketedEventWizardView(EventWizardView):
             event_settings[self.event_type]['roles'],
             post=request.POST)
         if validate_perms(request, ('Ticketing - Admin',), require=False):
-            context['tickets'] = LinkBPTEventForm(request.POST, initial={
+            context['tickets'] = LinkTicketsForm(request.POST, initial={
                 'conference': self.conference, })
         if context['second_form'].is_valid(
                 ) and context['scheduling_form'].is_valid(

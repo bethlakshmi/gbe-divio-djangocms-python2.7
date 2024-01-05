@@ -261,10 +261,12 @@ system_options = [
 source_options = [
     (0, 'Paypal'),
     (1, 'Brown Paper'),
-    (2, 'Eventbrite')]
+    (2, 'Eventbrite'),
+    (3, 'Humanitix')]
 ticket_link = {
     1: 'http://www.brownpapertickets.com/event/ID-user_id/%s/',
-    2: 'https://www.eventbrite.com/e/%s'}
+    2: 'https://www.eventbrite.com/e/%s',
+    3: 'https://events.humanitix.com/%s'}
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),
@@ -627,9 +629,6 @@ intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
 intro_ticket_assign_message = '''This grid shows what tickets are connected \
 to which GBE event.'''
-no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
-Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
-tickets listed, users will be unable to purchase entrance to this event.'''
 org_id_instructions = '''The organization id has not been defined.  Go to \
 admin and set one of the following ids in the EventbriteSettings for \
 'organization_id' for debug or live.  Only events for this organization \
@@ -642,6 +641,12 @@ no_settings_error = '''There are no Eventbrite settings for this server.  Go \
 to admin and ticketing -> EventbrightSettings and enter settings.  Oauth
 token can be found in the API settings in EventBrite.  After that, return
 here to get the organization id.'''
+no_ht_settings_error = '''There are no Humanitix settings for this server.  \
+Go to admin and ticketing -> HumanitixSettings and enter settings.  API key
+ can be found in your Humantix profile under Advanced Settings --> Public API
+  Key.  Organisation ID is the Host's ID, you can find it in the URL that
+  is shown in your Profile on the Host's page, it's the inscruitable string
+  between two slashes.'''
 intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \
 events.  For Paypal, it's simply a container for a set of prices.  These \
 containers define payment for act fees, vendor fees, or entry into the expo \
@@ -649,12 +654,20 @@ for all or some events.'''
 intro_make_ticket_message = '''This page makes an individual ticket (and \
 price) for either a fee or entry into the expo.  The BPT Event connected to \
 this ticket defines what the customer gets when they pay for the ticket.'''
+ticket_type_intro = '''Ticket Types in our use of Humantix represent individual
+ events in GBE.  These tickets can then be combined into packages.  Remember
+ that the cost shown here will automatically update from Humantix.'''
+ticket_package_intro = '''Ticket Packages contain ticket types, and also
+ can grant the big package qualities that events did with other systems.
+  Remember that the cost, and linked ticket types shown here will
+ automatically update from Humantix.'''
 purchase_intro_msg = '''Welcome!<br>Thanks for your interest in the Great \
 Burlesque Expo.  Below are the ticket options available for purchase. \
 There are many ways you can be a part of the convention, so please read \
 the descriptions carefully.'''
 edit_event_message = '''Event has been successfully updated.'''
 edit_ticket_message = '''Ticket has been successfully updated.'''
+edit_package_message = '''Package has been successfully updated.'''
 delete_ticket_fail_message = '''Deletion failed, transactions exist for this \
 ticket.'''
 delete_ticket_success_message = '''The ticket was successfully deleted (no \
@@ -667,7 +680,6 @@ link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
 unlink_event_to_ticket_success_msg = '''Successfully disconnected the  \
 following tickets from events: '''
-create_ticket_event_success_msg = "Created and linked a new BPT Event: "
 payment_details_error = '''Your choice for fee selections was not valid, \
 please check the form and try again.'''
 set_volunteer_role_summary = "Volunteer Offer %s"

@@ -42,6 +42,26 @@ class EventbriteSettings(models.Model):
         verbose_name_plural = 'Eventbrite Settings'
 
 
+class HumanitixSettings(models.Model):
+    '''
+    if oath exists, the "sync" thread will first attempt to get org id
+    if org id is present, then it will sync events & tickets & transactions
+    automatically and/or on button click in ticketing
+    '''
+    api_key = models.CharField(max_length=500)
+    organiser_id = models.CharField(max_length=128, blank=True, null=True)
+    system = models.IntegerField(choices=system_options, unique=True)
+    active_sync = models.BooleanField()
+    endpoint = models.CharField(max_length=200)
+    widget_page = models.URLField(blank=True)
+
+    def __str__(self):
+        return system_options[self.system][1]
+
+    class Meta:
+        verbose_name_plural = 'Humanitix Settings'
+
+
 class SyncStatus(models.Model):
     is_success = models.BooleanField(default=True)
     import_type = models.CharField(max_length=128)
@@ -94,6 +114,7 @@ class TicketingEvents(models.Model):
     title = models.CharField(max_length=50, blank=True, null=True)
     display_icon = models.CharField(max_length=50, blank=True)
     source = models.IntegerField(choices=source_options, default=0)
+    slug = models.SlugField(blank=True)
 
     def __str__(self):
         return "%s - %s" % (self.event_id, self.title)
@@ -113,7 +134,10 @@ class TicketingEvents(models.Model):
 
     @property
     def link(self):
-        return ticket_link[self.source] % self.event_id
+        if self.source != 3:
+            return ticket_link[self.source] % self.event_id
+        else:
+            return ticket_link[self.source] % self.slug
 
     class Meta:
         verbose_name_plural = 'Ticketing Events'
@@ -137,6 +161,7 @@ class TicketItem(models.Model):
     '''
     ticket_id = models.CharField(max_length=30)
     title = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
     cost = models.DecimalField(max_digits=20, decimal_places=2)
     datestamp = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=30)
@@ -173,6 +198,31 @@ class TicketItem(models.Model):
 
     class Meta:
         ordering = ['cost']
+
+
+class TicketType(TicketItem):
+    '''With Humanitix, the event is the whole conference.  Ticket types
+    are what can actually link to Scheduled Events.'''
+    linked_events = models.ManyToManyField('scheduler.Event', blank=True)
+
+    def __str__(self):
+        return "%s (%s)" % (self.title, self.ticket_id)
+
+
+class TicketPackage(TicketItem):
+    '''Humantix gives us a way to package tickets together, these also work
+    like our passes - Whole Shebang, Conference, etc.'''
+    ticket_types = models.ManyToManyField(TicketType, blank=True)
+    conference_only_pass = models.BooleanField(default=False)
+    whole_shebang = models.BooleanField(default=False)
+
+    @property
+    def linked_events(self):
+        from scheduler.models import Event
+        return Event.objects.filter(tickettype__ticketpackage=self)
+
+    def __str__(self):
+        return "%s (%s)" % (self.title, self.ticket_id)
 
 
 class Purchaser(models.Model):

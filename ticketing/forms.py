@@ -7,6 +7,8 @@
 from ticketing.models import (
     TicketingEvents,
     TicketItem,
+    TicketType,
+    TicketPackage,
     Transaction,
 )
 from gbe.functions import get_ticketable_gbe_events
@@ -20,7 +22,6 @@ from gbe_forms_text import (
     ticketing_event_labels,
     donation_help_text,
     donation_labels,
-    link_event_help_text,
     link_event_labels,
     ticket_item_labels,
     ticket_item_help_text,
@@ -94,12 +95,58 @@ class TicketItemForm(forms.ModelForm):
         return form
 
 
+class TicketTypeForm(TicketItemForm):
+    linked_events = forms.ModelMultipleChoiceField(
+        queryset=get_ticketable_gbe_events().order_by('title'),
+        required=False,
+        label=ticketing_event_labels['linked_events'])
+
+    class Meta:
+        model = TicketType
+        fields = ['ticket_id',
+                  'title',
+                  'cost',
+                  'ticketing_event',
+                  'has_coupon',
+                  'special_comp',
+                  'live',
+                  'start_time',
+                  'end_time',
+                  'is_minimum',
+                  'linked_events'
+                  ]
+        labels = ticket_item_labels
+        help_texts = ticket_item_help_text
+
+
+class TicketPackageForm(TicketItemForm):
+
+    class Meta:
+        model = TicketPackage
+        fields = ['ticket_id',
+                  'title',
+                  'cost',
+                  'ticketing_event',
+                  'has_coupon',
+                  'special_comp',
+                  'live',
+                  'start_time',
+                  'end_time',
+                  'is_minimum',
+                  'ticket_types',
+                  'conference_only_pass',
+                  'whole_shebang',
+                  ]
+        labels = ticket_item_labels
+        help_texts = ticket_item_help_text
+
+
 class PickBPTEventField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return "%s - %s" % (obj.event_id, obj.title)
 
 
-class LinkBPTEventForm(forms.ModelForm):
+class LinkTicketsForm(forms.Form):
     '''
     Used in event creation in gbe to set up ticket info when making a new class
     '''
@@ -107,31 +154,32 @@ class LinkBPTEventForm(forms.ModelForm):
     error_css_class = 'error'
     ticketing_events = PickBPTEventField(
         queryset=TicketingEvents.objects.exclude(
-            conference__status="completed").order_by('event_id'),
+            conference__status="completed",
+            source=3).order_by('title'),
         required=False,
         label=link_event_labels['ticketing_events'],
         widget=CheckboxSelectMultiple(),)
-    event_id = forms.IntegerField(
+    ticket_types = forms.ModelMultipleChoiceField(
+        queryset=TicketType.objects.filter(ticketing_event__source=3).exclude(
+            ticketing_event__conference__status="completed").order_by('title'),
         required=False,
-        label=link_event_labels['event_id'])
-    display_icon = forms.CharField(
-        required=False,
-        label=link_event_labels['display_icon'],
-        help_text=link_event_help_text['display_icon'])
+        label=link_event_labels['ticket_types'],
+        widget=CheckboxSelectMultiple())
 
     class Meta:
         model = TicketingEvents
-        fields = ['event_id', 'display_icon']
         labels = link_event_labels
-        help_texts = link_event_help_text
 
     def __init__(self, *args, **kwargs):
-        super(LinkBPTEventForm, self).__init__(*args, **kwargs)
+        super(LinkTicketsForm, self).__init__(*args, **kwargs)
         if 'initial' in kwargs and 'conference' in kwargs['initial']:
             initial = kwargs.pop('initial')
             self.fields[
                 'ticketing_events'].queryset = TicketingEvents.objects.filter(
-                conference=initial['conference']).order_by('event_id')
+                conference=initial['conference']).exclude(source=3).order_by('title')
+            self.fields['ticket_types'].queryset = TicketType.objects.filter(
+                ticketing_event__conference=initial['conference']
+                ).order_by('title')
 
 
 class BPTEventForm(forms.ModelForm):
@@ -155,6 +203,7 @@ class BPTEventForm(forms.ModelForm):
         fields = [
             'conference',
             'event_id',
+            'slug',
             'source',
             'title',
             'description',

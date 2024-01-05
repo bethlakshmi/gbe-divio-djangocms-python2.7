@@ -1,10 +1,24 @@
   <div class="dedicated-sched"><br>
-    Buy any of these tickets to get into this great event!<br>
+    Buy any of these tickets to get into this great event!
+    {% if tickets.events|length > 0 %}<br>
     <ul class="ticket_list">
-    {% for ticket in tickets %}
+    {% for ticket in tickets.events %}
       <li class="ticket_list_item">
         {{ ticket.title }} - 
         <a href="{{ ticket.link }}" target="_blank" class="gbe-link">
             Buy it now!</a>
       </li>{% endfor %}
-    </ul></div>
+    </ul>{% endif %}
+    {% if tickets.link %}
+    <a href="{{ tickets.link }}" target="_blank" class="gbe-link">Available now!</a>
+    <ul class="ticket_list">
+    {% for ticket in tickets.tickets %}
+      <li class="ticket_list_item">
+        {{ ticket.title }}
+      </li>{% endfor %}
+    {% for package in tickets.packages %}
+      <li class="ticket_list_item">
+        {{ package.title }}
+      </li>{% endfor %}
+    </ul>{% endif %}
+    </div>

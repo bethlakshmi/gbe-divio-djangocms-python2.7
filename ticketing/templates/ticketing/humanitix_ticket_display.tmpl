@@ -1,0 +1,114 @@
+{% for event in humanitix_events %}
+<div class="row"><div class="col-xs-7 col-sm-9 col-md-9{% if event.id in updated_events %} shadow-highlight{% endif %}"><br>
+<h2 class="gbe-subtitle">{{event.title}} - {{event.get_source_display}} Event</h3>
+({{event}})
+</div><div class="col-xs-5 col-sm-3 col-md-3 text-right">
+<div class="btn-group pt-4" role="group" aria-label="...">
+  <a href="{% url 'ticketing:bptevent_edit' event.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-secondary btn-sm" id="action-button">
+    <i class="fas fa-pencil-alt"></i></a>
+  <a href="{% url 'ticketing:bptevent_edit' event.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-secondary  btn-sm" id="action-button">
+    <i class="far fa-trash-alt"></i></a></div>
+</div></div>
+{% include 'ticketing/event_details.tmpl' %}
+{% endfor %}
+
+
+{% for item in ticket_types %}
+{% if forloop.first %}
+<div class="row"><div class="col-12"><br>
+<h3 class="gbe-subtitle">Humanitix Ticket Types</h3>
+</div></div>
+<table>
+  <thead>
+  <tr class="gbe-table-header">
+    <th>Ticket Item ID</th>
+    <th>Title</th>
+    <th>Visibility to Users</th>
+    <th>Payment Format</th>
+    <th>Cost</th>
+    <th>Linked Events</th>
+    <th>Last Modified Date</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+{% endif %}
+<tr class="{% if item.active %}dedicated-sched {% endif %}{% if item.id in updated_tickets %}gbe-table-success {% endif %}gbe-table-row">    
+  <td>{{item.ticket_id}}</td>
+  <td>{{ item.title | safe }}</td>
+  <td>{% if item.start_time and item.end_time %}
+    Valid: <br>{{ item.start_time | date:'m/d/Y' }} - <br>
+    {{ item.end_time | date:'m/d/Y'}}
+  {% elif item.start_time %}Valid After: <br>{{ item.start_time | date:'m/d/Y'}}
+  {% elif item.end_time %}Valid Before: <br>{{ item.end_time | date:'m/d/Y'}}
+  {% elif item.has_coupon %}Requires Coupon
+  {% elif item.live %}Visible{% else %}Hidden
+  {% endif %}{% if item.special_comp %}<br><i>Useable any time</i>{% endif %}</td>
+  <td>{% if item.is_minimum %}Minimum Donation
+    {% elif item.add_on %}Optional Add-On{% else %}Regular Fee{% endif %}</td>
+  <td>${{ item.cost }}</td>
+  <td>{% for event in item.linked_events.all %}{{ event.title }}<br>{% endfor %}</td>
+  <td>{{ item.datestamp }}</td>
+  <td id="ticket_action">
+    <div class="btn-group" role="group" aria-label="...">
+      <a href="{% url 'ticketing:ticket_type_update' item.pk %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
+        <i class="fas fa-pencil-alt"></i></a>
+      <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
+        <i class="far fa-trash-alt"></i></a></div></td>
+</tr>
+{% if forloop.last %}
+</tbody></table>
+{% endif %}
+{% endfor %}
+
+
+{% for item in packages %}
+{% if forloop.first %}
+<div class="row"><div class="col-12"><br>
+<h3 class="gbe-subtitle">Humanitix Packages</h3>
+</div></div>
+<table>
+  <thead>
+  <tr class="gbe-table-header">
+    <th>Ticket Item ID</th>
+    <th>Title</th>
+    <th>Visibility to Users</th>
+    <th>Payment Format</th>
+    <th>Cost</th>
+    <th>Last Modified Date</th>
+    <th>Special Powers</th>
+    <th>Linked Tickets</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+{% endif %}
+<tr class="{% if item.active %}dedicated-sched {% endif %}{% if item.id in updated_tickets %}gbe-table-success {% endif %}gbe-table-row">    
+  <td>{{item.ticket_id}}</td>
+  <td>{{ item.title | safe }}</td>
+  <td>{% if item.start_time and item.end_time %}
+    Valid: <br>{{ item.start_time | date:'m/d/Y' }} - <br>
+    {{ item.end_time | date:'m/d/Y'}}
+  {% elif item.start_time %}Valid After: <br>{{ item.start_time | date:'m/d/Y'}}
+  {% elif item.end_time %}Valid Before: <br>{{ item.end_time | date:'m/d/Y'}}
+  {% elif item.has_coupon %}Requires Coupon
+  {% elif item.live %}Visible{% else %}Hidden
+  {% endif %}{% if item.special_comp %}<br><i>Useable any time</i>{% endif %}</td>
+  <td>{% if item.is_minimum %}Minimum Donation
+    {% elif item.add_on %}Optional Add-On{% else %}Regular Fee{% endif %}</td>
+  <td>${{ item.cost }}</td>
+  <td>{{ item.datestamp }}</td>
+  <td>Whole Shebang: {{ item.whole_shebang }}<br>
+      Conference: {{ item.conference_only_pass }}<br></td>
+  <td>{% for ticket in item.ticket_types.all %}{{ticket.title}}<br>{% endfor %}</div>
+  <td id="ticket_action">
+    <div class="btn-group" role="group" aria-label="...">
+      <a href="{% url 'ticketing:ticket_package_update' item.id %}" data-toggle="tooltip" title="Edit" class="btn gbe-btn-table btn-sm" id="action-button">
+        <i class="fas fa-pencil-alt"></i></a>
+      <a href="{% url 'ticketing:ticket_item_edit' item.id %}?delete_item=True" data-toggle="tooltip" title="Delete" class="btn gbe-btn-table btn-sm" id="action-button">
+        <i class="far fa-trash-alt"></i></a></div></td>
+</tr>
+{% if forloop.last %}
+</tbody></table>
+{% endif %}
+{% endfor %}

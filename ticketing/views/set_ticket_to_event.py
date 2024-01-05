@@ -5,7 +5,10 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.urls import reverse
-from ticketing.models import TicketingEvents
+from ticketing.models import (
+    TicketingEvents,
+    TicketType,
+)
 from gbe.functions import validate_perms
 from ticketing.views.functions import make_open_panel
 from gbe.models import UserMessage
@@ -18,9 +21,18 @@ from scheduler.idd import get_occurrence
 
 
 @never_cache
-def set_ticket_to_event(request, event_id, state, gbe_event_id):
+def set_ticket_to_event(request, pk, ticket_class, state, gbe_event_id):
     validate_perms(request, ('Ticketing - Admin', ))
-    ticketing_event = get_object_or_404(TicketingEvents, event_id=event_id)
+    if ticket_class == "TicketingEvents":
+        ticketing_event = get_object_or_404(TicketingEvents, pk=pk)
+        conference = ticketing_event.conference
+        open_panel = make_open_panel(ticketing_event)
+    elif ticket_class == "TicketType":
+        ticketing_event = get_object_or_404(TicketType, pk=pk)
+        conference = ticketing_event.ticketing_event.conference
+        open_panel = "ticket"
+    else:
+        raise Http404
     response = get_occurrence(gbe_event_id)
     if response.errors and response.errors[0].code == "OCCURRENCE_NOT_FOUND":
         raise Http404
@@ -60,6 +72,6 @@ def set_ticket_to_event(request, event_id, state, gbe_event_id):
     return HttpResponseRedirect(
         '%s?conference=%s&open_panel=%s&updated_events=%s' % (
             reverse('ticket_items', urlconf='ticketing.urls'),
-            ticketing_event.conference.conference_slug,
-            make_open_panel(ticketing_event),
+            conference.conference_slug,
+            open_panel,
             str([ticketing_event.id])))
