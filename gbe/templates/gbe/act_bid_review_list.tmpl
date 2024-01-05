@@ -9,7 +9,7 @@
       <a class="btn gbe-btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Comp Act Options</a>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
         <a class="dropdown-item" href="{% url 'gbe:act_coord_create' %}">Create & Comp Act</a>
-        <a class="dropdown-item" href="{% url 'ticketing:comp_ticket' %}?next={{ request.get_full_path }}">Send a Comp</a>
+        <a class="dropdown-item" href="{% url 'ticketing:comp_ticket' %}?next={{ request.META.PATH_INFO }}">Send a Comp</a>
       </div></div>{% endif %}
       <button class="btn gbe-btn-primary my-3" type="button" data-toggle="collapse" data-target="#actMetricCollapse" aria-expanded="false" aria-controls="actMetricCollapse">
       Act Review Metrics

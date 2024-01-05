@@ -71,7 +71,8 @@ class TestCloneBid(TestCase):
         return response, bid
 
     def clone_class(self):
-        bid = ClassFactory(b_conference=self.old_conference)
+        bid = ClassFactory(b_conference=self.old_conference,
+                           difficulty="Hard")
         bid.b_title = "Factory is broken"
         bid.save()
         count = Class.objects.filter(
@@ -108,6 +109,7 @@ class TestCloneBid(TestCase):
             1 + count,
             Class.objects.filter(b_title=bid.b_title,
                                  b_conference=self.current_conference).count())
+        self.assertEqual(Class.objects.all().latest('pk').difficulty, "Hard")
 
     def test_clone_bid_bad_bid_type(self):
         bid = ActFactory(b_conference=self.old_conference)
