@@ -176,7 +176,7 @@ class LinkTicketsForm(forms.Form):
             initial = kwargs.pop('initial')
             self.fields[
                 'ticketing_events'].queryset = TicketingEvents.objects.filter(
-                conference=initial['conference']).order_by('title')
+                conference=initial['conference']).exclude(source=3).order_by('title')
             self.fields['ticket_types'].queryset = TicketType.objects.filter(
                 ticketing_event__conference=initial['conference']
                 ).order_by('title')
