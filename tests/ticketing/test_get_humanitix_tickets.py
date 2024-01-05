@@ -196,7 +196,6 @@ class TestGetHumanitixTickets(TestCase):
         login_as(self.privileged_user, self)
         response = self.client.get(self.url, data={
             "conference": package.ticketing_event.conference.conference_slug})
-        print(response.content)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Conference: True")

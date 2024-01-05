@@ -99,7 +99,6 @@ class TestReviewVolunteerlist(TestCase):
             'volunteer-review-add',
             urlconf='gbe.urls',
             args=[context.conference.conference_slug, vol1.pk]))
-        print(response.content)
         self.assertContains(
             response,
             "<b>Reviewer:</b> %s" % self.profile.display_name)
