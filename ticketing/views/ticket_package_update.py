@@ -39,16 +39,15 @@ class TicketPackageUpdate(GbeFormMixin, RoleRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(str(self.request.user))
-        if hasattr(self, 'valid_message'):
-            msg = UserMessage.objects.get_or_create(
-                view=self.__class__.__name__,
-                code="SUCCESS",
-                defaults={
-                    'summary': "Successful Submission",
-                    'description': self.valid_message})
-            messages.success(self.request, "%s  Package Id: %s, Title: %s" % (
-                msg[0].description,
-                self.object.ticket_id,
-                self.object.title))
+        msg = UserMessage.objects.get_or_create(
+            view=self.__class__.__name__,
+            code="SUCCESS",
+            defaults={
+                'summary': "Successful Submission",
+                'description': self.valid_message})
+        messages.success(self.request, "%s  Package Id: %s, Title: %s" % (
+            msg[0].description,
+            self.object.ticket_id,
+            self.object.title))
         return HttpResponseRedirect(self.get_success_url() + (
             "?updated_tickets=[%s]&open_panel=ticket" % self.object.pk))
