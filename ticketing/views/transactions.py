@@ -9,6 +9,7 @@ from ticketing.models import (
   Purchaser,
   Transaction,
 )
+from ticketing.humanitix import HumanitixClient
 from ticketing.brown_paper import process_bpt_order_list
 from ticketing.eventbrite import process_eb_purchases
 from django.shortcuts import render
@@ -46,6 +47,13 @@ def transactions(request):
     error = ''
 
     if ('Sync' in request.POST):
+        humanitix = HumanitixClient()
+        msgs = humanitix.process_transactions()
+        for msg, is_success in msgs:
+            if is_success:
+                messages.success(request, msg)
+            else:
+                messages.error(request, msg)
         msgs = process_eb_purchases()
         for msg, is_success in msgs:
             if is_success:

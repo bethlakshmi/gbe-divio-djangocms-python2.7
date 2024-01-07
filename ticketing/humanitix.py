@@ -54,6 +54,133 @@ class HumanitixClient:
                 )[0].description % "Humanitix", True)
         return True, ("", "")
 
+    def process_transactions(self):
+        msgs = []
+        proceed, return_tuple = self.setup_api()
+        if not proceed:
+            return [return_tuple]
+        # sync up any prior purchasers who may have setup accounts
+        match_existing_purchasers_using_email()
+
+        for event in TicketingEvents.objects.exclude(
+                conference__status='completed').filter(source=3):
+            orders, is_success = self.get_orders(event)
+            
+            # we're done if there's no orders
+            if is_success and len(orders) > 0:
+                msgs = msgs + self.get_order_inventory(event, orders)
+                # TODO - cancellations
+
+            else:
+                msgs += [(orders, is_success)]
+
+        return msgs
+
+    def get_order_inventory(self, event, orders):
+        # return a tuple (A, B) where A = the result or a message on why this
+        # failed, and B is whether processing halted early due to error
+        page = 1
+        has_more_items = True
+        num_added_tics = 0
+        num_added_pkgs = 0
+        msgs = []
+        while has_more_items:
+            response = self.perform_api_call(
+                '/v1/events/%s/tickets' % event.event_id,
+                params={'page': page,
+                        'status': 'complete'})
+
+            if response.status_code != 200 or 'tickets' not in response.json():
+                msg = (self.error_create(response), False)
+                status = SyncStatus(
+                    is_success=False,
+                    error_msg=eb_msg,
+                    import_type="HT Transaction")
+                status.save()
+                return [msg, False]
+            elif len(response.json()['tickets']) == 0 or (
+                    response.json()['total'] < response.json()['pageSize']):
+                has_more_items = False
+            else:
+                page = page + 1
+
+            for ticket in response.json()['tickets']:
+                # common elements if we need to make transaction
+                trans = Transaction(
+                    order_date=pytz.utc.localize(datetime.strptime(
+                        ticket['createdAt'], "%Y-%m-%dT%H:%M:%S.%fZ")),
+                    payment_source='Humanitix',
+                    amount=0)
+                # packages are traced by packageGroupId
+                if 'packageGroupId' in ticket.keys():
+
+                    if not Transaction.objects.filter(
+                            reference=ticket['packageGroupId']).exists():
+                        if not TicketPackage.objects.filter(
+                               ticket_id=ticket['packageId']).exists():
+                            msgs += [("Package for id %s does not exist" % (
+                                ticket['packageId']), False)]
+                        else:
+                            trans.reference = ticket['packageGroupId']
+                            trans.ticket_item = TicketPackage.objects.get(
+                                    ticket_id=ticket['packageId'])
+                            trans.purchaser=self.setup_purchaser(
+                                    orders[ticket['orderId']])
+                            trans.save()
+                            num_added_pkgs = num_added_pkgs + 1
+                # ticket types are traced by _id
+                else:
+                    if not Transaction.objects.filter(
+                            reference=ticket['_id']).exists():
+                        if not TicketType.objects.filter(
+                               ticket_id=ticket['ticketTypeId']).exists():
+                            msgs += [("Ticket Type for id %s does not exist" % (
+                                ticket['ticketTypeId']), False)]
+                        else:
+                            trans.reference = ticket['_id']
+                            trans.ticket_item=TicketType.objects.get(
+                                ticket_id=ticket['ticketTypeId'])
+                            trans.purchaser=self.setup_purchaser(
+                                orders[ticket['orderId']])
+                            trans.save()
+                            num_added_tics = num_added_tics + 1
+            msgs += [("Imported %d packages and %d tickets" % (
+                num_added_pkgs,
+                num_added_tics), True)]
+            return msgs
+
+    def get_orders(self, event):
+        # return a tuple (A, B) where A = the result or a message on why this
+        # failed, and B is whether processing halted early due to error
+        orders = {}
+        page = 1
+        has_more_items = True
+        while has_more_items:
+            response = self.perform_api_call(
+                '/v1/events/%s/orders' % event.event_id,
+                params={'page': page})
+
+            if response.status_code != 200 or 'orders' not in response.json():
+                msg = (self.error_create(response), False)
+                status = SyncStatus(
+                    is_success=False,
+                    error_msg=eb_msg,
+                    import_type="HT Transaction")
+                status.save()
+                return msg
+            elif len(response.json()['orders']) == 0 or (
+                    response.json()['total'] < response.json()['pageSize']):
+                has_more_items = False
+            else:
+                page = page + 1
+
+            for order in response.json()['orders']:
+                orders[order['_id']] = {
+                    'email': order['email'],
+                    'first_name': order['firstName'],
+                    'last_name': order['lastName']}
+            return (orders, True)
+
     def import_ticket_items(self):
 
         '''
@@ -197,6 +324,26 @@ class HumanitixClient:
                         ticket_id=ticket_type['ticketTypeId']))
 
         return ti_count
+
+    def setup_purchaser(self, order):
+        purchaser = None
+        if Purchaser.objects.filter(email=order['email']).exists():
+            purchaser = Purchaser.objects.filter(
+                email=order['email']).order_by('-pk').first()
+        else:
+            purchaser = Purchaser(
+                email=order['email'],
+                first_name=order['first_name'],
+                last_name=order['last_name'])
+
+        # assign to a user or limbo
+        matched_user = attempt_match_purchaser_to_user(purchaser)
+        if matched_user is None:
+            purchaser.matched_to_user = User.objects.get(username='limbo')
+        else:
+            purchaser.matched_to_user = matched_user
+        purchaser.save()
+        return purchaser
 
     def perform_api_call(self, path, params):
         # Basic formatting for all calls to Humantix
