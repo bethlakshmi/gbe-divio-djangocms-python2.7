@@ -113,10 +113,21 @@ class TicketTypeForm(TicketItemForm):
                   'start_time',
                   'end_time',
                   'is_minimum',
+                  'conference_only_pass',
                   'linked_events'
                   ]
         labels = ticket_item_labels
         help_texts = ticket_item_help_text
+
+    def save(self, user, commit=True):
+        # broken out separate, and skips TicketItemForm save because 
+        # the Ticket Item Form was breaking the natural m2m save
+        form = super(TicketItemForm, self).save(commit=commit)
+        form.modified_by = user
+
+        if commit:
+            form.save()
+        return form
 
 
 class TicketPackageForm(TicketItemForm):
