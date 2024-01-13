@@ -5,6 +5,7 @@ from gbetext import (
     source_options,
     system_options,
     ticket_link,
+    trans_status,
 )
 from datetime import datetime
 
@@ -176,6 +177,7 @@ class TicketItem(models.Model):
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     is_minimum = models.BooleanField(default=False)
+    conference_only_pass = models.BooleanField(default=False)
 
     def __str__(self):
         basic = "%s (%s)" % (self.title, self.ticket_id)
@@ -213,7 +215,6 @@ class TicketPackage(TicketItem):
     '''Humantix gives us a way to package tickets together, these also work
     like our passes - Whole Shebang, Conference, etc.'''
     ticket_types = models.ManyToManyField(TicketType, blank=True)
-    conference_only_pass = models.BooleanField(default=False)
     whole_shebang = models.BooleanField(default=False)
 
     @property
@@ -260,15 +261,15 @@ class Transaction(models.Model):
 
     ticket_item = models.ForeignKey(TicketItem, on_delete=models.CASCADE)
     purchaser = models.ForeignKey(Purchaser, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    amount = models.DecimalField(max_digits=20, decimal_places=2, blank=True)
     order_date = models.DateTimeField()
-    shipping_method = models.CharField(max_length=50, default="electronic")
-    order_notes = models.TextField(blank=True, null=True)
     reference = models.CharField(max_length=30, blank=True, null=True)
     payment_source = models.CharField(max_length=30, default="Manual")
     import_date = models.DateTimeField(auto_now=True)
-    invoice = models.CharField(max_length=100, blank=True, null=True)
     custom = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=25,
+                              choices=trans_status,
+                              default="paid")
 
     def total_count(self):
         return Transaction.objects.filter(

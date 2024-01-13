@@ -267,6 +267,10 @@ ticket_link = {
     1: 'http://www.brownpapertickets.com/event/ID-user_id/%s/',
     2: 'https://www.eventbrite.com/e/%s',
     3: 'https://events.humanitix.com/%s'}
+trans_status = (
+    ('paid', 'paid'),
+    ('canceled', 'canceled'),
+)
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),

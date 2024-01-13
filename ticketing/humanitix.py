@@ -4,6 +4,7 @@ import pytz
 from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils import timezone
 from ticketing.models import (
     HumanitixSettings,
     Purchaser,
@@ -69,12 +70,61 @@ class HumanitixClient:
             # we're done if there's no orders
             if is_success and len(orders) > 0:
                 msgs = msgs + self.get_order_inventory(event, orders)
-                # TODO - cancellations
+                msgs = msgs + self.get_cancellations(event)
 
             else:
                 msgs += [(orders, is_success)]
 
         return msgs
+
+    def get_cancellations(self, event):
+        # return a tuple (A, B) where A = the result or a message on why this
+        # failed, and B is whether processing halted early due to error
+        page = 1
+        has_more_items = True
+        num_cancelled = 0
+        msgs = []
+        while has_more_items:
+            response = self.perform_api_call(
+                '/v1/events/%s/tickets' % event.event_id,
+                params={'page': page,
+                        'status': 'cancelled'})
+
+            if response.status_code != 200 or 'tickets' not in response.json():
+                msg = (self.error_create(response), False)
+                status = SyncStatus(
+                    is_success=False,
+                    error_msg=eb_msg,
+                    import_type="HT Transaction")
+                status.save()
+                return [msg, False]
+            elif len(response.json()['tickets']) == 0 or (
+                    response.json()['total'] < response.json()['pageSize']):
+                has_more_items = False
+            else:
+                page = page + 1
+
+            for ticket in response.json()['tickets']:
+                # packages are traced by packageGroupId
+                if 'packageGroupId' in ticket.keys():
+                    reference = ticket['packageGroupId']
+                # ticket types are traced by _id
+                else:
+                    reference = ticket['_id']
+
+                if Transaction.objects.filter(
+                        reference=reference,
+                        ticket_item__ticketing_event__source=3).exclude(
+                        status="canceled").exists():
+                    trans = Transaction.objects.get(
+                        reference=reference,
+                        ticket_item__ticketing_event__source=3)
+                    trans.status = "canceled"
+                    trans.import_date = timezone.now()
+                    trans.save()
+                    num_cancelled = num_cancelled + 1
+            msgs += [("Canceled %d transactions" % (num_cancelled), True)]
+            return msgs
 
     def get_order_inventory(self, event, orders):
         # return a tuple (A, B) where A = the result or a message on why this
@@ -109,8 +159,7 @@ class HumanitixClient:
                 trans = Transaction(
                     order_date=pytz.utc.localize(datetime.strptime(
                         ticket['createdAt'], "%Y-%m-%dT%H:%M:%S.%fZ")),
-                    payment_source='Humanitix',
-                    amount=0)
+                    payment_source='Humanitix')
                 # packages are traced by packageGroupId
                 if 'packageGroupId' in ticket.keys():
 
