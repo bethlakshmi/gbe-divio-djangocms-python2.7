@@ -271,10 +271,6 @@ class Transaction(models.Model):
                               choices=trans_status,
                               default="paid")
 
-    def total_count(self):
-        return Transaction.objects.filter(
-            purchaser=self.purchaser, ticket_item=self.ticket_item).count()
-
 
 class CheckListItem(models.Model):
     '''
