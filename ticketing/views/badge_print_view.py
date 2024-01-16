@@ -27,7 +27,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
         badged_purchases = Transaction.objects.filter(
             ticket_item__ticketing_event__conference=conference).exclude(
             ticket_item__ticketingeligibilitycondition__checklistitem__badge_title__isnull=True
-            ).order_by('ticket_item')
+            ).exclude(status="canceled").order_by('ticket_item')
 
         header = ['First',
                   'Last',

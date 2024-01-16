@@ -261,7 +261,10 @@ class Transaction(models.Model):
 
     ticket_item = models.ForeignKey(TicketItem, on_delete=models.CASCADE)
     purchaser = models.ForeignKey(Purchaser, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=20, decimal_places=2, blank=True)
+    amount = models.DecimalField(max_digits=20,
+                                 decimal_places=2,
+                                 blank=True,
+                                 null=True)
     order_date = models.DateTimeField()
     reference = models.CharField(max_length=30, blank=True, null=True)
     payment_source = models.CharField(max_length=30, default="Manual")

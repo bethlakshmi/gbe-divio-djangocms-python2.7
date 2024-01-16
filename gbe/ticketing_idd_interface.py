@@ -146,8 +146,10 @@ def get_purchased_tickets(user):
     for conf in conferences:
         tickets = TicketItem.objects.filter(
             ticketing_event__conference=conf,
-            transaction__purchaser__matched_to_user=user).annotate(
-                number_of_tickets=Count('transaction')).order_by('title')
+            transaction__purchaser__matched_to_user=user,
+            transaction__status="paid").annotate(
+            number_of_tickets=Count('transaction')
+            ).order_by('title')
         if tickets:
             ticket_by_conf.append({'conference': conf, 'tickets': tickets})
     return ticket_by_conf
@@ -159,7 +161,8 @@ def get_checklist_items_for_tickets(profile, user_schedule, tickets):
     '''
     checklist_items = []
     transactions = Transaction.objects.filter(
-            purchaser__matched_to_user=profile.user_object)
+            purchaser__matched_to_user=profile.user_object).exclude(
+            status="canceled")
 
     for ticket in set(tickets):
         items = []
