@@ -7,13 +7,16 @@ class Command(BaseCommand):
     help = '''Imports any new transactions, tickets and events for HT org'''
 
     def handle(self, *args, **options):
-        logger.info('Executing Sync EB Script....')
-        self.stdout.write('Executing Sync EB Script....')
+        logger.info('Executing Sync HT Script....')
+        self.stdout.write('Executing Sync HT Script....')
         humanitix = HumanitixClient()
         msg, is_success = humanitix.import_ticket_items()
         logger.info(msg)
         self.stdout.write(msg)
         msgs = humanitix.process_transactions()
-        for msg, is_success in msgs:
-            logger.info(msg)
-            self.stdout.write(msg)
+        for sub_msg, is_success in msgs:
+            if not is_success:
+                logger.info(sub_msg)
+                self.stdout.write(sub_msg)
+            else:
+                raise Exception(sub_msg)
