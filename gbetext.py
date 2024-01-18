@@ -544,8 +544,8 @@ to register for a free account.  If you're planning on applying to perform, \
 want to teach, or are going to be a vendor or a volunteer, you need to \
 register.  You do <b>not</b> need to register if all you're doing is \
 buying tickets.'''
-not_accepting_bids = '''We're sorry, but we are not accepting bids at present.
-Please stay tuned!'''
+not_accepting_bids = '''We're sorry, but we are not accepting %s bids at
+ present.  Please stay tuned!'''
 full_login_msg = '''%s - <a href="%s">Login</a>'''
 default_deactivate_profile_admin_msg = '''This user is involved in one or \
 more activities on this site.  To protect unintended changes, the user was \

@@ -51,13 +51,16 @@ class MakeBidView(SubwayMapMixin, View):
     normal_redirect = reverse_lazy('home', urlconf='gbe.urls')
 
     def groundwork(self, request, args, kwargs):
-        if not Conference.objects.filter(accepting_bids=True).exists():
+        if not Conference.objects.filter(
+                accepting_bids__icontains=self.bid_type).exclude(
+                status="completed").exists():
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="NOT_ACCEPTING_BIDS",
                 defaults={
                     'summary': "Not Accepting Bids",
-                    'description': not_accepting_bids})
+                    'description': not_accepting_bids % (
+                        self.bid_type.lower())})
             messages.error(request, user_message[0].description)
             return "/"
         self.owner = validate_profile(request, require=False)
@@ -93,7 +96,7 @@ class MakeBidView(SubwayMapMixin, View):
             self.conference = self.bid_object.b_conference
         else:
             self.conference = Conference.objects.filter(
-                    accepting_bids=True).first()
+                accepting_bids__icontains=self.bid_type).first()
 
     def get_initial(self):
         initial = {}

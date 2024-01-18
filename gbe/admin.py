@@ -8,9 +8,30 @@ from published.admin import (
     add_to_list_display,
     add_to_readonly_fields,
 )
+from django import forms
+from django.contrib.admin.widgets import FilteredSelectMultiple
+
+
+class ConferenceAdminForm(forms.ModelForm):
+    accepting_bids = forms.MultipleChoiceField(
+        choices=[("Act", "Act"),
+                 ("Class", "Class"),
+                 ("Costume", "Costume"),
+                 ("Vendor", "Vendor"),
+                 ("Volunteer", "Volunteer (deprecated)")],
+        required=False,
+        widget=FilteredSelectMultiple(
+            verbose_name="Bid Types Accepted",
+            is_stacked=True,
+        ),
+    )
+    class Meta:
+        model = Conference
+        fields = "__all__"
 
 
 class ConferenceAdmin(admin.ModelAdmin):
+    form = ConferenceAdminForm
     list_display = ('conference_name',
                     'conference_slug',
                     'status',
