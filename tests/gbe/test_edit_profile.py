@@ -43,8 +43,7 @@ class TestEditProfile(TestCase):
     def setUpTestData(cls):
         UserMessage.objects.all().delete()
         cls.profile = ProfilePreferencesFactory().profile
-        cls.conference = ConferenceFactory(status='upcoming',
-                                           accepting_bids=True)
+        cls.conference = ConferenceFactory(status='upcoming')
 
     def setUp(self):
         self.client = Client()
@@ -208,8 +207,6 @@ class TestEditProfile(TestCase):
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_post_valid_redirect(self, m_urlopen):
         context = VolunteerContext()
-        context.conference.accepting_bids = True
-        context.conference.save()
         redirect = reverse('volunteer_signup', urlconf='gbe.scheduling.urls')
         a = Mock()
         ok_email_filename = open("tests/gbe/forum_spam_response.xml", 'r')
@@ -290,8 +287,7 @@ class TestEditProfile(TestCase):
         self.assertRedirects(response, reverse('home', urlconf='gbe.urls'))
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
-        self.conference = ConferenceFactory(status='upcoming',
-                                            accepting_bids=True)
+        self.conference = ConferenceFactory(status='upcoming')
 
     @patch('urllib.request.urlopen', autospec=True)
     def test_update_profile_make_message(self, m_urlopen):

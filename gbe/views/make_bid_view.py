@@ -20,6 +20,7 @@ from gbe.models import (
 )
 from gbe_logging import log_func
 from gbe.functions import (
+    get_current_conference,
     validate_profile,
 )
 from gbe.email.functions import (
@@ -49,9 +50,10 @@ class MakeBidView(SubwayMapMixin, View):
     payment_form = None
     coordinated = False
     normal_redirect = reverse_lazy('home', urlconf='gbe.urls')
+    override_accept_bid = False
 
     def groundwork(self, request, args, kwargs):
-        if not Conference.objects.filter(
+        if not self.override_accept_bid and not Conference.objects.filter(
                 accepting_bids__icontains=self.bid_type).exclude(
                 status="completed").exists():
             user_message = UserMessage.objects.get_or_create(
@@ -94,6 +96,8 @@ class MakeBidView(SubwayMapMixin, View):
             bid_id = kwargs.get("bid_id")
             self.bid_object = get_object_or_404(self.bid_class, pk=bid_id)
             self.conference = self.bid_object.b_conference
+        elif self.override_accept_bid:
+            self.conference = get_current_conference()
         else:
             self.conference = Conference.objects.filter(
                 accepting_bids__icontains=self.bid_type).first()

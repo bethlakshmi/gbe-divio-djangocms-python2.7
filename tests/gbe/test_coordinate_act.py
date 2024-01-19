@@ -45,7 +45,9 @@ class TestCoordinateAct(TestCase):
             contact__phone="111-222-3333",
             contact__user_object__first_name="first",
             contact__user_object__last_name="last")
-        cls.current_conference = ConferenceFactory(accepting_bids=True)
+        # this works, even when Act is not accepting bids
+        cls.current_conference = ConferenceFactory(
+            accepting_bids="['Class', ]")
         UserMessage.objects.all().delete()
         cls.privileged_user = ProfileFactory.create().user_object
         grant_privilege(cls.privileged_user,

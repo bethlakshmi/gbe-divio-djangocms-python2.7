@@ -31,7 +31,7 @@ class TestMakeBid(TestCase):
     def setUpTestData(cls):
         Conference.objects.all().delete()
         cls.performer = BioFactory()
-        cls.conference = ConferenceFactory(accepting_bids=True)
+        cls.conference = ConferenceFactory()
 
     def setUp(self):
         self.client = Client()
@@ -121,7 +121,7 @@ class TestMakeBid(TestCase):
     def test_bid_no_conference(self):
         '''when there is no conference accepting bids, should throw 404'''
         Conference.objects.all().delete()
-        self.conference = ConferenceFactory(accepting_bids=False)
+        self.conference = ConferenceFactory(accepting_bids="[]")
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
         login_as(self.performer.contact, self)

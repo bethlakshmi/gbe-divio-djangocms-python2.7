@@ -58,9 +58,8 @@ class TestIndex(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.current_conf = ConferenceFactory(accepting_bids=True,
-                                             status='upcoming')
-        cls.previous_conf = ConferenceFactory(accepting_bids=False,
+        cls.current_conf = ConferenceFactory(status='upcoming')
+        cls.previous_conf = ConferenceFactory(accepting_bids="[]",
                                               status='completed')
 
         # User/Human setup
@@ -208,6 +207,9 @@ class TestIndex(TestCase):
             self.current_costume.b_title in content)
         assert does_not_show_previous
         assert shows_all_current
+        self.assertContains(response, "Apply to Perform")
+        self.assertContains(response, "Apply to Teach")
+        self.assertContains(response, "Volunteer")
         self.assert_event_is_present(response, self.current_sched)
         self.assert_event_is_not_present(response, self.previous_sched)
         self.assert_event_is_present(response, self.current_class_sched)
@@ -216,6 +218,18 @@ class TestIndex(TestCase):
         self.assertContains(response, reverse(
             "volunteer_signup",
             urlconf="gbe.scheduling.urls"))
+
+    def test_conf_not_accepting_bids(self):
+        # No apply buttons when bidding is off
+        orig_state = self.current_conf.accepting_bids
+        self.current_conf.accepting_bids = "[]"
+        self.current_conf.save()
+        response = self.get_landing_page()
+        self.assertNotContains(response, "Apply to Perform")
+        self.assertNotContains(response, "Apply to Teach")
+        self.assertNotContains(response, "Volunteer")
+        self.current_conf.accepting_bids = orig_state
+        self.current_conf.save()
 
     def test_historical_view(self):
         url = reverse('home', urlconf='gbe.urls')

@@ -18,13 +18,14 @@ class ConferenceAdminForm(forms.ModelForm):
                  ("Class", "Class"),
                  ("Costume", "Costume"),
                  ("Vendor", "Vendor"),
-                 ("Volunteer", "Volunteer (deprecated)")],
+                 ("Volunteer", "Volunteer")],
         required=False,
         widget=FilteredSelectMultiple(
             verbose_name="Bid Types Accepted",
             is_stacked=True,
         ),
     )
+
     class Meta:
         model = Conference
         fields = "__all__"

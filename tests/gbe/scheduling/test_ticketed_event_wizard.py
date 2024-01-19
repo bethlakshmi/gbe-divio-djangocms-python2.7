@@ -35,7 +35,7 @@ class TestTicketedEventWizard(TestScheduling):
     def setUpTestData(cls):
         cls.room = RoomFactory()
         cls.teacher = BioFactory()
-        cls.current_conference = ConferenceFactory(accepting_bids=True)
+        cls.current_conference = ConferenceFactory()
         cls.room.conferences.add(cls.current_conference)
         cls.day = ConferenceDayFactory(conference=cls.current_conference)
         cls.url = reverse(
