@@ -75,7 +75,7 @@ class TestCreateClass(TestMakeClass):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.conference = ConferenceFactory(accepting_bids=True)
+        cls.conference = ConferenceFactory()
 
     def post_bid(self, submit=True):
         url = reverse(self.view_name,
@@ -195,8 +195,7 @@ class TestEditClass(TestMakeClass):
         cls.teacher = cls.performer
 
     def post_class_edit_submit(self):
-        klass = ClassFactory(teacher_bio=self.teacher,
-                             b_conference__accepting_bids=True)
+        klass = ClassFactory(teacher_bio=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -206,8 +205,7 @@ class TestEditClass(TestMakeClass):
         return response, data
 
     def post_class_edit_draft(self):
-        klass = ClassFactory(teacher_bio=self.teacher,
-                             b_conference__accepting_bids=True)
+        klass = ClassFactory(teacher_bio=self.teacher)
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -219,7 +217,7 @@ class TestEditClass(TestMakeClass):
         return response, data
 
     def test_edit_class_profile_is_not_contact(self):
-        klass = ClassFactory(b_conference__accepting_bids=True)
+        klass = ClassFactory()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -229,7 +227,7 @@ class TestEditClass(TestMakeClass):
 
     def test_class_edit_post_form_not_valid(self):
         '''class_edit, if form not valid, should return to ActEditForm'''
-        klass = ClassFactory(b_conference__accepting_bids=True)
+        klass = ClassFactory()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -254,7 +252,7 @@ class TestEditClass(TestMakeClass):
             view='ClassDifficulty',
             code='MEDIUM_DIFFICULTY',
             description="Mwah ha ha ha ha")
-        klass = ClassFactory(b_conference__accepting_bids=True)
+        klass = ClassFactory()
         klass.teacher_bio.contact.phone = "555-666-7777"
         klass.teacher_bio.contact.save()
         url = reverse(self.view_name,
@@ -271,7 +269,7 @@ class TestEditClass(TestMakeClass):
         self.assertContains(response, msg.description)
 
     def test_edit_bid_verify_info_popup_text(self):
-        klass = ClassFactory(b_conference__accepting_bids=True)
+        klass = ClassFactory()
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')
@@ -283,8 +281,7 @@ class TestEditClass(TestMakeClass):
 
     def test_edit_bid_verify_constraints(self):
         klass = ClassFactory(schedule_constraints="[u'0']",
-                             avoided_constraints="[u'1', u'2']",
-                             b_conference__accepting_bids=True)
+                             avoided_constraints="[u'1', u'2']")
         url = reverse(self.view_name,
                       args=[klass.pk],
                       urlconf='gbe.urls')

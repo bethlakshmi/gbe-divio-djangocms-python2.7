@@ -161,6 +161,7 @@ class LandingPageView(ProfileRequiredMixin, View):
             acts = acts.exclude(b_conference__status="completed")
 
         context = {
+            'current_conf': current_conf,
             'profile': viewer_profile,
             'historical': self.historical,
             'alerts': viewer_profile.alerts(classes),

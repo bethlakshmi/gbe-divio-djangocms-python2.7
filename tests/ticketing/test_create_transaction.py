@@ -26,7 +26,7 @@ class TestIndex(TestCase):
     def setUp(self):
         self.client = Client()
         # Conference Setup
-        conference = ConferenceFactory(accepting_bids=True, status='upcoming')
+        conference = ConferenceFactory(status='upcoming')
         self.ticketing_event = TicketingEventsFactory(
             conference=conference,
             act_submission_event=True)

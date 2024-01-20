@@ -1,10 +1,13 @@
 from django.db.models import (
-    BooleanField,
     CharField,
     Model,
     SlugField,
+    TextField,
 )
-from gbetext import conference_statuses
+from gbetext import (
+    bid_types,
+    conference_statuses,
+)
 
 
 class Conference(Model):
@@ -13,7 +16,7 @@ class Conference(Model):
     status = CharField(choices=conference_statuses,
                        max_length=50,
                        default='upcoming')
-    accepting_bids = BooleanField(default=False)
+    accepting_bids = TextField(blank=True)
 
     def __str__(self):
         return self.conference_name

@@ -36,8 +36,7 @@ class TestMakeVendor(TestCase):
         UserMessage.objects.all().delete()
         cls.profile = ProfileFactory()
         cls.business = BusinessFactory(owners=[cls.profile])
-        cls.conference = ConferenceFactory(status='upcoming',
-                                           accepting_bids=True)
+        cls.conference = ConferenceFactory(status='upcoming')
 
     def setUp(self):
         self.client = Client()

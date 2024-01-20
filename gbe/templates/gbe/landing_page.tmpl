@@ -5,15 +5,18 @@
 {% block content %}
 <div class="container three-column-container">
   <div class="row mb-2">
+    {% if "Volunteer" in current_conf.accepting_bids %}
     <div class="ml-auto col-sm-auto col-4 text-center">
      <a href="{% url 'scheduling:volunteer_signup' %}" class="btn gbe-btn-primary h-100 text-center d-inline-flex align-items-center" role="button">Volunteer</a>
-    </div>
+    </div>{% endif %}
+    {% if "Class" in current_conf.accepting_bids %}
     <div class="col-sm-auto col-4 text-center">
       <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:class_create' %}'>Apply to Teach</a>
-    </div>
+    </div>{% endif %}
+    {% if "Act" in current_conf.accepting_bids %}
     <div class="col-sm-auto col-4 text-center">
       <a class="btn gbe-btn-primary" role="button" href='{% url 'gbe:act_create' %}'>Apply to Perform</a>
-    </div>
+    </div>{% endif %}
   </div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs device-small landing-tabs pt-3" role="tablist">

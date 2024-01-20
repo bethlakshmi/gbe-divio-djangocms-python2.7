@@ -8,7 +8,7 @@
 <tr class="gbe-table-row">
   <td>{{ biz.name }}
   {% if biz.website %}
-    <a class="social" href="{{vendor.business.website}}" target="_blank">
+    <a class="social" href="{{biz.website}}" target="_blank">
       <i class="fa fa-link"></i></a>{% endif %}
   <td>{% for bid in biz.vendor_set.all %}
       {% if bid.b_conference.status != "completed" %}<b>{% endif %}
