@@ -15,8 +15,6 @@ class Command(BaseCommand):
         self.stdout.write(msg)
         msgs = humanitix.process_transactions()
         for sub_msg, is_success in msgs:
-            if not is_success:
-                logger.info(sub_msg)
-                self.stdout.write(sub_msg)
-            else:
-                raise Exception(sub_msg)
+            logger.info("Success? = " + str(is_success) + ":  " + sub_msg)
+            self.stdout.write(
+                "Success? = " + str(is_success) + ":  " + sub_msg)

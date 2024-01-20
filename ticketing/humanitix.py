@@ -71,10 +71,8 @@ class HumanitixClient:
             if is_success and len(orders) > 0:
                 msgs = msgs + self.get_order_inventory(event, orders)
                 msgs = msgs + self.get_cancellations(event)
-
             else:
-                msgs += [(orders, is_success)]
-
+                msgs += [("no orders or no success", is_success)]
         return msgs
 
     def get_cancellations(self, event):
@@ -216,7 +214,7 @@ class HumanitixClient:
                     error_msg=eb_msg,
                     import_type="HT Transaction")
                 status.save()
-                return msg
+                return (msg, False)
             elif len(response.json()['orders']) == 0 or (
                     response.json()['total'] < response.json()['pageSize']):
                 has_more_items = False
@@ -228,7 +226,7 @@ class HumanitixClient:
                     'email': order['email'],
                     'first_name': order['firstName'],
                     'last_name': order['lastName']}
-            return (orders, True)
+        return (orders, True)
 
     def import_ticket_items(self):
 
