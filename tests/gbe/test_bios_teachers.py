@@ -23,8 +23,7 @@ class TestBiosTeachers(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.conference = ConferenceFactory(status='upcoming',
-                                           accepting_bids=True)
+        cls.conference = ConferenceFactory(status='upcoming')
         cls.url = reverse(cls.view_name, urlconf="gbe.urls")
 
     def test_bios_teachers_no_active_conf(self):

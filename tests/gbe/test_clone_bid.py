@@ -36,10 +36,9 @@ class TestCloneBid(TestCase):
         clear_conferences()
         cls.old_conference = ConferenceFactory(
             status="completed",
-            accepting_bids=False)
+            accepting_bids="")
         cls.current_conference = ConferenceFactory(
-            status="upcoming",
-            accepting_bids=True)
+            status="upcoming")
 
     def clone_act(self):
         bid = ActFactory(b_conference=self.old_conference)

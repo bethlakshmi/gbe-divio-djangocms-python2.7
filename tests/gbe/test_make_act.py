@@ -40,7 +40,7 @@ class TestMakeAct(TestCase):
     @classmethod
     def setUpTestData(cls):
         Conference.objects.all().delete()
-        cls.current_conference = ConferenceFactory(accepting_bids=True)
+        cls.current_conference = ConferenceFactory()
 
     def setUp(self):
         self.client = Client()

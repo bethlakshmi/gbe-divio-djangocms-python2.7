@@ -18,7 +18,7 @@ class TestEventWizard(TestCase):
     view_name = 'create_event_wizard'
 
     def setUp(self):
-        self.current_conference = ConferenceFactory(accepting_bids=True)
+        self.current_conference = ConferenceFactory()
         self.url = reverse(
             self.view_name,
             args=[self.current_conference.conference_slug],

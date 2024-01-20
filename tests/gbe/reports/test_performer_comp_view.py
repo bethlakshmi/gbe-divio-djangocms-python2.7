@@ -37,7 +37,7 @@ class TestPerformerCompView(TestCase):
         self.assertContains(response, "Performer Comps")
 
     def test_old_conf_succeed(self):
-        old_conf = ConferenceFactory(status="completed", accepting_bids=False)
+        old_conf = ConferenceFactory(status="completed", accepting_bids="[]")
         login_as(self.priv_profile, self)
         response = self.client.get(
             "%s?conf_slug=%s&submit=Select+conference" % (
