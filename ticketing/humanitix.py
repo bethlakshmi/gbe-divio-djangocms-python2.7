@@ -72,7 +72,7 @@ class HumanitixClient:
                 msgs = msgs + self.get_order_inventory(event, orders)
                 msgs = msgs + self.get_cancellations(event)
             else:
-                msgs += [("no orders or no success", is_success)]
+                msgs += [(orders, is_success)]
         return msgs
 
     def get_cancellations(self, event):
@@ -89,10 +89,10 @@ class HumanitixClient:
                         'status': 'cancelled'})
 
             if response.status_code != 200 or 'tickets' not in response.json():
-                msg = (self.error_create(response), False)
+                msg = self.error_create(response)
                 status = SyncStatus(
                     is_success=False,
-                    error_msg=eb_msg,
+                    error_msg=msg,
                     import_type="HT Cancellations")
                 status.save()
                 return [msg, False]
@@ -143,10 +143,10 @@ class HumanitixClient:
                         'status': 'complete'})
 
             if response.status_code != 200 or 'tickets' not in response.json():
-                msg = (self.error_create(response), False)
+                msg = self.error_create(response)
                 status = SyncStatus(
                     is_success=False,
-                    error_msg=eb_msg,
+                    error_msg=msg,
                     import_type="HT Transaction")
                 status.save()
                 return [msg, False]
@@ -216,10 +216,10 @@ class HumanitixClient:
                 params={'page': page})
 
             if response.status_code != 200 or 'orders' not in response.json():
-                msg = (self.error_create(response), False)
+                msg = self.error_create(response)
                 status = SyncStatus(
                     is_success=False,
-                    error_msg=eb_msg,
+                    error_msg=msg,
                     import_type="HT Transaction")
                 status.save()
                 return (msg, False)

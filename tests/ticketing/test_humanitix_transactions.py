@@ -10,6 +10,7 @@ from ticketing.models import (
     TicketingEvents,
     EventbriteSettings,
     BrownPaperSettings,
+    HumanitixSettings,
     Purchaser,
     SyncStatus,
     Transaction
@@ -38,7 +39,7 @@ from tests.functions.gbe_functions import (
 from gbetext import (
     eventbrite_error,
     import_transaction_message,
-    no_settings_error,
+    no_ht_settings_error,
     sync_off_instructions,
 )
 from tests.contexts import PurchasedTicketContext
@@ -62,6 +63,7 @@ class TestHumanitixTransactions(TestCase):
 
     def setUp(self):
         TicketingEvents.objects.all().delete()
+        Purchaser.objects.all().delete()
         SyncStatus.objects.all().delete()
 
     @patch('requests.get', autospec=True)
@@ -129,13 +131,18 @@ class TestHumanitixTransactions(TestCase):
         self.assertEqual(cancel_status.import_number, 0)
 
     @patch('requests.get', autospec=True)
-    def test_transactions_sync_missing_ticket(self, m_humanitix):
+    def test_transactions_sync_missing_ticket_w_known_buyer(self, m_humanitix):
         HumanitixSettingsFactory()
         package = TicketPackageFactory(ticketing_event__source=3,
                                        ticket_id="6568c6ca6e0f8730e1bd5f1a")
         ticket1 = TicketTypeFactory(ticketing_event=package.ticketing_event,
-                                    ticket_id="656b90657cf8549dd8238a10")
+                                    ticket_id="6568c4ee7cf8549dd8238a0c")
         limbo = get_limbo()
+        purchaser = PurchaserFactory(
+            matched_to_user__email="testuser@gmail.com",
+            email="testuser@gmail.com")
+
+
         m_humanitix.side_effect = [MockHTResponse(json_data=order_list),
                                    MockHTResponse(json_data=complete_trans),
                                    MockHTResponse(json_data=canceled_trans)]
@@ -145,7 +152,7 @@ class TestHumanitixTransactions(TestCase):
         assert_alert_exists(response,
                             'success',
                             'Success',
-                            "Imported 3 packages and 1 tickets")
+                            "Imported 3 packages and 2 tickets")
         assert_alert_exists(response,
                             'success',
                             'Success',
@@ -153,40 +160,43 @@ class TestHumanitixTransactions(TestCase):
         success_status = SyncStatus.objects.filter(
             is_success=True,
             import_type="HT Transaction").first()
-        self.assertEqual(success_status.import_number, 4)
+        self.assertEqual(success_status.import_number, 5)
         cancel_status = SyncStatus.objects.filter(
             is_success=True,
             import_type="HT Cancellations").first()
         self.assertEqual(cancel_status.import_number, 1)
+        self.assertTrue(Transaction.objects.filter(
+            purchaser=purchaser,
+            reference="659880a26ec9d043e436d03c").exists())
 
-'''
-    @patch('eventbrite.Eventbrite.get', autospec=True)
-    def test_transactions_sync_ticket_missing(self, m_eventbrite):
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        EventbriteSettings.objects.all().delete()
-        SyncStatus.objects.all().delete()
-        BrownPaperSettingsFactory()
-        EventbriteSettingsFactory()
-        event = TicketingEventsFactory(event_id="1", source=2)
 
-        m_eventbrite.return_value = order_dict
-
+    def test_humanitix_settings_missing(self):
+        HumanitixSettings.objects.all().delete()
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
         assert_alert_exists(response,
                             'danger',
                             'Error',
-                            "Ticket Item for id 3255985 does not exist")
-        error_status = SyncStatus.objects.filter(is_success=False).first()
-        success_status = SyncStatus.objects.filter(is_success=True).first()
-        self.assertEqual(error_status.error_msg,
-                         "Ticket Item for id 3255985 does not exist")
-        self.assertEqual(success_status.import_type,
-                         "EB Transaction")
-        self.assertEqual(success_status.import_number,
-                         0)
+                            no_ht_settings_error)
 
+    @patch('requests.get', autospec=True)
+    def test_bad_api_key(self, m_humanitix):
+        HumanitixSettingsFactory()
+        package = TicketPackageFactory(ticketing_event__source=3,
+                                       ticket_id="6568c6ca6e0f8730e1bd5f1a")
+        m_humanitix.side_effect = [MockHTResponse(
+            json_data={'error': "Bad Request",
+                       'message': "Invalid api key format provided."},
+            status_code=400)]
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(
+            response,
+            'danger',
+            'Error',
+            'Bad Request - Invalid api key format provided.')
+
+'''
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_match_prior_purchaser(self, m_eventbrite):
