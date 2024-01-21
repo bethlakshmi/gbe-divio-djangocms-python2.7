@@ -61,8 +61,6 @@ def comp_act(user, conference):
         ticket_item=comp_ticket,
         amount=0,
         order_date=datetime.now(),
-        shipping_method="Comp'ed",
-        order_notes="Comped through IDD",
         reference="auto",
         payment_source="GBE")
     transaction.save()
@@ -245,7 +243,6 @@ def get_paypal_button(request, total, user_id, number_list, bid_type, bid_id):
         "business": PayPalSettings.objects.first().business_email,
         "amount": total,
         "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
-        "invoice": str(datetime.now()),
         "custom": "%s-%d-User-%d" % (bid_type, bid_id, user_id),
         "return": request.build_absolute_uri(
             reverse(

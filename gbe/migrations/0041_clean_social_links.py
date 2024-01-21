@@ -32,7 +32,6 @@ def clean_bad_social_links(apps, schema_editor):
             i = i + 1
             if link.order > 5:
                 print("problem for %s - link greater than 5" % bio.name)
-    print("Deleted %d links" % count)
 
 
 class Migration(migrations.Migration):

@@ -1,3 +1,4 @@
+from django.test import TestCase
 import copy
 from mock import patch, Mock
 import urllib
@@ -7,23 +8,22 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
-    BrownPaperSettings,
     EventbriteSettings,
+    BrownPaperSettings,
     Purchaser,
     SyncStatus,
     Transaction
 )
 from tests.factories.ticketing_factories import (
     BrownPaperSettingsFactory,
-    EventbriteSettingsFactory,
+    HumanitixSettingsFactory,
     PurchaserFactory,
-    TicketItemFactory,
+    TicketPackageFactory,
+    TicketTypeFactory,
     TicketingEventsFactory,
     TransactionFactory,
 )
 from django.contrib.auth.models import User
-from django.test import TestCase
-from django.test import Client
 from tests.factories.gbe_factories import (
     ProfileFactory,
     UserFactory,
@@ -42,21 +42,63 @@ from gbetext import (
     sync_off_instructions,
 )
 from tests.contexts import PurchasedTicketContext
-from tests.ticketing.eb_order_list import order_dict
-import eventbrite
+from tests.ticketing.mock_ht_response import MockHTResponse
+from tests.ticketing.ht_transactions import (
+    order_list,
+    complete_trans,
+    canceled_trans,
+)
 
 
-class TestTransactions(TestCase):
-    '''Tests for transactions view'''
+class TestHumanitixTransactions(TestCase):
+    '''Tests for humanitix sync in transactions view'''
 
     @classmethod
     def setUpTestData(cls):
         cls.privileged_user = setup_admin_w_privs(['Ticketing - Transactions'])
         cls.url = reverse('transactions', urlconf='ticketing.urls')
+        BrownPaperSettingsFactory(active_sync=False)
+        EventbriteSettings.objects.all().delete()
 
     def setUp(self):
-        self.client = Client()
+        TicketingEvents.objects.all().delete()
+        SyncStatus.objects.all().delete()
 
+    @patch('requests.get', autospec=True)
+    def test_transactions_sync_no_errors(self, m_humanitix):
+        HumanitixSettingsFactory()
+        package = TicketPackageFactory(ticketing_event__source=3,
+                                       ticket_id="6568c6ca6e0f8730e1bd5f1a")
+        ticket1 = TicketTypeFactory(ticketing_event=package.ticketing_event,
+                                    ticket_id="656b90657cf8549dd8238a10")
+        ticket2 = TicketTypeFactory(ticketing_event=package.ticketing_event,
+                                    ticket_id="6568c4ee7cf8549dd8238a0c")
+        limbo = get_limbo()
+        m_humanitix.side_effect = [MockHTResponse(json_data=order_list),
+                                   MockHTResponse(json_data=complete_trans),
+                                   MockHTResponse(json_data=canceled_trans)]
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        print(response.content)
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "Imported 3 packages and 3 tickets")
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "Canceled 1 transactions")
+        success_status = SyncStatus.objects.filter(
+            is_success=True,
+            import_type="HT Transaction").first()
+        self.assertEqual(success_status.import_number, 6)
+        cancel_status = SyncStatus.objects.filter(
+            is_success=True,
+            import_type="HT Cancellations").first()
+        self.assertEqual(cancel_status.import_number, 1)
+
+'''
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_ticket_missing(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
@@ -84,33 +126,6 @@ class TestTransactions(TestCase):
         self.assertEqual(success_status.import_number,
                          0)
 
-    @patch('eventbrite.Eventbrite.get', autospec=True)
-    def test_transactions_sync_eb_only(self, m_eventbrite):
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        EventbriteSettings.objects.all().delete()
-        SyncStatus.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
-        EventbriteSettingsFactory()
-        event = TicketingEventsFactory(event_id="1", source=2)
-        ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
-
-        limbo = get_limbo()
-        m_eventbrite.return_value = order_dict
-
-        login_as(self.privileged_user, self)
-        response = self.client.post(self.url, data={'Sync': 'Sync'})
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s  Transactions imported: %d -- Eventbrite" % (
-                                import_transaction_message,
-                                1))
-        success_status = SyncStatus.objects.filter(is_success=True).first()
-        self.assertEqual(success_status.import_type,
-                         "EB Transaction")
-        self.assertEqual(success_status.import_number,
-                         1)
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_match_prior_purchaser(self, m_eventbrite):
@@ -417,83 +432,4 @@ class TestTransactions(TestCase):
         self.assertNotContains(response,
                                context.profile.user_object.first_name)
         self.assertNotContains(response, context.transaction.ticket_item.title)
-
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_transactions_sync_bpt_only(self, m_urlopen):
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
-        event = TicketingEventsFactory(event_id="1")
-        ticket = TicketItemFactory(
-            ticketing_event=event,
-            ticket_id='%s-%s' % (event.event_id, '3255985'))
-
-        limbo = get_limbo()
-
-        a = Mock()
-        order_filename = open("tests/ticketing/orderlist.xml", 'r')
-        a.read.side_effect = [File(order_filename).read()]
-        m_urlopen.return_value = a
-
-        login_as(self.privileged_user, self)
-        response = self.client.post(self.url, data={'Sync': 'Sync'})
-        self.assertEqual(response.status_code, 200)
-
-        transaction = get_object_or_404(
-            Transaction,
-            reference='A12345678')
-        self.assertEqual(str(transaction.order_date),
-                         "2014-08-15 19:26:56")
-        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
-        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
-        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
-        self.assertEqual(transaction.purchaser.matched_to_user, limbo.user_ptr)
-        self.assertEqual(transaction.purchaser.first_name, 'John')
-        self.assertEqual(transaction.purchaser.last_name, 'Smith')
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s   Transactions imported: %s - BPT" % (
-                                import_transaction_message,
-                                "1"))
-        assert_alert_exists(response, 'danger', 'Error', no_settings_error)
-
-    def test_transactions_sync_no_sources_on(self):
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
-        EventbriteSettingsFactory(active_sync=False)
-        login_as(self.privileged_user, self)
-        response = self.client.post(self.url, data={'Sync': 'Sync'})
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s   Transactions imported: %s - BPT" % (
-                                import_transaction_message,
-                                "0"))
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            sync_off_instructions % "Eventbrite")
-
-    def test_transactions_sync_both_on_no_events(self):
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
-        EventbriteSettingsFactory()
-        login_as(self.privileged_user, self)
-        response = self.client.post(self.url, data={'Sync': 'Sync'})
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s   Transactions imported: %s - BPT" % (
-                                import_transaction_message,
-                                "0"))
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s  Transactions imported: %d -- Eventbrite" % (
-                                import_transaction_message,
-                                0))
+'''

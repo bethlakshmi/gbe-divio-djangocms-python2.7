@@ -64,7 +64,6 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
             matched_to_user=act.performer.contact.user_object)
         transaction = Transaction.objects.get(purchaser=purchaser)
         self.assertEqual(transaction.ticket_item, tickets[0])
-        self.assertEqual(transaction.invoice, ipn_obj.invoice)
         self.assertEqual(purchaser.first_name, ipn_obj.first_name)
         assert_right_mail_right_addresses(
             0,
@@ -103,9 +102,6 @@ class TestSignals(MockedPostbackMixin, IPNUtilsMixin, TestCase):
         transactions = Transaction.objects.filter(purchaser=purchaser)
         for ticket in tickets:
             self.assertTrue(transactions.filter(ticket_item=ticket).exists())
-            self.assertEqual(
-                transactions.filter(ticket_item=ticket).first().invoice,
-                ipn_obj.invoice)
         assert_right_mail_right_addresses(
             0,
             1,

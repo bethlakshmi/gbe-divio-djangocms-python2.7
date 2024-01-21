@@ -93,7 +93,7 @@ class HumanitixClient:
                 status = SyncStatus(
                     is_success=False,
                     error_msg=eb_msg,
-                    import_type="HT Transaction")
+                    import_type="HT Cancellations")
                 status.save()
                 return [msg, False]
             elif len(response.json()['tickets']) == 0 or (
@@ -121,8 +121,12 @@ class HumanitixClient:
                     trans.import_date = timezone.now()
                     trans.save()
                     num_cancelled = num_cancelled + 1
-            msgs += [("Canceled %d transactions" % (num_cancelled), True)]
-            return msgs
+        msgs += [("Canceled %d transactions" % (num_cancelled), True)]
+        status = SyncStatus(is_success=True,
+                            import_type="HT Cancellations",
+                            import_number=num_cancelled)
+        status.save()
+        return msgs
 
     def get_order_inventory(self, event, orders):
         # return a tuple (A, B) where A = the result or a message on why this
@@ -191,10 +195,14 @@ class HumanitixClient:
                                 orders[ticket['orderId']])
                             trans.save()
                             num_added_tics = num_added_tics + 1
-            msgs += [("Imported %d packages and %d tickets" % (
-                num_added_pkgs,
-                num_added_tics), True)]
-            return msgs
+        msgs += [("Imported %d packages and %d tickets" % (
+            num_added_pkgs,
+            num_added_tics), True)]
+        status = SyncStatus(is_success=True,
+                            import_type="HT Transaction",
+                            import_number=num_added_pkgs + num_added_tics)
+        status.save()
+        return msgs
 
     def get_orders(self, event):
         # return a tuple (A, B) where A = the result or a message on why this
@@ -226,6 +234,7 @@ class HumanitixClient:
                     'email': order['email'],
                     'first_name': order['firstName'],
                     'last_name': order['lastName']}
+
         return (orders, True)
 
     def import_ticket_items(self):

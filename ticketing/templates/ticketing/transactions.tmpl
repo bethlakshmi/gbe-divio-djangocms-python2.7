@@ -91,7 +91,7 @@ Note:  You may need to update the ticket item list before processing transaction
   <td>${{ item.amount }}</td>
   <td>{{ item.import_date|date:"M j, Y, g:i A" }}</td>
   <td>
-  {% if item.invoice %}{{ item.invoice }}{% elif item.reference %}{{ item.reference }}{% endif %}</td>
+  {% if item.reference %}{{ item.reference }}{% endif %}</td>
   <td>{{ item.status }}</td>
 </tr>
 {% endfor %}</tbody></table>

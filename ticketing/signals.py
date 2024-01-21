@@ -114,7 +114,6 @@ def pay_application_fee(sender, **kwargs):
                     amount=amount,
                     order_date=ipn_obj.payment_date,
                     payment_source="PayPalIPN",
-                    invoice=ipn_obj.invoice,
                     custom=ipn_obj.custom)
                 transaction.save()
             bid.submitted = True
