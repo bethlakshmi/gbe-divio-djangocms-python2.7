@@ -80,7 +80,6 @@ class TestHumanitixTransactions(TestCase):
 
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        print(response.content)
         assert_alert_exists(response,
                             'success',
                             'Success',
@@ -93,6 +92,68 @@ class TestHumanitixTransactions(TestCase):
             is_success=True,
             import_type="HT Transaction").first()
         self.assertEqual(success_status.import_number, 6)
+        cancel_status = SyncStatus.objects.filter(
+            is_success=True,
+            import_type="HT Cancellations").first()
+        self.assertEqual(cancel_status.import_number, 1)
+
+    @patch('requests.get', autospec=True)
+    def test_transactions_sync_missing_package_cancel_none(self, m_humanitix):
+        HumanitixSettingsFactory()
+        ticket1 = TicketTypeFactory(ticketing_event__source=3,
+                                    ticket_id="656b90657cf8549dd8238a10")
+        ticket2 = TicketTypeFactory(ticketing_event=ticket1.ticketing_event,
+                                    ticket_id="6568c4ee7cf8549dd8238a0c")
+        limbo = get_limbo()
+        m_humanitix.side_effect = [MockHTResponse(json_data=order_list),
+                                   MockHTResponse(json_data=complete_trans),
+                                   MockHTResponse(json_data=canceled_trans)]
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "Imported 0 packages and 3 tickets")
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "Canceled 0 transactions")
+        success_status = SyncStatus.objects.filter(
+            is_success=True,
+            import_type="HT Transaction").first()
+        self.assertEqual(success_status.import_number, 3)
+        cancel_status = SyncStatus.objects.filter(
+            is_success=True,
+            import_type="HT Cancellations").first()
+        self.assertEqual(cancel_status.import_number, 0)
+
+    @patch('requests.get', autospec=True)
+    def test_transactions_sync_missing_ticket(self, m_humanitix):
+        HumanitixSettingsFactory()
+        package = TicketPackageFactory(ticketing_event__source=3,
+                                       ticket_id="6568c6ca6e0f8730e1bd5f1a")
+        ticket1 = TicketTypeFactory(ticketing_event=package.ticketing_event,
+                                    ticket_id="656b90657cf8549dd8238a10")
+        limbo = get_limbo()
+        m_humanitix.side_effect = [MockHTResponse(json_data=order_list),
+                                   MockHTResponse(json_data=complete_trans),
+                                   MockHTResponse(json_data=canceled_trans)]
+
+        login_as(self.privileged_user, self)
+        response = self.client.post(self.url, data={'Sync': 'Sync'})
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "Imported 3 packages and 1 tickets")
+        assert_alert_exists(response,
+                            'success',
+                            'Success',
+                            "Canceled 1 transactions")
+        success_status = SyncStatus.objects.filter(
+            is_success=True,
+            import_type="HT Transaction").first()
+        self.assertEqual(success_status.import_number, 4)
         cancel_status = SyncStatus.objects.filter(
             is_success=True,
             import_type="HT Cancellations").first()
