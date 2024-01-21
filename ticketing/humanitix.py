@@ -95,7 +95,7 @@ class HumanitixClient:
                     error_msg=msg,
                     import_type="HT Cancellations")
                 status.save()
-                return [msg, False]
+                return [(msg, False)]
             elif len(response.json()['tickets']) == 0 or (
                     response.json()['total'] < response.json()['pageSize']):
                 has_more_items = False
@@ -149,7 +149,7 @@ class HumanitixClient:
                     error_msg=msg,
                     import_type="HT Transaction")
                 status.save()
-                return [msg, False]
+                return [(msg, False)]
             elif len(response.json()['tickets']) == 0 or (
                     response.json()['total'] < response.json()['pageSize']):
                 has_more_items = False
