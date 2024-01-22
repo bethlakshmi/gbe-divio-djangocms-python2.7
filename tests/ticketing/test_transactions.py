@@ -38,6 +38,8 @@ from tests.functions.gbe_functions import (
 from gbetext import (
     eventbrite_error,
     import_transaction_message,
+    intro_transaction_message,
+    intro_trans_user_message,
     no_settings_error,
     sync_off_instructions,
 )
@@ -330,19 +332,32 @@ class TestTransactions(TestCase):
 
     def test_transactions_w_privilege(self):
         context = PurchasedTicketContext()
+        canceled_trans = TransactionFactory(
+            ticket_item=context.transaction.ticket_item,
+            status="canceled")
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertContains(response, context.transaction.purchaser.email)
         self.assertContains(response, context.profile.display_name)
-        self.assertContains(response, context.transaction.ticket_item.title)
+        self.assertContains(response, context.transaction.ticket_item.title, 2)
         self.assertNotContains(response, "- Vendor")
         self.assertNotContains(response, "- Act")
+        self.assertContains(response, canceled_trans.purchaser.email)
+        self.assertContains(response, "gbe-table-row gbe-table-danger")
+        self.assertContains(response, intro_transaction_message)
 
     def test_transactions_w_privilege_userview_editpriv(self):
         context = PurchasedTicketContext()
         ticketing_event = context.transaction.ticket_item.ticketing_event
         ticketing_event.act_submission_event = True
         ticketing_event.save()
+        old_context = PurchasedTicketContext()
+        old_context.conference.status = "past"
+        old_context.conference.save()
+        old_context.transaction.purchaser = context.transaction.purchaser
+        canceled_trans = TransactionFactory(
+            ticket_item__ticketing_event__conference=context.conference,
+            status="canceled")
         grant_privilege(self.privileged_user, 'Registrar')
         login_as(self.privileged_user, self)
         response = self.client.get(self.url + "?format=user")
@@ -355,6 +370,11 @@ class TestTransactions(TestCase):
             'admin_profile',
             urlconf="gbe.urls",
             args=[context.profile.pk]))
+        self.assertContains(response, intro_trans_user_message)
+        self.assertContains(response, canceled_trans.ticket_item.title)
+        self.assertContains(response, "gbe-table-row gbe-table-danger")
+        self.assertNotContains(response,
+                               old_context.transaction.ticket_item.title)
 
     def test_transactions_empty(self):
         TicketingEvents.objects.all().delete()
