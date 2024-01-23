@@ -28,8 +28,6 @@ class CreateTransaction(FormToTableMixin, RoleRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.amount = 0
         form.instance.order_date = datetime.now()
-        form.instance.shipping_method = "manual"
-        form.instance.invoice = "comp by %s" % self.request.user
         form.instance.payment_source = "GBE comp"
         form.instance.amount = 0
         profile = form.cleaned_data['profile']

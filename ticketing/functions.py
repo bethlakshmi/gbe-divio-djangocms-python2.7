@@ -37,14 +37,22 @@ def get_tickets(linked_event):
         has_coupon=False).exclude(
         start_time__gt=datetime.now()).exclude(
         end_time__lt=datetime.now())
-    packages = []
+    tickets = TicketType.objects.filter(
+        linked_events=linked_event,
+        live=True,
+        has_coupon=False).exclude(
+        start_time__gt=datetime.now()).exclude(
+        end_time__lt=datetime.now())
+    packages = package_query.filter(ticket_types__in=tickets)
+
     link = None
     if linked_event.event_style not in ["Master", "Volunteer"]:
         general_events = TicketingEvents.objects.filter(
             include_most=True,
             conference__conference_slug__in=linked_event.labels).exclude(
             source=3)
-        packages = package_query.filter(whole_shebang=True)
+        packages = list(chain(packages,
+                              package_query.filter(whole_shebang=True)))
     if linked_event.event_style in class_styles:
         general_events = list(chain(
             general_events,
@@ -53,8 +61,14 @@ def get_tickets(linked_event):
                 conference__conference_slug__in=linked_event.labels).exclude(
                 source=3)))
 
-        packages = package_query.filter(
-            Q(conference_only_pass=True) | Q(whole_shebang=True))
+        packages = list(chain(packages, package_query.filter(
+            Q(conference_only_pass=True) | Q(whole_shebang=True))))
+        tickets = list(chain(tickets, TicketType.objects.filter(
+            conference_only_pass=True,
+            live=True,
+            has_coupon=False).exclude(
+            start_time__gt=datetime.now()).exclude(
+            end_time__lt=datetime.now())))
 
     general_events = list(chain(
         general_events,
@@ -68,26 +82,18 @@ def get_tickets(linked_event):
         if event.live_ticket_count > 0 and event not in ticket_events:
             ticket_events += [event]
 
-    tickets = TicketType.objects.filter(
-        linked_events=linked_event,
-        live=True,
-        has_coupon=False).exclude(
-        start_time__gt=datetime.now()).exclude(
-        end_time__lt=datetime.now())
-
     # with Humanitix, there is only 1 event, so all links are the same
     humanitix = HumanitixClient()
     humanitix_active, status_info = humanitix.setup_api()
     if humanitix_active and humanitix.settings.widget_page is not None and (
             len(humanitix.settings.widget_page) > 0):
         link = humanitix.settings.widget_page
-    elif tickets.count() > 0:
-        link = tickets.first().ticketing_event.link
-    elif packages != [] and packages.count() > 0:
-        link = packages.first().ticketing_event.link
+    elif len(tickets) > 0:
+        link = tickets[0].ticketing_event.link
+    elif packages != [] and len(packages) > 0:
+        link = packages[0].ticketing_event.link
 
-    if len(ticket_events) > 0 or tickets.count() > 0 or (
-            packages != [] and packages.count() > 0):
+    if len(ticket_events) > 0 or len(tickets) > 0 or len(packages) > 0:
         return {"events": ticket_events,
                 "link": link,
                 "tickets": tickets,

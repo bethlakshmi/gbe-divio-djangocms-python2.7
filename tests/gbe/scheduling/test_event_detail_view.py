@@ -202,7 +202,7 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, package.ticketing_event.title)
         self.assertContains(response, this_show.ticketing_event.title)
 
-    def test_display_humanitix_ticket_type(self):
+    def test_display_humanitix_package(self):
         context = ShowContext()
         package = context.setup_package()
         url = reverse(
@@ -213,16 +213,16 @@ class TestEventDetailView(TestCase):
         self.assertContains(response, package.title)
         self.assertContains(response, package.ticketing_event.link)
 
-    def test_display_humanitix_package(self):
+    def test_display_humanitix_composite_package(self):
         context = ShowContext()
-        this_show = context.setup_ticket_type()
+        ticket_type, package = context.setup_composite_package()
         url = reverse(
             self.view_name,
             urlconf="gbe.scheduling.urls",
             args=[context.sched_event.pk])
         response = self.client.get(url)
-        self.assertContains(response, this_show.title)
-        self.assertContains(response, this_show.ticketing_event.link)
+        self.assertContains(response, ticket_type.title)
+        self.assertContains(response, package.title)
 
     def test_display_humanitix_widget_page(self):
         settings = HumanitixSettingsFactory(
@@ -310,6 +310,18 @@ class TestEventDetailView(TestCase):
             '<span class="badge badge-pill gbe-badge">%s</span>' % (
                 self.label.text),
             html=True)
+
+    def test_humantix_class_tickets(self):
+        context = ClassContext(starttime=datetime.now()-timedelta(days=1))
+        ticket_type = context.setup_ticket_type()
+        package = context.setup_package()
+        url = reverse(
+            self.view_name,
+            urlconf="gbe.scheduling.urls",
+            args=[context.sched_event.pk])
+        response = self.client.get(url)
+        self.assertContains(response, ticket_type.title)
+        self.assertContains(response, package.title)
 
     def test_class_already_evaled(self):
         context = ClassContext(starttime=datetime.now()-timedelta(days=1))

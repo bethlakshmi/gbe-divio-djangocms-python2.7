@@ -87,7 +87,9 @@
         </td>
         {% endfor %}
         {% for ticketing_event in ticket_types %}
-        <td class="text-center">&nbsp;</td>
+        <td class="text-center">
+          {% if ticketing_event.conference_only_pass %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Conference Only Pass'"></i>{% else %}&nbsp;{% endif %}
+        </td>
         {% endfor %}
         {% for ticketing_event in packages %}
         <td class="text-center">

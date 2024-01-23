@@ -95,8 +95,6 @@ class TransactionFactory(DjangoModelFactory):
     purchaser = SubFactory(PurchaserFactory)
     amount = 99.99
     order_date = timezone.now()
-    shipping_method = Sequence(lambda x: "shipping_method: #%d" % x)
-    order_notes = Sequence(lambda x: "order_notes: #%d" % x)
     reference = Sequence(lambda x: "reference: #%d" % x)
     payment_source = Sequence(lambda x: "payment_source: #%d" % x)
     import_date = timezone.now()
