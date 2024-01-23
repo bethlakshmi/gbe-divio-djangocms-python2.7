@@ -40,6 +40,9 @@ class TestBadgePrintView(TestCase):
             checklistitem__badge_title="Badge Name")
         ticket_condition.tickets.add(
             self.ticket_context.transaction.ticket_item)
+        canceled_trans = TransactionFactory(
+            status="canceled",
+            ticket_item=self.ticket_context.transaction.ticket_item)
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -51,6 +54,9 @@ class TestBadgePrintView(TestCase):
         self.assertContains(
             response,
             self.ticket_context.profile.user_object.username)
+        self.assertNotContains(
+            response,
+            canceled_trans.purchaser.matched_to_user.username)
         self.assertContains(
             response,
             self.ticket_context.transaction.ticket_item.title)

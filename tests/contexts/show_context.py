@@ -161,8 +161,21 @@ class ShowContext:
         package = TicketPackageFactory(
             ticketing_event__conference=self.conference,
             ticketing_event__source=3,
-            ticketing_event__slug="testslug",
+            ticketing_event__slug="testpackageslug",
             whole_shebang=True,
             live=True,
             has_coupon=False)
         return package
+
+    def setup_composite_package(self):
+        ticket_type = self.setup_ticket_type()
+        package = TicketPackageFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__source=3,
+            ticketing_event__slug="testpackageslug",
+            whole_shebang=False,
+            live=True,
+            has_coupon=False)
+        package.ticket_types.add(ticket_type)
+        return ticket_type, package
+

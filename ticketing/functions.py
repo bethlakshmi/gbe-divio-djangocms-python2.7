@@ -91,7 +91,7 @@ def get_tickets(linked_event):
             len(humanitix.settings.widget_page) > 0):
         link = humanitix.settings.widget_page
     elif len(tickets) > 0:
-        link = tickets.first().ticketing_event.link
+        link = tickets[0].ticketing_event.link
     elif packages != [] and len(packages) > 0:
         link = packages[0].ticketing_event.link
 
