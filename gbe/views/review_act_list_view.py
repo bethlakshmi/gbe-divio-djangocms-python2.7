@@ -90,7 +90,7 @@ class ReviewActListView(ReviewBidListView):
             {'vertical_columns': EvaluationCategory.objects.filter(
                 visible=True).order_by('category').values_list(
                 'category', flat=True),
-             'last_columns': ['Average', 'Action'],
+             'last_columns': ['Average', '#', 'Action'],
              'review_metrics':  {
                 'total_by_status': accept_metrics,
                 'total_by_reviewer': self.object_type.objects.filter(
@@ -139,5 +139,7 @@ class ReviewActListView(ReviewBidListView):
                     total_average/valid_categories, 2)
             else:
                 bid_row['total_average'] = "--"
+            bid_row['num_reviews'] = FlexibleEvaluation.objects.filter(
+                bid=bid).distinct('evaluator').count()
             rows.append(bid_row)
         return rows

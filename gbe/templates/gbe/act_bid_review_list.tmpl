@@ -52,7 +52,8 @@
     <tr class="gbe-table-row {{ row.status }}">
       {% for value in row.bid %}<td>{{ value|linebreaks }}</td>{% endfor %}
     	{% for review in row.reviews %}<td>{{ review }}</td>{% endfor %}
-	    <td>{{ row.total_average }}</td>
+      <td>{{ row.total_average }}</td>
+      <td>{{ row.num_reviews }}</td>
       <td><a href="{{ row.review_url }}" role="button" class="btn gbe-btn-table btn-sm">
            Review</a></td>
     </tr>
