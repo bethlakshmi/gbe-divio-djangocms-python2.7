@@ -190,6 +190,9 @@ class TestReviewActList(TestCase):
         self.assertContains(response, self.metric_row % (
             self.privileged_profile.display_name,
             1), html=True)
+        # 2 because there's 1 review in metrics, and 1 review on the bid row
+        self.assertContains(response, "<td>1</td>", 2)
+        self.assertContains(response, "<td>0</td>", 3)
 
     def test_review_act_has_average_w_zero(self):
         EvaluationCategory.objects.all().delete()
