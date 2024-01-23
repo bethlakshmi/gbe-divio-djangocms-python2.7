@@ -76,8 +76,7 @@ class TestReports(TestCase):
         transaction = ticket_context.transaction
         login_as(self.profile, self)
         response = self.client.get(
-            reverse('env_stuff',
-                    urlconf="gbe.reporting.urls"))
+            reverse('env_stuff', urlconf="gbe.reporting.urls"))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),

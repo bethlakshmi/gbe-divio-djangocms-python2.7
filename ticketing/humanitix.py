@@ -66,7 +66,7 @@ class HumanitixClient:
         for event in TicketingEvents.objects.exclude(
                 conference__status='completed').filter(source=3):
             orders, is_success = self.get_orders(event)
-            
+
             # we're done if there's no orders
             if is_success and len(orders) > 0:
                 msgs = msgs + self.get_order_inventory(event, orders)
@@ -175,7 +175,7 @@ class HumanitixClient:
                             trans.reference = ticket['packageGroupId']
                             trans.ticket_item = TicketPackage.objects.get(
                                     ticket_id=ticket['packageId'])
-                            trans.purchaser=self.setup_purchaser(
+                            trans.purchaser = self.setup_purchaser(
                                     orders[ticket['orderId']])
                             trans.save()
                             num_added_pkgs = num_added_pkgs + 1
@@ -185,13 +185,14 @@ class HumanitixClient:
                             reference=ticket['_id']).exists():
                         if not TicketType.objects.filter(
                                ticket_id=ticket['ticketTypeId']).exists():
-                            msgs += [("Ticket Type for id %s does not exist" % (
-                                ticket['ticketTypeId']), False)]
+                            msgs += [(
+                                "Ticket Type for id %s does not exist" % (
+                                    ticket['ticketTypeId']), False)]
                         else:
                             trans.reference = ticket['_id']
-                            trans.ticket_item=TicketType.objects.get(
+                            trans.ticket_item = TicketType.objects.get(
                                 ticket_id=ticket['ticketTypeId'])
-                            trans.purchaser=self.setup_purchaser(
+                            trans.purchaser = self.setup_purchaser(
                                 orders[ticket['orderId']])
                             trans.save()
                             num_added_tics = num_added_tics + 1

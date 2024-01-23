@@ -11,7 +11,7 @@ def clean_bad_social_links(apps, schema_editor):
     for link in SocialLink.objects.all().order_by('-pk'):
         if SocialLink.objects.filter(
                  bio=link.bio,
-                 link=link.link, 
+                 link=link.link,
                  username=link.username,
                  social_network=link.social_network).exclude(
                  pk=link.pk).exists():

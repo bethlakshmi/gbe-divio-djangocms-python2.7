@@ -82,8 +82,6 @@ def get_tickets(linked_event):
         if event.live_ticket_count > 0 and event not in ticket_events:
             ticket_events += [event]
 
-
-
     # with Humanitix, there is only 1 event, so all links are the same
     humanitix = HumanitixClient()
     humanitix_active, status_info = humanitix.setup_api()

@@ -39,7 +39,6 @@ def transactions(request):
     view_format = request.GET.get('format', 'ticket')
     changed_id = int(request.GET.get('changed_id', -1))
 
-
     if view_format == "ticket":
         intro = UserMessage.objects.get_or_create(
           view="ViewTransactions",

@@ -178,4 +178,3 @@ class ShowContext:
             has_coupon=False)
         package.ticket_types.add(ticket_type)
         return ticket_type, package
-

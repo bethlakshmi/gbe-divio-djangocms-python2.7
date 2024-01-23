@@ -136,7 +136,7 @@ class TestWelcomeLetter(TestCase):
         '''
         transaction = TransactionFactory()
         canceled_trans = TransactionFactory(
-            ticket_item__ticketing_event__conference=transaction.\
+            ticket_item__ticketing_event__conference=transaction.
             ticket_item.ticketing_event.conference,
             purchaser=transaction.purchaser,
             status="canceled")

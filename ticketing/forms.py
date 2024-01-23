@@ -120,7 +120,7 @@ class TicketTypeForm(TicketItemForm):
         help_texts = ticket_item_help_text
 
     def save(self, user, commit=True):
-        # broken out separate, and skips TicketItemForm save because 
+        # broken out separate, and skips TicketItemForm save because
         # the Ticket Item Form was breaking the natural m2m save
         form = super(TicketItemForm, self).save(commit=commit)
         form.modified_by = user
@@ -187,7 +187,8 @@ class LinkTicketsForm(forms.Form):
             initial = kwargs.pop('initial')
             self.fields[
                 'ticketing_events'].queryset = TicketingEvents.objects.filter(
-                conference=initial['conference']).exclude(source=3).order_by('title')
+                conference=initial['conference']).exclude(source=3).order_by(
+                'title')
             self.fields['ticket_types'].queryset = TicketType.objects.filter(
                 ticketing_event__conference=initial['conference']
                 ).order_by('title')

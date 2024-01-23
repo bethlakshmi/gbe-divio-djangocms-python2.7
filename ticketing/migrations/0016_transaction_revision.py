@@ -34,11 +34,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transaction',
             name='status',
-            field=models.CharField(choices=[('paid', 'paid'), ('canceled', 'canceled')], default='paid', max_length=25),
+            field=models.CharField(
+                choices=[('paid', 'paid'), ('canceled', 'canceled')],
+                default='paid',
+                max_length=25),
         ),
         migrations.AlterField(
             model_name='transaction',
             name='amount',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=20, null=True),
+            field=models.DecimalField(blank=True,
+                                      decimal_places=2,
+                                      max_digits=20,
+                                      null=True),
         ),
     ]

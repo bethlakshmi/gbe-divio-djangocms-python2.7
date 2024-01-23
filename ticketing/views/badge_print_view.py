@@ -49,7 +49,8 @@ class BadgePrintView(PermissionRequiredMixin, View):
                 badge_name = buyer.profile.get_badge_name()
             else:
                 badge_name = badge.purchaser.first_name
-            for condition in badge.ticket_item.ticketingeligibilitycondition_set.exclude(
+            for condition in badge.ticket_item.\
+                    ticketingeligibilitycondition_set.exclude(
                     checklistitem__badge_title__isnull=True):
                 badge_info.append(
                     [badge.purchaser.first_name,

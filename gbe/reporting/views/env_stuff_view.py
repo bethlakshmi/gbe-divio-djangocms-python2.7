@@ -76,8 +76,9 @@ class EnvStuffView(CSVResponseMixin, RoleRequiredMixin, ConferenceListView):
                 ticket_item__ticketing_event__conference=self.conference,
                 purchaser__matched_to_user__is_active=True,
                 ticket_item__ticketing_event__act_submission_event=False
-                ).exclude(purchaser__matched_to_user__username="limbo"
-                ).exclude(status="canceled"):
+                ).exclude(
+                    purchaser__matched_to_user__username="limbo"
+                    ).exclude(status="canceled"):
             name = t.purchaser.matched_to_user.profile.get_badge_name(
                 ).encode('utf-8').strip()
             if name not in people_rows.keys():

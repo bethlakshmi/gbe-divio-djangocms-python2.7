@@ -95,7 +95,6 @@ class TestHumanitixTransactions(TestCase):
             matched_to_user__email="testuser@gmail.com",
             email="testuser@gmail.com")
 
-
         m_humanitix.side_effect = [MockHTResponse(json_data=order_list),
                                    MockHTResponse(json_data=complete_trans),
                                    MockHTResponse(json_data=canceled_trans)]
