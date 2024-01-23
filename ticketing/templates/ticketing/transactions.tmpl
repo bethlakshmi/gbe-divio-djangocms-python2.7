@@ -66,9 +66,10 @@ Note:  You may need to update the ticket item list before processing transaction
     <th>Amount</th>
     <th>Purchase Date</th>
     <th>Invoice</th>
+    <th>Status</th>
   </tr>
   </thead>
-    <tfoot>
+  <tfoot>
     <tr class="gbe-table-header">
     <th>User</th>
     <th>Purchase Email</th>
@@ -77,11 +78,12 @@ Note:  You may need to update the ticket item list before processing transaction
     <th>Amount</th>
     <th>Purchase Date</th>
     <th>Invoice</th>
-  </tr>
+    <th>Status</th>
+    </tr>
   </tfoot>
   <tbody>
  {% endifchanged %}
-<tr class="gbe-table-row {% if item.pk == changed_id %}gbe-table-success {% elif not item.purchaser.matched_to_user.profile %}gbe-table-info {% endif %}">
+<tr class="gbe-table-row {% if item.pk == changed_id %}gbe-table-success {% elif item.status == "canceled" %}gbe-table-danger {% elif not item.purchaser.matched_to_user.profile %}gbe-table-info {% endif %}">
   <td>{% include "ticketing/purchaser_name.tmpl" with user=item.purchaser.matched_to_user purchaser=item.purchaser %}</td>
   <td>{% include "email_crop.tmpl" with email=item.purchaser.email %}</td>
   <td>{{ item.payment_source }}</td>
@@ -89,7 +91,8 @@ Note:  You may need to update the ticket item list before processing transaction
   <td>${{ item.amount }}</td>
   <td>{{ item.import_date|date:"M j, Y, g:i A" }}</td>
   <td>
-  {% if item.invoice %}{{ item.invoice }}{% elif item.reference %}{{ item.reference }}{% endif %}</td>
+  {% if item.reference %}{{ item.reference }}{% endif %}</td>
+  <td>{{ item.status }}</td>
 </tr>
 {% endfor %}</tbody></table>
 {% else %}
@@ -99,33 +102,32 @@ Note:  You may need to update the ticket item list before processing transaction
     <tr class="gbe-table-header">
     <th>Email<br>(Username)</th>
     <th>Badge Name<br>(Last, First)</th>
-    <th>Tickets<br>Purchase Email | # | Ticket Id | Ticket | Date</th>
+    <th>Tickets<br>Purchase Email | status | Ticket Id | Ticket | Date</th>
   </tr>
   </thead>
     <tfoot>
     <tr class="gbe-table-header">
     <th>Email<br>(Username)</th>
     <th>Badge Name<br>(Last, First)</th>
-    <th>Tickets<br>Purchase Email | # | Ticket Id | Ticket | Date</th>
+    <th>Tickets<br>Purchase Email | status | Ticket Id | Ticket | Date</th>
   </tr>
   </tfoot>
   <tbody>
-  {% for user in users %}
+  {% for user, purchasers in users.items %}
   {% if user.username == 'limbo' %}
-{% for purchaser in user.purchaser_set.all %}
-  	{% if purchaser.transaction_set.all|length > 0 %}
+{% for purchaser, transactions in purchasers.items %}
 <tr class="gbe-table-row gbe-table-info">
   <td>{% include "email_crop.tmpl" with email=purchaser.email %}<br>(No user account)</td>
   <td>N/A<br>({{purchaser.last_name}}, {{purchaser.first_name}})</td>
-  <td id="sub-table"><table width=100%>{% include "ticketing/transaction_row.tmpl" %}</table></td>
+  <td id="sub-table"><table width=100%>{% include "ticketing/transaction_row.tmpl" %}
+  </table></td>
 </tr>
-{% endif %}{% endfor %}{% else %}
+{% endfor %}{% else %}
 <tr class="gbe-table-row{% if user.pk in updated_transactions %} gbe-table-success{% elif not user.profile.is_active %} gbe-form-error{% endif %}">
   <td>{% include "email_crop.tmpl" with email=user.email %}<br>({% include "ticketing/purchaser_name.tmpl" with purchaser=user %})</td>
-  <td>{{user.profile.display_name}},<br>({{user.last_name}}, {{user.first_name}})</td>
-  <td id="sub-table"><table width=100%>{% for purchaser in user.purchaser_set.all %}
-  	{% if purchaser.transaction_set.all|length > 0 %}
-      {% include "ticketing/transaction_row.tmpl" %}{% endif %}{% endfor %}</table>
+  <td>{% if user.profile %}{{user.profile.display_name}}{% else %}NO PROFILE{% endif %},<br>({{user.last_name}}, {{user.first_name}})</td>
+  <td id="sub-table"><table width=100%>{% for purchaser, transactions in purchasers.items %}
+      {% include "ticketing/transaction_row.tmpl" %}{% endfor %}</table>
   </td>
 </tr>{% endif %}{% endfor %}</tbody></table></div></div></div></div>
 {% endifequal %}

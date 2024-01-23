@@ -61,8 +61,6 @@ def comp_act(user, conference):
         ticket_item=comp_ticket,
         amount=0,
         order_date=datetime.now(),
-        shipping_method="Comp'ed",
-        order_notes="Comped through IDD",
         reference="auto",
         payment_source="GBE")
     transaction.save()
@@ -146,8 +144,10 @@ def get_purchased_tickets(user):
     for conf in conferences:
         tickets = TicketItem.objects.filter(
             ticketing_event__conference=conf,
-            transaction__purchaser__matched_to_user=user).annotate(
-                number_of_tickets=Count('transaction')).order_by('title')
+            transaction__purchaser__matched_to_user=user,
+            transaction__status="paid").annotate(
+            number_of_tickets=Count('transaction')
+            ).order_by('title')
         if tickets:
             ticket_by_conf.append({'conference': conf, 'tickets': tickets})
     return ticket_by_conf
@@ -159,7 +159,8 @@ def get_checklist_items_for_tickets(profile, user_schedule, tickets):
     '''
     checklist_items = []
     transactions = Transaction.objects.filter(
-            purchaser__matched_to_user=profile.user_object)
+            purchaser__matched_to_user=profile.user_object).exclude(
+            status="canceled")
 
     for ticket in set(tickets):
         items = []
@@ -242,7 +243,6 @@ def get_paypal_button(request, total, user_id, number_list, bid_type, bid_id):
         "business": PayPalSettings.objects.first().business_email,
         "amount": total,
         "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
-        "invoice": str(datetime.now()),
         "custom": "%s-%d-User-%d" % (bid_type, bid_id, user_id),
         "return": request.build_absolute_uri(
             reverse(

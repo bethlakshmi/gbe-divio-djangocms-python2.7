@@ -135,11 +135,19 @@ class TestWelcomeLetter(TestCase):
         '''a ticket purchaser gets a checklist item
         '''
         transaction = TransactionFactory()
+        canceled_trans = TransactionFactory(
+            ticket_item__ticketing_event__conference=transaction.
+            ticket_item.ticketing_event.conference,
+            purchaser=transaction.purchaser,
+            status="canceled")
         purchaser = ProfileFactory(
             user_object=transaction.purchaser.matched_to_user)
         conference = transaction.ticket_item.ticketing_event.conference
         ticket_condition = TicketingEligibilityConditionFactory(
             tickets=[transaction.ticket_item]
+        )
+        other_ticket_condition = TicketingEligibilityConditionFactory(
+            tickets=[canceled_trans.ticket_item]
         )
         context = ClassContext(
             conference=transaction.ticket_item.ticketing_event.conference)
@@ -159,6 +167,9 @@ class TestWelcomeLetter(TestCase):
         self.assertContains(
             response,
             str(ticket_condition.checklistitem))
+        self.assertNotContains(
+            response,
+            str(other_ticket_condition.checklistitem))
 
     def test_personal_schedule_only_active(self):
         '''a teacher booked into a class, with an active role condition

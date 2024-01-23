@@ -38,6 +38,10 @@ class TestReports(TestCase):
         '''env_stuff view should load with no conf choice
         '''
         transaction = self.ticket_context.transaction
+        canceled_context = PurchasedTicketContext(
+            conference=self.ticket_context.conference)
+        canceled_context.transaction.status = "canceled"
+        canceled_context.transaction.save()
         login_as(self.profile, self)
         response = self.client.get(
             reverse('env_stuff',
@@ -56,6 +60,9 @@ class TestReports(TestCase):
         self.assertContains(
             response,
             transaction.ticket_item.title)
+        self.assertNotContains(
+            response,
+            canceled_context.transaction.ticket_item.title)
 
     def test_env_stuff_w_inactive_purchaser(self):
         '''env_stuff view should load with no conf choice
@@ -69,8 +76,7 @@ class TestReports(TestCase):
         transaction = ticket_context.transaction
         login_as(self.profile, self)
         response = self.client.get(
-            reverse('env_stuff',
-                    urlconf="gbe.reporting.urls"))
+            reverse('env_stuff', urlconf="gbe.reporting.urls"))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Disposition'),

@@ -355,8 +355,6 @@ def eb_save_orders_to_database(event_id, attendee):
         trans.order_notes = attendee['ticket_class_name']
         trans.reference = attendee['id']
         trans.payment_source = 'Eventbrite'
-        trans.shipping_method = attendee['delivery_method']
-
         trans.save()
         attendee_count = attendee_count + 1
     else:

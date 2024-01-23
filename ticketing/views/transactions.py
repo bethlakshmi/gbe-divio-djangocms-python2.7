@@ -9,6 +9,7 @@ from ticketing.models import (
   Purchaser,
   Transaction,
 )
+from ticketing.humanitix import HumanitixClient
 from ticketing.brown_paper import process_bpt_order_list
 from ticketing.eventbrite import process_eb_purchases
 from django.shortcuts import render
@@ -16,6 +17,7 @@ from gbe.models import UserMessage
 from gbetext import (
     import_transaction_message,
     intro_transaction_message,
+    intro_trans_user_message,
 )
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -37,15 +39,29 @@ def transactions(request):
     view_format = request.GET.get('format', 'ticket')
     changed_id = int(request.GET.get('changed_id', -1))
 
-    intro = UserMessage.objects.get_or_create(
-      view="ViewTransactions",
-      code="INTRO_MESSAGE",
-      defaults={'summary': "Introduction Message",
-                'description': intro_transaction_message})
+    if view_format == "ticket":
+        intro = UserMessage.objects.get_or_create(
+          view="ViewTransactions",
+          code="INTRO_MESSAGE_TRANSACTIONS",
+          defaults={'summary': "Introduction Message",
+                    'description': intro_transaction_message})
+    else:
+        intro = UserMessage.objects.get_or_create(
+          view="ViewTransactions",
+          code="INTRO_MESSAGE_USERS",
+          defaults={'summary': "Introduction Message",
+                    'description': intro_trans_user_message})
     count = -1
     error = ''
 
     if ('Sync' in request.POST):
+        humanitix = HumanitixClient()
+        msgs = humanitix.process_transactions()
+        for msg, is_success in msgs:
+            if is_success:
+                messages.success(request, msg)
+            else:
+                messages.error(request, msg)
         msgs = process_eb_purchases()
         for msg, is_success in msgs:
             if is_success:
@@ -78,7 +94,17 @@ def transactions(request):
             'ticket_item__title',
             'purchaser')
     else:
-        context['users'] = User.objects.filter(
-            purchaser__transaction__ticket_item__ticketing_event__conference=conference
-            ).distinct().order_by('email')
+        users = {}
+        for transaction in Transaction.objects.filter(
+                ticket_item__ticketing_event__conference=conference
+                ).order_by('ticket_item'):
+            if transaction.purchaser.matched_to_user not in users.keys():
+                users[transaction.purchaser.matched_to_user] = {}
+            if transaction.purchaser not in users[
+                     transaction.purchaser.matched_to_user].keys():
+                users[transaction.purchaser.matched_to_user][
+                    transaction.purchaser] = []
+            users[transaction.purchaser.matched_to_user][
+                transaction.purchaser] += [transaction]
+        context['users'] = users
     return render(request, r'ticketing/transactions.tmpl', context)

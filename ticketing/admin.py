@@ -13,14 +13,15 @@ class PayPalSettingsAdmin(admin.ModelAdmin):
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('ticket_item',
+                    'status',
                     'purchaser',
                     'amount',
                     'payment_source',
                     'order_date',
                     'import_date')
     list_filter = ['ticket_item__ticketing_event__conference',
-                   'order_date',
-                   'import_date',
+                   'status',
+                   'ticket_item__ticketing_event__source',
                    'ticket_item__ticketing_event__act_submission_event',
                    'ticket_item__ticketing_event__vendor_submission_event']
     search_fields = ['ticket_item__title',

@@ -18,7 +18,6 @@ def move_performer(performer, bio):
 def migrate_personas(apps, schema_editor):
     Bio = apps.get_model("gbe", "Bio")
     Persona = apps.get_model("gbe", "Persona")
-    print("migrating %d personas" % Persona.objects.all().count())
     for performer in Persona.objects.all():
         # move persona to bio
         bio = Bio(contact=performer.contact.user_object.account,
@@ -49,7 +48,6 @@ def migrate_troupes(apps, schema_editor):
     Bio = apps.get_model("gbe", "Bio")
     Troupe = apps.get_model("gbe", "Troupe")
     People = apps.get_model("scheduler", "People")
-    print("migrating %d troupes" % Troupe.objects.all().count())
     for performer in Troupe.objects.all():
         # move persona to bio
         bio = Bio(contact=performer.contact.user_object.account,
@@ -77,8 +75,6 @@ def migrate_profiles(apps, schema_editor):
     ProfilePreferences = apps.get_model("gbe", "ProfilePreferences")
     Account = apps.get_model("gbe", "Account")
     Volunteer = apps.get_model("gbe", "Volunteer")
-    print('')
-    print("migrating %d profiles" % Profile.objects.all().count())
     for profile in Profile.objects.all():
         # move persona to bio
         account = Account(user_object=profile.user_object,
