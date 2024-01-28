@@ -343,7 +343,7 @@ class FlexAdmin(admin.ModelAdmin):
                    ("evaluator", admin.RelatedOnlyFieldListFilter),
                    'ranking',
                    'bid__b_conference__conference_slug']
-    search_fields = ['bid__title', 'big__performer__name']
+    search_fields = ['bid__b_title', 'bid__act__bio__name']
     list_editable = ('ranking', )
 
 
