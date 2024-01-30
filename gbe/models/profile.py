@@ -155,7 +155,9 @@ class Profile(Model):
                     (act.b_title, reverse('act_tech_wizard',
                                           urlconf='gbe.urls',
                                           args=[act.id])))
-        forms_to_sign = get_unsigned_forms(self, conference, user_schedule)
+        forms_to_sign = get_unsigned_forms(self.user_object,
+                                           conference,
+                                           user_schedule)
         if len(forms_to_sign) > 0:
             p_alerts.append(profile_alerts['sign_form'] % reverse(
                 'sign_forms',

@@ -10,6 +10,7 @@ from ticketing.models import (
     TicketingEvents,
     PayPalSettings,
     RoleEligibilityCondition,
+    Signature,
     TicketingEligibilityCondition,
     TicketItem,
     Transaction,
@@ -216,7 +217,7 @@ def get_checklist_items(profile, conference, user_schedule):
     return (ticket_items, role_items)
 
 
-def get_unsigned_forms(profile, conference, user_schedule):
+def get_unsigned_forms(user, conference, user_schedule):
     '''
     any forms for this conference that have not been signed yet.
     '''
@@ -224,7 +225,7 @@ def get_unsigned_forms(profile, conference, user_schedule):
     roles = []
     tickets = TicketItem.objects.filter(
         ticketing_event__conference=conference,
-        transaction__purchaser__matched_to_user=profile.user_object).distinct()
+        transaction__purchaser__matched_to_user=user).distinct()
 
     for booking in user_schedule:
         if booking.role not in roles:
@@ -233,7 +234,12 @@ def get_unsigned_forms(profile, conference, user_schedule):
     for condition in RoleEligibilityCondition.objects.filter(
             role__in=roles,
             checklistitem__e_sign_this__isnull=False):
-        if not condition.is_excluded(tickets, user_schedule):
+        if not Signature.objects.filter(
+                signed_file=condition.checklistitem.e_sign_this,
+                user=user,
+                conference=conference).exists() and not condition.is_excluded(
+                tickets,
+                user_schedule):
             if condition.role in checklist_items:
                 checklist_items[condition.role] += [condition.checklistitem]
             else:
