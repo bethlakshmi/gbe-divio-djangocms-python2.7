@@ -95,6 +95,7 @@ class LandingPageView(ProfileRequiredMixin, View):
         shows = []
         classes = []
         acts = Act.objects.filter(bio__pk__in=bio_ids)
+        current_sched = []
 
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
@@ -133,7 +134,9 @@ class LandingPageView(ProfileRequiredMixin, View):
                             urlconf='gbe.scheduling.urls')
             elif calendar_type == "Conference":
                 classes += [booking_item]
+
             if conference.status != "completed":
+                current_sched += [booking]
                 if calendar_type == "General" and (
                         booking.commitment is not None):
                     shows += [(booking.event,
@@ -159,12 +162,11 @@ class LandingPageView(ProfileRequiredMixin, View):
             acts = acts.filter(b_conference__status="completed")
         else:
             acts = acts.exclude(b_conference__status="completed")
-
         context = {
             'current_conf': current_conf,
             'profile': viewer_profile,
             'historical': self.historical,
-            'alerts': viewer_profile.alerts(classes),
+            'alerts': viewer_profile.alerts(current_conf, current_sched),
             'bios': Bio.objects.filter(pk__in=bio_ids).order_by('name'),
             'manage_shows': manage_shows,
             'businesses': viewer_profile.business_set.all(),

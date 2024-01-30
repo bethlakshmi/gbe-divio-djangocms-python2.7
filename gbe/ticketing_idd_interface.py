@@ -216,6 +216,31 @@ def get_checklist_items(profile, conference, user_schedule):
     return (ticket_items, role_items)
 
 
+def get_unsigned_forms(profile, conference, user_schedule):
+    '''
+    any forms for this conference that have not been signed yet.
+    '''
+    checklist_items = {}
+    roles = []
+    tickets = TicketItem.objects.filter(
+        ticketing_event__conference=conference,
+        transaction__purchaser__matched_to_user=profile.user_object).distinct()
+
+    for booking in user_schedule:
+        if booking.role not in roles:
+            roles += [booking.role]
+
+    for condition in RoleEligibilityCondition.objects.filter(
+            role__in=roles,
+            checklistitem__e_sign_this__isnull=False):
+        if not condition.is_excluded(tickets, user_schedule):
+            if condition.role in checklist_items:
+                checklist_items[condition.role] += [condition.checklistitem]
+            else:
+                checklist_items[condition.role] = [condition.checklistitem]
+    return checklist_items
+
+
 def get_ticket_form(bid_type, conference, post=None):
     form = None
     ticket_items = get_fee_list(bid_type, conference)

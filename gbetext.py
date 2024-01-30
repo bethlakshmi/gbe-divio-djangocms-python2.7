@@ -47,9 +47,11 @@ membership_help = '''Include the accounts of all performers in this act.  If
   show and for communication.'''
 EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
                  "it. <a href=' %s '>Update it now!</a>")
-
+SIGN_FORMS = ('You have some forms to sign.  Please get these signed before '
+              'you come to the Expo <a href = "%s">Sign some Forms!</a>')
 profile_alerts = {'empty_profile': EMPTY_PROFILE,
-                  'schedule_rehearsal': SCHEDULE_REHEARSAL}
+                  'schedule_rehearsal': SCHEDULE_REHEARSAL,
+                  'sign_form': SIGN_FORMS}
 vol_prof_update_failure = (
     '''An error occured while updating your information, and your offer to
     volunteer was not submitted.  Please try again or use the "Update Profile"
