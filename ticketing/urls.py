@@ -4,6 +4,7 @@ from ticketing.views import (
     BadgePrintView,
     CheckListItemList,
     CreateTransaction,
+    SignForms,
     TicketPackageUpdate,
     TicketTypeUpdate,
 )
@@ -38,7 +39,7 @@ urlpatterns = [
         CreateTransaction.as_view(),
         name='comp_ticket'),
     url(r'^sign_forms/?$',
-        CreateTransaction.as_view(),
+        SignForms.as_view(),
         name='sign_forms'),
     url(r'^ticketing/checklist/?$',
         CheckListItemList.as_view(),

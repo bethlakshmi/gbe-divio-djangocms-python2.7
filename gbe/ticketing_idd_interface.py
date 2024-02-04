@@ -221,7 +221,7 @@ def get_unsigned_forms(user, conference, user_schedule):
     '''
     any forms for this conference that have not been signed yet.
     '''
-    checklist_items = {}
+    forms_to_sign = []
     roles = []
     tickets = TicketItem.objects.filter(
         ticketing_event__conference=conference,
@@ -240,11 +240,9 @@ def get_unsigned_forms(user, conference, user_schedule):
                 conference=conference).exists() and not condition.is_excluded(
                 tickets,
                 user_schedule):
-            if condition.role in checklist_items:
-                checklist_items[condition.role] += [condition.checklistitem]
-            else:
-                checklist_items[condition.role] = [condition.checklistitem]
-    return checklist_items
+            if condition.checklistitem not in forms_to_sign:
+                forms_to_sign += [condition.checklistitem]
+    return forms_to_sign
 
 
 def get_ticket_form(bid_type, conference, post=None):

@@ -849,3 +849,4 @@ slug_safety_msgs = {
     conference year.  Any events assigned to this event may appear in diplays
     associated with that conference in a number of unpredictable places.'''
 }
+sign_form_msg = '''Please sign these forms prior to coming to the Expo'''

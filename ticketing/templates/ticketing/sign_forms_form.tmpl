@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static sekizai_tags %}
+{% block content %}
+  <h1 class="gbe-title">{{view_title}}</h1>
+  <p>{{intro_text}}</p>
+  <form action="" method="post" enctype="multipart/form-data">
+    <font class="gbe-form-error">{% csrf_token %}
+        {% if formset.non_form_errors %}{{ formset.non_form_errors }}<br>{% endif %}
+        {% for subform in formset.forms %}
+        {% if subform.non_form_errors %}{{ subform.non_field_errors }}<br>{% endif %}{% endfor %}</font>
+    {{ formset.management_form }}
+      {% for form in formset %}
+      <div class="gbe-bg-dark m-4 p-4">
+        <h3>{{ form.description }}</h3>
+        <div class="text-center">
+        <a href="{{ form.signed_file.value.url }}" target="_blank" class="btn gbe-btn-secondary m-4">Read Form</a><br>
+        {{ form }}</div>
+      </div>
+      {% endfor %}
+  <a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> 
+  <input type="submit" name="submit" value="Sign" class="btn gbe-btn-primary">
+  </form>
+&nbsp;<br>
+{% endblock content %}

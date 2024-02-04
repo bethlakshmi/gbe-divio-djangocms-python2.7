@@ -1,9 +1,9 @@
-from django.views.generic.edit import ModelFormMixin
+from django.views.generic.edit import FormMixin
 from django.contrib import messages
 from gbe.models import UserMessage
 
 
-class GbeFormMixin(ModelFormMixin):
+class GbeFormMixin(FormMixin):
     # if stay here is true, this should also have the is_popup() mixin or
     # you need to fake that method.  Don't use with Create flows, won't work
 
