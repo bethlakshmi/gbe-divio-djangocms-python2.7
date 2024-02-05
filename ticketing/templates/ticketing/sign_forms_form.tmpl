@@ -3,18 +3,28 @@
 {% block content %}
   <h1 class="gbe-title">{{view_title}}</h1>
   <p>{{intro_text}}</p>
-  <form action="" method="post" enctype="multipart/form-data">
-    <font class="gbe-form-error">{% csrf_token %}
-        {% if formset.non_form_errors %}{{ formset.non_form_errors }}<br>{% endif %}
+  <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <div class="gbe-form-error gbe-flat-list">
+        {% if formset.non_form_errors %}{{ formset.non_form_errors }}{% endif %}
         {% for subform in formset.forms %}
-        {% if subform.non_form_errors %}{{ subform.non_field_errors }}<br>{% endif %}{% endfor %}</font>
+        {% if subform.non_form_errors %}{{ subform.non_field_errors }}{% endif %}{% endfor %}</div>
     {{ formset.management_form }}
       {% for form in formset %}
       <div class="gbe-bg-dark m-4 p-4">
         <h3>{{ form.description }}</h3>
         <div class="text-center">
         <a href="{{ form.signed_file.value.url }}" target="_blank" class="btn gbe-btn-secondary m-4">Read Form</a><br>
-        {{ form }}</div>
+        {% for field in form.hidden_fields %}{{field}}
+        {% if field.errors %}
+        <font class="gbe-form-error gbe-flat-list">{{field.label_tag}}:  {{ field.errors }}</font>
+        {% endif %}
+        {% endfor %}
+        {% for field in form.visible_fields %}{% if field.label|length > 0 %}<b><font class="gbe-form-error">*</font>
+        {{field.label_tag}}</b>{% endif %} {{field}}
+        {% if field.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ field.errors }}</font>
+        {% endif %}{% endfor %}
+        </div>
       </div>
       {% endfor %}
   <a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> 

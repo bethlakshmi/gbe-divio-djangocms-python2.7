@@ -41,7 +41,9 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
         SignatureFormSet = modelformset_factory(
             Signature,
             form=SignatureForm,
-            extra=len(kwargs['initial']))
+            extra=0,
+            min_num=len(kwargs['initial']),
+            validate_min=True)
         return SignatureFormSet(**kwargs)
 
     def get_context_data(self, **kwargs):

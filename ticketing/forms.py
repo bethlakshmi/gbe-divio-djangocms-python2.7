@@ -293,8 +293,10 @@ class CompFeeForm(forms.ModelForm):
 class SignatureForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
-    signed_file = forms.FileField(required=True)
-    name_signed = forms.CharField(required=True, label="Sign your name")
+    signed_file = forms.FileField(
+        required=True,
+        label="",
+        widget=forms.FileInput(attrs={'hidden': ''}))
 
     class Meta:
         model = Signature
