@@ -42,13 +42,16 @@ class PerformerShowComp(View):
                 person.user_object,
                 labels=[self.conference.conference_slug])
             if len(response.schedule_items) > 0:
-                ticket_items, role_items = get_checklist_items(
-                    person,
-                    self.conference,
-                    response.schedule_items)
-                if len(role_items) > 0 and "Performer" in role_items.keys():
+                ticket_items, role_items, unsigned_forms = \
+                    get_checklist_items(
+                        person.user_object,
+                        self.conference,
+                        response.schedule_items)
+                if len(role_items) + len(unsigned_forms) > 0 and (
+                        "Performer" in role_items.keys()):
                     schedules += [{'person': person,
-                                   'role_items': role_items}]
+                                   'role_items': role_items,
+                                   'unsigned_forms': unsigned_forms}]
 
         sorted_sched = sorted(
             schedules,
@@ -62,6 +65,7 @@ class PerformerShowComp(View):
                                    'First',
                                    'Last',
                                    'Email',
+                                   'Forms to Sign',
                                    'Performer Comps']})
 
     @method_decorator(login_required)
