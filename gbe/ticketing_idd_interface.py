@@ -154,13 +154,13 @@ def get_purchased_tickets(user):
     return ticket_by_conf
 
 
-def get_checklist_items_for_tickets(profile, user_schedule, tickets):
+def get_checklist_items_for_tickets(user, user_schedule, tickets):
     '''
     get the checklist items for a purchaser in the BTP
     '''
     checklist_items = []
     transactions = Transaction.objects.filter(
-            purchaser__matched_to_user=profile.user_object).exclude(
+            purchaser__matched_to_user=user).exclude(
             status="canceled")
 
     for ticket in set(tickets):
@@ -179,11 +179,12 @@ def get_checklist_items_for_tickets(profile, user_schedule, tickets):
     return checklist_items
 
 
-def get_checklist_items_for_roles(user_schedule, tickets):
+def get_checklist_items_for_roles(user, user_schedule, tickets, conference):
     '''
     get the checklist items for the roles a person does in this conference
     '''
     checklist_items = {}
+    forms_to_sign = []
 
     roles = []
     for booking in user_schedule:
@@ -192,29 +193,39 @@ def get_checklist_items_for_roles(user_schedule, tickets):
 
     for condition in RoleEligibilityCondition.objects.filter(role__in=roles):
         if not condition.is_excluded(tickets, user_schedule):
-            if condition.role in checklist_items:
-                checklist_items[condition.role] += [condition.checklistitem]
-            else:
-                checklist_items[condition.role] = [condition.checklistitem]
-    return checklist_items
+            if condition.checklistitem.e_sign_this is None:
+                if condition.role in checklist_items:
+                    checklist_items[condition.role] += [condition.checklistitem]
+                else:
+                    checklist_items[condition.role] = [condition.checklistitem]
+            elif not Signature.objects.filter(
+                    signed_file=condition.checklistitem.e_sign_this,
+                    user=user,
+                    conference=conference).exists() and (
+                    condition.checklistitem not in forms_to_sign):
+                forms_to_sign += [condition.checklistitem]
+    return checklist_items, forms_to_sign
 
 
-def get_checklist_items(profile, conference, user_schedule):
+def get_checklist_items(user, conference, user_schedule):
     '''
-    get the checklist items for a person with a profile
+    get the checklist items for a person
     '''
     tickets = TicketItem.objects.filter(
         ticketing_event__conference=conference,
-        transaction__purchaser__matched_to_user=profile.user_object).distinct()
+        transaction__purchaser__matched_to_user=user).distinct()
 
     ticket_items = get_checklist_items_for_tickets(
-        profile,
+        user,
         user_schedule,
         tickets)
 
-    role_items = get_checklist_items_for_roles(user_schedule, tickets)
-
-    return (ticket_items, role_items)
+    role_items, forms_to_sign = get_checklist_items_for_roles(
+        user,
+        user_schedule,
+        tickets,
+        conference)
+    return (ticket_items, role_items, forms_to_sign)
 
 
 def get_unsigned_forms(user, conference, user_schedule):
