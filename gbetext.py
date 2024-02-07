@@ -421,7 +421,14 @@ unique_email_templates = {
          'category': 'registration',
          'default_base': "unsubscribe_email",
          'default_subject':
-            "Unsubscribe from GBE Mail", }, ],
+            "Unsubscribe from GBE Mail", },
+        {'name': 'sign form reminder',
+         'description': '''This email is sent to the email of any user who
+         has a role that needs to sign forms, but who has not signed at least
+         one form.''',
+         'category': 'registration',
+         'default_base': "sign_form_reminder",
+         'default_subject': "Reminder to Sign Forms", }, ],
 }
 
 default_class_submit_msg = "Your class was successfully submitted"

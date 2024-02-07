@@ -25,6 +25,7 @@ from gbe.models import (
 from ticketing.brown_paper import *
 from ticketing.functions import get_fee_list
 from ticketing.brown_paper import import_bpt_ticket_items
+from scheduler.idd import get_schedule
 from django.db.models import Count
 from django.db.models import Q
 from datetime import datetime
@@ -331,3 +332,26 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
             bid_type,
             bid_id),
         total)
+
+def get_signatories(conference):
+    form_conditions = RoleEligibilityCondition.objects.filter(
+        checklistitem__e_sign_this__isnull=False)
+    roles = []
+    for condition in form_conditions:
+        if condition.role not in roles:
+            roles += [condition.role]
+        for exclusion in condition.ticketing_roleexclusion.all():
+            if exclusion.role not in roles:
+                roles += [condition.role]
+    response = get_schedule(roles=roles, labels=[conference.conference_slug])
+    user_set = {}
+    for item in response.schedule_items:
+        if item.user not in user_set:
+            user_set[item.user] = []
+        user_set[item.user] += [item]
+    forms_to_sign = {}
+    for user, schedule in user_set.items():
+        forms = get_unsigned_forms(user, conference, schedule)
+        if len(forms) > 0:
+            forms_to_sign[user] = forms
+    return forms_to_sign
