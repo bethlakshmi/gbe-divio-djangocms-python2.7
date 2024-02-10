@@ -857,6 +857,7 @@ slug_safety_msgs = {
     associated with that conference in a number of unpredictable places.'''
 }
 sign_form_msg = '''Please sign these forms prior to coming to the Expo'''
+all_signed_msg = '''Thanks for signing your forms!'''
 welcome_message = '''Welcome!  Here's a schedule for your participation in
  the expo!  Keep in mind that some times (like rehearsals) are generalities
   and that last minute shifts in class schedules could not be printed.'''

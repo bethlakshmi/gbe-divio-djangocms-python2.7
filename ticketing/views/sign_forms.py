@@ -12,6 +12,7 @@ from scheduler.idd import get_schedule
 from gbe.functions import get_latest_conference
 from gbetext import (
     sign_form_msg,
+    all_signed_msg,
 )
 
 
@@ -21,7 +22,7 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
     page_title = 'Sign Forms'
     view_title = 'Sign Forms for this Year'
     intro_text = sign_form_msg
-
+    valid_message = all_signed_msg
 
     def get_initial(self):
         # TODO - what if error?
@@ -44,13 +45,7 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
             extra=0,
             min_num=len(kwargs['initial']),
             validate_min=True)
-        return SignatureFormSet(**kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # TODO - clean template if this works
-        context['formset'] = context['form']
-        return context
+        return SignatureFormSet(**kwargs, queryset=Signature.objects.none())
 
     def form_valid(self, form):
         instances = form.save(commit=False)
