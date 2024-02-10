@@ -246,14 +246,14 @@ def get_unsigned_forms(user, conference, user_schedule):
     for condition in RoleEligibilityCondition.objects.filter(
             role__in=roles,
             checklistitem__e_sign_this__isnull=False):
-        if not Signature.objects.filter(
-                signed_file=condition.checklistitem.e_sign_this,
-                user=user,
-                conference=conference).exists() and not condition.is_excluded(
-                tickets,
-                user_schedule):
-            if condition.checklistitem not in forms_to_sign:
-                forms_to_sign += [condition.checklistitem]
+        # nested ifs for readability/debugability
+        if condition.checklistitem not in forms_to_sign:
+            if not Signature.objects.filter(
+                    signed_file=condition.checklistitem.e_sign_this,
+                    user=user,
+                    conference=conference).exists():
+                if not condition.is_excluded(tickets,user_schedule):
+                    forms_to_sign += [condition.checklistitem]
     return forms_to_sign
 
 

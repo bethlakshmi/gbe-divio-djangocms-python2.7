@@ -20,6 +20,8 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
     PeopleAllocationFactory,
 )
+from tests.factories.ticketing_factories import RoleEligibilityConditionFactory
+from ticketing.models import Signature
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -33,6 +35,7 @@ from tests.functions.scheduler_functions import (
     get_or_create_bio,
     get_or_create_profile,
 )
+from tests.functions.ticketing_functions import set_form
 from tests.contexts import (
     ActTechInfoContext,
     ClassContext,
@@ -147,6 +150,10 @@ class TestIndex(TestCase):
                 people=people,
                 role='Teacher',
             )
+        cls.condition = RoleEligibilityConditionFactory(
+            role="Teacher",
+            checklistitem__description="Landing page sign!",
+            checklistitem__e_sign_this=set_form())
 
     def setUp(self):
         self.client = Client()
@@ -218,6 +225,8 @@ class TestIndex(TestCase):
         self.assertContains(response, reverse(
             "volunteer_signup",
             urlconf="gbe.scheduling.urls"))
+        self.assertContains(response, reverse("sign_forms",
+                                              urlconf='ticketing.urls'))
 
     def test_conf_not_accepting_bids(self):
         # No apply buttons when bidding is off
@@ -232,6 +241,11 @@ class TestIndex(TestCase):
         self.current_conf.save()
 
     def test_historical_view(self):
+        sig = Signature(user=self.profile.user_object,
+                  name_signed="Signed Name",
+                  conference=self.current_conf,
+                  signed_file=self.condition.checklistitem.e_sign_this)
+        sig.save()
         url = reverse('home', urlconf='gbe.urls')
         login_as(self.profile, self)
         response = self.client.get(
@@ -259,6 +273,8 @@ class TestIndex(TestCase):
         self.assert_event_is_not_present(response, self.current_sched)
         self.assert_event_is_present(response, self.previous_class_sched)
         self.assert_event_is_not_present(response, self.current_class_sched)
+        self.assertNotContains(response, reverse("sign_forms",
+                                         urlconf='ticketing.urls'))
 
     def test_as_privileged_user(self):
         staff_profile = ProfileFactory()
