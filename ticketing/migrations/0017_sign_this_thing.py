@@ -10,7 +10,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('filer', '0015_alter_file_owner_alter_file_polymorphic_ctype_and_more'),
+        ('filer',
+         '0015_alter_file_owner_alter_file_polymorphic_ctype_and_more'),
         ('gbe', '0047_better_bid_on_off'),
         ('ticketing', '0016_transaction_revision'),
     ]
@@ -19,17 +20,36 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='checklistitem',
             name='e_sign_this',
-            field=filer.fields.file.FilerFileField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='filer.file'),
+            field=filer.fields.file.FilerFileField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to='filer.file'),
         ),
         migrations.CreateModel(
             name='Signature',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('name_signed', models.CharField(max_length=50)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('conference', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='gbe.conference')),
-                ('signed_file', filer.fields.file.FilerFileField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='filer.file')),
-                ('user', models.ForeignKey(default=None, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                ('conference', models.ForeignKey(
+                    blank=True,
+                    null=True,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='gbe.conference')),
+                ('signed_file', filer.fields.file.FilerFileField(
+                    blank=True,
+                    null=True,
+                    on_delete=django.db.models.deletion.PROTECT,
+                    to='filer.file')),
+                ('user', models.ForeignKey(
+                    default=None,
+                    on_delete=django.db.models.deletion.PROTECT,
+                    to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

@@ -22,7 +22,6 @@ from tests.factories.ticketing_factories import (
     RoleExclusionFactory,
 )
 from tests.functions.ticketing_functions import set_form
-from ticketing.models import Signature
 
 
 class TestSendReminder(TestCase):

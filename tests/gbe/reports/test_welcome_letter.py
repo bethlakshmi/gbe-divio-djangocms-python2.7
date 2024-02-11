@@ -20,7 +20,6 @@ from tests.functions.gbe_functions import (
     login_as
 )
 from tests.functions.scheduler_functions import get_or_create_profile
-from ticketing.models import Signature
 from tests.functions.ticketing_functions import set_form
 from gbetext import unsigned_forms_message
 

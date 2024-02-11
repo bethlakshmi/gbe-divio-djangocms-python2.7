@@ -20,8 +20,10 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
     PeopleAllocationFactory,
 )
-from tests.factories.ticketing_factories import RoleEligibilityConditionFactory
-from ticketing.models import Signature
+from tests.factories.ticketing_factories import (
+    RoleEligibilityConditionFactory,
+    SignatureFactory,
+)
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -241,11 +243,11 @@ class TestIndex(TestCase):
         self.current_conf.save()
 
     def test_historical_view(self):
-        sig = Signature(user=self.profile.user_object,
-                        name_signed="Signed Name",
-                        conference=self.current_conf,
-                        signed_file=self.condition.checklistitem.e_sign_this)
-        sig.save()
+        sig = SignatureFactory(
+            user=self.profile.user_object,
+            name_signed="Signed Name",
+            conference=self.current_conf,
+            signed_file=self.condition.checklistitem.e_sign_this)
         url = reverse('home', urlconf='gbe.urls')
         login_as(self.profile, self)
         response = self.client.get(
