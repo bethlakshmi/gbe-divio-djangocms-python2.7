@@ -20,6 +20,9 @@ from tests.functions.gbe_functions import (
     login_as
 )
 from tests.functions.scheduler_functions import get_or_create_profile
+from ticketing.models import Signature
+from tests.functions.ticketing_functions import set_form
+from gbetext import unsigned_forms_message
 
 
 class TestWelcomeLetter(TestCase):
@@ -69,9 +72,13 @@ class TestWelcomeLetter(TestCase):
 
     def test_personal_schedule_teacher_booking(self):
         '''a teacher booked into a class, with an active role condition
-           should have a booking
+           should have a booking.  Also includes unsigned form warning
         '''
         role_condition = RoleEligibilityConditionFactory()
+        sign_condition = RoleEligibilityConditionFactory(
+            role="Teacher",
+            checklistitem__description="Landing page sign!",
+            checklistitem__e_sign_this=set_form())
         context = ClassContext()
 
         login_as(self.priv_profile, self)
@@ -89,6 +96,7 @@ class TestWelcomeLetter(TestCase):
             response,
             str(context.room))
         self.assertContains(response, "dedicated-sched")
+        self.assertContains(response, unsigned_forms_message)
 
     def test_personal_schedule_volunteer_w_slug(self):
         '''a teacher booked into a class, with an active role condition
