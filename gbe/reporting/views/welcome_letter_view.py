@@ -23,6 +23,7 @@ from gbetext import (
     welcome_message
 )
 
+
 class WelcomeLetterView(View):
     profiles = None
 

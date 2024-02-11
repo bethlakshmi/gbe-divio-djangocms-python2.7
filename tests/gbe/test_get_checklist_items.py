@@ -34,8 +34,8 @@ class TestGetCheckListItems(TestCase):
         no_schedule = get_schedule(
                 no_match_profile.user_object,
                 labels=[conf.conference_slug]).schedule_items
-        ticket_items, role_items = get_checklist_items(
-            no_match_profile,
+        ticket_items, role_items, forms_to_sign = get_checklist_items(
+            no_match_profile.user_object,
             transaction.ticket_item.ticketing_event.conference,
             no_schedule)
 
@@ -56,8 +56,8 @@ class TestGetCheckListItems(TestCase):
                 teacher.contact.user_object,
                 labels=[conference.conference_slug]).schedule_items
 
-        ticket_items, role_items = get_checklist_items(
-            teacher.contact,
+        ticket_items, role_items, forms_to_sign = get_checklist_items(
+            teacher.contact.user_object,
             conference,
             self.schedule)
         self.assertEqual(len(role_items), 1)
@@ -70,17 +70,15 @@ class TestGetCheckListItems(TestCase):
         '''
         from gbe.ticketing_idd_interface import get_checklist_items
         transaction = TransactionFactory()
-        purchaser = ProfileFactory(
-            user_object=transaction.purchaser.matched_to_user)
         conference = transaction.ticket_item.ticketing_event.conference
         self.ticket_condition.tickets.add(transaction.ticket_item)
         self.ticket_condition.save()
         self.schedule = get_schedule(
-                purchaser.user_object,
+                transaction.purchaser.matched_to_user,
                 labels=[conference.conference_slug]).schedule_items
 
-        ticket_items, role_items = get_checklist_items(
-            purchaser,
+        ticket_items, role_items, forms_to_sign = get_checklist_items(
+            transaction.purchaser.matched_to_user,
             conference,
             self.schedule)
 
@@ -110,12 +108,13 @@ class TestGetCheckListItems(TestCase):
         self.schedule = get_schedule(
                 teacher.contact.user_object,
                 labels=[conference.conference_slug]).schedule_items
-        ticket_items, role_items = get_checklist_items(
-            teacher.contact,
+        ticket_items, role_items, forms_to_sign = get_checklist_items(
+            teacher.contact.user_object,
             conference,
             self.schedule)
         self.assertEqual(len(ticket_items), 1)
         self.assertEqual(len(role_items), 1)
+        self.assertEqual(len(forms_to_sign), 0)
         self.assertEqual(ticket_items[0]['ticket'],
                          transaction.ticket_item.title)
         self.assertEqual(role_items[self.role_condition.role],

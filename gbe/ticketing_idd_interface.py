@@ -192,19 +192,19 @@ def get_checklist_items_for_roles(user, user_schedule, tickets, conference):
         if booking.role not in roles:
             roles += [booking.role]
 
-    for condition in RoleEligibilityCondition.objects.filter(role__in=roles):
-        if not condition.is_excluded(tickets, user_schedule):
-            if condition.checklistitem.e_sign_this is None:
-                if condition.role in checklist_items:
-                    checklist_items[condition.role] += [condition.checklistitem]
+    for cond in RoleEligibilityCondition.objects.filter(role__in=roles):
+        if not cond.is_excluded(tickets, user_schedule):
+            if cond.checklistitem.e_sign_this is None:
+                if cond.role in checklist_items:
+                    checklist_items[cond.role] += [cond.checklistitem]
                 else:
-                    checklist_items[condition.role] = [condition.checklistitem]
+                    checklist_items[cond.role] = [cond.checklistitem]
             elif not Signature.objects.filter(
-                    signed_file=condition.checklistitem.e_sign_this,
+                    signed_file=cond.checklistitem.e_sign_this,
                     user=user,
                     conference=conference).exists() and (
-                    condition.checklistitem not in forms_to_sign):
-                forms_to_sign += [condition.checklistitem]
+                    cond.checklistitem not in forms_to_sign):
+                forms_to_sign += [cond.checklistitem]
     return checklist_items, forms_to_sign
 
 
@@ -252,7 +252,7 @@ def get_unsigned_forms(user, conference, user_schedule):
                     signed_file=condition.checklistitem.e_sign_this,
                     user=user,
                     conference=conference).exists():
-                if not condition.is_excluded(tickets,user_schedule):
+                if not condition.is_excluded(tickets, user_schedule):
                     forms_to_sign += [condition.checklistitem]
     return forms_to_sign
 
@@ -332,6 +332,7 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
             bid_type,
             bid_id),
         total)
+
 
 def get_signatories(conference):
     form_conditions = RoleEligibilityCondition.objects.filter(

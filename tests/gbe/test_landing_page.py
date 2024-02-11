@@ -242,9 +242,9 @@ class TestIndex(TestCase):
 
     def test_historical_view(self):
         sig = Signature(user=self.profile.user_object,
-                  name_signed="Signed Name",
-                  conference=self.current_conf,
-                  signed_file=self.condition.checklistitem.e_sign_this)
+                        name_signed="Signed Name",
+                        conference=self.current_conf,
+                        signed_file=self.condition.checklistitem.e_sign_this)
         sig.save()
         url = reverse('home', urlconf='gbe.urls')
         login_as(self.profile, self)
@@ -274,7 +274,7 @@ class TestIndex(TestCase):
         self.assert_event_is_present(response, self.previous_class_sched)
         self.assert_event_is_not_present(response, self.current_class_sched)
         self.assertNotContains(response, reverse("sign_forms",
-                                         urlconf='ticketing.urls'))
+                                                 urlconf='ticketing.urls'))
 
     def test_as_privileged_user(self):
         staff_profile = ProfileFactory()

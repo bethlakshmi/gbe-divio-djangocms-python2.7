@@ -296,7 +296,7 @@ class CheckListItem(models.Model):
 
 class Signature(models.Model):
     # the signature of a checklist item.  If present, counts as having been
-    # signed.  If absent, user has not signed.  Users re-sign forms every 
+    # signed.  If absent, user has not signed.  Users re-sign forms every
     # conference.  Specifically keeping which form they signed.
     signed_file = FilerFileField(null=True,
                                  blank=True,

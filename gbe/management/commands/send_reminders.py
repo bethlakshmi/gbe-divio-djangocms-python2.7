@@ -39,4 +39,4 @@ class Command(BaseCommand):
         if not sent_anything:
             self.stdout.write(
                 'Today is %s, and not a scheduled day for any reminder.' % (
-                day_of_week[datetime.now().weekday()][1]))
+                    day_of_week[datetime.now().weekday()][1]))

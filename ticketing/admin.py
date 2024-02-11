@@ -103,7 +103,7 @@ class SignatureAdmin(admin.ModelAdmin):
                     'created_at']
     search_fields = ['user', 'name_signed']
     list_filter = ['conference', ("signed_file",
-                                  admin.RelatedOnlyFieldListFilter),]
+                                  admin.RelatedOnlyFieldListFilter)]
     autocomplete_fields = ["user"]
 
 

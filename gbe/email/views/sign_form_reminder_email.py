@@ -7,7 +7,7 @@ def sign_form_reminder():
     email_type = 'schedule_change_notifications'
     reminders_sent = 0
     conference = get_current_conference()
- 
+
     for user, forms in get_signatories(conference).items():
         send_sign_form_reminder(user, conference, email_type)
         reminders_sent = reminders_sent + 1
