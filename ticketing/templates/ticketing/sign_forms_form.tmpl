@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static sekizai_tags %}
+{% block content %}
+  <h1 class="gbe-title">{{view_title}}</h1>
+  {% if form|length > 0 %}
+  <p>{{intro_text}}</p>
+  <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <div class="gbe-form-error gbe-flat-list">
+        {% if form.non_form_errors %}{{ form.non_form_errors }}{% endif %}
+        {% for subform in form.forms %}
+        {% if subform.non_form_errors %}{{ subform.non_field_errors }}{% endif %}{% endfor %}</div>
+    {{ form.management_form }}
+      {% for subform in form %}
+      <div class="gbe-bg-dark m-4 p-4">
+        <h3>{{ subform.description }}</h3>
+        <div class="text-center">
+        <a href="{{ subform.signed_file.value.url }}" target="_blank" class="btn gbe-btn-secondary m-4">Read Form</a><br>
+        {% for field in subform.hidden_fields %}{{field}}
+        {% if field.errors %}
+        <font class="gbe-form-error gbe-flat-list">{{field.label_tag}}:  {{ field.errors }}</font>
+        {% endif %}
+        {% endfor %}
+        {% for field in subform.visible_fields %}{% if field.label|length > 0 %}<b><font class="gbe-form-error">*</font>
+        {{field.label_tag}}</b>{% endif %} {{field}}
+        {% if field.errors %}
+        <br><font class="gbe-form-error gbe-flat-list">{{ field.errors }}</font>
+        {% endif %}{% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+  <a href="{{return_url}}" class="btn gbe-btn-light">Cancel</a> 
+  <input type="submit" name="submit" value="Sign" class="btn gbe-btn-primary">
+  </form>{% else %}
+  You have no forms to sign
+  {% endif %}
+&nbsp;<br>
+{% endblock content %}

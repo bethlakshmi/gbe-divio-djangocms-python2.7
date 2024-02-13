@@ -138,8 +138,9 @@ class Profile(Model):
                 email_privs += [bid_type.lower()]
         return email_privs
 
-    def alerts(self, classes):
+    def alerts(self, conference, user_schedule):
         from gbe.models import Act
+        from gbe.ticketing_idd_interface import get_unsigned_forms
         p_alerts = []
         if (len(self.display_name.strip()) == 0 or
                 len(self.purchase_email.strip()) == 0):
@@ -154,6 +155,13 @@ class Profile(Model):
                     (act.b_title, reverse('act_tech_wizard',
                                           urlconf='gbe.urls',
                                           args=[act.id])))
+        forms_to_sign = get_unsigned_forms(self.user_object,
+                                           conference,
+                                           user_schedule)
+        if len(forms_to_sign) > 0:
+            p_alerts.append(profile_alerts['sign_form'] % reverse(
+                'sign_forms',
+                urlconf='ticketing.urls'))
         return p_alerts
 
     def get_costumebids(self, historical=False):

@@ -90,8 +90,21 @@ class DetailInline(admin.TabularInline):
 
 
 class ChecklistItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'badge_title', 'description']
+    list_display = ['id', 'badge_title', 'description', 'e_sign_this']
     search_fields = ['badge_title', 'description']
+
+
+class SignatureAdmin(admin.ModelAdmin):
+    list_display = ['id',
+                    'user',
+                    'conference',
+                    'name_signed',
+                    'signed_file',
+                    'created_at']
+    search_fields = ['user', 'name_signed']
+    list_filter = ['conference', ("signed_file",
+                                  admin.RelatedOnlyFieldListFilter)]
+    autocomplete_fields = ["user"]
 
 
 class TicketingEventsAdmin(admin.ModelAdmin):
@@ -234,3 +247,4 @@ admin.site.register(CheckListItem, ChecklistItemAdmin)
 admin.site.register(SyncStatus, SyncStatusAdmin)
 admin.site.register(TicketingExclusion, TicketExcludeAdmin)
 admin.site.register(RoleExclusion, RoleExcludeAdmin)
+admin.site.register(Signature, SignatureAdmin)

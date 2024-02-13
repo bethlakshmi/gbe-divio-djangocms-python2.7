@@ -8,6 +8,7 @@ from gbetext import (
     trans_status,
 )
 from datetime import datetime
+from filer.fields.image import FilerFileField
 
 
 class BrownPaperSettings(models.Model):
@@ -284,9 +285,28 @@ class CheckListItem(models.Model):
     '''
     description = models.CharField(max_length=50, unique=True)
     badge_title = models.CharField(max_length=50, null=True, blank=True)
+    # presence of e_sign_this triggers our feature to get pre-signed forms
+    e_sign_this = FilerFileField(null=True,
+                                 blank=True,
+                                 on_delete=models.PROTECT)
 
     def __str__(self):
         return str(self.description)
+
+
+class Signature(models.Model):
+    # the signature of a checklist item.  If present, counts as having been
+    # signed.  If absent, user has not signed.  Users re-sign forms every
+    # conference.  Specifically keeping which form they signed.
+    signed_file = FilerFileField(null=True,
+                                 blank=True,
+                                 on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, default=None)
+    conference = models.ForeignKey('gbe.Conference',
+                                   on_delete=models.CASCADE,
+                                   blank=True, null=True)
+    name_signed = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class EligibilityCondition(models.Model):

@@ -47,9 +47,11 @@ membership_help = '''Include the accounts of all performers in this act.  If
   show and for communication.'''
 EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
                  "it. <a href=' %s '>Update it now!</a>")
-
+SIGN_FORMS = ('You have some forms to sign.  Please get these signed before '
+              'you come to the Expo <a href = "%s">Sign some Forms!</a>')
 profile_alerts = {'empty_profile': EMPTY_PROFILE,
-                  'schedule_rehearsal': SCHEDULE_REHEARSAL}
+                  'schedule_rehearsal': SCHEDULE_REHEARSAL,
+                  'sign_form': SIGN_FORMS}
 vol_prof_update_failure = (
     '''An error occured while updating your information, and your offer to
     volunteer was not submitted.  Please try again or use the "Update Profile"
@@ -419,7 +421,14 @@ unique_email_templates = {
          'category': 'registration',
          'default_base': "unsubscribe_email",
          'default_subject':
-            "Unsubscribe from GBE Mail", }, ],
+            "Unsubscribe from GBE Mail", },
+        {'name': 'sign form reminder',
+         'description': '''This email is sent to the email of any user who
+         has a role that needs to sign forms, but who has not signed at least
+         one form.''',
+         'category': 'registration',
+         'default_base': "sign_form_reminder",
+         'default_subject': "Reminder to Sign Forms", }, ],
 }
 
 default_class_submit_msg = "Your class was successfully submitted"
@@ -847,3 +856,11 @@ slug_safety_msgs = {
     conference year.  Any events assigned to this event may appear in diplays
     associated with that conference in a number of unpredictable places.'''
 }
+sign_form_msg = '''Please sign these forms prior to coming to the Expo'''
+all_signed_msg = '''Thanks for signing your forms!'''
+welcome_message = '''Welcome!  Here's a schedule for your participation in
+ the expo!  Keep in mind that some times (like rehearsals) are generalities
+  and that last minute shifts in class schedules could not be printed.'''
+unsigned_forms_message = '''Please sign at the registration desk or save
+ time and sign by logging into our website and following the prompts in
+  your home page.'''

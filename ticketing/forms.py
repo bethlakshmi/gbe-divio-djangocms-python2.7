@@ -5,6 +5,7 @@
 #
 
 from ticketing.models import (
+    Signature,
     TicketingEvents,
     TicketItem,
     TicketType,
@@ -287,3 +288,21 @@ class CompFeeForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = ['ticket_item', ]
+
+
+class SignatureForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+    signed_file = forms.FileField(
+        required=True,
+        label="",
+        widget=forms.FileInput(attrs={'hidden': ''}))
+
+    class Meta:
+        model = Signature
+        fields = ['signed_file', 'name_signed']
+
+    def __init__(self, *args, **kwargs):
+        super(SignatureForm, self).__init__(*args, **kwargs)
+        if 'initial' in kwargs and 'description' in kwargs['initial']:
+            self.description = kwargs['initial']['description']

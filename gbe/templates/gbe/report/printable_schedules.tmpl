@@ -8,13 +8,11 @@
 {% block content %}
 
 {% include "conference_picker.tmpl" %}
-
+<br>
 {% for schedule in schedules %}
 {% if schedule.bookings %}  
   <h2>{{ schedule.person.get_badge_name }}'s Schedule</h2>
-  <i>Welcome!  Here's a schedule for your participation in the expo!
-  Keep in mind that some times (like rehearsals) are generalities and that late
-  shifts in class schedules could not be printed.</i><br><br>
+  <i>{{welcome_message}}</i><br><br>
   
   <table class='printable-table'>
   <tr class='printable-header'>
@@ -35,6 +33,14 @@
   </table>
 <br>
 {% endif %}
+{% if schedule.unsigned_forms %}
+<div class="alert gbe-alert-danger p-2"><h2 class="gbe-subtitle">You have forms to Sign!!</h2>
+{{ unsigned_forms_message }}<br><br><b>Forms to be signed:</b>
+  <ul>{%for form in schedule.unsigned_forms%}
+  <li>{{form.description}}</li>
+  {% endfor %}<ul></div>
+{% endif %}
+
 {% if schedule.ticket_items or schedule.role_items%}
   <h2 class="gbe-subtitle">{{ schedule.person.get_badge_name }}'s GBE Package Checklist</h2>
   <ul>

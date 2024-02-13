@@ -134,6 +134,14 @@ class RoleEligibilityConditionFactory(DjangoModelFactory):
     role = "Teacher"
 
 
+class SignatureFactory(DjangoModelFactory):
+    class Meta:
+        model = tickets.Signature
+    name_signed = Sequence(lambda x: "Signature %d" % x)
+    conference = SubFactory(ConferenceFactory)
+    user = SubFactory(UserFactory)
+
+
 class TicketingExclusionFactory(DjangoModelFactory):
     class Meta:
         model = tickets.TicketingExclusion

@@ -3,6 +3,7 @@
 <html>
   <head>
     <title>{% block title %} {% endblock %}</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="shortcut icon" href= {% static "img/favicon.ico" %} type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href= {% static "styles/base.css" %} media="all"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +15,25 @@
   </head>
   <body class="gbe-printable"> 
       <div id="middle">{% block content %}
-      {% endblock %}</div>        
+      {% endblock %}</div>     
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>   
+    <script>
+        (function($){
+    $('.dropdown-menu a.dropdown-toggle').on('click', function(e) {
+      if (!$(this).next().hasClass('show')) {
+        $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
+      }
+      var $subMenu = $(this).next(".dropdown-menu");
+      $subMenu.toggleClass('show');
+
+      $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
+        $('.dropdown-submenu .show').removeClass("show");
+      });
+
+      return false;
+    });
+    })(jQuery)
+    </script>
   </body>
 </html>
