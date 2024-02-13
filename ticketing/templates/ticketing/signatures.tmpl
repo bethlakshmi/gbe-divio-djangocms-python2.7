@@ -1,0 +1,12 @@
+{% extends 'gbe/gbe_table.tmpl' %}
+{% block tbody %}
+{% for signature in signatures %}
+<tr class="gbe-table-row">
+  <td><a class="social" href="{{ signature.signed_file.url }}" target="_blank">
+      {{ signature.signed_file }}</a></td>
+  <td>{{ signature.conference }}</td>
+  <td>{{ signature.created_at }}</td>
+  <td>{{ signature.name_signed }}</td>
+  </tr>
+{% endfor %}
+{% endblock %}

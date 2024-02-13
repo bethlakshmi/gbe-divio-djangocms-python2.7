@@ -4,6 +4,7 @@ from ticketing.views import (
     BadgePrintView,
     CheckListItemList,
     CreateTransaction,
+    SignatureList,
     SignForms,
     TicketPackageUpdate,
     TicketTypeUpdate,
@@ -55,4 +56,5 @@ urlpatterns = [
         '(?P<state>on|off)/(?P<gbe_event_id>\d+)/?$',
         views.set_ticket_to_event,
         name='set_ticket_type_to_event'),
+    url(r'^signatures/?', SignatureList.as_view(), name='signature_list'),
 ]
