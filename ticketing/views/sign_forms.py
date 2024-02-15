@@ -1,6 +1,8 @@
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
 from django.forms import modelformset_factory
+from django.contrib.auth.models import User
 from ticketing.forms import SignatureForm
 from gbe_utils.mixins import (
     GbeFormMixin,
@@ -9,7 +11,11 @@ from gbe_utils.mixins import (
 from ticketing.models import Signature
 from gbe.ticketing_idd_interface import get_unsigned_forms
 from scheduler.idd import get_schedule
-from gbe.functions import get_latest_conference
+from gbe.functions import (
+    get_conference_by_slug,
+    get_latest_conference,
+    validate_perms,
+)
 from gbetext import (
     sign_form_msg,
     all_signed_msg,
@@ -26,11 +32,20 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
 
     def get_initial(self):
         # TODO - what if error?
-        self.conference = get_latest_conference()
+        if self.request.GET and self.request.GET.get('conf_slug'):
+            self.conference = get_conference_by_slug(
+                self.request.GET['conf_slug'])
+        else:
+            self.conference = get_latest_conference()
+        self.signer = self.request.user
+        if 'user_id' in self.kwargs:
+            # sign for other user, only available to registrar
+            validate_perms(self.request, ('Registrar', ))
+            self.signer = get_object_or_404(User, pk=self.kwargs['user_id'])
         initial = []
-        response = get_schedule(self.request.user,
+        response = get_schedule(self.signer,
                                 labels=[self.conference.conference_slug])
-        for item in get_unsigned_forms(self.request.user,
+        for item in get_unsigned_forms(self.signer,
                                        self.conference,
                                        response.schedule_items):
             initial += [{'signed_file': item.e_sign_this,
@@ -50,7 +65,13 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
     def form_valid(self, form):
         instances = form.save(commit=False)
         for instance in instances:
-            instance.user = self.request.user
+            instance.user = self.signer
             instance.conference = self.conference
             instance.save()
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['signer'] = self.signer
+        return context
+

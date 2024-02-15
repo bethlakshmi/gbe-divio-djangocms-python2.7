@@ -12,6 +12,8 @@
 {% block before_table %}
   <h2 class="review-title gbe-title">{{ title }}{{view_title}}</h2>
   <p>{{intro_text}}</p>
+  <div class="pb-3">{% include "conference_picker.tmpl" %}</div>
+
 {% endblock %}
 {% if columns %}
   <div>Press the arrows to sort on a column.  To sort on an additional sub-order,
