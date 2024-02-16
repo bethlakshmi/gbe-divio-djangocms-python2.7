@@ -59,5 +59,7 @@ urlpatterns = [
         views.set_ticket_to_event,
         name='set_ticket_type_to_event'),
     url(r'^signatures/view/$', SignatureList.as_view(), name='signature_list'),
-    url(r'^signatures/manage/$', ManageSignatures.as_view()),
+    url(r'^signatures/manage/$',
+        ManageSignatures.as_view(),
+        name='manage_signatures'),
 ]
