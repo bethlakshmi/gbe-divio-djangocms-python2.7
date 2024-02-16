@@ -18,10 +18,8 @@ class SignatureList(GbeContextMixin, ProfileRequiredMixin, ListView):
     intro_text = '''Here are all the forms you've signed'''
     context_object_name = 'signatures'
 
-
     def get_queryset(self):
         return self.model.objects.filter(user=self.request.user)
-
 
     def get_context_data(self, **kwargs):
         from gbe.special_privileges import special_menu_tree

@@ -11,7 +11,6 @@ from ticketing.models import Signature
 from gbe.ticketing_idd_interface import get_signatories
 
 
-
 class ManageSignatures(GbeContextMixin,
                        RoleRequiredMixin,
                        ConferenceListView):
@@ -24,17 +23,15 @@ class ManageSignatures(GbeContextMixin,
     context_object_name = 'signatures'
     view_permissions = ('Registrar', )
 
-
     def get_queryset(self):
         return self.model.objects.filter(conference=self.conference)
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = " - " + self.conference.conference_slug
         context['columns'] = ['Profile',
                               'Signed Forms',
-                              'Needs Signing',                              
+                              'Needs Signing',
                               'Action']
         rows = {}
         signature_needed = get_signatories(self.conference)

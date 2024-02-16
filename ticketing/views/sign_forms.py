@@ -83,4 +83,3 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         context['signer'] = self.signer
         return context
-
