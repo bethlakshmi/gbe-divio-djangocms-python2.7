@@ -42,6 +42,10 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
             # sign for other user, only available to registrar
             validate_perms(self.request, ('Registrar', ))
             self.signer = get_object_or_404(User, pk=self.kwargs['user_id'])
+            if 'next' in self.request.GET:
+                self.success_url = "%s?conf_slug=%s" % (
+                    self.request.GET.get('next'),
+                    self.conference.conference_slug)
         initial = []
         response = get_schedule(self.signer,
                                 labels=[self.conference.conference_slug])
@@ -64,11 +68,16 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
 
     def form_valid(self, form):
         instances = form.save(commit=False)
+        custom_msg = None
         for instance in instances:
             instance.user = self.signer
             instance.conference = self.conference
             instance.save()
-        return super().form_valid(form)
+        if 'user_id' in self.kwargs:
+            custom_msg = "  Signatures complete for user %s, conference %s" % (
+                str(self.signer.profile),
+                self.conference.conference_name)
+        return super().form_valid(form, custom_msg=custom_msg)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

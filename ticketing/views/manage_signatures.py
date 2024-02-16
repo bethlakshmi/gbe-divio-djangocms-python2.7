@@ -18,7 +18,7 @@ class ManageSignatures(GbeContextMixin,
     model = Signature
     template_name = 'ticketing/manage_signatures.tmpl'
     page_title = 'Manage Signatures'
-    view_title = 'Manage Signatures for the Current Expo'
+    view_title = 'Manage Signatures'
     intro_text = '''Here are all users who should/did sign forms for this
      year's expo.'''
     context_object_name = 'signatures'
@@ -31,6 +31,7 @@ class ManageSignatures(GbeContextMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['title'] = " - " + self.conference.conference_slug
         context['columns'] = ['Profile',
                               'Signed Forms',
                               'Needs Signing',                              

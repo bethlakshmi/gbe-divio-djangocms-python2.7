@@ -10,7 +10,7 @@
 {% endblock %}
 {% block content %}
 {% block before_table %}
-  <h2 class="review-title gbe-title">{{ title }}{{view_title}}</h2>
+  <h2 class="review-title gbe-title">{{view_title}}{{ title }}</h2>
   <p>{{intro_text}}</p>
   <div class="pb-3">{% include "conference_picker.tmpl" %}</div>
 
