@@ -5,7 +5,7 @@
   <td><a class="social" href="{{ signature.signed_file.url }}" target="_blank">
       {{ signature.signed_file }}</a></td>
   <td>{{ signature.conference }}</td>
-  <td>{{ signature.created_at }}</td>
+  <td>{{ signature.created_at|date:"M j, Y, g:i A" }}</td>
   <td>{{ signature.name_signed }}</td>
   </tr>
 {% endfor %}

@@ -26,9 +26,10 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
     template_name = 'ticketing/sign_forms_form.tmpl'
     success_url = reverse_lazy('home', urlconf="gbe.urls")
     page_title = 'Sign Forms'
-    view_title = 'Sign Forms for this Year'
+    view_title = 'Sign Forms'
     intro_text = sign_form_msg
     valid_message = all_signed_msg
+    extra_title = ""
 
     def get_initial(self):
         # TODO - what if error?
@@ -46,6 +47,9 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
                 self.success_url = "%s?conf_slug=%s" % (
                     self.request.GET.get('next'),
                     self.conference.conference_slug)
+            self.extra_title = "Signer: %s, Conference: %s" % (
+                str(self.signer.profile),
+                self.conference.conference_slug)
         initial = []
         response = get_schedule(self.signer,
                                 labels=[self.conference.conference_slug])
@@ -81,5 +85,5 @@ class SignForms(GbeFormMixin, ProfileRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['signer'] = self.signer
+        context['extra_title'] = self.extra_title
         return context
