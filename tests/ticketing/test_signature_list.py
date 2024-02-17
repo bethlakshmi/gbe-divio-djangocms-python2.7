@@ -5,21 +5,12 @@ from tests.factories.gbe_factories import (
     UserFactory,
     ProfileFactory,
 )
-from tests.functions.gbe_functions import (
-    assert_alert_exists,
-    grant_privilege,
-    login_as,
-)
+from tests.functions.gbe_functions import login_as
 from tests.functions.ticketing_functions import set_form
-from gbetext import (
-    sign_form_msg,
-    all_signed_msg,
-)
 from tests.factories.ticketing_factories import (
     RoleEligibilityConditionFactory,
     SignatureFactory,
 )
-from ticketing.models import Signature
 
 
 class TestSignatureList(TestCase):
@@ -57,6 +48,7 @@ class TestSignatureList(TestCase):
         login_as(profile, self)
         response = self.client.get(self.url)
         self.assertNotContains(response,
-                            self.signature.signed_file)
+                               self.signature.signed_file)
         self.assertNotContains(response, self.signature.name_signed)
-        self.assertNotContains(response, self.context.conference.conference_name)
+        self.assertNotContains(response,
+                               self.context.conference.conference_name)

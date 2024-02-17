@@ -118,7 +118,7 @@ class TestSignForms(TestCase):
             response,
             'success',
             'Success',
-             "%s  Signatures complete for user %s, conference %s" % (
+            "%s  Signatures complete for user %s, conference %s" % (
                 all_signed_msg,
                 str(self.context.performer.contact),
                 self.context.conference.conference_name))
