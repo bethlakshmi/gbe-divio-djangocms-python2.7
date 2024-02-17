@@ -38,7 +38,7 @@ class TestSignForms(TestCase):
         cls.context = ActTechInfoContext()
         cls.url = reverse(cls.view_name, urlconf='ticketing.urls')
         # add conf and next
-        cls.priv_url = "%s??conf_slug=%s&next=%s" % (
+        cls.priv_url = "%s?conf_slug=%s&next=%s" % (
             reverse(cls.view_name,
                     urlconf='ticketing.urls',
                     args=[cls.context.performer.contact.user_object.pk]),

@@ -6,7 +6,7 @@
   <td>{% for signature in row.signatures %}
      <a class="social" href="{{ signature.signed_file.url }}" target="_blank">
       {{ signature.signed_file }}</a> - signed on {{ signature.created_at|date:"M j, Y, g:i A" }} by {{ signature.name_signed }} for {{ signature.conference }}<br>{% endfor %}</td>
-  <td>{% for to_be_signed in row.please_sign %}{{to_be_signed.e_sign_this}}{% endfor %}</td>
+  <td>{% for to_be_signed in row.please_sign %}{{to_be_signed.description}}<br>{% endfor %}</td>
   <td>{% if row.please_sign|length > 0%}<a href="{% url 'ticketing:sign_forms' user.id %}?conf_slug={{ conference.conference_slug }}&next={{ request.path }}" class="gbe-btn-table btn btn-sm">SIGN HERE</a>{% endif %}</td>
   </tr>
 {% endfor %}
