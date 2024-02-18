@@ -41,3 +41,6 @@ django-addanother
 eventbrite
 django-debug-toolbar
 django-published
+django-simple-captcha==0.5.20
+django-fobi
+
