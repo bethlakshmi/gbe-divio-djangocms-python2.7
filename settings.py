@@ -51,6 +51,8 @@ INSTALLED_APPS.extend([
     # Theme
     'fobi.contrib.themes.bootstrap3',
 
+    "fobi.contrib.apps.djangocms_integration",
+
     # Form field plugins
     'fobi.contrib.plugins.form_elements.fields.boolean',
     'fobi.contrib.plugins.form_elements.fields.checkbox_select_multiple',
@@ -251,3 +253,14 @@ TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "fobi.context_processors.theme")
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "fobi.context_processors.dynamic_values")
+
+CMS_TEMPLATES = (
+    (
+        "cms_page/{0}/page_with_sidebar.html".format(FOBI_DEFAULT_THEME),
+        "General template with sidebar for {0}".format(FOBI_DEFAULT_THEME),
+    ),
+    (
+        "cms_page/{0}/page_without_sidebar.html".format(FOBI_DEFAULT_THEME),
+        "General template without sidebar for {0}".format(FOBI_DEFAULT_THEME),
+    ),
+)
