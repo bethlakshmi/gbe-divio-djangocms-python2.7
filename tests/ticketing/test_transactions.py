@@ -415,56 +415,12 @@ class TestTransactions(TestCase):
                                context.profile.user_object.first_name)
         self.assertNotContains(response, context.transaction.ticket_item.title)
 
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_transactions_sync_bpt_only(self, m_urlopen):
-        TicketingEvents.objects.all().delete()
-        event = TicketingEventsFactory(event_id="1")
-        ticket = TicketItemFactory(
-            ticketing_event=event,
-            ticket_id='%s-%s' % (event.event_id, '3255985'))
-
-        limbo = get_limbo()
-
-        a = Mock()
-        order_filename = open("tests/ticketing/orderlist.xml", 'r')
-        a.read.side_effect = [File(order_filename).read()]
-        m_urlopen.return_value = a
-
-        login_as(self.privileged_user, self)
-        response = self.client.post(self.url, data={'Sync': 'Sync'})
-        self.assertEqual(response.status_code, 200)
-
-        transaction = get_object_or_404(
-            Transaction,
-            reference='A12345678')
-        self.assertEqual(str(transaction.order_date),
-                         "2014-08-15 19:26:56")
-        self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
-        self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
-        self.assertEqual(transaction.purchaser.phone, '111-222-3333')
-        self.assertEqual(transaction.purchaser.matched_to_user, limbo.user_ptr)
-        self.assertEqual(transaction.purchaser.first_name, 'John')
-        self.assertEqual(transaction.purchaser.last_name, 'Smith')
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s   Transactions imported: %s - BPT" % (
-                                import_transaction_message,
-                                "1"))
-        assert_alert_exists(response, 'danger', 'Error', no_settings_error)
-
     def test_transactions_sync_no_sources_on(self):
         TicketingEvents.objects.all().delete()
         EventbriteSettings.objects.all().delete()
         EventbriteSettingsFactory(active_sync=False)
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s   Transactions imported: %s - BPT" % (
-                                import_transaction_message,
-                                "0"))
         assert_alert_exists(response,
                             'success',
                             'Success',
@@ -476,12 +432,6 @@ class TestTransactions(TestCase):
         EventbriteSettingsFactory()
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
-        assert_alert_exists(response,
-                            'success',
-                            'Success',
-                            "%s   Transactions imported: %s - BPT" % (
-                                import_transaction_message,
-                                "0"))
         assert_alert_exists(response,
                             'success',
                             'Success',

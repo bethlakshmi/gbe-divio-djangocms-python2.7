@@ -21,20 +21,13 @@ def match_existing_purchasers_using_email():
             purchaser.save()
 
 
-def attempt_match_purchaser_to_user(purchaser, tracker_id=None):
+def attempt_match_purchaser_to_user(purchaser):
     '''
     Function attempts to match a given purchaser to a user in the system, using
     the algorithm agreed upon by Betty and Scratch.
 
     purchaser - the purchaser object to attempt match with
-    tracker_id - the tracker ID returned from Brown paper tickets
-    returns:  a user id (as an integer) that matched, or -1 if none
     '''
-
-    # First try to match the tracker id to a user in the system
-    if tracker_id is not None and isinstance(tracker_id, int):
-        user_id = int(tracker_id[3:])
-        return User.objects.get(id=user_id)
 
     # Next try to match to a purchase email address from the Profile
     # (Manual Override Mechanism)
