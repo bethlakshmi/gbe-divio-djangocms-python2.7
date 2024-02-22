@@ -7,14 +7,12 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
-    BrownPaperSettings,
     EventbriteSettings,
     Purchaser,
     SyncStatus,
     Transaction
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperSettingsFactory,
     EventbriteSettingsFactory,
     PurchaserFactory,
     TicketItemFactory,
@@ -62,10 +60,8 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_ticket_missing(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
         SyncStatus.objects.all().delete()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
 
@@ -89,10 +85,8 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_only(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
         SyncStatus.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
@@ -117,9 +111,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_match_prior_purchaser(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
@@ -137,9 +129,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_change_prior_purchaser(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         limbo = get_limbo()
@@ -170,9 +160,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_refund(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         limbo = get_limbo()
@@ -202,9 +190,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_error_status(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         limbo = get_limbo()
@@ -227,9 +213,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_pagination(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
@@ -253,9 +237,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_w_purchaser(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
@@ -276,9 +258,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_w_user(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
@@ -300,9 +280,7 @@ class TestTransactions(TestCase):
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_transactions_sync_eb_bad_auth_token(self, m_eventbrite):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         event = TicketingEventsFactory(event_id="1", source=2)
         ticket = TicketItemFactory(ticketing_event=event, ticket_id='3255985')
@@ -378,7 +356,6 @@ class TestTransactions(TestCase):
 
     def test_transactions_empty(self):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         login_as(self.privileged_user, self)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -441,8 +418,6 @@ class TestTransactions(TestCase):
     @patch('urllib.request.urlopen', autospec=True)
     def test_transactions_sync_bpt_only(self, m_urlopen):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        BrownPaperSettingsFactory()
         event = TicketingEventsFactory(event_id="1")
         ticket = TicketItemFactory(
             ticketing_event=event,
@@ -480,9 +455,7 @@ class TestTransactions(TestCase):
 
     def test_transactions_sync_no_sources_on(self):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory(active_sync=False)
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})
@@ -499,9 +472,7 @@ class TestTransactions(TestCase):
 
     def test_transactions_sync_both_on_no_events(self):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         EventbriteSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory()
         login_as(self.privileged_user, self)
         response = self.client.post(self.url, data={'Sync': 'Sync'})

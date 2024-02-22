@@ -29,15 +29,6 @@ class TicketingEventsFactory(DjangoModelFactory):
     source = 1
 
 
-class BrownPaperSettingsFactory(DjangoModelFactory):
-    class Meta:
-        model = tickets.BrownPaperSettings
-    developer_token = "devtoken"
-    client_username = "clientusername"
-    last_poll_time = timezone.now()
-    active_sync = True
-
-
 class EventbriteSettingsFactory(DjangoModelFactory):
     class Meta:
         model = tickets.EventbriteSettings

@@ -10,11 +10,9 @@ from decimal import Decimal
 from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
-    BrownPaperSettings,
     TicketItem
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperSettingsFactory,
     EventbriteSettingsFactory,
     TicketItemFactory,
     TicketingEventsFactory,
@@ -68,8 +66,6 @@ class TestListTickets(TestCase):
     def test_get_eb_debug_server(self, m_eventbrite):
         # test case for debug server being different, w no events to sync
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory(system=0)
         empty_event_dict = copy.deepcopy(event_dict)
         empty_event_dict['events'] = []
@@ -85,9 +81,7 @@ class TestListTickets(TestCase):
     def test_get_eb_no_org(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory(organization_id=None)
 
         m_eventbrite.side_effect = [org_dict]
@@ -103,9 +97,7 @@ class TestListTickets(TestCase):
     def test_get_eb_org_fail(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory(organization_id=None)
 
         m_eventbrite.side_effect = [{
@@ -124,9 +116,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_no_organizer(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
 
         m_eventbrite.side_effect = [event_dict,
@@ -148,9 +138,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_filter_organizer(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory(organizer_id="33556727241")
 
         m_eventbrite.side_effect = [event_dict,
@@ -174,9 +162,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_ticket_pagination(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         simple_event_dict = copy.deepcopy(event_dict)
         simple_event_dict['events'] = [event_dict['events'][0]]
@@ -201,9 +187,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_ticket_fail(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         simple_event_dict = copy.deepcopy(event_dict)
         simple_event_dict['events'] = [event_dict['events'][0]]
@@ -225,9 +209,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_event_fail(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         error_event_dict = {
             "status_code": 403,
@@ -246,9 +228,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_event_continuation(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         simple_event_dict = copy.deepcopy(event_dict)
         simple_event_dict['pagination']['has_more_items'] = True
@@ -268,9 +248,7 @@ class TestListTickets(TestCase):
     def test_get_bpt_inventory(self, m_urlopen):
         # privileged user gets the inventory of tickets from (fake) BPT
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
 
         a = Mock()
         date_filename = open("tests/ticketing/datelist.xml", 'r')
@@ -318,9 +296,7 @@ class TestListTickets(TestCase):
     def test_reimport_bpt_inventory(self, m_urlopen):
         # reimporting gets nothing new but doesn't fail
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         TicketItemFactory(
             ticket_id='%s-4513068' % (event.event_id),
             has_coupon=True,
@@ -344,9 +320,7 @@ class TestListTickets(TestCase):
     @patch('urllib.request.urlopen', autospec=True)
     def test_get_event_detail(self, m_urlopen):
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title='', description='')
-        BrownPaperSettingsFactory()
 
         a = Mock()
         event_filename = open("tests/ticketing/eventlist.xml", 'r')
@@ -377,9 +351,7 @@ class TestListTickets(TestCase):
     def test_no_event_list(self, m_urlopen):
         # not event list comes when getting inventory
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
 
         a = Mock()
         a.read.side_effect = []
@@ -392,9 +364,7 @@ class TestListTickets(TestCase):
     def test_no_date_list(self, m_urlopen):
         # not date list comes when getting inventory
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
 
         a = Mock()
         event_filename = open("tests/ticketing/eventlist.xml", 'r')
@@ -408,9 +378,7 @@ class TestListTickets(TestCase):
     def test_no_price_list(self, m_urlopen):
         # not price list comes when getting inventory
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
 
         a = Mock()
         event_filename = open("tests/ticketing/eventlist.xml", 'r')
@@ -426,9 +394,7 @@ class TestListTickets(TestCase):
     def test_urlerror(self, m_urlopen):
         # first read from BPT has a URL read error
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
 
         a = Mock()
         a.read.side_effect = urllib.error.URLError("test url error")
@@ -441,7 +407,6 @@ class TestListTickets(TestCase):
     def test_no_settings(self, m_urlopen):
         # not date list comes when getting inventory
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title="", description="")
 
         a = Mock()

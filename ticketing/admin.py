@@ -3,10 +3,6 @@ from ticketing.models import *
 from gbe_forms_text import ticketing_event_help_text
 
 
-class BrownPaperSettingsAdmin(admin.ModelAdmin):
-    list_display = ('developer_token', 'client_username', 'last_poll_time')
-
-
 class PayPalSettingsAdmin(admin.ModelAdmin):
     list_display = ('business_email', )
 
@@ -227,7 +223,6 @@ class TicketExcludeAdmin(admin.ModelAdmin):
     autocomplete_fields = ['condition']
     filter_horizontal = ("tickets",)
 
-admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
 admin.site.register(HumanitixSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)

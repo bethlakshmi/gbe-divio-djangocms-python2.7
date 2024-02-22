@@ -10,7 +10,6 @@ from ticketing.models import (
   Transaction,
 )
 from ticketing.humanitix import HumanitixClient
-from ticketing.brown_paper import process_bpt_order_list
 from ticketing.eventbrite import process_eb_purchases
 from django.shortcuts import render
 from gbe.models import UserMessage
@@ -68,16 +67,6 @@ def transactions(request):
                 messages.success(request, msg)
             else:
                 messages.error(request, msg)
-        count = process_bpt_order_list()
-        success_msg = UserMessage.objects.get_or_create(
-          view="ViewTransactions",
-          code="IMPORT_MESSAGE",
-          defaults={
-                    'summary': "Import BPT Transactions Message",
-                    'description': import_transaction_message})
-        messages.success(request, "%s   Transactions imported: %s - BPT" % (
-            success_msg[0].description,
-            count))
 
     user_editor = validate_perms(request, ('Registrar', ), require=False)
     context = {'conference_slugs': conference_slugs(),
