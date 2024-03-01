@@ -36,14 +36,15 @@ class GbeFormMixin(FormMixin):
                                                          self.success_url)
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form, custom_msg=None):
         if hasattr(self, 'valid_message'):
             msg = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="SUCCESS",
                 defaults={
                     'summary': "Successful Submission",
-                    'description': self.valid_message})
-            messages.success(self.request, msg[0].description)
-        return_valid = super().form_valid(form)
-        return return_valid
+                    'description': self.valid_message})[0].description
+            if custom_msg is not None:
+                msg = msg + custom_msg
+            messages.success(self.request, msg)
+        return super().form_valid(form)

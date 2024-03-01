@@ -97,7 +97,10 @@ class SignatureAdmin(admin.ModelAdmin):
                     'name_signed',
                     'signed_file',
                     'created_at']
-    search_fields = ['user', 'name_signed']
+    search_fields = ['user__username',
+                     'user__email',
+                     'user__profile__display_name',
+                     'name_signed']
     list_filter = ['conference', ("signed_file",
                                   admin.RelatedOnlyFieldListFilter)]
     autocomplete_fields = ["user"]
