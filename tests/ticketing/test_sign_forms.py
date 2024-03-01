@@ -7,6 +7,7 @@ from tests.factories.gbe_factories import (
 )
 from tests.functions.gbe_functions import (
     assert_alert_exists,
+    grant_privilege,
     login_as,
 )
 from tests.functions.ticketing_functions import set_form
@@ -36,10 +37,19 @@ class TestSignForms(TestCase):
     def setUpTestData(cls):
         cls.context = ActTechInfoContext()
         cls.url = reverse(cls.view_name, urlconf='ticketing.urls')
+        # add conf and next
+        cls.priv_url = "%s?conf_slug=%s&next=%s" % (
+            reverse(cls.view_name,
+                    urlconf='ticketing.urls',
+                    args=[cls.context.performer.contact.user_object.pk]),
+            cls.context.conference,
+            reverse("manage_signatures", urlconf='ticketing.urls'))
         cls.condition = RoleEligibilityConditionFactory(
             role="Performer",
             checklistitem__description="Form to Sign!",
             checklistitem__e_sign_this=set_form())
+        cls.privileged_user = ProfileFactory().user_object
+        grant_privilege(cls.privileged_user, 'Registrar')
 
     def test_get_form(self):
         login_as(self.context.performer.contact, self)
@@ -82,3 +92,33 @@ class TestSignForms(TestCase):
         response = self.client.get(self.url)
         self.assertNotContains(response, sign_form_msg)
         self.assertContains(response, "You have no forms to sign")
+
+    def test_get_form_w_privilege(self):
+        login_as(self.privileged_user, self)
+        response = self.client.get(self.priv_url)
+        self.assertContains(
+            response,
+            "Signer: %s, Conference: %s" % (
+                self.context.performer.contact.display_name,
+                self.context.conference.conference_slug))
+
+    def test_sign_forms_w_privilege(self):
+        login_as(self.privileged_user, self)
+        response = self.client.post(
+            self.priv_url,
+            self.formset_data,
+            follow=True)
+        self.assertRedirects(response, "%s?conf_slug=%s" % (
+            reverse("manage_signatures", urlconf='ticketing.urls'),
+            self.context.conference.conference_slug))
+        self.assertNotContains(response, "Sign some Forms!")
+        self.assertEqual(Signature.objects.filter(
+            user=self.context.performer.contact.user_object).count(), 1)
+        assert_alert_exists(
+            response,
+            'success',
+            'Success',
+            "%s  Signatures complete for user %s, conference %s" % (
+                all_signed_msg,
+                str(self.context.performer.contact),
+                self.context.conference.conference_name))

@@ -257,6 +257,10 @@ def get_unsigned_forms(user, conference, user_schedule):
     return forms_to_sign
 
 
+def has_signed_forms(user):
+    return Signature.objects.filter(user=user).exists()
+
+
 def get_ticket_form(bid_type, conference, post=None):
     form = None
     ticket_items = get_fee_list(bid_type, conference)
