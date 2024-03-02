@@ -20,7 +20,7 @@ from gbetext import (
     import_transaction_message,
     sync_off_instructions,
 )
-from ticketing.brown_paper import (
+from ticketing.sync_user_utils import (
     attempt_match_purchaser_to_user,
     match_existing_purchasers_using_email,
 )

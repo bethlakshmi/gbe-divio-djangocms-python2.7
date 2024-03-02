@@ -10,11 +10,9 @@ from decimal import Decimal
 from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
-    BrownPaperSettings,
     TicketItem
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperSettingsFactory,
     EventbriteSettingsFactory,
     TicketItemFactory,
     TicketingEventsFactory,
@@ -68,8 +66,6 @@ class TestListTickets(TestCase):
     def test_get_eb_debug_server(self, m_eventbrite):
         # test case for debug server being different, w no events to sync
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettingsFactory(system=0)
         empty_event_dict = copy.deepcopy(event_dict)
         empty_event_dict['events'] = []
@@ -78,16 +74,12 @@ class TestListTickets(TestCase):
         response = self.import_tickets()
         assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported %d events, %d tickets") % (0, 0))
-        assert_alert_exists(response, 'success', 'Success', (
-            "BPT: imported %d tickets") % (0))
 
     @patch('eventbrite.Eventbrite.get', autospec=True)
     def test_get_eb_no_org(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory(organization_id=None)
 
         m_eventbrite.side_effect = [org_dict]
@@ -103,9 +95,7 @@ class TestListTickets(TestCase):
     def test_get_eb_org_fail(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory(organization_id=None)
 
         m_eventbrite.side_effect = [{
@@ -124,9 +114,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_no_organizer(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
 
         m_eventbrite.side_effect = [event_dict,
@@ -137,8 +125,6 @@ class TestListTickets(TestCase):
         response = self.import_tickets()
         assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported %d events, %d tickets") % (3, 6))
-        assert_alert_exists(response, 'success', 'Success', (
-            "BPT: imported %d tickets") % (0))
         ticket = get_object_or_404(TicketItem, ticket_id='987987987')
         self.assertEqual(ticket.cost, Decimal('0.00'))
         ticket = get_object_or_404(TicketItem, ticket_id='098098098')
@@ -148,9 +134,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_filter_organizer(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory(organizer_id="33556727241")
 
         m_eventbrite.side_effect = [event_dict,
@@ -159,8 +143,6 @@ class TestListTickets(TestCase):
         response = self.import_tickets()
         assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported %d events, %d tickets") % (1, 2))
-        assert_alert_exists(response, 'success', 'Success', (
-            "BPT: imported %d tickets") % (0))
         ticket = get_object_or_404(TicketItem, ticket_id='890890890')
         self.assertEqual(ticket.cost, Decimal('0.00'))
         ticket = get_object_or_404(TicketItem, ticket_id='3255985')
@@ -174,9 +156,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_ticket_pagination(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         simple_event_dict = copy.deepcopy(event_dict)
         simple_event_dict['events'] = [event_dict['events'][0]]
@@ -190,8 +170,6 @@ class TestListTickets(TestCase):
         response = self.import_tickets()
         assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported %d events, %d tickets" % (1, 4)))
-        assert_alert_exists(response, 'success', 'Success', (
-            "BPT: imported %d tickets") % (0))
         ticket = get_object_or_404(TicketItem, ticket_id='987987987')
         self.assertEqual(ticket.cost, Decimal('0.00'))
         ticket = get_object_or_404(TicketItem, ticket_id='098098098')
@@ -201,9 +179,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_ticket_fail(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         simple_event_dict = copy.deepcopy(event_dict)
         simple_event_dict['events'] = [event_dict['events'][0]]
@@ -225,9 +201,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_event_fail(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         error_event_dict = {
             "status_code": 403,
@@ -246,9 +220,7 @@ class TestListTickets(TestCase):
     def test_get_eb_inventory_event_continuation(self, m_eventbrite):
         # privileged user gets the inventory of tickets from (fake) EB
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
         EventbriteSettingsFactory()
         simple_event_dict = copy.deepcopy(event_dict)
         simple_event_dict['pagination']['has_more_items'] = True
@@ -261,41 +233,6 @@ class TestListTickets(TestCase):
         response = self.import_tickets()
         assert_alert_exists(response, 'success', 'Success', (
             "Successfully imported %d events, %d tickets" % (3, 6)))
-        assert_alert_exists(response, 'success', 'Success', (
-            "BPT: imported %d tickets" % 0))
-
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_get_bpt_inventory(self, m_urlopen):
-        # privileged user gets the inventory of tickets from (fake) BPT
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
-
-        a = Mock()
-        date_filename = open("tests/ticketing/datelist.xml", 'r')
-        price_filename = open("tests/ticketing/pricelist.xml", 'r')
-        a.read.side_effect = [File(date_filename).read(),
-                              File(price_filename).read()]
-        m_urlopen.return_value = a
-
-        response = self.import_tickets()
-        self.assertEqual(response.status_code, 200)
-        assert_alert_exists(
-            response,
-            'danger',
-            'Error',
-            no_settings_error)
-        assert_alert_exists(
-            response,
-            'success',
-            'Success',
-            "BPT: imported %d tickets" % 12)
-        ticket = get_object_or_404(
-            TicketItem,
-            ticket_id='%s-4513068' % (event.event_id))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(ticket.cost, Decimal('125.00'))
 
     def test_list_ticket_user_is_not_ticketing(self):
         # The user does not have the right privileges.
@@ -314,59 +251,6 @@ class TestListTickets(TestCase):
             'No ticket events have been created, use the "Create Event" ' +
             'button above to create some.')
 
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_reimport_bpt_inventory(self, m_urlopen):
-        # reimporting gets nothing new but doesn't fail
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory()
-        BrownPaperSettingsFactory()
-        TicketItemFactory(
-            ticket_id='%s-4513068' % (event.event_id),
-            has_coupon=True,
-            live=False,
-            ticketing_event=event)
-        a = Mock()
-        date_filename = open("tests/ticketing/datelist.xml", 'r')
-        price_filename = open("tests/ticketing/pricelist.xml", 'r')
-        a.read.side_effect = [File(date_filename).read(),
-                              File(price_filename).read()]
-        m_urlopen.return_value = a
-
-        response = self.import_tickets()
-        self.assertEqual(response.status_code, 200)
-        ticket = get_object_or_404(
-            TicketItem,
-            ticket_id='%s-4513068' % (event.event_id))
-        assert ticket.live
-        assert ticket.has_coupon
-
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_get_event_detail(self, m_urlopen):
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory(title='', description='')
-        BrownPaperSettingsFactory()
-
-        a = Mock()
-        event_filename = open("tests/ticketing/eventlist.xml", 'r')
-        date_filename = open("tests/ticketing/datelist.xml", 'r')
-        price_filename = open("tests/ticketing/pricelist.xml", 'r')
-        a.read.side_effect = [File(event_filename).read(),
-                              File(date_filename).read(),
-                              File(price_filename).read()]
-        m_urlopen.return_value = a
-
-        response = self.import_tickets()
-        self.assertEqual(response.status_code, 200)
-        reload_event = get_object_or_404(
-            TicketingEvents,
-            event_id='%s' % (event.event_id))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(
-            "The Great Burlesque Exposition of 2016 takes place Feb. 5-7",
-            reload_event.description)
-
     def test_get_no_inventory(self):
         # privileged user gets the inventory of tickets with no tickets
         TicketingEvents.objects.all().delete()
@@ -377,9 +261,7 @@ class TestListTickets(TestCase):
     def test_no_event_list(self, m_urlopen):
         # not event list comes when getting inventory
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
 
         a = Mock()
         a.read.side_effect = []
@@ -389,64 +271,13 @@ class TestListTickets(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @patch('urllib.request.urlopen', autospec=True)
-    def test_no_date_list(self, m_urlopen):
-        # not date list comes when getting inventory
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
-
-        a = Mock()
-        event_filename = open("tests/ticketing/eventlist.xml", 'r')
-        a.read.side_effect = [File(event_filename).read()]
-        m_urlopen.return_value = a
-
-        response = self.import_tickets()
-        self.assertEqual(response.status_code, 200)
-
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_no_price_list(self, m_urlopen):
-        # not price list comes when getting inventory
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
-
-        a = Mock()
-        event_filename = open("tests/ticketing/eventlist.xml", 'r')
-        date_filename = open("tests/ticketing/datelist.xml", 'r')
-        a.read.side_effect = [File(event_filename).read(),
-                              File(date_filename).read()]
-        m_urlopen.return_value = a
-
-        response = self.import_tickets()
-        self.assertEqual(response.status_code, 200)
-
-    @patch('urllib.request.urlopen', autospec=True)
     def test_urlerror(self, m_urlopen):
         # first read from BPT has a URL read error
         TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
         event = TicketingEventsFactory(title="", description="")
-        BrownPaperSettingsFactory()
 
         a = Mock()
         a.read.side_effect = urllib.error.URLError("test url error")
-        m_urlopen.return_value = a
-
-        response = self.import_tickets()
-        self.assertEqual(response.status_code, 200)
-
-    @patch('urllib.request.urlopen', autospec=True)
-    def test_no_settings(self, m_urlopen):
-        # not date list comes when getting inventory
-        TicketingEvents.objects.all().delete()
-        BrownPaperSettings.objects.all().delete()
-        event = TicketingEventsFactory(title="", description="")
-
-        a = Mock()
-        event_filename = open("tests/ticketing/eventlist.xml", 'r')
-        a.read.side_effect = [File(event_filename).read()]
         m_urlopen.return_value = a
 
         response = self.import_tickets()

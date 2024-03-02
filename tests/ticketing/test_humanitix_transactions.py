@@ -5,14 +5,12 @@ from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
     EventbriteSettings,
-    BrownPaperSettings,
     HumanitixSettings,
     Purchaser,
     SyncStatus,
     Transaction
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperSettingsFactory,
     HumanitixSettingsFactory,
     PurchaserFactory,
     TicketPackageFactory,
@@ -44,7 +42,6 @@ class TestHumanitixTransactions(TestCase):
     def setUpTestData(cls):
         cls.privileged_user = setup_admin_w_privs(['Ticketing - Transactions'])
         cls.url = reverse('transactions', urlconf='ticketing.urls')
-        BrownPaperSettingsFactory(active_sync=False)
         EventbriteSettings.objects.all().delete()
 
     def setUp(self):

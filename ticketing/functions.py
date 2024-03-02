@@ -8,7 +8,6 @@ from ticketing.models import (
 )
 from ticketing.eventbrite import import_eb_ticket_items
 from ticketing.humanitix import HumanitixClient
-from ticketing.brown_paper import import_bpt_ticket_items
 from gbetext import class_styles
 from django.db.models import Q
 
@@ -21,10 +20,8 @@ def import_ticket_items():
         humanitix = HumanitixClient()
         msg, is_success = import_eb_ticket_items()
         hmsg, his_success = humanitix.import_ticket_items()
-        count = import_bpt_ticket_items()
         return [(msg, is_success),
-                (hmsg, his_success),
-                ("BPT: imported %d tickets" % count, True)]
+                (hmsg, his_success)]
 
 
 def get_tickets(linked_event):
