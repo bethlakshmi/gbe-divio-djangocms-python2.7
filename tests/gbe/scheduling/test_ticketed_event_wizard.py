@@ -9,12 +9,10 @@ from tests.factories.gbe_factories import (
 )
 from ticketing.models import (
     TicketingEvents,
-    BrownPaperSettings,
 )
 from tests.factories.ticketing_factories import (
     TicketingEventsFactory,
     TicketTypeFactory,
-    BrownPaperSettingsFactory,
 )
 from scheduler.models import Event
 from tests.functions.gbe_functions import (

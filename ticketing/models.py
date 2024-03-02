@@ -11,20 +11,6 @@ from datetime import datetime
 from filer.fields.image import FilerFileField
 
 
-class BrownPaperSettings(models.Model):
-    '''
-    This class is used to hold basic settings for the interface with BPT.
-    It should contain only one row and almost never changes.
-    '''
-    developer_token = models.CharField(max_length=15, primary_key=True)
-    client_username = models.CharField(max_length=30)
-    last_poll_time = models.DateTimeField()
-    active_sync = models.BooleanField()
-
-    class Meta:
-        verbose_name_plural = 'Brown Paper Settings'
-
-
 class EventbriteSettings(models.Model):
     '''
     if oath exists, the "sync" thread will first attempt to get org id
@@ -231,11 +217,11 @@ class Purchaser(models.Model):
     '''
     This class is used to hold the information for a given person who has
     purchased a ticket.  It has all the information we can gather
-    from BPT about the user.  It is meant to be mapped to a given User in
-    our system, if we can.
+    from the ticketing system about the user.  It is meant to be mapped to 
+    a given User in our system, if we can.
 
     These are pretty much all char fields since we don't know the format of
-    what BPT (or another system) will hand back.
+    what the system will hand back.
     '''
 
     first_name = models.CharField(max_length=50)
@@ -349,7 +335,8 @@ class TicketingEligibilityCondition(EligibilityCondition):
     '''
     This is the implementation of the condition under which we give a
     checklist item to a purchaser because they have purchased a ticket
-    Tickets are realized as BPT Events, the various tickets within an
+    Tickets for events like shows are realized as TicketingEvents in
+    Eventbrite or TicketItems, the various tickets within an
     event do not qualify a user for anything more.
 
     Ticket conditions are additive.  X purchases = X items given to the

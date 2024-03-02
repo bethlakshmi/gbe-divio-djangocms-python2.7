@@ -22,9 +22,7 @@ from ticketing.forms import (
 from gbe.models import (
     Conference,
 )
-from ticketing.brown_paper import *
 from ticketing.functions import get_fee_list
-from ticketing.brown_paper import import_bpt_ticket_items
 from scheduler.idd import get_schedule
 from django.db.models import Count
 from django.db.models import Q

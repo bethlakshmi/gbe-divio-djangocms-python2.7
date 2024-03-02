@@ -7,13 +7,11 @@ from decimal import Decimal
 from django.urls import reverse
 from ticketing.models import (
     TicketingEvents,
-    BrownPaperSettings,
     HumanitixSettings,
     TicketPackage,
     TicketType,
 )
 from tests.factories.ticketing_factories import (
-    BrownPaperSettingsFactory,
     HumanitixSettingsFactory,
     TicketPackageFactory,
     TicketTypeFactory,
@@ -49,7 +47,6 @@ class TestGetHumanitixTickets(TestCase):
         cls.privileged_user = ProfileFactory.create().user_object
         grant_privilege(cls.privileged_user, 'Ticketing - Admin')
         cls.url = reverse(cls.view_name, urlconf='ticketing.urls')
-        BrownPaperSettingsFactory(active_sync=False)
 
     def import_tickets(self):
         data = {'Import': 'Import'}
