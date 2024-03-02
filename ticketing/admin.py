@@ -1,6 +1,6 @@
 from django.contrib import admin
 from ticketing.models import *
-from gbe_forms_text import link_event_help_text
+from gbe_forms_text import ticketing_event_help_text
 
 
 class BrownPaperSettingsAdmin(admin.ModelAdmin):
@@ -13,18 +13,21 @@ class PayPalSettingsAdmin(admin.ModelAdmin):
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('ticket_item',
+                    'status',
                     'purchaser',
                     'amount',
+                    'payment_source',
                     'order_date',
                     'import_date')
     list_filter = ['ticket_item__ticketing_event__conference',
-                   'order_date',
-                   'import_date',
+                   'status',
+                   'ticket_item__ticketing_event__source',
                    'ticket_item__ticketing_event__act_submission_event',
                    'ticket_item__ticketing_event__vendor_submission_event']
     search_fields = ['ticket_item__title',
                      'purchaser__matched_to_user__username',
                      'purchaser__email']
+    autocomplete_fields = ["ticket_item", "purchaser"]
 
 
 class PurchaserAdmin(admin.ModelAdmin):
@@ -34,12 +37,11 @@ class PurchaserAdmin(admin.ModelAdmin):
                     'last_name',
                     'email',
                     'phone')
-    list_filter = ['state',
-                   'country']
     search_fields = ['matched_to_user__username',
                      'first_name',
                      'last_name',
                      'email']
+    autocomplete_fields = ["matched_to_user"]
 
 
 class TicketItemAdmin(admin.ModelAdmin):
@@ -54,22 +56,58 @@ class TicketItemAdmin(admin.ModelAdmin):
     list_filter = ['datestamp',
                    'modified_by',
                    'ticketing_event',
+                   'ticketing_event__conference',
                    'live',
                    'has_coupon']
     search_fields = ['title',
                      'ticketing_event__title',
                      'ticketing_event__conference__conference_name',
                      'ticketing_event__conference__conference_slug']
+    autocomplete_fields = ["ticketing_event"]
 
     def conference(self, obj):
         return obj.ticketing_event.conference
 
-    def active(self, obj):
-        return obj.active
+
+class TicketTypeAdmin(TicketItemAdmin):
+    list_display = ('title',
+                    'ticket_id',
+                    'active',
+                    'cost',
+                    'datestamp',
+                    'modified_by',
+                    'conference')
+    list_filter = ['ticketing_event__conference',
+                   'live',
+                   'datestamp',
+                   'modified_by',
+                   'has_coupon']
+    filter_horizontal = ['linked_events']
 
 
 class DetailInline(admin.TabularInline):
     model = EventDetail
+
+
+class ChecklistItemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'badge_title', 'description', 'e_sign_this']
+    search_fields = ['badge_title', 'description']
+
+
+class SignatureAdmin(admin.ModelAdmin):
+    list_display = ['id',
+                    'user',
+                    'conference',
+                    'name_signed',
+                    'signed_file',
+                    'created_at']
+    search_fields = ['user__username',
+                     'user__email',
+                     'user__profile__display_name',
+                     'name_signed']
+    list_filter = ['conference', ("signed_file",
+                                  admin.RelatedOnlyFieldListFilter)]
+    autocomplete_fields = ["user"]
 
 
 class TicketingEventsAdmin(admin.ModelAdmin):
@@ -113,7 +151,7 @@ class TicketingEventsAdmin(admin.ModelAdmin):
         }),
         ("Display Text", {
             'fields': ('display_icon', 'title', 'description'),
-            'description': link_event_help_text['display_icon'],
+            'description': ticketing_event_help_text['display_icon'],
         }),
     )
 
@@ -137,6 +175,9 @@ class EligibilityConditionAdmin(admin.ModelAdmin):
         TicketingExclusionInline,
         RoleExclusionInline
     ]
+    autocomplete_fields = ["checklistitem"]
+    search_fields = ["checklistitem__badge_title",
+                     "checklistitem__description"]
 
     def ticketing_exclusions(self, obj):
         return obj.ticketing_ticketingexclusion.count()
@@ -179,25 +220,34 @@ class RoleExcludeAdmin(admin.ModelAdmin):
                     'condition',
                     'role',
                     'event')
+    autocomplete_fields = ['event']
 
 
 class TicketExcludeAdmin(admin.ModelAdmin):
     list_display = ('pk',
                     'condition',
                     '__str__')
+    autocomplete_fields = ['condition']
+    filter_horizontal = ("tickets",)
 
 admin.site.register(BrownPaperSettings, BrownPaperSettingsAdmin)
 admin.site.register(EventbriteSettings)
+admin.site.register(HumanitixSettings)
 admin.site.register(PayPalSettings, PayPalSettingsAdmin)
 admin.site.register(TicketingEvents, TicketingEventsAdmin)
 admin.site.register(TicketItem, TicketItemAdmin)
+admin.site.register(TicketType, TicketTypeAdmin)
+admin.site.register(TicketPackage, TicketItemAdmin)
 admin.site.register(Purchaser, PurchaserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TicketingEligibilityCondition,
                     TicketEligibilityConditionAdmin)
+admin.site.register(EligibilityCondition,
+                    EligibilityConditionAdmin)
 admin.site.register(RoleEligibilityCondition,
                     EligibilityConditionAdmin)
-admin.site.register(CheckListItem)
+admin.site.register(CheckListItem, ChecklistItemAdmin)
 admin.site.register(SyncStatus, SyncStatusAdmin)
 admin.site.register(TicketingExclusion, TicketExcludeAdmin)
 admin.site.register(RoleExclusion, RoleExcludeAdmin)
+admin.site.register(Signature, SignatureAdmin)

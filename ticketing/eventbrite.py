@@ -139,6 +139,7 @@ def load_events(eventbrite, organization_id, organizer_id):
     has_more_items = True
     continuation_token = ""
     event_count = 0
+    conference = get_current_conference()
     while has_more_items:
         import_item_list = eventbrite.get(
             ('/organizations/%s/events/?order_by=start_asc&' +
@@ -147,7 +148,6 @@ def load_events(eventbrite, organization_id, organizer_id):
         if 'events' not in import_item_list.keys():
             return 0, eventbrite_error_create(import_item_list)
         has_more_items = import_item_list['pagination']['has_more_items']
-        conference = get_current_conference()
         for event in import_item_list['events']:
             if organizer_id is None or len(organizer_id) == 0 or (
                     event["organizer_id"] == organizer_id):
@@ -355,8 +355,6 @@ def eb_save_orders_to_database(event_id, attendee):
         trans.order_notes = attendee['ticket_class_name']
         trans.reference = attendee['id']
         trans.payment_source = 'Eventbrite'
-        trans.shipping_method = attendee['delivery_method']
-
         trans.save()
         attendee_count = attendee_count + 1
     else:

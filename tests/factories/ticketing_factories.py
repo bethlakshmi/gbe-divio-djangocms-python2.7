@@ -47,6 +47,16 @@ class EventbriteSettingsFactory(DjangoModelFactory):
     active_sync = True
 
 
+class HumanitixSettingsFactory(DjangoModelFactory):
+    class Meta:
+        model = tickets.HumanitixSettings
+    api_key = "UseAMock"
+    organiser_id = "12345678"
+    system = 1
+    active_sync = True
+    endpoint = "test.an.endpoint"
+
+
 class TicketItemFactory(DjangoModelFactory):
     class Meta:
         model = tickets.TicketItem
@@ -57,16 +67,22 @@ class TicketItemFactory(DjangoModelFactory):
     modified_by = "Ticket Item Mock"
 
 
+class TicketTypeFactory(TicketItemFactory):
+    class Meta:
+        model = tickets.TicketType
+
+
+class TicketPackageFactory(TicketItemFactory):
+    class Meta:
+        model = tickets.TicketPackage
+    whole_shebang = True
+
+
 class PurchaserFactory(DjangoModelFactory):
     class Meta:
         model = tickets.Purchaser
     first_name = Sequence(lambda x: "purchaser_first: #%d" % x)
     last_name = Sequence(lambda x: "purchaser_last: #%d" % x)
-    address = Sequence(lambda x: "purchaser_address: #%d" % x)
-    city = "Boston"
-    state = "MA"
-    zip = "12312"
-    country = "USA"
     email = Sequence(lambda x: "purchaser_%d@test.com" % x)
     phone = "111-222-3333"
     matched_to_user = SubFactory(UserFactory)
@@ -79,8 +95,6 @@ class TransactionFactory(DjangoModelFactory):
     purchaser = SubFactory(PurchaserFactory)
     amount = 99.99
     order_date = timezone.now()
-    shipping_method = Sequence(lambda x: "shipping_method: #%d" % x)
-    order_notes = Sequence(lambda x: "order_notes: #%d" % x)
     reference = Sequence(lambda x: "reference: #%d" % x)
     payment_source = Sequence(lambda x: "payment_source: #%d" % x)
     import_date = timezone.now()
@@ -118,6 +132,14 @@ class RoleEligibilityConditionFactory(DjangoModelFactory):
 
     checklistitem = SubFactory(CheckListItemFactory)
     role = "Teacher"
+
+
+class SignatureFactory(DjangoModelFactory):
+    class Meta:
+        model = tickets.Signature
+    name_signed = Sequence(lambda x: "Signature %d" % x)
+    conference = SubFactory(ConferenceFactory)
+    user = SubFactory(UserFactory)
 
 
 class TicketingExclusionFactory(DjangoModelFactory):

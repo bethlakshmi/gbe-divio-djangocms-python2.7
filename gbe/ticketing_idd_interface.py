@@ -10,6 +10,7 @@ from ticketing.models import (
     TicketingEvents,
     PayPalSettings,
     RoleEligibilityCondition,
+    Signature,
     TicketingEligibilityCondition,
     TicketItem,
     Transaction,
@@ -24,6 +25,7 @@ from gbe.models import (
 from ticketing.brown_paper import *
 from ticketing.functions import get_fee_list
 from ticketing.brown_paper import import_bpt_ticket_items
+from scheduler.idd import get_schedule
 from django.db.models import Count
 from django.db.models import Q
 from datetime import datetime
@@ -61,8 +63,6 @@ def comp_act(user, conference):
         ticket_item=comp_ticket,
         amount=0,
         order_date=datetime.now(),
-        shipping_method="Comp'ed",
-        order_notes="Comped through IDD",
         reference="auto",
         payment_source="GBE")
     transaction.save()
@@ -146,20 +146,23 @@ def get_purchased_tickets(user):
     for conf in conferences:
         tickets = TicketItem.objects.filter(
             ticketing_event__conference=conf,
-            transaction__purchaser__matched_to_user=user).annotate(
-                number_of_tickets=Count('transaction')).order_by('title')
+            transaction__purchaser__matched_to_user=user,
+            transaction__status="paid").annotate(
+            number_of_tickets=Count('transaction')
+            ).order_by('title')
         if tickets:
             ticket_by_conf.append({'conference': conf, 'tickets': tickets})
     return ticket_by_conf
 
 
-def get_checklist_items_for_tickets(profile, user_schedule, tickets):
+def get_checklist_items_for_tickets(user, user_schedule, tickets):
     '''
     get the checklist items for a purchaser in the BTP
     '''
     checklist_items = []
     transactions = Transaction.objects.filter(
-            purchaser__matched_to_user=profile.user_object)
+            purchaser__matched_to_user=user).exclude(
+            status="canceled")
 
     for ticket in set(tickets):
         items = []
@@ -177,54 +180,85 @@ def get_checklist_items_for_tickets(profile, user_schedule, tickets):
     return checklist_items
 
 
-def get_checklist_items_for_roles(user_schedule, tickets):
+def get_checklist_items_for_roles(user, user_schedule, tickets, conference):
     '''
     get the checklist items for the roles a person does in this conference
     '''
     checklist_items = {}
+    forms_to_sign = []
 
     roles = []
     for booking in user_schedule:
         if booking.role not in roles:
             roles += [booking.role]
 
-    for condition in RoleEligibilityCondition.objects.filter(role__in=roles):
-        if not condition.is_excluded(tickets, user_schedule):
-            if condition.role in checklist_items:
-                checklist_items[condition.role] += [condition.checklistitem]
-            else:
-                checklist_items[condition.role] = [condition.checklistitem]
-    return checklist_items
+    for cond in RoleEligibilityCondition.objects.filter(role__in=roles):
+        if not cond.is_excluded(tickets, user_schedule):
+            if cond.checklistitem.e_sign_this is None:
+                if cond.role in checklist_items:
+                    checklist_items[cond.role] += [cond.checklistitem]
+                else:
+                    checklist_items[cond.role] = [cond.checklistitem]
+            elif not Signature.objects.filter(
+                    signed_file=cond.checklistitem.e_sign_this,
+                    user=user,
+                    conference=conference).exists() and (
+                    cond.checklistitem not in forms_to_sign):
+                forms_to_sign += [cond.checklistitem]
+    return checklist_items, forms_to_sign
 
 
-def get_checklist_items(profile, conference, user_schedule):
+def get_checklist_items(user, conference, user_schedule):
     '''
-    get the checklist items for a person with a profile
+    get the checklist items for a person
     '''
     tickets = TicketItem.objects.filter(
         ticketing_event__conference=conference,
-        transaction__purchaser__matched_to_user=profile.user_object).distinct()
+        transaction__purchaser__matched_to_user=user).distinct()
 
     ticket_items = get_checklist_items_for_tickets(
-        profile,
+        user,
         user_schedule,
         tickets)
 
-    role_items = get_checklist_items_for_roles(user_schedule, tickets)
+    role_items, forms_to_sign = get_checklist_items_for_roles(
+        user,
+        user_schedule,
+        tickets,
+        conference)
+    return (ticket_items, role_items, forms_to_sign)
 
-    return (ticket_items, role_items)
+
+def get_unsigned_forms(user, conference, user_schedule):
+    '''
+    any forms for this conference that have not been signed yet.
+    '''
+    forms_to_sign = []
+    roles = []
+    tickets = TicketItem.objects.filter(
+        ticketing_event__conference=conference,
+        transaction__purchaser__matched_to_user=user).distinct()
+
+    for booking in user_schedule:
+        if booking.role not in roles:
+            roles += [booking.role]
+
+    for condition in RoleEligibilityCondition.objects.filter(
+            role__in=roles,
+            checklistitem__e_sign_this__isnull=False):
+        # nested ifs for readability/debugability
+        if condition.checklistitem not in forms_to_sign:
+            if not Signature.objects.filter(
+                    signed_file=condition.checklistitem.e_sign_this,
+                    user=user,
+                    conference=conference).exists():
+                if not condition.is_excluded(tickets, user_schedule):
+                    forms_to_sign += [condition.checklistitem]
+    return forms_to_sign
 
 
-def create_ticketing_event(event_id, conference, events=[], display_icon=None):
-    event = TicketingEvents.objects.create(
-            event_id=event_id,
-            conference=conference,
-            display_icon=display_icon)
-    if len(events) > 0:
-        event.linked_events.add(*events)
-    event.save()
-    count = import_bpt_ticket_items([event])
-    return event, count
+def has_signed_forms(user):
+    return Signature.objects.filter(user=user).exists()
 
 
 def get_ticket_form(bid_type, conference, post=None):
@@ -254,7 +288,6 @@ def get_paypal_button(request, total, user_id, number_list, bid_type, bid_id):
         "business": PayPalSettings.objects.first().business_email,
         "amount": total,
         "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
-        "invoice": str(datetime.now()),
         "custom": "%s-%d-User-%d" % (bid_type, bid_id, user_id),
         "return": request.build_absolute_uri(
             reverse(
@@ -303,3 +336,27 @@ def get_payment_details(request, form, bid_type, bid_id, user_id):
             bid_type,
             bid_id),
         total)
+
+
+def get_signatories(conference):
+    form_conditions = RoleEligibilityCondition.objects.filter(
+        checklistitem__e_sign_this__isnull=False)
+    roles = []
+    for condition in form_conditions:
+        if condition.role not in roles:
+            roles += [condition.role]
+        for exclusion in condition.ticketing_roleexclusion.all():
+            if exclusion.role not in roles:
+                roles += [condition.role]
+    response = get_schedule(roles=roles, labels=[conference.conference_slug])
+    user_set = {}
+    for item in response.schedule_items:
+        if item.user not in user_set:
+            user_set[item.user] = []
+        user_set[item.user] += [item]
+    forms_to_sign = {}
+    for user, schedule in user_set.items():
+        forms = get_unsigned_forms(user, conference, schedule)
+        if len(forms) > 0:
+            forms_to_sign[user] = forms
+    return forms_to_sign

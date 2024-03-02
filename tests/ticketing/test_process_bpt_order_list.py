@@ -58,8 +58,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')
@@ -91,8 +89,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')
@@ -126,8 +122,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')
@@ -165,8 +159,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')
@@ -203,8 +195,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')
@@ -238,8 +228,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')
@@ -271,8 +259,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')
@@ -304,8 +290,6 @@ class TestProcessBPTOrderList(TestCase):
             Transaction,
             reference='A12345678')
         self.assertEqual(str(transaction.order_date), "2014-08-15 19:26:56")
-        self.assertEqual(transaction.shipping_method, 'Will Call')
-        self.assertEqual(transaction.order_notes, 'None')
         self.assertEqual(transaction.payment_source, 'Brown Paper Tickets')
         self.assertEqual(transaction.purchaser.email, 'test@tickets.com')
         self.assertEqual(transaction.purchaser.phone, '111-222-3333')

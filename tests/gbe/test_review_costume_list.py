@@ -24,8 +24,7 @@ class TestReviewCostumeList(TestCase):
         cls.privileged_profile = ProfileFactory()
         cls.privileged_user = cls.privileged_profile.user_object
         grant_privilege(cls.privileged_user, 'Costume Reviewers')
-        cls.conference = ConferenceFactory(status='upcoming',
-                                           accepting_bids=True)
+        cls.conference = ConferenceFactory(status='upcoming')
         cls.costumes = CostumeFactory.create_batch(
             4,
             b_conference=cls.conference,

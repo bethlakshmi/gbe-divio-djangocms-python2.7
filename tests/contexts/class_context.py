@@ -27,7 +27,11 @@ from gbe.models import (
     SocialLink,
 )
 from datetime import timedelta
-from tests.factories.ticketing_factories import TicketItemFactory
+from tests.factories.ticketing_factories import (
+    TicketItemFactory,
+    TicketPackageFactory,
+    TicketTypeFactory,
+)
 
 
 class ClassContext:
@@ -123,6 +127,26 @@ class ClassContext:
             has_coupon=False)
         this_class.ticketing_event.linked_events.add(self.sched_event)
         return package, this_class
+
+    def setup_ticket_type(self):
+        ticket_type = TicketTypeFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__source=3,
+            ticketing_event__slug="testslug",
+            live=True,
+            has_coupon=False,
+            conference_only_pass=True)
+        return ticket_type
+
+    def setup_package(self):
+        package = TicketPackageFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__source=3,
+            ticketing_event__slug="testpackageslug",
+            whole_shebang=True,
+            live=True,
+            has_coupon=False)
+        return package
 
     def set_social_media(self, social_network="Website"):
         username = None

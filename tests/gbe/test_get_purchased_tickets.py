@@ -17,6 +17,14 @@ class TestGetPurchasedTickets(TestCase):
 
         self.assertEqual(ticket_set, [])
 
+    def test_no_canceled_purchases(self):
+        '''should get no tickets, this person never purchased any
+        '''
+        from gbe.ticketing_idd_interface import get_purchased_tickets
+        purchase = TransactionFactory(status="canceled")
+        ticket_set = get_purchased_tickets(purchase.purchaser.matched_to_user)
+        self.assertEqual(ticket_set, [])
+
     def test_buys_each_year(self):
         '''should get current and upcoming conference tickets, including fees
         '''

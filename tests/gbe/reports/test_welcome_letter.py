@@ -20,6 +20,8 @@ from tests.functions.gbe_functions import (
     login_as
 )
 from tests.functions.scheduler_functions import get_or_create_profile
+from tests.functions.ticketing_functions import set_form
+from gbetext import unsigned_forms_message
 
 
 class TestWelcomeLetter(TestCase):
@@ -69,9 +71,13 @@ class TestWelcomeLetter(TestCase):
 
     def test_personal_schedule_teacher_booking(self):
         '''a teacher booked into a class, with an active role condition
-           should have a booking
+           should have a booking.  Also includes unsigned form warning
         '''
         role_condition = RoleEligibilityConditionFactory()
+        sign_condition = RoleEligibilityConditionFactory(
+            role="Teacher",
+            checklistitem__description="Landing page sign!",
+            checklistitem__e_sign_this=set_form())
         context = ClassContext()
 
         login_as(self.priv_profile, self)
@@ -89,6 +95,7 @@ class TestWelcomeLetter(TestCase):
             response,
             str(context.room))
         self.assertContains(response, "dedicated-sched")
+        self.assertContains(response, unsigned_forms_message)
 
     def test_personal_schedule_volunteer_w_slug(self):
         '''a teacher booked into a class, with an active role condition
@@ -135,11 +142,19 @@ class TestWelcomeLetter(TestCase):
         '''a ticket purchaser gets a checklist item
         '''
         transaction = TransactionFactory()
+        canceled_trans = TransactionFactory(
+            ticket_item__ticketing_event__conference=transaction.
+            ticket_item.ticketing_event.conference,
+            purchaser=transaction.purchaser,
+            status="canceled")
         purchaser = ProfileFactory(
             user_object=transaction.purchaser.matched_to_user)
         conference = transaction.ticket_item.ticketing_event.conference
         ticket_condition = TicketingEligibilityConditionFactory(
             tickets=[transaction.ticket_item]
+        )
+        other_ticket_condition = TicketingEligibilityConditionFactory(
+            tickets=[canceled_trans.ticket_item]
         )
         context = ClassContext(
             conference=transaction.ticket_item.ticketing_event.conference)
@@ -159,6 +174,9 @@ class TestWelcomeLetter(TestCase):
         self.assertContains(
             response,
             str(ticket_condition.checklistitem))
+        self.assertNotContains(
+            response,
+            str(other_ticket_condition.checklistitem))
 
     def test_personal_schedule_only_active(self):
         '''a teacher booked into a class, with an active role condition

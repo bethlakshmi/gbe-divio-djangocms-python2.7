@@ -336,8 +336,6 @@ def bpt_save_order_to_database(event_id, bpt_order):
         datetime.strptime(
             bpt_order.find('order_time').text,
             "%Y-%m-%d %H:%M:%S"))
-    trans.shipping_method = str(bpt_order.find('shipping_method').text)
-    trans.order_notes = str(bpt_order.find('order_notes').text)
     trans.reference = str(bpt_order.find('ticket_number').text)
     trans.payment_source = 'Brown Paper Tickets'
 

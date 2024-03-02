@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
-from ticketing.models import TicketingEvents
+from ticketing.models import (
+    TicketingEvents,
+    TicketPackage,
+    TicketType,
+)
 from gbe.functions import (
     conference_slugs,
     get_current_conference,
@@ -68,7 +72,15 @@ def ticket_items(request, conference_choice=None):
                     request.GET.get('updated_tickets', '[]')),
                'updated_events': eval(request.GET.get('updated_events', '[]')),
                'events': events.filter(act_submission_event=False,
-                                       vendor_submission_event=False),
+                                       vendor_submission_event=False).exclude(
+                                       source=3),
+               'humanitix_events': events.filter(act_submission_event=False,
+                                                 vendor_submission_event=False,
+                                                 source=3),
+               'ticket_types': TicketType.objects.filter(
+                    ticketing_event__conference=conference),
+               'packages': TicketPackage.objects.filter(
+                    ticketing_event__conference=conference),
                'conference_slugs': conference_slugs(),
                'conference': conference,
                'check_intro': check_intro[0].description,

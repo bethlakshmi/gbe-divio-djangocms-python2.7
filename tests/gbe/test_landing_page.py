@@ -20,6 +20,10 @@ from tests.factories.scheduler_factories import (
     SchedEventFactory,
     PeopleAllocationFactory,
 )
+from tests.factories.ticketing_factories import (
+    RoleEligibilityConditionFactory,
+    SignatureFactory,
+)
 from tests.functions.gbe_functions import (
     grant_privilege,
     login_as,
@@ -33,6 +37,7 @@ from tests.functions.scheduler_functions import (
     get_or_create_bio,
     get_or_create_profile,
 )
+from tests.functions.ticketing_functions import set_form
 from tests.contexts import (
     ActTechInfoContext,
     ClassContext,
@@ -58,9 +63,8 @@ class TestIndex(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.current_conf = ConferenceFactory(accepting_bids=True,
-                                             status='upcoming')
-        cls.previous_conf = ConferenceFactory(accepting_bids=False,
+        cls.current_conf = ConferenceFactory(status='upcoming')
+        cls.previous_conf = ConferenceFactory(accepting_bids="[]",
                                               status='completed')
 
         # User/Human setup
@@ -148,6 +152,10 @@ class TestIndex(TestCase):
                 people=people,
                 role='Teacher',
             )
+        cls.condition = RoleEligibilityConditionFactory(
+            role="Teacher",
+            checklistitem__description="Landing page sign!",
+            checklistitem__e_sign_this=set_form())
 
     def setUp(self):
         self.client = Client()
@@ -208,6 +216,9 @@ class TestIndex(TestCase):
             self.current_costume.b_title in content)
         assert does_not_show_previous
         assert shows_all_current
+        self.assertContains(response, "Apply to Perform")
+        self.assertContains(response, "Apply to Teach")
+        self.assertContains(response, "Volunteer")
         self.assert_event_is_present(response, self.current_sched)
         self.assert_event_is_not_present(response, self.previous_sched)
         self.assert_event_is_present(response, self.current_class_sched)
@@ -216,8 +227,27 @@ class TestIndex(TestCase):
         self.assertContains(response, reverse(
             "volunteer_signup",
             urlconf="gbe.scheduling.urls"))
+        self.assertContains(response, reverse("sign_forms",
+                                              urlconf='ticketing.urls'))
+
+    def test_conf_not_accepting_bids(self):
+        # No apply buttons when bidding is off
+        orig_state = self.current_conf.accepting_bids
+        self.current_conf.accepting_bids = "[]"
+        self.current_conf.save()
+        response = self.get_landing_page()
+        self.assertNotContains(response, "Apply to Perform")
+        self.assertNotContains(response, "Apply to Teach")
+        self.assertNotContains(response, "Volunteer")
+        self.current_conf.accepting_bids = orig_state
+        self.current_conf.save()
 
     def test_historical_view(self):
+        sig = SignatureFactory(
+            user=self.profile.user_object,
+            name_signed="Signed Name",
+            conference=self.current_conf,
+            signed_file=self.condition.checklistitem.e_sign_this)
         url = reverse('home', urlconf='gbe.urls')
         login_as(self.profile, self)
         response = self.client.get(
@@ -245,6 +275,8 @@ class TestIndex(TestCase):
         self.assert_event_is_not_present(response, self.current_sched)
         self.assert_event_is_present(response, self.previous_class_sched)
         self.assert_event_is_not_present(response, self.current_class_sched)
+        self.assertNotContains(response, reverse("sign_forms",
+                                                 urlconf='ticketing.urls'))
 
     def test_as_privileged_user(self):
         staff_profile = ProfileFactory()

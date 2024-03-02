@@ -286,6 +286,30 @@ def send_act_tech_reminder(act, email_type):
             from_name=template.sender.from_name)
 
 
+def send_sign_form_reminder(user, conference, email_type):
+    name = 'sign form reminder'
+    template = get_or_create_template(
+        name,
+        "sign_form_reminder",
+        "Reminder to Sign Forms")
+
+    return mail_send_gbe(
+        user.email,
+        template.sender.from_email,
+        template=name,
+        context={
+            'name': user.profile.display_name,
+            'conference': conference,
+            'sign_form_url': "http://%s%s" % (
+                Site.objects.get_current().domain,
+                reverse('sign_forms', urlconf='ticketing.urls')),
+            'unsubscribe_link': create_unsubscribe_link(
+                user.email,
+                "send_%s" % email_type)},
+            priority="medium",
+            from_name=template.sender.from_name)
+
+
 def send_unsubscribe_link(user):
     name = 'unsubscribe email'
     template = get_or_create_template(

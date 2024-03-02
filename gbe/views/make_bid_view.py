@@ -20,6 +20,7 @@ from gbe.models import (
 )
 from gbe_logging import log_func
 from gbe.functions import (
+    get_current_conference,
     validate_profile,
 )
 from gbe.email.functions import (
@@ -49,15 +50,19 @@ class MakeBidView(SubwayMapMixin, View):
     payment_form = None
     coordinated = False
     normal_redirect = reverse_lazy('home', urlconf='gbe.urls')
+    override_accept_bid = False
 
     def groundwork(self, request, args, kwargs):
-        if not Conference.objects.filter(accepting_bids=True).exists():
+        if not self.override_accept_bid and not Conference.objects.filter(
+                accepting_bids__icontains=self.bid_type).exclude(
+                status="completed").exists():
             user_message = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="NOT_ACCEPTING_BIDS",
                 defaults={
                     'summary': "Not Accepting Bids",
-                    'description': not_accepting_bids})
+                    'description': not_accepting_bids % (
+                        self.bid_type.lower())})
             messages.error(request, user_message[0].description)
             return "/"
         self.owner = validate_profile(request, require=False)
@@ -91,9 +96,11 @@ class MakeBidView(SubwayMapMixin, View):
             bid_id = kwargs.get("bid_id")
             self.bid_object = get_object_or_404(self.bid_class, pk=bid_id)
             self.conference = self.bid_object.b_conference
+        elif self.override_accept_bid:
+            self.conference = get_current_conference()
         else:
             self.conference = Conference.objects.filter(
-                    accepting_bids=True).first()
+                accepting_bids__icontains=self.bid_type).first()
 
     def get_initial(self):
         initial = {}

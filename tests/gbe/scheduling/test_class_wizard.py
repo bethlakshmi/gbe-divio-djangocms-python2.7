@@ -31,7 +31,7 @@ class TestClassWizard(TestScheduling):
         # because there was a bug around duplicate room names
         RoomFactory(name=cls.room.name)
         cls.teacher = BioFactory()
-        cls.current_conference = ConferenceFactory(accepting_bids=True)
+        cls.current_conference = ConferenceFactory()
         cls.day = ConferenceDayFactory(conference=cls.current_conference)
         cls.room.conferences.add(cls.current_conference)
         cls.test_class = ClassFactory(b_conference=cls.current_conference,

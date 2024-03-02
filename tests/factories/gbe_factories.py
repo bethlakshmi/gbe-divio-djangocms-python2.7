@@ -31,7 +31,7 @@ class ConferenceFactory(DjangoModelFactory):
 
     conference_name = Sequence(lambda n: "Test Conference %d" % n)
     conference_slug = Sequence(lambda n: "test_conf_%d" % n)
-    accepting_bids = False
+    accepting_bids = "[Act, Class, Costume, Vendor, Volunteer]"
     status = 'upcoming'
 
 
@@ -252,7 +252,6 @@ class ProfilePreferencesFactory(DjangoModelFactory):
     profile = SubFactory(ProfileFactory)
     in_hotel = "No"
     inform_about = []
-    show_hotel_infobox = True
 
 
 class CostumeFactory(DjangoModelFactory):

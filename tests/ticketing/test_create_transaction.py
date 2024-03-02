@@ -26,7 +26,7 @@ class TestIndex(TestCase):
     def setUp(self):
         self.client = Client()
         # Conference Setup
-        conference = ConferenceFactory(accepting_bids=True, status='upcoming')
+        conference = ConferenceFactory(status='upcoming')
         self.ticketing_event = TicketingEventsFactory(
             conference=conference,
             act_submission_event=True)
@@ -105,7 +105,7 @@ class TestIndex(TestCase):
         buyer = PurchaserFactory(matched_to_user=self.profile.user_object)
         login_as(self.privileged_user, self)
         response = self.client.post(
-            "%s?next=%s" % (self.url, act_review_url),
+            "%s?next=%s?changed_id=1176" % (self.url, act_review_url),
             data={'ticket_item': self.ticket.pk,
                   'profile': self.profile.pk},
             follow=True)
@@ -115,3 +115,4 @@ class TestIndex(TestCase):
             "%s?changed_id=%d" % (
                 act_review_url,
                 buyer.transaction_set.first().pk))
+        self.assertContains(response, "Act Proposals")

@@ -47,9 +47,11 @@ membership_help = '''Include the accounts of all performers in this act.  If
   show and for communication.'''
 EMPTY_PROFILE = ("Your profile needs an update, please review it, and save "
                  "it. <a href=' %s '>Update it now!</a>")
-
+SIGN_FORMS = ('You have some forms to sign.  Please get these signed before '
+              'you come to the Expo <a href = "%s">Sign some Forms!</a>')
 profile_alerts = {'empty_profile': EMPTY_PROFILE,
-                  'schedule_rehearsal': SCHEDULE_REHEARSAL}
+                  'schedule_rehearsal': SCHEDULE_REHEARSAL,
+                  'sign_form': SIGN_FORMS}
 vol_prof_update_failure = (
     '''An error occured while updating your information, and your offer to
     volunteer was not submitted.  Please try again or use the "Update Profile"
@@ -261,10 +263,16 @@ system_options = [
 source_options = [
     (0, 'Paypal'),
     (1, 'Brown Paper'),
-    (2, 'Eventbrite')]
+    (2, 'Eventbrite'),
+    (3, 'Humanitix')]
 ticket_link = {
     1: 'http://www.brownpapertickets.com/event/ID-user_id/%s/',
-    2: 'https://www.eventbrite.com/e/%s'}
+    2: 'https://www.eventbrite.com/e/%s',
+    3: 'https://events.humanitix.com/%s'}
+trans_status = (
+    ('paid', 'paid'),
+    ('canceled', 'canceled'),
+)
 role_options = (
     ('Interested', "Interested"),
     ('Moderator', "Moderator"),
@@ -413,7 +421,14 @@ unique_email_templates = {
          'category': 'registration',
          'default_base': "unsubscribe_email",
          'default_subject':
-            "Unsubscribe from GBE Mail", }, ],
+            "Unsubscribe from GBE Mail", },
+        {'name': 'sign form reminder',
+         'description': '''This email is sent to the email of any user who
+         has a role that needs to sign forms, but who has not signed at least
+         one form.''',
+         'category': 'registration',
+         'default_base': "sign_form_reminder",
+         'default_subject': "Reminder to Sign Forms", }, ],
 }
 
 default_class_submit_msg = "Your class was successfully submitted"
@@ -542,8 +557,8 @@ to register for a free account.  If you're planning on applying to perform, \
 want to teach, or are going to be a vendor or a volunteer, you need to \
 register.  You do <b>not</b> need to register if all you're doing is \
 buying tickets.'''
-not_accepting_bids = '''We're sorry, but we are not accepting bids at present.
-Please stay tuned!'''
+not_accepting_bids = '''We're sorry, but we are not accepting %s bids at
+ present.  Please stay tuned!'''
 full_login_msg = '''%s - <a href="%s">Login</a>'''
 default_deactivate_profile_admin_msg = '''This user is involved in one or \
 more activities on this site.  To protect unintended changes, the user was \
@@ -608,9 +623,11 @@ group_filter_note = '''The recipients listed here include only active users,
 who have agreed to be contacted by the Expo.  Disabled users and users who
 have set their preference to not receive email of this kind will not be
 included.'''
-intro_transaction_message = '''Transactions marked in blue are associated \
-with the "limbo" user as a placeholder, because no user matching the \
-purchaser's email could be found.'''
+intro_trans_user_message = '''Blue background = purchaser does not have an
+ account in GBE.<br>Red background = transaction has been cancelled and
+ won't show up on the user's view.'''
+intro_transaction_message = intro_trans_user_message + '''<br>Green background
+ = transaction that was just created or edited.'''
 import_transaction_message = '''A sync was attempted, check the logs for \
 errors, if 0 transactions were recieved, it can mean we are up to date, it \
 can mean we failed to import any.'''
@@ -627,9 +644,6 @@ intro_ticket_message = '''The tickets below are all the ticket events & items \
 available for the current conference.'''
 intro_ticket_assign_message = '''This grid shows what tickets are connected \
 to which GBE event.'''
-no_tickets_found_msg = '''No tickets could be found for the bpt event id.  \
-Check the BPT Event id and your connection to Brown Paper Tickets.  With no \
-tickets listed, users will be unable to purchase entrance to this event.'''
 org_id_instructions = '''The organization id has not been defined.  Go to \
 admin and set one of the following ids in the EventbriteSettings for \
 'organization_id' for debug or live.  Only events for this organization \
@@ -642,6 +656,12 @@ no_settings_error = '''There are no Eventbrite settings for this server.  Go \
 to admin and ticketing -> EventbrightSettings and enter settings.  Oauth
 token can be found in the API settings in EventBrite.  After that, return
 here to get the organization id.'''
+no_ht_settings_error = '''There are no Humanitix settings for this server.  \
+Go to admin and ticketing -> HumanitixSettings and enter settings.  API key
+ can be found in your Humantix profile under Advanced Settings --> Public API
+  Key.  Organisation ID is the Host's ID, you can find it in the URL that
+  is shown in your Profile on the Host's page, it's the inscruitable string
+  between two slashes.'''
 intro_bptevent_message = '''This page makes an 'event' in the sense of BPT \
 events.  For Paypal, it's simply a container for a set of prices.  These \
 containers define payment for act fees, vendor fees, or entry into the expo \
@@ -649,12 +669,20 @@ for all or some events.'''
 intro_make_ticket_message = '''This page makes an individual ticket (and \
 price) for either a fee or entry into the expo.  The BPT Event connected to \
 this ticket defines what the customer gets when they pay for the ticket.'''
+ticket_type_intro = '''Ticket Types in our use of Humantix represent individual
+ events in GBE.  These tickets can then be combined into packages.  Remember
+ that the cost shown here will automatically update from Humantix.'''
+ticket_package_intro = '''Ticket Packages contain ticket types, and also
+ can grant the big package qualities that events did with other systems.
+  Remember that the cost, and linked ticket types shown here will
+ automatically update from Humantix.'''
 purchase_intro_msg = '''Welcome!<br>Thanks for your interest in the Great \
 Burlesque Expo.  Below are the ticket options available for purchase. \
 There are many ways you can be a part of the convention, so please read \
 the descriptions carefully.'''
 edit_event_message = '''Event has been successfully updated.'''
 edit_ticket_message = '''Ticket has been successfully updated.'''
+edit_package_message = '''Package has been successfully updated.'''
 delete_ticket_fail_message = '''Deletion failed, transactions exist for this \
 ticket.'''
 delete_ticket_success_message = '''The ticket was successfully deleted (no \
@@ -667,7 +695,6 @@ link_event_to_ticket_success_msg = '''Successfully linked the following \
                                    tickets: '''
 unlink_event_to_ticket_success_msg = '''Successfully disconnected the  \
 following tickets from events: '''
-create_ticket_event_success_msg = "Created and linked a new BPT Event: "
 payment_details_error = '''Your choice for fee selections was not valid, \
 please check the form and try again.'''
 set_volunteer_role_summary = "Volunteer Offer %s"
@@ -713,6 +740,7 @@ a valid ticket or pass to attend the class or the conference.<br><br>Want \
 more interested attendees?  We fully endorse shameless promotion! Post your \
 event page to your fans on social media, email, your website or anywhere and \
 get the word out!'''
+view_signed_msg = '''See all forms you've electronically signed: '''
 current_bid_msg = '''We are only showing bids for the current conference. \
 If you have proposed acts, classes, or vendors in previous click below.'''
 historic_bid_msg = '''These bids are not currently available for \
@@ -829,3 +857,11 @@ slug_safety_msgs = {
     conference year.  Any events assigned to this event may appear in diplays
     associated with that conference in a number of unpredictable places.'''
 }
+sign_form_msg = '''Please sign these forms prior to coming to the Expo'''
+all_signed_msg = '''Thanks for signing your forms!'''
+welcome_message = '''Welcome!  Here's a schedule for your participation in
+ the expo!  Keep in mind that some times (like rehearsals) are generalities
+  and that last minute shifts in class schedules could not be printed.'''
+unsigned_forms_message = '''Please sign at the registration desk or save
+ time and sign by logging into our website and following the prompts in
+  your home page.'''

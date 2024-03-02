@@ -14,7 +14,11 @@ from tests.factories.scheduler_factories import (
     ResourceAllocationFactory,
     SchedEventFactory,
 )
-from tests.factories.ticketing_factories import TicketItemFactory
+from tests.factories.ticketing_factories import (
+    TicketItemFactory,
+    TicketTypeFactory,
+    TicketPackageFactory,
+)
 import pytz
 from tests.functions.scheduler_functions import (
     get_or_create_bio,
@@ -142,3 +146,35 @@ class ShowContext:
             has_coupon=False)
         this_show.ticketing_event.linked_events.add(self.sched_event)
         return package, this_show
+
+    def setup_ticket_type(self):
+        this_show = TicketTypeFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__source=3,
+            ticketing_event__slug="testslug",
+            live=True,
+            has_coupon=False)
+        this_show.linked_events.add(self.sched_event)
+        return this_show
+
+    def setup_package(self):
+        package = TicketPackageFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__source=3,
+            ticketing_event__slug="testpackageslug",
+            whole_shebang=True,
+            live=True,
+            has_coupon=False)
+        return package
+
+    def setup_composite_package(self):
+        ticket_type = self.setup_ticket_type()
+        package = TicketPackageFactory(
+            ticketing_event__conference=self.conference,
+            ticketing_event__source=3,
+            ticketing_event__slug="testpackageslug",
+            whole_shebang=False,
+            live=True,
+            has_coupon=False)
+        package.ticket_types.add(ticket_type)
+        return ticket_type, package

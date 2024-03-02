@@ -15,6 +15,16 @@
         <a href="{% url 'ticketing:bptevent_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
         </span></div></th>
       {% endfor %}
+      {% for ticket_type in ticket_types %}
+        <th><div><span>
+        <a href="{% url 'ticketing:ticket_type_update' ticket_type.id %}" class="gbe-table-link">{{ ticket_type.title }}</a>
+        </span></div></th>
+      {% endfor %}
+      {% for package in packages %}
+        <th><div><span>
+        <a href="{% url 'ticketing:ticket_package_update' package.id %}" class="gbe-table-link">{{ package.title }}</a>
+        </span></div></th>
+      {% endfor %}
       </tr>
     </thead>
     <tfoot>
@@ -23,6 +33,16 @@
       {% for ticketing_event in events %}
         <th><div><span>
         <a href="{% url 'ticketing:bptevent_edit' ticketing_event.id %}" class="gbe-table-link">{{ ticketing_event.title }}</a>
+        </span></div></th>
+      {% endfor %}
+      {% for ticket_type in ticket_types %}
+        <th><div><span>
+        <a href="{% url 'ticketing:ticket_type_update' ticket_type.id %}" class="gbe-table-link">{{ ticket_type.title }}</a>
+        </span></div></th>
+      {% endfor %}
+      {% for package in packages %}
+        <th><div><span>
+        <a href="{% url 'ticketing:ticket_package_update' package.id %}" class="gbe-table-link">{{ package.title }}</a>
         </span></div></th>
       {% endfor %}
       </tr>
@@ -34,10 +54,27 @@
       {% for ticketing_event in events %}
         <td class="text-center">
           {% if gbe_event in ticketing_event.linked_events.all %}
-          <a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.event_id 'off' gbe_event.pk %}" data-toggle="tooltip" title="Remove Event from Ticket">
+          <a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.pk 'TicketingEvents' 'off' gbe_event.pk %}" data-toggle="tooltip" title="Remove Event from Ticket">
             <i class="fas fa-check gbe-text-success active-check"></i></a>
           {% elif ticketing_event.include_most and gbe_event.event_style != "Master Class" %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most'"></i>
-          {% else %}<a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.event_id 'on' gbe_event.pk %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Add Event to Ticket"><i class="fas fa-plus link-events-plus"></i></a>{% endif %}
+          {% else %}<a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.pk 'TicketingEvents' 'on' gbe_event.pk %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Add Event to Ticket"><i class="fas fa-plus link-events-plus"></i></a>{% endif %}
+        </td>
+      {% endfor %}
+      {% for ticketing_event in ticket_types %}
+        <td class="text-center">
+          {% if gbe_event in ticketing_event.linked_events.all %}
+          <a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.pk 'TicketType' 'off' gbe_event.pk %}" data-toggle="tooltip" title="Remove Event from Ticket">
+            <i class="fas fa-check gbe-text-success active-check"></i></a>
+          {% elif ticketing_event.include_most and gbe_event.event_style != "Master Class" %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most'"></i>
+          {% else %}<a href="{% url 'ticketing:set_ticket_to_event' ticketing_event.pk 'TicketType' 'on' gbe_event.pk %}?next={{ request.get_full_path }}" data-toggle="tooltip" title="Add Event to Ticket"><i class="fas fa-plus link-events-plus"></i></a>{% endif %}
+        </td>
+      {% endfor %}
+      {% for package in packages %}
+        <td class="text-center">
+          {% if gbe_event in package.linked_events %}
+            <i class="fas fa-check" data-toggle="tooltip" title="To change, go to Humanitix and remove any ticket type linked to this event"></i>
+          {% elif package.whole_shebang and gbe_event.event_style != "Master Class" %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit package and remove 'Whole Shebang'"></i>
+          {% else %}<i class="fas fa-plus link-events-plus" title="To change, edit package select Whole Shebang or select a ticket type that links to this event"></i>{% endif %}
         </td>
       {% endfor %}
       </tr>
@@ -48,7 +85,17 @@
         <td class="text-center">
           {% if ticketing_event.include_conference or ticketing_event.include_most %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Includes Most' or 'Includes Conference'"></i>{% else %}&nbsp;{% endif %}
         </td>
-      {% endfor %}
+        {% endfor %}
+        {% for ticketing_event in ticket_types %}
+        <td class="text-center">
+          {% if ticketing_event.conference_only_pass %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit ticket and remove 'Conference Only Pass'"></i>{% else %}&nbsp;{% endif %}
+        </td>
+        {% endfor %}
+        {% for ticketing_event in packages %}
+        <td class="text-center">
+          {% if ticketing_event.conference_only_pass or ticketing_event.whole_shebang %}<i class="fas fa-check" data-toggle="tooltip" title="To change, edit package and remove 'Whole Shebang' or 'Conference Only Pass'"></i>{% else %}&nbsp;{% endif %}
+        </td>
+        {% endfor %}
     </tr>
     </tbody>
   </table>

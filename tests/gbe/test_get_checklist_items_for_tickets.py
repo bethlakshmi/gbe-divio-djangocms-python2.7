@@ -27,7 +27,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
         from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         checklist_items = get_checklist_items_for_tickets(
-            self.purchaser,
+            self.purchaser.user_object,
             self.conference,
             [])
         self.assertEqual(len(checklist_items), 0)
@@ -38,7 +38,7 @@ class TestGetCheckListForTickets(TestCase):
         '''
         from gbe.ticketing_idd_interface import get_checklist_items_for_tickets
         checklist_items = get_checklist_items_for_tickets(
-            self.purchaser,
+            self.purchaser.user_object,
             self.conference,
             [])
         self.assertEqual(len(checklist_items), 0)
@@ -52,7 +52,7 @@ class TestGetCheckListForTickets(TestCase):
             tickets=[self.transaction.ticket_item])
 
         checklist_items = get_checklist_items_for_tickets(
-            self.purchaser,
+            self.purchaser.user_object,
             self.conference,
             [self.transaction.ticket_item])
         self.assertEqual(len(checklist_items), 1)
@@ -74,7 +74,7 @@ class TestGetCheckListForTickets(TestCase):
             ticket_item=self.transaction.ticket_item)
 
         checklist_items = get_checklist_items_for_tickets(
-            self.purchaser,
+            self.purchaser.user_object,
             self.conference,
             [self.transaction.ticket_item,
              another_transaction.ticket_item])
@@ -96,7 +96,7 @@ class TestGetCheckListForTickets(TestCase):
             tickets=[self.transaction.ticket_item])
 
         checklist_items = get_checklist_items_for_tickets(
-            self.purchaser,
+            self.purchaser.user_object,
             self.conference,
             [self.transaction.ticket_item])
         self.assertEqual(len(checklist_items), 1)
@@ -119,7 +119,7 @@ class TestGetCheckListForTickets(TestCase):
             tickets=[self.transaction.ticket_item])
 
         checklist_items = get_checklist_items_for_tickets(
-            self.purchaser,
+            self.purchaser.user_object,
             self.conference,
             [])
         self.assertEqual(len(checklist_items), 0)

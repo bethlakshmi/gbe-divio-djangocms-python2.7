@@ -5,8 +5,10 @@ from gbetext import (
     source_options,
     system_options,
     ticket_link,
+    trans_status,
 )
 from datetime import datetime
+from filer.fields.image import FilerFileField
 
 
 class BrownPaperSettings(models.Model):
@@ -40,6 +42,26 @@ class EventbriteSettings(models.Model):
 
     class Meta:
         verbose_name_plural = 'Eventbrite Settings'
+
+
+class HumanitixSettings(models.Model):
+    '''
+    if oath exists, the "sync" thread will first attempt to get org id
+    if org id is present, then it will sync events & tickets & transactions
+    automatically and/or on button click in ticketing
+    '''
+    api_key = models.CharField(max_length=500)
+    organiser_id = models.CharField(max_length=128, blank=True, null=True)
+    system = models.IntegerField(choices=system_options, unique=True)
+    active_sync = models.BooleanField()
+    endpoint = models.CharField(max_length=200)
+    widget_page = models.URLField(blank=True)
+
+    def __str__(self):
+        return system_options[self.system][1]
+
+    class Meta:
+        verbose_name_plural = 'Humanitix Settings'
 
 
 class SyncStatus(models.Model):
@@ -94,6 +116,7 @@ class TicketingEvents(models.Model):
     title = models.CharField(max_length=50, blank=True, null=True)
     display_icon = models.CharField(max_length=50, blank=True)
     source = models.IntegerField(choices=source_options, default=0)
+    slug = models.SlugField(blank=True)
 
     def __str__(self):
         return "%s - %s" % (self.event_id, self.title)
@@ -113,7 +136,10 @@ class TicketingEvents(models.Model):
 
     @property
     def link(self):
-        return ticket_link[self.source] % self.event_id
+        if self.source != 3:
+            return ticket_link[self.source] % self.event_id
+        else:
+            return ticket_link[self.source] % self.slug
 
     class Meta:
         verbose_name_plural = 'Ticketing Events'
@@ -137,6 +163,7 @@ class TicketItem(models.Model):
     '''
     ticket_id = models.CharField(max_length=30)
     title = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
     cost = models.DecimalField(max_digits=20, decimal_places=2)
     datestamp = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=30)
@@ -151,6 +178,7 @@ class TicketItem(models.Model):
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     is_minimum = models.BooleanField(default=False)
+    conference_only_pass = models.BooleanField(default=False)
 
     def __str__(self):
         basic = "%s (%s)" % (self.title, self.ticket_id)
@@ -175,6 +203,30 @@ class TicketItem(models.Model):
         ordering = ['cost']
 
 
+class TicketType(TicketItem):
+    '''With Humanitix, the event is the whole conference.  Ticket types
+    are what can actually link to Scheduled Events.'''
+    linked_events = models.ManyToManyField('scheduler.Event', blank=True)
+
+    def __str__(self):
+        return "%s (%s)" % (self.title, self.ticket_id)
+
+
+class TicketPackage(TicketItem):
+    '''Humantix gives us a way to package tickets together, these also work
+    like our passes - Whole Shebang, Conference, etc.'''
+    ticket_types = models.ManyToManyField(TicketType, blank=True)
+    whole_shebang = models.BooleanField(default=False)
+
+    @property
+    def linked_events(self):
+        from scheduler.models import Event
+        return Event.objects.filter(tickettype__ticketpackage=self)
+
+    def __str__(self):
+        return "%s (%s)" % (self.title, self.ticket_id)
+
+
 class Purchaser(models.Model):
     '''
     This class is used to hold the information for a given person who has
@@ -188,11 +240,6 @@ class Purchaser(models.Model):
 
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    address = models.TextField()
-    city = models.CharField(max_length=50)
-    state = models.CharField(max_length=50)
-    zip = models.CharField(max_length=50)
-    country = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     phone = models.CharField(max_length=50)
 
@@ -215,19 +262,18 @@ class Transaction(models.Model):
 
     ticket_item = models.ForeignKey(TicketItem, on_delete=models.CASCADE)
     purchaser = models.ForeignKey(Purchaser, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    amount = models.DecimalField(max_digits=20,
+                                 decimal_places=2,
+                                 blank=True,
+                                 null=True)
     order_date = models.DateTimeField()
-    shipping_method = models.CharField(max_length=50)
-    order_notes = models.TextField()
-    reference = models.CharField(max_length=30)
-    payment_source = models.CharField(max_length=30)
+    reference = models.CharField(max_length=30, blank=True, null=True)
+    payment_source = models.CharField(max_length=30, default="Manual")
     import_date = models.DateTimeField(auto_now=True)
-    invoice = models.CharField(max_length=100, blank=True, null=True)
     custom = models.CharField(max_length=100, blank=True, null=True)
-
-    def total_count(self):
-        return Transaction.objects.filter(
-            purchaser=self.purchaser, ticket_item=self.ticket_item).count()
+    status = models.CharField(max_length=25,
+                              choices=trans_status,
+                              default="paid")
 
 
 class CheckListItem(models.Model):
@@ -239,9 +285,28 @@ class CheckListItem(models.Model):
     '''
     description = models.CharField(max_length=50, unique=True)
     badge_title = models.CharField(max_length=50, null=True, blank=True)
+    # presence of e_sign_this triggers our feature to get pre-signed forms
+    e_sign_this = FilerFileField(null=True,
+                                 blank=True,
+                                 on_delete=models.PROTECT)
 
     def __str__(self):
         return str(self.description)
+
+
+class Signature(models.Model):
+    # the signature of a checklist item.  If present, counts as having been
+    # signed.  If absent, user has not signed.  Users re-sign forms every
+    # conference.  Specifically keeping which form they signed.
+    signed_file = FilerFileField(null=True,
+                                 blank=True,
+                                 on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, default=None)
+    conference = models.ForeignKey('gbe.Conference',
+                                   on_delete=models.CASCADE,
+                                   blank=True, null=True)
+    name_signed = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class EligibilityCondition(models.Model):

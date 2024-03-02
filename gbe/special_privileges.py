@@ -64,6 +64,11 @@ special_menu_tree = [
      'groups':  MailToPersonView.email_permissions + (
           MailToRolesView.reviewer_permissions) + (
           MailToBiddersView.reviewer_permissions)},
+    {'title': 'Signatures',
+     'url': reverse('manage_signatures', urlconf='ticketing.urls'),
+     'parent_id': 10,
+     'id': 15,
+     'groups': ['Registrar']},
     {'title': 'Themes',
      'url': reverse('themes_list', urlconf='gbe.themes.urls'),
      'parent_id': 10,

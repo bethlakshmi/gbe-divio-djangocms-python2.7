@@ -17,6 +17,7 @@ from gbe.models import (
     UserMessage,
 )
 from gbe.ticketing_idd_interface import (
+    has_signed_forms,
     get_purchased_tickets,
     verify_performer_app_paid,
     verify_vendor_app_paid,
@@ -27,6 +28,7 @@ from gbetext import (
     current_bid_msg,
     historic_bid_msg,
     interested_explain_msg,
+    view_signed_msg,
 )
 from gbe.functions import (
     get_current_conference,
@@ -95,6 +97,16 @@ class LandingPageView(ProfileRequiredMixin, View):
         shows = []
         classes = []
         acts = Act.objects.filter(bio__pk__in=bio_ids)
+        current_sched = []
+        prev_signed_msg = None
+
+        if has_signed_forms(viewer_profile.user_object):
+            prev_signed_msg = UserMessage.objects.get_or_create(
+                view="LandingPageView",
+                code="VIEW_SIGNED_FORMS",
+                defaults={
+                    'summary': "Prompt for viewing signed forms",
+                    'description': view_signed_msg})[0].description
 
         for booking in get_schedule(
                 viewer_profile.user_object).schedule_items:
@@ -133,7 +145,9 @@ class LandingPageView(ProfileRequiredMixin, View):
                             urlconf='gbe.scheduling.urls')
             elif calendar_type == "Conference":
                 classes += [booking_item]
+
             if conference.status != "completed":
+                current_sched += [booking]
                 if calendar_type == "General" and (
                         booking.commitment is not None):
                     shows += [(booking.event,
@@ -159,11 +173,11 @@ class LandingPageView(ProfileRequiredMixin, View):
             acts = acts.filter(b_conference__status="completed")
         else:
             acts = acts.exclude(b_conference__status="completed")
-
         context = {
+            'current_conf': current_conf,
             'profile': viewer_profile,
             'historical': self.historical,
-            'alerts': viewer_profile.alerts(classes),
+            'alerts': viewer_profile.alerts(current_conf, current_sched),
             'bios': Bio.objects.filter(pk__in=bio_ids).order_by('name'),
             'manage_shows': manage_shows,
             'businesses': viewer_profile.business_set.all(),
@@ -184,6 +198,7 @@ class LandingPageView(ProfileRequiredMixin, View):
             'vendor_paid': verify_vendor_app_paid(
                 viewer_profile.user_object.username,
                 current_conf),
+            'prev_signed_msg': prev_signed_msg
             }
         context.update(fetch_article_context())
         if not self.historical:

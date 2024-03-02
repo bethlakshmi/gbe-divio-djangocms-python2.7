@@ -38,7 +38,6 @@ profile_preferences_help_texts = {
 profile_preferences_labels = {
     'inform_about': 'Please let me know about...',
     'in_hotel': 'I am staying at the hotel',
-    'show_hotel_infobox': ('Show hotel booking info on your landing page?'),
     'send_daily_schedule': ('Send me my schedule'),
     'send_bid_notifications': (
       'Email me based on my past and current proposals'),
@@ -724,17 +723,9 @@ ticket_item_help_text = {
 }
 link_event_labels = {
     'ticketing_events': "Choose from existing tickets",
+    'ticket_types': "Chose from Humanitix Ticket Types",
     'event_id': "Ticket Event Id",
     'display_icon': "Display Icon"
-}
-link_event_help_text = {
-    'display_icon': '''What is shown on the 'I Want to Buy Tickets'
-        page.  Description is not shown there, it's pulled from BPT but not
-        shown.  Display Icon must come from http://simplelineicons.com/
-        https://icons.getbootstrap.com/ (version 1.10.2) or
-        https://nagoshiashumari.github.io/Rpg-Awesome/
-        -- NOTE:  use only the icon class, for example
-        <i class="JUST USE THIS STUFF"></i>'''
 }
 ticketing_event_labels = {
     'act_submission_event': 'Act Submission Fee?:',
@@ -758,7 +749,15 @@ ticketing_event_help_text = {
     'include_most': ('Everything except Master Classes and Volunteer '
                      'Opportunities'),
     'ticket_style': 'Special instructions for Reg Desk',
-    'display_icon': link_event_help_text['display_icon'],
+    'display_icon': '''What is shown on the 'I Want to Buy Tickets'
+        page.  Description is not shown there, it's pulled from BPT but not
+        shown.  Display Icon must come from http://simplelineicons.com/
+        https://icons.getbootstrap.com/ (version 1.10.2) or
+        https://nagoshiashumari.github.io/Rpg-Awesome/
+        -- NOTE:  use only the icon class, for example
+        <i class="JUST USE THIS STUFF"></i>''',
+    'slug': 'At present, the slug is only used for Humanitix tickets, as \
+    part of the URL generation.'
 }
 
 donation_labels = {'donation': 'Fee (pay what you will)'}
@@ -948,3 +947,6 @@ style_value_help = {
 }
 sender_name_help = ('The name of the sender.  Recipients will get email ' +
                     'from "Sender Name <From>')
+event_search_guide = "You can search by title, event type or id (pk)"
+resource_search_guide = '''You can search by name (of room), or id (pk) -
+ pardon the mess, there is residue from old data that needs cleanup'''

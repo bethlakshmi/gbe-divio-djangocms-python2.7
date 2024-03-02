@@ -36,9 +36,11 @@ class TestGetCheckListForRoles(TestCase):
         no_schedule = get_schedule(
                 no_match_profile.user_object,
                 labels=[self.conference.conference_slug]).schedule_items
-        checklist_items = get_checklist_items_for_roles(
+        checklist_items, forms_to_sign = get_checklist_items_for_roles(
+            no_match_profile.user_object,
             no_schedule,
-            [])
+            [],
+            self.conference)
 
         self.assertEqual(len(checklist_items), 0)
 
@@ -47,7 +49,11 @@ class TestGetCheckListForRoles(TestCase):
             purchaser has no roles in this conference
         '''
         from gbe.ticketing_idd_interface import get_checklist_items_for_roles
-        checklist_items = get_checklist_items_for_roles([], [])
+        checklist_items, forms_to_sign = get_checklist_items_for_roles(
+            self.teacher.contact.user_object,
+            [],
+            [],
+            self.conference)
 
         self.assertEqual(len(checklist_items), 0)
 
@@ -56,9 +62,11 @@ class TestGetCheckListForRoles(TestCase):
             the profile fits the role, item is given
         '''
         from gbe.ticketing_idd_interface import get_checklist_items_for_roles
-        checklist_items = get_checklist_items_for_roles(
+        checklist_items, forms_to_sign = get_checklist_items_for_roles(
+            self.teacher.contact.user_object,
             self.schedule,
-            [])
+            [],
+            self.conference)
 
         self.assertEqual(len(checklist_items), 1)
         self.assertEqual(checklist_items["Teacher"],
@@ -81,9 +89,11 @@ class TestGetCheckListForRoles(TestCase):
                 self.teacher.contact.user_object,
                 labels=[self.conference.conference_slug]).schedule_items
 
-        checklist_items = get_checklist_items_for_roles(
+        checklist_items, forms_to_sign = get_checklist_items_for_roles(
+            self.teacher.contact.user_object,
             self.schedule,
-            [])
+            [],
+            self.conference)
 
         self.assertEqual(len(checklist_items), 2)
         self.assertEqual(checklist_items['Teacher'],
@@ -99,9 +109,11 @@ class TestGetCheckListForRoles(TestCase):
         from gbe.ticketing_idd_interface import get_checklist_items_for_roles
         another_match = RoleEligibilityConditionFactory()
 
-        checklist_items = get_checklist_items_for_roles(
+        checklist_items, forms_to_sign = get_checklist_items_for_roles(
+            self.teacher.contact.user_object,
             self.schedule,
-            [])
+            [],
+            self.conference)
 
         self.assertEqual(len(checklist_items), 1)
         self.assertEqual(checklist_items["Teacher"],
@@ -127,8 +139,10 @@ class TestGetCheckListForRoles(TestCase):
                 self.teacher.contact.user_object,
                 labels=[self.conference.conference_slug]).schedule_items
 
-        checklist_items = get_checklist_items_for_roles(
+        checklist_items, forms_to_sign = get_checklist_items_for_roles(
+            self.teacher.contact.user_object,
             self.schedule,
-            [])
+            [],
+            self.conference)
 
         self.assertEqual(len(checklist_items), 0)

@@ -6,6 +6,7 @@ from tests.factories.gbe_factories import (
 )
 from tests.factories.ticketing_factories import (
     RoleEligibilityConditionFactory,
+    SignatureFactory,
     TransactionFactory,
     TicketingExclusionFactory,
 )
@@ -14,6 +15,7 @@ from tests.functions.gbe_functions import (
     grant_privilege,
     login_as
 )
+from tests.functions.ticketing_functions import set_form
 
 
 class TestPerformerCompView(TestCase):
@@ -37,7 +39,7 @@ class TestPerformerCompView(TestCase):
         self.assertContains(response, "Performer Comps")
 
     def test_old_conf_succeed(self):
-        old_conf = ConferenceFactory(status="completed", accepting_bids=False)
+        old_conf = ConferenceFactory(status="completed", accepting_bids="[]")
         login_as(self.priv_profile, self)
         response = self.client.get(
             "%s?conf_slug=%s&submit=Select+conference" % (
@@ -48,6 +50,10 @@ class TestPerformerCompView(TestCase):
 
     def test_performer_one_show(self):
         role_condition = RoleEligibilityConditionFactory(role="Performer")
+        sign_condition = RoleEligibilityConditionFactory(
+            role="Performer",
+            checklistitem__description="Performer comp sign!",
+            checklistitem__e_sign_this=set_form())
         context = ShowContext()
 
         login_as(self.priv_profile, self)
@@ -57,6 +63,9 @@ class TestPerformerCompView(TestCase):
             response,
             str(role_condition.checklistitem),
             msg_prefix="Role condition for performer was not found")
+        self.assertContains(
+            response,
+            sign_condition.checklistitem.description)
         self.assertContains(
             response,
             str(context.performer.contact),
@@ -99,6 +108,15 @@ class TestPerformerCompView(TestCase):
         ticketingexclusion = TicketingExclusionFactory(
             condition=role_condition,
             tickets=[transaction.ticket_item])
+        sign_condition = RoleEligibilityConditionFactory(
+            role="Performer",
+            checklistitem__description="Performer comp sign!",
+            checklistitem__e_sign_this=set_form())
+        sig = SignatureFactory(
+            user=context.performer.contact.user_object,
+            name_signed="Signed Name",
+            conference=context.conference,
+            signed_file=sign_condition.checklistitem.e_sign_this)
 
         login_as(self.priv_profile, self)
         response = self.client.get(self.url)
@@ -111,3 +129,7 @@ class TestPerformerCompView(TestCase):
             response,
             str(context.performer.contact),
             msg_prefix="Performer w no stuff shouldn't be here")
+        self.assertNotContains(
+            response,
+            sign_condition.checklistitem.description,
+            msg_prefix="Sign Form shows despite signing")
