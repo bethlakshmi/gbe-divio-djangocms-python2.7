@@ -8,7 +8,6 @@ INSTALLED_ADDONS = [
     'aldryn-django',
     'aldryn-sso',
     'aldryn-django-cms',
-    'aldryn-common',
     'djangocms-bootstrap4',
     'djangocms-file',
     'djangocms-history',
