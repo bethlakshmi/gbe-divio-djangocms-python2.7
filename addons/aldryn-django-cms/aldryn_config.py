@@ -85,6 +85,8 @@ class Form(forms.BaseForm):
             'cms.context_processors.cms_settings',
         ])
 
+        settings['CMS_CONFIRM_VERSION4'] = True
+
         middlewares = [
             'cms.middleware.user.CurrentUserMiddleware',
             'cms.middleware.page.CurrentPageMiddleware',
