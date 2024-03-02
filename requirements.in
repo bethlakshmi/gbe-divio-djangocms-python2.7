@@ -13,7 +13,7 @@ https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-snippet/3.1.1/2bf18
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-style/3.0.0/7f83861c-9e68-4dcc-949b-48d429e4fead/djangocms-style-3.0.0.tar.gz#egg=djangocms-style==3.0.0
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-text-ckeditor/5.1.1.2/b520a1fc-b9a2-4dc1-a8c6-7e953aade8de/djangocms-text-ckeditor-5.1.1.2.tar.gz#egg=djangocms-text-ckeditor==5.1.1.2
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-video/3.1.0/f42e8d21-88a1-4b84-bf72-40d4dccc54a0/djangocms-video-3.1.0.tar.gz#egg=djangocms-video==3.1.0
-https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/2.2.6/de2941f5-d8de-40ca-8ca1-b3533b0f61db/django-filer-2.2.6.tar.gz#egg=django-filer==2.2.6
+https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/3.1.1/27446c5d-f6bb-447c-b3bf-f8a1a0fbc1a1/django-filer-3.1.1.tar.gz#egg=django-filer==3.1.1
 # </INSTALLED_ADDONS>
 django-tempus-dominus
 django-formtools
