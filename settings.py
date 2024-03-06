@@ -9,6 +9,7 @@ INSTALLED_ADDONS = [
     'aldryn-sso',
     'aldryn-django-cms',
     'djangocms-file',
+    'djangocms-history',
     'djangocms-icon',
     'djangocms-link',
     'djangocms-picture',
