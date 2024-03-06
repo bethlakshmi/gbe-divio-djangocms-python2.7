@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import re_path
 from gbe.scheduling.views import (
     ApproveVolunteerView,
     ClassWizardView,
@@ -36,97 +36,97 @@ from gbe.scheduling.views import (
 app_name = "scheduling"
 
 urlpatterns = [
-    url(r'^conference/manage/(?P<day_id>\d+)/?$',
+    re_path(r'^conference/manage/(?P<day_id>\d+)/?$',
         ManageConferenceView.as_view(),
         name='schedule_conference'),
-    url(r'^conference/manage/?$',
+    re_path(r'^conference/manage/?$',
         ManageConferenceView.as_view(),
         name='manage_conference'),
 
-    url(r'^scheduling/manage/?$',
+    re_path(r'^scheduling/manage/?$',
         ManageEventsView.as_view(), name='manage_event_list'),
-    url(r'^scheduling/manage/(?P<conference_slug>[-\w]+)/?$',
+    re_path(r'^scheduling/manage/(?P<conference_slug>[-\w]+)/?$',
         ManageEventsView.as_view(), name='manage_event_list'),
-    url(r'^scheduler/delete_occurrence/(?P<occurrence_id>\d+)/?$',
+    re_path(r'^scheduler/delete_occurrence/(?P<occurrence_id>\d+)/?$',
         DeleteEventView.as_view(), name='delete_occurrence'),
-    url(r'^scheduling/show_dashboard/(?P<occurrence_id>\d+)/?$',
+    re_path(r'^scheduling/show_dashboard/(?P<occurrence_id>\d+)/?$',
         ShowDashboard.as_view(),
         name='show_dashboard'),
 
-    url(r'^scheduling/create_class_wizard/(?P<conference>[-\w]+)/?$',
+    re_path(r'^scheduling/create_class_wizard/(?P<conference>[-\w]+)/?$',
         ClassWizardView.as_view(), name='create_class_wizard'),
-    url(r'^scheduling/create_staff_area_wizard/(?P<conference>[-\w]+)/?$',
+    re_path(r'^scheduling/create_staff_area_wizard/(?P<conference>[-\w]+)/?$',
         StaffAreaWizardView.as_view(), name='staff_area_wizard'),
-    url(r'^scheduling/create_rehearsal_wizard/(?P<conference>[-\w]+)/?$',
+    re_path(r'^scheduling/create_rehearsal_wizard/(?P<conference>[-\w]+)/?$',
         RehearsalWizardView.as_view(), name='rehearsal_wizard'),
-    url(r'^scheduling/create_ticketed_wizard/(?P<conference>[-\w]+)/' +
+    re_path(r'^scheduling/create_ticketed_wizard/(?P<conference>[-\w]+)/' +
         '(?P<event_type>[-\w]+)/?$',
         TicketedEventWizardView.as_view(),
         name='create_ticketed_event_wizard'),
-    url(r'^scheduling/create_volunteer_wizard/(?P<conference>[-\w]+)/?$',
+    re_path(r'^scheduling/create_volunteer_wizard/(?P<conference>[-\w]+)/?$',
         VolunteerWizardView.as_view(), name='create_volunteer_wizard'),
-    url(r'^scheduling/create_event_wizard/(?P<conference>[-\w]+)/?$',
+    re_path(r'^scheduling/create_event_wizard/(?P<conference>[-\w]+)/?$',
         EventWizardView.as_view(), name='create_event_wizard'),
-    url(r'^scheduling/edit/(?P<conference>[-\w]+)/(?P<occurrence_id>\d+)/?$',
+    re_path(r'^scheduling/edit/(?P<conference>[-\w]+)/(?P<occurrence_id>\d+)/?$',
         EditEventView.as_view(),
         name='edit_event'),
-    url(r'^scheduling/show_edit/(?P<conference>[-\w]+)/' +
+    re_path(r'^scheduling/show_edit/(?P<conference>[-\w]+)/' +
         '(?P<occurrence_id>\d+)/?$',
         EditShowView.as_view(),
         name='edit_show'),
-    url(r'^scheduling/class_edit/(?P<conference>[-\w]+)/' +
+    re_path(r'^scheduling/class_edit/(?P<conference>[-\w]+)/' +
         '(?P<occurrence_id>\d+)/?$',
         EditClassView.as_view(),
         name='edit_class'),
-    url(r'^scheduling/volunteer_edit/(?P<conference>[-\w]+)/' +
+    re_path(r'^scheduling/volunteer_edit/(?P<conference>[-\w]+)/' +
         '(?P<occurrence_id>\d+)/?$',
         EditVolunteerView.as_view(),
         name='edit_volunteer'),
-    url(r'^scheduling/staff_edit/(?P<staff_id>\d+)/?$',
+    re_path(r'^scheduling/staff_edit/(?P<staff_id>\d+)/?$',
         EditStaffAreaView.as_view(),
         name='edit_staff'),
-    url(r'^scheduling/manage-show-opps/(?P<conference>[-\w]+)/' +
+    re_path(r'^scheduling/manage-show-opps/(?P<conference>[-\w]+)/' +
         '(?P<occurrence_id>\d+)/?$',
         EditShowView.as_view(), name='manage_show_opp'),
-    url(r'^scheduling/manage-opps/(?P<conference>[-\w]+)/' +
+    re_path(r'^scheduling/manage-opps/(?P<conference>[-\w]+)/' +
         '(?P<occurrence_id>\d+)/?$',
         EditEventView.as_view(), name='manage_vol'),
-    url(r'^scheduling/manage-opps/(?P<staff_id>\d+)/?$',
+    re_path(r'^scheduling/manage-opps/(?P<staff_id>\d+)/?$',
         EditStaffAreaView.as_view(), name='manage_vol'),
-    url(r'^scheduling/manage-workers/(?P<conference>[-\w]+)/' +
+    re_path(r'^scheduling/manage-workers/(?P<conference>[-\w]+)/' +
         '(?P<occurrence_id>\d+)/?$',
         EditVolunteerView.as_view(), name='manage_workers'),
 
-    url(r'^scheduling/copy/(?P<occurrence_id>\d+)/?$',
+    re_path(r'^scheduling/copy/(?P<occurrence_id>\d+)/?$',
         CopyOccurrenceView.as_view(), name='copy_event_schedule'),
-    url(r'^scheduling/copy_staff/(?P<staff_id>\d+)/?$',
+    re_path(r'^scheduling/copy_staff/(?P<staff_id>\d+)/?$',
         CopyStaffAreaView.as_view(), name='copy_staff_schedule'),
 
-    url(r'^scheduling/volunteer_signup/?$',
+    re_path(r'^scheduling/volunteer_signup/?$',
         VolunteerSignupView.as_view(), name='volunteer_signup'),
-    url(r'^volunteer/review_pending/?$',
+    re_path(r'^volunteer/review_pending/?$',
         ApproveVolunteerView.as_view(), name='review_pending'),
-    url(r'^volunteer/(?P<action>approve|waitlist|reject)/' +
+    re_path(r'^volunteer/(?P<action>approve|waitlist|reject)/' +
         '(?P<public_id>\d+)/(?P<booking_id>\d+)/?$',
         ApproveVolunteerView.as_view(), name='approve_volunteer'),
-    url(r'^calendar/(?P<calendar_type>[-\w]+)/(?P<day>\d{2}-\d{2}-\d{4})/?$',
+    re_path(r'^calendar/(?P<calendar_type>[-\w]+)/(?P<day>\d{2}-\d{2}-\d{4})/?$',
         ShowCalendarView.as_view(), name='calendar_by_day'),
-    url(r'^calendar/(?P<calendar_type>[-\w]+)/?$',
+    re_path(r'^calendar/(?P<calendar_type>[-\w]+)/?$',
         ShowCalendarView.as_view(), name='calendar'),
-    url(r'^scheduling/evaluate/(?P<occurrence_id>\d+)/?$',
+    re_path(r'^scheduling/evaluate/(?P<occurrence_id>\d+)/?$',
         EvalEventView.as_view(), name='eval_event'),
-    url(r'^scheduling/favorite/(?P<occurrence_id>\d+)/(?P<state>on|off)/?$',
+    re_path(r'^scheduling/favorite/(?P<occurrence_id>\d+)/(?P<state>on|off)/?$',
         SetFavoriteView.as_view(), name='set_favorite'),
-    url(r'^scheduling/volunteer/(?P<occurrence_id>\d+)/(?P<state>on|off)/?$',
+    re_path(r'^scheduling/volunteer/(?P<occurrence_id>\d+)/(?P<state>on|off)/?$',
         SetVolunteerView.as_view(), name='set_volunteer'),
-    url(r'^scheduling/view_list/?$',
+    re_path(r'^scheduling/view_list/?$',
         ListEventsView.as_view(), name='event_list'),
-    url(r'^scheduling/view_list/(?P<event_type>[-\w]+)/?$',
+    re_path(r'^scheduling/view_list/(?P<event_type>[-\w]+)/?$',
         ListEventsView.as_view(), name='event_list'),
-    url(r'^scheduling/details/(?P<occurrence_id>\d+)/?$',
+    re_path(r'^scheduling/details/(?P<occurrence_id>\d+)/?$',
         EventDetailView.as_view(), name='detail_view'),
 
-    url(r'^volunteer-autocomplete/$',
+    re_path(r'^volunteer-autocomplete/$',
         VolunteerAutocomplete.as_view(),
         name='volunteer-autocomplete'),
 ]
