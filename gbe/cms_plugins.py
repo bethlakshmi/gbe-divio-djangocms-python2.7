@@ -1,8 +1,8 @@
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
-from django.utils.translation import ugettext as _
-from gbe.forms import ContactForm
+from django.utils.translation import gettext_lazy as _
 from cms.models.pluginmodel import CMSPlugin
+from gbe.forms import ContactForm
 from gbe.models import ArticleConfig
 from gbe.views.article_views import fetch_article_context
 

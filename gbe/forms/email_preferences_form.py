@@ -12,8 +12,7 @@ from gbe_forms_text import (
     profile_preferences_labels,
 )
 from django.utils.safestring import mark_safe
-from snowpenguin.django.recaptcha2.fields import ReCaptchaField
-from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
+from django_recaptcha.fields import ReCaptchaField
 
 
 class EmailPreferencesForm(ModelForm):
@@ -60,4 +59,4 @@ class EmailPreferencesForm(ModelForm):
 
 class EmailPreferencesNoLoginForm(EmailPreferencesForm):
     token = CharField(widget=HiddenInput, required=True)
-    verification = ReCaptchaField(widget=ReCaptchaWidget(), label="")
+    verification = ReCaptchaField(label="")

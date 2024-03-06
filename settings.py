@@ -36,7 +36,7 @@ INSTALLED_APPS.extend([
     "post_office",
     'paypal.standard.ipn',
     'import_export',
-    'snowpenguin.django.recaptcha2',
+    'django_recaptcha',
     'dal',
     'dal_select2',
     'django_addanother',

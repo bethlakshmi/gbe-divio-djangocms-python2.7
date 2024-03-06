@@ -18,7 +18,7 @@ django-formtools
 django-post_office
 django-model-utils
 django-import-export
-django-recaptcha2
+django-recaptcha
 pytz
 reportlab
 pep8
