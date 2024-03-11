@@ -13,7 +13,6 @@ https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-style/3.0.0/7f83861
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-text-ckeditor/5.1.5/d4bd7411-57f8-41a8-ae4c-841923feccca/djangocms-text-ckeditor-5.1.5.tar.gz#egg=djangocms-text-ckeditor==5.1.5
 https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-video/3.1.0/f42e8d21-88a1-4b84-bf72-40d4dccc54a0/djangocms-video-3.1.0.tar.gz#egg=djangocms-video==3.1.0
 https://divio-addons.s3-eu-central-1.amazonaws.com/django-filer/3.1.1/27446c5d-f6bb-447c-b3bf-f8a1a0fbc1a1/django-filer-3.1.1.tar.gz#egg=django-filer==3.1.1
-https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-bootstrap4/2.0.0/21ac21c0-bccc-429c-bc91-8bb9e0834f45/djangocms-bootstrap4-2.0.0.tar.gz#egg=djangocms-bootstrap4==2.0.0
 # </INSTALLED_ADDONS>
 django-tempus-dominus
 django-formtools
@@ -40,3 +39,4 @@ django-addanother
 eventbrite
 django-debug-toolbar
 django-published
+djangocms-bootstrap4==3.0.1

@@ -34,9 +34,9 @@ backports-zoneinfo==0.2.1
     # via django
 bleach[css]==6.1.0
     # via django-post-office
-boto3==1.34.56
+boto3==1.34.59
     # via django-storages
-botocore==1.34.56
+botocore==1.34.59
     # via
     #   boto3
     #   s3transfer
@@ -206,7 +206,7 @@ djangocms-attributes-field==3.0.0
     #   djangocms-picture
     #   djangocms-style
     #   djangocms-video
-djangocms-bootstrap4 @ https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-bootstrap4/2.0.0/21ac21c0-bccc-429c-bc91-8bb9e0834f45/djangocms-bootstrap4-2.0.0.tar.gz
+djangocms-bootstrap4==3.0.1
     # via -r /workspace/requirements.in
 djangocms-file @ https://divio-addons.s3-eu-central-1.amazonaws.com/djangocms-file/3.0.0/3d2621db-220e-4e62-a731-f651d6c81fc6/djangocms-file-3.0.0.tar.gz
     # via -r /workspace/requirements.in
@@ -247,7 +247,7 @@ exceptiongroup==1.2.0
     # via pytest
 factory-boy==3.3.0
     # via -r /workspace/requirements.in
-faker==24.0.0
+faker==24.1.0
     # via factory-boy
 furl==2.1.3
     # via
@@ -282,7 +282,7 @@ openpyxl==3.1.2
     # via tablib
 orderedmultidict==1.0.1
     # via furl
-packaging==23.2
+packaging==24.0
     # via
     #   django-cms
     #   djangocms-text-ckeditor
@@ -300,7 +300,7 @@ pluggy==1.4.0
     # via pytest
 psycopg2==2.9.9
     # via aldryn-django
-pytest==8.1.0
+pytest==8.1.1
     # via
     #   -r /workspace/requirements.in
     #   pytest-cov
@@ -338,7 +338,7 @@ rjsmin==1.2.1
     # via django-compressor
 s3transfer==0.10.0
     # via boto3
-sentry-sdk==1.40.6
+sentry-sdk==1.41.0
     # via aldryn-django
 six==1.16.0
     # via

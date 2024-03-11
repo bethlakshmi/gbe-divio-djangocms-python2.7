@@ -19,6 +19,7 @@ INSTALLED_ADDONS = [
     'djangocms-video',
     'django-filer',
     # </INSTALLED_ADDONS>
+    'djangocms-bootstrap4',
 ]
 
 PAYPAL_BUY_BUTTON_IMAGE = "/static/img/paysubmit.png"
