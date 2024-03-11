@@ -51,7 +51,7 @@ class EventWizardView(View):
         }
         return context
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)

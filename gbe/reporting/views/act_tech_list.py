@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 import csv
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
 from scheduler.idd import (
     get_people,
@@ -37,7 +38,7 @@ class ActTechList(View):
         else:
             (self.profile, self.occurrence) = groundwork_data
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         error_url = self.groundwork(request, args, kwargs)
         if error_url:

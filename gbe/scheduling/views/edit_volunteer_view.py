@@ -114,7 +114,7 @@ class EditVolunteerView(ManageWorkerView):
         return super(EditVolunteerView,
                      self).make_post_response(request, response, errorcontext)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         error_url = self.groundwork(request, args, kwargs)
@@ -122,7 +122,7 @@ class EditVolunteerView(ManageWorkerView):
             return error_url
         return render(request, self.template, self.make_context(request))
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         context = {}

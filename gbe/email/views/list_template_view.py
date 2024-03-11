@@ -23,7 +23,7 @@ class ListTemplateView(View):
     def groundwork(self, request, args, kwargs):
         self.user = validate_perms(request, self.reviewer_permissions)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)

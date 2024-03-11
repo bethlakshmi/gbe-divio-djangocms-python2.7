@@ -117,7 +117,7 @@ class ReviewBidListView(View):
             'rows': self.rows}
         return context
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.groundwork(request)
 
@@ -130,7 +130,7 @@ class ReviewBidListView(View):
                       self.template,
                       self.get_context_dict())
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     def post(self, request, *args, **kwargs):
         self.groundwork(request)
         self.get_bid_list(request)

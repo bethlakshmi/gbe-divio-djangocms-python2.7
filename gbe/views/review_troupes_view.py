@@ -19,7 +19,7 @@ class ReviewTroupesView(View):
     header = ['Troupe', 'Contact', 'Members', 'Action']
     title = "Manage Troupes"
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @log_func
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):

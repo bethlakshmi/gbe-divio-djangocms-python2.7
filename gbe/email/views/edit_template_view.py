@@ -114,13 +114,13 @@ class EditTemplateView(View):
             self.make_context()
         )
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         return self.get_edit_template_form(request)
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @log_func
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):

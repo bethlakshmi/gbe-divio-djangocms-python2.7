@@ -25,7 +25,7 @@ class DeleteTheme(View):
     def dispatch(self, *args, **kwargs):
         return super(DeleteTheme, self).dispatch(*args, **kwargs)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         theme_display = "%s"
         self.groundwork(request, args, kwargs)

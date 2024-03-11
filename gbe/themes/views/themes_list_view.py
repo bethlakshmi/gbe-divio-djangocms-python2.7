@@ -41,7 +41,7 @@ class ThemesListView(View):
             'error_id': self.error_id,
             'preview': preview_version}
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.profile = validate_perms(request, self.permissions)
         self.changed_id = int(request.GET.get('changed_id', default=-1))

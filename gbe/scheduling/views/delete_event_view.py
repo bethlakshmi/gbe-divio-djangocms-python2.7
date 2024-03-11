@@ -37,7 +37,7 @@ class DeleteEventView(View):
             else:
                 self.occurrence = result.occurrence
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         error_url = self.groundwork(request, args, kwargs)

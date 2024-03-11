@@ -140,7 +140,7 @@ class ManageWorkerView(View):
                       self.template,
                       self.make_context(request, errorcontext))
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         form = WorkerAllocationForm(request.POST)

@@ -1,6 +1,6 @@
 from django.views import View
 from django.views.decorators.cache import never_cache
-from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
@@ -270,7 +270,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
                                 'Current',
                                 'Volunteers']}
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     def post(self, request, *args, **kwargs):
         error_url = self.groundwork(request, args, kwargs)
         if error_url:
@@ -313,7 +313,7 @@ class ShowDashboard(ProfileRequiredMixin, View):
 
         return render(request, self.template, data)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         error_url = self.groundwork(request, args, kwargs)
         if error_url:

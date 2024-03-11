@@ -72,7 +72,7 @@ class BidChangeStateView(View):
         self.notify_bidder(request)
 
     @log_func
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def post(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         return self.bid_state_change(request)

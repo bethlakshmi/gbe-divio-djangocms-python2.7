@@ -62,13 +62,13 @@ class EditStaffAreaView(ManageVolWizardView):
 
         return context
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         return render(request, self.template, self.make_context(request))
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         if "manage-opps" in request.path:

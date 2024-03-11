@@ -126,14 +126,14 @@ class ReviewBidView(View):
                     'description': "Set %s State" % bid_string
                     })[0].description
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         self.form = self.bid_evaluation_form_type(instance=self.bid_eval)
         return (self.object_not_current_redirect() or
                 self.bid_review_response(request))
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     def post(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         self.form = self.bid_evaluation_form_type(request.POST,

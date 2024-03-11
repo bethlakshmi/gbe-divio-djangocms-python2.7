@@ -1,26 +1,6 @@
-from django.views.generic import View
-from django.views.decorators.cache import never_cache
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
 from gbe.themes.views import ManageTheme
-from gbe.models import (
-    StyleValue,
-    StyleVersion,
-    UserMessage,
-)
-from gbe.themes.forms import (
-    StyleValueForm,
-    StyleValueImageForm,
-    ThemeVersionForm,
-)
+from gbe.themes.forms import ThemeVersionForm
 from django.contrib import messages
-from gbetext import user_messages
 
 
 class CloneTheme(ManageTheme):

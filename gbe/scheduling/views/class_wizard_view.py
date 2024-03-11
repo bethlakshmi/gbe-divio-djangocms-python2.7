@@ -133,7 +133,7 @@ class ClassWizardView(EventWizardView):
             slug=bid_form.cleaned_data['slug'])
         return response
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
@@ -148,7 +148,7 @@ class ClassWizardView(EventWizardView):
                      'accepted_class': working_class})
         return render(request, self.template, context)
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         working_class = None

@@ -1,5 +1,6 @@
 from django.views.generic import View
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -37,7 +38,7 @@ from gbe.email.functions import (
 
 class SetVolunteerView(View):
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def post(self, request, *args, **kwargs):
         warnings = []
         errors = []

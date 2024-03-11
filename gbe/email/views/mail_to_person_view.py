@@ -34,7 +34,7 @@ class MailToPersonView(MailView):
             user_profile.display_name,
             user_profile.user_object.email))]
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         to_address = self.groundwork(request, args, kwargs)
@@ -44,7 +44,7 @@ class MailToPersonView(MailView):
             'gbe/email/send_mail.tmpl',
             {"email_form": email_form})
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         to_address = self.groundwork(request, args, kwargs)
