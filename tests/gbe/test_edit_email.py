@@ -23,7 +23,8 @@ from gbetext import (
     link_sent_msg,
     send_link_message,
 )
-import os
+from unittest.mock import patch
+from django_recaptcha.client import RecaptchaResponse
 from django.contrib.sites.models import Site
 from gbe.email.functions import create_unsubscribe_link
 from django.utils.html import escape
@@ -45,7 +46,6 @@ class TestEditEmail(TestCase):
         self.client = Client()
         self.profile = ProfilePreferencesFactory().profile
         self.url = reverse(self.view_name, urlconf='gbe.urls')
-        os.environ['RECAPTCHA_DISABLE'] = 'True'
 
     def test_update_email_no_token(self):
         response = self.client.get(self.url)
@@ -100,16 +100,18 @@ class TestEditEmail(TestCase):
         self.assertContains(response, "Email Options")
         self.assertNotContains(response, "Email:")
 
-    def test_update_email_post_valid_user_email(self):
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_valid_user_email(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             )
         response = self.client.post(
             self.url,
-            data={'email': self.profile.user_object.email},
+            data={'email': self.profile.user_object.email,
+                  "g-recaptcha-response": "PASSED"},
             follow=True)
-        assert_alert_exists(
-            response, 'success', 'Success', link_sent_msg)
+        print(response.content)
         queued_email = Email.objects.filter(
             status=2,
             to=self.profile.user_object.email,
@@ -117,17 +119,20 @@ class TestEditEmail(TestCase):
             from_email="Team BurlExpo <%s>" % settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 1)
+        assert_alert_exists(
+            response, 'success', 'Success', link_sent_msg)
 
-    def test_update_email_post_invalid_user_email(self):
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_invalid_user_email(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             )
         response = self.client.post(
             self.url,
-            data={'email': self.profile.user_object.email + "invalid"},
+            data={'email': self.profile.user_object.email + "invalid",
+                  "g-recaptcha-response": "PASSED"},
             follow=True)
-        assert_alert_exists(
-            response, 'success', 'Success', link_sent_msg)
         queued_email = Email.objects.filter(
             status=2,
             to=self.profile.user_object.email,
@@ -135,8 +140,12 @@ class TestEditEmail(TestCase):
             from_email=settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 0)
+        assert_alert_exists(
+            response, 'success', 'Success', link_sent_msg)
 
-    def test_update_email_post_inactive_profile_email(self):
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_inactive_profile_email(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             )
@@ -144,10 +153,9 @@ class TestEditEmail(TestCase):
         self.profile.user_object.save()
         response = self.client.post(
             self.url,
-            data={'email': self.profile.user_object.email},
+            data={'email': self.profile.user_object.email,
+                  "g-recaptcha-response": "PASSED"},
             follow=True)
-        assert_alert_exists(
-            response, 'success', 'Success', link_sent_msg)
         queued_email = Email.objects.filter(
             status=2,
             to=self.profile.user_object.email,
@@ -155,12 +163,17 @@ class TestEditEmail(TestCase):
             from_email=settings.DEFAULT_FROM_EMAIL,
             )
         self.assertEqual(queued_email.count(), 0)
+        assert_alert_exists(
+            response, 'success', 'Success', link_sent_msg)
 
-    def test_update_email_post_valid_form_w_token(self):
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_valid_form_w_token(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.post(self.url, follow=True, data={
+            "g-recaptcha-response": "PASSED",
             'token': TimestampSigner().sign(self.profile.user_object.email),
             'send_daily_schedule': True,
             'send_bid_notifications': False,
@@ -174,12 +187,15 @@ class TestEditEmail(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
 
-    def test_update_email_post_valid_form_logged_in(self):
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_valid_form_logged_in(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         login_as(self.profile.user_object, self)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.post(self.url, follow=True, data={
+            "g-recaptcha-response": "PASSED",
             'token': TimestampSigner().sign(self.profile.user_object.email),
             'send_daily_schedule': True,
             'send_bid_notifications': False,
@@ -192,11 +208,14 @@ class TestEditEmail(TestCase):
         assert_alert_exists(
             response, 'success', 'Success', default_update_profile_msg)
 
-    def test_update_email_post_valid_form_w_bad_token(self):
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_valid_form_w_bad_token(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.post(self.url, follow=True, data={
+            "g-recaptcha-response": "PASSED",
             'token': "bad, bad token",
             'send_daily_schedule': True,
             'send_bid_notifications': False,
@@ -204,13 +223,16 @@ class TestEditEmail(TestCase):
             'send_schedule_change_notifications': True})
         self.assertContains(response, send_link_message)
 
-    def test_update_email_post_valid_form_w_no_pref(self):
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_valid_form_w_no_pref(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         pref = ProfilePreferences.objects.get(profile=self.profile)
         pref.delete()
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             ) + "?email_disable=send_schedule_change_notifications"
         response = self.client.post(self.url, follow=True, data={
+            "g-recaptcha-response": "PASSED",
             'token': TimestampSigner().sign(self.profile.user_object.email),
             'send_daily_schedule': True,
             'send_bid_notifications': False,
@@ -228,8 +250,10 @@ class TestEditEmail(TestCase):
         response = self.client.post(self.url, follow=True, data={},)
         self.assertContains(response, send_link_message)
 
-    def test_update_email_post_invalid_form_failed_recaptcha(self):
-        del os.environ['RECAPTCHA_DISABLE']
+    @patch("django_recaptcha.fields.client.submit")
+    def test_update_email_post_invalid_form_failed_recaptcha(self,
+                                                             mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=False)
         self.url = create_unsubscribe_link(
             self.profile.user_object.email
             ) + "?email_disable=send_schedule_change_notifications"
@@ -239,9 +263,5 @@ class TestEditEmail(TestCase):
             'send_bid_notifications': False,
             'send_role_notifications': False,
             'send_schedule_change_notifications': True})
-        os.environ['RECAPTCHA_DISABLE'] = 'True'
         self.assertContains(response, "There is an error on the form.")
         self.assertContains(response, "This field is required.")
-
-    def tearDown(self):
-        del os.environ['RECAPTCHA_DISABLE']

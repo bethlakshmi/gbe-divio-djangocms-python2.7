@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load recaptcha2 %}
 {% block title %}{{ title }}{% endblock %}
-{% block head %}
-  {% recaptcha_init %}
-{% endblock %}
 {% block content %}
 <h3 class="gbe-title">{{ header }}</h3>
 <p>

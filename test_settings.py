@@ -1,15 +1,10 @@
 import os
 
 """
-Django settings for expo project.
+Django test settings for expo project.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/1.11/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.11/ref/settings/
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+Because divio injects a lot, this is much bigger than the settings.py as it
+also covers what divio configures out of our settings.py view.
 
 """
 
@@ -202,9 +197,6 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.filters')
 THUMBNAIL_QUALITY = 90
 THUMBNAIL_SOURCE_GENERATORS = ('easy_thumbnails.source_generators.pil_image',)
-
-RECAPTCHA_PRIVATE_KEY = '6Le0dx0UAAAAACNZynxCx5mUovu3M1Au3XFeeFKN'
-RECAPTCHA_PUBLIC_KEY = '6Le0dx0UAAAAAFGd_HJzX22FdzhwI-GCh8nCoXoU'
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 DEFAULT_FROM_EMAIL = 'mail@burlesque-expo.com'
