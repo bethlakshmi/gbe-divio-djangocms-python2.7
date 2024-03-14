@@ -32,11 +32,11 @@ Note:  You may need to update the ticket item list before processing transaction
  	{{intro | safe}}
 <br><br>
 <div class="btn-group btn-group-toggle">
-    <a class="btn {% ifequal view_format "ticket" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
-    <a class="btn {% ifequal view_format "user" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endifequal %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
+    <a class="btn {% if view_format == "ticket" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endif %}" href="{{ request.path }}?format=ticket&conference={{conference.conference_slug}}" role="button">Ticket View</a>
+    <a class="btn {% if view_format == "user" %}gbe-btn-secondary-disabled disabled{% else %}gbe-btn-light{% endif %}" href="{{ request.path }}?format=user&conference={{conference.conference_slug}}" role="button">User View</a>
 </div>
 <a href="{% url 'ticketing:comp_ticket' %}" class="btn gbe-btn-primary float-right">Create Comp</a>
-{% ifequal view_format "ticket" %}
+{% if view_format == "ticket" %}
 <div id="accordion" class="gbe_accordion my-3">
 {% for item in transactions %}
 {% ifchanged item.ticket_item.ticketing_event %}
@@ -130,7 +130,7 @@ Note:  You may need to update the ticket item list before processing transaction
       {% include "ticketing/transaction_row.tmpl" %}{% endfor %}</table>
   </td>
 </tr>{% endif %}{% endfor %}</tbody></table></div></div></div></div>
-{% endifequal %}
+{% endif %}
 </div></div></div></div></div></div>
 {% addtoblock "js" %}
   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
