@@ -370,8 +370,7 @@ class TestActTechWizard(TestGBE):
                                 'pronouns_0',
                                 'id_pronouns_0_3',
                                 '',
-                                checked=True,
-                                required=True)
+                                checked=True)
         self.assertContains(
             response,
             '<input type="text" name="pronouns_1" id="id_pronouns_0">',
@@ -567,8 +566,7 @@ class TestActTechWizard(TestGBE):
                                 'pronouns_0',
                                 'id_pronouns_0_3',
                                 '',
-                                checked=True,
-                                required=True)
+                                checked=True)
         self.assertContains(
             response,
             '<input type="text" name="pronouns_1" id="id_pronouns_0" ' +
