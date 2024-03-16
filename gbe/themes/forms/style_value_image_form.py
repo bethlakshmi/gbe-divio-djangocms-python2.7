@@ -54,14 +54,14 @@ class StyleValueImageForm(ModelForm):
         style_value = super(StyleValueImageForm, self).save(commit=False)
         # need whether or not commit=True for clone, as it will make a new
         # object, so want to consistently set up image.
-        if self['add_image'] and self['add_image'].value():
+        if self['add_image'] and self.cleaned_data['add_image']:
             superuser = User.objects.get(username='admin_img')
             folder, created = Folder.objects.get_or_create(
                 name='Backgrounds')
             img, created = Image.objects.get_or_create(
                 owner=superuser,
-                original_filename=self['add_image'].value().name,
-                file=self['add_image'].value(),
+                original_filename=self.cleaned_data['add_image'].name,
+                file=self.cleaned_data['add_image'],
                 folder=folder,
                 author="theme form",
             )

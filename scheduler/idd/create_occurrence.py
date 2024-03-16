@@ -53,7 +53,7 @@ def create_occurrence(title,
 
     if parent_event_id:
         response.occurrence.parent = parent_response.occurrence
-
+    response.occurrence.save()
     if peer_id:
         response.occurrence.set_peer(peer_response.occurrence)
 
