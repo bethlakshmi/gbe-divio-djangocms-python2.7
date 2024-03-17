@@ -94,6 +94,7 @@ class ArticleDelete(GbeFormMixin, RoleRequiredMixin, DeleteView):
     view_permissions = article_view_permissions
     valid_message = "Successfully deleted article."
 
+
 class ArticleUpdate(FormToTableMixin, RoleRequiredMixin, UpdateView):
     model = Article
     form_class = ArticleForm

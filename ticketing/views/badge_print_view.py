@@ -87,7 +87,8 @@ class BadgePrintView(PermissionRequiredMixin, View):
                         badged_usernames += [user.username]
 
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=print_badges.csv'
+        response['Content-Disposition'] = \
+            'attachment; filename=print_badges.csv'
         writer = csv.writer(response)
         writer.writerow(header)
         for row in badge_info:

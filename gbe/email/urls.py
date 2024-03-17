@@ -17,13 +17,18 @@ app_name = "email"
 
 urlpatterns = [
     re_path(r'^email/edit_template/(?P<template_name>[\w|\W]+)/?$',
-        EditTemplateView.as_view(), name='edit_template'),
+            EditTemplateView.as_view(),
+            name='edit_template'),
     re_path(r'^email/list_template/?$',
-        ListTemplateView.as_view(), name='list_template'),
+            ListTemplateView.as_view(),
+            name='list_template'),
     re_path(r'^email/mail_to_bidders/?$',
-        MailToBiddersView.as_view(), name='mail_to_bidders'),
+            MailToBiddersView.as_view(),
+            name='mail_to_bidders'),
     re_path(r'^email/mail_to_individual/(?P<profile_id>\d+)?$',
-        MailToPersonView.as_view(), name='mail_to_individual'),
+            MailToPersonView.as_view(),
+            name='mail_to_individual'),
     re_path(r'^email/mail_to_roles/?$',
-        MailToRolesView.as_view(), name='mail_to_roles'),
+            MailToRolesView.as_view(),
+            name='mail_to_roles'),
 ]

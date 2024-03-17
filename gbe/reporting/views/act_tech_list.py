@@ -148,8 +148,8 @@ class ActTechList(View):
                 ])
 
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s_tech.csv' % (
-            str(self.occurrence))
+        response['Content-Disposition'] = \
+            'attachment; filename=%s_tech.csv' % (str(self.occurrence))
         writer = csv.writer(response)
         writer.writerow(header)
         for row in tech_info:

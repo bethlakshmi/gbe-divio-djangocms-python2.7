@@ -14,16 +14,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='eligibilitycondition',
             name='checklistitem',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(app_label)s_%(class)s', to='ticketing.checklistitem'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='%(app_label)s_%(class)s',
+                to='ticketing.checklistitem'),
         ),
         migrations.AlterField(
             model_name='roleexclusion',
             name='condition',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(app_label)s_%(class)s', to='ticketing.eligibilitycondition'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='%(app_label)s_%(class)s',
+                to='ticketing.eligibilitycondition'),
         ),
         migrations.AlterField(
             model_name='ticketingexclusion',
             name='condition',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(app_label)s_%(class)s', to='ticketing.eligibilitycondition'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='%(app_label)s_%(class)s',
+                to='ticketing.eligibilitycondition'),
         ),
     ]
