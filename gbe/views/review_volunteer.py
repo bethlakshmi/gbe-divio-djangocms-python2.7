@@ -61,22 +61,11 @@ class VolunteerEvalDelete(VolReviewMixin, DeleteView):
     model = VolunteerEvaluation
     success_url = reverse_lazy('volunteer_review', urlconf="gbe.urls")
     template_name = 'gbe/admin_html_form.tmpl'
+    valid_message = "Successfully deleted review"
 
     def get_queryset(self):
         return self.model.objects.filter(
             evaluator=self.request.user.profile)
-
-    def delete(self, request, *args, **kwargs):
-        obj = self.get_object()
-        msg = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code="SUCCESS",
-            defaults={'summary': "Successful Delete",
-                      'description': "Successfully deleted review for '%s'"})
-        messages.success(
-            self.request,
-            msg[0].description % obj.volunteer.get_badge_name())
-        return super().delete(request, *args, **kwargs)
 
 
 class VolunteerEvalUpdate(VolReviewMixin, UpdateView):

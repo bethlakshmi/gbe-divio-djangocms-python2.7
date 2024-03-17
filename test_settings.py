@@ -207,3 +207,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 ADMINS = [('Admin',
            'admin@email.com'), ]
+CMS_TEMPLATES = (
+    ('base.html', 'base.html'),
+)

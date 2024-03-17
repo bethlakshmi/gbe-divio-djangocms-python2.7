@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ProfileFactory,
@@ -31,9 +30,11 @@ from django.utils.html import escape
 from post_office.models import Email
 from django.conf import settings
 from django.core.signing import TimestampSigner
+from cms.test_utils.testcases import CMSTestCase
+from cms.api import create_page
 
 
-class TestEditEmail(TestCase):
+class TestEditEmail(CMSTestCase):
     '''Tests for editing email (w no login) view'''
     '''This flow uses the 'I'm not a robot' widget (recaptcha).  To make
     most tests run, the recaptcha is disabled.  However, there's one test
@@ -43,9 +44,17 @@ class TestEditEmail(TestCase):
 
     def setUp(self):
         UserMessage.objects.all().delete()
-        self.client = Client()
-        self.profile = ProfilePreferencesFactory().profile
-        self.url = reverse(self.view_name, urlconf='gbe.urls')
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.profile = ProfilePreferencesFactory().profile
+        cls.url = reverse(cls.view_name, urlconf='gbe.urls')
+        cls.page = create_page(
+            "Welcome",
+            "base.html",
+            "en",
+            published=True,
+            overwrite_url="/")
 
     def test_update_email_no_token(self):
         response = self.client.get(self.url)
@@ -111,7 +120,6 @@ class TestEditEmail(TestCase):
             data={'email': self.profile.user_object.email,
                   "g-recaptcha-response": "PASSED"},
             follow=True)
-        print(response.content)
         queued_email = Email.objects.filter(
             status=2,
             to=self.profile.user_object.email,

@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from tests.factories.gbe_factories import (
     ConferenceFactory,
@@ -23,15 +22,23 @@ from datetime import (
     date,
     datetime,
 )
+from cms.test_utils.testcases import CMSTestCase
+from cms.api import create_page
 
 
-class TestRegister(TestCase):
+class TestRegister(CMSTestCase):
     '''Tests for register  view'''
     view_name = 'register'
 
-    def setUp(self):
-        self.client = Client()
-        self.counter = 0
+    @classmethod
+    def setUpTestData(cls):
+        cls.counter = 0
+        cls.page = create_page(
+            "Welcome",
+            "base.html",
+            "en",
+            published=True,
+            overwrite_url="/")
 
     def get_post_data(self):
         self.counter += 1
@@ -64,7 +71,7 @@ class TestRegister(TestCase):
 
     @patch('urllib.request.urlopen', autospec=True)
     @patch("django_recaptcha.fields.client.submit")
-    def test_register_post(self, m_urlopen, mocked_submit):
+    def test_register_post(self, mocked_submit, m_urlopen):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
 
@@ -82,7 +89,7 @@ class TestRegister(TestCase):
 
     @patch('urllib.request.urlopen', autospec=True)
     @patch("django_recaptcha.fields.client.submit")
-    def test_register_redirect(self, m_urlopen, mocked_submit):
+    def test_register_redirect(self, mocked_submit, m_urlopen):
         clear_conferences()
         conference = ConferenceFactory()
         save_the_date = datetime(2016, 2, 6, 12, 0, 0)
@@ -127,7 +134,7 @@ class TestRegister(TestCase):
 
     @patch('urllib.request.urlopen', autospec=True)
     @patch("django_recaptcha.fields.client.submit")
-    def test_register_spammer_email(self, m_urlopen, mocked_submit):
+    def test_register_spammer_email(self, mocked_submit, m_urlopen):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
 
@@ -138,12 +145,11 @@ class TestRegister(TestCase):
         mocked_submit.return_value = RecaptchaResponse(is_valid=True)
 
         response = self.client.post(url, self.get_post_data(), follow=True)
-        print(response.content)
         self.assertContains(response, found_on_list_msg)
 
     @patch('urllib.request.urlopen', autospec=True)
     @patch("django_recaptcha.fields.client.submit")
-    def test_register_spam_check_fail(self, m_urlopen, mocked_submit):
+    def test_register_spam_check_fail(self, mocked_submit, m_urlopen):
         url = reverse(self.view_name,
                       urlconf='gbe.urls')
         a = Mock()
