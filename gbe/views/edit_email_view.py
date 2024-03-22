@@ -130,7 +130,6 @@ class EditEmailView(View):
         if 'email' in list(request.POST.keys()):
             form = SendEmailLinkForm(request.POST)
             if form.is_valid():
-                print("valid")
                 try:
                     profile = Profile.objects.get(
                         user_object__email=form.cleaned_data["email"])
@@ -195,10 +194,8 @@ class EditEmailView(View):
 
     def success_redirect(self, request):
         if request.user.is_authenticated:
-            print("redirect home")
             redirect_to = reverse('home', urlconf='gbe.urls')
         else:
-            print("redirect current")
             site = Site.objects.get_current()
             redirect_to = "http://%s" % site.domain
         return HttpResponseRedirect(redirect_to)
