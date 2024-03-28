@@ -2,10 +2,9 @@ from django.forms import (
     EmailField,
     Form,
 )
-from snowpenguin.django.recaptcha2.fields import ReCaptchaField
-from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
+from django_recaptcha.fields import ReCaptchaField
 
 
 class SendEmailLinkForm(Form):
     email = EmailField(required=True)
-    verification = ReCaptchaField(widget=ReCaptchaWidget(), label="")
+    verification = ReCaptchaField(label="")

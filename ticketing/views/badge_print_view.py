@@ -11,6 +11,7 @@ from ticketing.models import (
 from django.http import HttpResponse
 import csv
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from gbe.functions import get_latest_conference
 from scheduler.idd import get_people
 
@@ -19,7 +20,7 @@ class BadgePrintView(PermissionRequiredMixin, View):
 
     permission_required = 'ticketing.view_transaction'
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request):
         conference = get_latest_conference()
         badged_usernames = []
@@ -86,7 +87,8 @@ class BadgePrintView(PermissionRequiredMixin, View):
                         badged_usernames += [user.username]
 
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=print_badges.csv'
+        response['Content-Disposition'] = \
+            'attachment; filename=print_badges.csv'
         writer = csv.writer(response)
         writer.writerow(header)
         for row in badge_info:

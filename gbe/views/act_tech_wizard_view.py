@@ -286,7 +286,7 @@ class ActTechWizardView(View):
             'prop_setup': prop_initial,
             'confirm_no_music': int(self.act.tech.confirm_no_music)})
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         error = self.groundwork(request, args, kwargs)
@@ -378,7 +378,7 @@ class ActTechWizardView(View):
                     advanced_form=advanced_form))
         return HttpResponseRedirect(self.next_page)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         error = self.groundwork(request, args, kwargs)

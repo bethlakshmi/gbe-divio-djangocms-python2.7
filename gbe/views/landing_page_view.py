@@ -1,4 +1,5 @@
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import (
     get_object_or_404,
@@ -47,6 +48,7 @@ from gbe_utils.mixins import ProfileRequiredMixin
 from gbe.views.article_views import fetch_article_context
 
 
+@method_decorator(never_cache, name="get")
 class LandingPageView(ProfileRequiredMixin, View):
 
     def groundwork(self, request, args, kwargs):
@@ -72,7 +74,6 @@ class LandingPageView(ProfileRequiredMixin, View):
                                             ['Staff Lead', ],
                                             require=False)
 
-    @never_cache
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         viewer_profile = self.viewer_profile

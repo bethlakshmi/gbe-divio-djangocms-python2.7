@@ -51,7 +51,7 @@ class ManageConferenceView(View):
                 'description': change_day_note})
         return message[0].description
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @log_func
     def get(self, request, *args, **kwargs):
         intro_message = self.groundwork(request, args, kwargs)
@@ -72,7 +72,7 @@ class ManageConferenceView(View):
                        'button': self.button,
                        'header': self.header})
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @log_func
     def post(self, request, *args, **kwargs):
         intro_message = self.groundwork(request, args, kwargs)

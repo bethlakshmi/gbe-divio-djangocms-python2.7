@@ -43,7 +43,7 @@ class WelcomeLetterView(View):
             self.profiles = Profile.objects.filter(
                 user_object__is_active=True).select_related()
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         schedules = []

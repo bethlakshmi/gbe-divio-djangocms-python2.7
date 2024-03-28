@@ -23,11 +23,10 @@ class DeletePerformerView(ProfileRequiredMixin, DeleteView):
         return self.model.objects.filter(
             contact__user_object=self.request.user)
 
-    def delete(self, request, *args, **kwargs):
-        obj = self.get_object()
-        response = get_schedule(public_class=obj.__class__.__name__,
-                                public_id=obj.pk)
-        if obj.has_bids() or len(response.schedule_items) >= 1:
+    def form_valid(self, form):
+        response = get_schedule(public_class=self.object.__class__.__name__,
+                                public_id=self.object.pk)
+        if self.object.has_bids() or len(response.schedule_items) >= 1:
             msg = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
                 code="DELETED_IN_USE_PERFORMER",
@@ -35,8 +34,7 @@ class DeletePerformerView(ProfileRequiredMixin, DeleteView):
                     'summary': "Delete In Use Performer Error",
                     'description': delete_in_use})
             messages.error(self.request, msg[0].description)
-            return HttpResponseRedirect(
-                request.META.get('HTTP_REFERER', self.success_url))
+            return HttpResponseRedirect(self.success_url)
         else:
             msg = UserMessage.objects.get_or_create(
                 view=self.__class__.__name__,
@@ -44,7 +42,7 @@ class DeletePerformerView(ProfileRequiredMixin, DeleteView):
                 defaults={
                     'summary': "Successful Delete",
                     'description': "Successfully deleted persona %s"})
-            messages.success(self.request, msg[0].description % str(obj))
-        delete_bookable_people(obj)
-        return super(DeletePerformerView,
-                     self).delete(request, *args, **kwargs)
+            messages.success(self.request,
+                             msg[0].description % str(self.object))
+        delete_bookable_people(self.object)
+        return super().form_valid(form)

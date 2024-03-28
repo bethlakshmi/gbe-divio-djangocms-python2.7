@@ -180,7 +180,7 @@ class CopyCollectionsView(View):
             context['second_form'] = form
             return render(request, self.template, context)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         error = self.groundwork(request, args, kwargs)
         if error:
@@ -190,7 +190,7 @@ class CopyCollectionsView(View):
             self.template,
             self.make_context(request))
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     def post(self, request, *args, **kwargs):
         error = self.groundwork(request, args, kwargs)
         if error:

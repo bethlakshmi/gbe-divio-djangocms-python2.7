@@ -83,7 +83,7 @@ class MailToFilterView(MailView):
     def select_form_is_valid(self):
         return self.select_form.is_valid()
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         self.user = validate_perms(request, self.reviewer_permissions)
@@ -93,7 +93,7 @@ class MailToFilterView(MailView):
             self.template,
             self.get_select_forms())
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         self.user = validate_perms(request, self.reviewer_permissions)

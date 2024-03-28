@@ -20,7 +20,7 @@ class RehearsalWizardView(EventWizardView):
         context['second_title'] = "Choose the Show for This Slot"
         return context
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
@@ -28,7 +28,7 @@ class RehearsalWizardView(EventWizardView):
             initial={'conference':  self.conference})
         return render(request, self.template, context)
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         working_class = None

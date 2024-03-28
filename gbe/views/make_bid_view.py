@@ -239,7 +239,7 @@ class MakeBidView(SubwayMapMixin, View):
             self.bid_object,
             self.bid_object.accepted)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @log_func
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -266,7 +266,7 @@ class MakeBidView(SubwayMapMixin, View):
 
         return self.get_create_form(request)
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @log_func
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):

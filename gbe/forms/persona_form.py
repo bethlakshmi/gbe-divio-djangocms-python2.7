@@ -85,15 +85,15 @@ class PersonaForm(ModelForm):
         performer = super(PersonaForm, self).save(commit=False)
 
         if commit and self['upload_img'] and (
-                self['upload_img'].value() != performer.img):
-            if self['upload_img'].value():
+                self.cleaned_data['upload_img'] != performer.img):
+            if self.cleaned_data['upload_img']:
                 superuser = User.objects.get(username='admin_img')
                 folder, created = Folder.objects.get_or_create(
                     name='Performers')
                 img, created = Image.objects.get_or_create(
                     owner=superuser,
-                    original_filename=self['upload_img'].value().name,
-                    file=self['upload_img'].value(),
+                    original_filename=self.cleaned_data['upload_img'].name,
+                    file=self.cleaned_data['upload_img'],
                     folder=folder,
                     author="%s" % str(performer.name,),
                 )

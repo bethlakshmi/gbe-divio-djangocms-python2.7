@@ -70,7 +70,7 @@ class TicketedEventWizardView(EventWizardView):
                 request,
                 user_message[0].description + ticket_list)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = self.groundwork(request, args, kwargs)
@@ -94,7 +94,7 @@ class TicketedEventWizardView(EventWizardView):
                 'conference': self.conference, })
         return render(request, self.template, context)
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         more_view = "edit_event"

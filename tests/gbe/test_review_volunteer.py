@@ -181,8 +181,7 @@ class TestVolunteerEvalDelete(TestCase):
             response,
             'success',
             'Success',
-            "Successfully deleted review for '%s'" % str(
-                self.review.volunteer.get_badge_name()))
+            "Successfully deleted review")
 
     def test_delete_wrong_review(self):
         login_as(self.privileged_user, self)

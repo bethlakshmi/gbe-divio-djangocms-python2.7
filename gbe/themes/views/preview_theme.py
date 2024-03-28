@@ -28,7 +28,7 @@ class PreviewTheme(View):
     def dispatch(self, *args, **kwargs):
         return super(PreviewTheme, self).dispatch(*args, **kwargs)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.profile = validate_perms(request, self.permissions)
         self.groundwork(request, args, kwargs)

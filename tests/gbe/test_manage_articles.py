@@ -162,7 +162,7 @@ class ArticleDelete(TestCase):
         cls.privileged_user = ProfileFactory().user_object
         grant_privilege(cls.privileged_user, 'Act Coordinator')
 
-    def test_delete_performer_has_message(self):
+    def test_delete_has_message(self):
         login_as(self.privileged_user, self)
         response = self.client.post(self.url,
                                     data={'submit': 'Confirm'},
@@ -173,7 +173,7 @@ class ArticleDelete(TestCase):
             response,
             'success',
             'Success',
-            "Successfully deleted article '%s'" % str(self.article))
+            "Successfully deleted article.")
 
 
 class TestArticleLists(TestCase):

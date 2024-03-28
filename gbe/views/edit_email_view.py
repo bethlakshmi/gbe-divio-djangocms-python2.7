@@ -79,7 +79,7 @@ class EditEmailView(View):
             'header': self.header,
         }
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @log_func
     def get(self, request, *args, **kwargs):
         interest_disable = []
@@ -124,7 +124,7 @@ class EditEmailView(View):
             interest_disable=interest_disable)
         return render(request, 'gbe/update_email.tmpl', context)
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @log_func
     def post(self, request, *args, **kwargs):
         if 'email' in list(request.POST.keys()):

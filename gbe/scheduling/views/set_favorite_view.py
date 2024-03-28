@@ -1,5 +1,6 @@
 from django.views.generic import View
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -20,7 +21,7 @@ from gbetext import (
 
 class SetFavoriteView(View):
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         this_url = reverse(
                 'set_favorite',

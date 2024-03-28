@@ -1,5 +1,6 @@
 from django.views.generic import View
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -59,7 +60,7 @@ class EditProfileView(LoginRequiredMixin, View):
                 'description': default_update_profile_msg})
         return user_message[0].description
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     @log_func
     def get(self, request, *args, **kwargs):
         intro_message = self.groundwork(request, args, kwargs)
@@ -96,7 +97,7 @@ class EditProfileView(LoginRequiredMixin, View):
                        'button': self.button,
                        'header': self.header})
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @log_func
     def post(self, request, *args, **kwargs):
         intro_message = self.groundwork(request, args, kwargs)

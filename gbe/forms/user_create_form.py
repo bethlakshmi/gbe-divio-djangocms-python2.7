@@ -7,8 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from gbe_forms_text import (
     user_form_help,
 )
-from snowpenguin.django.recaptcha2.fields import ReCaptchaField
-from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
+from django_recaptcha.fields import ReCaptchaField
 from gbe.functions import check_forum_spam
 from gbetext import (
     email_in_use_msg,
@@ -21,7 +20,7 @@ class UserCreateForm(UserCreationForm):
     error_css_class = 'error'
     name = CharField(required=True, help_text=user_form_help['name'])
     email = EmailField(required=True)
-    verification = ReCaptchaField(widget=ReCaptchaWidget())
+    verification = ReCaptchaField()
 
     def is_valid(self):
         from gbe.models import UserMessage

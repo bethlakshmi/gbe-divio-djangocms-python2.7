@@ -1,5 +1,6 @@
 from django.views.generic import View
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
@@ -150,7 +151,7 @@ class EvalEventView(View):
         }
         return context
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         redirect = self.groundwork(request, args, kwargs)
         if redirect:
@@ -165,7 +166,7 @@ class EvalEventView(View):
                       self.template,
                       self.make_context(eval_form, eval_info))
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     def post(self, request, *args, **kwargs):
         redirect = self.groundwork(request, args, kwargs)
         if redirect:

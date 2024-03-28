@@ -304,9 +304,7 @@ class TestTransactions(TestCase):
         request = self.client.get(
             reverse('transactions', urlconf='ticketing.urls'),
         )
-        request.user = user
-        with self.assertRaises(PermissionDenied):
-            response = transactions(request)
+        self.assertEqual(request.status_code, 403)
 
     def test_transactions_w_privilege(self):
         context = PurchasedTicketContext()

@@ -3,13 +3,13 @@ import os
 import aldryn_addons.settings
 
 INSTALLED_ADDONS = [
-    # <INSTALLED_ADDONS>  # Warning: text inside the INSTALLED_ADDONS tags is auto-generated. Manual changes will be overwritten.
+    # <INSTALLED_ADDONS>
+    # Warning: text inside the INSTALLED_ADDONS tags is auto-generated.
+    # Manual changes will be overwritten.
     'aldryn-addons',
     'aldryn-django',
     'aldryn-sso',
     'aldryn-django-cms',
-    'aldryn-common',
-    'djangocms-bootstrap4',
     'djangocms-file',
     'djangocms-history',
     'djangocms-icon',
@@ -21,6 +21,7 @@ INSTALLED_ADDONS = [
     'djangocms-video',
     'django-filer',
     # </INSTALLED_ADDONS>
+    'djangocms-bootstrap4',
 ]
 
 PAYPAL_BUY_BUTTON_IMAGE = "/static/img/paysubmit.png"
@@ -39,7 +40,7 @@ INSTALLED_APPS.extend([
     "post_office",
     'paypal.standard.ipn',
     'import_export',
-    'snowpenguin.django.recaptcha2',
+    'django_recaptcha',
     'dal',
     'dal_select2',
     'django_addanother',

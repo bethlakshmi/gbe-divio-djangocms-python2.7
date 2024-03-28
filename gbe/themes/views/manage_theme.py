@@ -118,7 +118,7 @@ class ManageTheme(View):
     def dispatch(self, *args, **kwargs):
         return super(ManageTheme, self).dispatch(*args, **kwargs)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         return render(request,
@@ -136,7 +136,7 @@ class ManageTheme(View):
         self.style_version.save()
         return (self.style_version.pk, "Updated %s" % self.style_version)
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         if 'cancel' in list(request.POST.keys()):

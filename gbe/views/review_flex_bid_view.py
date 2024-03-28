@@ -1,4 +1,5 @@
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
@@ -164,7 +165,7 @@ class FlexibleReviewBidView(ReviewBidView):
             self.bid_notes = ActBidEvaluation(
                 evaluator=self.reviewer, bid=self.object)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         self.form = [FlexibleEvaluationForm(
@@ -176,7 +177,7 @@ class FlexibleReviewBidView(ReviewBidView):
         return (self.object_not_current_redirect() or
                 self.bid_review_response(request))
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     def post(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         self.form = [FlexibleEvaluationForm(

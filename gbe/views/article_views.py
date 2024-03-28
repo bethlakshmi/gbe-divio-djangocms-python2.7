@@ -19,6 +19,7 @@ from gbe.forms import ArticleForm
 from published.mixins import PublishedListMixin, PublishedDetailMixin
 from gbe_utils.mixins import (
     GbeContextMixin,
+    GbeFormMixin,
     FormToTableMixin,
     RoleRequiredMixin,
 )
@@ -86,21 +87,12 @@ class ArticleCreate(FormToTableMixin, RoleRequiredMixin, CreateView):
         return response
 
 
-class ArticleDelete(RoleRequiredMixin, DeleteView):
+class ArticleDelete(GbeFormMixin, RoleRequiredMixin, DeleteView):
     model = Article
     success_url = reverse_lazy('news_manage', urlconf="gbe.urls")
     template_name = 'gbe/admin_html_form.tmpl'
     view_permissions = article_view_permissions
-
-    def delete(self, request, *args, **kwargs):
-        obj = self.get_object()
-        msg = UserMessage.objects.get_or_create(
-            view=self.__class__.__name__,
-            code="SUCCESS",
-            defaults={'summary': "Successful Delete",
-                      'description': "Successfully deleted article '%s'"})
-        messages.success(self.request, msg[0].description % str(obj))
-        return super(ArticleDelete, self).delete(request, *args, **kwargs)
+    valid_message = "Successfully deleted article."
 
 
 class ArticleUpdate(FormToTableMixin, RoleRequiredMixin, UpdateView):

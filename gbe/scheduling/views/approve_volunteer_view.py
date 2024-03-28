@@ -302,7 +302,7 @@ class ApproveVolunteerView(View):
                                     profile,
                                     person.role)
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.groundwork(request)
         if 'action' in kwargs and 'booking_id' in kwargs and (

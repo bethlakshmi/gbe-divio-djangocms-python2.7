@@ -227,7 +227,7 @@ class ManageVolWizardView(View):
     def do_additional_actions(self, request):
         return None
 
-    @never_cache
+    @method_decorator(never_cache, name="post")
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         error_url = self.groundwork(request, args, kwargs)

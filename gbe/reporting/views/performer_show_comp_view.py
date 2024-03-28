@@ -32,7 +32,7 @@ class PerformerShowComp(View):
             user_object__is_active=True, bio__isnull=False
             ).select_related().distinct()
 
-    @never_cache
+    @method_decorator(never_cache, name="get")
     def get(self, request, *args, **kwargs):
         self.groundwork(request, args, kwargs)
         schedules = []
