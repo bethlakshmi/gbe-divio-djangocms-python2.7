@@ -8,7 +8,7 @@
 
 aiocontextvars==0.2.2
     # via aldryn-django
-aldryn-addons @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-addons/2.2.0/8c3dde04-debd-4e6e-bc8d-fd913ca258e2/aldryn-addons-2.2.0.tar.gz
+aldryn-addons @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-addons/2.3.0/a5621b5c-8f81-44d1-9899-ff33b0e17320/aldryn-addons-2.3.0.tar.gz
     # via
     #   -r /workspace/requirements.in
     #   aldryn-django
@@ -28,15 +28,15 @@ aldryn-snake==2.0.0
     #   aldryn-django-cms
 aldryn-sso @ https://divio-addons.s3-eu-central-1.amazonaws.com/aldryn-sso/2.1.0/e29cc97c-b0f6-49d9-a46f-ed1a34cc9bf7/aldryn-sso-2.1.0.tar.gz
     # via -r /workspace/requirements.in
-asgiref==3.7.2
+asgiref==3.8.1
     # via django
 backports-zoneinfo==0.2.1
     # via django
 bleach[css]==6.1.0
     # via django-post-office
-boto3==1.34.59
+boto3==1.34.72
     # via django-storages
-botocore==1.34.59
+botocore==1.34.72
     # via
     #   boto3
     #   s3transfer
@@ -52,7 +52,7 @@ click==8.1.7
     # via
     #   aldryn-client
     #   aldryn-django
-coverage[toml]==7.4.3
+coverage[toml]==7.4.4
     # via
     #   -r /workspace/requirements.in
     #   pytest-cov
@@ -247,7 +247,7 @@ exceptiongroup==1.2.0
     # via pytest
 factory-boy==3.3.0
     # via -r /workspace/requirements.in
-faker==24.1.0
+faker==24.4.0
     # via factory-boy
 furl==2.1.3
     # via
@@ -305,7 +305,7 @@ pytest==8.1.1
     #   -r /workspace/requirements.in
     #   pytest-cov
     #   pytest-django
-pytest-cov==4.1.0
+pytest-cov==5.0.0
     # via -r /workspace/requirements.in
 pytest-django==4.8.0
     # via -r /workspace/requirements.in
@@ -336,9 +336,9 @@ requests==2.31.0
     #   webservices
 rjsmin==1.2.1
     # via django-compressor
-s3transfer==0.10.0
+s3transfer==0.10.1
     # via boto3
-sentry-sdk==1.41.0
+sentry-sdk==1.43.0
     # via aldryn-django
 six==1.16.0
     # via
